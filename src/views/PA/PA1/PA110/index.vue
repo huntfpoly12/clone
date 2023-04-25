@@ -10,7 +10,7 @@
                         key-expr="companyId" :show-borders="true" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
-                        <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
+                        <DxColumn :caption="paYear + '귀속월'" cell-template="imputed-year" />
                         <template #imputed-year="{}">
                             <span>지급연월</span>
                         </template>
@@ -366,14 +366,14 @@ export default defineComponent({
     },
     setup() {
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
         store.state.common.pa110.processKeyPA110 = {
-            imputedYear: globalYear.value,
+            imputedYear: paYear.value,
             imputedMonth: dayjs().month() + 1,
-            paymentYear: globalYear.value,
+            paymentYear: paYear.value,
             paymentMonth: dayjs().month() + 1,
         }
         const startYearMonth = getJwtObject(sessionStorage.getItem("token")!)?.withholding?.startYearMonth;
@@ -394,7 +394,7 @@ export default defineComponent({
         const dataGridRef = computed(() => gridRefPA110.value?.instance as any); // ref of grid Instance
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: paYear.value,
         })
         const originDataTaxPayInfo = ref({
             companyId: companyId,
@@ -602,8 +602,8 @@ export default defineComponent({
             store.state.common.pa110.resetArrayEmploySelect++
         })
         watch(() => store.state.common.pa110.loadingTableInfo, (newVal) => {
-            originData.value.imputedYear = globalYear.value
-            originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
+            originData.value.imputedYear = paYear.value
+            originDataTaxPayInfo.value.processKey.imputedYear = paYear.value
             // refetchDataProcessIncomeWages() //reset data table 1
             trigger.value = true; //reset data table 1
             dataGridRef.value?.refresh();
@@ -729,7 +729,7 @@ export default defineComponent({
         successChangeIncomeProcess(e => {
             dataMonthNew.value.status = status.value
             notification('success', Message.getMessage('COMMON', '106').message)
-            originData.value.imputedYear = globalYear.value
+            originData.value.imputedYear = paYear.value
             // isRunOnce.value = true;
             // refetchDataProcessIncomeWages()
             trigger.value = true; //reset data table 1
@@ -784,7 +784,7 @@ export default defineComponent({
                     store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
                     originData.value.imputedYear = store.state.common.pa110.dataYearNew
                     trigger.value = true; //reset data table 1
-                    await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                    await (store.state.settings.paYear = store.state.common.pa110.dataYearNew)
                     await (store.state.common.pa110.checkClickYear = false)
                     return;
                 }
@@ -823,7 +823,7 @@ export default defineComponent({
         const checkStartYearMonth = (month: number) => {
             let startYear = ref<any>(startYearMonth?.toString().slice(0, 4))
             let startMonth = ref<any>(startYearMonth?.toString().slice(4, 6))
-            if (parseInt(startYear.value) !== parseInt(globalYear.value)) {
+            if (parseInt(startYear.value) !== paYear.value) {
                 return false;
             } else {
                 if (month >= parseInt(startMonth.value)) {
@@ -833,25 +833,25 @@ export default defineComponent({
             }
         }
 
-        watch(globalYear, (newVal, oldVal) => {
-            if ((store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd)) {
-                if (!store.state.common.pa110.checkClickYear) {
-                    modalChangeRow.value = true
-                    store.state.common.pa110.checkClickYear = true
-                    store.state.settings.globalYear = oldVal;
-                    store.state.common.pa110.dataYearNew = newVal;
-                    return
-                }
-                return
-            } else {
-                isRunOnce.value = true;
-                store.state.common.pa110.processKeyPA110.imputedYear = newVal
-                store.state.common.pa110.processKeyPA110.paymentYear = newVal
-                originData.value.imputedYear = newVal
-                originDataTaxPayInfo.value.processKey.imputedYear = newVal
-                trigger.value = true; //reset data table 1
-            }
-        })
+        // watch(paYear, (newVal, oldVal) => {
+        //     if ((store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd)) {
+        //         if (!store.state.common.pa110.checkClickYear) {
+        //             modalChangeRow.value = true
+        //             store.state.common.pa110.checkClickYear = true
+        //             store.state.settings.paYear = oldVal;
+        //             store.state.common.pa110.dataYearNew = newVal;
+        //             return
+        //         }
+        //         return
+        //     } else {
+        //         isRunOnce.value = true;
+        //         store.state.common.pa110.processKeyPA110.imputedYear = newVal
+        //         store.state.common.pa110.processKeyPA110.paymentYear = newVal
+        //         originData.value.imputedYear = newVal
+        //         originDataTaxPayInfo.value.processKey.imputedYear = newVal
+        //         trigger.value = true; //reset data table 1
+        //     }
+        // })
         const classObject = (month: number) => {
             let string = 'cell-center'
             store.state.common.pa110.processKeyPA110.imputedMonth == month ? string += ' column-focus' : ''
@@ -867,7 +867,7 @@ export default defineComponent({
             return string
         }
         return {
-            globalYear,
+            paYear,
             per_page,
             move_column,
             colomn_resize,

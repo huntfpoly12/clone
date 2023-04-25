@@ -46,6 +46,11 @@
       color: #888888;
       font-size: 12px
     }
+
+    :deep .dx-template-wrapper {
+      width: 100%;
+      padding: 3px;
+    }
   }
 
   .jobtype-margin {

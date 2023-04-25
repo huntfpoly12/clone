@@ -69,36 +69,16 @@ export default defineComponent({
     const retirementIncome1 = ref(true)
     const retirementIncome2 = ref(true)
     const isDataFormChange = ref(false)
-    const trigger = ref(false)
     const statusModal = ref(props.modalStatus)
-    const requestCallDetail: any = ref({
+    const variableGetDetail: any = ref({
       companyId: companyId,
       processKey: props.processKey,
-      incomeId: 0
+      incomeId: props.keyRowIndex
     })
     const firstLoad = ref(0)
     // =========================  GRAPQL =================================================
-    // query get config from screen cm-130
-    const {
-      loading: loadingConfig,
-      result: resultConfig,
-    } = useQuery(
-      queriescm130.getWithholdingConfig,
-      {
-        companyId: companyId,
-        imputedYear: globalYear
-      },
-      () => ({
-        fetchPolicy: "no-cache",
-      })
-    );
 
-    watch(resultConfig, (resConfig) => {
-      if (resConfig) {
-        store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
-      }
-    })
-
+    // Update Income Retirement
     const {
       mutate,
       onDone,
@@ -113,13 +93,13 @@ export default defineComponent({
       notification('error', e.message)
     })
 
+    // Get Detail Income Retirement
     const {
       loading,
       refetch: refetchGetDetail,
       onError: errorGetDetail,
       onResult: resultGetDetail
-    } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
-      enabled: trigger.value,
+    } = useQuery(queries.getIncomeRetirement, variableGetDetail, () => ({
       fetchPolicy: "no-cache",
     }));
     resultGetDetail(async (newValue) => {
@@ -152,7 +132,6 @@ export default defineComponent({
         store.commit('common/setEmployee', newValue.data.getIncomeRetirement.employee)
 
         firstLoad.value = 0
-        trigger.value = false
         step.value = 0
       }
     })
@@ -168,12 +147,11 @@ export default defineComponent({
     }, {deep: true})
 
     watch(() => props.modalStatus, (newValue) => {
-      requestCallDetail.value.incomeId = props.keyRowIndex
+      variableGetDetail.value.incomeId = props.keyRowIndex
       statusModal.value = newValue
       if (newValue) {
         console.log('props', props)
 
-        trigger.value = true
         refetchGetDetail()
         firstLoad.value = 0
       }

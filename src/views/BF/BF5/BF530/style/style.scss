@@ -100,13 +100,13 @@
   :deep .dx-datagrid-content .dx-datagrid-table .dx-row > td{
     height: 20px;
   }
-  :deep .dx-scrollable-container {
-    overflow: visible;
-  }
-  :deep .dx-datagrid-rowsview .dx-row > td, .dx-datagrid-rowsview .dx-row > tr > td {
-    overflow: visible;
-  }
-  :deep .dx-datagrid-rowsview{
-    overflow: visible;
-  }
+  // :deep .dx-scrollable-container {
+  //   overflow: visible;
+  // }
+  // :deep .dx-datagrid-rowsview .dx-row > td, .dx-datagrid-rowsview .dx-row > tr > td {
+  //   overflow: visible;
+  // }
+  // :deep .dx-datagrid-rowsview{
+  //   overflow: visible;
+  // }
 }

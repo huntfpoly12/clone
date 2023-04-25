@@ -69,6 +69,7 @@
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
           id="tab2-bf640">
+          <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="code" cell-template="company-code" />
           <template #company-code="{ data }: any">
@@ -127,12 +128,23 @@ import { Message } from '@/configs/enum';
 import CheckboxGroup from './CheckboxGroup.vue';
 import { watchEffect } from "vue";
 import { isNumber } from "lodash";
+import { DxLoadPanel } from "devextreme-vue";
 export default defineComponent({
   components: {
-    SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
-    RequestFilePopup, GetStatusTable,
+    SaveOutlined,
+    DxDataGrid,
+    DxToolbar,
+    DxSelection,
+    DxColumn,
+    DxItem,
+    DxScrolling,
+    DxSummary,
+    DxTotalItem,
+    RequestFilePopup,
+    GetStatusTable,
     CheckboxGroup,
-  },
+    DxLoadPanel
+},
   props: {
     search: {
       type: Number,
@@ -143,7 +155,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const globalYear: any = computed(() => store.state.settings.globalYear);
+    const globalYear: any = +dayjs().format('YYYY');
     let checkBoxSearch = [...checkBoxSearchStep1]
     let valueDefaultCheckbox = ref(1)
     let valueDefaultSwitch = ref(true)
@@ -164,30 +176,32 @@ export default defineComponent({
     const fetchDataStatus = async (companies: any) => {
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
-        await client.query({
-          query: queries.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement, variables: {
-            input: {
-              companyId: companies[i].companyId,
-              paymentYear: companies[i].paymentYear,
-              paymentMonth: companies[i].paymentMonth,
-            }
-          }
-        }).then((res) => {
-          let productionStatus = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0].productionStatus;
-          let causeOfProductionFailure = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0]?.causeOfProductionFailure;
-          productionCount.value--;
-          dataSource.value.forEach((item: any) => {
-            if (item.companyId == companies[i].companyId) {
-              item.productionStatus = productionStatus;
-              if (productionStatus == -1) {
-                item.causeOfProductionFailure = causeOfProductionFailure;
-              }
-              if (productionStatus == 2){
-                item.allowSelection = false;
+        if (companies[i]) {
+          await client.query({
+            query: queries.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement, variables: {
+              input: {
+                companyId: companies[i].companyId,
+                paymentYear: companies[i].paymentYear,
+                paymentMonth: companies[i].paymentMonth,
               }
             }
-          })
-        }).catch((err: any) => err);
+          }).then((res) => {
+            let productionStatus = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0].productionStatus;
+            let causeOfProductionFailure = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0]?.causeOfProductionFailure;
+            productionCount.value--;
+            dataSource.value.forEach((item: any) => {
+              if (item.companyId == companies[i].companyId) {
+                item.productionStatus = productionStatus;
+                if (productionStatus == -1) {
+                  item.causeOfProductionFailure = causeOfProductionFailure;
+                }
+                if (productionStatus == 2) {
+                  item.allowSelection = false;
+                }
+              }
+            })
+          }).catch((err: any) => err);
+        }
       }
     };
 

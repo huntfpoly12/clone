@@ -93,7 +93,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const processKeyPA720 = computed(() => store.state.common.processKeyPA720);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const month1 = ref(1);
     const modalCopy = ref(false);
     const paymentDayPA720 = computed({

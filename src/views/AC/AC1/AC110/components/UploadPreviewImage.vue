@@ -2,7 +2,7 @@
   <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
     <div class="form-upload-ac110" >
       <div ref="elementUpload" class="upload-pewview-img">
-        <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
+        <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof || disabled" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
           @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
           accept="image/png, image/jpeg, image/jpg image/gif">
           <div v-if="fileList.length <= limit">
@@ -71,6 +71,10 @@ export default defineComponent({
     payLoadProofs: {
       type: Object,
       default: () => { }
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit }) {
@@ -208,15 +212,15 @@ export default defineComponent({
     const beforeUpload = (file: any) => {
       const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
       if (!isImage) {
-        notification('error', 'You can only upload png, jpg, jpeg, gif file!')
+        notification('error', Message.getMessage('AC110', '002').message)
       }
       const isLt10M = file.size / 1024 / 1024 <= 10;
       if (!isLt10M) {
-        notification('error', 'Image must smaller than 10MB!')
+        notification('error', Message.getMessage('AC110', '003').message)
       }
       const isDuplicaseName = fileList.value.some((items: any) => file.name === items.name)
       if (isDuplicaseName) {
-        notification('error', 'Duplicate image are not allowed!')
+        notification('error', Message.getMessage('AC110', '004').message)
       }
       isFailUpload.value = isImage && isLt10M && !isDuplicaseName
     };
@@ -335,5 +339,16 @@ export default defineComponent({
 .ac110-disable-form-upload {
   opacity: .7;
   pointer-events: none;
+}
+</style>
+<style scoped>
+:deep .ant-upload-list-item-uploading .ant-upload-list-item-thumbnail::before {
+  position: absolute;
+  content: "업로딩";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fafafa;
 }
 </style>

@@ -196,7 +196,7 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
 
         let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
@@ -220,19 +220,19 @@ export default defineComponent({
         const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
         const originData = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
         }
         const originDataDetail: any = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
             employeeId: null,
             incomeTypeCode: null,
         });
         let confirmSave = ref(false)
         const optionsRadio = ref([...initialOptionsRadio]);
         let runOne = ref(true);
-        const dataYearNew = ref(globalYear.value)
-        const checkClickYear = ref<Boolean>(false)
+        const dataYearNew = ref<number>(paYear.value)
+        // const checkClickYear = ref<Boolean>(false)
         var disabledBlock = ref<boolean>(false);
         const disabledBlockTable = ref<boolean>(false);
         // ================GRAPQL==============================================
@@ -294,16 +294,16 @@ export default defineComponent({
         });
         onDoneAdd(async (data) => {
             notification('success', Message.getMessage('COMMON', '101').message)
-            if (checkClickYear.value) {
-                originData.imputedYear = dataYearNew.value
-                runOne.value = true;
-                trigger.value = true;
-                store.state.settings.globalYear = dataYearNew.value
-                setTimeout(() => {
-                    checkClickYear.value = false;
-                }, 500);
-                return;
-            }
+            // if (checkClickYear.value) {
+            //     originData.imputedYear = dataYearNew.value
+            //     runOne.value = true;
+            //     trigger.value = true;
+            //     store.state.settings.paYear = dataYearNew.value
+            //     setTimeout(() => {
+            //         checkClickYear.value = false;
+            //     }, 500);
+            //     return;
+            // }
             await (trigger.value = true);
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 return
@@ -324,7 +324,7 @@ export default defineComponent({
         onErrorAdd((e) => {
             focusedRowKey.value = 'PA710'
             notification('error', e.message)
-            checkClickYear.value ? checkClickYear.value = false : '';
+            // checkClickYear.value ? checkClickYear.value = false : '';
         });
         onDoneDelete(() => {
             modalStatusDelete.value = false;
@@ -338,16 +338,16 @@ export default defineComponent({
         });
         onDoneUpdate(async (data) => {
             notification('success', Message.getMessage('COMMON', '106').message)
-            if (checkClickYear.value) {
-                originData.imputedYear = dataYearNew.value
-                runOne.value = true;
-                trigger.value = true;
-                store.state.settings.globalYear = dataYearNew.value
-                setTimeout(() => {
-                    checkClickYear.value = false;
-                }, 500);
-                return;
-            }
+            // if (checkClickYear.value) {
+            //     originData.imputedYear = dataYearNew.value
+            //     runOne.value = true;
+            //     trigger.value = true;
+            //     store.state.settings.paYear = dataYearNew.value
+            //     setTimeout(() => {
+            //         checkClickYear.value = false;
+            //     }, 500);
+            //     return;
+            // }
             await (trigger.value = true);
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 return
@@ -363,7 +363,7 @@ export default defineComponent({
             store.state.common.savePA710++;
         });
         onErrorUpdate((e) => {
-            checkClickYear.value ? checkClickYear.value = false : '';
+            // checkClickYear.value ? checkClickYear.value = false : '';
             triggerDetail.value = true;
             notification('error', e.message)
         });
@@ -372,14 +372,14 @@ export default defineComponent({
         const pa710FormRef = ref()
         const actionSave = () => {
             statusClickButtonSave.value = true;
-            checkClickYear.value = false
+            // checkClickYear.value = false
             submitForm()
         }
         const submitForm = () => {
             var res = pa710FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                checkClickYear.value ? checkClickYear.value = false : '';
+                // checkClickYear.value ? checkClickYear.value = false : '';
             } else {
                 let residentId = formState.value.residentId.replace('-', '')
                 let input = {
@@ -395,7 +395,7 @@ export default defineComponent({
                 if (statusFormUpdate.value) {
                     let dataUpdate = {
                         companyId: companyId,
-                        imputedYear: globalYear.value,
+                        imputedYear: paYear.value,
                         employeeId: parseInt(formState.value.employeeId),
                         incomeTypeCode: formState.value.incomeTypeCode,
                         input: { ...input }
@@ -405,7 +405,7 @@ export default defineComponent({
                 } else {
                     let dataCreate = {
                         companyId: companyId,
-                        imputedYear: globalYear.value,
+                        imputedYear: paYear.value,
                         input: {
                             employeeId: parseInt(formState.value.employeeId),
                             incomeTypeCode: formState.value.incomeTypeCode,
@@ -475,7 +475,7 @@ export default defineComponent({
         const onSubmitDelete = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: globalYear.value,
+                imputedYear: paYear.value,
                 employeeId: formState.value.employeeId,
                 incomeTypeCode: formState.value.incomeTypeCode
             };
@@ -487,16 +487,16 @@ export default defineComponent({
                 statusClickButtonSave.value = false;
                 submitForm();
             } else {
-                if (checkClickYear.value) {
-                    originData.imputedYear = dataYearNew.value
-                    runOne.value = true;
-                    trigger.value = true;
-                    store.state.settings.globalYear = dataYearNew.value
-                    setTimeout(() => {
-                        checkClickYear.value = false;
-                    }, 500);
-                    return;
-                }
+                // if (checkClickYear.value) {
+                //     originData.imputedYear = dataYearNew.value
+                //     runOne.value = true;
+                //     trigger.value = true;
+                //     store.state.settings.paYear = dataYearNew.value
+                //     setTimeout(() => {
+                //         checkClickYear.value = false;
+                //     }, 500);
+                //     return;
+                // }
                 if (!statusAddRow.value) {
                     listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
                     statusAddRow.value = true
@@ -509,7 +509,7 @@ export default defineComponent({
         const statusComfirmAdd = (val: any) => {
             if (val) {
                 statusClickButtonSave.value = false;
-                checkClickYear.value = false;
+                // checkClickYear.value = false;
                 submitForm();
             } else {
                 if (statusAddRow.value && statusClickButtonAdd.value) { // add row
@@ -590,24 +590,24 @@ export default defineComponent({
             formState.value.name = formState.value.name?.toUpperCase() ?? '';
         });
 
-        watch(globalYear, (newVal, oldVal) => {
-            let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
-            let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
-            if (statusChangeFormEdit || statusChangeFormAdd) { // if status form add and form not null
-                if (!checkClickYear.value) {
-                    modalStatus.value = true
-                    checkClickYear.value = true
-                    store.state.settings.globalYear = oldVal;
-                    dataYearNew.value = newVal;
-                    return
-                }
-                return
-            } else {
-                originData.imputedYear = newVal
-                runOne.value = true;
-                trigger.value = true;
-            }
-        });
+        // watch(paYear, (newVal, oldVal) => {
+        //     let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
+        //     let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
+        //     if (statusChangeFormEdit || statusChangeFormAdd) { // if status form add and form not null
+        //         // if (!checkClickYear.value) {
+        //         //     modalStatus.value = true
+        //         //     checkClickYear.value = true
+        //         //     store.state.settings.paYear = oldVal;
+        //         //     dataYearNew.value = newVal;
+        //         //     return
+        //         // }
+        //         return
+        //     } else {
+        //         originData.imputedYear = newVal
+        //         runOne.value = true;
+        //         trigger.value = true;
+        //     }
+        // });
 
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,

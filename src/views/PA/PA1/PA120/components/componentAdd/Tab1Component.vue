@@ -141,7 +141,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
     const arrDepartments = ref([]);

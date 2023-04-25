@@ -173,7 +173,7 @@ export default defineComponent({
         const messageAddSuccess = Message.getMessage('COMMON', '101').message
 
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
         const processKey = computed(() => store.state.common.pa510.processKeyPA510)
         const modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
@@ -190,27 +190,27 @@ export default defineComponent({
         const employeeWageDailyTrigger = ref<boolean>(false);
         const showErrorButton = ref(false)
         const triggerWithholdingConfig = ref<boolean>(true)
-        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
+        const dataQuery = ref({ companyId: companyId, imputedYear: paYear });
         const insuranceSupport = ref<boolean>(false);
         let employeeWageDailyParam = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
             employeeId: null,
         };
         const originData = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
         }
         const originDataConfig = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
             useOnly: true,
         }
         const employeementInsuranceDeduction = ref<boolean>(false)
         const employeementInsuranceSupportPercent = ref<number>(0)
         // const originDataCalculateIncome = ref({
         //     companyId: companyId,
-        //     imputedYear: globalYear.value,
+        //     imputedYear: paYear.value,
         //     totalTaxPay: 10,
         //     dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
         // })
@@ -280,7 +280,7 @@ export default defineComponent({
                 store.state.common.pa510.processKeyPA510.imputedYear = store.state.common.pa510.dataYearNew
                 store.state.common.pa510.processKeyPA510.paymentYear = store.state.common.pa510.dataYearNew
                 store.state.common.pa510.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.pa510.dataYearNew)
+                await (store.state.settings.paYear = store.state.common.pa510.dataYearNew)
                 await (store.state.common.pa510.checkClickYear = false);
                 return;
             }
@@ -310,7 +310,7 @@ export default defineComponent({
                 store.state.common.pa510.processKeyPA510.imputedYear = store.state.common.pa510.dataYearNew
                 store.state.common.pa510.processKeyPA510.paymentYear = store.state.common.pa510.dataYearNew
                 store.state.common.pa510.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.pa510.dataYearNew)
+                await (store.state.settings.paYear = store.state.common.pa510.dataYearNew)
                 await (store.state.common.pa510.checkClickYear = false);
                 return;
             }
@@ -321,7 +321,7 @@ export default defineComponent({
                 store.state.common.pa510.processKeyPA510.imputedYear = store.state.common.pa510.dataYearNew
                 store.state.common.pa510.processKeyPA510.paymentYear = store.state.common.pa510.dataYearNew
                 store.state.common.pa510.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.pa510.dataYearNew)
+                await (store.state.settings.paYear = store.state.common.pa510.dataYearNew)
                 await (store.state.common.pa510.checkClickYear = false);
                 return
             }
@@ -349,7 +349,7 @@ export default defineComponent({
                 store.state.common.pa510.processKeyPA510.imputedYear = store.state.common.pa510.dataYearNew
                 store.state.common.pa510.processKeyPA510.paymentYear = store.state.common.pa510.dataYearNew
                 store.state.common.pa510.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.pa510.dataYearNew)
+                await (store.state.settings.paYear = store.state.common.pa510.dataYearNew)
                 await (store.state.common.pa510.checkClickYear = false);
                 return;
             }
@@ -429,11 +429,11 @@ export default defineComponent({
                 triggerWithholdingConfig.value = true; // reset insuranceSupport cm-130
             }
         })
-        watch(globalYear, (newVal) => {
-            // originData.value.imputedYear = newVal
-            triggerEmployeeWageDailies.value = true;
-            triggerWithholdingConfigDeductionItems.value = true;
-        })
+        // watch(paYear, (newVal) => {
+        //     // originData.value.imputedYear = newVal
+        //     triggerEmployeeWageDailies.value = true;
+        //     triggerWithholdingConfigDeductionItems.value = true;
+        // })
         // Watching the value of the store.state.common.pa510.statusFormAdd and if it is true, it will do
         // some stuff.
         watch(() => store.state.common.pa510.statusFormAdd, (value) => {

@@ -4,7 +4,7 @@
         :value="valueEmploy" :name="nameInput"
         field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
         :disabled="disabled">
-        <template #field-data="{ data }">
+        <template #field-data="{ data }: any">
             <div v-if="data" style="padding-left: 4px">
                 <employee-info :idEmployee="data.employeeId" :idCardNumber="data.residentId"
                                         :name="data.name" :status="data.status"
@@ -16,7 +16,7 @@
                 <DxTextBox style="display: none;" />
             </div>
         </template>
-        <template #item-data="{ data }">
+        <template #item-data="{ data }: any">
             <employee-info :idEmployee="data.employeeId" :idCardNumber="data.residentId"
                                         :name="data.name" :status="data.status"
                                         :foreigner="data.foreigner" :checkStatus="false" :forDailyUse="activeType20 == true && data.type == 20"/>

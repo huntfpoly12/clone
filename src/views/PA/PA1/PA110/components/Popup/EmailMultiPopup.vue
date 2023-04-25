@@ -45,7 +45,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
         const token = computed(() => sessionStorage.getItem('token'));
         store.dispatch('auth/getUserInfor', token.value);
         const userInfor = computed(() => store.state.auth.userInfor);
@@ -82,7 +82,7 @@ export default defineComponent({
                 })
                 sendEmail({
                     companyId: companyId,
-                    imputedYear: globalYear.value,
+                    imputedYear: paYear.value,
                     incomeInputs: variables,
                 });
             }

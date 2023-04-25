@@ -4,16 +4,23 @@
       <div class="nav-logo">
         <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
       </div>
-      <div class="user-info" v-if="username">
+      <div class="user-info" v-if="userInfor">
         <FacilityBizTypeHeader />
-        <year-header />
-        <a-dropdown>
+        <!-- <year-header /> -->
+        <a-dropdown  :overlayStyle="{ 'border': '2px solid'}">
           <a class="ant-dropdown-link" @click.prevent>
-            {{ username }}
+            {{ userInfor.name }}
             <DownOutlined />
           </a>
           <template #overlay>
             <a-menu>
+              <a-menu-item>
+                <div class="user-infor">
+                  <p class="name-infor">ID : {{userInfor.username}} <a-tag v-if="userInfor.type != 'c'" :color="getColorTag(userInfor.type).color">{{ getColorTag(userInfor.type).name }}</a-tag></p>
+                  <p>{{userInfor.email}}</p>
+                  <p>{{ $filters.formatPhoneNumber(userInfor.mobilePhone)}}</p>
+                </div>
+              </a-menu-item>
               <a-menu-item>
                 <router-link to="/change-password">비밀번호 변경</router-link>
               </a-menu-item>
@@ -165,7 +172,7 @@
             </div>
             <div class="main-content">
               <template v-if="activeTab">
-                <keep-alive :exclude="cachedTab">
+                <keep-alive :exclude="cachedTab" :key="count">
                   <component :is="currentComponent" />
                 </keep-alive>
               </template>
@@ -515,6 +522,7 @@ export default defineComponent({
     },
   },
   setup() {
+
     const MAX_TAB = 20
     const inputSearchText = ref("");
     const filteredResult =ref([]);
@@ -525,6 +533,9 @@ export default defineComponent({
 
     let menuItems = menuTree;
     const store = useStore();
+    store.dispatch('auth/getUserInfor');
+    const userInfor = computed(() => store.state.auth.userInfor);
+    const count = computed(()=> store.getters['settings/changeFacilityBusiness'])
     const router = useRouter()
     const route = useRoute();
     const collapsed = ref(false);
@@ -542,18 +553,14 @@ export default defineComponent({
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
     })
 
-    const infosAccounting = jwtObject.accounting;
-    if(!!infosAccounting && infosAccounting.length) {
-      store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
-    }
+    // const infosAccounting = jwtObject.accounting;
+    // if(!!infosAccounting && infosAccounting.length) {
+    //   store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
+    // }
 
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
-      //get and set account subject
-      if (jwtObject.userType === 'c') {
-        let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
-        await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
-      }
+ 
       // store.commit('auth/setTokenInfo',jwtObject)
       if(route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
         openTab(tabDashboard)
@@ -742,6 +749,15 @@ export default defineComponent({
         openKeys.value = latestOpenKey ? [latestOpenKey] : [];
       }
     }
+    const getColorTag = (data) => {
+       if (data === "m") {
+            return {"name":"매니저","color":"black"};
+        } else if (data === "r") {
+            return {"name":"영업자","color":"grey"};
+        } else if (data === "p") {
+            return {"name":"파트너","color":"goldenrod"};
+        }
+    }
     return {
       logout,
       onSearch,
@@ -762,7 +778,10 @@ export default defineComponent({
       tabIndex,
       onTabDragStart,
       onTabDrop,
-      MAX_TAB
+      MAX_TAB,
+      count,
+      userInfor,
+      getColorTag
     }
   },
 });
@@ -853,5 +872,8 @@ export default defineComponent({
 :deep .tab-main .dx-tabs-scrollable .dx-tabs-wrapper {
   border-left: 0;
   border-right: 0;
+}
+:deep .ant-dropdown-menu-item{
+  text-align: right;
 }
 </style>

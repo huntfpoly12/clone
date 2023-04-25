@@ -7,13 +7,13 @@
           <a-row>
             <a-col span="12" class="ac-110-popup-registrantion-selected-form-input">
               <a-form-item label="선택된 통장내역">
-                <default-text-box :width="150" :readOnly="true" :valueInput="propListSlipRegistrationSelected.count"/>
+                <default-text-box :width="50" height="25" :readOnly="true" :valueInput="propListSlipRegistrationSelected.count"/>
               </a-form-item>
               <span class="mr-10">건</span>
             </a-col>
             <a-col span="12" class="ac-110-popup-registrantion-selected-form-input">
               <a-form-item label="대상 거래내역">
-                <default-text-box :width="150" :readOnly="true" :valueInput="propListSlipRegistrationSelected.selectedRowKeys"/>
+                <default-text-box :width="50" height="25" :readOnly="true" :valueInput="totalBankbookCount"/>
               </a-form-item>
               <span class="mr-10">건</span>
             </a-col>
@@ -52,15 +52,21 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
+    let totalBankbookCount: any = ref(0)
     const cancel = () => {
       emit("closePopup", false)
     };
     const submit = () => {
       emit("submit")
     }
+    watch(() => props.propListSlipRegistrationSelected.selectedRowKeys, (value) => {
+      totalBankbookCount.value = 0
+      value.forEach((count: any) => totalBankbookCount.value += count)
+    })
     return {
       submit,
-      cancel
+      cancel,
+      totalBankbookCount
     }
   },
 })
@@ -73,7 +79,7 @@ export default defineComponent({
       display: flex;
       align-items: center;
       span {
-        margin-left: 5px;
+        margin-left: 2px;
       }
     }
   }

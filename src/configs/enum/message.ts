@@ -25,6 +25,8 @@ export class Message extends BaseType {
       // CANCEL Button Click
         '301': { "message" : "변경사항을 저장하지 않은채 종료하시겠습니까?", "icon": "iconWarning"}, // [Modal-confirm] "Are you sure you want to exit without saving changes?
         '302': { "message" : "취소되었습니다.", "icon":"iconInfo"}, // Canceled!
+        '303': { "message" : "선택된 내역을 취소하겠습니까?", "yes": "네. 취소합니다","no":"아니요"}, // Are you sure you want to cancel the selected?
+      
       // Delete Button Click
         '401': { "message" : "정말로 삭제하시겠습니까?", "icon": "iconWarning"}, // Do you really want to delete this data?
         '402': { "message" : "삭제되었습니다", "icon": "iconInfo"}, // Deleted!
@@ -116,12 +118,17 @@ export class Message extends BaseType {
   //통장내역
     public static AC110 = new Message({
         '001': { "message" : "새로운 통장내역이 있는 경우 추가로 불러옵니다. 자주 사용시 시스템 부하를 줄 수 있기에, 제한되는 경우가 있으니 주의하셔서 이용하시기 바랍니다. 그래도 불러오시겠습니까?","yes": "네. 불러옵니다","no":"아니요"}, // If you have a new bank account details, call in addition. Frequent use may cause system load, so please be careful when using it. Will you still invite me?
+        '002': { "message" : "png, jpg, jpeg, gif 파일만 업로드할 수 있습니다" }, //  You can only upload png, jpg, jpeg, gif file!
+        '003': { "message" : "파일 크기는 10MB보다 작아야합니다"}, // Image must smaller than 10MB! 
+        '004': { "message" : "중복된 이미지는 업로드가 불가합니다" }, // Duplicate image are not allowed 
     });
+       
   
   //전표
     public static AC120 = new Message({
         '001': { "message" : "결의서 종류를 변경하면 기존 저장된 값들(물품내역 포함)은 모두 삭제 및 초기화됩니다. 그래도 진행하시겠습니까?","yes": "네. 진행합니다","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?
         '002': { "message" : "여입결의서 반영되었습니다"}, // It was reflected in the entry resolution
+        '003': { "message" : "동일일자 내에서만 순서변경 가능합니다"}, // You can change the order only within the same date
     });
   
   //과목전용조서

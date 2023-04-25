@@ -137,7 +137,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="우편번호" label-align="right">
-                  <default-text-box :lengthFixed="5" :maxCharacter="5" lengthFixMsg="length must be 5"  width="200px" v-model:valueInput="formState.afterReportPostNumber" />
+                  <default-text-box :lengthFixed="5" :maxCharacter="5" :lengthFixMsg="lenFixedMsg"  width="200px" v-model:valueInput="formState.afterReportPostNumber" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -257,37 +257,29 @@
 <script lang="ts">
 import mutations from "@/graphql/mutations/PA/PA8/PA880/index";
 import queries from "@/graphql/queries/PA/PA8/PA880/index";
-import getCompany from "@/graphql/queries/common/getCompany";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
-// import INITIAL_DATA, {Company, DependentsType} from "./../utils";
 import {
   DeleteOutlined,
   HistoryOutlined,
   SearchOutlined,
 } from "@ant-design/icons-vue";
 import {
-  employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, employeeFashionArr2,
+  employeeFashionArr, nationaPersionSelectbox, healthInsuranceSelectbox, employeeFashionArr2,
   includeDependentsSelectbox,
 } from "../utils/index";
-import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
 import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
 import { DxFileUploader } from "devextreme-vue/file-uploader";
 import {
-  computed,
   defineComponent,
   getCurrentInstance,
   reactive,
   ref,
   watch,
-  watchEffect,
 } from "vue";
-import { useStore } from "vuex";
 import notification from "@/utils/notification";
-import filters from "@/helpers/filters";
-import { clone, cloneDeep } from "lodash";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
   components: {
@@ -307,10 +299,10 @@ export default defineComponent({
   //   }
   // },
   setup(props, { emit }) {
-    const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
+    const lenFixedMsg = messages.getCommonMessage('105').message;
     const formState = reactive({
       companyName: '',
       companyBizNuber: '',
@@ -432,6 +424,7 @@ export default defineComponent({
       formState, onSubmit,
       // isDisabled1, isDisabled2,
       onCanCelModal, myCompanyLoading, myCompanyResult,
+      lenFixedMsg,
     };
   },
 });

@@ -282,8 +282,7 @@ export default defineComponent({
     const modalEditStatus = ref<boolean>(false);
     const modalStatus = ref(false)
     const contentDelete = Message.getMessage('PA120', '002').message
-    const idAction = ref()
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const idAction = ref();
     const relationSummary = ref();
     const basicDeductionSummary0 = ref();
     const basicDeductionSummary = ref();

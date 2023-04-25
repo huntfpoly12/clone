@@ -27,7 +27,7 @@
             'borderRadiusleft10': (index === 0 || listChat[index - 1]?.name !== items.name) && items.name !== userName,
             'borderRadiusRight10': (index === 0 || listChat[index - 1]?.name !== items.name) && items.name === userName,
             'form-chat-timeline-content-right': items.name === userName,
-            'borderEdit': idEditComment === items.id
+            'borderEdit': itemEditComment?.key === items.key
           }">
             <div class="form-chat-timeline-content-info">
               <div class="form-chat-timeline-content-info-user">
@@ -54,11 +54,11 @@
               <EllipsisOutlined :style="{ fontSize: '16px' }" />
               <template #overlay>
                 <a-menu>
-                  <a-menu-item @click="editComment(items)">
+                  <a-menu-item v-if="items.name === userName" @click="editComment(items)">
                     <EditOutlined />
                     수정
                   </a-menu-item>
-                  <a-menu-item @click="deleteComment(items, index)">
+                  <a-menu-item @click="deleteComment(items)">
                     <DeleteOutlined />
                     삭제
                   </a-menu-item>
@@ -68,7 +68,30 @@
           </div>
         </div>
       </div>
+
+      <div v-if="!!objectChatUpFile" class="form-chat-timeline-common form-chat-timeline-right mt-1" :class="{'mt-10': objectChatUpFile.cssTop}">
+        <div class="form-chat-timeline-content form-chat-timeline-content-right">
+        <div class="form-chat-timeline-content-info">
+          <div class="form-chat-timeline-content-info-user">
+            <span class="form-chat-timeline-content-info-user-status"
+              :class="{ 'hidden-avatar': true }">{{ objectChatUpFile.status
+              }}</span>
+            <div class="form-chat-timeline-content-info-user-name"
+              :class="{ 'hidden-avatar': true }">{{ objectChatUpFile.name }}
+            </div>
+          </div>
+          <div class="form-chat-timeline-content-info-time">{{ formatDate(objectChatUpFile.createdAt) }}</div>
+        </div>
+        <div class="form-chat-timeline-content-files">
+          <a-spin v-for="(file, indexFile) in objectChatUpFile.files" :spinning="isLoadingUpload && !!file?.isUploading" size="small" :key="file.url">
+            <img class="form-chat-timeline-content-files-items" :src="file.url" alt=""> 
+          </a-spin>
+        </div>
+        <div class="form-chat-timeline-content-text" v-html="objectChatUpFile.text"></div>
+      </div>
+      </div>
     </div>
+
     <div class="form-chat-bottom">
       <a-badge :dot="true" :offset="[-5, 33]" status="success" class="mr-5">
         <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff">{{ userName }}</a-avatar>
@@ -98,15 +121,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, nextTick, watch } from 'vue'
+import { defineComponent, ref, nextTick, watch, computed } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, SendOutlined } from '@ant-design/icons-vue';
 import { databaseFirebase, storage } from "@/firebaseConfig";
 import {
   ref as reffb,
   push,
   set,
+  query,
   onChildAdded,
+  onChildChanged,
+  onChildRemoved,
   onValue,
+  child,
+  remove,
+  update,
+  limitToLast
 } from "firebase/database";
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import notification from '@/utils/notification';
@@ -120,7 +150,7 @@ export default defineComponent({
     // message to the group
     keyChatChannel: {
       type: [String, Number],
-      default: 'keyChatChannelCommon'
+      default: ''
     },
   },
   components: {
@@ -133,16 +163,18 @@ export default defineComponent({
     SendOutlined
   },
   setup(props, { emit }) {
+    let firstLoadChat = ref(true)
     const inputFile = ref<any>()
     const userName = ref(sessionStorage.getItem("username"));
     let textChat = ref('')
     const formTimeline: any = ref()
     const inputChat: any = ref()
-    let idEditComment = ref<any>(null)
+    let itemEditComment = ref<any>(null)
     let listFileUpload: any = ref([])
     let listFileUploadHandleLoading: any = ref([])
     let listImageUpload: any = ref([])
     let isLoadingUpload = ref(false)
+    let isProcessingDeleteUpdate = ref(false)
     let payload: any = ref({
       name: userName.value,
       avatar: '',
@@ -152,6 +184,7 @@ export default defineComponent({
       status: '일반',
       uid: userName.value
     })
+    const objectChatUpFile: any = ref(null)
     const listChat = ref<any>([])
 
     const channelChatSubrights = () => {
@@ -167,34 +200,65 @@ export default defineComponent({
       }
     };
 
-    let chatListRef = reffb(databaseFirebase, channelChatSubrights());
+    let chatListRef: any = computed(() => {
+      return !!channelChatSubrights() ? reffb(databaseFirebase, channelChatSubrights()) : null
+    });
 
     const getListContentChat = () => {
       onValue(
-        chatListRef,
+        chatListRef.value,
         (snapshot) => {
           const objList = snapshot.val()
+          if(!objList){
+            firstLoadChat.value = false
+          }
           let arr = []
           for (const key in objList) {
-            arr.push({
-              key: key,
-              files: objList?.files || [],
-              ...objList[key]
-            })
+            if(!objList[key]?.isDelete){
+              arr.push({
+                key: key,
+                files: objList?.files || [],
+                ...objList[key]
+              })
+            }
           }
           listChat.value = arr
+          
+          onChildAdded(query(chatListRef.value, limitToLast(1)), (data) => {
+            if(!firstLoadChat.value) {
+              listChat.value.push({
+                ...data.val(),
+                key: data.key
+              })
+              nextTick(() => {
+                formTimeline.value.scrollTop = 10000000
+              })
+            }
+            firstLoadChat.value = false
+          });
+          onChildChanged(chatListRef.value, (data) => {
+            const indexUpdate = listChat.value.findIndex((chat: any) => chat.key === data.key)
+            if(!!data.val()?.isDelete) {
+              listChat.value.splice(indexUpdate, 1)
+            }else {
+              listChat.value[indexUpdate] = {
+                ...listChat.value[indexUpdate],
+                text: data.val().text
+              }
+            }
+          });
           nextTick(() => {
             formTimeline.value.scrollTop = 10000000
           })
+        },
+        {
+          onlyOnce: true,
         }
-        // {
-        //   onlyOnce: true,
-        // }
       );
     };
 
     const submitChat = () => {
-      if(isLoadingUpload.value) return
+      if(isLoadingUpload.value || isProcessingDeleteUpdate.value) return
       if (!textChat.value.trim() && !listFileUpload.value.length) return
       payload.value = {
         ...payload.value,
@@ -204,11 +268,26 @@ export default defineComponent({
       if(listFileUpload.value.length) {
         isLoadingUpload.value = true
         listFileUploadHandleLoading.value = [...listFileUpload.value]
-        listChat.value = [...listChat.value, {
-          ...payload.value,
-          text: textChat.value,
-          files: listFileUploadHandleLoading.value.map((file:any) => ({...file, isUploading: true}))
-        }]
+        // listChat.value = [...listChat.value, {
+        //   ...payload.value,
+        //   text: textChat.value,
+        //   files: listFileUploadHandleLoading.value.map((file:any) => ({...file, isUploading: true}))
+        // }]
+        if(itemEditComment.value === null) {
+            objectChatUpFile.value = {
+            ...payload.value,
+            text: textChat.value,
+            files: listFileUploadHandleLoading.value.map((file:any) => ({...file, isUploading: true})),
+            cssTop: listChat.value[listChat.value.length-1].name === userName.value ? false : true,
+          }
+        }else {
+          const index = listChat.value.findIndex((item: any) => item.key === itemEditComment.value.key)
+          listChat.value[index] = {
+            ...payload.value,
+            text: textChat.value,
+            files: listFileUploadHandleLoading.value.map((file:any) => ({...file, isUploading: true})),
+          }
+        }
         textChat.value = ""
         listFileUpload.value = []
         nextTick(() => {
@@ -222,16 +301,16 @@ export default defineComponent({
     };
 
     const sendChat = () => {
-      if (idEditComment.value === null) {
-        if(listFileUploadHandleLoading.value.length) {
-          payload.value = {
-            ...payload.value,
-            files: listImageUpload.value
-          }
-          textChat.value = "";
-          listImageUpload.value = []
-          listFileUploadHandleLoading.value = []
+      if(listFileUploadHandleLoading.value.length) {
+        payload.value = {
+          ...payload.value,
+          files: listImageUpload.value
         }
+        textChat.value = "";
+        listImageUpload.value = []
+        listFileUploadHandleLoading.value = []
+      }
+      if (itemEditComment.value === null) {
         const postListRef = reffb(databaseFirebase, channelChatSubrights());
         const newPostRef = push(postListRef);
         set(newPostRef, payload.value)
@@ -245,22 +324,28 @@ export default defineComponent({
           .catch((err) => {
             console.log(err);
           }).finally(() => {
+            objectChatUpFile.value = null
             isLoadingUpload.value = false
             formTimeline.value.scrollTop = 10000000
           })
-      } 
-      else {
-        textChat.value = "";
-        nextTick(() => {
-          formTimeline.value.scrollTop = 10000000
-          resetInputChat()
+      }else {
+        isProcessingDeleteUpdate.value = true
+        const updates: any = {};
+        updates[`/${itemEditComment.value.key}`] = {...itemEditComment.value, ...payload.value }
+        update(chatListRef.value, updates).then(() => {
+        }).catch(() => {
+          console.log('eeeeeeeee');
+        }).finally(() => {
+          isLoadingUpload.value = false
+          isProcessingDeleteUpdate.value = false
         })
       }
     }
 
     watch(() => [props.idUserTo, props.keyChatChannel], (value) => {
-      if (!!value) {
-        chatListRef = reffb(databaseFirebase, channelChatSubrights());
+      if (!!value[0] || !!value[1]) {
+        firstLoadChat.value = true
+        chatListRef.value = reffb(databaseFirebase, channelChatSubrights());
         getListContentChat();
         nextTick(() => {
           formTimeline.value.scrollTop = 10000000
@@ -291,30 +376,32 @@ export default defineComponent({
     }
 
     const editComment = (item: any) => {
-      // idEditComment.value = item.id
-      // textChat.value = item.content
-      // nextTick(() => {
-      //   changeInput(inputChat.value)
-      //   inputChat.value.focus()
-      // })
+      itemEditComment.value = item
+      listFileUpload.value = [...item.files]
+      textChat.value = item.text
+      nextTick(() => {
+        changeInput(inputChat.value)
+        inputChat.value.focus()
+      })
     }
-    const deleteComment = (items: any, index: number) => {
-      // if (items.id === idEditComment.value) {
-      //   textChat.value = ''
-      //   idEditComment.value = null
-      //   nextTick(() => {
-      //     changeInput(inputChat.value)
-      //     inputChat.value.focus()
-      //   })
-      // }
-      // listChat.value.splice(index, 1)
+    const deleteComment = (item: any) => {
+      isProcessingDeleteUpdate.value = true
+      const updates: any = {};
+      updates[`/${item.key}`] = {...item, isDelete: true}
+      update(chatListRef.value, updates).then(() => {
+      }).catch(() => {
+        console.log('eeeeeeeee');
+      }).finally(() => {
+        isProcessingDeleteUpdate.value = false
+      })
     }
     const removeText = () => {
-      // idEditComment.value = null
-      // textChat.value = ''
-      // nextTick(() => {
-      //   resetInputChat()
-      // })
+      itemEditComment.value = null
+      textChat.value = ''
+      listFileUpload.value = []
+      nextTick(() => {
+        resetInputChat()
+      })
     }
 
     const resetInputChat = () => {
@@ -327,7 +414,8 @@ export default defineComponent({
       const date = new Date(timestamp)
       const month = date.getMonth()
       const day = date.getDate()
-      return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${date.getMinutes()}`
+      const minutes = date.getMinutes().toString()
+      return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${minutes.length === 2 ? minutes : '0'+minutes}`
     }
 
     const openFile = () => {
@@ -344,7 +432,7 @@ export default defineComponent({
       if (!isLt10M) {
         notification('error', 'Image must smaller than 10MB!')
       }
-      const isDuplicaseName = listFileUpload.value.some((items: any) => file.name === items.file.name)
+      const isDuplicaseName = listFileUpload.value.some((items: any) => file.name === items?.file?.name)
       if (isDuplicaseName) {
         notification('error', 'Duplicate image are not allowed!')
       }
@@ -367,14 +455,18 @@ export default defineComponent({
     const uploadFileServer = () => {
       listImageUpload.value = []
       listFileUploadHandleLoading.value.forEach((file: any) =>  {
-        const storageRef = refStorage(storage, file.file.name);
-        uploadBytes(storageRef, file.file, file.metadata).then(async (res) => {
-          const url = await getDownloadURL(res.ref)
-          listImageUpload.value = [...listImageUpload.value, { url: url}]
-        }).catch((err) => {
-          isLoadingUpload.value = false
-          console.log('error', err);
-        })
+        if(!!file?.file) {
+          const storageRef = refStorage(storage, file.file.name);
+          uploadBytes(storageRef, file.file, file.metadata).then(async (res) => {
+            const url = await getDownloadURL(res.ref)
+            listImageUpload.value = [...listImageUpload.value, { url: url}]
+          }).catch((err) => {
+            isLoadingUpload.value = false
+            console.log('error', err);
+          })
+        }else{
+          listImageUpload.value = [...listImageUpload.value, { url: file.url}]
+        }
       })
     }
 
@@ -400,7 +492,7 @@ export default defineComponent({
       inputChat,
       editComment,
       deleteComment,
-      idEditComment,
+      itemEditComment,
       removeText,
       formatDate,
       inputFile,
@@ -408,7 +500,8 @@ export default defineComponent({
       uploadPreviewFile,
       listFileUpload,
       removeFile,
-      isLoadingUpload
+      isLoadingUpload,
+      objectChatUpFile
     }
   },
 })
@@ -621,7 +714,7 @@ export default defineComponent({
         width: 100%;
         top: 0;
         transform: translateY(-100%);
-        background-color: #EBF1DE;
+        background-color: #fff;
         padding: 5px;
         border-radius: 5px 5px 0 0;
         display: flex;

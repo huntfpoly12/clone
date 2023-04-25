@@ -472,7 +472,7 @@ export default defineComponent({
             e.cancel = true;
         };
         const { refetch: refetchFacility, onResult: resultFacility } = useQuery(
-            queries.getDataFacilityBusiness,
+            queries.getMyCompanyFacilityBusinesses,
             {companyId: companyId},
             () => ({ enabled: triggerDataFacilityBusiness.value, fetchPolicy: "no-cache" })
         );

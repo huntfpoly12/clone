@@ -27,9 +27,19 @@ const mutations: MutationTree<SettingState> = {
   },
   setAccoountSubjects(state, value: any) {
     state.accountSubject = value
+    sessionStorage.setItem("accountSubject",JSON.stringify(value));
   },
   setClients(state, value: any[]) {
     state.clients = value
+  },
+  setAcYear(state, value: any) {
+    state.acYear = value
+  },
+  setPaYear(state, value: any) {
+    state.paYear = value
+  },
+  setChangeFacilityBusiness(state) {
+    state.changeFacilityBusiness++
   },
 };
 

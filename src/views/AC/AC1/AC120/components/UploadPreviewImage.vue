@@ -70,8 +70,8 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
-        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
+        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 
         let fileList = ref<any[]>([]);
         let isFailUpload = ref(false);
@@ -83,7 +83,7 @@ export default defineComponent({
         const indexImg = ref<number>(0)
         const dataGetAccountingDocumentProofs: any = ref({
             companyId: companyId,
-            fiscalYear: globalYear.value,
+            fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
             transactionDetailDate: null,
             accountingDocumentId: null,
@@ -228,8 +228,8 @@ export default defineComponent({
             const formData = new FormData();
             formData.append("file", e.file);
             formData.append("companyId", companyId);
-            formData.append("fiscalYear", globalYear.value);
-            formData.append("facilityBusinessId", globalFacilityBizId.value);
+            formData.append("fiscalYear", acYear.value.toString());
+            formData.append("facilityBusinessId", globalFacilityBizId.value.toString());
             uploadRepository.accountingProof(formData)
                 .then((res: any) => {
                     e.onSuccess("ok");

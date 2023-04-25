@@ -165,7 +165,7 @@ export default defineComponent({
         const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수');
         const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
-        const globalYear: any = computed(() => store.state.settings.globalYear);
+        const globalYear: any = computed(() => parseInt(sessionStorage.getItem("paYear")?? '0'));
         const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
         const idRowEdit = computed(() => store.getters['common/idRowCurrentEditPA520'])
         const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);

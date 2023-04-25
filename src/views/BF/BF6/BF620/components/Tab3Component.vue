@@ -30,7 +30,7 @@
           </a-col>
           <a-col>
             <a-form-item label="제작요청자">
-              <list-manager-dropdown width="150px" v-model:valueInput=" ElecFilingFileFilter.manageUserId " />
+              <list-manager-dropdown width="200px" v-model:valueInput=" ElecFilingFileFilter.manageUserId " />
             </a-form-item>
           </a-col>
         </a-row>
@@ -56,10 +56,10 @@
         </template>
         <DxColumn caption="상세보기" cell-template="afterDeadline" />
         <template #afterDeadline=" { data }: any ">
-          <DxButton class="custom-action" @click=" onShow(data.data.electronicFilingId) "
-            style="border: none; margin-top: -2px; width: 35px; height: 35px;">
-            <zoom-in-outlined :style=" { fontSize: '20px', color: 'black' } " />
-          </DxButton>
+          <div style="text-align: center">
+            <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
+              @click=" onShow(data.data) " />
+          </div>
         </template>
         <DxSummary>
           <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />

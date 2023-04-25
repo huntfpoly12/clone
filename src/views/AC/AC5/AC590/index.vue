@@ -53,7 +53,7 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const status = ref(10)
         let monthStart = ref(5)
         let monthEnd = ref(9)
@@ -74,7 +74,7 @@ export default defineComponent({
             // popupDataEmailSingle.value = {
             //     companyId: companyId,
             //     input: {
-            //         imputedYear: globalYear,
+            //         imputedYear: acYear,
             //         type: valueDefaultIncomeBusiness.value.input.type,
             //         receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
             //     },
