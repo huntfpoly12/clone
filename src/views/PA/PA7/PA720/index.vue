@@ -309,7 +309,7 @@ export default defineComponent({
   setup() {
     const statusParam = ref<any>({ status: 10 });
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const modalDelete = ref<boolean>(false);
     const modalEdit = ref<boolean>(false);

@@ -70,7 +70,7 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const acYear = computed(() => store.state.settings.acYear)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const dataSourceAC510 = ref<any>([
             { id: 1, name: "세입결산서" },
             { id: 2, name: "세출결산서", },

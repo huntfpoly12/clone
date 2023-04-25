@@ -204,7 +204,7 @@ export default defineComponent({
       administrationAgency: '사업장관리번호, ',
       hasDownFile: true,
     }]);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
     const dataStateAC580 = computed(() => store.state.common.dataStateAC580);
     const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
 
@@ -349,7 +349,7 @@ export default defineComponent({
 
     const getMajorInsuranceParam = ref<any>({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: acYear.value,
       workId: dataStateAC580.value.workId,
     });
     const getMajorInsuranceTrigger = ref<boolean>(false);

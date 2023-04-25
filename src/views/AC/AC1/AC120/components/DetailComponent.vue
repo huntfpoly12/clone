@@ -132,13 +132,13 @@
                                                 width="150px" disabled="true" />
                                         </a-form-item>
                                         <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
-                                            <template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서 ${수입원/지출원}을
+                                            <template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서 {{textLabelInputSource}} 을
                                                 참조합니다.</template>
                                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
                                                 class="mr-5">
                                         </a-tooltip>
                                     </div>
-                                    <a-form-item label="수입원/지출원">
+                                    <a-form-item :label="textLabelInputSource">
                                         <default-text-box v-model:valueInput="store.state.common.ac120.formData.source"
                                             width="150px" />
                                     </a-form-item>
@@ -243,6 +243,7 @@ import DxButton from "devextreme-vue/button"
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
 import dayjs from "dayjs";
+import queries from "@/graphql/queries/AC/AC1/AC120";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
 import { companyId } from "@/helpers/commonFunction"
@@ -257,13 +258,14 @@ export default defineComponent({
     setup() {
         const heightForm: any = ref('352px')
         const store = useStore();
-        const acYear = computed(() => store.state.settings.acYear)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const refFormAC120 = ref()
         let statusPopupCopyData = ref<boolean>(false);
         let fileList = ref<any[]>([])
         const textButton = ref<string>('')
+        const textLabelInputSource = ref<string>('')
         // const keyRefreshForm = ref<number>(0)
         const arrayRadioCheck = computed(() => store.state.common.ac120.arrLetterOfApprovalType)
 
@@ -287,6 +289,8 @@ export default defineComponent({
         const {
             mutate: mutateInitializeTransactionDetails, onDone: doneInitializeTransactionDetails, onError: errorInitializeTransactionDetails,
         } = useMutation(mutations.initializeTransactionDetails);
+
+        const { result: resultCompany } = useQuery(queries.getMyCompany, { companyId: companyId }, () => ({ fetchPolicy: "no-cache" }));
 
         // ============== ON DONE MUTATION GRAPHQL ===============
         // createAccountingDocument
@@ -332,22 +336,33 @@ export default defineComponent({
         })
 
         // ================== WATCH ================
+        watch(resultCompany, (value) => {
+            let data = value.getMyCompany;
+            if (data) {
+                initialStateFormData.source = data.presidentName
+            }
+        });
+
         watch(() => store.state.common.ac120.formData.resolutionType, (newValue, oldValue) => {
             switch (newValue) {
                 case 11:
                     store.state.common.ac120.formData.resolutionClassification = 1
+                    textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 22)?.text
                     break;
                 case 22:
                     store.state.common.ac120.formData.resolutionClassification = 2
+                    textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 11)?.text
                     break;
                 case 21:
                     store.state.common.ac120.formData.resolutionClassification = 2
+                    textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 12)?.text
                     break;
                 case 12:
                     store.state.common.ac120.formData.resolutionClassification = 1
+                    textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 21)?.text
                     break;
                 default:
@@ -462,6 +477,7 @@ export default defineComponent({
             // refCssForm,
             heightForm,
             textButton,
+            textLabelInputSource,
             // keyRefreshForm,
             onCancelDeleteRow,
         }

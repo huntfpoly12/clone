@@ -22,7 +22,10 @@
                     <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
                     </button-basic>
                     <DxButton icon="plus" class="ml-4">
-                        <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingProcess" />
+                        <a-tooltip placement="top"
+                            title="마감상태 변경이력">
+                            <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingProcess" />
+                        </a-tooltip>
                     </DxButton>
                 </div>
                 <div class="action">
@@ -58,14 +61,18 @@
                         </div>
                     </DxButton>
                     <DxButton icon="plus">
-                        <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingDocuments" />
+                        <a-tooltip placement="topLeft"
+                            title="전표 변경이력">
+                            <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingDocuments" />
+                        </a-tooltip>
+                        
                     </DxButton>
                     <!-- <HistoryOutlined style="font-size: 18px; margin-left: 5px;" /> -->
                 </div>
             </div>
         </div>
         <div class="main">
-            {{ dataSource }}
+            <!-- {{ dataSource }} -->
             <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- {{ dataSource }} -->
@@ -74,21 +81,21 @@
                     <DxDataGrid id="dataGridAc120" key-expr="bankbookDetailId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                        :column-auto-width="true" :onRowPrepared="onCellPrepared"
-                        v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
+                        :column-auto-width="true" v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
                         @selection-changed="selectionChanged">
                         <DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
-                            :on-drag-change="onDragChange" :onRowDragging="onRowDragging" />
+                            :on-drag-change="onDragChange" />
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
                             mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
 
-                        <DxColumn caption="일자" cell-template="transactionDetailDate" width="85"/>
+                        <DxColumn caption="일자" cell-template="transactionDetailDate" width="85" />
                         <template #transactionDetailDate="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="transactionDetailDate" cell-template="transactionDetailDateDetail" />
                                 <template #transactionDetailDateDetail="{ data: row }">
                                     {{ $filters.formatDate(row.value) }}
@@ -96,32 +103,37 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="순번" data-field="documentOrderByDate" cell-template="documentOrderByDate" width="45"/>
+                        <DxColumn caption="순번" data-field="documentOrderByDate" cell-template="documentOrderByDate"
+                            width="45" />
                         <template #documentOrderByDate="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="documentOrderByDate" />
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="결의번호" data-field="resolutionNumber" cell-template="resolutionNumber" width="68"/>
+                        <DxColumn caption="결의번호" data-field="resolutionNumber" cell-template="resolutionNumber"
+                            width="68" />
                         <template #resolutionNumber="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="resolutionNumber" />
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="120"/>
+                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="120" />
                         <template #bankbook="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="bankbook" cell-template="bankbookDetail" />
                                 <template #bankbookDetail="{ data: row }">
                                     <a-tooltip placement="top"
@@ -132,42 +144,46 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="결의 구분" cell-template="resolutionClassification" width="75"/>
+                        <DxColumn caption="결의 구분" cell-template="resolutionClassification" width="75" />
                         <template #resolutionClassification="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="resolutionClassification" />
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="수입액" cell-template="income" width="75"/>
+                        <DxColumn caption="수입액" cell-template="income" width="75" />
                         <template #income="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
-                                <DxColumn data-field="income" />
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="income" format="fixedPoint"/>
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="지출액" cell-template="spending" width="75"/>
+                        <DxColumn caption="지출액" cell-template="spending" width="75" />
                         <template #spending="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
-                                <DxColumn data-field="spending" />
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="spending" format="fixedPoint"/>
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="잔액" cell-template="balance" width="75"/>
+                        <DxColumn caption="잔액" cell-template="balance" width="75" />
                         <template #balance="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="balance" cell-template="balanceDetail" />
                                 <template #balanceDetail="{ data: row }">
                                     {{ $filters.formatCurrency(lastBalance + row.data.income - row.data.spending) }}
@@ -176,33 +192,36 @@
                         </template>
 
                         <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail"
-                            cell-template="summaryOfBankbookDetail" width="75"/>
+                            cell-template="summaryOfBankbookDetail" width="75" />
                         <template #summaryOfBankbookDetail="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="summaryOfBankbookDetail" />
 
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="적요" data-field="summary" cell-template="summary1" width="75"/>
+                        <DxColumn caption="적요" data-field="summary" cell-template="summary1" width="75" />
                         <template #summary1="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="summary" />
                             </DxDataGrid>
                         </template>
 
                         <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200" />
                         <template #accountCode="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="accountCode" cell-template="accountCodeDetail" />
                                 <template #accountCodeDetail="{ data: row }">
                                     <account-code-select :valueInput="row.data.accountCode" :disabled="true" />
@@ -212,10 +231,11 @@
 
                         <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150" />
                         <template #relationCode="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="relationCode" cell-template="relationCodeDetail" />
                                 <template #relationCodeDetail="{ data: row }">
                                     <account-code-select :valueInput="row.data.relationCode" :disabled="true" />
@@ -223,22 +243,24 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource" width="75"/>
+                        <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource" width="75" />
                         <template #fundingSource="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="fundingSource" />
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" width="75"/>
+                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" width="75" />
                         <template #clientId="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="clientId" cell-template="clientIdDetail" />
                                 <template #clientIdDetail="{ data: row }">
                                     {{ clients.find((item: any) => item.value == row.data.clientId)?.label }}
@@ -246,23 +268,25 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint" cell-template="proofCount" width="50"/>
+                        <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint" cell-template="proofCount"
+                            width="50" />
                         <template #proofCount="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
-                                <DxColumn data-field="proofCount"/>
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="proofCount" />
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" width="75"/>
+                        <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" width="75" />
                         <template #normality="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child icon-add"
-                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
-                                :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
+                                class="data-grid-child icon-add" :showColumnHeaders="false" :show-row-lines="true"
+                                :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="normality" cell-template="normalityDetail" css-class="cell-center" />
                                 <template #normalityDetail="{ data: row }">
                                     <PlusOutlined v-if="row.data.resolutionClassification != 1" class="icon-add"
@@ -271,12 +295,13 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="수기 여부" cell-template="handwriting" width="75"/>
+                        <DxColumn caption="수기 여부" cell-template="handwriting" width="75" />
                         <template #handwriting="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="handwriting" cell-template="handwritingDetail" />
                                 <template #handwritingDetail="{ data: row }">
                                     <div class="slipRegistration">
@@ -288,12 +313,13 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="정상 여부" cell-template="resolutionNormalStatus" width="75"/>
+                        <DxColumn caption="정상 여부" cell-template="resolutionNormalStatus" width="75" />
                         <template #resolutionNormalStatus="{ data }">
-                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
-                                @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
-                                v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
-                                :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
                                 <DxColumn data-field="resolutionNormalStatus"
                                     cell-template="resolutionNormalStatusDetail" />
                                 <template #resolutionNormalStatusDetail="{ data: row }">
@@ -349,7 +375,7 @@ import { defineComponent, ref, reactive, computed, onMounted, watch } from "vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxRowDragging } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
-import { dataDemoMain, dataDemoMain2, contentPopupRetrieveStatements, initialStateFormData } from "./utils/index"
+import { contentPopupRetrieveStatements, initialStateFormData } from "./utils/index"
 import { Message } from "@/configs/enum"
 import PopupSlipCancellation from "./components/PopupSlipCancellation.vue"
 import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
@@ -412,25 +438,6 @@ export default defineComponent({
 
         const dataRows: any = ref([])
 
-        let arraySelectBox = reactive([
-            {
-                value: 1,
-                label: '수익사업'
-            },
-            {
-                value: 2,
-                label: '자부담'
-            },
-            {
-                value: 3,
-                label: '보조금'
-            },
-            {
-                value: 4,
-                label: '후원듬'
-            }
-        ])
-
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const lastBalance = ref<number>(0)
         const dataGetAccountingProcesses = ref<any>([])
@@ -482,6 +489,7 @@ export default defineComponent({
         // ============== ON DONE MUTATION GRAPHQL ===============
         // reorderAccountingDocuments
         doneReorderAccountingDocuments((e) => {
+            triggerGetAccountingDocuments.value = true
             notification('success', Message.getMessage('COMMON', '106').message)
         })
         errorReorderAccountingDocuments(e => {
@@ -552,7 +560,7 @@ export default defineComponent({
             dataRows.value = []
             data.component.getSelectedRowsData().then((rowData: any) => {
                 rowData.map((data: any) => {
-                    dataRows.value = dataRows.value.concat(data.data) 
+                    dataRows.value = dataRows.value.concat(data.data)
                 })
                 // console.log(dataRows.value);
                 // if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
@@ -607,29 +615,10 @@ export default defineComponent({
             // dataSource.value.splice(0, dataSource.value.length - 1)
             await dataSource.value.pop()
             await gridRefAC120.value?.instance.refresh()
-            
+
             await (loadingGetAccountingDocuments.value = false)
             await getOneRowData()
         }
-
-        const totalDeposits = () => {
-            let total = 0;
-            dataDemoMain.forEach((item: any) => {
-                total += item.fill6;
-            });
-            return `입금액 합계: ${total}`
-        };
-
-        const totalWithdrawal = () => {
-            let total = 0;
-            dataDemoMain.forEach((item: any) => {
-                total += item.fill7;
-            });
-            return `출금액 합계: ${total}`
-        };
-
-        
-
 
         const actionPopupSlipCancellation = (value: any) => {
             if (dataRows.value?.length) {
@@ -641,7 +630,7 @@ export default defineComponent({
         }
 
         const actionPopupSlipRegistration = async (value: any) => {
-            
+
             if (!store.state.common.ac120.statusFormAdd) {
                 await addNewRow()
             }
@@ -661,99 +650,70 @@ export default defineComponent({
 
         }
 
-        // const openPopupRetrieveStatements = (value: any) => {
-        //     isModalRetrieveStatements.value = true
-        // }
-
-
-
-        
-
         const onReorder = (e: any) => {
-            // console.log(e.toIndex);
-            // console.log(e.component.getVisibleRows());
             const visibleRows = e.component.getVisibleRows();
-            // console.log(visibleRows[e.toIndex].data);
-            // console.log(e.itemData);
 
-            // const toIndex = dataSource.value.findIndex((item: any) => item.bankbookId === visibleRows[e.toIndex].data.bankbookId);
-            // const fromIndex = dataSource.value.findIndex((item: any) => item.bankbookId === e.itemData.bankbookId);
-
-            // console.log(e);
-            // if (e.toIndex >= dataDemoMain2.length) {
-            //     e.toIndex = dataDemoMain2.length - 1;
-            // }
-            // if (e.fromIndex !== e.toIndex) {
-            //     const item = dataDemoMain2[e.fromIndex];
-            //     dataDemoMain2.splice(e.fromIndex, 1);
-            //     dataDemoMain2.splice(e.toIndex, 0, item);
-            // }
-            // reorderAccountingDocuments({
-            //     companyId: companyId,
-            //     fiscalYear: acYear.value,
-            //     facilityBusinessId: globalFacilityBizId.value,
-            //     // transactionDetailDate: Int!
-            // })
+            const dataToIndex = dataSource.value.find((item: any) => item.bankbookDetailId === visibleRows[e.toIndex].data.bankbookDetailId);
+            const dataFromIndex = dataSource.value.find((item: any) => item.bankbookDetailId === e.itemData.bankbookDetailId);
+            if (dataToIndex.data[0].transactionDetailDate === dataFromIndex.data[0].transactionDetailDate) { // cùng date mới cho đổi
+                const visibleRows = e.component.getVisibleRows();
+                const toIndex = dataSource.value.findIndex((item: any) => item.bankbookDetailId === visibleRows[e.toIndex].data.bankbookDetailId);
+                const fromIndex = dataSource.value.findIndex((item: any) => item.bankbookDetailId === e.itemData.bankbookDetailId);
+                const newTasks = [...dataSource.value];
+                newTasks.splice(fromIndex, 1);
+                newTasks.splice(toIndex, 0, e.itemData);
+                let indexDocumentOrderByDate = 1
+                let dataInputs: any = []
+                newTasks.map((item: any) => {
+                    if (item.data[0]?.transactionDetailDate == dataToIndex.data[0].transactionDetailDate) { // nếu cùng ngày thì sắp xếp đổi
+                        item.data?.map((data: any) => {
+                            dataInputs.push({
+                                accountingDocumentId: data.accountingDocumentId,
+                                documentOrderByDate: indexDocumentOrderByDate
+                            })
+                            indexDocumentOrderByDate++
+                        })
+                    }
+                })
+                reorderAccountingDocuments({
+                    companyId: companyId,
+                    fiscalYear: acYear.value,
+                    facilityBusinessId: globalFacilityBizId.value,
+                    transactionDetailDate: dataToIndex.data[0].transactionDetailDate,
+                    inputs: dataInputs
+                })
+            } else {
+                notification('error', Message.getMessage('AC120', '003').message)
+            }
         }
 
         const onDragChange = (e: any) => {
             // console.log(e);
+            console.log(2);
 
-        }
-        const onDragStart = (e: any) => {
-
-        }
-
-        const onRowDragging = (e: any) => {
-            // console.log(e);
-
-            if (e.toIndex >= dataDemoMain2.length) {
-                e.toIndex = dataDemoMain2.length - 1;
-            }
-            if (e.fromIndex !== e.toIndex) {
-                const item = dataDemoMain2[e.fromIndex];
-                dataDemoMain2.splice(e.fromIndex, 1);
-                dataDemoMain2.splice(e.toIndex, 0, item);
-            }
         }
 
         const onFillDataAdd = (dataAdd: any) => {
             statusModalSlipRegistrantion.value = false; // close popup
-
-            // Object.assign(store.state.common.ac120.formData, initialStateFormData);
-
-            // if (!store.state.common.ac120.statusFormAdd) {
-            //     store.state.common.ac120.formData = reactive({ ...initialStateFormData })
-            //     // Object.assign(store.state.common.ac120.formData, dataAdd);
-            //     store.state.common.ac120.statusFormAdd = true;
-            //     addNewRow(store.state.common.ac120.formData)
-            // } else {
-            //     // Object.assign(store.state.common.ac120.formData, dataAdd);
-            // }
         }
 
-
         // handle add row
-        const addRow = () => {
-
-        };
-
         const addNewRow = async () => {
             await (loadingGetAccountingDocuments.value = true)
             // gridRefAC120.value?.instance.addRow()
             // gridRefAC120.value?.instance.deselectAll()
             store.state.common.ac120.statusFormAdd = true
             console.log(initialStateFormData);
-            
-            await dataSource.value.push({ data: [{...initialStateFormData}], bankbookDetailId: 'AC120' })
+
+            await dataSource.value.push({ data: [{ ...initialStateFormData }], bankbookDetailId: 'AC120' })
             // gridRefAC120Detail.value?.instance.refresh()
             await gridRefAC120.value?.instance.refresh()
             // dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ data: [initialStateFormData], bankbookDetailId: 'AC120' })
             store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]?.data[0]
             console.log(store.state.common.ac120.formData);
-            
+
             focusedRowKey.value = 'AC120'
-            
+
             store.state.common.ac120.keyRefreshForm++
             await (loadingGetAccountingDocuments.value = false)
         }
@@ -780,45 +740,16 @@ export default defineComponent({
 
         const actionEditTaxPay = async (e: any) => {
             // console.log(e);
-            
+
             await (focusedRowKey.value = null)
-        // setTimeout(() => {
+            // setTimeout(() => {
             await (focusedRowKey.value = e.data.accountingDocumentId)
-        // }, 100);
+            // }, 100);
             // focusedRowKey.value = e.data.accountingDocumentId
             // formState.value = e.row?.data;
             // previousRowData.value = cloneDeep(e.row?.data);
         }
 
-        const onCellPrepared = (e: any) => {
-            // if (e.data) {
-            //     if (e.data.amount == e.data.amountNew) {
-            //         e.rowElement.style.color = 'black';
-            //     } else {
-            //         e.rowElement.style.color = 'red';
-            //     }
-            //     e.cells[0].cellElement.style.color = 'black';
-            //     e.cells[2].cellElement.style.color = 'black';
-            // }
-
-            // console.log();
-            // console.log();
-            // console.log();
-
-            if (e.rowType !== "data") {
-                return;
-            }
-            // console.log(e.rowType, e.data, e.rowIndex, e.rowElement, e.cells);
-            // e.cells[0].cellElement.rowSpan = 2
-            // if (e.cellElement) {
-            //     e.cellElement.rowSpan = 2;
-            //     console.log(e.cellElement?.rowSpan);
-
-            //     e.cellElement.innerHTML = "<div>My Text</div>";
-            // } else {
-            //     // e.cellElement.style.display = "none";
-            // }
-        }
 
         // ================ CUSTOM SUMMARY TABLE ============================================
         const customCountRow = () => {
@@ -870,58 +801,31 @@ export default defineComponent({
             loadingGetAccountingDocuments,
             dataRows,
             onFocusedRowChanging,
-            onCellPrepared,
             actionEditTaxPay,
             gridRefAC120Detail,
             lastBalance,
             customCountRow, sumOfIncome, sumOfExpenses, customBalance, countResolutionNormalStatus,
 
-            // onSubmit,
-            // refFormAC120,
-
             store,
-            // refCssForm,
-            //  refCssTable,
             heightTable,
-            // statusEntering,
-            // statusInput,
-            // statusAdjusting,
-            // statusAdjusted,
             move_column,
             colomn_resize,
             acYear,
             focusedRowKey,
             selectionChanged,
-            dataDemoMain,
-            // fileList,
-            totalDeposits,
-            totalWithdrawal,
-            
+
             isModalRetrieveStatements,
-            Message,
             handleConfirmChange,
-            // openPopupRegistration,
-            // openPopupRetrieveStatements,
             contentPopupRetrieveStatements,
             statusModalSlipCancellation,
             statusModalSlipRegistrantion,
-            // statusPopupCopyData,
             statusModalItemDetail,
-            // actionPopupCopyData,
-            
-            arraySelectBox,
-            onDragStart,
 
             actionPopupItemDetail,
-
             actionPopupSlipCancellation,
             actionPopupSlipRegistration,
-            // arrayRadioCheck,
-            
-            dataDemoMain2,
-            onReorder, onDragChange, onRowDragging,
 
-            // monthSelected,
+            onReorder, onDragChange,
             selectedMonth,
             modalHistoryAccountingProcess, modalHistoryAccountingDocuments,
             modalHistoryStatusAccountingProcess,

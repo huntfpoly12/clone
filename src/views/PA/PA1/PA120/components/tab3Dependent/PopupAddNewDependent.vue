@@ -117,7 +117,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
     const ageCount = ref();
     const labelResidebId = ref('주민등록번호');

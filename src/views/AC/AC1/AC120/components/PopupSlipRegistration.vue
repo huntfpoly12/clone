@@ -9,7 +9,7 @@
                                 v-model:valueInput="dataBankBook" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
-                            <number-box :width="200" :required="true"
+                            <number-box-money :width="200" :required="true"
                                 v-model:valueInput="store.state.common.ac120.formData.amount" placeholder="금액" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
@@ -34,7 +34,7 @@
                                 v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType"
                                 @update:valueRadioCheck="changeRadioResolutionType" />
                         </a-form-item>
-                        <a-form-item class="red" label="품의종류">
+                        <a-form-item v-if="statusShowLetterOfApprovalType" class="red" label="품의종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrLetterOfApprovalType"
                                 :layoutCustom="'horizontal'" :required="true"
                                 v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType" />
@@ -76,7 +76,7 @@ export default defineComponent({
 
     setup(props, { emit }) {
         const store = useStore();
-        const acYear = computed(() => store.state.settings.acYear)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const countKey = ref<number>(0)
 
         const refFormAddAC120 = ref()
@@ -87,7 +87,7 @@ export default defineComponent({
             fiscalYear: acYear.value,
         })
         let dataStateFormAdd = {};
-
+        const statusShowLetterOfApprovalType = ref(false)
         const arraySelectBox = ref([]);
         const triggerBankbooks = ref<boolean>(true);
 
@@ -149,12 +149,6 @@ export default defineComponent({
             }
         }
         const cancel = () => {
-
-            console.log(dataStateFormAdd);
-            console.log(initialStateFormAdd);
-
-            // console.log(JSON.stringify(initialStateFormAdd) === JSON.stringify(dataStateFormAdd));
-
             if (JSON.stringify(initialStateFormAdd) === JSON.stringify(dataStateFormAdd) == true) {
                 emit("closePopup", false)
                 if (statusRemoveRow.value) {
@@ -169,18 +163,19 @@ export default defineComponent({
                 })
             }
 
-            // emit("closePopup", false)
-            // if (!store.state.common.ac120.statusFormAdd) {
-            //     store.state.common.ac120.onDeleteRowAdd
-            // }
-
         };
         const changeRadioResolutionType = (value: Number) => {
-            console.log(value);
             if (value == 11 || value == 21) {
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
             } else if (value == 12 || value == 22) {
                 store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+            }
+            if (value == 21 || value == 22) {
+                statusShowLetterOfApprovalType.value = true
+                store.state.common.ac120.formData.letterOfApprovalType = 1
+            } else {
+                statusShowLetterOfApprovalType.value = false
+                store.state.common.ac120.formData.letterOfApprovalType = null
             }
 
         }
@@ -201,7 +196,7 @@ export default defineComponent({
         });
         return {
             refFormAddAC120,
-            // initialStateFormAdd,
+            statusShowLetterOfApprovalType,
             submit,
             cancel,
             arraySelectBox,
