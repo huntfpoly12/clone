@@ -28,7 +28,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const valueSelected = ref(0);
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear")?? '0'));
         // Getting the token from the session storage and then dispatching the action to get the user
         // information.
         const token = computed(()=>sessionStorage.getItem("token"))
