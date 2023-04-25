@@ -110,7 +110,7 @@ export default defineComponent({
         // const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear);
+        const globalYear = dayjs().year()
         watch(
             () => props.modalStatus,
             async (newValue, old) => {
@@ -385,7 +385,7 @@ export default defineComponent({
                         case 'pa-820':
                           dataQuery.value = {
                             companyId: companyId,
-                            imputedYear: globalYear.value,
+                            imputedYear: globalYear,
                             workId: props.data,
                           };
                           console.log(`output-`,dataQuery.value)
