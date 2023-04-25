@@ -69,6 +69,7 @@
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
           id="tab2-bf640">
+          <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="code" cell-template="company-code" />
           <template #company-code="{ data }: any">
@@ -127,12 +128,23 @@ import { Message } from '@/configs/enum';
 import CheckboxGroup from './CheckboxGroup.vue';
 import { watchEffect } from "vue";
 import { isNumber } from "lodash";
+import { DxLoadPanel } from "devextreme-vue";
 export default defineComponent({
   components: {
-    SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
-    RequestFilePopup, GetStatusTable,
+    SaveOutlined,
+    DxDataGrid,
+    DxToolbar,
+    DxSelection,
+    DxColumn,
+    DxItem,
+    DxScrolling,
+    DxSummary,
+    DxTotalItem,
+    RequestFilePopup,
+    GetStatusTable,
     CheckboxGroup,
-  },
+    DxLoadPanel
+},
   props: {
     search: {
       type: Number,
@@ -143,7 +155,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const globalYear: any = computed(() => store.state.settings.globalYear);
+    const globalYear: any = +dayjs().format('YYYY');
     let checkBoxSearch = [...checkBoxSearchStep1]
     let valueDefaultCheckbox = ref(1)
     let valueDefaultSwitch = ref(true)
