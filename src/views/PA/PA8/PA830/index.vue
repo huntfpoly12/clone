@@ -112,7 +112,7 @@ const data = [
 ]
 const store = useStore();
 const {per_page, move_column, colomn_resize} = store.state.settings;
-const paYear = computed(() => sessionStorage.getItem("paYear") || dayjs().year())
+const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
 const dataSource = ref(data)
 const isOpenModalCreate = ref(false);
 const modalHistory = ref(false);
