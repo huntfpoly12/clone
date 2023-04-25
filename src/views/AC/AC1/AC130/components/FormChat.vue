@@ -714,7 +714,7 @@ export default defineComponent({
         width: 100%;
         top: 0;
         transform: translateY(-100%);
-        background-color: #EBF1DE;
+        background-color: #fff;
         padding: 5px;
         border-radius: 5px 5px 0 0;
         display: flex;
