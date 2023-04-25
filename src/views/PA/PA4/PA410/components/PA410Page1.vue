@@ -73,6 +73,7 @@ export default defineComponent({
         .select-employee{
             display: flex;
             margin: 160px 480px;
+            min-width: 490px;
             .label{
                 font-size: 23px;
                 font-weight: bold;
