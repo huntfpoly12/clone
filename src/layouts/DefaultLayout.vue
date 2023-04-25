@@ -7,7 +7,7 @@
       <div class="user-info" v-if="userInfor">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
-        <a-dropdown  :overlayStyle="{ 'border': '2px solid'}">
+        <a-dropdown  :overlayStyle="{ 'border': '2px solid'}" :trigger="['click']">
           <a class="ant-dropdown-link" @click.prevent>
             {{ userInfor.name }}
             <DownOutlined />
@@ -875,5 +875,7 @@ export default defineComponent({
 }
 :deep .ant-dropdown-menu-item{
   text-align: right;
+  line-height: 18px;
+
 }
 </style>
