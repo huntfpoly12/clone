@@ -352,7 +352,7 @@ export default defineComponent({
       healthInsuranceReport: true,
       employeementInsuranceReport: true,
       industrialAccidentInsuranceReport: true,
-      nationalPensionLossCode: '0',
+      nationalPensionLossCode: 0,
       nationalPensionPaymentCurrentMonthLoss: '',
       employeementInsuranceLossCode: '',
       employeementInsuranceJobChangeReport: false,
@@ -541,10 +541,10 @@ export default defineComponent({
 
     watch(() => formState.nationalPensionReport, (newVal: Boolean) => {
       if (!newVal) {
-        formState.nationalPensionLossCode = '0';
+        formState.nationalPensionLossCode = 0;
         showData.acquisitionMonthPayment = false;
       } else {
-        formState.nationalPensionLossCode = '3';
+        formState.nationalPensionLossCode = 3;
       }
     }, { deep: true });
     watch(() => formState.healthInsuranceReport, (newVal: Boolean) => {
