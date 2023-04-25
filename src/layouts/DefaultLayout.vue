@@ -4,32 +4,10 @@
       <div class="nav-logo">
         <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
       </div>
-      <div class="user-info" v-if="userInfor">
+      <div class="user-info">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
-        <a-dropdown  :overlayStyle="{ 'border': '2px solid'}" :trigger="['click']">
-          <a class="ant-dropdown-link" @click.prevent>
-            {{ userInfor.name }}
-            <DownOutlined />
-          </a>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <div class="user-infor">
-                  <p class="name-infor">ID : {{userInfor.username}} <a-tag v-if="userInfor.type != 'c'" :color="getColorTag(userInfor.type).color">{{ getColorTag(userInfor.type).name }}</a-tag></p>
-                  <p>{{userInfor.email}}</p>
-                  <p>{{ $filters.formatPhoneNumber(userInfor.mobilePhone)}}</p>
-                </div>
-              </a-menu-item>
-              <a-menu-item>
-                <router-link to="/change-password">비밀번호 변경</router-link>
-              </a-menu-item>
-              <a-menu-item>
-                <p @click="logout">로그아웃</p>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
+        <account-infor></account-infor>
       </div>
     </a-layout-header>
 
@@ -190,12 +168,10 @@
 </template>
 <script>
 import { defineComponent, ref, watch, computed, onMounted, nextTick } from "vue";
-import {  useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
 import menuData from "./menuData";
-import { DownOutlined } from '@ant-design/icons-vue';
-
 import {
   BF310,
   BF320,
@@ -267,10 +243,9 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
-import {AdminScreenRole, getJwtObject, ScreenRole} from '@bankda/jangbuda-common';
-import { companyId, openTab, setMenuTab } from "@/helpers/commonFunction";
+import { getJwtObject} from '@bankda/jangbuda-common';
+import {  openTab, setMenuTab } from "@/helpers/commonFunction";
 import useCheckPermission from "@/helpers/useCheckPermission";
-import dayjs from "dayjs";;
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
 export default defineComponent({
@@ -284,7 +259,6 @@ export default defineComponent({
     };
   },
   components: {
-    DownOutlined,
     BF310,
     BF320,
     BF330,
@@ -530,13 +504,10 @@ export default defineComponent({
     const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
-
     let menuItems = menuTree;
     const store = useStore();
-    store.dispatch('auth/getUserInfor');
-    const userInfor = computed(() => store.state.auth.userInfor);
     const count = computed(()=> store.getters['settings/changeFacilityBusiness'])
-    const router = useRouter()
+
     const route = useRoute();
     const collapsed = ref(false);
     const selectedItems = ref(null);
@@ -581,12 +552,6 @@ export default defineComponent({
         }
       })
     })
-
-    const logout = ()=>{
-      router.push("/login");
-      location.reload();
-      store.commit("auth/logout");
-    }
 
     const onSearch  = (key)=>{
       state.value = true;
@@ -749,17 +714,8 @@ export default defineComponent({
         openKeys.value = latestOpenKey ? [latestOpenKey] : [];
       }
     }
-    const getColorTag = (data) => {
-       if (data === "m") {
-            return {"name":"매니저","color":"black"};
-        } else if (data === "r") {
-            return {"name":"영업자","color":"grey"};
-        } else if (data === "p") {
-            return {"name":"파트너","color":"goldenrod"};
-        }
-    }
+
     return {
-      logout,
       onSearch,
       addMenuTab,
       removeItemTab,
@@ -780,8 +736,6 @@ export default defineComponent({
       onTabDrop,
       MAX_TAB,
       count,
-      userInfor,
-      getColorTag
     }
   },
 });
@@ -872,10 +826,5 @@ export default defineComponent({
 :deep .tab-main .dx-tabs-scrollable .dx-tabs-wrapper {
   border-left: 0;
   border-right: 0;
-}
-:deep .ant-dropdown-menu-item{
-  text-align: right;
-  line-height: 18px;
-
 }
 </style>
