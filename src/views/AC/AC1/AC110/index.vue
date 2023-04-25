@@ -16,14 +16,20 @@
             :disabled="true" />
           <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
           </button-basic>
-          <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
+          <a-tooltip >
+            <template #title>마감상태 변경이력</template>
+            <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
+          </a-tooltip>
         </div>
         <div class="ac-110__top-flex-action">
           <button-basic :text="'통장내역 불러오기'" :type="'default'" :mode="'contained'"
             @onClick="openPopupRetrieveStatements" />
           <button-basic :text="'☑전표등록'" :type="'default'" :mode="'contained'" style="margin-left: 5px;"
             @onClick="openPopupSlipRegistrationSelected" :disabled="!selectedRowKeys.length" />
-          <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistory" />
+          <a-tooltip placement="topRight">
+            <template #title>통장내역 변경이력</template>
+            <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistory" />
+          </a-tooltip>
         </div>
       </div>
     </div>
@@ -104,163 +110,165 @@
       </div>
       <div class="ac-110__main-detail">
         <div class="ac-110__main-detail-detail1">
-          <div class="ac-110__main-detail-detail1-title">
-            <b>거래내역-</b><span v-if="!!bankbookSelected">{{ bankbookSelected.bankbook.bankbookNickname }} {{
-              getNameBankBookUseType(bankbookSelected.bankbook.useType) }}</span>
-            <b style="margin-right: 5px;">-정상여부: </b>
-            <button-basic v-if="!!bankbookSelected" :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'"
-              :type="bankbookSelected.normalTransactionDetails ? 'success' : 'danger'" :mode="'contained'" />
-          </div>
-          <a-spin :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails" size="large">
-            <standard-form>
-              <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
-                :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
-                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxPaging :enabled="false" />
-                <DxScrolling mode="standard" show-scrollbar="always" />
-                <DxExport :enabled="true" />
-                <DxToolbar>
-                  <DxItem template="summary-transaction-detail" css-class="cell-button-export" location="before" />
-                  <DxItem template="button-reset" css-class="cell-button-export" />
-                  <DxItem location="after" template="button-add" css-class="cell-button-add" />
-                  <DxItem template="button-save" css-class="cell-button-export" />
-                </DxToolbar>
+          <div class="ac-110__main-detail-detail1-wrapper">
+            <div class="ac-110__main-detail-detail1-title">
+              <b>거래내역-</b><span v-if="!!bankbookSelected">{{ bankbookSelected.bankbook.bankbookNickname }} {{
+                getNameBankBookUseType(bankbookSelected.bankbook.useType) }}</span>
+              <b style="margin-right: 5px;">-정상여부: </b>
+              <button-basic v-if="!!bankbookSelected" :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'"
+                :type="bankbookSelected.normalTransactionDetails ? 'success' : 'danger'" :mode="'contained'" />
+            </div>
+            <a-spin :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails" size="large">
+              <standard-form>
+                <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
+                  :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
+                  :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                  <DxPaging :enabled="false" />
+                  <DxScrolling mode="standard" show-scrollbar="always" />
+                  <DxExport :enabled="true" />
+                  <DxToolbar>
+                    <DxItem template="summary-transaction-detail" css-class="cell-button-export" location="before" />
+                    <DxItem template="button-reset" css-class="cell-button-export" />
+                    <DxItem location="after" template="button-add" css-class="cell-button-add" />
+                    <DxItem template="button-save" css-class="cell-button-export" />
+                  </DxToolbar>
 
-                <template #summary-transaction-detail>
-                  <div class="ac-110__main-detail-detail1-summary">
-                    <div class="ac-110__main-detail-detail1-summary-quantity">
-                      <span class="ac-110__main-detail-detail1-summary-label">거래내역수:</span>
-                      <span class="ac-110__main-detail-detail1-summary-value">{{ totalTransactions() }}</span>
+                  <template #summary-transaction-detail>
+                    <div class="ac-110__main-detail-detail1-summary">
+                      <div class="ac-110__main-detail-detail1-summary-quantity">
+                        <span class="ac-110__main-detail-detail1-summary-label">거래내역수:</span>
+                        <span class="ac-110__main-detail-detail1-summary-value">{{ totalTransactions() }}</span>
+                      </div>
+                      <div class="ac-110__main-detail-detail1-summary-income">
+                        <span class="ac-110__main-detail-detail1-summary-label">수입액 합계:</span>
+                        <span class="ac-110__main-detail-detail1-summary-value">{{ sumOfIncome() }}</span>
+                      </div>
+                      <div class="ac-110__main-detail-detail1-summary-expenses">
+                        <span class="ac-110__main-detail-detail1-summary-label">지출액 합계:</span>
+                        <span class="ac-110__main-detail-detail1-summary-value">{{ sumOfExpenses() }}</span>
+                      </div>
                     </div>
-                    <div class="ac-110__main-detail-detail1-summary-income">
-                      <span class="ac-110__main-detail-detail1-summary-label">수입액 합계:</span>
-                      <span class="ac-110__main-detail-detail1-summary-value">{{ sumOfIncome() }}</span>
-                    </div>
-                    <div class="ac-110__main-detail-detail1-summary-expenses">
-                      <span class="ac-110__main-detail-detail1-summary-label">지출액 합계:</span>
-                      <span class="ac-110__main-detail-detail1-summary-value">{{ sumOfExpenses() }}</span>
-                    </div>
-                  </div>
-                </template>
-                <template #button-reset>
-                  <button-basic text="초기화" type="default" :mode="'contained'" :disabled="isRegistered"
-                    @onClick="handleInitializeTransactionDetails" />
-                </template>
-                <template #button-add>
-                  <a-tooltip placement="top">
-                    <template #title>신규</template>
-                    <div>
-                      <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" :disabled="isRegistered" />
-                    </div>
-                  </a-tooltip>
-                </template>
-                <template #button-save> 
-                  <a-tooltip placement="top">
-                    <template #title>신규</template>
-                    <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)" :disabled="isRegistered">
-                      <SaveFilled style="font-size: 19px;" />
-                    </DxButton>
-                  </a-tooltip>
-                </template>
-                <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center" :allowUpdating="true">
-                  <DxLookup :data-source="resolutionClassification" display-expr="label" value-expr="value" />
-                </DxColumn>
-                <DxColumn caption="수입액" cell-template="income" width="150" />
-                <template #income="{ data }">
-                  <div :id="`ac110income${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.spending}">
-                    <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
-                      :disabled="!!data.data.spending" height="26" :readOnly="isRegistered"
-                      @focusInput="changeInputIncomeSpending(data, 'income')" />
-                  </div>
-                </template>
-                <DxColumn caption="지출액" cell-template="spending" width="150" />
-                <template #spending="{ data }">
-                  <div :id="`ac110spending${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.income}">
-                    <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
-                      :disabled="!!data.data.income" height="26" :readOnly="isRegistered"
-                      @focusInput="changeInputIncomeSpending(data, 'spending')" /> 
-                  </div>
-                </template>
-                <DxColumn caption="적요" cell-template="summary" width="200" />
-                <template #summary="{ data }">
-                  <default-text-box v-model:valueInput="data.data.summary" :required="true" :readOnly="isRegistered" />
-                </template>
-                <DxColumn caption="계정과목" cell-template="accountCode" width="200" />
-                <template #accountCode="{ data }">
-                  <account-code-select v-model:valueInput="data.data.accountCode"
-                    :classification="!!data.data.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
-                </template>
-                <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
-                <template #relationCode="{ data }">
-                  <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
-                    <account-code-select v-model:valueInput="data.data.relationCode"
-                    :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
-                    :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
-                  </div>
-                </template>
-                <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
-                <template #fundingSource="{ data }">
-                  <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" :readOnly="isRegistered" />
-                </template>
-                <DxColumn caption="거래처" cell-template="clientId" width="165px" />
-                <template #clientId="{ data }">
-                  <customer-select v-model:valueInput="data.data.clientId" width="150px" :readOnly="isRegistered" />
-                </template>
-                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100"/>
-                <template #letterOfApprovalType="{ data }">
-                  <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
-                    <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
-                    :disabled="data.data.resolutionClassification === 1" :readOnly="isRegistered"
-                    :required="data.data.resolutionClassification === 2" />
-                  </div>
-                </template>
-                <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
-                <template #causeUsage="{ data }">
-                  <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
-                    <a-tooltip v-if="!!data.data.causeUsage && data.data.causeUsage.length" placement="top">
-                      <template #title>
-                        <div class="ac-110-tooltip-memocauseUsage">{{ data.data.causeUsage }}</div>
-                      </template>
+                  </template>
+                  <template #button-reset>
+                    <button-basic text="초기화" type="default" :mode="'contained'" :disabled="isRegistered"
+                      @onClick="handleInitializeTransactionDetails" />
+                  </template>
+                  <template #button-add>
+                    <a-tooltip placement="top">
+                      <template #title>신규</template>
                       <div>
-                        <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
+                        <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" :disabled="isRegistered" />
                       </div>
                     </a-tooltip>
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
-                  </div>
-                </template>
-                <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
-                <template #goodsCount="{ data }">
-                  <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
-                    <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
-                      {{ data.data.goodsCount || 0 }}
-                    </span>
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
-                  </div>
-                </template>
-                <DxColumn caption="메모" cell-template="memo" alignment="center" />
-                <template #memo="{ data }">
-                  <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
-                    <a-tooltip v-if="!!data.data.memo && data.data.memo.length" placement="top">
-                      <template #title>
-                        <div class="ac-110-tooltip-memocauseUsage">{{ data.data.memo }}</div>
-                      </template>
-                      <div>
-                        <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
-                      </div>
+                  </template>
+                  <template #button-save> 
+                    <a-tooltip placement="top">
+                      <template #title>신규</template>
+                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)" :disabled="isRegistered">
+                        <SaveFilled style="font-size: 19px;" />
+                      </DxButton>
                     </a-tooltip>
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
-                  </div>
-                </template>
-              </DxDataGrid>
-            </standard-form>
-          </a-spin>
+                  </template>
+                  <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center" :allowUpdating="true" width="70">
+                    <DxLookup :data-source="resolutionClassification" display-expr="label" value-expr="value" />
+                  </DxColumn>
+                  <DxColumn caption="수입액" cell-template="income" width="110" />
+                  <template #income="{ data }">
+                    <div :id="`ac110income${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.spending}">
+                      <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
+                        :disabled="!!data.data.spending" height="26" :readOnly="isRegistered"
+                        @focusInput="changeInputIncomeSpending(data, 'income')" />
+                    </div>
+                  </template>
+                  <DxColumn caption="지출액" cell-template="spending" width="110" />
+                  <template #spending="{ data }">
+                    <div :id="`ac110spending${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.income}">
+                      <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
+                        :disabled="!!data.data.income" height="26" :readOnly="isRegistered"
+                        @focusInput="changeInputIncomeSpending(data, 'spending')" /> 
+                    </div>
+                  </template>
+                  <DxColumn caption="적요" cell-template="summary" width="150" />
+                  <template #summary="{ data }">
+                    <default-text-box v-model:valueInput="data.data.summary" :required="true" :readOnly="isRegistered" />
+                  </template>
+                  <DxColumn caption="계정과목" cell-template="accountCode" width="175" />
+                  <template #accountCode="{ data }">
+                    <account-code-select v-model:valueInput="data.data.accountCode"
+                      :classification="!!data.data.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
+                  </template>
+                  <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
+                  <template #relationCode="{ data }">
+                    <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
+                      <account-code-select v-model:valueInput="data.data.relationCode"
+                      :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
+                      :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
+                    </div>
+                  </template>
+                  <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
+                  <template #fundingSource="{ data }">
+                    <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" :readOnly="isRegistered" />
+                  </template>
+                  <DxColumn caption="거래처" cell-template="clientId" width="150px" />
+                  <template #clientId="{ data }">
+                    <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered" />
+                  </template>
+                  <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100"/>
+                  <template #letterOfApprovalType="{ data }">
+                    <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
+                      <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
+                      :disabled="data.data.resolutionClassification === 1" :readOnly="isRegistered"
+                      :required="data.data.resolutionClassification === 2" />
+                    </div>
+                  </template>
+                  <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
+                  <template #causeUsage="{ data }">
+                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
+                      <a-tooltip v-if="!!data.data.causeUsage && data.data.causeUsage.length" placement="top">
+                        <template #title>
+                          <div class="ac-110-tooltip-memocauseUsage">{{ data.data.causeUsage }}</div>
+                        </template>
+                        <div>
+                          <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
+                        </div>
+                      </a-tooltip>
+                      <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
+                    </div>
+                  </template>
+                  <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
+                  <template #goodsCount="{ data }">
+                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
+                      <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
+                        {{ data.data.goodsCount || 0 }}
+                      </span>
+                      <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                    </div>
+                  </template>
+                  <DxColumn caption="메모" cell-template="memo" alignment="center" />
+                  <template #memo="{ data }">
+                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
+                      <a-tooltip v-if="!!data.data.memo && data.data.memo.length" placement="top">
+                        <template #title>
+                          <div class="ac-110-tooltip-memocauseUsage">{{ data.data.memo }}</div>
+                        </template>
+                        <div>
+                          <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
+                        </div>
+                      </a-tooltip>
+                      <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
+                    </div>
+                  </template>
+                </DxDataGrid>
+              </standard-form>
+            </a-spin>
+          </div>
         </div>
         <div class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <UploadPreviewImage width="400" :payLoadProofs="payloadGetTransactionDetails"
+            <UploadPreviewImage width="295" :payLoadProofs="payloadGetTransactionDetails"
               @updateAddBankbookDetailProof="updateAddBankbookDetailProof"
               @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof"
-              :disabled="isRegistered" />
+              :disabled="isRegistered" :limit="10" />
           </div>
         </div>
       </div>
