@@ -1,105 +1,65 @@
 <template>
-    <form
-      action="your-action"
-      class="auth-form"
-      @submit="submitForm"
-    > 
-      <div class="dx-fieldset">
-        <div class="dx-fieldset-header">비밀번호 변경</div>
-        <p v-if="errors" class="invalid">
-          {{ errors }}
-        </p>
-        <div class="dx-field">
-          <div class="dx-field-label">비밀번호</div>
-          <div class="dx-field-value">
-            <DxTextBox
-              v-model:value="form.password"
-              mode="password"
-            >
-              <DxValidator>
-                <DxRequiredRule message="비밀번호는 필수 입렵항목 입니다"/>
-              </DxValidator>
-            </DxTextBox>
+    <a-modal :visible="true" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
+          :width="445" :height="500">
+      <standard-form  formName="forget-password" ref="forgetPassword"  class="auth-form">
+        <div class="dx-fieldset">
+          <div class="dx-fieldset-header">비밀번호 변경</div>
+          <div class="dx-field">
+            <div class="dx-field-label">비밀번호</div>
+            <div class="dx-field-value">
+              <default-text-box width="100%" v-model:valueInput="form.password" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
+            </div>
+          </div>
+          <div class="dx-field">
+            <div class="dx-field-label">비밀번호 확인</div>
+            <div class="dx-field-value">
+              <default-text-box width="100%" v-model:valueInput="confirmPassword" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
+              <p style="color: red;">{{ confirMessage }}</p>
+            </div>
           </div>
         </div>
-        <div class="dx-field">
-          <div class="dx-field-label">비밀번호 확인</div>
-          <div class="dx-field-value">
-            <DxTextBox mode="password">
-              <DxValidator>
-                <DxRequiredRule message="비밀번호 확인은 필수 입렵항목 입니다"/>
-                <DxCompareRule
-                  :comparison-target="passwordComparison"
-                  message="비밀번호가 일치하지 않습니다"
-                />
-              </DxValidator>
-            </DxTextBox>
-          </div>
+        <div class="dx-fieldset">
+          <DxButton
+            id="button"
+            :use-submit-behavior="true"
+            text="비밀번호 변경"
+            type="success"
+            :height="$config_styles.HeightInput" 
+            @click="submitForm"
+          />
         </div>
-      </div>
-      
-    
-  
-      <div class="dx-fieldset">
-        <DxValidationSummary id="summary"/>
-        <DxButton
-          id="button"
-          :use-submit-behavior="true"
-          text="비밀번호 변경"
-          type="success"
-          :height="$config_styles.HeightInput" 
-        />
-      </div>
-    </form>
+      </standard-form>
+    </a-modal>
   </template>
-  <script>
-
-  import DxTextBox from 'devextreme-vue/text-box';
+  <script lang="ts">
   import DxButton from 'devextreme-vue/button';
-  import {
-    DxValidator,
-    DxRequiredRule,
-    DxCompareRule,
-  } from 'devextreme-vue/validator';
-  
-  import { reactive, ref } from "vue";
+  import { reactive, ref, watch } from "vue";
   import { useMutation } from "@vue/apollo-composable";
-  import { useRouter, useRoute } from "vue-router";
+  import { useRouter } from "vue-router";
   import mutations from "../graphql/mutations/index";
-  import { notification } from 'ant-design-vue';
+  import notification from '@/utils/notification';
   export default {
     components: {
-
-      DxTextBox,
-
       DxButton,
-      DxValidator,
-      DxRequiredRule,
-      DxCompareRule,
-   
     },
-    methods: {
-      passwordComparison() {
-        return this.password;
-      },
-    },
-    setup() {
+    setup(props,{emit}) {
       const router = useRouter();
-      const route = useRoute()
       const form = reactive({
         password: "",
       });
       const errors = ref(null);
-  
-      const submitForm = (e) => {
-        e.preventDefault();
-        resetData();
+      const confirmPassword = ref('')
+      const confirMessage = ref('')
+      const setModalVisible = () => {
+            emit("closePopup", false)
+      };
+      const submitForm = () => {
+        changePassword();
       };
   
-
       // signin mutation
       const {
-        mutate: resetData,
+        mutate: changePassword,
         loading: resetLoading,
         onDone: resetDone,
         onError,
@@ -109,32 +69,33 @@
         },
       }));
       resetDone(() => {
-        notification.success({
-          message: '비밀번호 변경 성공',
-          description:
-            '비밀번호를 성공적으로 변경했으며 로그인하여 관리 페이지로 이동하세요',
-        });
-        router.push("/login");
+        notification('success', '비밀번호를 성공적으로 변경했으며 로그인하여 관리 페이지로 이동하세요')
+        setModalVisible()
       });
       onError((error) => {
-        errors.value = error.message;
+        notification('error', error.message)
       });
-      const passwordComparison = () => {
-        return form.password
-      }
+      watch(confirmPassword, (newVal) => {
+          if (form.password !== newVal) {
+            confirMessage.value = 'Passwords are not matching, please try again' 
+          } else {
+            confirMessage.value=''
+          }
+      })
       return {
         form,
         submitForm,
         errors,
-        passwordComparison,
-        resetLoading
+        setModalVisible,
+        resetLoading,
+        confirmPassword,
+        confirMessage
       };
     },
   };
   </script>
 <style scoped>
 .auth-form {
-    padding-top: 150px;
     max-width: 400px;
     margin: 0 auto;
 }
@@ -164,7 +125,7 @@
   color: red;
 }
 .request-contract {
-  margin-top: 40px;
+
 }
 .form-control {
   margin: 8px 0;
