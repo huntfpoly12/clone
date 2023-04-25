@@ -334,6 +334,7 @@ import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import InfoToolTip from './components/InfoToolTip.vue'
 import {isEqual, cloneDeep} from "lodash";
 import {message} from "ant-design-vue";
+import dayjs from "dayjs";
 // type SearchType = {
 //   page: number
 //   rows: number
@@ -380,7 +381,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const per_page = 1000;
     const column_resize = computed(() => store.state.settings.colomn_resize);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const acYear = computed(() => Number(sessionStorage.getItem("acYear")) || dayjs().year())
     // ref
     const isDiscard = ref(false); // verify popup discard
     const formRef = ref(); // ref of form
@@ -634,7 +635,7 @@ export default defineComponent({
         } else {
           const newData = {
             type: formState.value.type,
-            year: globalYear.value,
+            year: acYear.value,
             use: formState.value.use,
             name: formState.value.name
           }
