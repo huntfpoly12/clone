@@ -40,10 +40,10 @@
             :hoverStateEnabled="true" :data-source="dataSource" v-model:selected-row-keys="selectedRowKeys"
             :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused"
             :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-            @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging">
+            @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging" @row-click="onRowClick">
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
-            <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
+            <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="always" :deferred="false"/>
             <DxColumn caption="통장" cell-template="nickName" />
             <template #nickName="{ data }">
               <a-tooltip placement="left"
@@ -82,17 +82,18 @@
               </div>
             </template>
             <DxColumn caption="거래내역" data-field="transactionDetailsCount" />
-            <DxColumn caption="정상여부" cell-template="normalTransactionDetails" width="80" />
+            <DxColumn caption="정상여부" cell-template="normalTransactionDetails" width="80" alignment="center" />
             <template #normalTransactionDetails="{ data }">
-              <button-basic :text="data.data.normalTransactionDetails ? 'O' : 'X'"
-                :type="data.data.normalTransactionDetails ? 'success' : 'danger'" :mode="'contained'" />
+                <DxButton :focusStateEnabled="false" :text="data.data.normalTransactionDetails ? 'O' : 'X'" 
+                :style="data.data.normalTransactionDetails ? 'background-color: #337614' : 'background-color: #BB3835'" 
+                :height="$config_styles.HeightInput" style="color:white; width: 42px"  />
             </template>
             <DxColumn caption="전표등록" cell-template="documentRegistered" width="200" />
             <template #documentRegistered="{ data }">
               <div class="ac-110__main-main-slipRegistration">
-                <button-basic :text="data.data.documentRegistered ? 'O' : 'X'"
-                  :type="data.data.documentRegistered ? 'success' : 'danger'" :mode="'contained'"
-                  style="margin-right: 5px;" />
+                <DxButton :focusStateEnabled="false" :text="data.data.documentRegistered ? 'O' : 'X'"
+                :style="data.data.documentRegistered ? 'background-color: #337614' : 'background-color: #BB3835'" 
+                :height="$config_styles.HeightInput" style="color:white; margin-right: 5px; width: 42px" />
                 <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'"
                   :mode="data.data.documentRegistered ? 'outlined' : 'contained'"
                   @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails" />
@@ -115,8 +116,9 @@
               <b>거래내역-</b><span v-if="!!bankbookSelected">{{ bankbookSelected.bankbook.bankbookNickname }} {{
                 getNameBankBookUseType(bankbookSelected.bankbook.useType) }}</span>
               <b style="margin-right: 5px;">-정상여부: </b>
-              <button-basic v-if="!!bankbookSelected" :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'"
-                :type="bankbookSelected.normalTransactionDetails ? 'success' : 'danger'" :mode="'contained'" />
+                <DxButton v-if="!!bankbookSelected" :focusStateEnabled="false" :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'" 
+                :style="bankbookSelected.normalTransactionDetails ? 'background-color: #337614' : 'background-color: #BB3835'" 
+                :height="$config_styles.HeightInput" width="40" style="color:white; width: 42px" />
             </div>
             <a-spin :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails" size="large">
               <standard-form>
@@ -640,8 +642,11 @@ export default defineComponent({
       }
     }
     const onFocusedRowChanging = (event: any) => {
-      const item = event.rows[event.newRowIndex].data
-      if (payloadGetTransactionDetails.bankbookDetailId === item.bankbookDetailId) return
+      event.cancel = true
+    }
+    const onRowClick = (event: any) => {
+      const item = event.data
+      if(rowKeyfocused.value === item.bankbookDetailId) return
       rowKeyfocused.value = item.bankbookDetailId
       payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
       payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
@@ -932,6 +937,7 @@ export default defineComponent({
       selectedRowKeys,
       selectionChanged,
       onFocusedRowChanging,
+      onRowClick,
       dataSource,
       totalDeposits,
       totalWithdrawal,
