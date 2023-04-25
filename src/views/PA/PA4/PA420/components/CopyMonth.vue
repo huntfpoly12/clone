@@ -4,7 +4,7 @@
     <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
       <div class="d-flex-center">
         <div class="month-custom-1 d-flex-center">
-          귀 {{ store.state.settings.globalYear }}-{{ $filters.formatMonth(attributionMonth) }}
+          귀 {{ paYear }}-{{ $filters.formatMonth(attributionMonth) }}
         </div>
         <month-picker-box-custom v-model:valueDate="paymentYearMonthChoose" text="지"/>
       </div>
@@ -26,6 +26,7 @@ import {useQuery} from "@vue/apollo-composable";
 import {companyId} from "@/helpers/commonFunction";
 import {useStore} from 'vuex';
 import filters from "@/helpers/filters";
+import dayjs from "dayjs";
 
 function convertToDate({day, month, year}: { day: number, month: number, year: number }): number {
   // Tính số ngày của tháng đó
@@ -52,19 +53,20 @@ const emit = defineEmits(['closePopup', 'dataAddIncomeProcess'])
 const store = useStore();
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const paymentDate = computed(() => store.getters['common/getPaymentDay'])
-const globalYear = computed(() => store.state.settings.globalYear)
+const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
+
 const attributionMonth: any = ref(0)
 const paymentYearMonthChoose = ref(0)
 
-const dataQuery = ref({companyId: companyId, imputedYear: globalYear.value});
+const dataQuery = ref({companyId: companyId, imputedYear: paYear.value});
 
 watchEffect(() => {
   attributionMonth.value = selectMonthColumn.value.imputedMonth
-  paymentYearMonthChoose.value = Number(`${globalYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
+  paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
 
 })
 const paymentDayConfig = ref()
-// const maxDay = computed(() => convertToDate({day: 31, month: paymentYearMonthChoose.value.toString().slice(-2), year: globalYear.value}))
+// const maxDay = computed(() => convertToDate({day: 31, month: paymentYearMonthChoose.value.toString().slice(-2), year: paYear.value}))
 const setModalVisible = () => {
   emit("closePopup", false)
 };
@@ -82,13 +84,13 @@ watch(resultConfig, (value) => {
   if (value) {
     paymentDayConfig.value = value.getWithholdingConfig.paymentDay
     if (value.getWithholdingConfig.paymentType === 1) {
-      paymentYearMonthChoose.value = Number(`${globalYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
+      paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
     } else {
       if (filters.formatMonth(selectMonthColumn.value.paymentMonth) !== 12) {
-        paymentYearMonthChoose.value = Number(`${globalYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth + 1)}`)
+        paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth + 1)}`)
         return
       }
-      paymentYearMonthChoose.value = Number(`${globalYear.value + 1}01`)
+      paymentYearMonthChoose.value = Number(`${paYear.value + 1}01`)
     }
     store.commit('common/setPaymentDay', value.getWithholdingConfig.paymentDay)
   }
@@ -108,7 +110,7 @@ const onSubmit = (e: any) => {
     res.brokenRules[0].validator.focus();
   } else {
     emit("dataAddIncomeProcess", {
-      imputedYear: globalYear.value,
+      imputedYear: paYear.value,
       imputedMonth: attributionMonth.value,
       paymentYear: parseInt(paymentYearMonthChoose.value.toString().slice(0, 4)),
       paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),

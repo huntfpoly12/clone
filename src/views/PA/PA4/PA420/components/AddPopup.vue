@@ -110,7 +110,6 @@
         v-if="step < 2"
       />
       <button-basic
-
         text="저장"
         type="default"
         mode="contained"
