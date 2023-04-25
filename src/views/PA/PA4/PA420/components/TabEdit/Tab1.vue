@@ -337,10 +337,10 @@ const FORM_STATE_OLD = computed(() => cloneDeep({
     taxableRetirementBenefits: prevRetirementBenefitStatus.value?.taxableRetirementBenefits || 0,
   },
   incomeCalculationInput: {
-    settlementStartDate: null,
-    settlementFinishDate: null,
-    exclusionDays: (prevRetiredYearsOfService.value?.additionalDays || 0) + (lastRetiredYearsOfService.value?.additionalDays || 0),
-    additionalDays: lastRetiredYearsOfService.value?.exclusionDays || 0,
+    settlementStartDate: prevRetiredYearsOfService.value?.settlementStartDate || lastRetiredYearsOfService.value?.settlementStartDate,
+    settlementFinishDate:  prevRetiredYearsOfService.value?.settlementFinishDate || lastRetiredYearsOfService.value?.settlementFinishDate,
+    exclusionDays: (prevRetiredYearsOfService.value?.exclusionDays || 0) + (lastRetiredYearsOfService.value?.exclusionDays || 0),
+    additionalDays: lastRetiredYearsOfService.value?.additionalDays || 0,
     annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
     totalAnualBonus:props.dataDetail.specification?.totalAnualBonus || 0,
     totalPay3Month:props.dataDetail.specification?.totalPay3Month || 0,
@@ -436,7 +436,7 @@ const validatePreRetirementBenefitStatus = computed(() => {
 })
 const taxableRetirementBenefits = computed(() => +formState.prevRetirementBenefitStatus.retirementBenefits - +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits )
 const isChangeForm = computed(() => {
-  return !isEqual(formState.inputFormTab1, FORM_STATE_OLD.value) ||
+  return !isEqual(formState.inputFormTab1, FORM_STATE_OLD.value.inputFormTab1) ||
     !isEqual(formState, FORM_STATE_OLD.value) ||
     !isEqual(formState.incomeCalculationInput, FORM_STATE_OLD.value.incomeCalculationInput) ||
     attributionDate.value != `${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}` ||
@@ -551,7 +551,6 @@ const submitForm = (e: any) => {
   } else if (!dtValidate) {
     dtValidate = true
   } else {
-    console.log('formState', formState)
     const {inputFormTab1, incomeCalculationInput, ...taxCalculationInput} = formState
     store.commit('common/setIncomeCalculationInput', incomeCalculationInput)
     store.commit('common/setTaxCalculationInput', {

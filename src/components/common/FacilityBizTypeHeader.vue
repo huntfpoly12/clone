@@ -2,49 +2,51 @@
   <div class="facilityBizType-header">
     <a @click="openPopup"><span  v-if="acStateYear">회계({{ namelFacilityBiz }}, {{acStateYear}}) </span> <span v-if="paStateYear">원천({{paStateYear}})</span></a>
   </div>
-  <a-modal :visible="modalConfirm" :closable="false" :width="430" footer="" :bodyStyle="{padding: '15px'}">
+  <a-modal :visible="modalConfirm" :closable="false" :width="paStateYear && acStateYear ? 420 : 377" footer="" :bodyStyle="{padding: '15px'}">
     <standard-form  formName="forget-password" ref="settingFacilityBizType">
-      <h2>시설사업 및 귀속연도 선택</h2>
+      <h2 :style="paStateYear && acStateYear ? {'padding-left':'39px','margin-top': '20px'}:''">시설사업 및 귀속연도 선택</h2>
         <div class="popup-content">
           <a-row class="item-row">
             <a-col  :span="24">
-          <span >회계업무 시설사업 / 귀속연도 선택</span>
-          </a-col>
-          </a-row>
-          <div>
-            <a-row :gutter="16" class="item-row">
-            <a-col  :span="12">
-              <DxSelectBox  width="170px" :data-source="listFacilityBizTypeForUser" 
-                  v-model:value="facilityBiz"  :display-expr="'name'" :value-expr="'facilityBusinessId'" 
-                :height="$config_styles.HeightInput"  placeholder="사업유형 선택" :disabled="!infos">
-                <DxValidator>
-                    <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
-                </DxValidator>
-              </DxSelectBox>
-            </a-col>
-            <a-col :span="12">
-              <DxSelectBox v-model:value="acYear" :items="acArrYear"  width="70px" :disabled="!infos" placeholder="년">
-                <DxValidator>
-                    <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
-                </DxValidator>
-              </DxSelectBox>
+              <span >회계업무 시설사업 / 귀속연도 선택</span>
             </a-col>
           </a-row>
-          <a-row :gutter="16" class="item-row">
-            <a-col :span="12">
-              <spa :class="!info ? 'opacity': ''"> 원천업무 귀속연도 선택 </spa>
-            </a-col>
-            <a-col :span="12">
-              <DxSelectBox v-model:value="paYear" :items="paArrYear" width="70px" :disabled="!info" placeholder="년">              
-                <DxValidator>
-                    <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
-                </DxValidator>
-              </DxSelectBox>
-            </a-col>
-          </a-row>
+          <div style="width: 266px;">
+            <a-row  class="item-row ac-settings">
+              <a-col  :span="24" >
+                <div style="display: flex;">
+                  <DxSelectBox  width="195px" :data-source="listFacilityBizTypeForUser" 
+                    v-model:value="facilityBiz"  :display-expr="'name'" :value-expr="'facilityBusinessId'" 
+                  :height="$config_styles.HeightInput"  placeholder="사업유형 선택" :disabled="!infos" style="margin-right: 2px;">
+                  <DxValidator>
+                        <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
+                    </DxValidator>
+                  </DxSelectBox>
+      
+                  <DxSelectBox v-model:value="acYear" :items="acArrYear"  width="70px" :disabled="!infos" placeholder="년" :height="$config_styles.HeightInput">
+                    <DxValidator>
+                        <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
+                    </DxValidator>
+                  </DxSelectBox>
+                </div>
+              </a-col>
+            </a-row>
+            <hr/>
+            <a-row  class="item-row  pa-settings">
+              <a-col :span="24">
+                <div style="display: flex;">
+                  <span style="width: 195px;" :class="!info ? 'opacity': ''" > 원천업무 귀속연도 선택 </span>
+                  <DxSelectBox v-model:value="paYear" :items="paArrYear" width="70px" :disabled="!info" placeholder="년" :height="$config_styles.HeightInput">              
+                    <DxValidator>
+                        <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
+                    </DxValidator>
+                  </DxSelectBox>
+                </div>
+              </a-col>
+            </a-row>
           </div>
 
-          <a-row v-if="paStateYear && acStateYear">
+          <a-row v-if="paStateYear && acStateYear" class="warning-text">
             <a-col :span="24">
               <p>시설사업을 변경하시면,</p>
               <p>- 모든 작업창이 닫히고 처음 로그인한 상태로 새로 설정됩니다.</p>
@@ -54,10 +56,10 @@
           </a-row>
       </div>
       <a-row>
-        <a-col :span="6" :offset="8">
+        <a-col :span="9" :offset="8">
           <div style="display: flex;">
-            <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="handleCancel" style="margin-right: 10px;"/>
-            <button-basic class="button-form-modal" :text="'네'" :width="140" :type="'default'"
+            <button-basic v-if="paStateYear && acStateYear" class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="handleCancel" style="margin-right: 10px;"/>
+            <button-basic class="button-form-modal" :text="paStateYear && acStateYear ? '네' : '확인'" :width="74" :type="'default'"
                             :mode="'contained'" @onClick="handleOk" />
           </div>         
         </a-col>
@@ -145,6 +147,9 @@ export default defineComponent({
     watch(result, (value) => {
       if(value && value.getMyCompanyFacilityBusinesses.length) {
         listFacilityBizTypeForUser.value = value.getMyCompanyFacilityBusinesses
+        // if just login
+        if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = listFacilityBizTypeForUser.value[0].facilityBusinessId;
+        
         store.commit('settings/setListFacilityBizTypeForUser', value.getMyCompanyFacilityBusinesses)
       }
       trigger.value = false
@@ -220,7 +225,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .popup-content{
-  padding: 0px 10px 10px 10px;
+  padding: 10px 10px 10px 10px;
+  margin: 0px 30px;
 }
 .facilityBizType-header{
   display: flex;
@@ -236,9 +242,24 @@ p {
     margin-bottom: 0em;
 }
 .item-row{
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  margin-top: 15px;
 }
 .opacity{
   opacity: 50%;  
 }
+.warning-text{
+  p{
+    font-size: 11px;
+  }
+}
+.pa-settings{
+  span{
+    margin: 5px 0px;
+  }
+}
+.dx-button-mode-contained.dx-button-default {
+  background-color:#0078D7
+}
+
 </style>

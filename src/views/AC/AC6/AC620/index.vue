@@ -381,7 +381,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const per_page = 1000;
     const column_resize = computed(() => store.state.settings.colomn_resize);
-    const acYear = computed(() => sessionStorage.getItem("acYear") || dayjs().year())
+    const acYear = computed(() => Number(sessionStorage.getItem("acYear")) || dayjs().year())
     // ref
     const isDiscard = ref(false); // verify popup discard
     const formRef = ref(); // ref of form

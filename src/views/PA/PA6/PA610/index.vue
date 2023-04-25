@@ -386,7 +386,7 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const column_resize = computed(() => store.state.settings.column_resize);
-    const paYear = computed(() => sessionStorage.getItem("paYear") || dayjs().year())
+    const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])

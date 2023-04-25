@@ -24,34 +24,24 @@ export default gql`
                 ... on EmployeeWage{
                     joinedAt
                     leavedAt
-                    totalPay
                     name
                     employeeId
                     residentId
                     status
                     foreigner
-                    nationalPensionDeduction
-                    healthInsuranceDeduction
-                    employeementInsuranceDeduction
-                    nationalPensionSupportPercent
-                    employeementInsuranceSupportPercent
-                    employeementReductionRatePercent
-                    incomeTaxMagnification
+                    __typename @skip(if: true)
+                  
                 }
                 ... on EmployeeWageDaily{
-                    retirementIncome
                     joinedAt
                     leavedAt
-                    monthlyWage
                     name
+                    employeeId
                     residentId
                     status
                     foreigner
-                    nationalPensionDeduction
-                    healthInsuranceDeduction
-                    employeementInsuranceDeduction
-                    nationalPensionSupportPercent
-                    employeementInsuranceSupportPercent
+                    __typename @skip(if: true)
+
                 }
             }
             totalDeduction
