@@ -223,8 +223,11 @@
 	display: flex;
 }
 .user-infor {
+  
+  margin-bottom: 7px;
+
 	p{
-    margin-bottom: 1px !important;
+    margin-bottom: 0px !important;
   }
   .name-infor{
     font-weight: bold;
