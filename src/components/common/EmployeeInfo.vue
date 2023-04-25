@@ -79,7 +79,6 @@ export default defineComponent({
 .main {
     display: flex;
     align-items: flex-end;
-    margin: 5px 0;
 }
 .employee-info {
   display: flex;

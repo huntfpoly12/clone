@@ -78,7 +78,8 @@
     </a-spin>
     <FormReport v-if=" modalCreate " @onCreateModal=" onCreateModal " />
     <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
-      :content=" contentDelete " okText="네. 삭제합니다" cancelText="아니요" @checkConfirm=" handleDelete " />
+      :content=" contentDelete.message " :okText=" contentDelete.yes " :canclText=" contentDelete.no "
+      @checkConfirm=" handleDelete " />
     <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
       typeHistory="pa-880" />
   </div>
@@ -210,7 +211,7 @@ export default defineComponent({
 
     //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
-    const contentDelete = Message.getCommonMessage('303').message as string
+    const contentDelete = Message.getCommonMessage('303');
     const modalDelete = ref(false);
     const cancelCompanyOutParam = reactive({
       companyId: companyId,
