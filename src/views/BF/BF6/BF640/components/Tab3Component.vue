@@ -36,6 +36,7 @@
             <DxDataGrid id="tab3-bf640" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                <DxLoadPanel :enabled="true" :showPane="true" />
                 <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" width="150"/>
                 <DxColumn caption="참고사항"  data-field="referenceInformation"/>
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
@@ -77,6 +78,7 @@ import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
 import GetStatusTable from "./GetStatusTable.vue";
+import { DxLoadPanel } from "devextreme-vue";
 export default defineComponent({
     components: {
     SaveOutlined,
@@ -90,7 +92,8 @@ export default defineComponent({
     DxScrolling,
     DxRadioGroup,
     ElectronicFilingFileProductions,
-    GetStatusTable
+    GetStatusTable,
+    DxLoadPanel
 },
     props: {
       search: {
