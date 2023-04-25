@@ -17,12 +17,6 @@
                   <div class="d-flex-center">
                     <employ-select :arrayValue="employeeArr" :required="true" v-model:valueEmploy="formState.employeeId"
                       :width="formState.employeeType == 10 ? '220px' : '280px'" />
-                    <!-- <div class="ml-5 d-flex-center">
-                      <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                      <span class="custom-waring">
-                        대상: 사원과 일용직사 원 중 퇴직금 대상자.
-                      </span>
-                    </div> -->
                   </div>
                 </a-form-item>
               </a-col>
@@ -371,8 +365,14 @@ export default defineComponent({
     })
     const formStateToCompare = ref({ ...formState });
 
-    //-----------------------Fnc COMMON ------------------------
+    // -----------------FNC COMMON--------------------------
 
+    const resetEmployeeWage = () => {
+      showData.name1 = '';
+      showData.joinedAt = '';
+      showData.residentId = '';
+      showData.leavedAt = '';
+    }
 
     //-------------------------- get Company-----------------------
 
@@ -417,7 +417,7 @@ export default defineComponent({
       }
     }, { deep: true });
 
-    // ----------------get data employeeWages--------------
+    // ----------------get data employeeWageDailies--------------
 
     const employeeWageDailies = ref([]);
     const variablesWageDailies = reactive({
@@ -431,18 +431,9 @@ export default defineComponent({
     watch(getEmployeeWageDailies, (value) => {
       if (value) {
         employeeWageDailies.value = value.getEmployeeWageDailies;
-        // employeeArr.value = value.getEmployeeWageDailies;
       }
     }, { deep: true });
 
-    // -----------------FNC COMMON--------------------------
-
-    const resetEmployeeWage = () => {
-      showData.name1 = '';
-      showData.joinedAt = '';
-      showData.residentId = '';
-      showData.leavedAt = '';
-    }
     // ----------------GET DATA WHEN employeeType == 0--------------
 
     const getEmployeeWageTrigger = ref(false);
@@ -624,5 +615,10 @@ export default defineComponent({
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 322px;
+}
+
+:deep .ant-tag {
+  width: 29px;
+  text-align: center;
 }
 </style>

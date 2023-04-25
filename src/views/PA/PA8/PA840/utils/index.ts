@@ -1,80 +1,102 @@
 import dayjs from "dayjs";
 
-export enum EmploymentStatus {
-  LeaveOfAbsence = '휴직',
-  ReturnToWork = '복직'
-}
-export enum PaymentDesire {
-  No = '희망',
-  Yes = '미희망'
-}
+export const EmploymentStatus = [
+  { id: 4, text: "휴직" },
+  { id: 5, text: "복직" },
+];
+export const PaymentDesire = [
+  { id: true, text: "희망" },
+  { id: false, text: "미희망" },
+];
 export const INITIAL_FORM_PA840 = {
-  company_name: '',
-  phone: '',
-  fax: '',
-  adding: '',
-  address: '',
-  employee_name: '',
-  residentId: '',
-  change_time: '',
-  change_amount: '',
+  employeeType: 10,
+  employeeId: null,
+  nationalPensionReport: true,
+  healthInsuranceReport: true,
+  employeementInsuranceReport: true,
+  industrialAccidentInsuranceReport: true,
+  typeOfLeave: 1,
+  startDateOfLeave: +dayjs().format("YYYYMMDD"),
+  endDateOfLeave: +dayjs().format("YYYYMMDD"),
+  pensionPaymentExceptionReasonCode: "",
+  healthInsurancePaymentExceptionReasonCode: "",
+  employeementInsuranceLeaveReasonCode: "",
+  leaveOfAbsenceRequestFileStorageId: NaN,
+
+  company_name: "",
+  phone: "",
+  fax: "",
+  adding: "",
+  address: "",
+  employee_name: "",
+  residentId: "",
+  change_time: "",
+  change_amount: "",
   boolean: true,
   radio: 2,
   radio1: 2,
-  employmentStatus: EmploymentStatus.LeaveOfAbsence,
-  money: '',
+  money: "",
   contractExpiredDate: dayjs().format("YYYY-MM-DD"),
   leaveStartDate: dayjs().format("YYYY-MM-DD"),
-  leaveOfAbsence: dayjs().format("YYYY-MM-DD"),
-  paymentDesire: PaymentDesire.Yes,
   year: Number(dayjs().year()),
-  totalRemuneration: '',
-  numberOfInstallmentPayments: '',
-  dependentsEvidenceFileStorageId: 0
-}
+  
+  paymentDesire: 1,
+  dependentsEvidenceFileStorageId: 0,
+  healthSalaryPaymentYearDuringLeaveOfAbsence: [
+    { year: dayjs().year(), totalSalary: 0 },
+  ],
+  returnDate: +dayjs().format("YYYYMMDD"),
+  salaryAfterReturn: 0,
+  pensionPaymentAtReturnMonth: false,
+  heathInstallmentPaymentCount: NaN,
+};
 const LeaveOfAbsenceDocument = [
-  { name: '휴직', id: 1 },
-  { name: '육아휴직', id: 2 },
-  { name: '휴가', id: 3 },
-  { name: '출산휴가', id: 4 },
-]
+  { name: "휴직", id: 1 },
+  { name: "육아휴직", id: 2 },
+  { name: "휴가", id: 3 },
+  { name: "출산휴가", id: 4 },
+];
 const NationalPensionPaymentExemptionCode = [
-  { name: '산전후휴가', id: 0 },
-  { name: '육아휴직', id: 1 },
-  { name: '병역의무수행', id: 2 },
-  { name: '재학', id: 3 },
-  { name: '3개월이상입원', id: 4 },
-  { name: '재해.사고등으로 기초생활곤란', id: 5 },
-  { name: '무보수 대표이사', id: 6 },
-  { name: '무급 근로자', id: 7 },
-  { name: '산재요양', id: 8 },
-  { name: '무급 노조전임자', id: 9 },
-]
+  { name: "산전후휴가,육아휴직", id: "1" },
+  { name: "병역의무수행", id: "2" },
+  { name: "재학", id: "3" },
+  { name: "3개월이상입원", id: "7" },
+  { name: "재해.사고등으로 기초생활곤란", id: "11" },
+  { name: "무보수 대표이사", id: "12" },
+  { name: "무급 근로자", id: "13" },
+  { name: "산재요양", id: "21" },
+  { name: "무급 노조전임자", id: "22" },
+];
 const ReasonForDeferringHealthInsurancePayments = [
-  { name: '휴직', id: 0 },
-  { name: '육아휴직', id: 1 },
-  { name: '질병휴직', id: 2 },
-  { name: '무급노조전입자휴직', id: 3 },
-  { name: '기타의 사유', id: 4 },
-]
+  { name: "휴직", id: "81" },
+  { name: "육아휴직", id: "82" },
+  { name: "질병휴직", id: "83" },
+  { name: "무급노조전입자휴직", id: "84" },
+  { name: "기타의 사유", id: "89" },
+];
 const TypeOfWorkersCompensationInsurance = [
-  { name: '산재보험', id: 0 },
-  { name: '고용보험', id: 1 },
-  { name: '산재 + 고용보험', id: 2 },
-]
+  { name: "산재보험", id: "1" },
+  { name: "고용보험", id: "3" },
+  { name: "산재 + 고용보험", id: "5" },
+];
 
 const EmploymentInjuryLeaveReasonCode = [
-  { name: '휴업.휴직(사업장사정)', id: 0 },
-  { name: '휴직(병가등 근로자사정)', id: 1 },
-  { name: '근로기준법에따른 보호휴가', id: 2 },
-  { name: '노조전임자', id: 3 },
-  { name: '기타', id: 4 },
-]
+  { name: "휴업.휴직(사업장사정)", id: '01' },
+  { name: "휴직(병가등 근로자사정)", id: '02' },
+  { name: "근로기준법에따른 보호휴가", id: '03' },
+  { name: "노조전임자", id: '04' },
+  { name: "기타", id: '05' },
+];
+const employeeFashionArr = [
+  { id: 10, text: "사원" },
+  { id: 20, text: "일용직사원" },
+];
 export default {
   INITIAL_FORM_PA840,
   LeaveOfAbsenceDocument,
   NationalPensionPaymentExemptionCode,
   ReasonForDeferringHealthInsurancePayments,
   TypeOfWorkersCompensationInsurance,
-  EmploymentInjuryLeaveReasonCode
-}
+  EmploymentInjuryLeaveReasonCode,
+  employeeFashionArr,
+};
