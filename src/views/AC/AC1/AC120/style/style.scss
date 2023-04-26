@@ -59,7 +59,7 @@
 
 
         #dataGridAc120 {
-            height: 520px;
+            height: calc(100vh - 480px);
             max-width: 100% !important;
             // margin: -1px;
         }
@@ -171,10 +171,16 @@
 :deep .dx-datagrid-headers .dx-row > td {
     padding: 4px 7px;
 }
-:deep .dx-datagrid-text-content {
-    white-space: pre-wrap;
-    text-align: left !important;
-}
+// :deep .dx-datagrid-text-content {
+//     white-space: pre-wrap;
+//     text-align: left !important;
+// }
 // :deep .data-grid-child .dx-datagrid-rowsview.dx-empty {
 //     height: 40px;
 // }
+:deep .redColor input.dp__input {
+    color: #ff3030;
+}
+:deep .greenColor input.dp__input {
+    color: #48b148;
+}

@@ -87,7 +87,7 @@ export default defineComponent({
               emit("update:valueInput", maxNum.value);
               return;
           }
-          if (typeof minNum.value == "number" && minNum.value && e.value <= minNum.value && e.value != null) {
+          if (typeof minNum.value == "number" && e.value <= minNum.value && e.value != null) {
               e.component.option('value', minNum.value);
               emit("update:valueInput", minNum.value);
               return;
