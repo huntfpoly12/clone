@@ -121,7 +121,7 @@
             </div>
             <a-spin :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails" size="large">
               <standard-form>
-                <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
+                <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110" v-model:focused-row-key="rowKeyfocusedGridDetail"
                   :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
                   :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                   <DxPaging :enabled="false" />
@@ -451,6 +451,7 @@ export default defineComponent({
     const isModalHistoryAccountingProcessLogs = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
     const refGridDetailAc110: any = ref()
+    let rowKeyfocusedGridDetail: any = ref(null)
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     const isRegistered = computed(() => {
@@ -820,14 +821,15 @@ export default defineComponent({
         initTransactionDetails.theOrder = 0
         initTransactionDetails.accountingDocumentId = 'create'
       }
-      // refGridDetailAc110.value.instance.addRow(initTransactionDetails)
       dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
+      nextTick(() => {
+        rowKeyfocusedGridDetail.value = initTransactionDetails.accountingDocumentId
+      })
     }
     const submitTransactionDetails = async (event: any) => {
       if (rowKeyfocused.value === null || isRegistered.value) return
       const res = await event.validationGroup.validate();
       if (!res.isValid) return
-      // await refGridDetailAc110.value.instance.saveEditData()
       dataSourceTransactionDetails.value.transactionDetails = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => {
         if (Number.isInteger(item.accountingDocumentId)) {
           return item
@@ -1000,7 +1002,8 @@ export default defineComponent({
       letterOfApprovalType,
       changeInputIncomeSpending,
       updateGoodsCount,
-      isRegistered
+      isRegistered,
+      rowKeyfocusedGridDetail
     };
   },
 });
