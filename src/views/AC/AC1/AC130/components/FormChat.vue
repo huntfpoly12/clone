@@ -101,7 +101,19 @@
           v-model="textChat" @input="changeInput" @keypress.enter.exact.prevent="submitChat"></textarea>
         <div class="form-chat-bottom-input-tool">
           <CloseOutlined @click="removeText()" />
-          <SmileOutlined style="margin: 0 5px;" />
+          <a-dropdown :visible="isVisibleEmojiForm">
+            <SmileOutlined style="margin: 0 5px;" @click.stop="isVisibleEmojiForm = !isVisibleEmojiForm"/>
+            <template #overlay>
+              <EmojiPicker 
+              theme="dark" 
+              :native="true"
+              :disable-skin-tones="true" 
+              :hide-group-names="true" 
+              :static-texts="{ placeholder: '그림 이모티콘 검색'}"
+              @select="onSelectEmoji" 
+              v-click-outside="clickOutside"/>
+            </template>
+          </a-dropdown>
           <FileAddOutlined @click="openFile" />
         </div>
         <div v-if="listFileUpload.length" class="form-chat-bottom-input-files">
@@ -145,6 +157,10 @@ import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage
 import notification from '@/utils/notification';
 import { getJwtObject  } from "@bankda/jangbuda-common";
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
+// import picker compopnent
+import EmojiPicker from 'vue3-emoji-picker'
+// import css
+import 'vue3-emoji-picker/css'
 export default defineComponent({
   props: {
     // Message only 2 people
@@ -166,7 +182,8 @@ export default defineComponent({
     SmileOutlined,
     FileAddOutlined,
     SendOutlined,
-    ModalPreviewListImage
+    ModalPreviewListImage,
+    EmojiPicker
   },
   setup(props, { emit }) {
     const token  = ref(sessionStorage.getItem("token"))
@@ -186,6 +203,7 @@ export default defineComponent({
     let listImageUpload: any = ref([])
     let isLoadingUpload = ref(false)
     let isProcessingDeleteUpdate = ref(false)
+    let isVisibleEmojiForm = ref(false)
     let payload: any = ref({
       name: userName.value,
       avatar: '',
@@ -521,6 +539,14 @@ export default defineComponent({
       isModalPreview.value = true
     }
 
+    const onSelectEmoji = (emoji: any) => {
+      textChat.value += emoji.i
+    }
+
+    const clickOutside = () => {
+      isVisibleEmojiForm.value = false
+    }
+
     return {
       userName,
       listChat,
@@ -546,7 +572,10 @@ export default defineComponent({
       previewImage,
       listImagePreview,
       isModalDeleteChat,
-      openComfirmDetele
+      openComfirmDetele,
+      onSelectEmoji,
+      clickOutside,
+      isVisibleEmojiForm
     }
   },
 })

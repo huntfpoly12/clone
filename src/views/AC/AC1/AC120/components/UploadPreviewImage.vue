@@ -108,6 +108,8 @@ export default defineComponent({
         // AddAccountingDocumentProof
         doneAddAccountingDocumentProof((e) => {
             // triggerAccountingDocumentProofs.value = true;
+            store.state.common.ac120.statusKeppRow = true;
+            store.state.common.ac120.resetDataTable++
             notification("success", Message.getMessage("COMMON", "106").message);
         });
         errorAddAccountingDocumentProof((e) => {
@@ -116,6 +118,8 @@ export default defineComponent({
 
         // RemoveAccountingDocumentProof
         doneRemoveAccountingDocumentProof((e) => {
+            store.state.common.ac120.statusKeppRow = true;
+            store.state.common.ac120.resetDataTable++
             fileList.value.splice(indexImg.value, 1);
             notification("success", Message.getMessage("COMMON", "106").message);
         });
