@@ -5,11 +5,11 @@
                 <a-row class="row-1">
                     <a-col :span="10" class="col-1">
                         <a-form-item class="red" label="통장">
-                            <select-box-common placeholder="선택" :arrSelect="arraySelectBox"
-                                v-model:valueInput="dataBankBook" :required="true" :width="200" />
+                            <select-box-common placeholder="선택" :arrSelect="store.state.common.ac120.arrayBankbooks"
+                                v-model:valueInput="store.state.common.ac120.formData.bankbookId" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
-                            <number-box-money :width="200" :required="true"
+                            <number-box-money :width="200" :required="true" :min="0"
                                 v-model:valueInput="store.state.common.ac120.formData.amount" placeholder="금액" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
@@ -25,7 +25,7 @@
                         <a-form-item class="red" label="결의일자">
                             <!-- <date-time-box width="150px" :required="true"
                                 v-model:valueDate="store.state.common.ac120.formData.resolutionDate" /> -->
-                            <date-time-box width="150px" :required="true"
+                            <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
                                 v-model:valueDate="store.state.common.ac120.transactionDetailDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
@@ -63,7 +63,8 @@ import dayjs from "dayjs";
 import filters from "@/helpers/filters";
 import { initialStateFormAdd } from '../utils/index'
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
-import { ResolutionType, LetterOfApprovalType, enum2Entries } from "@bankda/jangbuda-common";
+import { ResolutionType, LetterOfApprovalType, ResolutionClassification, FundingSource ,enum2Entries } from "@bankda/jangbuda-common";
+import DateTimeBoxCustom from '@/components/common/DateTimeBoxCustom.vue';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -72,6 +73,7 @@ export default defineComponent({
         },
     },
     components: {
+        DateTimeBoxCustom
     },
 
     setup(props, { emit }) {
@@ -80,7 +82,7 @@ export default defineComponent({
         const countKey = ref<number>(0)
 
         const refFormAddAC120 = ref()
-        const dataBankBook = ref({})
+        // const dataBankBook = ref(null)
         const statusRemoveRow = ref<boolean>(true)
         const dataQueryGetBankBooks = ref({
             companyId: companyId,
@@ -88,8 +90,11 @@ export default defineComponent({
         })
         let dataStateFormAdd = {};
         const statusShowLetterOfApprovalType = ref(false)
-        const arraySelectBox = ref([]);
+        // const arraySelectBox = ref([]);
         const triggerBankbooks = ref<boolean>(true);
+
+        const startDate = ref(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate());
+        const finishDate = ref(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).endOf('month').toDate());
 
         // =================== GRAPHQL ===================
         // query getBankbooks
@@ -102,12 +107,14 @@ export default defineComponent({
         // 1. getBankbooks
         watch(resBankbooks, (value) => {
             triggerBankbooks.value = false
-            arraySelectBox.value = []
+            // arraySelectBox.value = []
             if (value.getBankbooks) {
-                arraySelectBox.value = value.getBankbooks.map((value: any) => {
+                store.state.common.ac120.arrayBankbooks = value.getBankbooks.map((value: any) => {
                     return {
                         'label': value.bankbookNickname,
-                        'value': value
+                        'value': value.bankbookId,
+                        'bankbookNumber': value.bankbookNumber,
+                        'bankbookNickname': value.bankbookNickname
                     }
                 })
             }
@@ -129,14 +136,16 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.ac120.monthSelected, (newValue, old) => {
+            startDate.value = dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate();
+            finishDate.value = dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).endOf('month').toDate();
             store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs().set('year', acYear.value).set('month', newValue - 1).set('date', 1).toDate())
         })
 
-        watch(() => dataBankBook.value, (newValue: any, old) => {
-            store.state.common.ac120.formData.bankbookId = newValue?.bankbookId
-            store.state.common.ac120.formData.bankbookNickname = newValue?.bankbookNickname
-            store.state.common.ac120.formData.bankbookNumber = newValue?.bankbookNumber
-        }, { deep: true })
+        // watch(() => dataBankBook.value, (newValue: any, old) => {
+        //     store.state.common.ac120.formData.bankbookId = newValue?.bankbookId
+        //     // store.state.common.ac120.formData.bankbook.bankbookNickname = newValue?.bankbookNickname
+        //     // store.state.common.ac120.formData.bankbook.bankbookNumber = newValue?.bankbookNumber
+        // }, { deep: true })
 
         // ================ FUNCTION ============================================
         const submit = () => {
@@ -165,11 +174,11 @@ export default defineComponent({
 
         };
         const changeRadioResolutionType = (value: Number) => {
-            if (value == 11 || value == 21) {
-                store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
-            } else if (value == 12 || value == 22) {
-                store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
-            }
+            // if (value == 11 || value == 21) {
+            //     store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+            // } else if (value == 12 || value == 22) {
+            //     store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+            // }
             if (value == 21 || value == 22) {
                 statusShowLetterOfApprovalType.value = true
                 store.state.common.ac120.formData.letterOfApprovalType = 1
@@ -194,16 +203,29 @@ export default defineComponent({
             }));
             return item;
         });
+        store.state.common.ac120.arrResolutionClassification = computed(() => {
+            let item: any = enum2Entries(ResolutionClassification).map((value) => ({
+                id: value[1],
+                text: value[0],
+            }));
+            return item;
+        });
+        store.state.common.ac120.arrFundingSource = computed(() => {
+            let item: any = enum2Entries(FundingSource).map((value) => ({
+                id: value[1],
+                text: value[0],
+            }));
+            return item;
+        });
         return {
             refFormAddAC120,
             statusShowLetterOfApprovalType,
             submit,
             cancel,
-            arraySelectBox,
-            dataBankBook,
             changeRadioResolutionType,
             countKey,
             store,
+            startDate, finishDate,
         }
     },
 })

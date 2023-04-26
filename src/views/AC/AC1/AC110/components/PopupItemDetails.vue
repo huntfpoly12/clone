@@ -14,39 +14,41 @@
             <a-tooltip placement="top">
               <template #title>신규</template>
               <div>
-                <DxButton icon="plus" @click="addNewRow" />
+                <DxButton icon="plus" @click="addNewRow" :disabled="disabled"/>
               </div>
             </a-tooltip>
           </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" :readOnly="disabled" />
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
             <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
-              :required="true" />
+              :required="true" :readOnly="disabled" />
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" :readOnly="disabled"/>
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
-            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26" />
+            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26" @changeInput="changeInput('quantity', data.rowIndex)" :readOnly="disabled" />
           </template>
           <DxColumn caption="단가" cell-template="unitPrice" />
           <template #unitPrice="{ data }">
-            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26" />
+            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26" @changeInput="changeInput('unitPrice', data.rowIndex)" :readOnly="disabled" />
           </template>
-          <DxColumn caption="금액" cell-template="amount" />
+          <DxColumn caption="금액" cell-template="amount"/>
           <template #amount="{ data }">
-            <number-box-money v-model:valueInput="data.data.amount" :required="true" height="26" @changeInput="changeInput"/>
+            <number-box-money v-model:valueInput="data.data.amount" 
+            :value="data.data.quantity && data.data.unitPrice ? data.data.quantity * data.data.unitPrice : 0" 
+            height="26" :readOnly="disabled"  :required="true" @changeInput="changeInput('amount', data.rowIndex)"/>
           </template>
           <DxColumn caption="비고" cell-template="remark" />
           <template #remark="{ data }">
-            <default-text-box v-model:valueInput="data.data.remark" />
+            <default-text-box v-model:valueInput="data.data.remark" :readOnly="disabled"/>
           </template>
           <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
           <template #action="{ data }">
@@ -61,7 +63,7 @@
           </DxSummary>
         </DxDataGrid>
         <div class="ac-110-popup-detail-btn">
-          <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)" />
+          <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)" :disabled="disabled" />
         </div>
       </standard-form>
     </a-spin>
@@ -102,6 +104,10 @@ export default defineComponent({
     payload: {
       type: Object,
       default: () => { }
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     }
   },
   components: {
@@ -206,10 +212,24 @@ export default defineComponent({
         isModalConfirmSaveChange.value = false
       }
     }
-    const totalValue = () => {
+    const totalValue = (key: string, index: number) => {
       let total = 0;
-      dataSource.value.statementOfGoodsItems.forEach((item: any) => {
-        total += item.amount
+      dataSource.value.statementOfGoodsItems.forEach((item: any, i: number) => {
+        if(index === i) {
+          if(key === 'amount') {
+            if(item.amount){
+              total += item.amount
+            }
+          }else{
+            if(item.quantity && item.unitPrice){
+              total += item.quantity * item.unitPrice
+            }
+          }
+        }else {
+          if(item.amount){
+            total += item.amount
+          }
+        }
       });
       return `금액합계: ${formatNumber(total)}`
     }
@@ -217,16 +237,31 @@ export default defineComponent({
       const spending = dataSource.value.spending || 0
       return `지출액: ${formatNumber(spending)}`
     }
-    const totalDifference = () => {
+    const totalDifference = (key: string, index: number) => {
       let total = 0;
       const spending = dataSource.value.spending || 0
-      dataSource.value.statementOfGoodsItems.forEach((item: any) => {
-        total += item.amount
+      dataSource.value.statementOfGoodsItems.forEach((item: any, i: number) => {
+        if(index === i) {
+          if(key === 'amount') {
+            if(item.amount){
+              total += item.amount
+            }
+          }else{
+            if(item.quantity && item.unitPrice){
+              total += item.quantity * item.unitPrice
+            }
+          }
+        }else {
+          if(item.amount){
+            total += item.amount
+          }
+        }
       });
       const result = spending - total
       return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
+      if(props.disabled) return
       itemDelete.value = data
       isModalDelete.value = true
     }
@@ -289,14 +324,14 @@ export default defineComponent({
         return 0
       }
     }
-    const changeInput = () => {
+    const changeInput = (key: string, index: number) => {
       const elTotalValue: any = document.querySelector('.refPopupDetail110TotalValue')
       const elTotalDifference = document.querySelector('.refPopupDetail110TotalDifference')
       if(elTotalValue){
-        elTotalValue.textContent = totalValue()
+        elTotalValue.textContent = totalValue(key, index)
       }
       if(elTotalDifference){
-        elTotalDifference.textContent = totalDifference()
+        elTotalDifference.textContent = totalDifference(key, index)
       }
     }
     return {

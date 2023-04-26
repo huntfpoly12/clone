@@ -9,7 +9,7 @@
                 <template #title>
                     <div v-if="convertBirthDayKorea(idCardNumber)" style="color: white;">{{ convertBirthDayKorea(idCardNumber) }}</div>
                 </template>
-                <div class="text-center" style="padding-top: 4px; height: 25px;">
+                <div class="text-center">
                     {{ name }}
                 </div>
             </a-tooltip>
@@ -79,17 +79,19 @@ export default defineComponent({
 .main {
     display: flex;
     align-items: flex-end;
-  .employee-info {
-    display: flex;
-    align-items: flex-start;
-    gap: 5px;
-  }
+}
+.employee-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
 }
 .tag-status {
     background-color: #C00000;
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
+    height: 26px;
 }
 
 .tag-foreigner {
@@ -97,6 +99,8 @@ export default defineComponent({
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
+    height: 26px;
+
 }
 
 .tag-forDailyUse {
@@ -105,7 +109,7 @@ export default defineComponent({
     border: 1px solid rgb(164, 164, 164);
     border-radius: 5px;
     padding: 3px 4px;
-    height: 25px;
+    height: 26px;
 }
 
 .display-none {

@@ -70,9 +70,9 @@ export const INITIAL_STATE = {
   hasIncomeProcessRetirements: false,
   selectMonthColumn: {
     imputedYear: dayjs().year(),
-    imputedMonth: dayjs().month() ,
+    imputedMonth: dayjs().month() + 1,
     paymentYear: dayjs().year(),
-    paymentMonth: dayjs().month() ,
+    paymentMonth: dayjs().month() + 1,
   },
   paymentDate: 1,
   isDisableBtnTab2: true,

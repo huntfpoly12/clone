@@ -6,59 +6,59 @@
     <div ref="formTimeline" class="form-chat-timeline">
       <div v-for="(items, index) in listChat" :key="index">
         <div class="form-chat-timeline-common" :class="{
-          'form-chat-timeline-right': items.name === userName,
-          'form-chat-timeline-left': items.name !== userName,
-          'mt-1': index > 0 && listChat[index - 1].name === items.name,
-          'mt-10': index > 0 && listChat[index - 1].name !== items.name,
+          'form-chat-timeline-right': items.userId === userId,
+          'form-chat-timeline-left': items.userId !== userId,
+          'mt-1': index > 0 && listChat[index - 1].userId === items.userId,
+          'mt-10': index > 0 && listChat[index - 1].userId !== items.userId,
         }">
-          <div class="form-chat-timeline-avatar" :class="{ 'hidden-avatar': items.name === userName }">
-            <!-- <img :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }" :src="items.avatar"
+          <div class="form-chat-timeline-avatar" :class="{ 'hidden-avatar': items.userId === userId }">
+            <!-- <img :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.userId, }" :src="items.avatar"
               alt=""> -->
-            <a-badge :dot="true" :offset="[-5, 33]" :status="items.name === userName ? 'success' : 'error'"
-              :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name }">
+            <a-badge :dot="true" :offset="[-5, 33]" :status="items.userId === userId ? 'success' : 'error'"
+              :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].userId === items.userId }">
               <a-avatar shape="circle" size="large"
-                :style="`background-color: ${items.name === userName ? '#1890ff' : '#f56a00'}`">{{ items.name
+                :style="`background-color: ${items.userId === userId ? '#1890ff' : '#f56a00'}`">{{ items.name
                 }}</a-avatar>
             </a-badge>
           </div>
 
 
           <div class="form-chat-timeline-content" :class="{
-            'borderRadiusleft10': (index === 0 || listChat[index - 1]?.name !== items.name) && items.name !== userName,
-            'borderRadiusRight10': (index === 0 || listChat[index - 1]?.name !== items.name) && items.name === userName,
-            'form-chat-timeline-content-right': items.name === userName,
+            'borderRadiusleft10': (index === 0 || listChat[index - 1]?.userId !== items.userId) && items.userId !== userId,
+            'borderRadiusRight10': (index === 0 || listChat[index - 1]?.userId !== items.userId) && items.userId === userId,
+            'form-chat-timeline-content-right': items.userId === userId,
             'borderEdit': itemEditComment?.key === items.key
           }">
             <div class="form-chat-timeline-content-info">
               <div class="form-chat-timeline-content-info-user">
                 <span class="form-chat-timeline-content-info-user-status"
-                  :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name }">{{ items.status
+                  :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].userId === items.userId }">{{ items.status
                   }}</span>
                 <div class="form-chat-timeline-content-info-user-name"
-                  :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name }">{{ items.name }}
+                  :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].userId === items.userId }">{{ items.name }}
                 </div>
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
             <div class="form-chat-timeline-content-files">
               <a-spin v-for="(file, indexFile) in items.files" :spinning="isLoadingUpload && !!file?.isUploading" size="small" :key="file.url">
-                <img class="form-chat-timeline-content-files-items" :src="file.url" alt=""> 
+                <img class="form-chat-timeline-content-files-items" :src="file.url" alt="" @click="previewImage(items.files, indexFile)"> 
               </a-spin>
             </div>
             <div class="form-chat-timeline-content-text" v-html="items.text"></div>
           </div>
 
 
-          <div class="form-chat-timeline-common-menu">
-            <a-dropdown :placement="items.name === userName ? 'bottomRight' : 'bottomLeft'" :trigger="['click']">
+          <div v-if="items.userId === userId" class="form-chat-timeline-common-menu">
+            <a-dropdown :placement="items.userId === userId ? 'bottomRight' : 'bottomLeft'" :trigger="['click']">
               <EllipsisOutlined :style="{ fontSize: '16px' }" />
               <template #overlay>
                 <a-menu>
-                  <a-menu-item v-if="items.name === userName" @click="editComment(items)">
+                  <a-menu-item @click="editComment(items)">
                     <EditOutlined />
                     수정
                   </a-menu-item>
-                  <a-menu-item @click="deleteComment(items)">
+                  <a-menu-item @click="openComfirmDetele(items)">
                     <DeleteOutlined />
                     삭제
                   </a-menu-item>
@@ -101,7 +101,19 @@
           v-model="textChat" @input="changeInput" @keypress.enter.exact.prevent="submitChat"></textarea>
         <div class="form-chat-bottom-input-tool">
           <CloseOutlined @click="removeText()" />
-          <SmileOutlined style="margin: 0 5px;" />
+          <a-dropdown :visible="isVisibleEmojiForm">
+            <SmileOutlined style="margin: 0 5px;" @click.stop="isVisibleEmojiForm = !isVisibleEmojiForm"/>
+            <template #overlay>
+              <EmojiPicker 
+              theme="dark" 
+              :native="true"
+              :disable-skin-tones="true" 
+              :hide-group-names="true" 
+              :static-texts="{ placeholder: '그림 이모티콘 검색'}"
+              @select="onSelectEmoji" 
+              v-click-outside="clickOutside"/>
+            </template>
+          </a-dropdown>
           <FileAddOutlined @click="openFile" />
         </div>
         <div v-if="listFileUpload.length" class="form-chat-bottom-input-files">
@@ -117,6 +129,9 @@
     </div>
     <input v-show="false" ref="inputFile" type="file" accept="image/png, image/jpeg, image/jpg image/gif"
       @change="uploadPreviewFile" />
+    <ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false" :listImage="listImagePreview" />
+    <PopupMessage :modalStatus="isModalDeleteChat" @closePopup="isModalDeleteChat = false" :typeModal="'confirm'" 
+      title="Confirm detele" content="" :okText="'네. 삭제합니다'" :cancelText="'아니요'" @checkConfirm="handleConfirmDelete" />
   </div>
 </template>
 
@@ -140,6 +155,12 @@ import {
 } from "firebase/database";
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import notification from '@/utils/notification';
+import { getJwtObject  } from "@bankda/jangbuda-common";
+import ModalPreviewListImage from './ModalPreviewListImage.vue'
+// import picker compopnent
+import EmojiPicker from 'vue3-emoji-picker'
+// import css
+import 'vue3-emoji-picker/css'
 export default defineComponent({
   props: {
     // Message only 2 people
@@ -160,13 +181,20 @@ export default defineComponent({
     CloseOutlined,
     SmileOutlined,
     FileAddOutlined,
-    SendOutlined
+    SendOutlined,
+    ModalPreviewListImage,
+    EmojiPicker
   },
   setup(props, { emit }) {
+    const token  = ref(sessionStorage.getItem("token"))
+    let jwtObject = getJwtObject(token.value!);
+    const userName = ref(sessionStorage.getItem("name"));
+    const userId = jwtObject.userId
     let firstLoadChat = ref(true)
     const inputFile = ref<any>()
-    const userName = ref(sessionStorage.getItem("username"));
     let textChat = ref('')
+    let isModalPreview = ref(false)
+    let isModalDeleteChat = ref(false)
     const formTimeline: any = ref()
     const inputChat: any = ref()
     let itemEditComment = ref<any>(null)
@@ -175,6 +203,7 @@ export default defineComponent({
     let listImageUpload: any = ref([])
     let isLoadingUpload = ref(false)
     let isProcessingDeleteUpdate = ref(false)
+    let isVisibleEmojiForm = ref(false)
     let payload: any = ref({
       name: userName.value,
       avatar: '',
@@ -182,11 +211,15 @@ export default defineComponent({
       files: [],
       createdAt: new Date().getTime(),
       status: '일반',
-      uid: userName.value
+      userId: jwtObject.userId
     })
     const objectChatUpFile: any = ref(null)
     const listChat = ref<any>([])
-
+    let listImagePreview: any = ref({
+      index: 0,
+      files: [],
+    })
+    let itemDetele: any = ref()
     const channelChatSubrights = () => {
       if (!!props.idUserTo) {
         const idUser = userName.value?.toString() || ''
@@ -226,6 +259,12 @@ export default defineComponent({
           
           onChildAdded(query(chatListRef.value, limitToLast(1)), (data) => {
             if(!firstLoadChat.value) {
+              if(isLoadingUpload.value){
+                if(data.val().userId === userId && data.val().createdAt === objectChatUpFile.value.createdAt){
+                  objectChatUpFile.value = null
+                  isLoadingUpload.value = false
+                }
+              }
               listChat.value.push({
                 ...data.val(),
                 key: data.key
@@ -278,7 +317,7 @@ export default defineComponent({
             ...payload.value,
             text: textChat.value,
             files: listFileUploadHandleLoading.value.map((file:any) => ({...file, isUploading: true})),
-            cssTop: listChat.value[listChat.value.length-1].name === userName.value ? false : true,
+            cssTop: listChat.value[listChat.value.length-1]?.userId === userId ? false : true,
           }
         }else {
           const index = listChat.value.findIndex((item: any) => item.key === itemEditComment.value.key)
@@ -384,16 +423,27 @@ export default defineComponent({
         inputChat.value.focus()
       })
     }
-    const deleteComment = (item: any) => {
-      isProcessingDeleteUpdate.value = true
-      const updates: any = {};
-      updates[`/${item.key}`] = {...item, isDelete: true}
-      update(chatListRef.value, updates).then(() => {
-      }).catch(() => {
-        console.log('eeeeeeeee');
-      }).finally(() => {
-        isProcessingDeleteUpdate.value = false
-      })
+
+    const openComfirmDetele = (item: any) => {
+      itemDetele.value = {...item}
+      isModalDeleteChat.value = true
+    }
+
+    const handleConfirmDelete = (status: boolean) => {
+      if(status) {
+        isProcessingDeleteUpdate.value = true
+        const updates: any = {};
+        updates[`/${itemDetele.value.key}`] = {...itemDetele.value, isDelete: true}
+        update(chatListRef.value, updates).then(() => {
+        }).catch(() => {
+          console.log('eeeeeeeee');
+        }).finally(() => {
+          itemDetele.value = null
+          isProcessingDeleteUpdate.value = false
+        })
+      }else{
+        isModalDeleteChat.value = false
+      }
     }
     const removeText = () => {
       itemEditComment.value = null
@@ -482,6 +532,21 @@ export default defineComponent({
     const removeFile = (index: number) => {
       listFileUpload.value.splice(index, 1)
     }
+
+    const previewImage = (files: any, index: number) => {
+      listImagePreview.value.index = index
+      listImagePreview.value.files = files.map((file: any) => file.url)
+      isModalPreview.value = true
+    }
+
+    const onSelectEmoji = (emoji: any) => {
+      textChat.value += emoji.i
+    }
+
+    const clickOutside = () => {
+      isVisibleEmojiForm.value = false
+    }
+
     return {
       userName,
       listChat,
@@ -491,7 +556,7 @@ export default defineComponent({
       formTimeline,
       inputChat,
       editComment,
-      deleteComment,
+      handleConfirmDelete,
       itemEditComment,
       removeText,
       formatDate,
@@ -501,7 +566,16 @@ export default defineComponent({
       listFileUpload,
       removeFile,
       isLoadingUpload,
-      objectChatUpFile
+      objectChatUpFile,
+      userId,
+      isModalPreview,
+      previewImage,
+      listImagePreview,
+      isModalDeleteChat,
+      openComfirmDetele,
+      onSelectEmoji,
+      clickOutside,
+      isVisibleEmojiForm
     }
   },
 })
@@ -620,6 +694,10 @@ export default defineComponent({
           object-fit: cover;
           display: block;
           padding: 5px;
+          cursor: pointer;
+          &:hover{
+            opacity: .8;
+          }
         }
       }
       &-info {
@@ -714,7 +792,7 @@ export default defineComponent({
         width: 100%;
         top: 0;
         transform: translateY(-100%);
-        background-color: #EBF1DE;
+        background-color: #fff;
         padding: 5px;
         border-radius: 5px 5px 0 0;
         display: flex;

@@ -36,6 +36,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { useStore } from 'vuex';
+import { accountSubject } from "@/helpers/commonFunction"
 export default {
     props: {
         required: {
@@ -91,18 +92,18 @@ export default {
         }
         const resetSelect = ref(0)
         let value: any = ref(null);
-        const arrAllCallApi = computed(() => store.getters['settings/accountSubjects'])
+        // const arrAllCallApi = accountSubject
         let accountSubjects: any = ref([])
         onMounted(() => {
             fillData()
         });
-        watch(arrAllCallApi, (newValue) => {
+        watch(accountSubject, (newValue) => {
             fillData()
         });
         const fillData = () => {
             accountSubjects.value = []
-            if (arrAllCallApi.value.length) {
-                arrAllCallApi.value?.map((row: any) => {
+            if (accountSubject.length) {
+                accountSubject?.map((row: any) => {
                     if (props.useStartDate && !props.useFinishDate) {
                         if (row.useStartDate >= props.useStartDate) {
                             fillRow(row)
@@ -158,7 +159,7 @@ export default {
             e.component._popup.option('width', props.width);
         }
         return {
-            messageRequired, arrAllCallApi, resetSelect, onOpened,
+            messageRequired, resetSelect, onOpened,
             accountSubjects,
             updateValue,
             value,

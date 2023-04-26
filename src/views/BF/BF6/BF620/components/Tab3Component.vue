@@ -58,7 +58,7 @@
         <template #afterDeadline=" { data }: any ">
           <div style="text-align: center">
             <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
-              @click=" onShow(data.data) " />
+              @click=" onShow(data.data.electronicFilingId) " />
           </div>
         </template>
         <DxSummary>

@@ -1,25 +1,27 @@
 <template>
-  <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
-    <div class="form-upload-ac110" >
-      <div ref="elementUpload" class="upload-pewview-img">
-        <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
-          @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
-          accept="image/png, image/jpeg, image/jpg image/gif">
-          <div v-if="fileList.length <= limit">
-            <div class="ant-btn-upload">
-              <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
-              <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="">
-              <p class="ant-btn-upload-text">또는</p>
-              <button class="ant-btn-upload-button">파일 선택</button>
+  <a-config-provider :locale="locale">
+    <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
+      <div class="form-upload-ac110" >
+        <div ref="elementUpload" class="upload-pewview-img">
+          <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof || disabled" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
+            @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
+            accept="image/png, image/jpeg, image/jpg image/gif">
+            <div v-if="fileList.length <= limit">
+              <div class="ant-btn-upload">
+                <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
+                <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="">
+                <p class="ant-btn-upload-text">또는</p>
+                <button class="ant-btn-upload-button">파일 선택</button>
+              </div>
             </div>
-          </div>
-        </a-upload>
-        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-          <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
-        </a-modal>
+          </a-upload>
+          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+            <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
+          </a-modal>
+        </div>
       </div>
-    </div>
-  </a-spin>
+    </a-spin>
+  </a-config-provider>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from "vue";
@@ -29,6 +31,7 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
 import Repository from "@/repositories";
+import koKR from 'ant-design-vue/es/locale/ko_KR';
 const uploadRepository = Repository.get("upload");
 interface FileItem {
   uid: string;
@@ -71,9 +74,14 @@ export default defineComponent({
     payLoadProofs: {
       type: Object,
       default: () => { }
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit }) {
+    const locale = koKR
     let fileList = ref<any[]>([])
     let listFileStorageId = ref<any[]>([])
     let isFailUpload = ref(false)
@@ -168,21 +176,6 @@ export default defineComponent({
       deep: true,
     })
 
-    watch(() => fileList.value, (value) => {
-      nextTick(() => {
-        if (value.length) {
-          const elementsIconPreview = elementUpload.value.querySelectorAll("a[title='Preview file']")
-          const elementsIconDelete = elementUpload.value.querySelectorAll("button[title='Remove file']")
-          elementsIconPreview.forEach((el: any) => {
-            el.setAttribute("title", "원본 보기");
-          })
-          elementsIconDelete.forEach((el: any) => {
-            el.setAttribute("title", "삭제");
-          })
-        }
-      })
-    }, { deep: true });
-
     const getBase64 = (file: File) => {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -249,6 +242,7 @@ export default defineComponent({
       })
     }
     const remove = (e: any) => {
+      if(e.status === 'error') return true
       const index = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
       indexImgRemove.value = index
       if (!listFileStorageId.value[index].fileStorageId) return false
@@ -259,6 +253,7 @@ export default defineComponent({
       return false
     }
     return {
+      locale,
       handlePreview,
       beforeUpload,
       previewVisible,
@@ -282,7 +277,7 @@ export default defineComponent({
   padding: 15px;
   .ant-upload-list  {
     display: grid !important;
-    grid-template-columns: auto auto auto !important;
+    grid-template-columns: auto auto !important;
     gap: 8px;
     &::before {
       display: none;
@@ -335,16 +330,5 @@ export default defineComponent({
 .ac110-disable-form-upload {
   opacity: .7;
   pointer-events: none;
-}
-</style>
-<style scoped>
-:deep .ant-upload-list-item-uploading .ant-upload-list-item-thumbnail::before {
-  position: absolute;
-  content: "업로딩";
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #fafafa;
 }
 </style>

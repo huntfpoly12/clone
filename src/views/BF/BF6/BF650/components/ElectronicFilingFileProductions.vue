@@ -34,6 +34,7 @@ import { useStore } from 'vuex';
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import {convertResidentId} from "@/helpers/commonFunction";
+import dayjs from "dayjs";
 export default defineComponent({
   methods: {convertResidentId},
     props: {
@@ -49,7 +50,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalYear = computed(() => dayjs().year());
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         let originData = ref({
