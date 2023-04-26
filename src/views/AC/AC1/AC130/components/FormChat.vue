@@ -297,6 +297,7 @@ export default defineComponent({
     };
 
     const submitChat = () => {
+      isVisibleEmojiForm.value = false
       if(isLoadingUpload.value || isProcessingDeleteUpdate.value) return
       if (!textChat.value.trim() && !listFileUpload.value.length) return
       payload.value = {
