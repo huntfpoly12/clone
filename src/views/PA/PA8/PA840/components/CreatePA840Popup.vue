@@ -58,7 +58,7 @@
         </a-col>
         <a-col :span="col.right">
           <DxField label="납부재개 예정일" class="field-custom">
-            <date-time-box dateFormat="YYYY-MM-DD" v-model="formData.returnDate" width="200px"
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model="formData.returnDate" width="200px"
               :disabled="isStatusLeaveOfAbsence" />
           </DxField>
         </a-col>
@@ -99,8 +99,8 @@
         <!-- row 5 -->
         <a-col :span="col.left">
           <DxField label="휴직시작일">
-            <date-time-box dateFormat="YYYY-MM-DD" v-model="formData.startDateOfLeave" width="200px"
-              :disabled="!isStatusLeaveOfAbsence" />
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.startDateOfLeave" width="200px"
+              :disabled="!isStatusLeaveOfAbsence" :teleport = "true"/>
           </DxField>
         </a-col>
         <a-col :span="col.right">
@@ -110,11 +110,11 @@
         <!-- row 6 -->
         <a-col :span="col.left">
           <DxField label="휴직종료(예정)">
-            <date-time-box dateFormat="YYYY-MM-DD" v-model="formData.endDateOfLeave" width="200px"
-              :disabled="!isStatusLeaveOfAbsence" />
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.endDateOfLeave" width="200px"
+              :disabled="!isStatusLeaveOfAbsence" :teleport = "true" />
           </DxField>
         </a-col>
-        <a-col :span="col.right">
+        <a-col :span="col.right" class="pl-50">
           <DxField label="연도" class="field-custom">
             <year-picker-box-custom v-model:valueDate="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
               color="#a6a6a6" :disabled="isStatusLeaveOfAbsence" />
@@ -156,7 +156,7 @@
               name="type" placeholder="선택" width="200px" :disabled=" !isStatusLeaveOfAbsence " /> -->
           </DxField>
         </a-col>
-        <a-col :span=" col.right ">
+        <a-col :span=" col.right " class="pl-50">
           <DxField label="보수총액" class="field-custom">
             <number-box-money width="200px"
               v-model:valueInput=" formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].totalSalary " placeholder="원"
@@ -199,7 +199,7 @@
               name="type" placeholder="선택" width="200px" :disabled="!isStatusLeaveOfAbsence" /> -->
           </DxField>
         </a-col>
-        <a-col :span=" col.right ">
+        <a-col :span=" col.right " class="pl-50">
           <DxField label="분할납부횟수" class="field-custom">
 
             <number-box v-model:valueInput=" formData.heathInstallmentPaymentCount " placeholder="건" width="200px"
@@ -505,8 +505,8 @@ export default defineComponent({
             employeementInsuranceLeaveReasonCode: formData.value.employeementInsuranceLeaveReasonCode,
           }
           makeDataClean(dataType1, ['']);
-          createLeaveOfAbsenceMutate({ companyId: companyId, imputedYear: globalYear.value, input: dataType1 });
-          console.log(dataType1)
+          console.log(`output->dataType1`,dataType1);
+          // createLeaveOfAbsenceMutate({ companyId: companyId, imputedYear: globalYear.value, input: dataType1 });
         } else {
           let dataType2 = {
             employeeType: formData.value.employeeType,

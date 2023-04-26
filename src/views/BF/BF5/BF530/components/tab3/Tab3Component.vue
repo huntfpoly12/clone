@@ -216,9 +216,9 @@ export default defineComponent({
     const selectionChanged = (event: any) => {
       // let deselectRowKeys: any = [];
       let { currentSelectedRowKeys, selectedRowsData } = event;
-      console.log(`output->event`, event);
-      console.log(`output->event`, tab1Bf520Ref.value.instance);
-      console.log(`output->currentSelectedRowKeys`, currentSelectedRowKeys[0])
+      // console.log(`output->event`, event);
+      // console.log(`output->event`, tab1Bf520Ref.value.instance);
+      // console.log(`output->currentSelectedRowKeys`, currentSelectedRowKeys[0])
       tab1Bf520Ref.value.instance.editRow(currentSelectedRowKeys[0] - 1);
       // selectedRowsData.component.editRow(selectedRowsData.currentSelectedRowKeys);
       // event.selectedRowsData.forEach((item: any) => {

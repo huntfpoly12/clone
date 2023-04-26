@@ -98,7 +98,7 @@
           <p>급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
         </span>
       </div>
-      <a-row>
+      <a-row gutter="5">
         <a-col style="flex: 1 1 28%">
           <div class="header-text-2">요약</div>
           <div class="summary">
@@ -404,7 +404,6 @@ export default defineComponent({
     watch(resultGetEmployeeWage, async (value) => {
       if (value) {
         let data = value.getEmployeeWage;
-        console.log(`output->value`, data)
         store.state.common.presidentEditPA120 = data.president;
         let editRowData: any = {};
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;

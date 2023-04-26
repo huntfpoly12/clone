@@ -297,6 +297,7 @@ export default defineComponent({
     };
 
     const submitChat = () => {
+      isVisibleEmojiForm.value = false
       if(isLoadingUpload.value || isProcessingDeleteUpdate.value) return
       if (!textChat.value.trim() && !listFileUpload.value.length) return
       payload.value = {
@@ -541,6 +542,7 @@ export default defineComponent({
 
     const onSelectEmoji = (emoji: any) => {
       textChat.value += emoji.i
+      changeInput(inputChat.value)
     }
 
     const clickOutside = () => {

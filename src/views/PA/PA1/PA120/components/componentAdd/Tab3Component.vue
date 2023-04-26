@@ -289,7 +289,7 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const modalAddNewDependent = ref<boolean>(false);
     const modalEditStatus = ref<boolean>(false);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
 
     const originDataDetail = reactive({
       companyId: companyId,

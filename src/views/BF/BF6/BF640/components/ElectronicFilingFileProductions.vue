@@ -43,6 +43,7 @@ import {
   DxSummary,
   DxTotalItem,
 } from "devextreme-vue/data-grid";
+import dayjs from "dayjs";
 export default defineComponent({
   props: {
     modalStatus: Boolean,
@@ -61,7 +62,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = +dayjs().format('YYYY');
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref([]);
