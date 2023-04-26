@@ -151,21 +151,21 @@
                     </div>
                   </template>
                   <template #button-reset>
-                    <button-basic text="초기화" type="default" :mode="'contained'" :disabled="isRegistered"
+                    <button-basic text="초기화" type="default" :mode="'contained'" :disabled="isRegistered || !rowKeyfocused"
                       @onClick="handleInitializeTransactionDetails" />
                   </template>
                   <template #button-add>
                     <a-tooltip placement="top">
                       <template #title>신규</template>
                       <div>
-                        <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" :disabled="isRegistered" />
+                        <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" :disabled="isRegistered || !rowKeyfocused" />
                       </div>
                     </a-tooltip>
                   </template>
                   <template #button-save> 
                     <a-tooltip placement="top">
                       <template #title>신규</template>
-                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)" :disabled="isRegistered">
+                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)" :disabled="isRegistered || !rowKeyfocused">
                         <SaveFilled style="font-size: 19px;" />
                       </DxButton>
                     </a-tooltip>
@@ -642,6 +642,7 @@ export default defineComponent({
       event.cancel = true
     }
     const onRowClick = (event: any) => {
+      if(!event?.data) return
       const item = event.data
       if(rowKeyfocused.value === item.bankbookDetailId) return
       rowKeyfocused.value = item.bankbookDetailId
