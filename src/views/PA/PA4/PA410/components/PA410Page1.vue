@@ -86,6 +86,7 @@ export default defineComponent({
 
         .button-next{
             margin: 0px 655px;
+            width: 60px;
         }
 
     }
