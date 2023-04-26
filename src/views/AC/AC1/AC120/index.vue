@@ -32,7 +32,7 @@
                         <template #title>전표 신규 건별 등록</template>
                         <span>
                             <DxButton class="ml-4 custom-button" type="default" :height="$config_styles.HeightInput"
-                                @click="actionPopupSlipRegistration">
+                                @click="actionOpenModalAdd" :disabled="store.state.common.ac120.statusFormAdd">
                                 <div class="d-flex-center">
                                     <PlusOutlined style="font-size: 14px" />
                                     <span class="pl-5">전표 건별 등록</span>
@@ -53,7 +53,7 @@
                         </span>
                     </a-tooltip>
                     <DxButton class="ml-4 mr-4 custom-button-checkbox custom-button" type="default"
-                        :height="$config_styles.HeightInput" @click="actionPopupSlipCancellation">
+                        :height="$config_styles.HeightInput" @click="actionModalDelete">
                         <div class="d-flex-center">
                             <checkbox-basic :valueCheckbox="true" disabled="true" />
                             <span class="pl-5">전표취소</span>
@@ -76,7 +76,7 @@
                     <!-- {{ dataSource }} -->
                     <!-- {{ store.state.common.ac120.selectedRowKeys }}
                     {{ focusedRowKey }} -->
-                    <DxDataGrid id="dataGridAc120" key-expr="bankbookDetailId" :show-row-lines="true"
+                    <!-- <DxDataGrid id="dataGridAc120" key-expr="bankbookDetailId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
@@ -185,10 +185,7 @@
                                 :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
                                 :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
                                 :data-source="data.data.data">
-                                <DxColumn data-field="balance" cell-template="balanceDetail" cssClass="cell-right"/>
-                                <template #balanceDetail="{ data: row }">
-                                    {{ $filters.formatCurrency(lastBalance + row.data.income - row.data.spending) }}
-                                </template>
+                                <DxColumn data-field="balance" cssClass="cell-right" format="fixedPoint"/>
                             </DxDataGrid>
                         </template>
 
@@ -336,6 +333,291 @@
                                 </template>
                             </DxDataGrid>
                         </template>
+                    </DxDataGrid> -->
+                    <!-- {{ focusedRowKey }} -->
+                    <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
+                        :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
+                        :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                        v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true"
+                        @focused-row-changing="onFocusedRowChanging"
+                        :column-auto-width="true" v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
+                        @selection-changed="selectionChanged">
+                        <DxRowDragging v-if="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status == 10" :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
+                            :on-drag-change="onDragChange" />
+                        <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
+                            mode="multiple" />
+                        <DxScrolling mode="standard" show-scrollbar="always" />
+
+                        <DxColumn caption="일자" cell-template="transactionDetailDate" data-field="transactionDetailDate"
+                            width="85" />
+                        <template #transactionDetailDate="{ data }">
+                            {{ $filters.formatDate(data.value) }}
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="transactionDetailDate" cell-template="transactionDetailDateDetail" />
+                                <template #transactionDetailDateDetail="{ data: row }">
+                                    {{ $filters.formatDate(row.value) }}
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="순번" data-field="documentOrderByDate" width="45" />
+                        <!-- <template #documentOrderByDate="{ data }">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="documentOrderByDate" />
+                            </DxDataGrid>
+                        </template> -->
+
+                        <DxColumn caption="결의번호" data-field="resolutionNumber" width="68" />
+                        <!-- <template #resolutionNumber="{ data }">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="resolutionNumber" />
+                            </DxDataGrid>
+                        </template> -->
+
+                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="120" />
+                        <template #bankbook="{ data }">
+                            <a-tooltip placement="top"
+                                :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
+                                <div>{{ data.data.bankbook?.bankbookNickname }}</div>
+                            </a-tooltip>
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="bankbook" cell-template="bankbookDetail" />
+                                <template #bankbookDetail="{ data: row }">
+                                    <a-tooltip placement="top"
+                                        :title="row.data.bankbook?.type + ' ' + row.data.bankbook?.bankbookNumber">
+                                        <div>{{ row.data.bankbook?.bankbookNickname }}</div>
+                                    </a-tooltip>
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="결의 구분" data-field="resolutionClassification"
+                            cell-template="resolutionClassification" width="75" />
+                        <template #resolutionClassification="{ data }">
+                            {{ store.state.common.ac120.arrResolutionClassification.find((item: any) =>
+                                data.data.resolutionClassification == item.id)?.text }}
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="resolutionClassification"
+                                    cell-template="resolutionClassificationDetail" />
+                                <template #resolutionClassificationDetail="{ data: row }">
+                                    {{ store.state.common.ac120.arrResolutionClassification.find((item: any) =>
+                                        row.data.resolutionClassification == item.id)?.text }}
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="수입액" data-field="income" format="fixedPoint" width="75" />
+                        <!-- <template #income="{ data }">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="income" format="fixedPoint" />
+                            </DxDataGrid>
+                        </template> -->
+
+                        <DxColumn caption="지출액" data-field="spending" format="fixedPoint" width="75" />
+                        <!-- <template #spending="{ data }">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="spending" format="fixedPoint" />
+                            </DxDataGrid>
+                        </template> -->
+
+                        <DxColumn caption="잔액" data-field="balance" width="75" format="fixedPoint" />
+                        <!-- <template #balance="{ data }">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="balance" cssClass="cell-right" format="fixedPoint" />
+                            </DxDataGrid>
+                        </template> -->
+
+                        <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" width="75" />
+                        <!-- <template #summaryOfBankbookDetail="{ data }">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="summaryOfBankbookDetail" />
+
+                            </DxDataGrid>
+                        </template> -->
+
+                        <DxColumn caption="적요" data-field="summary" width="75" />
+                        <!-- <template #summary1="{ data }">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="summary" />
+                            </DxDataGrid>
+                        </template> -->
+
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200" />
+                        <template #accountCode="{ data }">
+                            <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="accountCode" cell-template="accountCodeDetail" />
+                                <template #accountCodeDetail="{ data: row }">
+                                    <account-code-select :valueInput="row.data.accountCode" :disabled="true" />
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150" />
+                        <template #relationCode="{ data }">
+                            <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="relationCode" cell-template="relationCodeDetail" />
+                                <template #relationCodeDetail="{ data: row }">
+                                    <account-code-select :valueInput="row.data.relationCode" :disabled="true" />
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource" width="75" />
+                        <template #fundingSource="{ data }">
+                            {{ store.state.common.ac120.arrFundingSource.find((item: any) => data.data.fundingSource
+                                == item.id)?.text }}
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="fundingSource" cell-template="fundingSourceDetail" />
+                                <template #fundingSourceDetail="{ data: row }">
+                                    {{ store.state.common.ac120.arrFundingSource.find((item: any) => row.data.fundingSource
+                                        == item.id)?.text }}
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" width="75" />
+                        <template #clientId="{ data }">
+                            {{ clients.find((item: any) => item.value == data.data.clientId)?.label }}
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="clientId" cell-template="clientIdDetail" />
+                                <template #clientIdDetail="{ data: row }">
+                                    {{ clients.find((item: any) => item.value == row.data.clientId)?.label }}
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="증빙" data-field="proofCount" width="50" />
+                        <!-- <template #proofCount="{ data }">
+                            <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="proofCount" />
+                            </DxDataGrid>
+                        </template> -->
+
+                        <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" width="75" />
+                        <template #normality="{ data }">
+                            <PlusOutlined v-if="data.data.resolutionClassification != 1" class="icon-add"
+                                @click="actionPopupItemDetail(data.data)" />
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
+                                class="data-grid-child icon-add" :showColumnHeaders="false" :show-row-lines="true"
+                                :hoverStateEnabled="true" :data-source="data.data.data">
+                                <DxColumn data-field="normality" cell-template="normalityDetail" css-class="cell-center" />
+                                <template #normalityDetail="{ data: row }">
+                                    
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="수기 여부" cell-template="handwriting" width="75" />
+                        <template #handwriting="{ data }">
+                            <div class="slipRegistration">
+                                <DxButton v-if="data.data.handwriting == true" :focusStateEnabled="false" text="O"
+                                    :style="{ backgroundColor: '#BB3835', color: 'white' }"
+                                    :height="$config_styles.HeightInput" />
+                            </div>
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="handwriting" cell-template="handwritingDetail" />
+                                <template #handwritingDetail="{ data: row }">
+                                    <div class="slipRegistration">
+                                        <DxButton v-if="row.data.handwriting == true" :focusStateEnabled="false" text="O"
+                                            :style="{ backgroundColor: '#BB3835', color: 'white' }"
+                                            :height="$config_styles.HeightInput" />
+                                    </div>
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
+
+                        <DxColumn caption="정상 여부" cell-template="resolutionNormalStatus" width="75" />
+                        <template #resolutionNormalStatus="{ data }">
+                            <div class="slipRegistration">
+                                <DxButton :focusStateEnabled="false" :text="data.data.resolutionNormalStatus ? 'O' : 'X'"
+                                    :style="{ backgroundColor: data.data.resolutionNormalStatus ? '#337614' : '#BB3835', color: 'white' }"
+                                    :height="$config_styles.HeightInput" />
+                            </div>
+                            <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
+                                :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
+                                :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" class="data-grid-child"
+                                :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="data.data.data">
+                                <DxColumn data-field="resolutionNormalStatus"
+                                    cell-template="resolutionNormalStatusDetail" />
+                                <template #resolutionNormalStatusDetail="{ data: row }">
+                                    <div class="slipRegistration">
+                                        <DxButton :focusStateEnabled="false"
+                                            :text="row.data.resolutionNormalStatus ? 'O' : 'X'"
+                                            :style="{ backgroundColor: row.data.resolutionNormalStatus ? '#337614' : '#BB3835', color: 'white' }"
+                                            :height="$config_styles.HeightInput" />
+                                    </div>
+                                </template>
+                            </DxDataGrid> -->
+                        </template>
 
                         <!-- <DxSummary>
                             <DxTotalItem column="순번" :customize-text="customCountRow" />
@@ -347,25 +629,25 @@
 
                     </DxDataGrid>
                     <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;">
-                            <div style="width: 250px; margin-left: 200px;">
-                                <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customCountRow()">
-                                </div>
+                        <div style="width: 250px; margin-left: 200px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customCountRow()">
                             </div>
-                            <div style="width: 150px;">
-                                <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfIncome()"></div>
+                        </div>
+                        <div style="width: 150px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfIncome()"></div>
+                        </div>
+                        <div style="width: 150px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfExpenses()">
                             </div>
-                            <div style="width: 150px;">
-                                <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfExpenses()">
-                                </div>
+                        </div>
+                        <div style="width: 670px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customBalance()">
                             </div>
-                            <div style="width: 670px;">
-                                <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customBalance()">
-                                </div>
-                            </div>
-                            <div style=" width: 230px;">
-                                <div class="dx-datagrid-summary-item dx-datagrid-text-content"
-                                    v-text="countResolutionNormalStatus()"></div>
-                            </div>
+                        </div>
+                        <div style=" width: 230px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                                v-text="countResolutionNormalStatus()"></div>
+                        </div>
                     </div>
                 </a-spin>
             </div>
@@ -378,11 +660,9 @@
         :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
         :cancelText="'아니요'" @checkConfirm="handleConfirmChange" />
 
-    <PopupSlipCancellation :modalStatus="statusModalSlipCancellation" @closePopup="statusModalSlipCancellation = false"
-        :dataRows='dataRows' />
+    <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows='dataRows' />
 
-    <PopupSlipRegistration :modalStatus="statusModalSlipRegistrantion" @closePopup="statusModalSlipRegistrantion = false"
-        @submit="onFillDataAdd" />
+    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" @submit="onFillDataAdd" />
 
 
     <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false" />
@@ -403,8 +683,8 @@ import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTo
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, initialStateFormData } from "./utils/index"
 import { Message } from "@/configs/enum"
-import PopupSlipCancellation from "./components/PopupSlipCancellation.vue"
-import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
+import ModalDelete from "./components/ModalDelete.vue"
+import ModalAdd from "./components/ModalAdd.vue"
 import DetailComponent from "./components/DetailComponent.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
 import filters from "@/helpers/filters";
@@ -425,8 +705,8 @@ export default defineComponent({
         DxSelection,
         DxSummary,
         DxTotalItem,
-        PopupSlipCancellation,
-        PopupSlipRegistration,
+        ModalDelete,
+        ModalAdd,
         // PopupCopyData,
         EditOutlined,
         PlusOutlined,
@@ -449,8 +729,8 @@ export default defineComponent({
         let focusedRowKey = ref()
 
         let isModalRetrieveStatements = ref(false);
-        let statusModalSlipCancellation = ref(false);
-        let statusModalSlipRegistrantion = ref(false);
+        let statusModalDelete = ref(false);
+        let statusModalAdd = ref(false);
 
         let statusModalItemDetail = ref(false);
 
@@ -528,27 +808,40 @@ export default defineComponent({
             dataGetAccountingProcesses.value = value.getAccountingProcesses
         })
         // 2. getAccountingDocuments
-        watch(resGetAccountingDocuments, (value) => {
+        watch(resGetAccountingDocuments, async (value) => {
             triggerGetAccountingDocuments.value = false
             dataApi.value = value.getAccountingDocuments?.accountingDocuments
             let dataAll: any = []
-            dataApi.value.map((item: any, index: number) => {
-                if (item.bankbookDetailId) { // nếu có data bankbookDetailId
-                    if (!dataAll.filter((row: any) => row.bankbookDetailId === item.bankbookDetailId).length) { // nếu không có thằng bankbookDetailId đó trong mảng
-                        dataAll.push({
-                            bankbookDetailId: item.bankbookDetailId,
-                            data: dataApi.value.filter((row: any) => row.bankbookDetailId === item.bankbookDetailId)
-                        })
+
+            // await dataApi.value.map((item: any, index: number) => {
+
+            // })
+            await dataApi.value.map((item: any, index: number) => {
+                item.balance = lastBalance.value + item.income - item.spending
+                const totalBefore: any = ref(0)
+                dataApi.value.slice(0, index).forEach((data) => {
+                    if (item.transactionDetailDate == data.transactionDetailDate) {
+                        totalBefore.value = data.balance
                     }
-                } else {
-                    dataAll.push({
-                        bankbookDetailId: index,
-                        data: [item]
-                    })
-                }
+                });
+                item.balance = totalBefore.value + item.balance
+
+                // if (item.bankbookDetailId) { // nếu có data bankbookDetailId
+                //     if (!dataAll.filter((row: any) => row.bankbookDetailId === item.bankbookDetailId).length) { // nếu không có thằng bankbookDetailId đó trong mảng
+                //         dataAll.push({
+                //             bankbookDetailId: item.bankbookDetailId,
+                //             data: dataApi.value.filter((row: any) => row.bankbookDetailId === item.bankbookDetailId)
+                //         })
+                //     }
+                // } else {
+                //     dataAll.push({
+                //         bankbookDetailId: index,
+                //         data: [item]
+                //     })
+                // }
             })
 
-            dataSource.value = dataAll
+            await (dataSource.value = dataApi.value)
             lastBalance.value = value.getAccountingDocuments?.lastBalance
             getOneRowData()
         })
@@ -568,15 +861,34 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
         const getOneRowData = () => {
-            if (dataSource.value[0]) { // if table has data source
+            // if (dataSource.value[0]) { // if table has data source
+            //     if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
+            //         store.state.common.ac120.statusKeppRow = false;
+            //         return
+            //         // Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
+            //     } else { // lấy row đầu tiên
+            //         focusedRowKey.value = dataSource.value[0]?.data[0]?.accountingDocumentId
+            //         store.state.common.ac120.selectedRowKeys = [dataSource.value[0].bankbookDetailId]
+            //         Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
+            //     }
+            //     store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+            //     store.state.common.ac120.statusFormAdd = false
+            // } else {
+            //     focusedRowKey.value = null
+            //     store.state.common.ac120.statusFormAdd = true
+            //     Object.assign(store.state.common.ac120.formData, initialStateFormData)
+            //     store.state.common.ac120.keyRefreshForm++
+            // }
+
+            if (dataSource.value.length) { // if table has data source
                 if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
                     store.state.common.ac120.statusKeppRow = false;
                     return
                     // Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
                 } else { // lấy row đầu tiên
-                    focusedRowKey.value = dataSource.value[0]?.data[0]?.accountingDocumentId
-                    store.state.common.ac120.selectedRowKeys = [dataSource.value[0].bankbookDetailId]
-                    Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
+                    focusedRowKey.value = dataSource.value[0].accountingDocumentId
+                    store.state.common.ac120.selectedRowKeys = [dataSource.value[0].accountingDocumentId]
+                    Object.assign(store.state.common.ac120.formData, dataSource.value[0])
                 }
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
                 store.state.common.ac120.statusFormAdd = false
@@ -588,17 +900,13 @@ export default defineComponent({
             }
         }
         const selectionChanged = (data: any) => {
+            // store.state.common.ac120.selectedRowKeys
             // gridRefAC120.value?.instance.refresh();
             dataRows.value = []
             data.component.getSelectedRowsData().then((rowData: any) => {
                 rowData.map((data: any) => {
                     dataRows.value = dataRows.value.concat(data.data)
                 })
-                // console.log(dataRows.value);
-                // if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
-                //     gridRefPA510.value?.instance.deselectAll()
-                //     dataRows.value = []
-                // }
             })
         }
 
@@ -607,9 +915,11 @@ export default defineComponent({
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
                 e.cancel = true;
             } else {
-
+                
                 Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
+                store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+                store.state.common.ac120.keyRefreshForm++
                 if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
                     deleteRowAdd()
                 }
@@ -617,26 +927,26 @@ export default defineComponent({
         };
 
         const deleteRowAdd = async () => {
-            await (loadingGetAccountingDocuments.value = true)
+            // await (loadingGetAccountingDocuments.value = true)
             await dataSource.value.pop()
             await gridRefAC120.value?.instance.refresh()
-            await (loadingGetAccountingDocuments.value = false)
+            // await (loadingGetAccountingDocuments.value = false)
             await getOneRowData()
         }
 
-        const actionPopupSlipCancellation = (value: any) => {
+        const actionModalDelete = (value: any) => {
             if (dataRows.value?.length) {
-                statusModalSlipCancellation.value = true
+                statusModalDelete.value = true
             } else {
                 notification('error', Message.getMessage('COMMON', '404').message)
             }
         }
 
-        const actionPopupSlipRegistration = async (value: any) => {
-            if (!store.state.common.ac120.statusFormAdd) {
-                await addNewRow()
-            }
-            statusModalSlipRegistrantion.value = true
+        const actionOpenModalAdd = async (value: any) => {
+            // if (!store.state.common.ac120.statusFormAdd) {
+            //     await addNewRow()
+            // }
+            statusModalAdd.value = true
         }
 
 
@@ -645,67 +955,79 @@ export default defineComponent({
             statusModalItemDetail.value = true
         }
 
-        const handleConfirmChange = () => {}
+        const handleConfirmChange = () => { }
 
         const onReorder = (e: any) => {
             const visibleRows = e.component.getVisibleRows();
-            const dataToIndex = dataSource.value.find((item: any) => item.bankbookDetailId === visibleRows[e.toIndex].data.bankbookDetailId);
-            const dataFromIndex = dataSource.value.find((item: any) => item.bankbookDetailId === e.itemData.bankbookDetailId);
-            if (dataToIndex.data[0].transactionDetailDate === dataFromIndex.data[0].transactionDetailDate) { // cùng date mới cho đổi
+            const dataToIndex = dataSource.value.find((item: any) => item.accountingDocumentId === visibleRows[e.toIndex].data.accountingDocumentId);
+            const dataFromIndex = dataSource.value.find((item: any) => item.accountingDocumentId === e.itemData.accountingDocumentId);
+            if (dataToIndex.transactionDetailDate === dataFromIndex.transactionDetailDate) { // cùng date mới cho đổi
                 const visibleRows = e.component.getVisibleRows();
-                const toIndex = dataSource.value.findIndex((item: any) => item.bankbookDetailId === visibleRows[e.toIndex].data.bankbookDetailId);
-                const fromIndex = dataSource.value.findIndex((item: any) => item.bankbookDetailId === e.itemData.bankbookDetailId);
+                const toIndex = dataSource.value.findIndex((item: any) => item.accountingDocumentId === visibleRows[e.toIndex].data.accountingDocumentId);
+                const fromIndex = dataSource.value.findIndex((item: any) => item.accountingDocumentId === e.itemData.accountingDocumentId);
                 const newTasks = [...dataSource.value];
                 newTasks.splice(fromIndex, 1);
                 newTasks.splice(toIndex, 0, e.itemData);
                 let indexDocumentOrderByDate = 1
                 let dataInputs: any = []
                 newTasks.map((item: any) => {
-                    if (item.data[0]?.transactionDetailDate == dataToIndex.data[0].transactionDetailDate) { // nếu cùng ngày thì sắp xếp đổi
-                        item.data?.map((data: any) => {
-                            dataInputs.push({
-                                accountingDocumentId: data.accountingDocumentId,
-                                documentOrderByDate: indexDocumentOrderByDate
-                            })
-                            indexDocumentOrderByDate++
+                    if (item.transactionDetailDate == dataToIndex.transactionDetailDate) { // nếu cùng ngày thì sắp xếp đổi
+                        // item.data?.map((data: any) => {
+                        dataInputs.push({
+                            accountingDocumentId: item.accountingDocumentId,
+                            documentOrderByDate: indexDocumentOrderByDate
                         })
+                        indexDocumentOrderByDate++
+                        // })
                     }
                 })
-                reorderAccountingDocuments({
-                    companyId: companyId,
-                    fiscalYear: acYear.value,
-                    facilityBusinessId: globalFacilityBizId.value,
-                    transactionDetailDate: dataToIndex.data[0].transactionDetailDate,
-                    inputs: dataInputs
-                })
+                if (dataInputs.length) {
+                    reorderAccountingDocuments({
+                        companyId: companyId,
+                        fiscalYear: acYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        transactionDetailDate: dataToIndex.transactionDetailDate,
+                        inputs: dataInputs
+                    })
+                } else {
+                    notification('error', Message.getMessage('AC120', '003').message)
+                }
             } else {
                 notification('error', Message.getMessage('AC120', '003').message)
             }
         }
 
-        const onDragChange = (e: any) => {}
+        const onDragChange = (e: any) => { }
 
         const onFillDataAdd = (dataAdd: any) => {
-            statusModalSlipRegistrantion.value = false; // close popup
+            console.log(dataAdd);
+            addNewRow(dataAdd)
+            statusModalAdd.value = false; // close popup
         }
 
         // handle add row
-        const addNewRow = async () => {
-            await (loadingGetAccountingDocuments.value = true)
+        const addNewRow = async (dataAdd: any) => {
+            // await (loadingGetAccountingDocuments.value = true)
             // gridRefAC120.value?.instance.addRow()
             // gridRefAC120.value?.instance.deselectAll()
             store.state.common.ac120.statusFormAdd = true
-
-            await dataSource.value.push({ data: [{ ...initialStateFormData }], bankbookDetailId: 'AC120' })
+            let dataInitial:any = { ...initialStateFormData }
+            // dataInitial.transactionDetailDate = store.state.common.ac120.transactionDetailDate
+            
+            Object.assign(dataInitial, dataAdd)
+            // await dataSource.value.push({ data: [{ ...initialStateFormData }], bankbookDetailId: 'AC120' })
+            // await dataSource.value.push({ ...dataInitial })
+            dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...dataInitial })
             // gridRefAC120Detail.value?.instance.refresh()
-            await gridRefAC120.value?.instance.refresh()
+            // await gridRefAC120.value?.instance.refresh()
             // dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ data: [initialStateFormData], bankbookDetailId: 'AC120' })
-            store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]?.data[0]
+            store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
 
             focusedRowKey.value = 'AC120'
 
+            store.state.common.ac120.statusShowFull = true
             store.state.common.ac120.keyRefreshForm++
-            await (loadingGetAccountingDocuments.value = false)
+            // await (loadingGetAccountingDocuments.value = false)
         }
 
 
@@ -727,25 +1049,25 @@ export default defineComponent({
         }
 
         const actionEditTaxPay = async (e: any) => {
-            await (focusedRowKey.value = null)
-            await (focusedRowKey.value = e.data.accountingDocumentId)
+            // await (focusedRowKey.value = null)
+            // await (focusedRowKey.value = e.data.accountingDocumentId)
         }
 
 
         // ================ CUSTOM SUMMARY TABLE ============================================
         const customCountRow = () => {
-            return `전표 건수: ` + dataApi.value.length
+            return `전표 건수: ` + dataSource.value.length
         }
         const sumOfIncome = () => {
             let total = 0;
-            dataApi.value.forEach((item: any) => {
+            dataSource.value.forEach((item: any) => {
                 total += item.income;
             });
             return `수입액 합계: ${filters.formatCurrency(total)}`
         }
         const sumOfExpenses = () => {
             let total = 0;
-            dataApi.value.forEach((item: any) => {
+            dataSource.value.forEach((item: any) => {
                 total += item.spending;
             });
             return `지출액 합계: ${filters.formatCurrency(total)}`
@@ -754,21 +1076,17 @@ export default defineComponent({
             let total = 0;
             let totalIncome = 0;
             let totalSpending = 0;
-            dataApi.value.forEach((item: any) => {
+            dataSource.value.forEach((item: any) => {
                 totalIncome += item.income
                 totalSpending += item.spending
             });
-            console.log(lastBalance.value);
-            console.log(totalIncome);
-            console.log(totalSpending);
-            
             total = lastBalance.value + totalIncome - totalSpending
             return `전월 잔액: ${filters.formatCurrency(lastBalance.value)}, 예상 잔액: ${filters.formatCurrency(total)}`
         }
         const countResolutionNormalStatus = () => {
             let totalResolutionNormalStatuTrue = 0;
             let totalResolutionNormalStatuFalse = 0;
-            dataApi.value.forEach((item: any) => {
+            dataSource.value.forEach((item: any) => {
                 if (item.resolutionNormalStatus) {
                     totalResolutionNormalStatuTrue++
                 } else {
@@ -802,13 +1120,13 @@ export default defineComponent({
             isModalRetrieveStatements,
             handleConfirmChange,
             contentPopupRetrieveStatements,
-            statusModalSlipCancellation,
-            statusModalSlipRegistrantion,
+            statusModalDelete,
+            statusModalAdd,
             statusModalItemDetail,
 
             actionPopupItemDetail,
-            actionPopupSlipCancellation,
-            actionPopupSlipRegistration,
+            actionModalDelete,
+            actionOpenModalAdd,
 
             onReorder, onDragChange,
             selectedMonth,
