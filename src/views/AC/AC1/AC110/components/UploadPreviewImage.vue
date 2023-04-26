@@ -274,7 +274,7 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .upload-pewview-img {
-  padding: 15px;
+  padding: 14px;
   .ant-upload-list  {
     display: grid !important;
     grid-template-columns: auto auto !important;

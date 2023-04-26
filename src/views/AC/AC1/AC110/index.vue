@@ -61,8 +61,7 @@
             <template #bankbookDetailDate="{ data }">
               <div>
                 {{ data.data.bankbookDetailDate.toString().slice(0, 4) }}-{{
-                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{ data.data.bankbookDetailDate.toString().slice(6)
-  }}
+                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{ data.data.bankbookDetailDate.toString().slice(6)}}
               </div>
             </template>
             <DxColumn caption="통장적요" data-field="summary" />
@@ -122,7 +121,7 @@
             </div>
             <a-spin :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails" size="large">
               <standard-form>
-                <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
+                <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110" v-model:focused-row-key="rowKeyfocusedGridDetail"
                   :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
                   :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                   <DxPaging :enabled="false" />
@@ -152,21 +151,21 @@
                     </div>
                   </template>
                   <template #button-reset>
-                    <button-basic text="초기화" type="default" :mode="'contained'" :disabled="isRegistered"
+                    <button-basic text="초기화" type="default" :mode="'contained'" :disabled="isRegistered || !rowKeyfocused"
                       @onClick="handleInitializeTransactionDetails" />
                   </template>
                   <template #button-add>
                     <a-tooltip placement="top">
                       <template #title>신규</template>
                       <div>
-                        <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" :disabled="isRegistered" />
+                        <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" :disabled="isRegistered || !rowKeyfocused" />
                       </div>
                     </a-tooltip>
                   </template>
                   <template #button-save> 
                     <a-tooltip placement="top">
                       <template #title>신규</template>
-                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)" :disabled="isRegistered">
+                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)" :disabled="isRegistered || !rowKeyfocused">
                         <SaveFilled style="font-size: 19px;" />
                       </DxButton>
                     </a-tooltip>
@@ -196,13 +195,13 @@
                   </template>
                   <DxColumn caption="계정과목" cell-template="accountCode" width="175" />
                   <template #accountCode="{ data }">
-                    <account-code-select v-model:valueInput="data.data.accountCode"
+                    <account-code-select v-if="rowKeyfocused" v-model:valueInput="data.data.accountCode"
                       :classification="!!data.data.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
                   </template>
                   <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
                   <template #relationCode="{ data }">
                     <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
-                      <account-code-select v-model:valueInput="data.data.relationCode"
+                      <account-code-select v-if="rowKeyfocused" v-model:valueInput="data.data.relationCode"
                       :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
                       :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
                     </div>
@@ -308,7 +307,6 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
-import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
 import { Message } from "@/configs/enum"
@@ -351,8 +349,7 @@ export default defineComponent({
     DxLookup,
     HistoryPopup,
     SaveFilled,
-    DxPaging,
-    DxSelectBox
+    DxPaging
   },
   setup() {
     const store = useStore();
@@ -454,6 +451,7 @@ export default defineComponent({
     const isModalHistoryAccountingProcessLogs = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
     const refGridDetailAc110: any = ref()
+    let rowKeyfocusedGridDetail: any = ref(null)
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     const isRegistered = computed(() => {
@@ -645,6 +643,7 @@ export default defineComponent({
       event.cancel = true
     }
     const onRowClick = (event: any) => {
+      if(!event?.data) return
       const item = event.data
       if(rowKeyfocused.value === item.bankbookDetailId) return
       rowKeyfocused.value = item.bankbookDetailId
@@ -822,14 +821,15 @@ export default defineComponent({
         initTransactionDetails.theOrder = 0
         initTransactionDetails.accountingDocumentId = 'create'
       }
-      // refGridDetailAc110.value.instance.addRow(initTransactionDetails)
       dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
+      nextTick(() => {
+        rowKeyfocusedGridDetail.value = initTransactionDetails.accountingDocumentId
+      })
     }
     const submitTransactionDetails = async (event: any) => {
       if (rowKeyfocused.value === null || isRegistered.value) return
       const res = await event.validationGroup.validate();
       if (!res.isValid) return
-      // await refGridDetailAc110.value.instance.saveEditData()
       dataSourceTransactionDetails.value.transactionDetails = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => {
         if (Number.isInteger(item.accountingDocumentId)) {
           return item
@@ -1002,7 +1002,8 @@ export default defineComponent({
       letterOfApprovalType,
       changeInputIncomeSpending,
       updateGoodsCount,
-      isRegistered
+      isRegistered,
+      rowKeyfocusedGridDetail
     };
   },
 });
