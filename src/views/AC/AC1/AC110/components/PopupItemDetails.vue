@@ -4,7 +4,7 @@
     <p class="ac-110-popup-detail-title">물품내역</p>
     <a-spin :spinning="loadingSaveStatementOfGoods || loadingDeleteStatementOfGoods" size="large">
       <standard-form>
-        <DxDataGrid id="DxDataGrid-ac-110-popup-detail" class="mt-20" :show-row-lines="true"
+        <DxDataGrid id="DxDataGrid-ac-110-popup-detail" key-expr="id" class="mt-20" :show-row-lines="true" v-model:focused-row-key="rowKeyfocused"
           :data-source="dataSource.statementOfGoodsItems" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true">
           <DxToolbar>
@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed, nextTick } from 'vue'
 import { useStore } from 'vuex';
 import { useMutation } from "@vue/apollo-composable";
 import { InitStatementOfGoods } from '../utils/index'
@@ -126,6 +126,7 @@ export default defineComponent({
     let arrSelectUnit: any = ref([])
     let dataSourceCopy: any = ref()
     let itemDelete: any = ref()
+    let rowKeyfocused: any = ref(null)
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -310,10 +311,19 @@ export default defineComponent({
       }
     }
     const addNewRow = () => {
-      if (!!dataSource.value.statementOfGoodsItems && dataSource.value.statementOfGoodsItems.length) {
-        dataSource.value.statementOfGoodsItems = [...dataSource.value.statementOfGoodsItems, { ...InitStatementOfGoods, id: dataSource.value.statementOfGoodsItems[0].id + 'create' }]
+      const lengthArr = dataSource.value.statementOfGoodsItems.length
+      let newObj: any = {}
+      if (!!dataSource.value.statementOfGoodsItems && lengthArr) {
+        newObj = { ...InitStatementOfGoods, id: dataSource.value.statementOfGoodsItems[lengthArr - 1].id + 'create' }
+        dataSource.value.statementOfGoodsItems = [ ...dataSource.value.statementOfGoodsItems, {...newObj} ]
+        nextTick(() => {
+          setTimeout(() => {
+            rowKeyfocused.value = newObj.id
+          }, 100)
+        })
       } else {
-        dataSource.value.statementOfGoodsItems = [{ ...InitStatementOfGoods, id: 'create' }]
+        newObj = { ...InitStatementOfGoods, id: 'create' }
+        dataSource.value.statementOfGoodsItems = [{ ...newObj }]
       }
     }
 
@@ -356,6 +366,7 @@ export default defineComponent({
       arrSelectUnit,
       handleConfirmChange,
       changeInput,
+      rowKeyfocused
     }
   },
 })
