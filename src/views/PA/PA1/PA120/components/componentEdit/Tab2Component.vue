@@ -404,7 +404,6 @@ export default defineComponent({
     watch(resultGetEmployeeWage, async (value) => {
       if (value) {
         let data = value.getEmployeeWage;
-        console.log(`output->value`, data)
         store.state.common.presidentEditPA120 = data.president;
         let editRowData: any = {};
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;

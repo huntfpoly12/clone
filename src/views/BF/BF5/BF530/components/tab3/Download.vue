@@ -42,7 +42,7 @@ export default defineComponent({
       emit("closeModal", false)
     };
     const onAllowUpdate = (e: any) => {
-      console.log(`output->e`, e)
+      // console.log(`output->e`, e)
     }
     return {
       setModalStatus,
