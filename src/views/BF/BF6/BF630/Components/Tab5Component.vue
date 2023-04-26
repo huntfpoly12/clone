@@ -106,7 +106,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(true);
@@ -190,7 +189,6 @@ export default defineComponent({
     }
 
     return {
-      globalYear,
       originData,
       move_column,
       colomn_resize,
