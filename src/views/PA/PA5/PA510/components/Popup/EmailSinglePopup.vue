@@ -40,7 +40,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
             emailAddress.value = val?.employee.email
@@ -62,7 +62,7 @@ export default defineComponent({
             } else {
                 sendEmail({
                     companyId: companyId,
-                    imputedYear: globalYear.value,
+                    imputedYear: paYear.value,
                     incomeInputs: {
                         senderName: sessionStorage.getItem("username"),
                         receiverName: props.data.employee.name,

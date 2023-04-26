@@ -1,15 +1,6 @@
 import dayjs from 'dayjs';
-const statesPA420 = {
-  paymentDayPA420: 0,
-  processKeyPA420: {
-    imputedYear: dayjs().year(),
-    imputedMonth: dayjs().month() + 1,
-    paymentYear: dayjs().year(),
-    paymentMonth: dayjs().month() + 1,
-  },
-  formStateEditPA420: {},
-
-  // tab 1
+import cloneDeep from "lodash/cloneDeep";
+export const INITIAL_STATE = {
   incomeCalculationInput: {
     settlementStartDate: null,
     settlementFinishDate: null,
@@ -97,6 +88,16 @@ const statesPA420 = {
     tab2: false,
     tab3: false,
   },
+  // Edit
+  employee: {
+    employeeId: null,
+  }
+}
+const statesPA420 = {
+  formStateEditPA420: {},
+
+  // tab 1
+  ...cloneDeep(INITIAL_STATE)
 };
 
 export default statesPA420;

@@ -1,31 +1,32 @@
 <template>
-    <a-spin :spinning="loadingGetAccountingDocumentProofs" size="large">
-        <div style="margin-right: -10px; overflow-x: hidden" :style="[
-            !store.state.common.ac120.statusShowFull ? { height: '125px', overflow: 'hidden', transition: '.5s' } : {},
-            `max-width: 387px; width: 100%`,
-        ]" :class="{ 'ac120-disable-form-upload': false }">
-            <div ref="elementUpload" class="upload-pewview-img">
-                <a-upload :disabled="statusDisabledImg" list-type="picture-card" :multiple="multiple"
-                    v-model:file-list="fileList" @preview="handlePreview" @change="changeFile"
-                    :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
-                    accept="image/png, image/jpeg, image/jpg image/gif">
-                    <div v-if="fileList.length <= limit">
-                        <div class="ant-btn-upload">
-                            <p class="ant-btn-upload-text">
-                                이미지 파일을 여기에 끌이다 놓으세요
-                            </p>
-                            <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="" />
-                            <p class="ant-btn-upload-text">또는</p>
-                            <button class="ant-btn-upload-button">파일 선택</button>
+    <a-config-provider :locale="locale">
+        <a-spin :spinning="loadingGetAccountingDocumentProofs" size="large">
+            <div style="margin-right: -10px; overflow-x: hidden" :style="[
+                    !store.state.common.ac120.statusShowFull ? { height: '125px', overflow: 'hidden', transition: '.5s' } : {},
+                    `max-width: 387px; width: 100%`,
+                ]" :class="{ 'ac120-disable-form-upload': false }">
+                <div ref="elementUpload" class="upload-pewview-img">
+                    <a-upload :disabled="statusDisabledImg" list-type="picture-card" :multiple="multiple"
+                        v-model:file-list="fileList" @preview="handlePreview" :customRequest="customRequest"
+                        :before-upload="beforeUpload" @remove="remove" accept="image/png, image/jpeg, image/jpg image/gif">
+                        <div v-if="fileList.length <= limit">
+                            <div class="ant-btn-upload">
+                                <p class="ant-btn-upload-text">
+                                    이미지 파일을 여기에 끌이다 놓으세요
+                                </p>
+                                <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="" />
+                                <p class="ant-btn-upload-text">또는</p>
+                                <button class="ant-btn-upload-button">파일 선택</button>
+                            </div>
                         </div>
-                    </div>
-                </a-upload>
-                <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-                    <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
-                </a-modal>
+                    </a-upload>
+                    <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+                        <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
+                    </a-modal>
+                </div>
             </div>
-        </div>
-    </a-spin>
+        </a-spin>
+    </a-config-provider>
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
@@ -37,6 +38,7 @@ import Repository from "@/repositories";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
 import { companyId } from "@/helpers/commonFunction"
+import koKR from 'ant-design-vue/es/locale/ko_KR';
 const uploadRepository = Repository.get("upload");
 interface FileItem {
     uid: string;
@@ -48,11 +50,6 @@ interface FileItem {
     preview?: string;
     originFileObj?: any;
     fileStorageId?: any;
-}
-
-interface FileInfo {
-    file: FileItem;
-    fileList: FileItem[];
 }
 export default defineComponent({
     props: {
@@ -68,26 +65,18 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
-        // width: {
-        //     type: String,
-        //     default: "",
-        // },
-        // heightHidden: {
-        //     type: String,
-        //     default: "",
-        // },
         payLoadProofs: {
             type: Object,
             default: () => { },
         },
     },
     setup(props, { emit }) {
+        const locale = koKR
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
-        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
+        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 
         let fileList = ref<any[]>([]);
-        let listFileStorageId = ref<any[]>([]);
         let isFailUpload = ref(false);
         const previewImage = ref<string | undefined>("");
         const previewVisible = ref<boolean>(false);
@@ -97,13 +86,11 @@ export default defineComponent({
         const indexImg = ref<number>(0)
         const dataGetAccountingDocumentProofs: any = ref({
             companyId: companyId,
-            fiscalYear: globalYear.value,
+            fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
             transactionDetailDate: null,
             accountingDocumentId: null,
         })
-        // computed
-        // const payload = computed(() => props.payLoadProofs);
         // =================== GRAPHQL ===================
         // queries getAccountingDocumentProofs
         const { result: resGetAccountingDocumentProofs, loading: loadingGetAccountingDocumentProofs
@@ -123,6 +110,9 @@ export default defineComponent({
         // ============== ON DONE MUTATION GRAPHQL ===============
         // AddAccountingDocumentProof
         doneAddAccountingDocumentProof((e) => {
+            // triggerAccountingDocumentProofs.value = true;
+            store.state.common.ac120.statusKeppRow = true;
+            store.state.common.ac120.resetDataTable++
             notification("success", Message.getMessage("COMMON", "106").message);
         });
         errorAddAccountingDocumentProof((e) => {
@@ -131,6 +121,8 @@ export default defineComponent({
 
         // RemoveAccountingDocumentProof
         doneRemoveAccountingDocumentProof((e) => {
+            store.state.common.ac120.statusKeppRow = true;
+            store.state.common.ac120.resetDataTable++
             fileList.value.splice(indexImg.value, 1);
             notification("success", Message.getMessage("COMMON", "106").message);
         });
@@ -142,7 +134,7 @@ export default defineComponent({
         watch(() => store.state.common.ac120.formData.accountingDocumentId, (value) => {
             if (value != 'AC120') {
                 statusDisabledImg.value = false;
-                dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
+                dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.transactionDetailDate
                 dataGetAccountingDocumentProofs.value.accountingDocumentId = value
                 triggerAccountingDocumentProofs.value = true;
             } else if (value == 'AC120') {
@@ -150,9 +142,6 @@ export default defineComponent({
                 fileList.value = []
             }
         }, { deep: true });
-        // watch( () => props.listImageFile, (value) => {
-        //     fileList.value = value;
-        // });
 
         watch(resGetAccountingDocumentProofs, (value) => {
             triggerAccountingDocumentProofs.value = false;
@@ -166,49 +155,35 @@ export default defineComponent({
                         status: "done",
                     }
                 });
-                // fileList.value = listFileStorageId.value
             }
         });
 
-        // watch(() => listFileStorageId.value, (value) => {
-        //     emit("update:listImageFile", value);
+        // watch(() => fileList.value, (value) => {
+        //     nextTick(() => {
+        //         if (value.length) {
+        //             value.forEach((items) => {
+        //                 if (items.status === "error") {
+        //                     items.response = "업로드 오류";
+        //                 }
+        //             });
+        //             const elementsIconPreview = elementUpload.value.querySelectorAll(
+        //                 "a[title='Preview file']"
+        //             );
+        //             const elementsIconDelete = elementUpload.value.querySelectorAll(
+        //                 "button[title='Remove file']"
+        //             );
+        //             elementsIconPreview.forEach((el: any) => {
+        //                 el.setAttribute("title", "원본 보기");
+        //             });
+        //             elementsIconDelete.forEach((el: any) => {
+        //                 el.setAttribute("title", "삭제");
+        //             });
+        //         }
+        //     });
         // }, { deep: true });
-
-        watch(() => fileList.value, (value) => {
-            nextTick(() => {
-                if (value.length) {
-                    value.forEach((items) => {
-                        if (items.status === "error") {
-                            items.response = "업로드 오류";
-                        }
-                    });
-                    const elementsIconPreview = elementUpload.value.querySelectorAll(
-                        "a[title='Preview file']"
-                    );
-                    const elementsIconDelete = elementUpload.value.querySelectorAll(
-                        "button[title='Remove file']"
-                    );
-                    elementsIconPreview.forEach((el: any) => {
-                        el.setAttribute("title", "원본 보기");
-                    });
-                    elementsIconDelete.forEach((el: any) => {
-                        el.setAttribute("title", "삭제");
-                    });
-                }
-            });
-        }, { deep: true });
 
 
         // ================ FUNCTION ============================================
-
-        // watch(
-        //     () => props.payLoadProofs,
-        //     (value) => {
-        //         if (!!value?.bankbookDetailId && !!value?.bankbookDetailDate) {
-        //             triggerAccountingDocumentProofs.value = true;
-        //         }
-        //     }
-        // );
 
         const getBase64 = (file: File) => {
             return new Promise((resolve, reject) => {
@@ -229,45 +204,37 @@ export default defineComponent({
             previewVisible.value = false;
         };
 
-        const changeFile = ({ file, fileList: newFileList }: FileInfo) => { };
-
         const beforeUpload = (file: any) => {
-            const isImage =
-                file.type === "image/jpeg" ||
-                file.type === "image/png" ||
-                file.type === "image/gif" ||
-                file.type === "image/jpg";
+            const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
             if (!isImage) {
-                notification("error", "You can only upload png, jpg, jpeg, gif file!");
+                notification('error', Message.getMessage('AC110', '002').message)
             }
             const isLt10M = file.size / 1024 / 1024 <= 10;
             if (!isLt10M) {
-                notification("error", "Image must smaller than 10MB!");
+                notification('error', Message.getMessage('AC110', '003').message)
             }
-            const isDuplicaseName = fileList.value.some(
-                (items: any) => file.name === items.name
-            );
+            const isDuplicaseName = fileList.value.some((items: any) => file.name === items.name)
             if (isDuplicaseName) {
-                notification("error", "Duplicate image are not allowed!");
+                notification('error', Message.getMessage('AC110', '004').message)
             }
-            isFailUpload.value = isImage && isLt10M && !isDuplicaseName;
+            isFailUpload.value = isImage && isLt10M && !isDuplicaseName
         };
 
         const customRequest = (e: any) => {
             if (!isFailUpload.value) {
                 fileList.value.splice(fileList.value.length - 1, 1);
                 e.onError("");
-                // emit("update:listImageFile", listFileStorageId.value);
                 return;
             }
             const formData = new FormData();
             formData.append("file", e.file);
             formData.append("companyId", companyId);
-            formData.append("fiscalYear", globalYear.value);
-            formData.append("facilityBusinessId", globalFacilityBizId.value);
+            formData.append("fiscalYear", acYear.value.toString());
+            formData.append("facilityBusinessId", globalFacilityBizId.value.toString());
             uploadRepository.accountingProof(formData)
                 .then((res: any) => {
                     e.onSuccess("ok");
+                    fileList.value[fileList.value.length - 1].id = res.data.id
                     addAccountingDocumentProof({
                         ...dataGetAccountingDocumentProofs.value,
                         fileStorageId: res.data.id,
@@ -288,6 +255,7 @@ export default defineComponent({
                 ...dataGetAccountingDocumentProofs.value,
                 fileStorageId: fileList.value[indexImg.value].id,
             });
+            return false
 
         };
         return {
@@ -297,12 +265,12 @@ export default defineComponent({
             fileList,
             handleCancel,
             previewImage,
-            changeFile,
             customRequest,
             remove,
             elementUpload,
             loadingGetAccountingDocumentProofs,
             store, statusDisabledImg,
+            locale,
         };
     },
 });

@@ -109,7 +109,7 @@ export default defineComponent({
 
     setup(props, { emit }) {
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear);
+        const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? "0"))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);

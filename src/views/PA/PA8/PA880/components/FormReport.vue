@@ -124,7 +124,7 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="사유발생일" label-align="right">
+                <a-form-item label="사유발생일" label-align="right" class="red">
                   <date-time-box text="지" v-model:valueDate="formState.issueDate" bgColor="white" :clearable="false" width="200px" />
                 </a-form-item>
               </a-col>
@@ -137,7 +137,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="우편번호" label-align="right">
-                  <number-box width="200px" v-model:valueInput="formState.afterReportPostNumber" />
+                  <default-text-box :lengthFixed="5" :maxCharacter="5" :lengthFixMsg="lenFixedMsg"  width="200px" v-model:valueInput="formState.afterReportPostNumber" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -178,7 +178,7 @@
               <a-col :span="8">
                 <a-form-item label="근로자수" label-align="right" :class="{ red: formState.healthInsuranceReport }">
                   <number-box width="200px" v-model:valueInput="formState.healthInsuranceEmployeeNumber"
-                    :required="formState.healthInsuranceReport" />
+                    :required="formState.healthInsuranceReport"/>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -257,37 +257,29 @@
 <script lang="ts">
 import mutations from "@/graphql/mutations/PA/PA8/PA880/index";
 import queries from "@/graphql/queries/PA/PA8/PA880/index";
-import getCompany from "@/graphql/queries/common/getCompany";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
-// import INITIAL_DATA, {Company, DependentsType} from "./../utils";
 import {
   DeleteOutlined,
   HistoryOutlined,
   SearchOutlined,
 } from "@ant-design/icons-vue";
 import {
-  employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, employeeFashionArr2,
+  employeeFashionArr, nationaPersionSelectbox, healthInsuranceSelectbox, employeeFashionArr2,
   includeDependentsSelectbox,
 } from "../utils/index";
-import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
 import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
 import { DxFileUploader } from "devextreme-vue/file-uploader";
 import {
-  computed,
   defineComponent,
   getCurrentInstance,
   reactive,
   ref,
   watch,
-  watchEffect,
 } from "vue";
-import { useStore } from "vuex";
 import notification from "@/utils/notification";
-import filters from "@/helpers/filters";
-import { clone, cloneDeep } from "lodash";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
   components: {
@@ -307,10 +299,10 @@ export default defineComponent({
   //   }
   // },
   setup(props, { emit }) {
-    const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
+    const lenFixedMsg = messages.getCommonMessage('105').message;
     const formState = reactive({
       companyName: '',
       companyBizNuber: '',
@@ -325,7 +317,7 @@ export default defineComponent({
       isShutdown: true,
       isNoWorker: true,
       is1YearWithoutWorker: true,
-      issueDate: NaN,
+      issueDate: +dayjs().format('YYYYMMDD'),
       afterReportPostAddress: '',
       afterReportPostNumber: '',
       nationalPensionClosingPeriod: '',
@@ -395,50 +387,6 @@ export default defineComponent({
         formState.industrialAccidentInsuranceCloseDate = NaN;
       }
     }, { immediate: true })
-
-    // //---------------------------------DISABLED FIELD--------------------------------
-
-    // const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
-    // const isDisabled2 = computed(() => {
-    //   // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
-    //   let check = [23, 26, 32].some((item: any) => formState.healthInsuranceAcquisitionCode2 == item);
-    //   formState.includeDependents = check;
-    //   return check;
-    // })
-
-    //-----------------------------GET DETAIL getMajorInsuranceCompanyOut-------------------
-
-    // const getCompanyOutTrigger = ref<boolean>(false);
-    // const getCompanyOutParam = reactive({
-    //   companyId: companyId,
-    //   imputedYear: globalYear,
-    //   workId: NaN,
-    // })
-    // const { refetch: getCompanyOutRefetch, result: getCompanyOutResult, onError: getCompanyOutError } = useQuery(
-    //   queries.getMajorInsuranceCompanyOut,
-    //   getCompanyOutParam,
-    //   () => ({
-    //     enabled: getCompanyOutTrigger.value,
-    //     fetchPolicy: 'no-cache',
-    //   })
-    // );
-    // watch(getCompanyOutResult, (newVal) => {
-    //   if (newVal) {
-    //     let data = newVal.getMajorInsuranceCompanyOut;
-    //     console.log(`output->data`,data);
-    //     // formState.value = newVal.getMajorInsurancegetCompanyOut;
-    //     getCompanyOutTrigger.value = false;
-    //   }
-    // });
-    // getCompanyOutError((res: any) => {
-    //   notification('error', res.message)
-    // })
-    // watch(()=>props.workId,(newVal: number) => {
-    //   if(newVal){
-    //     getCompanyOutParam.workId = newVal;
-    //     getCompanyOutTrigger.value = true;
-    //   }
-    // },{immediate: true})
     
     //-----------------------------API CREATE && FORM ACTION--------------------------------
 
@@ -476,6 +424,7 @@ export default defineComponent({
       formState, onSubmit,
       // isDisabled1, isDisabled2,
       onCanCelModal, myCompanyLoading, myCompanyResult,
+      lenFixedMsg,
     };
   },
 });

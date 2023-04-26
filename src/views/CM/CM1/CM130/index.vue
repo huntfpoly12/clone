@@ -407,6 +407,7 @@ import { optionsRadioReportType, optionsRadioPaymentType } from "./utils/data";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
 import { initialFormState, initialFormStateDeduction } from "./utils/data";
 import { Message } from "@/configs/enum"
+import dayjs from 'dayjs';
 export default defineComponent({
     components: {
         DxNumberBox,
@@ -432,7 +433,7 @@ export default defineComponent({
     setup() {
         // config grid
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalYear = dayjs().year()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const popupData = ref([]);
@@ -583,7 +584,7 @@ export default defineComponent({
         const onSubmitConfig = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: globalYear.value,
+                imputedYear: globalYear,
                 input: {
                     reportType: formState.reportType,
                     paymentType: formState.paymentType,
@@ -601,25 +602,25 @@ export default defineComponent({
             mutations.updateWithholdingConfigDeductionItem
         );
         errorEditConfigDeduction((error) => {
-            checkClickYear.value ? checkClickYear.value = false : '';
+            // checkClickYear.value ? checkClickYear.value = false : '';
             notification('error', error.message)
         })
         onDoneUpdatedDeduction(() => {
             notification('success', `업데이트 성공되었습니다!`)
             // refetchConfigDeduction();
-            if (checkClickYear.value) {
-                runOne.value = true;
-                store.state.settings.globalYear = dataYearNew.value
-                setTimeout(() => {
-                    checkClickYear.value = false;
-                }, 500);
-            }
+            // if (checkClickYear.value) {
+            //     runOne.value = true;
+            //     store.state.settings.globalYear = dataYearNew.value
+            //     setTimeout(() => {
+            //         checkClickYear.value = false;
+            //     }, 500);
+            // }
             triggerWithholdingConfigDeductionItems.value = true;
         });
         const onSubmitConfigDeduction = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: globalYear.value,
+                imputedYear: globalYear,
                 itemCode: formStateDeduction.itemCode,
                 input: {
                     formula: formStateDeduction.formula
@@ -710,7 +711,7 @@ export default defineComponent({
                 onOk() {
                     let variables = {
                         companyId: companyId,
-                        imputedYear: globalYear.value,
+                        imputedYear: globalYear,
                         itemCode: data.data.itemCode
                     };
                     actionDelete(variables);
@@ -808,47 +809,47 @@ export default defineComponent({
                 e.rowElement.style.backgroundColor = '#ECECEC';
             }
         }
-        const dataYearNew = ref(globalYear.value)
-        const checkClickYear = ref<Boolean>(false)
+        // const dataYearNew = ref(globalYear)
+        // const checkClickYear = ref<Boolean>(false)
         const statusComfirm = (val: any) => {
             if (val) {
                 statusClickSaveModal.value = true
                 onSubmitConfigDeduction();
             } else {
-                if (checkClickYear.value) {
-                    store.state.settings.globalYear = dataYearNew.value
-                    runOne.value = true;
-                    triggerWithholdingConfig.value = true
-                    triggerWithholdingConfigPayItems.value = true
-                    triggerWithholdingConfigDeductionItems.value = true
-                    setTimeout(() => {
-                        checkClickYear.value = false;
-                    }, 500);
-                    return;
-                }
+                // if (checkClickYear.value) {
+                //     store.state.settings.globalYear = dataYearNew.value
+                //     runOne.value = true;
+                //     triggerWithholdingConfig.value = true
+                //     triggerWithholdingConfigPayItems.value = true
+                //     triggerWithholdingConfigDeductionItems.value = true
+                //     setTimeout(() => {
+                //         checkClickYear.value = false;
+                //     }, 500);
+                //     return;
+                // }
                 Object.assign(formStateDeduction, dataOldFormStateDeduction);
                 focusedRowKey.value = formStateDeduction.itemCode
             }
             dataGridRef.value?.refresh();
         }
-        watch(globalYear, (newVal, oldVal) => {
-            if (JSON.stringify(dataOldFormStateDeduction) !== JSON.stringify(formStateDeduction)) {
-                if (!checkClickYear.value) {
-                    modalStatus.value = true
-                    checkClickYear.value = true
-                    store.state.settings.globalYear = oldVal;
-                    dataYearNew.value = newVal;
-                    return
-                }
-                return
-            } else {
-                runOne.value = true;
-                triggerWithholdingConfig.value = true
-                triggerWithholdingConfigPayItems.value = true
-                triggerWithholdingConfigDeductionItems.value = true
-            }
+        // watch(globalYear, (newVal, oldVal) => {
+        //     if (JSON.stringify(dataOldFormStateDeduction) !== JSON.stringify(formStateDeduction)) {
+        //         if (!checkClickYear.value) {
+        //             modalStatus.value = true
+        //             checkClickYear.value = true
+        //             store.state.settings.globalYear = oldVal;
+        //             dataYearNew.value = newVal;
+        //             return
+        //         }
+        //         return
+        //     } else {
+        //         runOne.value = true;
+        //         triggerWithholdingConfig.value = true
+        //         triggerWithholdingConfigPayItems.value = true
+        //         triggerWithholdingConfigDeductionItems.value = true
+        //     }
             
-        })
+        // })
         return {
             changeValueAddress,
             idRowEdit,

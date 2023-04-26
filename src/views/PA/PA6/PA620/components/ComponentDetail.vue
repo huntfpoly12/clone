@@ -237,7 +237,7 @@ export default defineComponent({
     const amountFormat = ref({ currency: 'VND', useGrouping: true })
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
-    const globalYear = computed(() => store.state.settings.globalYear)
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const modalHistory = ref<boolean>(false)
     const modalHistoryStatus = ref<boolean>(false)
     let paymentDayPA620 = computed(() => store.state.common.paymentDayPA620);
@@ -454,8 +454,6 @@ export default defineComponent({
       } else {
         compareType.value = 2;
         rowChangeStatus.value = true;
-        isClickYearDiff.value = true;
-        changeYearDataFake.value = oldVal;
       }
     });
     //on add row
@@ -484,11 +482,6 @@ export default defineComponent({
         ele.click();
       } else {
         removeHoverRowKey();
-        if (isClickYearDiff.value) {
-          emit('noSave', 1, globalYear.value);
-          compareType.value = 1;
-          return;
-        }
         if (isClickEditDiff.value) {
           onEditItem();
           // dataAction.value.input = {...dataActionEdit.value.input}
@@ -571,7 +564,6 @@ export default defineComponent({
       }
       popupDataDelete.value = event.selectedRowKeys;
       editParam.value = event.selectedRowsData.map((item: any) => {
-        console.log(`output->item`,item)
         return {
           param: { incomeId: item.incomeId },
           errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name, incomeTypeCode: item.incomeTypeCode },
@@ -687,10 +679,6 @@ export default defineComponent({
       if (!isClickEditClick.value) {
         selectedRowKeys.value = compareType.value == 1 ? [dataAction.value.input.incomeId] : [idRowFake.value];
       }
-      if (isClickYearDiff.value) {
-        emit('noSave', 1);
-        return;
-      }
       if (isClickMonthDiff.value) {
         emit('noSave', 0);
         isClickMonthDiff.value = false;
@@ -771,22 +759,6 @@ export default defineComponent({
       isClickMonthDiff.value = false;
       isClickAddMonthDiff.value = false;
       compareType.value = 1;
-      if (isClickYearDiff.value) {
-        watchGlobalYear();
-        store.state.settings.globalYear = changeYearDataFake.value;
-        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-          if (compareForm()) {
-            emit('noSave', 1, newVal);
-          } else {
-            compareType.value = 2;
-            rowChangeStatus.value = true;
-            isClickYearDiff.value = true;
-            changeYearDataFake.value = oldVal;
-          }
-        });
-        isClickYearDiff.value = false;
-        compareType.value = 1;
-      }
     }
     const onSave = (e: any) => {
       var res = e.validationGroup.validate();

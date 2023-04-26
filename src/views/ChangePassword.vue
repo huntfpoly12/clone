@@ -1,104 +1,79 @@
 <template>
-    <form
-      action="your-action"
-      class="auth-form"
-      @submit="submitForm"
-    > 
-      <div class="dx-fieldset">
-        <div class="dx-fieldset-header">비밀번호 변경</div>
-        <p v-if="errors" class="invalid">
-          {{ errors }}
-        </p>
-        <div class="dx-field">
-          <div class="dx-field-label">비밀번호</div>
-          <div class="dx-field-value">
-            <DxTextBox
-              v-model:value="form.password"
-              mode="password"
-            >
-              <DxValidator>
-                <DxRequiredRule message="비밀번호는 필수 입렵항목 입니다"/>
-              </DxValidator>
-            </DxTextBox>
+    <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
+          :width="445" :height="500">
+    <a-spin :spinning="resetLoading" size="large">
+      <standard-form  formName="change-password" ref="changePass"  class="auth-form">
+        <div class="dx-fieldset">
+          <div class="dx-fieldset-header">비밀번호 변경</div>
+          <div class="dx-field">
+            <div class="dx-field-label">비밀번호</div>
+            <div class="dx-field-value">
+              <default-text-box width="100%" v-model:valueInput="form.password" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
+            </div>
+          </div>
+          <div class="dx-field">
+            <div class="dx-field-label">비밀번호 확인</div>
+            <div class="dx-field-value">
+              <default-text-box width="100%" v-model:valueInput="confirmPassword" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
+              <p style="color: red;">{{ confirmMessage }}</p>
+            </div>
           </div>
         </div>
-        <div class="dx-field">
-          <div class="dx-field-label">비밀번호 확인</div>
-          <div class="dx-field-value">
-            <DxTextBox mode="password">
-              <DxValidator>
-                <DxRequiredRule message="비밀번호 확인은 필수 입렵항목 입니다"/>
-                <DxCompareRule
-                  :comparison-target="passwordComparison"
-                  message="비밀번호가 일치하지 않습니다"
-                />
-              </DxValidator>
-            </DxTextBox>
-          </div>
+        <div class="dx-fieldset">
+          <DxButton
+            id="button"
+            text="비밀번호 변경"
+            type="success"
+            :height="$config_styles.HeightInput" 
+            @click="submitForm"
+          />
         </div>
-      </div>
-      
-    
-  
-      <div class="dx-fieldset">
-        <DxValidationSummary id="summary"/>
-        <DxButton
-          id="button"
-          :use-submit-behavior="true"
-          text="비밀번호 변경"
-          type="success"
-        />
-      </div>
-    </form>
+      </standard-form>
+    </a-spin>
+    </a-modal>
   </template>
-  <script>
-
-  import DxTextBox from 'devextreme-vue/text-box';
+  <script lang="ts">
   import DxButton from 'devextreme-vue/button';
-  import {
-    DxValidator,
-    DxRequiredRule,
-    DxCompareRule,
-  } from 'devextreme-vue/validator';
-  
-  import { reactive, ref } from "vue";
+  import { reactive, ref, watch } from "vue";
   import { useMutation } from "@vue/apollo-composable";
-  import { useRouter, useRoute } from "vue-router";
   import mutations from "../graphql/mutations/index";
-  import { notification } from 'ant-design-vue';
+  import notification from '@/utils/notification';
+  import { useStore } from 'vuex';
   export default {
-    components: {
-
-      DxTextBox,
-
-      DxButton,
-      DxValidator,
-      DxRequiredRule,
-      DxCompareRule,
-   
-    },
-    methods: {
-      passwordComparison() {
-        return this.password;
+    props: {
+      modalStatus: {
+          type: Boolean,
+          default: false,
       },
     },
-    setup() {
-      const router = useRouter();
-      const route = useRoute()
+    components: {
+      DxButton,
+    },
+    setup(props,{emit}) {
+      const store = useStore();
       const form = reactive({
         password: "",
       });
+      const changePass = ref();
       const errors = ref(null);
-  
-      const submitForm = (e) => {
-        e.preventDefault();
-        resetData();
+      const confirmPassword = ref('')
+      const isConfirm = ref(true)
+      const confirmMessage = ref('')
+      const setModalVisible = () => {
+            emit("closePopup", false)
+      };
+      const submitForm = () => {
+        const res = changePass.value.validate();
+        if (!res.isValid || !isConfirm.value) {
+          res.brokenRules[0].validator.focus();
+        } else {
+          changePassword();
+        }
       };
   
-
       // signin mutation
       const {
-        mutate: resetData,
+        mutate: changePassword,
         loading: resetLoading,
         onDone: resetDone,
         onError,
@@ -108,32 +83,37 @@
         },
       }));
       resetDone(() => {
-        notification.success({
-          message: '비밀번호 변경 성공',
-          description:
-            '비밀번호를 성공적으로 변경했으며 로그인하여 관리 페이지로 이동하세요',
-        });
-        router.push("/login");
+        notification('success', '비밀번호를 성공적으로 변경했으며 로그인하여 관리 페이지로 이동하세요')
+        location.reload();
+        store.commit("auth/logout");
       });
       onError((error) => {
-        errors.value = error.message;
+        notification('error', error.message)
       });
-      const passwordComparison = () => {
-        return form.password
-      }
+      watch(confirmPassword, (newVal) => {
+          if (form.password !== newVal) {
+            confirmMessage.value = 'Passwords are not matching, please try again' 
+            isConfirm.value = false
+          } else {
+              confirmMessage.value = ''
+              isConfirm.value = true
+          }
+      })
       return {
         form,
         submitForm,
         errors,
-        passwordComparison,
-        resetLoading
+        setModalVisible,
+        resetLoading,
+        confirmPassword,
+        confirmMessage,
+        changePass
       };
     },
   };
   </script>
 <style scoped>
 .auth-form {
-    padding-top: 150px;
     max-width: 400px;
     margin: 0 auto;
 }
@@ -163,7 +143,7 @@
   color: red;
 }
 .request-contract {
-  margin-top: 40px;
+
 }
 .form-control {
   margin: 8px 0;

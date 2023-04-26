@@ -70,7 +70,7 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const dataSourceAC510 = ref<any>([
             { id: 1, name: "세입결산서" },
             { id: 2, name: "세출결산서", },
@@ -91,7 +91,7 @@ export default defineComponent({
             // popupDataEmailSingle.value = {
             //     companyId: companyId,
             //     input: {
-            //         imputedYear: globalYear,
+            //         imputedYear: acYear,
             //         type: valueDefaultIncomeBusiness.value.input.type,
             //         receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
             //     },

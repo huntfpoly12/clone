@@ -233,6 +233,7 @@ import { useStore } from 'vuex';
 import PopupAddStatus from "./components/PopupAddStatus.vue";
 import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
+import dayjs from "dayjs";
 export default defineComponent({
   components: {
       DxDataGrid, DxToolbar, DxButton, DxColumn, DxItem, DxScrolling, PlusOutlined
@@ -247,7 +248,7 @@ export default defineComponent({
       const store = useStore()
       const token = computed(()=>sessionStorage.getItem("token"))
       store.dispatch('auth/getUserInfor', token.value);
-      const globalYear: any = computed(() => store.state.settings.globalYear)
+      const globalYear: any = computed(() => dayjs().year())
       const userInfor: any = computed(() => store.state.auth.userInfor)
 
       const filter = reactive({

@@ -52,7 +52,11 @@ export default defineComponent({
     isResidentId: {
       type: Boolean,
       default: true,
-    }
+    },
+    mask: {
+      type: String,
+      default: "000000-0000000",
+    },
   },
   components: {
     DxTextBox,
@@ -63,7 +67,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
-    const mask = ref("000000-0000000");
+    // const mask = ref("000000-0000000");
     const maskMess = ref(messages.getCommonMessage('105').message);
     const messageRequired = ref(messages.getCommonMessage('102').message);
     const msgError = Message.getMessage('COMMON', '701').message;
@@ -90,20 +94,31 @@ export default defineComponent({
         return true
       }
       const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
-      if (props.foreigner && fNumber > 4 && fNumber < 9) {
-        return validResidentId(value.value || "");
-      } else if (props.foreigner && (fNumber < 4 || fNumber > 9)) {
+      if (fNumber > 4 && fNumber < 9)
+      {
+          return validResidentId(value.value);
+      } else{
+          return false
+      };
+    }
+
+    const checkIdNotForeigner = () => {
+      if (!value.value) {
+        return true
+      }
+      const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
+      if ( fNumber <= 4 || fNumber >= 9)
+      {
+        return validResidentId(value.value);
+      } else {
         return false
       }
     }
-    const checkIdNotForeigner = () => {
-      return !checkID()
-    };
-
+    
     return {
       updateValue,
       value,
-      mask,
+      // mask,
       maskMess,
       messageRequired,
       msgError,

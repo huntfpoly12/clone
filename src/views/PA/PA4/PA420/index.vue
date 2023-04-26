@@ -1,5 +1,5 @@
 <template>
-  <action-header title="퇴직소득자료입력" @actionSave="saving"  :buttonSave="true"/>
+  <action-header title="퇴직소득자료입력" @actionSave="saving" :buttonSave="true"/>
   <div id="pa-420">
     <div class="page-content">
       <a-row>
@@ -24,8 +24,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 1"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(1) && addMonth(1)"> [+]</div>
               </template>
               <DxColumn caption="02" width="100px" cell-template="month-2"
                         :cssClass="selectMonthColumn.imputedMonth == 2 ? 'column-focus': ''"/>
@@ -37,8 +36,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 2"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(2) && addMonth(2)">[+]</div>
               </template>
               <DxColumn caption="03" width="100px" cell-template="month-3"
                         :cssClass="selectMonthColumn.imputedMonth == 3 ? 'column-focus': ''"/>
@@ -50,8 +48,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 3"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(3) && addMonth(3)">[+]</div>
               </template>
               <DxColumn caption="04" width="100px" cell-template="month-4"
                         :cssClass="selectMonthColumn.imputedMonth == 4 ? 'column-focus': ''"/>
@@ -63,8 +60,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 4"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(4) && addMonth(4)">[+]</div>
               </template>
               <DxColumn caption="05" width="100px" cell-template="month-5"
                         :cssClass="selectMonthColumn.imputedMonth == 5 ? 'column-focus': ''"/>
@@ -76,8 +72,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 5"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(5) && addMonth(5)">[+]</div>
               </template>
               <DxColumn caption="06" width="100px" cell-template="month-6"
                         :cssClass="selectMonthColumn.imputedMonth == 6 ? 'column-focus': ''"/>
@@ -89,8 +84,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 6"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(6) && addMonth(6)">[+]</div>
               </template>
               <DxColumn caption="07" width="100px" cell-template="month-7"
                         :cssClass="selectMonthColumn.imputedMonth == 7 ? 'column-focus': ''"/>
@@ -102,8 +96,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 7"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(7) && addMonth(7)">[+]</div>
               </template>
               <DxColumn caption="08" width="100px" cell-template="month-8"
                         :cssClass="selectMonthColumn.imputedMonth == 8 ? 'column-focus': ''"/>
@@ -115,8 +108,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 8"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(8) && addMonth(8)">[+]</div>
               </template>
               <DxColumn caption="09" width="100px" cell-template="month-9"
                         :cssClass="selectMonthColumn.imputedMonth == 9 ? 'column-focus': ''"/>
@@ -128,8 +120,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 9"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(9)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(9) && addMonth(9)">[+]</div>
               </template>
               <DxColumn caption="10" width="100px" cell-template="month-10"
                         :cssClass="selectMonthColumn.imputedMonth == 10 ? 'column-focus': ''"/>
@@ -141,8 +132,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 10"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(10) && addMonth(10)">[+]</div>
               </template>
               <DxColumn caption="11" width="100px" cell-template="month-11"
                         :cssClass="selectMonthColumn.imputedMonth == 11 ? 'column-focus': ''"/>
@@ -154,8 +144,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 11"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(11)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(11) && addMonth(11)">[+]</div>
               </template>
               <DxColumn caption="12" width="100px" cell-template="month-12"
                         :cssClass="selectMonthColumn.imputedMonth == 12 ? 'column-focus': ''"/>
@@ -167,8 +156,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 12"
                   />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="addMonth(12)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="showMonth(12) && addMonth(12)">[+]</div>
               </template>
               <DxMasterDetail class="table-detail" :enabled="true" template="detailRow"/>
               <template #detailRow="{}">
@@ -313,7 +301,7 @@ let statusButton = ref(0)
 let actionSave = ref(0)
 let dataSource: any = ref([]);
 const store = useStore();
-const globalYear = computed(() => store.state.settings.globalYear)
+const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'))
 const per_page = computed(() => store.state.settings.per_page);
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -327,6 +315,7 @@ const dataModalCopy: any = ref()
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const paymentDate = computed(() => store.getters['common/getPaymentDay'])
 let dataCustomRes: any = ref([])
+const showMonth = (month: number) => (month > 3 && globalYear.value > 2022) || globalYear.value > 2023
 // ================GRAPQL==============================================
 
 // API QUERY TABLE BIG
@@ -397,8 +386,14 @@ resIncomeProcessBusinesses(res => {
         value: filters.formatCurrency(val.incomeStat?.retirementBenefits - val.incomeStat?.withholdingIncomeTax - val.incomeStat?.withholdingLocalIncomeTax),
         ...dataAdd
       }
-      if (val.imputedMonth == selectMonthColumn.value.imputedMonth) {
+      if (val.imputedMonth == dayjs().month() + 1 && selectMonthColumn.value.imputedMonth === dayjs().month() + 1) {
         store.commit('common/setPaymentDay', val.paymentMonth)
+        store.commit('common/setSelectMonthColumn', {
+          imputedMonth: val.imputedMonth,
+          imputedYear: val.imputedYear,
+          paymentYear: val.paymentYear,
+          paymentMonth: val.paymentMonth,
+        })
         //If there is data, then assign the status with the status of the month in focus
         statusButton.value = val.status
       }
@@ -423,6 +418,15 @@ const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: an
     paymentMonth: paymentMonth,
   })
 }
+// watch year
+watch(globalYear, (val) => {
+  store.commit('common/setSelectMonthColumn', {
+    imputedMonth: selectMonthColumn.value.imputedMonth,
+    imputedYear: val,
+    paymentYear: val,
+    paymentMonth: selectMonthColumn.value.paymentMonth,
+  })
+})
 const saving = () => {
   actionSave.value++;
 }
@@ -443,6 +447,7 @@ const addMonth = (month: number) => {
 const dataAddIncomeProcess = (data: any) => {
   dataSource.value[0]['month' + data.imputedMonth] = data
   dataSource.value[0]['month' + data.imputedMonth].status = 10
+  statusButton.value = 10
 }
 const actionCopySuccess = () => {
   modalCopy.value = false

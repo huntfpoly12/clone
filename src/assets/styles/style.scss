@@ -196,13 +196,15 @@ $lenght: 50;
   border: 1px solid rgb(164, 164, 164);
   border-radius: 5px;
   padding: 3px 4px;
-  height: 25px;
+  height: 26px;
 }
 
 .cell-center {
   text-align: center !important
 }
-
+.cell-right {
+  text-align: right !important
+}
 
 .money-column {
   text-align: right !important;

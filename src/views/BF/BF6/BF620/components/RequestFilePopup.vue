@@ -63,12 +63,12 @@ export default defineComponent({
         switch (props.tabName) {
           case 'tab1':
             makeDataClean(dataRequestFile.value);
-            dataRequestFile.value.filter.productionStatuses = dataRequestFile.value.filter.beforeProduction && null;
+            dataRequestFile.value.filter.productionStatuses = dataRequestFile.value.filter.beforeProduction ? null : dataRequestFile.value.filter.productionStatuses;
             creationWithholdingTaxTab1(dataRequestFile.value);
             break;
           case 'tab2':
             makeDataClean(dataRequestFile.value);
-            dataRequestFile.value.filter.productionStatuses = dataRequestFile.value.filter.beforeProduction && null;
+            dataRequestFile.value.filter.productionStatuses = dataRequestFile.value.filter.beforeProduction ? null : dataRequestFile.value.filter.productionStatuses;
             creationLocalTab2(dataRequestFile.value);
             break;
           default:

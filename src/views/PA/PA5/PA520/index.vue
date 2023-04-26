@@ -37,7 +37,7 @@
       <a-row>
           <a-col :span="13" class="custom-layout" >
               <a-spin :spinning="loading" size="large">
-                <div class="grid-table" style="height: 100%;">
+                <div class="grid-table">
                   <DxDataGrid 
                   :show-row-lines="true" 
                   :hoverStateEnabled="true" 
@@ -51,7 +51,7 @@
                   v-model:focused-row-key="focusedRowKey" 
                   @exporting="onExporting" 
                   id="gridContainer" 
-                  style="max-height: 768px;"
+                  style="max-height: 776px;"
                   ref="pa520Grid"
                   @focused-row-changing="onFocusedRowChanging"
                   @focused-row-changed="onFocusedRowChanged"
@@ -259,7 +259,7 @@ export default defineComponent({
     const idRowCurrentClick = ref(0);
     // vuex declare
     const store = useStore();
-    const globalYear = computed(() => store.getters['settings/currentYear']);
+    const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear")?? '0'));
     const focusedRowKey = computed(() => store.getters['common/focusedRowKeyPA520'])
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
     const move_column = computed(() => store.state.settings.move_column);

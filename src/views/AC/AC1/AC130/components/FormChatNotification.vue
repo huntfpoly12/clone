@@ -27,18 +27,33 @@
         <CloseOutlined class="form-notification-wrapper-btnClose" @click="closeNoti" />
       </div>
     </a-drawer>
-    <slot />
+    <slot keyChatChannel="keyChatChannelCommon" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import { CloseOutlined } from "@ant-design/icons-vue";
+// import { databaseFirebase, storage } from "@/firebaseConfig";
+// import {
+//   ref as reffb,
+//   push,
+//   query,
+//   onChildAdded,
+//   onChildChanged,
+//   onChildRemoved,
+//   onValue,
+//   child,
+//   remove,
+//   update,
+//   limitToLast
+// } from "firebase/database";
 export default defineComponent({
   components: {
     CloseOutlined
   },
   setup(props, { emit }) {
+    const keyChatChannel = 'keyChatChannelCommon';
     const visible = ref(false)
     const listNotification = ref([
       {
@@ -63,6 +78,7 @@ export default defineComponent({
         online: false
       }
     ])
+    const firstLoadChat = ref(false)
 
     const goToChatByNoti = () => {
       visible.value = false
@@ -82,7 +98,53 @@ export default defineComponent({
       const day = date.getDate()
       return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${date.getMinutes()}`
     }
+
+    // let chatListRef = reffb(databaseFirebase, keyChatChannel)
+
+    const getListContentChat = () => {
+      // onValue(
+      //   chatListRef,
+      //   (snapshot) => {
+      //     const objList = snapshot.val()
+      //     if(!objList){
+      //       firstLoadChat.value = false
+      //     }
+      //     let arr = []
+      //     for (const key in objList) {
+      //       if(!objList[key]?.isDelete){
+      //         arr.push({
+      //           key: key,
+      //           files: objList?.files || [],
+      //           ...objList[key]
+      //         })
+      //       }
+      //     }
+      //     listNotification.value = arr
+          
+      //     nextTick(() => {
+      //       formTimeline.value.scrollTop = 10000000
+      //     })
+          
+      //     onChildAdded(query(chatListRef, limitToLast(1)), (data) => {
+      //       if(!firstLoadChat.value) {
+      //         listNotification.value.push({
+      //           ...data.val(),
+      //           key: data.key
+      //         })
+      //         // nextTick(() => {
+      //         //   formTimeline.value.scrollTop = 10000000
+      //         // })
+      //       }
+      //       firstLoadChat.value = false
+      //     });
+      //   },
+      //   {
+      //     onlyOnce: true,
+      //   }
+      // );
+    };
     return {
+      keyChatChannel,
       visible,
       listNotification,
       formatDate,

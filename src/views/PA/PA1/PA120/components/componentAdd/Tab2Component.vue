@@ -108,7 +108,7 @@
         <p>급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
       </span>
     </div>
-    <a-row >
+    <a-row gutter="5">
       <a-col style="flex: 0 0 28%;">
         <div class="header-text-2">요약</div>
         <div class="summary">
@@ -244,7 +244,7 @@ export default defineComponent({
     const store = useStore();
     const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const isDisableInsuranceSupport = computed(() => store.state.common.isDisableInsuranceSupport)
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,

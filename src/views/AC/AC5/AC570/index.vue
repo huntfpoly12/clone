@@ -105,7 +105,7 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 
         let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
@@ -127,18 +127,18 @@ export default defineComponent({
         const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
         const originData = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: acYear.value,
         }
         const originDataDetail: any = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: acYear.value,
             employeeId: null,
             incomeTypeCode: null,
         });
         let confirmSave = ref(false)
         // const optionsRadio = ref([...initialOptionsRadio]);
         let runOne = ref(true);
-        const dataYearNew = ref(globalYear.value)
+        const dataYearNew = ref(acYear.value)
         const checkClickYear = ref<Boolean>(false)
         var disabledBlock = ref<boolean>(false);
 

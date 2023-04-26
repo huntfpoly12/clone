@@ -141,7 +141,7 @@ export default defineComponent({
       ...DataEdit
     })
     const store = useStore();
-    const globalYear: any = computed(() => store.state.settings.globalYear);
+    const globalYear: any = computed(() => parseInt(sessionStorage.getItem("paYear")?? '0'));
     const originData = ref({
       companyId: companyId,
     })

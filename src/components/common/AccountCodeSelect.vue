@@ -4,7 +4,15 @@
         field-template="field" item-template="item" :key="resetSelect" :disabled="disabled" :read-only="readOnly"
         @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
         <template #field="{ data }">
-            <DxTextBox :read-only="readOnly" v-if="data" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+            <template v-if="data">
+              <a-tooltip v-if="!!lengthText" zIndex="9999999" placement="top" color="black">
+                  <template #title>{{ data.name + ' ' + data.shortCode }}</template>
+                  <div>
+                    <DxTextBox :read-only="readOnly" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+                  </div>
+                </a-tooltip>
+              <DxTextBox v-else :read-only="readOnly" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+            </template>
             <DxTextBox :read-only="readOnly" v-else placeholder="선택" height="26" />
         </template>
         <template #item="{ data }">
@@ -28,6 +36,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { useStore } from 'vuex';
+import { accountSubject } from "@/helpers/commonFunction"
 export default {
     props: {
         required: {
@@ -61,6 +70,10 @@ export default {
         classification: {
             type: Array,
             default: null,
+        },
+        lengthText: {
+          type: Number,
+          default: null,
         }
     },
     components: {
@@ -79,18 +92,18 @@ export default {
         }
         const resetSelect = ref(0)
         let value: any = ref(null);
-        const arrAllCallApi = computed(() => store.getters['settings/accountSubjects'])
+        // const arrAllCallApi = accountSubject
         let accountSubjects: any = ref([])
         onMounted(() => {
             fillData()
         });
-        watch(arrAllCallApi, (newValue) => {
+        watch(accountSubject, (newValue) => {
             fillData()
         });
         const fillData = () => {
             accountSubjects.value = []
-            if (arrAllCallApi.value.length) {
-                arrAllCallApi.value?.map((row: any) => {
+            if (accountSubject.length) {
+                accountSubject?.map((row: any) => {
                     if (props.useStartDate && !props.useFinishDate) {
                         if (row.useStartDate >= props.useStartDate) {
                             fillRow(row)
@@ -146,7 +159,7 @@ export default {
             e.component._popup.option('width', props.width);
         }
         return {
-            messageRequired, arrAllCallApi, resetSelect, onOpened,
+            messageRequired, resetSelect, onOpened,
             accountSubjects,
             updateValue,
             value,

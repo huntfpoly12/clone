@@ -11,7 +11,7 @@
             @focused-row-changing="onFocusedRowChanging">
             <DxPaging :page-size="0" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
-              :search-visible-columns="['TypeCodeAndName']" />
+              :search-visible-columns="['TypeCodeAndName']" placeholder="검색"  />
             <DxExport :enabled="true" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxToolbar>
@@ -74,19 +74,19 @@
               </DxButton>
             </template>
             <DxColumn caption="성명" width="180" cell-template="company-name" data-field="name" />
-            <template #company-name="{ data }">
+            <template #company-name="{ data }: any">
               <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                 :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
                 :checkStatus="false" @toolTopErorr="toolTopErorr" :employeeId="data.data.employeeId"
                 @mouseenter="defaultVisible = true" @mouseleave="defaultVisible = false" />
             </template>
             <DxColumn caption="주민등록번호" cell-template="residentId" width="110" data-field="residentId" />
-            <template #residentId="{ data }">
+            <template #residentId="{ data }: any">
               <resident-id :residentId="data.data.residentId"></resident-id>
             </template>
             <DxColumn caption="비고" cell-template="grade-cell" data-field="incomeTaxMagnification"
               :calculateCellValue="calculateIncomeTypeCodeAndName" />
-            <template #grade-cell="{ data }">
+            <template #grade-cell="{ data }: any">
               <div>
                 <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
                 <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2" :typeValue="1" />
@@ -102,7 +102,7 @@
               </div>
             </template>
             <DxColumn cell-template="pupop" width="40" />
-            <template #pupop="{ data }">
+            <template #pupop="{ data }: any">
               <div class="custom-action" style="text-align: center" v-if="data.data.deletable">
                 <a-space :size="10">
                   <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
@@ -175,7 +175,7 @@ export default defineComponent({
     const store = useStore();
     const totalUserOnl = ref(0);
     const totalUserOff = ref(0);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -266,27 +266,6 @@ export default defineComponent({
       }
       trigger.value = false;
     });
-    //change year
-    const isClickYearDiff = ref(false);
-    const changeYearDataFake = ref();
-    const changeYear = (newVal: any) => {
-      isFirstRun.value = true;
-      originData.value.imputedYear = newVal;
-      trigger.value = true;
-      store.state.common.isNewRowPA120 = false;
-      store.state.common.yearPA120 = newVal;
-      changeYearDataFake.value = newVal;
-    }
-    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-      if (compareForm()) {
-        changeYear(newVal);
-      } else {
-        compareType.value = 2;
-        rowChangeStatus.value = true;
-        isClickYearDiff.value = true;
-        store.state.common.yearPA120 = oldVal;
-      }
-    });
     // addcomponent
     const addComponentKey = ref(1);
     const modalHistory = () => {
@@ -375,11 +354,6 @@ export default defineComponent({
         }
       } else {
         removeHoverRowKey();
-        if (isClickYearDiff.value) {
-          changeYear(globalYear.value);
-          isClickYearDiff.value = false;
-          return;
-        }
         if (isNewRowPA120.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
         }
@@ -403,11 +377,6 @@ export default defineComponent({
         trigger.value = true;
         return;
       }
-      if (isClickYearDiff.value) {
-        changeYear(globalYear.value);
-        isClickYearDiff.value = false;
-        return;
-      }
       focusedRowKey.value = compareType.value == 1 ? initFormStateTabPA120.value.employeeId.toString() : idRowFake.value.toString();
       store.state.common.isNewRowPA120 = false;
       trigger.value = true;
@@ -422,22 +391,6 @@ export default defineComponent({
       compareType.value = 1;
       focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
       removeHoverRowKey();
-      if (isClickYearDiff.value) {
-        watchGlobalYear();
-        store.state.settings.globalYear = changeYearDataFake.value;
-        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-          if (compareForm()) {
-            changeYear(newVal)
-          } else {
-            compareType.value = 2;
-            rowChangeStatus.value = true;
-            isClickYearDiff.value = true;
-            changeYearDataFake.value = oldVal;
-          }
-        });
-        isClickYearDiff.value = false;
-        return;
-      }
       if (tabCurrent.value == 2) {
         store.commit('common/activeTabEditKeyPA120', '2');
       } else {

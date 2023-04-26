@@ -174,7 +174,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'));
     const formState = reactive({
       employeeType: 0,
       employeeId: 1,

@@ -4,25 +4,10 @@
       <div class="nav-logo">
         <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
       </div>
-      <div class="user-info" v-if="username">
+      <div class="user-info">
         <FacilityBizTypeHeader />
-        <year-header />
-        <a-dropdown>
-          <a class="ant-dropdown-link" @click.prevent>
-            {{ username }}
-            <DownOutlined />
-          </a>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <router-link to="/change-password">비밀번호 변경</router-link>
-              </a-menu-item>
-              <a-menu-item>
-                <p @click="logout">로그아웃</p>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
+        <!-- <year-header /> -->
+        <account-infor></account-infor>
       </div>
     </a-layout-header>
 
@@ -165,7 +150,7 @@
             </div>
             <div class="main-content">
               <template v-if="activeTab">
-                <keep-alive :exclude="cachedTab">
+                <keep-alive :exclude="cachedTab" :key="count">
                   <component :is="currentComponent" />
                 </keep-alive>
               </template>
@@ -183,12 +168,10 @@
 </template>
 <script>
 import { defineComponent, ref, watch, computed, onMounted, nextTick } from "vue";
-import {  useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
 import menuData from "./menuData";
-import { DownOutlined } from '@ant-design/icons-vue';
-
 import {
   BF310,
   BF320,
@@ -260,10 +243,9 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
-import {AdminScreenRole, getJwtObject, ScreenRole} from '@bankda/jangbuda-common';
-import { companyId, openTab, setMenuTab } from "@/helpers/commonFunction";
+import { getJwtObject} from '@bankda/jangbuda-common';
+import {  openTab, setMenuTab } from "@/helpers/commonFunction";
 import useCheckPermission from "@/helpers/useCheckPermission";
-import dayjs from "dayjs";;
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
 export default defineComponent({
@@ -277,7 +259,6 @@ export default defineComponent({
     };
   },
   components: {
-    DownOutlined,
     BF310,
     BF320,
     BF330,
@@ -515,6 +496,7 @@ export default defineComponent({
     },
   },
   setup() {
+
     const MAX_TAB = 20
     const inputSearchText = ref("");
     const filteredResult =ref([]);
@@ -522,10 +504,10 @@ export default defineComponent({
     const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
-
     let menuItems = menuTree;
     const store = useStore();
-    const router = useRouter()
+    const count = computed(()=> store.getters['settings/changeFacilityBusiness'])
+
     const route = useRoute();
     const collapsed = ref(false);
     const selectedItems = ref(null);
@@ -542,18 +524,14 @@ export default defineComponent({
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
     })
 
-    const infosAccounting = jwtObject.accounting;
-    if(!!infosAccounting && infosAccounting.length) {
-      store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
-    }
+    // const infosAccounting = jwtObject.accounting;
+    // if(!!infosAccounting && infosAccounting.length) {
+    //   store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
+    // }
 
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
-      //get and set account subject
-      if (jwtObject.userType === 'c') {
-        let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
-        await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
-      }
+ 
       // store.commit('auth/setTokenInfo',jwtObject)
       if(route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
         openTab(tabDashboard)
@@ -574,12 +552,6 @@ export default defineComponent({
         }
       })
     })
-
-    const logout = ()=>{
-      router.push("/login");
-      location.reload();
-      store.commit("auth/logout");
-    }
 
     const onSearch  = (key)=>{
       state.value = true;
@@ -742,8 +714,8 @@ export default defineComponent({
         openKeys.value = latestOpenKey ? [latestOpenKey] : [];
       }
     }
+
     return {
-      logout,
       onSearch,
       addMenuTab,
       removeItemTab,
@@ -762,7 +734,8 @@ export default defineComponent({
       tabIndex,
       onTabDragStart,
       onTabDrop,
-      MAX_TAB
+      MAX_TAB,
+      count,
     }
   },
 });

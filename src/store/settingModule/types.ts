@@ -23,6 +23,9 @@ export interface SettingState {
   listFacilityBizTypeForUser: any[],
   accountSubject: any
   clients: any[],
+  acYear: any,
+  paYear: any,
+  changeFacilityBusiness: number
 }
 
 export interface PayLoadAccSubject {

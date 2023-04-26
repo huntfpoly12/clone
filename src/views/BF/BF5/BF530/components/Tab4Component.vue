@@ -78,26 +78,19 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
-import SearchArea from './SearchArea.vue';
-import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel, DxEditing, DxLookup, DxColumnFixing } from 'devextreme-vue/data-grid';
 import { DownloadOutlined, SaveOutlined } from '@ant-design/icons-vue';
-import GetStatusTable from './GetStatusTable.vue';
 import notification from '@/utils/notification';
 import { Message } from '@/configs/enum';
 import { reportTypeSelectbox2, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox, formatMonth, dataTableTab1, states1 } from '../utils/index'
 import dayjs from 'dayjs';
 import { isNumber } from 'lodash';
-import Tab1PopUp1 from './Tab1PopUp1.vue';
-import Tab1PopUp2 from './Tab1PopUp2.vue';
 export default defineComponent({
   components: {
-    SearchArea,
-    RequestFilePopup,
     DxButton,
     DxDataGrid,
     DxScrolling,
@@ -106,10 +99,7 @@ export default defineComponent({
     SaveOutlined,
     DxSummary,
     DxTotalItem,
-    GetStatusTable,
     DxLoadPanel,
-    Tab1PopUp1,
-    Tab1PopUp2,
     DxEditing,
     DxLookup,
     DownloadOutlined,
@@ -126,7 +116,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
     const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
     const formState = reactive({
       companyName1: '',

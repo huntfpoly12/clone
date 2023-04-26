@@ -309,7 +309,7 @@ export default defineComponent({
   setup() {
     const statusParam = ref<any>({ status: 10 });
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const modalDelete = ref<boolean>(false);
     const modalEdit = ref<boolean>(false);
@@ -443,27 +443,6 @@ export default defineComponent({
         return;
       }
     });
-    //change year
-    const changeYear = (newVal: any) => {
-      taxPayRef.value.firsTimeRow = true;
-      isRunOnce.value = true;
-      incomeProcessExtrasParam.imputedYear = newVal;
-      formTaxRef.value.isEdit = false;
-      store.commit('common/formEditPA720', formPA720.value);
-      formTaxRef.value.getEmployeeExtrasParams.imputedYear = newVal;
-    }
-    const isClickYearDiff = ref(false);
-    const changeYearDataFake = ref();
-    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-      if (compareForm()) {
-        changeYear(newVal)
-      } else {
-        compareType.value = 1;
-        rowChangeStatus.value = true;
-        isClickYearDiff.value = true;
-        changeYearDataFake.value = oldVal;
-      }
-    });
     // -----------------change income process extra status------------------------
     const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone, onError: onErrorChangeStatus } = useMutation(mutations.changeIncomeProcessExtraStatus);
     onDoneChangeIncomeProcessExtraStatusDone(() => {
@@ -484,7 +463,7 @@ export default defineComponent({
         if (isClickMonthDiff.value) {
           refetchIncomeProcessExtras();
         }
-        if (!isClickMonthDiff.value && !isClickYearDiff.value) {
+        if (!isClickMonthDiff.value) {
           changeFommDone.value++;
         }
         formTaxRef.value.isEdit = true;
@@ -600,10 +579,6 @@ export default defineComponent({
           isClickMonthDiff.value = false;
           return;
         }
-        if (isClickYearDiff.value) {
-          changeYear(globalYear.value);
-          isClickYearDiff.value = false;
-        }
         if (isClickEditDiff.value) {
           onEditItem();
           isClickEditDiff.value = false;
@@ -691,11 +666,6 @@ export default defineComponent({
           isClickMonthDiff.value = false;
           return;
         }
-        if (isClickYearDiff.value) {
-          changeYear(globalYear.value);
-          isClickYearDiff.value = false;
-          return;
-        }
         if (isClickEditDiff.value) {
           onEditItem();
           isClickEditDiff.value = false;
@@ -719,21 +689,6 @@ export default defineComponent({
       store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
       editTaxParamFake.value = editTaxParam.value;
       compareType.value = 1;
-      if (isClickYearDiff.value) {
-        watchGlobalYear();
-        store.state.settings.globalYear = changeYearDataFake.value;
-        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-          if (compareForm()) {
-            changeYear(newVal)
-          } else {
-            compareType.value = 1;
-            rowChangeStatus.value = true;
-            isClickYearDiff.value = true;
-            changeYearDataFake.value = oldVal;
-          }
-        });
-        isClickYearDiff.value = false;
-      }
     }
     // -------------------- Delete item in tax table --------------------
     const onDeleteItem = () => {
@@ -915,7 +870,6 @@ export default defineComponent({
       onDelDone,
       isExpiredStatus,
       pa720GridRef,
-      changeYearDataFake,
       compareForm,
       subValidate,
       isNewRowPA720,
@@ -929,7 +883,7 @@ export default defineComponent({
       changeMonthDataFake,
       onCloseCopy,
       customColumnClass,
-      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff, isClickYearDiff,
+      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff, 
       disableAddMonth,
     };
   },

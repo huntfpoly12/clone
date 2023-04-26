@@ -112,13 +112,13 @@ const data = [
 ]
 const store = useStore();
 const {per_page, move_column, colomn_resize} = store.state.settings;
-const globalYear = computed(() => store.getters['settings/currentYear'])
+const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
 const dataSource = ref(data)
 const isOpenModalCreate = ref(false);
 const modalHistory = ref(false);
 const actionParam = reactive({
   companyId: companyId,
-  imputedYear: globalYear.value,
+  imputedYear: paYear.value,
   workId: null as (number | null),
 })
 const onOpenLogs = (e: any) => {

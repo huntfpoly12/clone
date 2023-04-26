@@ -3,15 +3,10 @@
   <div class="ac-130">
     <div class="ac-130__top">
       <div class="ac-130__top-grid">
-        <div 
-          v-for="(month, index) in 12" :key="index" 
-          class="ac-130__top-grid-items" 
-          :class="{ 'ac-130__top-grid-items-active': monthSelected === month }"
-          @click="selectedMonth(month)">
-            <colorful-badge 
-              :value="listAccountingProcesses.find((item: any) => item.month === month)?.status || null" 
-              :year="globalYear" 
-              :month="month"/>
+        <div v-for="(month, index) in 12" :key="index" class="ac-130__top-grid-items"
+          :class="{ 'ac-130__top-grid-items-active': monthSelected === month }" @click="selectedMonth(month)">
+          <colorful-badge :value="listAccountingProcesses.find((item: any) => item.month === month)?.status || null"
+            :year="globalYear" :month="month" />
         </div>
       </div>
       <div class="ac-130__top-status">
@@ -32,8 +27,10 @@
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>현금출납부 잔액 -></span>
-                    <button-basic v-if="true" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90" />
-                    <button-basic v-else text="정상" type="success" :mode="'contained'" width="90" />
+                    <DxButton v-if="true" class="mr-5" text="확인필요"
+                      style="background-color: #BB3835; color: white" :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-else text="정상"
+                      style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
                 <TableBalanceOfCashRegister />
@@ -42,8 +39,10 @@
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>예산서 -></span>
-                    <button-basic v-if="false" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90" />
-                    <button-basic v-else text="정상" type="success" :mode="'contained'" width="90" />
+                    <DxButton v-if="false" class="mr-5" text="확인필요"
+                      style="background-color: #BB3835; color: white" :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-else text="정상"
+                      style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
                 <TableBudget />
@@ -52,8 +51,10 @@
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>인건비 -></span>
-                    <button-basic v-if="false" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90" />
-                    <button-basic v-else text="정상" type="success" :mode="'contained'" width="90" />
+                    <DxButton v-if="false" class="mr-5" text="확인필요"
+                      style="background-color: #BB3835; color: white" :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-else text="정상"
+                      style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
                 <TablePersonnelExpenses />
@@ -68,8 +69,8 @@
             <b>관리사항</b>
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChatNotification>
-              <FormChat />
+            <FormChatNotification v-slot="slotProps">
+              <FormChat :keyChatChannel="slotProps.keyChatChannel" />
             </FormChatNotification>
           </div>
         </div>
@@ -119,7 +120,7 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const globalYear = computed(() => store.state.settings.globalYear)
+    const globalYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
     let statusEntering = ref(10);
     let statusInput = ref(20);
     let statusAdjusting = ref(30);

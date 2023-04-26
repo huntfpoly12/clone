@@ -25,73 +25,79 @@
       {{ dataSource }} <br />
       {{ productionCount }} productionCount<br />
       {{ beforeCount }} beforeCount<br /> -->
-      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource" :show-borders="true"
-        key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-        :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true">
+      <DxDataGrid id="tab1-bf620" :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
+        :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+        :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
+        :allowSelection="true">
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
         <DxColumn caption="사업자코드" data-field="companyCode" cell-template="companyCode" />
-        <template #companyCode="{ data }">
+        <template #companyCode="{ data }: any">
           {{ data.data.companyCode }}
           {{ data.data.active ? '' : '해지' }}
         </template>
         <DxColumn caption="상호 주소" cell-template="companyName" width="300" />
-        <template #companyName="{ data }">
+        <template #companyName=" { data }: any ">
           {{ data.data.companyName }}
           {{ data.data.address }}
         </template>
-        <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
-        <template #inputYearMonth="{ data }">
+        <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="115px" />
+        <template #inputYearMonth=" { data }: any ">
           <!-- {{ data.data.imputedYear }} -->
           <a-tooltip color="black">
             <template #title>삭제</template>
-            <DxButton :text="'귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth)" :style="{
-              color: 'white',
-              backgroundColor: 'gray',
-              height: $config_styles.HeightInput
-            }" class="btn-date" />
+            <DxButton :text=" '귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth) " :style="
+              {
+                color: 'white',
+                  backgroundColor: 'gray',
+                    height: $config_styles.HeightInput
+              }
+            " class="btn-date" />
           </a-tooltip>
         </template>
-        <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
-        <template #paymentYearMonth="{ data }">
-          <DxButton :text="'지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
-            color: 'white',
-            backgroundColor: 'black',
-            height: $config_styles.HeightInput
-          }" class="btn-date" />
+        <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="115px" />
+        <template #paymentYearMonth=" { data }: any ">
+          <DxButton :text=" '지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth) " :style="
+            {
+              color: 'white',
+                backgroundColor: 'black',
+                  height: $config_styles.HeightInput
+            }
+          " class="btn-date" />
         </template>
         <DxColumn caption="신고 주기" cell-template="reportType" width="100px" />
-        <template #reportType="{ data }">
-          <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
-          <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
+        <template #reportType=" { data }: any ">
+          <div v-if=" data.data.reportType == 1 " class="px-3 py-4 report-tag-black">매월</div>
+          <div v-if=" data.data.reportType == 6 " class="px-3 py-4 report-tag-gray">반기</div>
           <div v-else></div>
         </template>
         <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
-        <template #afterDeadline="{ data }">
-          <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
-          <div v-if="data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-black">기한후</div>
-          <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-orange">수정 {{
+        <template #afterDeadline=" { data }: any ">
+          <div v-if=" !data.data.afterDeadline && data.data.index == 0 " class="deadline-tag tag-white">정기</div>
+          <div v-if=" data.data.afterDeadline && data.data.index == 0 " class="deadline-tag tag-black">기한후</div>
+          <div v-if=" !data.data.afterDeadline && data.data.index > 0 " class="deadline-tag tag-orange">수정 {{
             data.data.index }}</div>
         </template>
-        <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###"  width="100"/>
+        <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###" width="100" />
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" width="120"/>
-        <DxColumn caption="제작현황" cell-template="productionStatus" width="360"/>
-        <template #productionStatus="{ data }">
-          <GetStatusTable :dataProcduct="data.data" :message="data.data.causeOfProductionFailure"/>
-          <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
+        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"
+          width="120" />
+        <DxColumn caption="제작현황" cell-template="productionStatus" width="360" />
+        <template #productionStatus=" { data }: any ">
+          <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
+          <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
         </template>
         <DxSummary>
           <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-          <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text="reportTypeSummary" />
-          <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text="afterDeadlineSummary" />
-          <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
+          <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text=" reportTypeSummary " />
+          <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text=" afterDeadlineSummary " />
+          <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
         </DxSummary>
       </DxDataGrid>
     </div>
-    <RequestFilePopup v-if="modalStatus" :requestFileData="requestFileData" tab-name="tab1"
-      @cancel="modalStatus = false" />
+    <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1"
+      @cancel=" onRequestDone " />
   </div>
 </template>
 
@@ -137,7 +143,6 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
     const filterBF620 = computed(() => store.state.common.filterBF620);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -159,27 +164,32 @@ export default defineComponent({
     const fetchDataStatus = async (companies: any) => {
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
-        await client.query({
-          query: queries.getElectronicFilingsByWithholdingTax, variables: {
-            input: {
-              companyId: companies[i].companyId,
-              imputedYear: companies[i].imputedYear,
-              reportId: companies[i].reportId,
-            }
-          }
-        }).then((res) => {
-          let productionStatus = res.data.getElectronicFilingsByWithholdingTax[0].productionStatus;
-          let causeOfProductionFailure = res.data.getElectronicFilingsByWithholdingTax[0]?.causeOfProductionFailure;
-          productionCount.value--;
-          dataSource.value.forEach((item: any) => {
-            if (item.reportId == companies[i].reportId) {
-              item.productionStatus = productionStatus;
-              if(productionStatus == -1){
-                item.causeOfProductionFailure = causeOfProductionFailure;
+        if (companies[i]) {
+          await client.query({
+            query: queries.getElectronicFilingsByWithholdingTax, variables: {
+              input: {
+                companyId: companies[i].companyId,
+                imputedYear: companies[i].imputedYear,
+                reportId: companies[i].reportId,
               }
             }
-          })
-        }).catch((err: any) => err);
+          }).then((res) => {
+            let productionStatus = res.data.getElectronicFilingsByWithholdingTax[0].productionStatus;
+            let causeOfProductionFailure = res.data.getElectronicFilingsByWithholdingTax[0]?.causeOfProductionFailure;
+            productionCount.value--;
+            dataSource.value.forEach((item: any) => {
+              if (item.reportId == companies[i].reportId) {
+                item.productionStatus = productionStatus;
+                if (productionStatus == -1) {
+                  item.causeOfProductionFailure = causeOfProductionFailure;
+                }
+                if (productionStatus == 2) {
+                  item.allowSelection = false;
+                }
+              }
+            })
+          }).catch((err: any) => err);
+        }
       }
     };
 
@@ -191,7 +201,6 @@ export default defineComponent({
       paymentMonth: filterBF620.value.paymentMonth,
       paymentYear: filterBF620.value.paymentYear,
     })
-    const eletroFillingTrigger = ref(true);
     const {
       refetch: searchWithholdingRefetch,
       result: searchWithholdingResult,
@@ -201,7 +210,6 @@ export default defineComponent({
       queries.searchWithholdingTaxElectronicFilingsByYearMonth,
       searchWithholdingParam,
       () => ({
-        enabled: eletroFillingTrigger.value,
         fetchPolicy: 'no-cache',
       })
     );
@@ -247,9 +255,11 @@ export default defineComponent({
       }, {}));
       dataSource.value = [...result];
       await fetchDataStatus(dataSource.value.map((item: any) => {
-        if (item.lastProductionRequestedAt)
+        if (item.lastProductionRequestedAt) {
           productionCount.value = item.lastProductionRequestedAt ? productionCount.value + 1 : productionCount.value;
-        return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId }
+          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId }
+        }
+        return;
       }));
       if (props.onSearch && productionCount.value == 0) {
         props.onSearch();
@@ -260,33 +270,16 @@ export default defineComponent({
     })
     watchEffect(() => {
       if (filterBF620.value.paymentYear && filterBF620.value.paymentMonth) {
-        if (eletroFillingTrigger.value) {
-          filteredDataSource.value = [];
-          dataSource.value = [];
-          searchWithholdingParam.value = {
-            paymentMonth: filterBF620.value.paymentMonth,
-            paymentYear: filterBF620.value.paymentYear,
-          }
+        searchWithholdingParam.value = {
+          paymentMonth: filterBF620.value.paymentMonth,
+          paymentYear: filterBF620.value.paymentYear,
         }
       }
     })
-    const productionStatusData = (emitVal: any, index: number) => {
-      productionStatusArr.value = [emitVal];
-      productionCount.value--;
-      if (emitVal?.companyId != 'undefined') {
-        productionStatusArr.value = [...productionStatusArr.value, emitVal];
-        filteredDataSource.value[index].productionStatus = emitVal?.productionStatus;
-        filteredDataSource.value[index].allowSelection = false;
-      }
-      if (props.onSearch && productionCount.value == 0) {
-        props.onSearch();
-      }
-    };
 
     //------------------------SUM AREA------------------------------ 
 
     // count the number of status
-    let productionStatusArr = ref<any>([]);
     const countStatus = (arr: any[], type: number | Boolean, propertyCompare: string) => {
       if (Object.keys(arr).length === 0 || arr.length === 0) {
         return 0;
@@ -329,23 +322,23 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
-        if (!filterBF620.value.beforeProduction && beforeCount.value == 1) {
-          searchWithholdingRefetch();
-        } else {
-          let { paymentYear, paymentMonth, imputedYear, imputedMonth, afterDeadline, index, ...compareObj } = filterBF620.value;
-          let arr = dataSource.value.filter((item: any) => {
-            return Object.keys(compareObj).every((key: any) => {
-              if (key === 'productionStatuses') {  //error search main reason is 
-                return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
-              }
-              if (compareObj[key]) {
-                return compareObj[key] == item[key];
-              }
-              return true;
-            })
+        // if (!filterBF620.value.beforeProduction && beforeCount.value == 1) {
+        //   searchWithholdingRefetch();
+        // } else {
+        let { paymentYear, paymentMonth, imputedYear, imputedMonth, afterDeadline, index, ...compareObj } = filterBF620.value;
+        let arr = dataSource.value.filter((item: any) => {
+          return Object.keys(compareObj).every((key: any) => {
+            if (key === 'productionStatuses') {  //error search main reason is 
+              return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
+            }
+            if (compareObj[key]) {
+              return compareObj[key] == item[key];
+            }
+            return true;
           })
-          filteredDataSource.value = arr;
-        }
+        })
+        filteredDataSource.value = arr;
+        // }
         beforeCount.value = 1;
       },
       { deep: true }
@@ -391,17 +384,21 @@ export default defineComponent({
         notification('warning', messageDelNoItem);
       }
     };
+    const onRequestDone = () => {
+      searchWithholdingRefetch();
+      modalStatus.value = false;
+    }
+
     return {
       filterBF620,
       searchWithholdingLoading,
       move_column,
       colomn_resize,
       dataSource,
-      onRequestFile,
+      onRequestFile, onRequestDone,
       modalStatus,
       requestFileData,
       userInfor,
-      productionStatusData,
       reportTypeSummary,
       afterDeadlineSummary,
       productStatusSummary,
@@ -409,11 +406,34 @@ export default defineComponent({
       formatMonth,
       searchWithholdingParam,
       filteredDataSource,
-      productionCount, statusRef, beforeCount,
+      productionCount, statusRef,
     };
   },
 })
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../style/style.scss';
+
+:deep #tab1-bf620 {
+  height: calc(62vh);
+
+  :deep .dx-datagrid-total-footer {
+    height: 77px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+  }
+
+  :deep .dx-datagrid-headers {
+    height: 27px;
+  }
+
+  :deep .dx-datagrid-rowsview {
+    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+  }
+
+  .dx-freespace-row {
+    display: none !important; // cục lúc hiện lúc không
+  }
+}
 </style>

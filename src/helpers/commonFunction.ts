@@ -13,7 +13,12 @@ let userType: any = null
 let userId: any = null
 let managerGrade: any = null
 let screenRoleInfo: any = null;
+let accountSubject: any = Array()
 let token = sessionStorage.getItem("token");
+let dataAccountSubject = sessionStorage.getItem("accountSubject")
+if (dataAccountSubject) {
+  accountSubject =JSON.parse(dataAccountSubject)
+}
 if (token) {
     const jwtObject = getJwtObject(token);
     userType = jwtObject.userType
@@ -195,6 +200,7 @@ const convertResidentId = (residentId: string) => {
   // add - to index 6
   return residentId.slice(0, 6) + '-' + residentId.slice(6);
 }
+
 export {
     companyId,
     openTab,
@@ -212,6 +218,7 @@ export {
     convertBirthDayKorea,
     makeDataClean,
     startYearMonth,
-    convertResidentId
+    convertResidentId,
+    accountSubject
 }
 

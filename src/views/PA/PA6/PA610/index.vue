@@ -163,7 +163,7 @@
                 <radio-group
                   :arrayValue="arrForeigner"
                   width="200px"
-                  :disabled="!dataShow.deletable"
+                  :disabled="!dataShow.deletable && !isNewRow"
                   v-model:valueRadioCheck="dataShow.foreigner"
                   layoutCustom="horizontal"
                   @update:valueRadioCheck="changeRadioForeigner"
@@ -227,7 +227,7 @@
                   width="200px"
                   placeholder="숫자 13자리"
                   :required="true"
-                  :disabled="!dataShow.deletable"
+                  :disabled="!dataShow.deletable && !isNewRow"
                   :foreigner="dataShow.foreigner"
                 />
               </a-form-item>
@@ -345,6 +345,7 @@ import PopupMessageCustom from "./components/PopupMessageCustom.vue";
 import {ArrForeigner, valueDefaultAction} from "./utils";
 import {ClickYearStatus, FormStatus} from "@/store/settingModule/types";
 import DxTextBox from "devextreme-vue/text-box";
+import dayjs from "dayjs";
 
 export default defineComponent({
   name: 'MyForm',
@@ -385,7 +386,7 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const column_resize = computed(() => store.state.settings.column_resize);
-    const globalYear = computed(() => store.getters['settings/currentYear'])
+    const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
@@ -412,7 +413,7 @@ export default defineComponent({
 
     let valueCallApiGetEmployeeBusiness: any = reactive({
       companyId: companyId,
-      imputedYear: globalYear,
+      imputedYear: paYear,
       incomeTypeCode: "",
       employeeId: null,
     });
@@ -454,8 +455,8 @@ export default defineComponent({
       }
     }
 
-    // watch listen dataSource and globalYear change then change focusedRowKey
-    watch([dataSource, globalYear], async (newVal, oldValue) => {
+    // watch listen dataSource and paYear change then change focusedRowKey
+    watch([dataSource, paYear], async (newVal, oldValue) => {
       if (newVal[0]?.isLoaded() && newVal[1] !== oldValue[1]) {
         // focusedRowKey.value = newVal[0]?.items()[0]?.residentId || 0;
         storeDataSourceCount.value = newVal[0]?.totalCount() || 0
@@ -467,7 +468,7 @@ export default defineComponent({
     // ================GRAPHQL==============================================
     const valueCallApiGetEmployeeBusinesses = reactive({
       companyId: companyId,
-      imputedYear: globalYear,
+      imputedYear: paYear,
     });
     const resetForm = () => {
       formRef.value.resetValidate();
@@ -485,8 +486,8 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
-    // watch listen globalYear change then focus first row
-    watch(globalYear, async (newVal, oldValue) => {
+    // watch listen paYear change then focus first row
+    watch(paYear, async (newVal, oldValue) => {
       if (newVal !== oldValue) {
         focusedRowKey.value = resultGetEmployeeBusinesses.value?.getEmployeeBusinesses[0]?.residentId || 0;
       }
@@ -773,7 +774,7 @@ export default defineComponent({
       let residentId = dataShow.value.residentId.replace("-", "");
       return {
         companyId: companyId,
-        imputedYear: globalYear.value,
+        imputedYear: paYear.value,
         employeeId: parseInt(
           dataShow.value.employeeId ? dataShow.value.employeeId : ""
         ),
@@ -819,7 +820,7 @@ export default defineComponent({
         } else {
           const newDataCreate = {
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: paYear.value,
             input: {
               name: dataShow.value.name,
               foreigner: dataShow.value.foreigner,

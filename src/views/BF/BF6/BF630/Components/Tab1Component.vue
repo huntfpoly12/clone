@@ -170,12 +170,11 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const userInfor = computed(() => (store.state.auth.userInfor))
-    const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(true);
     const triggerElecFilings = ref<boolean>(false);
-    const dateSubmission = ref((globalYear.value + 1) + '0310')
+    const dateSubmission = ref((new Date().getFullYear() + 1) + '0310')
     // for checkbox 
     const checkbox1 = ref<boolean>(false);
     const checkbox2 = ref<boolean>(false);
@@ -398,7 +397,8 @@ export default defineComponent({
     };
     const productionStatusData = (emitVal: any, index: number) => {
       countListData.value++
-      if (countListData.value > dataSource.value.filter((x: any) => !!x.lastProductionRequestedAt).length) return
+      const lengthDataSourceAfterProduction = dataSource.value.filter((x: any) => !!x.lastProductionRequestedAt).length
+      if (countListData.value > lengthDataSourceAfterProduction) return
       if (emitVal !== null) {
         productionStatusArr.value = [...productionStatusArr.value, emitVal];
         dataSource.value[index].productionStatus = emitVal.productionStatus
@@ -406,7 +406,7 @@ export default defineComponent({
         dataSourceOrigin.value[index].productionStatus = emitVal.productionStatus
         dataSourceOrigin.value[index].afterProduction = true
       }
-      if (countListData.value == dataSource.value.length) {
+      if (countListData.value == lengthDataSourceAfterProduction) {
         if (isFirstSearchByfilter.value) {
           isFirstSearchByfilter.value = false
           searchByFilter()
@@ -483,7 +483,6 @@ export default defineComponent({
       searchByFilter()
     }
     return {
-      globalYear,
       filterForm,
       move_column,
       colomn_resize,

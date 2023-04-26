@@ -10,7 +10,7 @@
     <div class="block-radio">
       <radio-group
         class="radio-group one"
-        :arrayValue="option1"
+        :arrayValue="optionEmployeeType"
         v-model:valueRadioCheck="retirementIncome"
         layoutCustom="horizontal"
       />
@@ -72,24 +72,15 @@
     </a-steps>
     <div class="step-content pt-20">
       <keep-alive>
-        <template v-if="step === 0">
           <Tab1
-            :arrayEmploySelect="arrayEmploySelect"
+            v-if="step === 0"
+            :retirementIncome="retirementIncome"
             :actionNextStep="valueNextStep"
             :retirement-type="retirementType"
             @nextPage="step++"
           />
-        </template>
-      </keep-alive>
-      <keep-alive>
-        <template v-if="step === 1">
-          <Tab2/>
-        </template>
-      </keep-alive>
-      <keep-alive>
-        <template v-if="step === 2">
-          <Tab3/>
-        </template>
+          <Tab2  v-else-if="step === 1"/>
+          <Tab3 v-else/>
       </keep-alive>
     </div>
     <div style="justify-content: center" class="pt-10 wf-100 d-flex-center">
@@ -110,7 +101,6 @@
         v-if="step < 2"
       />
       <button-basic
-
         text="저장"
         type="default"
         mode="contained"
@@ -135,29 +125,31 @@ import Tab3 from "./TabCreated/Tab3.vue";
 import {useStore} from "vuex";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import {Message} from "@/configs/enum";
-
+enum EmployeeWageType {
+  WAGE = 10,
+  WAGEDaily = 20,
+}
 interface Props {
   modalStatus: boolean,
   listEmployeeexist: Array<any>
 }
-
 const props = defineProps<Props>();
-const emit = defineEmits(["closePopup", "refreshData"]);
+const emit = defineEmits(["closePopup"]);
 
 const store = useStore();
-const globalYear = computed(() => store.state.settings.globalYear);
+const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
 const step = ref(0);
 const valueNextStep = ref(0);
 const modalStatusAccept = ref(false);
-const retirementIncome = ref(true);
+const retirementIncome = ref(EmployeeWageType.WAGE);
 const isDisableBtnTab2 = computed(() => store.getters['common/getIsDisableBtnTab2'])
 const isChangeForm = computed(() => store.getters['common/getIsChangeForm'])
 
-const retirementType = ref(2)
+const retirementType = ref(1)
 
-const option1 = reactive([
-  {id: true, text: "사원"},
-  {id: false, text: "일용직사원"},
+const optionEmployeeType = reactive([
+  {id: 10, text: "사원"},
+  {id: 20, text: "일용직사원"},
 ]);
 const option2 = reactive([
   {id: 1, text: "퇴직소득(퇴직자)"},
@@ -170,6 +162,7 @@ const setModalVisible = () => {
   } else {
     comfirmClosePopup(() => {
       emit("closePopup", false);
+      store.commit('common/resetForm');
       modalStatusAccept.value = false;
     })
   }
@@ -177,12 +170,6 @@ const setModalVisible = () => {
 const setModalSelectVisible = () => {
   emit("closePopup", false)
 };
-store.dispatch("common/getListEmployee", {
-  companyId: companyId,
-  imputedYear: globalYear,
-});
-const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410);
-
 // =========================  GRAPQL =================================================
 // query get config from screen cm-130
 const {
@@ -214,7 +201,8 @@ const {
 onDoneCreateIncomeRetirement(() => {
   notification("success", Message.getCommonMessage('101').message);
   modalStatusAccept.value = false;
-  emit("closePopup", false);
+  emit("closePopup", true);
+  store.commit('common/resetForm')
 });
 onErrorCreateIncomeRetirement((e: any) => {
   notification("error", e.message);
@@ -285,37 +273,8 @@ const created = (e: any) => {
     mutateCreateIncomeRetirement(variables)
   }
 };
-
 const openModalAdd = () => {
-  // if is 사원
-  if (retirementIncome.value) {
-    // filter 일용 employee
-    // console.log('store.state.common.arrayEmployeePA410' , store.state.common.arrayEmployeePA410)
-    arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter(
-      (element: any) =>
-        element.type === 10 &&
-        !props.listEmployeeexist.includes(element.employeaeId)
-    );
-    // if it is 일용직사원
-  } else {
-    arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter(
-      (element: any) =>
-        element.type === 20 &&
-        !props.listEmployeeexist.includes(element.employeeId)
-    );
-  }
-  //If you choose retired employees, you have to filter again
-  if (retirementType.value == 1) {
-    arrayEmploySelect.value = arrayEmploySelect.value.filter(
-      (element: any) => element.status === 0
-    );
-  } else {
-    arrayEmploySelect.value = arrayEmploySelect.value.filter(
-      (element: any) => element.status !== 0
-    );
-  }
   modalStatusAccept.value = true;
-  //emit("closePopup", false);
 };
 
 </script>

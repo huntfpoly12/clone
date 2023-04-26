@@ -43,12 +43,14 @@ import getAccountingProcessLogs from "./getAccountingProcessLogs";
 import getAccountingDocumentsLogs from './getAccountingDocumentsLogs'
 import getMe from "./getMe";
 import getMajorInsuranceCompanyOutLogs from "./getMajorInsuranceCompanyOutLogs";
-import refreshLogin from "./refreshLogin";
 import getMajorInsuranceCompanyEmployeeLossLogs from "./getMajorInsuranceCompanyEmployeeLossLogs";
+import findUsername from "./findUsername";
+import getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs from "./getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs";
+import getMajorInsuranceCompanyEmployeeReturnToWorkLogs from "./getMajorInsuranceCompanyEmployeeReturnToWorkLogs";
 const queries = {
   getMe: getMe,
   getUser: getUser,
-  refreshLogin:refreshLogin,
+  findUsername:findUsername,
   getListSale: getListSale,
   getUserLogs: getUserLogs,
   getIncomeWagesLogs: getIncomeWagesLogs,
@@ -95,6 +97,8 @@ const queries = {
   getAccountingDocumentsLogs: getAccountingDocumentsLogs,
   getMajorInsuranceCompanyOutLogs: getMajorInsuranceCompanyOutLogs,
   getMajorInsuranceCompanyEmployeeLossLogs: getMajorInsuranceCompanyEmployeeLossLogs,
+  getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs: getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs,
+  getMajorInsuranceCompanyEmployeeReturnToWorkLogs: getMajorInsuranceCompanyEmployeeReturnToWorkLogs,
 };
 
 export default queries;

@@ -173,7 +173,7 @@ import { useStore } from "vuex";
 import { radioCheckData, radioCheckDataSearch } from "./utils/index";
 
 const store = useStore();
-const globalYear = computed(() => store.state.settings.globalYear);
+const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
 

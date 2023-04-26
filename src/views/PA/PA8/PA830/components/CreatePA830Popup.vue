@@ -193,7 +193,7 @@ export default defineComponent({
   setup(props, {emit}) {
     const store = useStore();
     const { infoCompany } = useCompanyInfo(companyId)
-    const globalYear = computed(() => store.getters['settings/currentYear']);
+    const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const employeeWages = ref();
     const employeeWageSelected = ref();
     const formData = ref({...INITIAL_FORM_PA830})

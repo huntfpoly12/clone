@@ -4,7 +4,6 @@ import LoginLayout from "../layouts/LoginLayout.vue";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
 import RquestContract from "../views/requestContract/index.vue";
 import ResetPassword from "../views/ResetPassword.vue";
-import ChangePassword from "../views/ChangePassword.vue";
 import NotFound from "../views/NotFound.vue";
 import { AdminScreenRole, WorkScreenRole, getJwtObject } from "@bankda/jangbuda-common";
 import isEmpty from "lodash/isEmpty";
@@ -39,16 +38,6 @@ const routes = [
       {
         path: "recovery/:key",
         component: ResetPassword,
-      },
-    ],
-  },
-  {
-    path: "/change-password",
-    component: LoginLayout,
-    children: [
-      {
-        path: "",
-        component: ChangePassword,
       },
     ],
   },
@@ -467,9 +456,9 @@ router.beforeEach((to, from, next) => {
 
   const { read } = useCheckPermission(roles)
   // check if token isExpired
-  // if(token && getJwtObject(token).isExpired()){
-  //   store.dispatch('auth/checkToken')
-  // }
+  if (token && getJwtObject(token).isExpired()) {
+    store.dispatch('auth/checkToken')
+  }
   
   if ((requiresAuth && !token)) {
     next("/login");

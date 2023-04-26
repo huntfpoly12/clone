@@ -12,7 +12,7 @@
                 </DxButton>
                 <DxButton icon="plus" @click="addRow" :disabled="checkActionValue" />
                 <DxButton @click="onItemClick('history')" :disabled="checkActionValue">
-                    <a-tooltip placement="left">
+                    <a-tooltip placement="top">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
                             <HistoryOutlined style="font-size: 16px" />
@@ -143,10 +143,9 @@
         :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
     <EditPopup  :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
-    <AddPopup v-if="modalAdd"  :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
+    <AddPopup v-if="modalAdd" :modalStatus="modalAdd" @closePopup="handleClose" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
-    <UpdatePopup  :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
-        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
+    <UpdatePopup v-if="modalUpdate" :modalStatus="modalUpdate" @closePopup="actionClosePopup" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
 <script lang="ts">
 import {computed, defineComponent, reactive, ref, watch} from "vue";
@@ -221,7 +220,7 @@ export default defineComponent({
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
         const modalDelete = ref<boolean>(false)
-        const triggerDetail = ref<boolean>(true);
+        const triggerDetail = ref<boolean>(false);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -261,10 +260,11 @@ export default defineComponent({
               listEmployee.push(item.employeeId)
               }
             })
-          listEmployeeId.value = listEmployee
+            listEmployeeId.value = listEmployee
             triggerDetail.value = false
         })
         errorTableDetail(res => {
+            dataSourceDetail.value = []
             notification('error', res.message)
         })
         const {
@@ -316,8 +316,13 @@ export default defineComponent({
             triggerDetail.value = true
             refetchTableDetail()
             emit('createdDone', true)
-            modalAdd.value = false
             modalUpdate.value = false
+        }
+
+        // action modal create
+        const handleClose = (e: boolean) => {
+          if (e) triggerDetail.value = true
+          modalAdd.value = false
         }
         const actionClosePopup = () => {
             modalUpdate.value = false
@@ -402,7 +407,8 @@ export default defineComponent({
             refetchTableDetail,
             resetFormNum,
             listEmployeeId,
-            closeChangePaymentDay,store,hasDataIncRetirements
+            closeChangePaymentDay,store,hasDataIncRetirements,
+            handleClose
         }
     }
 });

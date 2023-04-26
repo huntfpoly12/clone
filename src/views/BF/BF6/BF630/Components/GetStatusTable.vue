@@ -1,12 +1,22 @@
 <template>
   <a-spin :spinning="loadingTab1 || loadingTab2 || loadingTab3 || loadingTab4">
-  <span class="tag-status-null" style="padding:1px 10px;opacity: 50%" v-if="beforeProductionRequest">제작요청전</span>
-  <template v-else>
-    <production-status :typeTag="2" v-if="checkStatus(0)" padding="1px 10px" />
-    <production-status :typeTag="3" v-if="checkStatus(1)" padding="1px 10px" />
-    <production-status :typeTag="4" v-if="checkStatus(2)" padding="1px 10px" />
-    <production-status :typeTag="5" v-if="checkStatus(-1)" padding="1px 10px" />
-  </template>
+    <span class="tag-status-null" style="padding:1px 10px;opacity: 50%" v-if="beforeProductionRequest">제작요청전</span>
+    <template v-else>
+      <a-tooltip placement="topLeft" color="#C00000"  v-if="checkStatus(-1)">
+        <template #title>{{ causeOfProductionFailure }}</template>
+        <div>
+          <production-status :typeTag="5" padding="1px 10px" />
+        </div>
+      </a-tooltip>
+      <a-tooltip placement="topLeft" color="black" v-if="checkStatus(2)">
+        <template #title>전자신고파일 다운로드</template>
+        <div>
+          <production-status :typeTag="4" padding="1px 10px" />
+        </div>
+      </a-tooltip>
+      <production-status :typeTag="2" v-if="checkStatus(0)" padding="1px 10px" />
+      <production-status :typeTag="3" v-if="checkStatus(1)" padding="1px 10px" />
+    </template>
   </a-spin>
 </template>
 <script lang="ts">
@@ -41,7 +51,7 @@ export default defineComponent({
         imputedYear: props.data?.imputedYear
       }
     })
-
+    let causeOfProductionFailure = ref('')
     watch(dataSearch, (newVal) => {
       if (newVal && !props.beforeProductionRequest) {
         if (props.tabName == 'tab1') {
@@ -155,14 +165,16 @@ export default defineComponent({
 
 
     const checkStatus = (status: any) => {
-      if (!!arrStatus.value && arrStatus.value.productionStatus === status)
+      if (!!arrStatus.value && arrStatus.value.productionStatus === status){
+        causeOfProductionFailure.value = arrStatus.value?.causeOfProductionFailure || ''
         return true
-      else
+      }else{
         return false
+      }
     }
 
     return {
-      arrStatus, checkStatus, loadingTab1, loadingTab2, loadingTab3, loadingTab4
+      arrStatus, checkStatus, loadingTab1, loadingTab2, loadingTab3, loadingTab4, causeOfProductionFailure
     }
   }
 })

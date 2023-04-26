@@ -3,7 +3,7 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820||
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820|| loadingPA840_1|| loadingPA840_2||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
                 || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments">
@@ -24,7 +24,7 @@
                     <DxColumn caption="삭제여부" data-field="active" :width="80" />
                     <DxColumn caption="IP주소" data-field="ip" />
                     <DxColumn caption="상세" cell-template="detail" css-class="cell-center" :width="50" />
-                    <template #detail="{}">
+                    <template #detail>
                         <a-space :size="8">
                             <a-tooltip placement="top" color="black">
                                 <template #title>상세보기</template>
@@ -94,6 +94,8 @@ export default defineComponent({
         let triggerPA210 = ref<boolean>(false);
         let triggerPA810 = ref<boolean>(false);
         let triggerPA820 = ref<boolean>(false);
+        let triggerPA840_1 = ref<boolean>(false);
+        let triggerPA840_2 = ref<boolean>(false);
         let triggerPA880 = ref<boolean>(false);
         let triggerAC610 = ref<boolean>(false);
         let triggerCM121 = ref<boolean>(false);
@@ -110,7 +112,7 @@ export default defineComponent({
         // const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear);
+        const globalYear = dayjs().year()
         watch(
             () => props.modalStatus,
             async (newValue, old) => {
@@ -385,13 +387,30 @@ export default defineComponent({
                         case 'pa-820':
                           dataQuery.value = {
                             companyId: companyId,
-                            imputedYear: globalYear.value,
+                            imputedYear: globalYear,
                             workId: props.data,
                           };
-                          console.log(`output-`,dataQuery.value)
                             triggerPA820.value = true;
                             // refetchPA820();
                             break;
+                        case 'pa-840-1':
+                          dataQuery.value = {
+                            companyId: companyId,
+                            imputedYear: globalYear,
+                            workId: props.data,
+                          };
+                            triggerPA840_1.value = true;
+                            refetchPA840_1();
+                            break;
+                        case 'pa-840-2':
+                          dataQuery.value = {
+                            companyId: companyId,
+                            imputedYear: globalYear,
+                            workId: props.data,
+                          };
+                            triggerPA840_2.value = true;
+                            refetchPA840_2();
+                            break;    
                         case 'pa-880':
                             dataQuery.value = {
                                 companyId: companyId,
@@ -456,6 +475,8 @@ export default defineComponent({
                     triggerPA210.value = false;
                     triggerPA810.value = false;
                     triggerPA820.value = false;
+                    triggerPA840_1.value = false;
+                    triggerPA840_2.value = false;
                     triggerPA880.value = false;
                     triggerAC610.value = false;
                     triggerCM121.value = false;
@@ -859,7 +880,7 @@ export default defineComponent({
           }
         });
         // get pa-820
-        const { result: resultPA820, loading: loadingPA820, refetch: refetchPA820 } = useQuery(
+        const { result: resultPA820, loading: loadingPA820 } = useQuery(
             queries.getMajorInsuranceCompanyEmployeeLossLogs,
             dataQuery,
             () => ({
@@ -870,6 +891,34 @@ export default defineComponent({
         watch(resultPA820, (value) => {
             if (value) {
                 dataTableShow.value = value.getMajorInsuranceCompanyEmployeeLossLogs;
+            }
+        });
+        // get pa-840-1
+        const { result: resultPA840_1, loading: loadingPA840_1, refetch: refetchPA840_1 } = useQuery(
+            queries.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerPA840_1.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA840_1, (value) => {
+            if (value) {
+                dataTableShow.value = value.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs;
+            }
+        });
+        // get pa-840-2
+        const { result: resultPA840_2, loading: loadingPA840_2, refetch: refetchPA840_2} = useQuery(
+            queries.getMajorInsuranceCompanyEmployeeReturnToWorkLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerPA840_2.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA840_2, (value) => {
+            if (value) {
+                dataTableShow.value = value.getMajorInsuranceCompanyEmployeeReturnToWorkLogs;
             }
         });
         // get pa-880
@@ -1022,6 +1071,8 @@ export default defineComponent({
             loadingPA210,
             loadingPA810,
             loadingPA820,
+            loadingPA840_1,
+            loadingPA840_2,
             loadingPA880,
             loadingAC610,
             loadingCM121,

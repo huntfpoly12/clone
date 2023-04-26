@@ -4,15 +4,13 @@ export default gql`
     $companyId: Int!,
     $fiscalYear: Int!,
     $facilityBusinessId: Int!,
-    $bankbookDetailDate: Int!,
-    $bankbookDetailIds: [Int!]!
+    $keys: [BankbookDetailKeyInput!]!
   ) {
     registerTransactionDetailsToAccountingDocuments(
       companyId: $companyId,
       fiscalYear: $fiscalYear,
       facilityBusinessId: $facilityBusinessId,
-      bankbookDetailDate: $bankbookDetailDate,
-      bankbookDetailIds: $bankbookDetailIds
+      keys: $keys
     )
   }
 `;

@@ -1,25 +1,24 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="disabledBlock ? false :actionSave()" :buttonSave="disabledBlock ? false : true" />
+    <action-header title="기타소득자등록" @actionSave="disabledBlock ? false : actionSave()"
+        :buttonSave="disabledBlock ? false : true" />
     <div id="pa-710">
         <div class="page-content">
             <a-row>
-                <a-col span="16" class="data-table" :class="{'disabledBlock': disabledBlockTable}">
+                <a-col span="16" class="data-table" :class="{ 'disabledBlock': disabledBlockTable }">
                     <a-spin :spinning="loading || loadingCreated" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true"
-                            @focused-row-changing="onFocusedRowChanging"
-                            ref="gridRef"
+                            :column-auto-width="true" @focused-row-changing="onFocusedRowChanging" ref="gridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
-                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                             <DxPaging :enabled="false" />
-                            <DxExport :enabled="true"/>
+                            <DxExport :enabled="true" />
                             <DxToolbar>
-                                <DxItem template="total-user" location="before"/>
+                                <DxItem template="total-user" location="before" />
                                 <DxItem name="searchPanel" />
-                                <DxItem name="exportButton" css-class="cell-button-export"/>
+                                <DxItem name="exportButton" css-class="cell-button-export" />
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
                                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             </DxToolbar>
@@ -27,7 +26,7 @@
                                 <div class="total-user">
                                     <span>{{ listEmployeeExtra.length }}</span>
                                     <span>전체</span>
-                                    <img src="@/assets/images/user.svg"/>
+                                    <img src="@/assets/images/user.svg" />
                                 </div>
                             </template>
                             <template #button-history>
@@ -43,7 +42,7 @@
                                     </div>
                                 </a-tooltip>
                             </template>
-                            <DxColumn caption="성명 (상호)" cell-template="company-name" data-field="name"/>
+                            <DxColumn caption="성명 (상호)" cell-template="company-name" data-field="name" />
                             <template #company-name="{ data }">
                                 <div class="custom-action" v-if="data.data.__typename">
                                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
@@ -53,96 +52,98 @@
                                 </div>
                                 <div class="custom-action" v-else>
                                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                        :status="data.data.status" :foreigner="data.data.foreigner"
-                                        :checkStatus="false" />
+                                        :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false" />
                                 </div>
                             </template>
-                            <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"/>
+                            <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId" />
                             <template #residentId="{ data }">
-                              <resident-id :residentId="data.data.residentId"></resident-id>
+                                <resident-id :residentId="data.data.residentId"></resident-id>
                             </template>
-                            <DxColumn caption="소득구분" cell-template="grade-cell" data-field="incomeTypeName"/>
+                            <DxColumn caption="소득구분" cell-template="grade-cell" data-field="incomeTypeName" />
                             <template #grade-cell="{ data }">
                                 <income-type :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName"></income-type>
                             </template>
-                            <DxColumn :width="50" cell-template="pupop" css-class="cell-center"/>
+                            <DxColumn :width="50" cell-template="pupop" css-class="cell-center" />
                             <template #pupop="{ data }">
-                                    <DeleteOutlined v-if="data.data.deletable" style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
-                                        @click="statusAddRow ? modalStatusDelete = true : ''" />
+                                <DeleteOutlined v-if="data.data.deletable"
+                                    style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
+                                    @click="statusAddRow ? modalStatusDelete = true : ''" />
                             </template>
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <a-col span="8" class="custom-layout" :class="{'disabledBlock': disabledBlock}">
-                    <a-spin :spinning="loadingDetail" size="large" :key="resetFormNum"><StandardForm formName="pa-710-form" ref="pa710FormRef">
-                        <a-form-item label="코드" :label-col="labelCol" class="red">
-                            <div class="custom-note d-flex-center">
-                                <number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
-                                    placeholder="숫자만 입력 가능" :disabled="statusFormUpdate">
-                                </number-box>
-                                <div class="pl-5">
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                    <span class="style-note">최초 저장된 이후 수정 불가</span>
+                <a-col span="8" class="custom-layout" :class="{ 'disabledBlock': disabledBlock }">
+                    <a-spin :spinning="loadingDetail" size="large" :key="resetFormNum">
+                        <StandardForm formName="pa-710-form" ref="pa710FormRef">
+                            <a-form-item label="코드" :label-col="labelCol" class="red">
+                                <div class="custom-note d-flex-center">
+                                    <number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
+                                        placeholder="숫자만 입력 가능" :disabled="statusFormUpdate">
+                                    </number-box>
+                                    <div class="pl-5">
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+                                        <span class="style-note">최초 저장된 이후 수정 불가</span>
+                                    </div>
                                 </div>
+                            </a-form-item>
+                            <a-form-item label="성명(상호) " :label-col="labelCol" class="red">
+                                <default-text-box :width="200" v-model:valueInput="formState.name" :required="true"
+                                    placeholder="한글,영문(대문자) 입력 가능">
+                                </default-text-box>
+                            </a-form-item>
+                            <a-form-item label="내/외국인" :label-col="labelCol" class="red">
+                                <radio-group :arrayValue="optionsRadio" :required="true"
+                                    @update:valueRadioCheck="changeRadioForeigner"
+                                    v-model:valueRadioCheck="formState.foreigner" :layoutCustom="'horizontal'" />
+                            </a-form-item>
+                            <a-form-item label="외국인 국적" :label-col="labelCol" :class="!formState.foreigner ? '' : 'red'">
+                                <country-code-select-box v-if="formState.foreigner" style="width: 200px"
+                                    v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
+                                    :required="formState.foreigner" :disabled="!formState.foreigner"
+                                    :hiddenOptionKR="true" />
+                                <country-code-select-box v-else style="width: 200px"
+                                    v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
+                                    :required="formState.foreigner" :disabled="!formState.foreigner" />
+                            </a-form-item>
+                            <a-form-item label="외국인 체류자격" :label-col="labelCol" :class="!formState.foreigner ? '' : 'red'">
+                                <stay-qualification-select-box style="width: 200px" :required="formState.foreigner"
+                                    :disabled="!formState.foreigner"
+                                    v-model:valueStayQualifiction="formState.stayQualification" />
+                            </a-form-item>
+                            <a-form-item :label="!formState.foreigner ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol"
+                                class="red">
+                                <id-number-text-box :width="200" v-model:valueInput="formState.residentId" :required="true"
+                                    :foreigner="formState.foreigner" />
+                            </a-form-item>
+                            <a-form-item label="소득구분" :label-col="labelCol" class="red">
+                                <type-code-select-box style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
+                                    @textTypeCode="textTypeCode" :required="true" :disabled="statusFormUpdate">
+                                </type-code-select-box>
+                            </a-form-item>
+                            <a-form-item label="이메일" :label-col="labelCol">
+                                <div class="custom-note">
+                                    <mail-text-box placeholder="abc@example.com" v-model:valueInput="formState.email"
+                                        id="email" />
+                                    <span>
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요
+                                        서류를
+                                        메일로 전달 가능합니다.
+                                    </span>
+                                </div>
+                            </a-form-item>
+                            <div class="text-align-center mt-20">
+                                <button-basic :text="'저장'" type="default" :mode="'contained'" @onClick="actionSave()" />
                             </div>
-                        </a-form-item>
-                        <a-form-item label="성명(상호) " :label-col="labelCol" class="red">
-                            <default-text-box :width="200" v-model:valueInput="formState.name" :required="true"
-                                placeholder="한글,영문(대문자) 입력 가능">
-                            </default-text-box>
-                        </a-form-item>
-                        <a-form-item label="내/외국인" :label-col="labelCol" class="red">
-                            <radio-group :arrayValue="optionsRadio" :required="true"
-                                v-model:valueRadioCheck="formState.foreigner" :layoutCustom="'horizontal'" />
-                        </a-form-item>
-                        <a-form-item label="외국인 국적" :label-col="labelCol" :class="!formState.foreigner ? '' : 'red'">
-                            <country-code-select-box v-if="formState.foreigner" style="width: 200px"
-                                v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
-                                :required="formState.foreigner" :disabled="!formState.foreigner"
-                                :hiddenOptionKR="true" />
-                            <country-code-select-box v-else style="width: 200px"
-                                v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
-                                :required="formState.foreigner" :disabled="!formState.foreigner" />
-                        </a-form-item>
-                        <a-form-item label="외국인 체류자격" :label-col="labelCol" :class="!formState.foreigner ? '' : 'red'">
-                            <stay-qualification-select-box style="width: 200px" :required="formState.foreigner"
-                                :disabled="!formState.foreigner"
-                                v-model:valueStayQualifiction="formState.stayQualification" />
-                        </a-form-item>
-                        <a-form-item :label="!formState.foreigner ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol"
-                            class="red">
-                            <id-number-text-box :width="200" v-model:valueInput="formState.residentId"
-                                :required="true" :foreigner="formState.foreigner"/>
-                        </a-form-item>
-                        <a-form-item label="소득구분" :label-col="labelCol" class="red">
-                            <type-code-select-box style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
-                                @textTypeCode="textTypeCode" :required="true" :disabled="statusFormUpdate">
-                            </type-code-select-box>
-                        </a-form-item>
-                        <a-form-item label="이메일" :label-col="labelCol">
-                            <div class="custom-note">
-                                <mail-text-box placeholder="abc@example.com" v-model:valueInput="formState.email"
-                                    id="email" />
-                                <span>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요
-                                    서류를
-                                    메일로 전달 가능합니다.
-                                </span>
-                            </div>
-                        </a-form-item>
-                        <div class="text-align-center mt-20">
-                            <button-basic :text="'저장'" type="default" :mode="'contained'"
-                                @onClick="actionSave()" />
-                        </div>
-                        <!-- <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
+                            <!-- <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
                             id="active-save" /> -->
-                    </StandardForm></a-spin>
+                        </StandardForm>
+                    </a-spin>
                 </a-col>
             </a-row>
         </div>
-        <a-modal :visible="modalStatusDelete" @cancel="modalStatusDelete = false" :mask-closable="false"
-            class="confirm-md" footer="" :width="500">
+        <a-modal :visible="modalStatusDelete" @cancel="modalStatusDelete = false" :mask-closable="false" class="confirm-md"
+            footer="" :width="500">
             <standard-form action="" name="delete-510">
                 <div class="custom-modal-delete">
                     <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
@@ -159,9 +160,13 @@
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
             title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-710" />
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
-        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirm" />
+            :title="Message.getMessage('COMMON', '501').message" content=""
+            :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
+            @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
-        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
+            :title="Message.getMessage('COMMON', '501').message" content=""
+            :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
+            @checkConfirm="statusComfirmAdd" />
         <!-- <PopupMessage :modalStatus="confirmSave" @closePopup="confirmSave = false" :typeModal="'confirm'"
             title="입력한 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="confimSaveWhenChangeRow" /> -->
     </div>
@@ -191,7 +196,7 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
 
         let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
@@ -215,19 +220,19 @@ export default defineComponent({
         const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
         const originData = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
         }
         const originDataDetail: any = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
             employeeId: null,
             incomeTypeCode: null,
         });
         let confirmSave = ref(false)
         const optionsRadio = ref([...initialOptionsRadio]);
         let runOne = ref(true);
-        const dataYearNew = ref(globalYear.value)
-        const checkClickYear = ref<Boolean>(false)
+        const dataYearNew = ref<number>(paYear.value)
+        // const checkClickYear = ref<Boolean>(false)
         var disabledBlock = ref<boolean>(false);
         const disabledBlockTable = ref<boolean>(false);
         // ================GRAPQL==============================================
@@ -289,23 +294,23 @@ export default defineComponent({
         });
         onDoneAdd(async (data) => {
             notification('success', Message.getMessage('COMMON', '101').message)
-            if (checkClickYear.value) {
-                originData.imputedYear = dataYearNew.value
-                runOne.value = true;
-                trigger.value = true;
-                store.state.settings.globalYear = dataYearNew.value
-                setTimeout(() => {
-                    checkClickYear.value = false;
-                }, 500);
-                return;
-            }
+            // if (checkClickYear.value) {
+            //     originData.imputedYear = dataYearNew.value
+            //     runOne.value = true;
+            //     trigger.value = true;
+            //     store.state.settings.paYear = dataYearNew.value
+            //     setTimeout(() => {
+            //         checkClickYear.value = false;
+            //     }, 500);
+            //     return;
+            // }
             await (trigger.value = true);
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 return
             }
             if (statusClickButtonSave.value) { // if click submit
                 originDataDetail.value.employeeId = data.data.createEmployeeExtra?.employeeId
-                originDataDetail.value.incomeTypeCode = data.data.createEmployeeExtra?.incomeTypeCode  
+                originDataDetail.value.incomeTypeCode = data.data.createEmployeeExtra?.incomeTypeCode
             } else { // if click save modal
                 originDataDetail.value.employeeId = dataRow.employeeId
                 originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
@@ -314,12 +319,12 @@ export default defineComponent({
             await (statusFormUpdate.value = true);
             await (statusAddRow.value = true);
             store.state.common.savePA710++;
-            
+
         });
         onErrorAdd((e) => {
             focusedRowKey.value = 'PA710'
             notification('error', e.message)
-            checkClickYear.value ? checkClickYear.value = false : '';
+            // checkClickYear.value ? checkClickYear.value = false : '';
         });
         onDoneDelete(() => {
             modalStatusDelete.value = false;
@@ -333,23 +338,23 @@ export default defineComponent({
         });
         onDoneUpdate(async (data) => {
             notification('success', Message.getMessage('COMMON', '106').message)
-            if (checkClickYear.value) {
-                originData.imputedYear = dataYearNew.value
-                runOne.value = true;
-                trigger.value = true;
-                store.state.settings.globalYear = dataYearNew.value
-                setTimeout(() => {
-                    checkClickYear.value = false;
-                }, 500);
-                return;
-            }
+            // if (checkClickYear.value) {
+            //     originData.imputedYear = dataYearNew.value
+            //     runOne.value = true;
+            //     trigger.value = true;
+            //     store.state.settings.paYear = dataYearNew.value
+            //     setTimeout(() => {
+            //         checkClickYear.value = false;
+            //     }, 500);
+            //     return;
+            // }
             await (trigger.value = true);
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 return
             }
             if (statusClickButtonSave.value) { // if click submit
                 originDataDetail.value.employeeId = data.data.updateEmployeeExtra?.employeeId
-                originDataDetail.value.incomeTypeCode = data.data.updateEmployeeExtra?.incomeTypeCode  
+                originDataDetail.value.incomeTypeCode = data.data.updateEmployeeExtra?.incomeTypeCode
             } else { // if click save modal
                 originDataDetail.value.employeeId = dataRow.employeeId
                 originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
@@ -358,7 +363,7 @@ export default defineComponent({
             store.state.common.savePA710++;
         });
         onErrorUpdate((e) => {
-            checkClickYear.value ? checkClickYear.value = false : '';
+            // checkClickYear.value ? checkClickYear.value = false : '';
             triggerDetail.value = true;
             notification('error', e.message)
         });
@@ -367,14 +372,14 @@ export default defineComponent({
         const pa710FormRef = ref()
         const actionSave = () => {
             statusClickButtonSave.value = true;
-            checkClickYear.value = false
+            // checkClickYear.value = false
             submitForm()
         }
         const submitForm = () => {
             var res = pa710FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                checkClickYear.value ? checkClickYear.value = false : '';
+                // checkClickYear.value ? checkClickYear.value = false : '';
             } else {
                 let residentId = formState.value.residentId.replace('-', '')
                 let input = {
@@ -390,7 +395,7 @@ export default defineComponent({
                 if (statusFormUpdate.value) {
                     let dataUpdate = {
                         companyId: companyId,
-                        imputedYear: globalYear.value,
+                        imputedYear: paYear.value,
                         employeeId: parseInt(formState.value.employeeId),
                         incomeTypeCode: formState.value.incomeTypeCode,
                         input: { ...input }
@@ -400,7 +405,7 @@ export default defineComponent({
                 } else {
                     let dataCreate = {
                         companyId: companyId,
-                        imputedYear: globalYear.value,
+                        imputedYear: paYear.value,
                         input: {
                             employeeId: parseInt(formState.value.employeeId),
                             incomeTypeCode: formState.value.incomeTypeCode,
@@ -427,7 +432,7 @@ export default defineComponent({
             statusClickButtonAdd.value = false
             dataRow = e.rows[e.newRowIndex]?.data
             const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
-            if (dataRow.residentId && (dataRow.residentId +''+ dataRow.incomeTypeCode != formState.value.residentId+''+formState.value.incomeTypeCode)) {
+            if (dataRow.residentId && (dataRow.residentId + '' + dataRow.incomeTypeCode != formState.value.residentId + '' + formState.value.incomeTypeCode)) {
                 originDataDetail.value.employeeId = e.rows[e.newRowIndex]?.data.employeeId
                 originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
@@ -460,7 +465,7 @@ export default defineComponent({
                 if (statusChangeFormAdd) { // if status form add and form not null
                     modalStatusAdd.value = true
                     statusClickButtonAdd.value = true
-                } else if(statusAddRow.value) {
+                } else if (statusAddRow.value) {
                     addRow()
                 }
             }
@@ -470,7 +475,7 @@ export default defineComponent({
         const onSubmitDelete = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: globalYear.value,
+                imputedYear: paYear.value,
                 employeeId: formState.value.employeeId,
                 incomeTypeCode: formState.value.incomeTypeCode
             };
@@ -482,16 +487,16 @@ export default defineComponent({
                 statusClickButtonSave.value = false;
                 submitForm();
             } else {
-                if (checkClickYear.value) {
-                    originData.imputedYear = dataYearNew.value
-                    runOne.value = true;
-                    trigger.value = true;
-                    store.state.settings.globalYear = dataYearNew.value
-                    setTimeout(() => {
-                        checkClickYear.value = false;
-                    }, 500);
-                    return;
-                }
+                // if (checkClickYear.value) {
+                //     originData.imputedYear = dataYearNew.value
+                //     runOne.value = true;
+                //     trigger.value = true;
+                //     store.state.settings.paYear = dataYearNew.value
+                //     setTimeout(() => {
+                //         checkClickYear.value = false;
+                //     }, 500);
+                //     return;
+                // }
                 if (!statusAddRow.value) {
                     listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
                     statusAddRow.value = true
@@ -504,10 +509,10 @@ export default defineComponent({
         const statusComfirmAdd = (val: any) => {
             if (val) {
                 statusClickButtonSave.value = false;
-                checkClickYear.value = false;
+                // checkClickYear.value = false;
                 submitForm();
             } else {
-                if(statusAddRow.value && statusClickButtonAdd.value) { // add row
+                if (statusAddRow.value && statusClickButtonAdd.value) { // add row
                     addRow()
                 } else { // reset form
                     resetFormNum.value++;
@@ -525,6 +530,15 @@ export default defineComponent({
             resetFormNum.value++;
             focusedRowKey.value = 'PA710';
             statusFormUpdate.value = false;
+        }
+
+        const changeRadioForeigner = (value: Boolean) => {
+            if (!value) {
+                formState.value.nationalityCode = 'KR'
+                formState.value.stayQualification = null
+            } else {
+                formState.value.nationalityCode = formState.value.nationalityCode == 'KR' ? null : formState.value.nationalityCode
+            }
         }
 
         // ================WATCHING============================================
@@ -557,47 +571,48 @@ export default defineComponent({
                 } else {
                     disabledBlock.value = true;
                 }
-                
+
             }
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 addRow()
             }
         });
-        watch(() => formState.value.foreigner, (newValue) => {
-            if (!newValue) {
-                formState.value.nationalityCode = 'KR'
-                formState.value.stayQualification = null
-            } else {
-                resetFormNum.value++;
-                formState.value.nationalityCode = formState.value.nationalityCode == 'KR' ? null : formState.value.nationalityCode
-            }
-        });
+        // watch(() => formState.value.foreigner, (newValue) => {
+        //     if (!newValue) {
+        //         formState.value.nationalityCode = 'KR'
+        //         formState.value.stayQualification = null
+        //     } else {
+        //         // resetFormNum.value++;
+        //         formState.value.nationalityCode = formState.value.nationalityCode == 'KR' ? null : formState.value.nationalityCode
+        //     }
+        // });
         watchEffect(() => {
             formState.value.name = formState.value.name?.toUpperCase() ?? '';
         });
-        
-        watch(globalYear, (newVal, oldVal) => {
-            let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
-            let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
-            if (statusChangeFormEdit || statusChangeFormAdd) { // if status form add and form not null
-                if (!checkClickYear.value) {
-                    modalStatus.value = true
-                    checkClickYear.value = true
-                    store.state.settings.globalYear = oldVal;
-                    dataYearNew.value = newVal;
-                    return
-                }
-                return
-            } else {
-                originData.imputedYear = newVal
-                runOne.value = true;
-                trigger.value = true;
-            }
-        });
+
+        // watch(paYear, (newVal, oldVal) => {
+        //     let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
+        //     let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
+        //     if (statusChangeFormEdit || statusChangeFormAdd) { // if status form add and form not null
+        //         // if (!checkClickYear.value) {
+        //         //     modalStatus.value = true
+        //         //     checkClickYear.value = true
+        //         //     store.state.settings.paYear = oldVal;
+        //         //     dataYearNew.value = newVal;
+        //         //     return
+        //         // }
+        //         return
+        //     } else {
+        //         originData.imputedYear = newVal
+        //         runOne.value = true;
+        //         trigger.value = true;
+        //     }
+        // });
 
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
             // confimSaveWhenChangeRow, 
+            changeRadioForeigner,
             onFocusedRowChanging,
             disabledBlockTable,
             textCountry, actionCreate, textTypeCode, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
@@ -606,9 +621,7 @@ export default defineComponent({
     },
 });
 </script> 
-<style scoped lang="scss" src="./style/style.scss" >
-
-</style>
+<style scoped lang="scss" src="./style/style.scss" ></style>
 
 <style>
 .confirmDelete .anticon {

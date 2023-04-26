@@ -42,7 +42,16 @@
         }
       }
       #DxDataGridMainAc110 {
-        height: calc(100vh - 560px)
+        height: calc(100vh - 560px);
+        :deep .dx-freespace-row {
+          display: none !important;
+        }
+      }
+      &-tabUserType {
+        border: 1px solid #bfbfbf;
+        border-radius: 6px;
+        height: 28px;
+        line-height: 28px;
       }
     }
     &-detail {
@@ -51,15 +60,18 @@
       margin-top: 15px;
       &-detail1 {
         height: 100%;
-        width: calc(100% - 422px);
+        width: calc(100% - 295px);
+        min-width: calc(100% - 295px);
         padding-right: 10px;
         :deep(.dx-toolbar .dx-toolbar-items-container) {
           height: 55px !important;
         }
+        &-wrapper {
+          border: 1px solid #bfbfbf;
+        }
         &-title {
           background-color: #bdd7ee;
           padding: 3px 5px;
-          margin-bottom: 10px;
           display: flex;
           align-items: center;
         }
@@ -110,12 +122,22 @@
         }
       }
       #DxDataGridDetailAc110 {
-        height: 235px;
+        height: 242px;
+        :deep .dx-freespace-row {
+          display: none !important;
+        }
+        :deep .dx-datagrid-focus-overlay {
+          visibility: hidden !important;
+        }
       }
     }
   }
-  .disable-button-edit-add {
+  .disable-icon-column {
     pointer-events: none;
-    color: rgb(180, 177, 177);
+    opacity: .1;
+  }
+  .disable-input-column {
+    pointer-events: none;
+    opacity: .4;
   }
 }

@@ -19,6 +19,14 @@ ChangePassword: gql`
     changeMyPassword(password: $password)
   }
 `,
+refreshLogin:gql`
+mutation refreshLogin($accessToken: String! , $refreshToken: String!) {
+  refreshLogin(accessToken: $accessToken, refreshToken: $refreshToken) {
+    accessToken
+    refreshToken
+  }
+}
+`
 };
 
 export default mutations;

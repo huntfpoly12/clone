@@ -141,7 +141,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
     const arrDepartments = ref([]);
@@ -284,6 +283,7 @@ export default defineComponent({
         emit('employeeId', +initFormStateTabPA120.value.employeeId);
         let formData = { ...initFormStateTabPA120.value, employeeId: +initFormStateTabPA120.value.employeeId, };
         delete formData.key;
+        delete formData.deletable;
         if (isEdit.value) {
           delete formData.employeeId;
         }
@@ -291,8 +291,8 @@ export default defineComponent({
           ...formParam,
           input: {
             ...formData,
-            joinedAt: +dayjs(initFormStateTabPA120.value.joinedAt).format("YYYYMMDD"),
-            leavedAt: +dayjs(initFormStateTabPA120.value.leavedAt).format("YYYYMMDD"),
+            joinedAt: +initFormStateTabPA120.value.joinedAt,
+            leavedAt: initFormStateTabPA120.value.leavedAt,
           },
         };
         if (!isEdit.value) {

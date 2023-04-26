@@ -58,7 +58,7 @@
           <date-time-box width="150px" dateFormat="YYYY-MM-DD" v-model:valueDate="dateTime"/>
           <a-tooltip placement="topLeft" color="black">
             <template #title>전자신고파일 제작 요청</template>
-            <div class="btn-modal-save" @click="openModalSave">
+            <div class="btn-modal-save" @click="keySelect.length > 0 && openModalSave()">
               <SaveOutlined class="fz-24 ml-5 action-save"/>
               <span style="margin-left: 5px;">파일제작요청</span>
             </div>
@@ -71,7 +71,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                     key-expr="index" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged">
+                    @selection-changed="selectionChanged" style="height: 590px">
           <DxSelection mode="multiple" :fixed="true"/>
           <DxColumn caption="사업자코드" cell-template="company-code" data-field="company.code"/>
           <template #company-code="{ data }">
@@ -160,7 +160,7 @@ export default defineComponent({
     const userInfor = computed(() => (store.state.auth.userInfor))
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const globalYear = computed(() => store.getters['settings/currentYear']);
+    const globalYear = computed(() => dayjs().year());
     let trigger = ref(true)
     let modalConfirmMail = ref(false)
     let dataModalSave = ref()
@@ -228,6 +228,7 @@ export default defineComponent({
         productionStatus: 3,
         index
       }))
+
       const arrayStatus = await fetchDataStatus(arrDataConvert.filter((i: any) => i.lastProductionRequestedAt).map((item: any) => ({
         companyId: item.companyId,
         paymentYear: item.paymentYear,
@@ -235,7 +236,7 @@ export default defineComponent({
       })));
       if (arrayStatus) {
         dataSourceOriginal.value = dataSourceOriginal.value.map((item: any, index: number) => {
-          item.productionStatus = arrayStatus[index].productionStatus
+          item.productionStatus = arrayStatus[index]?.productionStatus ?? 3
           return item;
         });
       }
@@ -245,7 +246,7 @@ export default defineComponent({
             ? filter.productionStatuses.length > 0  //
               ? filter.productionStatuses.includes(item.productionStatus)
               : item.productionStatus === 3
-            : item)
+            : item.productionStatus === 3)
       })
     })
 
@@ -330,7 +331,7 @@ export default defineComponent({
       }
     }
     const selectionChanged = (res: any) => {
-      keySelect.value = res.selectedRowKeys.map((i: any) => res.selectedRowsData[i].companyId)
+      keySelect.value = res.selectedRowsData.map((i: any) => i.companyId)
     }
     const customTextSummary = () => {
       return `제작요청전: ${beforeProductionRequest}, 제작대기: ${waitingForProduction}, 제작중: ${productionInProgress}, 제작실패: ${productionFailed}, 제작성공: ${productionSuccess}`;
@@ -361,7 +362,7 @@ export default defineComponent({
       filter, dataSource, colomn_resize, move_column, modalConfirmMail,
       selectionChanged, openModalSave,
       dateTime,
-
+      keySelect,
       refetch
     }
   }

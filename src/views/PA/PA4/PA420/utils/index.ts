@@ -6,6 +6,7 @@ interface Origindata {
   name: string,
   code: string,
 }
+
 export const origindata: Origindata = {
   page: 1,
   rows: 10,
@@ -15,8 +16,9 @@ export const origindata: Origindata = {
   code: "",
 }
 
-import { companyId } from "@/helpers/commonFunction";
+import {companyId} from "@/helpers/commonFunction";
 import dayjs from "dayjs";
+
 export const dataActionUtils = {
   companyId: companyId,
   processKey: {
@@ -109,53 +111,25 @@ export const initialFormState = {
     }
   }
 }
-// form state tab 2
-export const initialIncomeCalculationInput = {
-  settlementStartDate: null,
-  settlementFinishDate: null,
-  exclusionDays: 0,
-  additionalDays: 0,
-  totalPay3Month: 0,
-  totalAnualBonus: 0,
-  annualLeaveAllowance: 0
-}
-
-// processKey of tab 1
-export const PROCESSKEY = {
-  imputedYear: parseInt(dayjs().format("YYYY")),
-  imputedMonth: parseInt(dayjs().format("MM")),
-  paymentYear: parseInt(dayjs().format("YYYY")),
-  paymentMonth: parseInt(dayjs().format("MM")),
-}
 
 // state input api fincomeCalculationInput
 export const INPUT_FORM_TAB_1 = {
-  // paymentDay: null,
   employeeId: null,
   employeeType: null,
   retirementType: 1,
   executive: false,
   retirementReason: null,
 }
+export const Prev_Retired_Years_Of_Service = {
+  settlementStartDate: null,
+  settlementFinishDate: null,
+  paymentDate: null,
+  exclusionDays: 0,
+  additionalDays: 0,
+}
 // state taxCalculationInput
-export const TAX_CALCULATION_INPUT = {
-  prevRetirementBenefitStatus: {
-    retirementBenefits: null,
-    nonTaxableRetirementBenefits: null,
-    taxableRetirementBenefits: null,
-  },
-  lastRetirementBenefitStatus: {
-    retirementBenefits: null,
-    nonTaxableRetirementBenefits: null,
-    taxableRetirementBenefits: null,
-  },
-  prevRetiredYearsOfService: {
-    settlementStartDate: null,
-    settlementFinishDate: null,
-    paymentDate: null,
-    exclusionDays: null,
-    additionalDays: null,
-  },
+export const FORM_STATE_TAB_1 = {
+  prevRetiredYearsOfService: {...Prev_Retired_Years_Of_Service},
   lastRetiredYearsOfService: {
     settlementStartDate: null,
     settlementFinishDate: null,
@@ -163,8 +137,21 @@ export const TAX_CALCULATION_INPUT = {
     exclusionDays: 0,
     additionalDays: 0,
   },
-  taxCredit: 0,
-  prePaidDelayedTaxPaymentTaxAmount: 0,
+  prevRetirementBenefitStatus: {
+    retirementBenefits: null,
+    nonTaxableRetirementBenefits: null,
+    taxableRetirementBenefits: null,
+  },
+  incomeCalculationInput: {
+    settlementStartDate: null,
+    settlementFinishDate: null,
+    exclusionDays: 0,
+    additionalDays: 0,
+  },
+  //
+  inputFormTab1: {...INPUT_FORM_TAB_1}
+}
+export const FORM_STATE_TAB_3 = {
   calculationOfDeferredRetirementIncomeTax: {
     totalAmount: 0,
     statements: [
@@ -183,17 +170,10 @@ export const TAX_CALCULATION_INPUT = {
         accountDepositAmount: 0,
       }
     ]
-  }
-}
-//
-export const INCOME_CALCULATION_INPUT = {
-  settlementStartDate: null,
-  settlementFinishDate: null,
-  exclusionDays: 0,
-  additionalDays: 0,
-  totalPay3Month: 0,
-  totalAnualBonus: 0,
-  annualLeaveAllowance: 0,
+  },
+  nonTaxableRetirementBenefits: 0,
+  taxCredit: 0,
+  prePaidDelayedTaxPaymentTaxAmount: 0
 }
 
 export const initialIncomeRetirementTax = {
@@ -244,20 +224,7 @@ export const initialIncomeRetirementTax = {
     localIncomeTax: null,
   }
 }
-export const dataGetDetailEdit = {
-  companyId: companyId,
-  processKey: {
-    imputedYear: 2022,
-    imputedMonth: 1,
-    paymentYear: 2022,
-    paymentMonth: 1,
-  },
-  incomeId: 0
-}
 
-export const dataCallApiCreated = {
-  retirementIncome: '',
-}
 
 export const dataAddTableBigUtils = [
   {
@@ -320,50 +287,78 @@ export const arrayReasonResignationUtils = [
   },
   {
     label: "기타",
-    value: 6
+    value: 99
   },
 ]
 
 export const dataDefaultDetailUtils = {
-  "incomeId": 0,
-  "paymentDay": 0,
-  "retirementType": 0,
-  "imputedMonth": 0,
-  "paymentYear": 0,
-  "paymentMonth": 0,
-  "employeeType": 0,
-  "employeeId": 0,
-  "incomeTypeCode": "",
-  "createdAt": 0,
-  "incomePayment": 0,
-  "withholdingIncomeTax": 0,
-  "withholdingLocalIncomeTax": 0,
-  "withholdingRuralSpecialTax": null,
-  "prevPaymentDay": null,
-  "actualPayment": 0,
-  "employee": {
-    "joinedAt": 0,
-    "leavedAt": 0,
-    "totalPay": 0,
-    "name": "",
-    "employeeId": 0,
-    "incomeTypeCode": "",
-    "residentId": "",
-    "status": 0,
-    "foreigner": false,
-    "nationalPensionDeduction": true,
-    "healthInsuranceDeduction": false,
-    "employeementInsuranceDeduction": false,
-    "nationalPensionSupportPercent": null,
-    "employeementInsuranceSupportPercent": null,
-    "employeementReductionRatePercent": null,
-    "incomeTaxMagnification": 0
+  active: true,
+  incomeId: 0,
+  paymentDay: 0,
+  retirementType: 0,
+  imputedMonth: 0,
+  paymentYear: 0,
+  paymentMonth: 0,
+  employeeType: 0,
+  employeeId: 0,
+  incomeTypeCode: "",
+  createdAt: 0,
+  incomePayment: 0,
+  nonTaxableRetirementBenefits: 0,
+  taxableRetirementBenefits: 0,
+  retirementBenefits: 0,
+  withholdingIncomeTax: 0,
+  withholdingLocalIncomeTax: 0,
+  withholdingRuralSpecialTax: null,
+  prevPaymentDay: null,
+  actualPayment: 0,
+  employee: {
+    joinedAt: 0,
+    leavedAt: 0,
+    totalPay: 0,
+    name: "",
+    employeeId: 0,
+    incomeTypeCode: "",
+    residentId: "",
+    status: 0,
+    foreigner: false,
+    // nationalPensionDeduction: true,
+    // healthInsuranceDeduction: false,
+    // employeementInsuranceDeduction: false,
+    // nationalPensionSupportPercent: null,
+    // employeementInsuranceSupportPercent: null,
+    // employeementReductionRatePercent: null,
+    // incomeTaxMagnification: 0
   },
-  "totalDeduction": 0,
-  "specification": {
-    "executive": false,
-    "retirementReason": 0,
-    "specificationDetail": {
+  totalDeduction: 0,
+  specification: {
+    executive: false,
+    retirementReason: 0,
+    specificationDetail: {
+      calculationOfDeferredRetirementIncomeTax: {
+        totalAmount: 0,
+        retirementIncomeTax: 0,
+        statements: [
+          {
+            pensionAccountHolder: "",
+            bizNumber: "",
+            bankAccountNumber: "",
+            depositDate: 0,
+            accountDepositAmount: 0
+          }
+        ]
+      },
+      deductibleWithholdingTax: {
+        incomeTax: 0,
+        localIncomeTax: 0
+      },
+      lastRetiredYearsOfService: {
+        settlementStartDate: 0,
+        settlementFinishDate: 0,
+        paymentDate: 0,
+        exclusionDays: 0,
+        additionalDays: 0
+      },
       "lastRetirementBenefitStatus": {
         "retirementBenefits": 10,
         "nonTaxableRetirementBenefits": 10,
@@ -376,17 +371,14 @@ export const dataDefaultDetailUtils = {
         "exclusionDays": 0,
         "additionalDays": 0,
       },
-      "lastRetiredYearsOfService": {
-        "settlementStartDate": 0,
-        "settlementFinishDate": 0,
-        "paymentDate": 0,
-        "exclusionDays": 0,
-        "additionalDays": 0
-      },
       "prevRetirementBenefitStatus": {
         "retirementBenefits": 0,
         "nonTaxableRetirementBenefits": 0,
         "taxableRetirementBenefits": 0
+      },
+      "retirementIncomeTax": {
+        "incomeTax": 0,
+        "localIncomeTax": 0
       },
       "settlementRetiredYearsOfService": {
         "settlementStartDate": 0,
@@ -395,25 +387,13 @@ export const dataDefaultDetailUtils = {
         "exclusionDays": 0,
         "additionalDays": 0
       },
+
       "taxAmountCalculation": {
         "taxCredit": 0,
         "prePaidDelayedTaxPaymentTaxAmount": 0,
         "convertedTaxAmount": 0,
         "taxAmountCalculatedForRetirementIncome": 0,
         "taxAmountSubjectToReporting": 0
-      },
-      "calculationOfDeferredRetirementIncomeTax": {
-        "totalAmount": 0,
-        "retirementIncomeTax": 0,
-        "statements": [
-          {
-            "pensionAccountHolder": "",
-            "bizNumber": "",
-            "bankAccountNumber": "",
-            "depositDate": "",
-            "accountDepositAmount": 0
-          }
-        ]
       },
       "taxBaseCalculation": {
         "retirementIncome": 0,
@@ -422,18 +402,10 @@ export const dataDefaultDetailUtils = {
         "taxBaseForRetirementIncome": 0,
         "deductionByConversionBenefit": 0
       },
-      "deductibleWithholdingTax": {
-        "incomeTax": 0,
-        "localIncomeTax": 0
-      },
       "taxAmountToBeReported": {
         "incomeTax": 0,
         "localIncomeTax": 0
       },
-      "retirementIncomeTax": {
-        "incomeTax": 0,
-        "localIncomeTax": 0
-      }
     },
     "totalPay3Month": 0,
     "totalAnualBonus": 0,

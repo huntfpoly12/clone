@@ -28,7 +28,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const valueSelected = ref(0);
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear")?? '0'));
         // Getting the token from the session storage and then dispatching the action to get the user
         // information.
         const token = computed(()=>sessionStorage.getItem("token"))
@@ -73,6 +73,7 @@ export default defineComponent({
         .select-employee{
             display: flex;
             margin: 160px 480px;
+            min-width: 490px;
             .label{
                 font-size: 23px;
                 font-weight: bold;
@@ -85,6 +86,7 @@ export default defineComponent({
 
         .button-next{
             margin: 0px 655px;
+            width: 60px;
         }
 
     }
