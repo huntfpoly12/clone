@@ -11,7 +11,7 @@
             @focused-row-changing="onFocusedRowChanging">
             <DxPaging :page-size="0" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
-              :search-visible-columns="['TypeCodeAndName']" />
+              :search-visible-columns="['TypeCodeAndName']" placeholder="검색"  />
             <DxExport :enabled="true" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxToolbar>

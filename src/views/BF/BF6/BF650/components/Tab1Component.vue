@@ -228,6 +228,7 @@ export default defineComponent({
         productionStatus: 3,
         index
       }))
+
       const arrayStatus = await fetchDataStatus(arrDataConvert.filter((i: any) => i.lastProductionRequestedAt).map((item: any) => ({
         companyId: item.companyId,
         paymentYear: item.paymentYear,
@@ -235,7 +236,7 @@ export default defineComponent({
       })));
       if (arrayStatus) {
         dataSourceOriginal.value = dataSourceOriginal.value.map((item: any, index: number) => {
-          item.productionStatus = arrayStatus[index].productionStatus
+          item.productionStatus = arrayStatus[index]?.productionStatus ?? 3
           return item;
         });
       }
@@ -245,7 +246,7 @@ export default defineComponent({
             ? filter.productionStatuses.length > 0  //
               ? filter.productionStatuses.includes(item.productionStatus)
               : item.productionStatus === 3
-            : item)
+            : item.productionStatus === 3)
       })
     })
 
@@ -330,7 +331,7 @@ export default defineComponent({
       }
     }
     const selectionChanged = (res: any) => {
-      keySelect.value = res.selectedRowKeys.map((i: any) => res.selectedRowsData[i].companyId)
+      keySelect.value = res.selectedRowsData.map((i: any) => i.companyId)
     }
     const customTextSummary = () => {
       return `제작요청전: ${beforeProductionRequest}, 제작대기: ${waitingForProduction}, 제작중: ${productionInProgress}, 제작실패: ${productionFailed}, 제작성공: ${productionSuccess}`;

@@ -45,20 +45,26 @@ const screenMutatePA420 = {
     state.employee = data
   },
   resetForm(state: any) {
+    console.log('resetForm')
     //   reset state to initial
-    Object.assign(state, cloneDeep({
-      incomeCalculationInput: INITIAL_STATE.incomeCalculationInput,
-      taxCalculationInput: INITIAL_STATE.taxCalculationInput,
-      interimPaymentTab1: INITIAL_STATE.interimPaymentTab1,
-      inputTab1: INITIAL_STATE.inputTab1,
-      hasIncomeProcessRetirements: INITIAL_STATE.hasIncomeProcessRetirements,
-      isDisableBtnTab2: INITIAL_STATE.isDisableBtnTab2,
-      definedRetirementBenefits: INITIAL_STATE.definedRetirementBenefits,
-      isDisableBtnTab3: INITIAL_STATE.isDisableBtnTab3,
-      isDisableBtnTab1: INITIAL_STATE.isDisableBtnTab1,
-      isChangeForm: INITIAL_STATE.isChangeForm,
-      employee: INITIAL_STATE.employee
-    }))
+    Object.assign(state, {
+      ...state,
+      ...cloneDeep({
+        incomeCalculationInput: INITIAL_STATE.incomeCalculationInput,
+        taxCalculationInput: INITIAL_STATE.taxCalculationInput,
+        interimPaymentTab1: INITIAL_STATE.interimPaymentTab1,
+        inputTab1: {
+          ...INITIAL_STATE.inputTab1,
+          paymentDay: state.inputTab1.paymentDay
+        },
+        isDisableBtnTab2: INITIAL_STATE.isDisableBtnTab2,
+        definedRetirementBenefits: INITIAL_STATE.definedRetirementBenefits,
+        isDisableBtnTab3: INITIAL_STATE.isDisableBtnTab3,
+        isDisableBtnTab1: INITIAL_STATE.isDisableBtnTab1,
+        isChangeForm: INITIAL_STATE.isChangeForm,
+        employee: INITIAL_STATE.employee
+      })
+    })
   }
 };
 export default screenMutatePA420;

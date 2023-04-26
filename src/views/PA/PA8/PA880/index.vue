@@ -115,7 +115,6 @@ import { Message } from "@/configs/enum";
 import FormReport from './components/FormReport.vue';
 import { DeleteOutlined, DownloadOutlined, EditOutlined, HistoryOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
-import { react } from '@babel/types';
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
   접수 = 2,
@@ -212,6 +211,7 @@ export default defineComponent({
     //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
     const contentDelete = Message.getCommonMessage('303');
+    const deleteMesDone = Message.getCommonMessage('302').message;
     const modalDelete = ref(false);
     const cancelCompanyOutParam = reactive({
       companyId: companyId,
@@ -224,7 +224,7 @@ export default defineComponent({
       onError: cancelCompanyOutError,
     } = useMutation(mutations.cancelMajorInsuranceCompanyOut);
     cancelCompanyOutOnDone(() => {
-      notification('success', Message.getMessage('COMMON', '402').message);
+      notification('success', deleteMesDone);
       companyOutsRefetch();
     });
     cancelCompanyOutError((res) => {

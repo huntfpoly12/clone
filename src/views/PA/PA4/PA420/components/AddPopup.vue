@@ -72,24 +72,15 @@
     </a-steps>
     <div class="step-content pt-20">
       <keep-alive>
-        <template v-if="step === 0">
           <Tab1
+            v-if="step === 0"
             :retirementIncome="retirementIncome"
             :actionNextStep="valueNextStep"
             :retirement-type="retirementType"
             @nextPage="step++"
           />
-        </template>
-      </keep-alive>
-      <keep-alive>
-        <template v-if="step === 1">
-          <Tab2/>
-        </template>
-      </keep-alive>
-      <keep-alive>
-        <template v-if="step === 2">
-          <Tab3/>
-        </template>
+          <Tab2  v-else-if="step === 1"/>
+          <Tab3 v-else/>
       </keep-alive>
     </div>
     <div style="justify-content: center" class="pt-10 wf-100 d-flex-center">
@@ -146,7 +137,7 @@ const props = defineProps<Props>();
 const emit = defineEmits(["closePopup"]);
 
 const store = useStore();
-const globalYear = computed(() => store.state.settings.globalYear);
+const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
 const step = ref(0);
 const valueNextStep = ref(0);
 const modalStatusAccept = ref(false);
@@ -171,8 +162,8 @@ const setModalVisible = () => {
   } else {
     comfirmClosePopup(() => {
       emit("closePopup", false);
-      modalStatusAccept.value = false;
       store.commit('common/resetForm');
+      modalStatusAccept.value = false;
     })
   }
 };

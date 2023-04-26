@@ -72,7 +72,6 @@ import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import notification from "@/utils/notification";
-import { useStore } from 'vuex';
 import { initialState } from "../utils/data"
 import queries from "@/graphql/queries/CM/CM130/index";
 import mutations from "@/graphql/mutations/CM/CM130/index";
@@ -86,7 +85,6 @@ export default defineComponent({
         TaxPay,
     },
     setup(props, { emit }) {
-        const store = useStore();
         const globalYear = dayjs().year()
         let trigger = ref<boolean>(false);
         const dataQuery = ref();

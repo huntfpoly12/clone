@@ -20,46 +20,45 @@
                         </a-tooltip>
                     </template>
                     <DxScrolling mode="standard" show-scrollbar="always" />
-                    <DxColumn caption="품목" cell-template="item" width="150" />
+                    <DxColumn caption="품목" cell-template="item" width="140" />
                     <template #item="{ data }">
                         <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem"
                             :required="true" />
                     </template>
-                    <DxColumn caption="규격" cell-template="standard" width="150" />
+                    <DxColumn caption="규격" cell-template="standard" width="140" />
                     <template #standard="{ data }">
                         <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
                             :required="true" />
                     </template>
-                    <DxColumn caption="단위" cell-template="unit" width="150" />
+                    <DxColumn caption="단위" cell-template="unit" width="140" />
                     <template #unit="{ data }">
                         <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit"
                             :required="true" />
                     </template>
-                    <DxColumn caption="수량" cell-template="quantity" width="100" />
+                    <DxColumn caption="수량" cell-template="quantity" width="90" />
                     <template #quantity="{ data }">
-                        <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26" />
+                        <number-box-money v-model:valueInput="data.data.quantity" @changeInput="changeInput('quantity', data.rowIndex)" :required="true" height="26" />
                     </template>
-                    <DxColumn caption="단가" cell-template="unitPrice" width="100" />
+                    <DxColumn caption="단가" cell-template="unitPrice" width="90" />
                     <template #unitPrice="{ data }">
-                        <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26" />
+                        <number-box-money v-model:valueInput="data.data.unitPrice" @changeInput="changeInput('unitPrice', data.rowIndex)" :required="true" height="26" />
                     </template>
-                    <DxColumn caption="금액" cell-template="amount" width="100" data-field="amount"/>
+                    <DxColumn caption="금액" cell-template="amount" />
                     <template #amount="{ data }">
-                        {{ data.data.amount =  data.data.quantity * data.data.unitPrice}}
-                        <!-- <number-box-money v-model:valueInput="data.data.amount" :required="true" height="26" /> -->
+                        <number-box-money v-model:valueInput="data.data.amount" @changeInput="changeInput('amount', data.rowIndex)" :required="true" height="26" />
                     </template>
-                    <DxColumn caption="비고" cell-template="remark" />
+                    <DxColumn caption="비고" cell-template="remark" width="100"/>
                     <template #remark="{ data }">
                         <default-text-box v-model:valueInput="data.data.remark" />
                     </template>
-                    <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
+                    <DxColumn caption="삭제" cell-template="action" alignment="center" width="50" />
                     <template #action="{ data }">
                         <DeleteOutlined style="font-size: 12px" @click="deleteItem(data.data)" />
                     </template>
-
-                    <DxSummary>
+                    <DxSummary :recalculate-while-editing="true">
                         <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}건" />
-                        <DxTotalItem column="금액" summary-type="sum" display-format="금액합계: {0}원" value-format="#,###"/>
+                        <!-- <DxTotalItem column="금액" summary-type="sum" display-format="금액합계: {0}원" value-format="#,###"/> -->
+                        <DxTotalItem column="금액" cssClass="refTotalValue" :customize-text="customSumAmount" />
                     </DxSummary>
                 </DxDataGrid>
             </standard-form>
@@ -86,6 +85,7 @@ import { companyId } from "@/helpers/commonFunction";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
 import { initStatementOfGoods } from '../utils/index'
+import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -192,7 +192,7 @@ export default defineComponent({
                     companyId: companyId,
                     fiscalYear: acYear.value,
                     facilityBusinessId: globalFacilityBizId.value,
-                    transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
+                    transactionDetailDate: store.state.common.ac120.transactionDetailDate,
                     accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
                 })
             }
@@ -217,7 +217,7 @@ export default defineComponent({
                             companyId: companyId,
                             fiscalYear: acYear.value,
                             facilityBusinessId: globalFacilityBizId.value,
-                            transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
+                            transactionDetailDate: store.state.common.ac120.transactionDetailDate,
                             accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
                             items: dataItem
                         }
@@ -228,8 +228,23 @@ export default defineComponent({
                     emit("closePopup", false)
                 }
             }
-
-
+        }
+        const changeInput = (key: string, index: number) => {
+            if (key != 'amount') {
+                const dataTotalValue = dataSource.value[index].quantity
+                const dataTotalDifference = dataSource.value[index].unitPrice
+                dataSource.value[index].amount = dataTotalValue * dataTotalDifference
+            }
+            const elTotalValue: any = document.querySelector('.refTotalValue')
+            elTotalValue.textContent = customSumAmount()
+            
+        }
+        const customSumAmount = () => {
+            let total = 0
+            dataSource.value?.map((item: any) => {
+                total += item.amount
+            })
+            return `금액합계: ${filters.formatCurrency(total)} 원`
         }
         return {
             move_column,
@@ -238,7 +253,8 @@ export default defineComponent({
             cancel,
             deleteItem,
             dataSource,
-            // onRowInserted,
+            changeInput,
+            customSumAmount,
             addNewRow, dataGridRef,
             // onInitRow,
             focusedRowKey,
