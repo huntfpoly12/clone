@@ -187,7 +187,7 @@
                             </a-row>
                             <a-row>
                                 <a-col :span="12">
-                                    <a-form-item class="red" label="품의종류">
+                                    <a-form-item class="red" label="품의종류" v-if="store.state.common.ac120.formData.letterOfApprovalType">
                                         <radio-group
                                             v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType"
                                             :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'" :required="true" />
@@ -299,7 +299,9 @@ export default defineComponent({
 
         // ============== ON DONE MUTATION GRAPHQL ===============
         // createAccountingDocument
-        doneCreateAccountingDocument((e) => {
+        doneCreateAccountingDocument((e: any) => {
+            store.state.common.ac120.statusKeppRow = true
+            store.state.common.ac120.focusedRowKey = e.data?.createAccountingDocument?.accountingDocumentId
             notification('success', Message.getMessage('COMMON', '106').message)
             // store.state.common.ac120.onDoneAdd++
             store.state.common.ac120.resetDataTable++
@@ -311,6 +313,7 @@ export default defineComponent({
 
         // updateAccountingDocument
         doneUpdateAccountingDocument((e) => {
+            store.state.common.ac120.statusKeppRow = true
             notification('success', Message.getMessage('COMMON', '106').message)
             // store.state.common.ac120.onDoneAdd++
             store.state.common.ac120.resetDataTable++

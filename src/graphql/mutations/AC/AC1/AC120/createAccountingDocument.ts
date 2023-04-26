@@ -14,7 +14,7 @@ export default gql`
       transactionDetailDate: $transactionDetailDate
       input: $input
     ) {
-      bankbookId
+      accountingDocumentId
     }
   }
 `;
