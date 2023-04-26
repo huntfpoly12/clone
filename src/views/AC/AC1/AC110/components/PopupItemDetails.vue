@@ -21,16 +21,22 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" :readOnly="disabled" />
+            <div :key="`item${keyRefreshSelect}`">
+              <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" :readOnly="disabled" />
+            </div>
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
+            <div :key="`standard${keyRefreshSelect}`">
+              <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
               :required="true" :readOnly="disabled" />
+            </div>
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" :readOnly="disabled"/>
+            <div :key="`unit${keyRefreshSelect}`">
+              <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" :readOnly="disabled"/>
+            </div>
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
@@ -63,7 +69,9 @@
           </DxSummary>
         </DxDataGrid>
         <div class="ac-110-popup-detail-btn">
-          <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)" :disabled="disabled" />
+          <button-basic text="저장" type="default" :mode="'contained'" 
+          @onClick="submitFormDetail($event)" 
+          :disabled="disabled || !dataSource.statementOfGoodsItems.length" />
         </div>
       </standard-form>
     </a-spin>
@@ -127,6 +135,7 @@ export default defineComponent({
     let dataSourceCopy: any = ref()
     let itemDelete: any = ref()
     let rowKeyfocused: any = ref(null)
+    let keyRefreshSelect = ref(0)
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -152,6 +161,11 @@ export default defineComponent({
     doneSaveStatementOfGoods((e) => {
       emit("updateGoodsCount",  props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
       setData()
+      arrSelectItem.value = []
+      arrSelectStandard.value = []
+      arrSelectUnit.value = []
+      keyRefreshSelect.value++
+      setDataSelect()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveStatementOfGoods(e => {
@@ -268,7 +282,11 @@ export default defineComponent({
     }
     const handleDelete = (status: Boolean) => {
       if (!status) return
-      if (dataSource.value.statementOfGoodsItems.length === 1 && !dataSource.value.accountingDocumentId.toString().includes('create')) {
+      if (
+        dataSource.value.statementOfGoodsItems.length === 1 
+        && !dataSource.value.accountingDocumentId.toString().includes('create')
+        && !dataSource.value.statementOfGoodsItems[0].id.toString().includes('create')
+        ) {
         const payloadRequest = { ...props.payload }
         delete payloadRequest.bankbookDetailDate
         delete payloadRequest.bankbookDetailId
@@ -366,7 +384,8 @@ export default defineComponent({
       arrSelectUnit,
       handleConfirmChange,
       changeInput,
-      rowKeyfocused
+      rowKeyfocused,
+      keyRefreshSelect
     }
   },
 })
