@@ -460,6 +460,10 @@ router.beforeEach((to, from, next) => {
     store.dispatch('auth/checkToken')
   }
   
+  if(to.fullPath == '/login' && token){
+    next("/dashboard");
+  }
+  
   if ((requiresAuth && !token)) {
     next("/login");
   } else if (requiresAuth && token && !read) {
