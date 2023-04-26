@@ -506,7 +506,6 @@ export default defineComponent({
           }
           makeDataClean(dataType1, ['']);
           createLeaveOfAbsenceMutate({ companyId: companyId, imputedYear: globalYear.value, input: dataType1 });
-          console.log(dataType1)
         } else {
           let dataType2 = {
             employeeType: formData.value.employeeType,

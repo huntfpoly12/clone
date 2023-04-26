@@ -141,7 +141,6 @@ export default defineComponent({
                 dataSearch.value.productionStatuses = [newVal]
         })
         watch(() => props.search, (val: any) => {
-            console.log(`output-`,)
             dataSearch.value.requesteStartDate = rangeDate.value[0]
             dataSearch.value.requesteFinishDate = rangeDate.value[1]
             trigger.value = true

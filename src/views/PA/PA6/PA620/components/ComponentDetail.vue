@@ -454,8 +454,6 @@ export default defineComponent({
       } else {
         compareType.value = 2;
         rowChangeStatus.value = true;
-        isClickYearDiff.value = true;
-        changeYearDataFake.value = oldVal;
       }
     });
     //on add row
@@ -484,11 +482,6 @@ export default defineComponent({
         ele.click();
       } else {
         removeHoverRowKey();
-        if (isClickYearDiff.value) {
-          emit('noSave', 1, globalYear.value);
-          compareType.value = 1;
-          return;
-        }
         if (isClickEditDiff.value) {
           onEditItem();
           // dataAction.value.input = {...dataActionEdit.value.input}
@@ -686,10 +679,6 @@ export default defineComponent({
       if (!isClickEditClick.value) {
         selectedRowKeys.value = compareType.value == 1 ? [dataAction.value.input.incomeId] : [idRowFake.value];
       }
-      if (isClickYearDiff.value) {
-        emit('noSave', 1);
-        return;
-      }
       if (isClickMonthDiff.value) {
         emit('noSave', 0);
         isClickMonthDiff.value = false;
@@ -770,22 +759,6 @@ export default defineComponent({
       isClickMonthDiff.value = false;
       isClickAddMonthDiff.value = false;
       compareType.value = 1;
-      if (isClickYearDiff.value) {
-        watchGlobalYear();
-        store.state.settings.globalYear = changeYearDataFake.value;
-        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-          if (compareForm()) {
-            emit('noSave', 1, newVal);
-          } else {
-            compareType.value = 2;
-            rowChangeStatus.value = true;
-            isClickYearDiff.value = true;
-            changeYearDataFake.value = oldVal;
-          }
-        });
-        isClickYearDiff.value = false;
-        compareType.value = 1;
-      }
     }
     const onSave = (e: any) => {
       var res = e.validationGroup.validate();
