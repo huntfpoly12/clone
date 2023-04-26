@@ -235,7 +235,7 @@ export default defineComponent({
       })));
       if (arrayStatus) {
         dataSourceOriginal.value = dataSourceOriginal.value.map((item: any, index: number) => {
-          item.productionStatus = arrayStatus[index].productionStatus
+          item.productionStatus = arrayStatus[index]?.productionStatus
           return item;
         });
       }

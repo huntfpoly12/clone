@@ -237,7 +237,8 @@ const handleDelete = (workId: number) => {
         imputedYear: paYear.value,
         workId: workId,
       });
-    }
+    },
+    message: Message.getCommonMessage('303').message
   })
 }
 const dateFormat = (value: any) => {

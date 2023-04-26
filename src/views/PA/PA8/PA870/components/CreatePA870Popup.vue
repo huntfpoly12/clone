@@ -96,7 +96,7 @@
           </a-row>
           <DxField  label="주소" required>
             <default-text-box placeholder="성명" required />
-          </DxField> 
+          </DxField>
           <a-row>
             <a-col span="8">
               <DxField label="사업자등록번호" required>
@@ -632,7 +632,7 @@ export default defineComponent({
   setup(props, {emit}) {
     const store = useStore();
     const { infoCompany } = useCompanyInfo(companyId)
-    const globalYear = computed(() => store.getters['settings/currentYear']);
+    const globalYear = computed(() =>parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const employeeWages = ref();
     const employeeWageSelected = ref();
     const formRef = ref();
