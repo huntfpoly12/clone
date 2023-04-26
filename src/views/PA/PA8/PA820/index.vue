@@ -54,7 +54,7 @@
           </div>
         </template>
         <DxColumn caption="" cell-template="action" width="150px" />
-        <template #action=" { data }: any " class="custom-action">
+        <template #action=" { data }: any ">
           <div class="custom-action" style="margin-left: 40px;">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
@@ -221,6 +221,7 @@ export default defineComponent({
     //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
     const contentDelete = Message.getCommonMessage('303');
+    const deleteMesDone = Message.getCommonMessage('302').message;
     const modalDelete = ref(false);
     const cancelCompanyOutParam = reactive({
       companyId: companyId,
@@ -233,7 +234,7 @@ export default defineComponent({
       onError: cancelCompanyOutError,
     } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeLoss);
     cancelCompanyOutOnDone(() => {
-      notification('success', Message.getMessage('COMMON', '402').message);
+      notification('success', deleteMesDone);
       companyEmployeeLossesRefetch();
     });
     cancelCompanyOutError((res) => {

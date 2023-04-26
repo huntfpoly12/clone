@@ -58,7 +58,7 @@
         </a-col>
         <a-col :span="col.right">
           <DxField label="납부재개 예정일" class="field-custom">
-            <date-time-box dateFormat="YYYY-MM-DD" v-model="formData.returnDate" width="200px"
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model="formData.returnDate" width="200px"
               :disabled="isStatusLeaveOfAbsence" />
           </DxField>
         </a-col>
@@ -99,7 +99,7 @@
         <!-- row 5 -->
         <a-col :span="col.left">
           <DxField label="휴직시작일">
-            <date-time-box dateFormat="YYYY-MM-DD" v-model="formData.startDateOfLeave" width="200px"
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model="formData.startDateOfLeave" width="200px"
               :disabled="!isStatusLeaveOfAbsence" />
           </DxField>
         </a-col>
@@ -110,7 +110,7 @@
         <!-- row 6 -->
         <a-col :span="col.left">
           <DxField label="휴직종료(예정)">
-            <date-time-box dateFormat="YYYY-MM-DD" v-model="formData.endDateOfLeave" width="200px"
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model="formData.endDateOfLeave" width="200px"
               :disabled="!isStatusLeaveOfAbsence" />
           </DxField>
         </a-col>
