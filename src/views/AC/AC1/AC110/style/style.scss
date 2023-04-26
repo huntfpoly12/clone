@@ -61,6 +61,7 @@
       &-detail1 {
         height: 100%;
         width: calc(100% - 295px);
+        min-width: calc(100% - 295px);
         padding-right: 10px;
         :deep(.dx-toolbar .dx-toolbar-items-container) {
           height: 55px !important;
