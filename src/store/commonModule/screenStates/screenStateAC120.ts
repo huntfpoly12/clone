@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import filters from "@/helpers/filters";
 let statesAC120 = {
     ac120: {
+        focusedRowKey: null,
         statusShowFull: false,
         formData: null,
         onAddRow: 0,

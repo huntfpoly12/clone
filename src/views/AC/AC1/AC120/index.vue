@@ -338,7 +338,7 @@
                     <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                        v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true"
+                        v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
                         @focused-row-changing="onFocusedRowChanging"
                         :column-auto-width="true" v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
                         @selection-changed="selectionChanged">
@@ -386,7 +386,7 @@
                             </DxDataGrid>
                         </template> -->
 
-                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="120" />
+                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="80" />
                         <template #bankbook="{ data }">
                             <a-tooltip placement="top"
                                 :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
@@ -482,7 +482,7 @@
                             </DxDataGrid>
                         </template> -->
 
-                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200" />
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode"/>
                         <template #accountCode="{ data }">
                             <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
                             <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
@@ -497,7 +497,7 @@
                             </DxDataGrid> -->
                         </template>
 
-                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150" />
+                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="170" />
                         <template #relationCode="{ data }">
                             <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
                             <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
@@ -629,14 +629,14 @@
 
                     </DxDataGrid>
                     <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;">
-                        <div style="width: 250px; margin-left: 200px;">
+                        <div style="width: 250px; margin-left: 180px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customCountRow()">
                             </div>
                         </div>
-                        <div style="width: 150px;">
+                        <div style="width: 170px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfIncome()"></div>
                         </div>
-                        <div style="width: 150px;">
+                        <div style="width: 170px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfExpenses()">
                             </div>
                         </div>
@@ -726,7 +726,7 @@ export default defineComponent({
         const clients = computed(() => store.state.settings.clients)
         const dataApi = ref<any[]>([])
         // let statusAdjusting = ref(30);
-        let focusedRowKey = ref()
+        // let focusedRowKey = ref()
 
         let isModalRetrieveStatements = ref(false);
         let statusModalDelete = ref(false);
@@ -811,7 +811,7 @@ export default defineComponent({
         watch(resGetAccountingDocuments, async (value) => {
             triggerGetAccountingDocuments.value = false
             dataApi.value = value.getAccountingDocuments?.accountingDocuments
-            let dataAll: any = []
+            // let dataAll: any = []
 
             // await dataApi.value.map((item: any, index: number) => {
 
@@ -819,11 +819,14 @@ export default defineComponent({
             await dataApi.value.map((item: any, index: number) => {
                 item.balance = lastBalance.value + item.income - item.spending
                 const totalBefore: any = ref(0)
+                const maxOrder: any = ref(1)
                 dataApi.value.slice(0, index).forEach((data) => {
                     if (item.transactionDetailDate == data.transactionDetailDate) {
                         totalBefore.value = data.balance
+                        maxOrder.value = data.documentOrderByDate + 1
                     }
                 });
+                item.documentOrderByDate = maxOrder.value
                 item.balance = totalBefore.value + item.balance
 
                 // if (item.bankbookDetailId) { // nếu có data bankbookDetailId
@@ -883,17 +886,18 @@ export default defineComponent({
             if (dataSource.value.length) { // if table has data source
                 if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
                     store.state.common.ac120.statusKeppRow = false;
-                    return
+                    store.state.common.ac120.selectedRowKeys = [store.state.common.ac120.focusedRowKey]
+                    Object.assign(store.state.common.ac120.formData, dataSource.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey))
                     // Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
                 } else { // lấy row đầu tiên
-                    focusedRowKey.value = dataSource.value[0].accountingDocumentId
+                    store.state.common.ac120.focusedRowKey = dataSource.value[0].accountingDocumentId
                     store.state.common.ac120.selectedRowKeys = [dataSource.value[0].accountingDocumentId]
                     Object.assign(store.state.common.ac120.formData, dataSource.value[0])
                 }
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
                 store.state.common.ac120.statusFormAdd = false
             } else {
-                focusedRowKey.value = null
+                store.state.common.ac120.focusedRowKey = null
                 store.state.common.ac120.statusFormAdd = true
                 Object.assign(store.state.common.ac120.formData, initialStateFormData)
                 store.state.common.ac120.keyRefreshForm++
@@ -912,7 +916,7 @@ export default defineComponent({
 
         const onFocusedRowChanging = (e: any) => {
             // gridRefAC120Detail.value?.instance.refresh()
-            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
+            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1) || !(e.event.currentTarget.outerHTML.search("dx-command-drag") == -1)) {
                 e.cancel = true;
             } else {
                 
@@ -1000,7 +1004,6 @@ export default defineComponent({
         const onDragChange = (e: any) => { }
 
         const onFillDataAdd = (dataAdd: any) => {
-            console.log(dataAdd);
             addNewRow(dataAdd)
             statusModalAdd.value = false; // close popup
         }
@@ -1023,10 +1026,13 @@ export default defineComponent({
             // dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ data: [initialStateFormData], bankbookDetailId: 'AC120' })
             store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
 
-            focusedRowKey.value = 'AC120'
+            store.state.common.ac120.focusedRowKey = 'AC120'
 
-            store.state.common.ac120.statusShowFull = true
+            
             store.state.common.ac120.keyRefreshForm++
+            setTimeout(() => {
+                store.state.common.ac120.statusShowFull = true
+            }, 500);
             // await (loadingGetAccountingDocuments.value = false)
         }
 
@@ -1061,14 +1067,14 @@ export default defineComponent({
         const sumOfIncome = () => {
             let total = 0;
             dataSource.value.forEach((item: any) => {
-                total += item.income;
+                total += item.income ? item.income : 0;
             });
             return `수입액 합계: ${filters.formatCurrency(total)}`
         }
         const sumOfExpenses = () => {
             let total = 0;
             dataSource.value.forEach((item: any) => {
-                total += item.spending;
+                total += item.spending ? item.spending : 0;
             });
             return `지출액 합계: ${filters.formatCurrency(total)}`
         }
@@ -1077,8 +1083,8 @@ export default defineComponent({
             let totalIncome = 0;
             let totalSpending = 0;
             dataSource.value.forEach((item: any) => {
-                totalIncome += item.income
-                totalSpending += item.spending
+                totalIncome += item.income ? item.income : 0
+                totalSpending += item.spending ? item.spending : 0
             });
             total = lastBalance.value + totalIncome - totalSpending
             return `전월 잔액: ${filters.formatCurrency(lastBalance.value)}, 예상 잔액: ${filters.formatCurrency(total)}`
@@ -1114,7 +1120,7 @@ export default defineComponent({
             move_column,
             colomn_resize,
             acYear,
-            focusedRowKey,
+            // focusedRowKey,
             selectionChanged,
 
             isModalRetrieveStatements,
