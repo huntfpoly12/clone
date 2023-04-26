@@ -1,96 +1,104 @@
 <template>
-  <action-header title="급여변경신고" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false"/>
+  <action-header title="급여변경신고" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-870" class="px-10 py-10">
     <a-spin :spinning="false" size="large">
-      <DxDataGrid
-        :show-row-lines="true"
-        :hoverStateEnabled="true"
-        :data-source="dataSource"
-        :show-borders="true"
-        :allow-column-reordering="move_column"
-        key-expr="id"
-        :allow-column-resizing="colomn_resize"
-        :column-auto-width="true"
-        style="max-height: 770px"
-      >
+      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        :allow-column-reordering="move_column" key-expr="workId" :allow-column-resizing="colomn_resize"
+        :column-auto-width="true" style="max-height: 770px">
         <DxPaging :page-size="0" />
         <DxSearchPanel :visible="true" placeholder="검색" />
         <DxExport :enabled="true" />
         <DxToolbar>
           <DxItem name="searchPanel" />
           <DxItem name="exportButton" css-class="cell-button-export" />
-          <DxItem location="after" template="button-template" css-class="cell-button-add"/>
+          <DxItem location="after" template="button-template" css-class="cell-button-add" />
         </DxToolbar>
 
-        <DxColumn caption="일련번호" data-field="id" width="100" alignment="center"/>
-        <DxColumn caption="상태" data-field="status" alignment="center"/>
-        <DxColumn caption="등록일" data-field="registeredAt" :format="dateFormat" alignment="center"/>
-        <DxColumn caption="접수일" data-field="acceptedAt" :format="dateFormat" alignment="center"/>
-        <DxColumn caption="완료일" data-field="completedAt" :format="dateFormat" alignment="center"/>
-        <DxColumn caption="접수번호" data-field="accedpedNumber" alignment="center"/>
-        <DxColumn caption="메모" data-field="memo" alignment="center"/>
-        <DxColumn caption="사업장가입신고서다운로드" data-field="fileStorageId" cell-template="fileStorageId" width="80" alignment="center" css-class="label-custom"/>
-        <DxColumn caption="" cell-template="action" alignment="center" width="100"/>
+        <DxColumn caption="일련번호" data-field="workId" width="100" alignment="center" />
+        <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="center" cell-template="workingStatus" />
+        <DxColumn caption="등록일" data-field="registeredAt" :format="dateFormat" alignment="center" />
+        <DxColumn caption="접수일" data-field="acceptedAt" :format="dateFormat" alignment="center" />
+        <DxColumn caption="완료일" data-field="completedAt" :format="dateFormat" alignment="center" />
+        <DxColumn caption="접수번호" data-field="accedpedNumber" alignment="center" />
+        <DxColumn caption="메모" data-field="memo" alignment="center" />
+        <DxColumn caption="사업장가입신고서다운로드" cell-template="fileStorageId" alignment="center" css-class="label-custom"
+          width="180px" />
+        <DxColumn caption="" cell-template="action" width="100" />
         <template #button-template>
           <a-tooltip placement="top">
             <template #title>신규</template>
             <div>
-              <DxButton icon="plus" @click="openAddNewModal"/>
+              <DxButton icon="plus" @click="modalCreate = true" />
             </div>
           </a-tooltip>
         </template>
-        <template #workingStatus="{ data }">
+        <template #workingStatus="{ data }: any">
           <div>
             {{ MajorInsuranceWorkingStatus[data.data.workingStatus] }}
           </div>
         </template>
-        <template #fileStorageId="{ data }" class="custom-action">
+        <template #fileStorageId=" { data }: any " class="custom-action">
           <div class="d-flex justify-content-center">
-            <DxButton v-if="data.data.fileStorageId" type="ghost" class="" style="cursor: pointer" @click="onGetFileStorageId(data.data.fileStorageId.url)">
-              <DownloadOutlined :size="12"/>
+            <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
+              <DownloadOutlined :size=" 12 " />
             </DxButton>
           </div>
         </template>
-       <template #action="{ data }" class="custom-action">
-         <div class="custom-action" style="text-align: center">
-           <a-space>
-             <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)" >
-               <EditOutlined style="font-size: 16px"/>
-             </DxButton>
-             <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)" >
-               <DeleteOutlined style="font-size: 16px"/>
-             </DxButton>
-           </a-space>
-         </div>
-       </template>
+        <template #action=" { data }: any ">
+          <div class="custom-action" style="margin-left: 10px;">
+            <a-space>
+              <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
+                <a-tooltip zIndex="9999999" placement="top" color="black">
+                  <template #title>
+                    <div>
+                      변경이력
+                    </div>
+                  </template>
+                  <HistoryOutlined style="font-size: 16px" />
+                </a-tooltip>
+              </DxButton>
+              <DxButton type="ghost" style="cursor: pointer" @click=" actionDelete(data.data.workId) "
+                v-if=" data.data.workingStatus != 0 ">
+                <a-tooltip zIndex="9999999" placement="top" color="black">
+                  <template #title>
+                    <div>
+                      취소
+                    </div>
+                  </template>
+                  <DeleteOutlined style="font-size: 16px" />
+                </a-tooltip>
+              </DxButton>
+            </a-space>
+          </div>
+        </template>
       </DxDataGrid>
     </a-spin>
-    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
-                  typeHistory="pa-810"/>
-    <CreatePA840Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" />
-    <!--    <PopupMessage :modalStatus="isDelete"  @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />-->
+    <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
+      typeHistory="pa-810" />
+    <CreatePA870Popup v-if=" modalCreate " @closeModal=" onCloseModal " />
+    <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
+      :content=" contentDelete.message " :okText=" contentDelete.yes " :cancelText=" contentDelete.no "
+      @checkConfirm=" handleDelete " />
   </div>
 </template>
 
 <script setup lang="ts">
-import {DxColumn, DxDataGrid, DxExport, DxPaging, DxSearchPanel, DxToolbar} from 'devextreme-vue/data-grid';
-import {DownloadOutlined} from '@ant-design/icons-vue';
+import { DxColumn, DxDataGrid, DxExport, DxPaging, DxSearchPanel, DxToolbar } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
-import {DxItem} from 'devextreme-vue/select-box';
-import CreatePA840Popup from "./components/CreatePA870Popup.vue";
+import { DxItem } from 'devextreme-vue/select-box';
+import CreatePA870Popup from "./components/CreatePA870Popup.vue";
 import dayjs from "dayjs";
-import {computed, reactive, ref} from "vue";
-import {useStore} from "vuex";
-import {companyId} from "@/helpers/commonFunction";
+import { ref, watch, reactive } from 'vue';
+import { useStore } from "vuex";
+import { companyId } from "@/helpers/commonFunction";
+import queries from '@/graphql/queries/PA/PA8/PA870/index';
+import mutations from '@/graphql/mutations/PA/PA8/PA870/index';
 import {
-DeleteOutlined,
-EditOutlined,
-PlusSquareOutlined,
-SaveOutlined,
-UploadOutlined,
-WarningFilled,
-ZoomInOutlined,
+  DeleteOutlined, HistoryOutlined, DownloadOutlined,
 } from "@ant-design/icons-vue";
+import notification from '@/utils/notification';
+import { useMutation, useQuery } from '@vue/apollo-composable';
+import { Message } from '@/configs/enum';
 
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
@@ -99,34 +107,134 @@ enum MajorInsuranceWorkingStatus {
   오류 = -1,
   취소 = 0
 }
-const dataSource = [
-  {"id": 2, "status": 1, "imputedYear": 2023, "workId": 58, "employeeType": 10, "employeeId": 99831231, "name": "ABESHINZO", "nationalPensionReport": true, "healthInsuranceReport": true, "employeementInsuranceReport": true, "industrialAccidentInsuranceReport": true, "workingStatus": 1, "registeredAt": 1679043291582, "acceptedAt": null, "completedAt": null, "accedpedNumber": null, "memo": null, "createdAt": 1679043291589, "createdBy": "C23010402", "updatedAt": 1679043291589, "updatedBy": "C23010402", "ip": "1.54.101.150", "active": true, "includeDependents": true, "fileStorageId": 256, "fileStorageId1": 256, "fileStorageId2": 256,"residentId": "123123-2132131", "dependentsEvidenceFile": {"url": "https://jangbuda-frs.bankda.com/B93xLAjFmhN9lq3JxaA3hyrOjXAoBP.png", "__typename": "FileStorage"}, "__typename": "MajorInsuranceCompanyEmployeeAcquisition"}
-]
 const store = useStore();
-const {per_page, move_column, colomn_resize} = store.state.settings;
-const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'))
-const isOpenModalCreate = ref(false);
-const modalHistory = ref(false);
-const actionParam = reactive({
-  companyId: companyId,
-  imputedYear: globalYear.value,
-  workId: null as (number | null),
-})
-const onOpenLogs = (e: any) => {
-  modalHistory.value = true;
-  actionParam.workId = e;
-};
-const onGetFileStorageId = (url: string) => {
-  window.open(url);
-};
-const openAddNewModal = () => {
-  isOpenModalCreate.value = true;
-};
+const { per_page, move_column, colomn_resize } = store.state.settings;
+const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
+
+//------------------------FUNCTION COMMON --------------------------------
+
 const dateFormat = (value: any) => {
   if (value) {
     return dayjs(value).format('YYYY-MM-DD');
   }
 }
+
+//--------------------------DATASOURCE getMajorInsuranceCompanyJoins--------------------------
+
+const dataSource = ref([]);
+const companyJoinsParam = reactive({
+  companyId: companyId,
+  imputedYear: globalYear
+})
+const { refetch: companyJoinsRefetch, result: companyJoinsResult, onError: companyJoinsError } = useQuery(
+  queries.getMajorInsuranceCompanyJoins,
+  companyJoinsParam,
+  () => ({
+    // enabled: companyJoinsTrigger.value,
+    fetchPolicy: 'no-cache',
+  })
+);
+watch(companyJoinsResult, (newVal) => {
+  if (newVal) {
+    dataSource.value = newVal.getMajorInsuranceCompanyJoins;
+    // companyJoinsTrigger.value = false;
+  }
+});
+companyJoinsError((res: any) => {
+  notification('error', res.message)
+})
+
+//---------------------------CREATE------------------
+
+const modalCreate = ref(false);
+const onCloseModal = (emitVal: Boolean) => {
+  modalCreate.value = false;
+  if (emitVal) {
+    modalCreate.value = false;
+    companyJoinsRefetch();
+  }
+}
+
+//----------------------------ON DETAIL DATA---------------
+
+// const workId = ref();
+// const onDetailData = (val: Number) => {
+//   workId.value = val;
+//   modalCreate.value = true;
+// }
+
+// -----------------------------HISTORY-------------------
+
+const modalHistory = ref(false);
+const workIdHistory = ref();
+const onOpenLogs = (e: any) => {
+  modalHistory.value = true;
+  workIdHistory.value = e;
+  // actionParam.workId = e;
+};
+
+//-------------------------MUTATION DELETE cancelMajorInsuranceCompanyJoin -----------
+
+const contentDelete = Message.getCommonMessage('303');
+const deleteMesDone = Message.getCommonMessage('302').message;
+const modalDelete = ref(false);
+const cancelCompanyJoinParam = reactive({
+  companyId: companyId,
+  imputedYear: globalYear,
+  workId: NaN,
+})
+const {
+  mutate: cancelCompanyJoinMutate,
+  onDone: cancelCompanyJoinOnDone,
+  onError: cancelCompanyJoinError,
+} = useMutation(mutations.cancelMajorInsuranceCompanyJoin);
+cancelCompanyJoinOnDone(() => {
+  notification('success', deleteMesDone);
+  companyJoinsRefetch();
+});
+cancelCompanyJoinError((res) => {
+  notification('error', res.message);
+})
+const actionDelete = (workId: number) => {
+  modalDelete.value = true;
+  cancelCompanyJoinParam.workId = workId;
+}
+const handleDelete = (e: boolean) => {
+  if (e) {
+    modalDelete.value = false;
+    cancelCompanyJoinMutate(cancelCompanyJoinParam);
+  }
+}
+
+//------get ReportViewUrl ----
+
+const companyJoinViewUrlParam = reactive({
+  companyId: companyId,
+  imputedYear: globalYear,
+  workId: '',
+})
+const companyJoinViewUrlTrigger = ref<boolean>(false);
+const { refetch: companyJoinViewUrlRefetch, result: companyJoinViewUrlResult, onError: companyJoinViewUrlError } = useQuery(
+  queries.getMajorInsuranceCompanyJoinFaxFilingReportViewUrl,
+  companyJoinViewUrlParam,
+  () => ({
+    enabled: companyJoinViewUrlTrigger.value,
+    fetchPolicy: 'no-cache',
+  })
+);
+companyJoinViewUrlError((res: any) => {
+  notification('error', res.message);
+})
+watch(companyJoinViewUrlResult, (newVal) => {
+  if (newVal) {
+    window.open(newVal.getMajorInsuranceCompanyJoinFaxFilingReportViewUrl);
+    companyJoinViewUrlTrigger.value = false;
+  }
+});
+const onGetAcquistionRp = (workId: any) => {
+  companyJoinViewUrlParam.workId = workId;
+  companyJoinViewUrlTrigger.value = true;
+};
 </script>
 
 <style scoped lang="scss">
