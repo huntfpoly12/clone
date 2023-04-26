@@ -64,7 +64,7 @@
             // margin: -1px;
         }
         .data-grid {
-            height: calc(100vh - 795px);
+            height: calc(100vh - 730px);
             // border: 1px solid #ddd;
             overflow: hidden;
             transition: .5s;
@@ -156,21 +156,21 @@
     font-size: 16px;
     font-weight: bold;
 }
-:deep .data-grid-child .dx-datagrid-rowsview {
-    border-top: none;
-}
-:deep .data-grid-child .dx-row-lines {
-    height: 37px;
-}
-:deep .dx-datagrid .dx-row > td {
-    padding: 0;
-}
-:deep .data-grid-child .dx-row > td {
-    padding: 4px 7px;
-}
-:deep .dx-datagrid-headers .dx-row > td {
-    padding: 4px 7px;
-}
+// :deep .data-grid-child .dx-datagrid-rowsview {
+//     border-top: none;
+// }
+// :deep .data-grid-child .dx-row-lines {
+//     height: 37px;
+// }
+// :deep .dx-datagrid .dx-row > td {
+//     padding: 0;
+// }
+// :deep .data-grid-child .dx-row > td {
+//     padding: 4px 7px;
+// }
+// :deep .dx-datagrid-headers .dx-row > td {
+//     padding: 4px 7px;
+// }
 // :deep .dx-datagrid-text-content {
 //     white-space: pre-wrap;
 //     text-align: left !important;

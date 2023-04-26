@@ -301,7 +301,7 @@ let statusButton = ref(0)
 let actionSave = ref(0)
 let dataSource: any = ref([]);
 const store = useStore();
-const globalYear = computed(() => store.state.settings.globalYear)
+const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'))
 const per_page = computed(() => store.state.settings.per_page);
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);

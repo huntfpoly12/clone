@@ -1,7 +1,7 @@
 <template>
   <action-header title="급여변경신고" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-840" class="px-10 py-10">
-    <a-spin :spinning="loading1||loading2" size="large">
+    <a-spin :spinning="loading1 || loading2" size="large">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
         :allow-column-reordering="move_column" key-expr="companyId" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" style="max-height: 770px">
@@ -31,7 +31,7 @@
 
         <DxColumn caption="건강보험휴복직신고서다운로드" cell-template="fileStorageId1" alignment="center" />
         <DxColumn caption="고용산재휴복직신고서다운로드" cell-template="fileStorageId2" alignment="center" />
-        <DxColumn caption="" cell-template="action" alignment="center" />
+        <DxColumn caption="" cell-template="action" />
 
         <template #button-template>
           <a-tooltip placement="top">
@@ -80,7 +80,7 @@
           </div>
         </template>
         <template #action=" { data }: any " class="custom-action">
-          <div class="custom-action" style="text-align: center">
+          <div class="custom-action" style="margin-left: 5px;">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.type, data.data.workId) ">
                 <a-tooltip zIndex="9999999" placement="top" color="black">
@@ -112,9 +112,10 @@
     </a-spin>
 
     <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
-      :content=" contentDelete.message " :okText="contentDelete.yes" :cancelText="contentDelete.no" @checkConfirm=" handleDelete " />
+      :content=" contentDelete.message " :okText=" contentDelete.yes " :cancelText=" contentDelete.no "
+      @checkConfirm=" handleDelete " />
     <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
-      :typeHistory="typeHistory" />
+      :typeHistory=" typeHistory " />
     <CreatePA840Popup v-if=" modalCreate " @closeModal=" onCloseModal " />
     <!--    <PopupMessage :modalStatus="isDelete"  @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />-->
   </div>
@@ -163,6 +164,7 @@ const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0')
 const dataType = ref(4);
 const dataSourceCount = ref(0);
 const dataSource = ref([]);
+
 //------------------------FUNCTION COMMON --------------------------------
 
 const dateFormat = (value: any) => {
@@ -254,7 +256,8 @@ const onOpenLogs = (type: number, e: any) => {
 
 //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
-const contentDelete = Message.getCommonMessage('303')
+const contentDelete = Message.getCommonMessage('303');
+const deleteMesDone = Message.getCommonMessage('302').message;
 const modalDelete = ref(false);
 const cancelCompanyParam = reactive({
   companyId: companyId,
@@ -268,7 +271,7 @@ const {
   onError: cancelLeaveOfAbsenceError,
 } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeLeaveOfAbsence);
 cancelLeaveOfAbsenceOnDone(() => {
-  notification('success', Message.getMessage('COMMON', '402').message);
+  notification('success', deleteMesDone);
   companyEmployeeLeaveOfAbsencesRefetch();
 });
 cancelLeaveOfAbsenceError((res) => {
