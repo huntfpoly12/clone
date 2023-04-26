@@ -61,8 +61,7 @@
             <template #bankbookDetailDate="{ data }">
               <div>
                 {{ data.data.bankbookDetailDate.toString().slice(0, 4) }}-{{
-                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{ data.data.bankbookDetailDate.toString().slice(6)
-  }}
+                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{ data.data.bankbookDetailDate.toString().slice(6)}}
               </div>
             </template>
             <DxColumn caption="통장적요" data-field="summary" />
@@ -196,13 +195,13 @@
                   </template>
                   <DxColumn caption="계정과목" cell-template="accountCode" width="175" />
                   <template #accountCode="{ data }">
-                    <account-code-select v-model:valueInput="data.data.accountCode"
+                    <account-code-select v-if="rowKeyfocused" v-model:valueInput="data.data.accountCode"
                       :classification="!!data.data.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
                   </template>
                   <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
                   <template #relationCode="{ data }">
                     <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
-                      <account-code-select v-model:valueInput="data.data.relationCode"
+                      <account-code-select v-if="rowKeyfocused" v-model:valueInput="data.data.relationCode"
                       :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
                       :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
                     </div>
@@ -308,7 +307,6 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
-import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
 import { Message } from "@/configs/enum"
@@ -351,8 +349,7 @@ export default defineComponent({
     DxLookup,
     HistoryPopup,
     SaveFilled,
-    DxPaging,
-    DxSelectBox
+    DxPaging
   },
   setup() {
     const store = useStore();
