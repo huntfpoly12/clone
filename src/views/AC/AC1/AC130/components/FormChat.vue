@@ -542,6 +542,7 @@ export default defineComponent({
 
     const onSelectEmoji = (emoji: any) => {
       textChat.value += emoji.i
+      changeInput(inputChat.value)
     }
 
     const clickOutside = () => {
