@@ -104,7 +104,7 @@ const dataSource = [
 ]
 const store = useStore();
 const {per_page, move_column, colomn_resize} = store.state.settings;
-const globalYear = computed(() => store.getters['settings/currentYear'])
+const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'))
 const isOpenModalCreate = ref(false);
 const modalHistory = ref(false);
 const actionParam = reactive({

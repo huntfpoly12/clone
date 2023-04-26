@@ -637,7 +637,7 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const {per_page, move_column, colomn_resize} = store.state.settings;
     const employeeWageType = ref<EmployeeWageType>(EmployeeWageType.WAGE);
     const employeeWage = ref(cloneDeep(INITIAL_DATA.initialEmployeeWage));

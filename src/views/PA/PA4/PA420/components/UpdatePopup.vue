@@ -87,7 +87,7 @@ const emit = defineEmits(['closePopup', 'updateSuccess', 'closePopup'])
 
 const formEditTab3 = ref()
 const store = useStore();
-const globalYear = computed(() => store.state.settings.globalYear)
+const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'))
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const isDisableCreate = computed(() => store.getters['common/getIsDisableCreate'])
 const getAllData = computed(() => store.getters['common/getAllDataUpdate'])

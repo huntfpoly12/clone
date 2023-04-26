@@ -3,7 +3,7 @@
     <div class="page-content">
         <a-spin :spinning="loading" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                key-expr="reportId" :allow-column-reordering="move_column" :focused-row-enabled="true" :allow-column-resizing="colomn_resize" 
+                key-expr="reportId" :allow-column-reordering="move_column" :focused-row-enabled="true" :allow-column-resizing="colomn_resize"
                 :column-auto-width="true"  :focused-row-key="store.state.common.focusedRowKeyPA210" :onRowClick="onRowClick">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxToolbar>
@@ -210,8 +210,8 @@ export default defineComponent({
         const store = useStore();
         store.dispatch('auth/getUserInfor', sessionStorage.getItem('token'));
         const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);
-        const globalYear = computed(() => store.state.settings.globalYear);
-        
+        const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
+
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
@@ -447,9 +447,9 @@ export default defineComponent({
             changeStatusRowTable, resetComponentEdit, resetComponentModify,
             getAfterDeadline,
             checkModify, showTooltipYearMonth,
-            onRowClick,   
+            onRowClick,
         };
     },
 });
-</script>  
+</script>
 <style scoped lang="scss" src="./style/style.scss"></style>

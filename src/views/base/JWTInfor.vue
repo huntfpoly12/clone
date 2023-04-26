@@ -92,6 +92,7 @@ export default defineComponent({
 
     const intervalId = setInterval(() => {
       now.value = dayjs().valueOf();
+      token.value = sessionStorage.getItem("token")
     }, 1000);
     onMounted(() => {
       now.value = dayjs().valueOf();

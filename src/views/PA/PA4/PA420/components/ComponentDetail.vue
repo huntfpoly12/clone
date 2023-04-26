@@ -12,7 +12,7 @@
                 </DxButton>
                 <DxButton icon="plus" @click="addRow" :disabled="checkActionValue" />
                 <DxButton @click="onItemClick('history')" :disabled="checkActionValue">
-                    <a-tooltip placement="left">
+                    <a-tooltip placement="top">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
                             <HistoryOutlined style="font-size: 16px" />
