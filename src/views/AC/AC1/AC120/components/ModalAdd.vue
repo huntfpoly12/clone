@@ -6,38 +6,38 @@
                     <a-col :span="10" class="col-1">
                         <a-form-item class="red" label="통장">
                             <select-box-common placeholder="선택" :arrSelect="store.state.common.ac120.arrayBankbooks"
-                                v-model:valueInput="store.state.common.ac120.formData.bankbookId" :required="true" :width="200" />
+                                v-model:valueInput="formDataAdd.bankbookId" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
                             <number-box-money :width="200" :required="true" :min="0"
-                                v-model:valueInput="store.state.common.ac120.formData.amount" placeholder="금액" />
+                                v-model:valueInput="formDataAdd.amount" placeholder="금액" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
                             <default-text-box :width="200" :required="true"
-                                v-model:valueInput="store.state.common.ac120.formData.summary" placeholder="적요" />
+                                v-model:valueInput="formDataAdd.summary" placeholder="적요" />
                         </a-form-item>
                         <a-form-item class="red" label="자금원천">
                             <FundingSourceSelect placeholder="선택" :width="200" :required="true"
-                                v-model:valueInput="store.state.common.ac120.formData.fundingSource" />
+                                v-model:valueInput="formDataAdd.fundingSource" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="14" class="col-2">
                         <a-form-item class="red" label="결의일자">
                             <!-- <date-time-box width="150px" :required="true"
-                                v-model:valueDate="store.state.common.ac120.formData.resolutionDate" /> -->
+                                v-model:valueDate="formDataAdd.resolutionDate" /> -->
                             <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
                                 v-model:valueDate="store.state.common.ac120.transactionDetailDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrResolutionType"
                                 :layoutCustom="'horizontal'" :required="true"
-                                v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType"
+                                v-model:valueRadioCheck="formDataAdd.resolutionType"
                                 @update:valueRadioCheck="changeRadioResolutionType" />
                         </a-form-item>
                         <a-form-item v-if="statusShowLetterOfApprovalType" class="red" label="품의종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrLetterOfApprovalType"
                                 :layoutCustom="'horizontal'" :required="true"
-                                v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType" />
+                                v-model:valueRadioCheck="formDataAdd.letterOfApprovalType" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -62,7 +62,7 @@ import { useStore } from 'vuex';
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
 import { initialStateFormAdd } from '../utils/index'
-import comfirmClosePopup from '@/utils/comfirmClosePopup';
+// import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { ResolutionType, LetterOfApprovalType, ResolutionClassification, FundingSource ,enum2Entries } from "@bankda/jangbuda-common";
 import DateTimeBoxCustom from '@/components/common/DateTimeBoxCustom.vue';
 export default defineComponent({
@@ -83,12 +83,12 @@ export default defineComponent({
 
         const refFormAddAC120 = ref()
         // const dataBankBook = ref(null)
-        const statusRemoveRow = ref<boolean>(true)
+        // const statusRemoveRow = ref<boolean>(true)
         const dataQueryGetBankBooks = ref({
             companyId: companyId,
             fiscalYear: acYear.value,
         })
-        let dataStateFormAdd = {};
+        let formDataAdd = ref({...initialStateFormAdd});
         const statusShowLetterOfApprovalType = ref(false)
         // const arraySelectBox = ref([]);
         const triggerBankbooks = ref<boolean>(true);
@@ -122,15 +122,17 @@ export default defineComponent({
 
         watch(() => props.modalStatus, (newValue, old) => {
             if (newValue) {
-                dataStateFormAdd = {
-                    bankbookId: store.state.common.ac120.formData.bankbookId,
-                    // resolutionDate: store.state.common.ac120.formData.resolutionDate,
-                    resolutionType: store.state.common.ac120.formData.resolutionType,
-                    amount: store.state.common.ac120.formData.amount,
-                    summary: store.state.common.ac120.formData.summary,
-                    fundingSource: store.state.common.ac120.formData.fundingSource,
-                    letterOfApprovalType: store.state.common.ac120.formData.letterOfApprovalType,
-                };
+                formDataAdd.value = {...initialStateFormAdd}
+                store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate())
+                // dataStateFormAdd = {
+                //     bankbookId: store.state.common.ac120.formData.bankbookId,
+                //     // resolutionDate: store.state.common.ac120.formData.resolutionDate,
+                //     resolutionType: store.state.common.ac120.formData.resolutionType,
+                //     amount: store.state.common.ac120.formData.amount,
+                //     summary: store.state.common.ac120.formData.summary,
+                //     fundingSource: store.state.common.ac120.formData.fundingSource,
+                //     letterOfApprovalType: store.state.common.ac120.formData.letterOfApprovalType,
+                // };
                 countKey.value++
             }
         })
@@ -138,7 +140,6 @@ export default defineComponent({
         watch(() => store.state.common.ac120.monthSelected, (newValue, old) => {
             startDate.value = dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate();
             finishDate.value = dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).endOf('month').toDate();
-            store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs().set('year', acYear.value).set('month', newValue - 1).set('date', 1).toDate())
         })
 
         // watch(() => dataBankBook.value, (newValue: any, old) => {
@@ -153,24 +154,25 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                statusRemoveRow.value = false;
-                emit('submit', true)
+                // statusRemoveRow.value = false;
+                emit('submit', formDataAdd.value)
             }
         }
         const cancel = () => {
-            if (JSON.stringify(initialStateFormAdd) === JSON.stringify(dataStateFormAdd) == true) {
-                emit("closePopup", false)
-                if (statusRemoveRow.value) {
-                    store.state.common.ac120.onDeleteRowAdd++
-                }
-            } else {
-                comfirmClosePopup(() => {
-                    emit("closePopup", false)
-                    if (statusRemoveRow.value) {
-                        store.state.common.ac120.onDeleteRowAdd++
-                    }
-                })
-            }
+            emit("closePopup", false)
+            // if (JSON.stringify(initialStateFormAdd) === JSON.stringify(dataStateFormAdd) == true) {
+            //     emit("closePopup", false)
+            //     if (statusRemoveRow.value) {
+            //         store.state.common.ac120.onDeleteRowAdd++
+            //     }
+            // } else {
+            //     comfirmClosePopup(() => {
+            //         emit("closePopup", false)
+            //         if (statusRemoveRow.value) {
+            //             store.state.common.ac120.onDeleteRowAdd++
+            //         }
+            //     })
+            // }
 
         };
         const changeRadioResolutionType = (value: Number) => {
@@ -225,7 +227,7 @@ export default defineComponent({
             changeRadioResolutionType,
             countKey,
             store,
-            startDate, finishDate,
+            startDate, finishDate, formDataAdd,
         }
     },
 })

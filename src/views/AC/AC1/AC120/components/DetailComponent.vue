@@ -29,7 +29,8 @@
                             <a-col :span="8">
                                 <div style="display: flex; justify-content: flex-end;">
                                     <a-form-item label="결의번호">
-                                        {{ store.state.common.ac120.formData.resolutionNumber }}
+                                        {{ store.state.common.ac120.formData.resolutionNumber ?
+                                            store.state.common.ac120.formData.resolutionNumber : '_____' }}
                                         <DxButton v-if="store.state.common.ac120.formData.handwriting == true"
                                             :focusStateEnabled="false" text="수기"
                                             :style="{ backgroundColor: '#BB3835', color: 'white' }"
@@ -59,22 +60,20 @@
                             </a-col>
                             <a-col :span="6" class="col-2">
                                 <a-form-item label="결의일자" class="red">
-                                    <date-time-box v-if="store.state.common.ac120.statusFormAdd"
+                                    <date-time-box
                                         v-model:valueDate="store.state.common.ac120.transactionDetailDate" width="150px"
                                         :required="true" disabled="true" />
-                                    <date-time-box v-else
+                                    <!-- <date-time-box v-else
                                         v-model:valueDate="store.state.common.ac120.formData.resolutionDate" width="150px"
-                                        :required="true" disabled="true" />
+                                        :required="true" disabled="true" /> -->
                                 </a-form-item>
 
                                 <a-form-item label="통장" class="red">
                                     <div class="input_info">
-                                        <default-text-box
-                                            v-model:valueInput="bankbookNickname"
-                                            width="70px" style="margin-right: 10px;" :required="true" disabled="true" />
-                                        <default-text-box
-                                            v-model:valueInput="bankbookNumber"
-                                            width="70px" :required="true" disabled="true" />
+                                        <default-text-box v-model:valueInput="bankbookNickname" width="70px"
+                                            style="margin-right: 10px;" :required="true" disabled="true" />
+                                        <default-text-box v-model:valueInput="bankbookNumber" width="70px" :required="true"
+                                            disabled="true" />
                                     </div>
                                 </a-form-item>
                             </a-col>
@@ -211,9 +210,8 @@
                                 </a-col>
                             </a-row>
                             <div class="text-align-center mt-20">
-                                <DxButton :disabled="store.state.common.ac120.statusFormAdd" @click="onCancelDeleteRow"
-                                    class="ml-4 custom-button-checkbox custom-button" type="default"
-                                    :height="$config_styles.HeightInput">
+                                <DxButton @click="onCancelDeleteRow" class="ml-4 custom-button-checkbox custom-button"
+                                    type="default" :height="$config_styles.HeightInput">
                                     <div class="d-flex-center">
                                         <checkbox-basic :valueCheckbox="true" disabled="true" />
                                         <span class="pl-5">전표취소</span>
@@ -261,7 +259,7 @@ export default defineComponent({
         UploadPreviewImage,
     },
     setup() {
-        const heightForm: any = ref('352px')
+        const heightForm: any = ref('280px')
         const store = useStore();
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
@@ -382,13 +380,13 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.ac120.formData.causeActionDate, (newValue, oldValue) => {
-            if (store.state.common.ac120.statusFormAdd) {
+            // if (store.state.common.ac120.statusFormAdd) {
                 colorDate.value = newValue == store.state.common.ac120.transactionDetailDate ? 'greenColor' : 'redColor'
-            } else {
-                colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
-            }
+            // } else {
+            //     colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
+            // }
         })
-        
+
         watch(() => [store.state.common.ac120.formData.bankbookId, store.state.common.ac120.arrayBankbooks], (newValue, oldValue) => {
             let data = store.state.common.ac120.arrayBankbooks?.find((item: any) => item.value == store.state.common.ac120.formData.bankbookId)
             bankbookNickname.value = data?.bankbookNickname
@@ -435,6 +433,7 @@ export default defineComponent({
                     }
                     delete dataSubmit.input.resolutionClassification
                     delete dataSubmit.input.resolutionDate
+                    delete dataSubmit.input.bankbook
                     delete (dataSubmit.input.accountingDocumentId)
                     mutateCreateAccountingDocument(dataSubmit)
                 } else {
@@ -442,7 +441,7 @@ export default defineComponent({
                         companyId: companyId,
                         fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
-                        transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
+                        transactionDetailDate: store.state.common.ac120.transactionDetailDate,
                         accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
                         input: { ...store.state.common.ac120.formData }
                     }
@@ -468,6 +467,7 @@ export default defineComponent({
                     delete dataSubmit.input.resolutionNumber
                     delete dataSubmit.input.summaryOfBankbookDetail
                     delete dataSubmit.input.bankbookDetailId
+                    delete dataSubmit.input.balance
                     const cleanData = JSON.parse(
                         JSON.stringify(dataSubmit, (name, val) => {
                             if (
@@ -484,23 +484,28 @@ export default defineComponent({
             }
         }
         const onCancelDeleteRow = () => {
-            if (store.state.common.ac120.formData.handwriting === true) {
-                mutateUnregisterAccountingDocument({
-                    companyId: companyId,
-                    fiscalYear: acYear.value,
-                    facilityBusinessId: globalFacilityBizId.value,
-                    transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
-                    accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId
-                })
-            } else if (store.state.common.ac120.formData.handwriting === false) {
-                mutateInitializeTransactionDetails({
-                    companyId: companyId,
-                    fiscalYear: acYear.value,
-                    facilityBusinessId: globalFacilityBizId.value,
-                    bankbookDetailDate: store.state.common.ac120.formData.transactionDetailDate,
-                    bankbookDetailId: store.state.common.ac120.formData.bankbookDetailId
-                })
+            if (store.state.common.ac120.statusFormAdd) { // xóa row chưa lưu
+                store.state.common.ac120.onDeleteRowAdd++
+            } else { // delete data
+                if (store.state.common.ac120.formData.handwriting === true) {
+                    mutateUnregisterAccountingDocument({
+                        companyId: companyId,
+                        fiscalYear: acYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        transactionDetailDate: store.state.common.ac120.transactionDetailDate,
+                        accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId
+                    })
+                } else if (store.state.common.ac120.formData.handwriting === false) {
+                    mutateInitializeTransactionDetails({
+                        companyId: companyId,
+                        fiscalYear: acYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        bankbookDetailDate: store.state.common.ac120.transactionDetailDate,
+                        bankbookDetailId: store.state.common.ac120.formData.bankbookDetailId
+                    })
+                }
             }
+
         }
 
 

@@ -291,8 +291,8 @@ export default defineComponent({
           ...formParam,
           input: {
             ...formData,
-            joinedAt: +dayjs(initFormStateTabPA120.value.joinedAt).format("YYYYMMDD"),
-            leavedAt: +dayjs(initFormStateTabPA120.value.leavedAt).format("YYYYMMDD"),
+            joinedAt: +initFormStateTabPA120.value.joinedAt,
+            leavedAt: initFormStateTabPA120.value.leavedAt,
           },
         };
         if (!isEdit.value) {
