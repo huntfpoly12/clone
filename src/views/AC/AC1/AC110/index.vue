@@ -196,24 +196,30 @@
                   </template>
                   <DxColumn caption="계정과목" cell-template="accountCode" width="175" />
                   <template #accountCode="{ data }">
-                    <account-code-select v-if="rowKeyfocused" v-model:valueInput="data.data.accountCode"
-                      :classification="!!data.data.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
+                    <div v-if="rowKeyfocused">
+                      <account-code-select v-model:valueInput="data.data.accountCode"
+                        :classification="!!data.data.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
+                    </div>
                   </template>
                   <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
                   <template #relationCode="{ data }">
-                    <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
-                      <account-code-select v-if="rowKeyfocused" v-model:valueInput="data.data.relationCode"
+                    <div v-if="rowKeyfocused" :class="{'disable-input-column': data.data.resolutionClassification === 1}" :key="`relationCode${rowKeyfocused}`">
+                      <account-code-select v-model:valueInput="data.data.relationCode"
                       :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
                       :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
                     </div>
                   </template>
                   <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                   <template #fundingSource="{ data }">
-                    <FundingSourceSelect v-if="rowKeyfocused" v-model:valueInput="data.data.fundingSource" :required="true" :readOnly="isRegistered" />
+                    <div v-if="rowKeyfocused">
+                      <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" :readOnly="isRegistered" />
+                    </div>
                   </template>
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">
-                    <customer-select v-if="rowKeyfocused" v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered" />
+                    <div v-if="rowKeyfocused">
+                      <customer-select v-if="rowKeyfocused" v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered" />
+                    </div>
                   </template>
                   <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100"/>
                   <template #letterOfApprovalType="{ data }">
@@ -572,6 +578,8 @@ export default defineComponent({
     } = useMutation(mutations.saveTransactionDetails);
     doneSaveTransactionDetails((e) => {
       if(Number.isInteger(itemChange.value)) {
+        dataSourceTransactionDetails.value.transactionDetails = []
+        listTransactionDetailsOrigin.value = []
         rowKeyfocused.value = null
         firstLoad.value = true
         monthSelected.value = itemChange.value
@@ -676,13 +684,11 @@ export default defineComponent({
       console.log(dataSourceTransactionDetails.value.transactionDetails);
       console.log(listTransactionDetailsOrigin.value);
       if(isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value)){
-        console.log('111');
         rowKeyfocused.value = item.bankbookDetailId
         payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
         payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
         triggerTransactionDetails.value = true
       }else{ 
-        console.log('222');
         itemChange.value = {...item}
         isModalConfirmChangeData.value = true
       }
@@ -968,6 +974,8 @@ export default defineComponent({
         submitTransactionDetails()
       }else {
         if(Number.isInteger(itemChange.value)) {
+          dataSourceTransactionDetails.value.transactionDetails = []
+          listTransactionDetailsOrigin.value = []
           rowKeyfocused.value = null
           firstLoad.value = true
           monthSelected.value = itemChange.value
