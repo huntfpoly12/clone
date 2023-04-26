@@ -138,7 +138,6 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    const globalYear = +dayjs().format('YYYY');
     const filterBF620 = computed(() => store.state.common.filterBF620);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);

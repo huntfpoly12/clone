@@ -142,7 +142,7 @@ export default defineComponent({
         onMounted(() => {
           let employeeInfor = store.state.common.arrayEmployeePA410.find((item: any) => item.employeeId == store.state.common.employeeIdPA410)
           formState.settlementStartDate = employeeInfor && employeeInfor.joinedAt ? employeeInfor.joinedAt : filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
-          formState.settlementFinishDate = employeeInfor && employeeInfor.leavedAt ? employeeInfor.leavedAt : filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
+          formState.settlementFinishDate = employeeInfor && employeeInfor.leavedAt ? employeeInfor.leavedAt : filters.formatDateToInterger(dayjs().add(1, 'day').format("YYYY-MM-DD"))
           dataLastRetiredYearsOfService.value = Formula.getDateOfService(
               new Date(filters.formatDate(formState.settlementStartDate)),
               new Date(filters.formatDate(formState.settlementFinishDate)),
