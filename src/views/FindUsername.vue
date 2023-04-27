@@ -3,7 +3,7 @@
   <a-modal :visible="true" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="445" :height="500">
     <div class="auth-form">
-        <div class="dx-fieldset-header text-a">아이디 찾기</div>
+        <div class="dx-fieldset-header text-a" style="font-weight: bold;">아이디 찾기</div>
         <standard-form  formName="find-username" ref="findUsername"> 
           <div class="input-field">
              <a-form-item label="성명" label-align="right" class="text-a">
