@@ -80,7 +80,7 @@
                     </a-col>
                     <a-col :span="10">
                         <div style="margin-left: 5px">
-                            <post-code-button @dataAddress="funcAddress" />
+                            <post-code-button @dataAddress="funcAddress" text="주소검색"/>
                         </div>
                     </a-col>
                 </a-row>

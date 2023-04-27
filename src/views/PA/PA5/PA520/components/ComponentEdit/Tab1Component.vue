@@ -78,7 +78,7 @@
                     </a-col>
                     <a-col :span="10">
                         <div class="ml-5">
-                            <post-code-button @dataAddress="funcAddress" />
+                            <post-code-button @dataAddress="funcAddress" text="주소검색"/>
                         </div>
                     </a-col>
                 </a-row>
