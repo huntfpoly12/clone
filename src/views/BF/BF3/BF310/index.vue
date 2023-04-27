@@ -74,7 +74,7 @@
                     <DxColumn data-field="code" caption="신청코드" />
                     <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
                     <template #grid-cell="{ data }">
-                        <a-tag :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
+                        <a-tag style="width: 55px" :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
                     </template>
                     <DxColumn data-field="companyCode" caption="사업자코드" css-class="cell-center" />
                     <DxColumn data-field="companyName" caption="상호" />

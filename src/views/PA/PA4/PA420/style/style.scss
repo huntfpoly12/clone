@@ -205,3 +205,12 @@
 :deep(.dx-datagrid-expand) {
   padding-top: 3px !important;
 }
+.add-month {
+  text-align: center;
+  &.disabled {
+    opacity: 50%;
+  }
+}
+:deep .dx-freespace-row {
+  display: none !important;
+}

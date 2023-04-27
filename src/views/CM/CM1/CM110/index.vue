@@ -143,7 +143,7 @@
                         :column-auto-width="true" @exporting="onExporting">
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxPager :visible="false" />
-                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                         <DxExport :enabled="true" />
                         <DxToolbar>
                             <DxItem location="after" template="pagination-table" />
@@ -435,6 +435,7 @@ export default defineComponent({
         }
         const closePopupAdd = () => {
             resetFormNum.value++;
+            refetchDataUsers()
             modalAddNewStatus.value = false
         }
         const changeValueRow = (data: any) => {

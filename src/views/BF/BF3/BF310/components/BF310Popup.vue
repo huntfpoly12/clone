@@ -16,25 +16,25 @@
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="신청" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.createdAt) ? dayjs(formState.createdAt).format('YYYY-MM-DD'): ''"
+                                                :valueInput="isNumeric(formState.createdAt) ? dayjs(formState.createdAt).format('YYYY-MM-DD') : ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="심사중" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.processedAt) ? dayjs(formState.processedAt).format('YYYY-MM-DD'): ''"
+                                                :valueInput="isNumeric(formState.processedAt) ? dayjs(formState.processedAt).format('YYYY-MM-DD') : ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
-                                            <default-text-box v-model:valueInput="formState.processedBy"
-                                                :disabled="true" width="200px" />
+                                            <default-text-box v-model:valueInput="formState.processedBy" :disabled="true"
+                                                width="200px" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="반려" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.rejectedAt) ? dayjs(formState.rejectedAt).format('YYYY-MM-DD'): ''"
+                                                :valueInput="isNumeric(formState.rejectedAt) ? dayjs(formState.rejectedAt).format('YYYY-MM-DD') : ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
@@ -45,7 +45,7 @@
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="승인" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.approvedAt) ? dayjs(formState.approvedAt).format('YYYY-MM-DD'): ''"
+                                                :valueInput="isNumeric(formState.approvedAt) ? dayjs(formState.approvedAt).format('YYYY-MM-DD') : ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
@@ -74,11 +74,14 @@
                                                 서비스약관
                                             </a-button>
                                             |
-                                            <a-button @click="onOpenPopupInfo(2)" type="link" style="padding: 0px">개인정보제공활용동의</a-button>
+                                            <a-button @click="onOpenPopupInfo(2)" type="link"
+                                                style="padding: 0px">개인정보제공활용동의</a-button>
                                             |
-                                            <a-button @click="onOpenPopupInfo(3)" type="link" style="padding: 0px">회계서비스약관동의</a-button>
+                                            <a-button @click="onOpenPopupInfo(3)" type="link"
+                                                style="padding: 0px">회계서비스약관동의</a-button>
                                             |
-                                            <a-button @click="onOpenPopupInfo(4)" type="link" style="padding: 0px">원천서비스약관동의</a-button>
+                                            <a-button @click="onOpenPopupInfo(4)" type="link"
+                                                style="padding: 0px">원천서비스약관동의</a-button>
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
@@ -86,36 +89,31 @@
                             <a-collapse-panel key="2" header="사업자정보" class="key-2">
                                 <a-row :gutter="24" style="height: 350px; overflow-y: scroll">
                                     <a-col :span="9">
-                                        <a-form-item label="상 호" class="clr" label-align="left"
-                                            :label-col="{ span: 9 }">
-                                            <default-text-box v-model:valueInput="formState.content.company.name" width="220"
-                                                :required="true" messRequired="이항목은 필수 입력사항입니다!"
+                                        <a-form-item label="상 호" class="clr" label-align="left" :label-col="{ span: 9 }">
+                                            <default-text-box v-model:valueInput="formState.content.company.name"
+                                                width="220" :required="true" messRequired="이항목은 필수 입력사항입니다!"
                                                 nameInput="companyName" />
                                         </a-form-item>
                                         <a-form-item label="사업자등록번호" class="clr" label-align="left"
                                             :label-col="{ span: 9 }">
                                             <biz-number-text-box :disabled="!canChangeableBizNumber"
-                                                v-model:valueInput="formState.companyBizNumber" width="220"
-                                                :required="true" messRequired="이항목은 필수 입력사항입니다!"
-                                                nameInput="companyBizNumber" />
+                                                v-model:valueInput="formState.companyBizNumber" width="220" :required="true"
+                                                messRequired="이항목은 필수 입력사항입니다!" nameInput="companyBizNumber" />
                                         </a-form-item>
-                                        <a-form-item label="사업자유형" class="clr" label-align="left"
-                                            :label-col="{ span: 9 }">
+                                        <a-form-item label="사업자유형" class="clr" label-align="left" :label-col="{ span: 9 }">
                                             <radio-group :arrayValue="bizTypeItems"
                                                 v-model:valueRadioCheck="formState.content.company.bizType"
                                                 layoutCustom="horizontal" />
                                         </a-form-item>
                                         <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                             label-align="left" :label-col="{ span: 9 }">
-                                            <id-number-text-box :required="true" key="100"
-                                                :foreigner="isResidentId"
+                                            <id-number-text-box :required="true" :isResidentId="isResidentId"
                                                 v-model:valueInput="formState.content.company.residentId" width="220" />
                                         </a-form-item>
                                         <a-form-item label="주소" class="clr" label-align="left" :label-col="{ span: 9 }">
                                             <a-row :gutter="[0, 4]">
                                                 <a-col :span="24" style="display: flex">
-                                                    <default-text-box
-                                                        v-model:valueInput="formState.content.company.zipcode"
+                                                    <default-text-box v-model:valueInput="formState.content.company.zipcode"
                                                         width="70px" :disabled="true" />
                                                     <post-code-button @dataAddress="funcAddress" />
                                                 </a-col>
@@ -131,14 +129,14 @@
                                                 </a-col>
                                             </a-row>
                                         </a-form-item>
-                                        <a-form-item label="연락처" class="clr" label-align="left"
-                                            :label-col="{ span: 9 }">
+                                        <a-form-item label="연락처" class="clr" label-align="left" :label-col="{ span: 9 }">
                                             <tel-text-box v-model:valueInput="formState.content.company.phone"
-                                                :required="true" messRequired="이항목은 필수 입력사항입니다!"
-                                                nameInput="company-phone" width="220"/>
+                                                :required="true" messRequired="이항목은 필수 입력사항입니다!" nameInput="company-phone"
+                                                width="220" />
                                         </a-form-item>
                                         <a-form-item label="팩 스" label-align="left" :label-col="{ span: 9 }">
-                                            <text-number-box v-model:valueInput="formState.content.company.fax" width="220"/>
+                                            <text-number-box v-model:valueInput="formState.content.company.fax"
+                                                width="220" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="6">
@@ -151,14 +149,11 @@
                                 </a-row>
                             </a-collapse-panel>
                             <a-collapse-panel key="3" header="대표자정보">
-                                <a-form-item has-feedback label="대표자명" class="clr" label-align="left"
-                                    :label-col="labelCol">
-                                    <default-text-box v-model:valueInput="formState.content.president.name"
-                                        width="200px" :required="true" messRequired="이항목은 필수 입력사항입니다!"
-                                        nameInput="president-name" />
+                                <a-form-item has-feedback label="대표자명" class="clr" label-align="left" :label-col="labelCol">
+                                    <default-text-box v-model:valueInput="formState.content.president.name" width="200px"
+                                        :required="true" messRequired="이항목은 필수 입력사항입니다!" nameInput="president-name" />
                                 </a-form-item>
-                                <a-form-item has-feedback label="생년월일" class="clr" label-align="left"
-                                    :label-col="labelCol">
+                                <a-form-item has-feedback label="생년월일" class="clr" label-align="left" :label-col="labelCol">
                                     <birth-day-box v-model:valueInput="formState.content.president.birthday"
                                         width="200px" />
                                 </a-form-item>
@@ -200,21 +195,21 @@
                                                     <div>{{ data.rowIndex + 1 }}</div>
                                                 </template>
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
-                                                <DxColumn data-field="facilityBizType" caption="사업분류" >
-                                                    <DxLookup :data-source="facilityBizTypeCommon" value-expr="v" display-expr="n" />
+                                                <DxColumn data-field="facilityBizType" caption="사업분류">
+                                                    <DxLookup :data-source="facilityBizTypeCommon" value-expr="v"
+                                                        display-expr="n" />
                                                 </DxColumn>
                                                 <DxColumn cell-template="startYearMonth" caption="서비스시작년월"
                                                     data-type="date" />
                                                 <template #startYearMonth="{ data }">
                                                     {{
                                                         data.data.startYearMonth ?
-                                                            dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : ''
+                                                        dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : ''
                                                     }}
                                                 </template>
                                                 <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
                                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
-                                                    template="button-template" mode="cell"
-                                                    new-row-position="pageBottom">
+                                                    template="button-template" mode="cell" new-row-position="pageBottom">
                                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                                                 </DxEditing>
                                                 <DxToolbar>
@@ -245,8 +240,8 @@
                                                     </a-form-item>
                                                     <a-form-item label="정원수 (명)" style="display: inline-flex"
                                                         :label-col="labelCol">
-                                                        <number-box width="160px" :required="true"
-                                                            :min="0" :spinButtons="true"
+                                                        <number-box width="160px" :required="true" :min="0"
+                                                            :spinButtons="true"
                                                             v-model:valueInput="dataActiveRow.capacity" />
                                                     </a-form-item>
                                                     <a-form-item label="장기요양기관등록번호" :label-col="labelCol">
@@ -285,11 +280,10 @@
                                     <checkbox-basic label="원천서비스 신청합니다" v-model:valueCheckbox="checkedService"
                                         :disabled="false" :size="'16'" />
                                     <div style="margin-top: 20px">
-                                        <a-form-item label="서비스 시작년월" class="clr" label-align="left"
-                                            :label-col="labelCol" >
+                                        <a-form-item label="서비스 시작년월" class="clr" label-align="left" :label-col="labelCol">
                                             <div style="width: 200px">
                                                 <month-picker-box :required="true" width="120px"
-                                                    v-model:valueDate="formState.content.withholding.startYearMonth"/>
+                                                    v-model:valueDate="formState.content.withholding.startYearMonth" />
                                             </div>
                                         </a-form-item>
                                         <a-form-item label="직 원 수" class="clr" label-align="left" :label-col="labelCol">
@@ -320,8 +314,8 @@
                                         v-model:valueInput="formState.content.cmsBank.ownerName"
                                         nameInput="cmsBank-ownerName" />
                                 </a-form-item>
-                                <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr"
-                                    label-align="left" :label-col="labelCol">
+                                <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr" label-align="left"
+                                    :label-col="labelCol">
                                     <text-number-box width="250px" :required="true"
                                         v-model:valueInput="formState.content.cmsBank.ownerBizNumber"
                                         nameInput="cmsBank-ownerBizNumber" />
@@ -340,8 +334,7 @@
                             </a-collapse-panel>
                             <a-collapse-panel key="7" header="기타">
                                 <a-form-item label="영업관리담당" label-align="left" :label-col="labelCol">
-                                    <list-sales-dropdown
-                                        v-model:valueInput="formState.content.extra.salesRepresentativeId"
+                                    <list-sales-dropdown v-model:valueInput="formState.content.extra.salesRepresentativeId"
                                         width="200px" />
                                 </a-form-item>
                                 <a-form-item label="전달사항" label-align="left" :label-col="labelCol">
@@ -361,7 +354,7 @@
                     </a-row>
                 </standard-form>
             </a-spin>
-            <PopupInfo :statusPupopInfo="statusPupopInfo" @closePopup="statusPupopInfo = false" :keyText="keyInfo"/>
+            <PopupInfo :statusPupopInfo="statusPupopInfo" @closePopup="statusPupopInfo = false" :keyText="keyInfo" />
         </a-modal>
     </div>
 </template>
@@ -417,7 +410,7 @@ export default defineComponent({
         const imageLicenseFile = ref("");
         const licenseFileName = ref("");
         let visible = ref(false);
-        let activeKey = ref(2);
+        let activeKey = ref(1);
         const dataQuery = ref();
         const dataQueryCheckPer = ref({});
         let trigger = ref<boolean>(false);
@@ -438,13 +431,13 @@ export default defineComponent({
         // event close popup
         const setModalVisible = () => {
             if (
-                (JSON.stringify(objDataDefault.value) != JSON.stringify(formState.value)) || 
+                (JSON.stringify(objDataDefault.value) != JSON.stringify(formState.value)) ||
                 (JSON.stringify(dataSource.value) != JSON.stringify(dataSourceOld.value))
-                )
+            )
                 comfirmClosePopup(() => emit("closePopup", false))
             else
                 emit("closePopup", false)
-                
+
         };
         // watch event modal popup
         watch(() => props.modalStatus, (newValue, old) => {
@@ -459,9 +452,9 @@ export default defineComponent({
                 licenseFileName.value = "";
                 visible.value = newValue;
             }
-            setTimeout(() => {
-                activeKey.value = 1;
-            }, 100);
+            // setTimeout(() => {
+            //     activeKey.value = 1;
+            // }, 500);
         });
         const { result, loading, error, refetch } = useQuery(
             queries.getSubscriptionRequest,
@@ -587,7 +580,7 @@ export default defineComponent({
             if (!res.isValid) {
                 // open collapse 
                 res.brokenRules[0].validator.focus();
-                activeKey.value = 2;     
+                activeKey.value = 2;
                 inputInCollapse.map((value: any) => {
                     if (value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1) {
                         activeKey.value = value.key;
@@ -748,6 +741,4 @@ export default defineComponent({
     },
 });
 </script>   
-<style lang="scss" scoped src="../style/popupStyle.scss" >
-
-</style>
+<style lang="scss" scoped src="../style/popupStyle.scss" ></style>

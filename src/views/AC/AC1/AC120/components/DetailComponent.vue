@@ -12,13 +12,13 @@
                         <a-row class="text-align-center">
                             <a-col :span="8"></a-col>
                             <a-col :span="8">
-                                <div style="display: flex; justify-content: center;">
+                                <div style="display: flex; justify-content: center; margin-left: 30px;">
                                     <h2>결의서</h2>
                                     <DxButton v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
                                         :focusStateEnabled="false" text="O"
                                         :style="{ backgroundColor: '#337614', color: 'white' }"
                                         :height="$config_styles.HeightInput" />
-                                    <DxButton v-else-if="store.state.common.ac120.formData.resolutionNormalStatus == false"
+                                    <DxButton v-else
                                         :focusStateEnabled="false" text="X"
                                         :style="{ backgroundColor: '#BB3835', color: 'white' }"
                                         :height="$config_styles.HeightInput" />

@@ -113,7 +113,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, reactive, ref} from "vue";
+import {computed, reactive, ref, watch} from "vue";
 import notification from "@/utils/notification";
 import {companyId} from "@/helpers/commonFunction";
 import {useMutation, useQuery} from "@vue/apollo-composable";
@@ -186,13 +186,11 @@ const {
   })
 );
 
-// watch(resultConfig, (resConfig) => {
-//   if (resConfig) {
-//     store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
-//     dataForm.input.paymentDay = store.state.common.paymentDayPA420
-//     defaltDataForm.input.paymentDay = store.state.common.paymentDayPA420
-//   }
-// })
+watch(resultConfig, (resConfig) => {
+  if (resConfig) {
+    store.commit('common/setPaymentDay', resConfig.getWithholdingConfig.paymentDay)
+  }
+})
 const {
   mutate: mutateCreateIncomeRetirement,
   onDone: onDoneCreateIncomeRetirement,
