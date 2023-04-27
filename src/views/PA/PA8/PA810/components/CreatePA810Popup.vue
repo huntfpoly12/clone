@@ -123,7 +123,7 @@
           <a-col :span="col.item">
             <DxField label="월급여">
               <text-number-box
-                :value="filters.formatCurrency(employeeWage.totalPay)"
+                :value="filters.formatCurrency(employeeWage.totalPay || employeeWage.monthlyWage)"
                 :disabled="true"
                 placeholder="한글,영문(대문자) 입력 가능"
               />
@@ -640,7 +640,7 @@ export default defineComponent({
     const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const {per_page, move_column, colomn_resize} = store.state.settings;
     const employeeWageType = ref<EmployeeWageType>(EmployeeWageType.WAGE);
-    const employeeWage = ref(cloneDeep(INITIAL_DATA.initialEmployeeWage));
+    const employeeWage: any = ref(cloneDeep(INITIAL_DATA.initialEmployeeWage));
     const employeeWages = ref();
     const employeeWageSelected = ref();
     const formRef = ref();
@@ -799,8 +799,8 @@ export default defineComponent({
         const dependents = employeeWage.value?.dependents
           ? employeeWage.value.dependents.map((item: any) => {
             const result: any = {
-              name: employeeWage.value.name,
-              residentId: employeeWage.value.residentId,
+              name: item.name,
+              residentId: item.residentId,
               relationCode: getCodeOrLabel(item.relation).number,
             }
             if (item?.nationalityNumber) result.nationalityNumber = item.nationalityNumber

@@ -78,6 +78,7 @@ import mutations from "@/graphql/mutations/CM/CM130/index";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import TaxPay from "@/components/TaxPay.vue";
 import dayjs from "dayjs";
+import { Message } from "@/configs/enum"
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", "idRowEdit"],
 
@@ -134,7 +135,7 @@ export default defineComponent({
             notification('error', error.message)
         })
         onDoneUpdated(() => {
-            notification('success', `업데이트 성공되었습니다!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             refetchConfigPayItem();
             emit("closePopup", false);
         });

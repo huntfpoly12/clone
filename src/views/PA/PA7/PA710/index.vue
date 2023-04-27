@@ -330,24 +330,11 @@ export default defineComponent({
             modalStatusDelete.value = false;
             runOne.value = true;
             trigger.value = true;
-            // resetFormNum.value++;
-            // statusFormUpdate.value = false;
-            // focusedRowKey.value = null;
-            // Object.assign(formState.value, initialState);
+            notification('success', Message.getMessage('COMMON', '402').message)
             store.state.common.savePA710++;
         });
         onDoneUpdate(async (data) => {
             notification('success', Message.getMessage('COMMON', '106').message)
-            // if (checkClickYear.value) {
-            //     originData.imputedYear = dataYearNew.value
-            //     runOne.value = true;
-            //     trigger.value = true;
-            //     store.state.settings.paYear = dataYearNew.value
-            //     setTimeout(() => {
-            //         checkClickYear.value = false;
-            //     }, 500);
-            //     return;
-            // }
             await (trigger.value = true);
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 return

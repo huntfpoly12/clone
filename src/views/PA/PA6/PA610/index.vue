@@ -1,53 +1,28 @@
 <template>
-  <action-header
-    title="사업소득자등록"
-    @actionSave="saving()"
-    :buttonSave="true"
-  />
+  <action-header title="사업소득자등록" @actionSave="saving()" :buttonSave="true" />
   <div id="pa-610">
     <div class="page-content">
       <a-row :gutter="[24, 0]" style="margin: 0; ">
         <a-col :span="16">
           <div style="height: 100%; border: 1px solid #d7d7d7">
-            <a-spin
-              :spinning="
-              loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete
-            "
-              size="large"
-            >
-              <DxDataGrid
-                ref="gridRef"
-                :show-row-lines="true"
-                :hoverStateEnabled="true"
-                :dataSource="dataSource"
-                :show-borders="true"
-                key-expr="key"
-                :allow-column-reordering="move_column"
-                :allow-column-resizing="column_resize"
-                :focused-row-enabled="true"
-                @focused-row-changing="onFocusedRowChanging"
-                @focused-row-changed="onFocusedRowChanged"
-                v-model:focused-row-key="focusedRowKey"
-                :focusedRowIndex="0"
-                style="height: 775px;"
-              >
-                <DxPaging :page-size="0"/>
-                <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" placeholder="검색" />
+            <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete
+              " size="large">
+              <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :dataSource="dataSource"
+                :show-borders="true" key-expr="key" :allow-column-reordering="move_column"
+                :allow-column-resizing="column_resize" :focused-row-enabled="true"
+                @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged"
+                v-model:focused-row-key="focusedRowKey" :focusedRowIndex="0" style="height: 775px;">
+                <DxPaging :page-size="0" />
+                <DxScrolling mode="standard" show-scrollbar="always" />
+                <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
+                  :search-visible-columns="['TypeCodeAndName']" placeholder="검색" />
                 <DxExport :enabled="true" />
                 <DxToolbar>
-                  <DxItem template="total-user" location="before"/>
+                  <DxItem template="total-user" location="before" />
                   <DxItem name="searchPanel" />
                   <DxItem name="exportButton" css-class="cell-button-export" />
-                  <DxItem
-                    location="after"
-                    template="button-history"
-                    css-class="cell-button-add"
-                  />
-                  <DxItem
-                    location="after"
-                    css-class="cell-button-add"
-                  >
+                  <DxItem location="after" template="button-history" css-class="cell-button-add" />
+                  <DxItem location="after" css-class="cell-button-add">
                     <DxButton icon="plus" @click="!isDataInvalidAttributionYear && addRow()">
                       <a-tooltip color="black" placement="top">
                         <template #title>신규</template>
@@ -61,65 +36,36 @@
                   <div class="total-user">
                     <span>{{ storeDataSourceCount }}</span>
                     <span>전체</span>
-                    <img src="@/assets/images/user.svg"/>
+                    <img src="@/assets/images/user.svg" />
                   </div>
                 </template>
                 <template #button-history style="border-color: #ddd">
                   <DxButton icon="plus">
-                    <HistoryOutlined
-                      style="font-size: 18px"
-                      @click="modalHistory"
-                    />
+                    <HistoryOutlined style="font-size: 18px" @click="modalHistory" />
                   </DxButton>
                 </template>
-                <DxColumn
-                  caption="성명 (상호)"
-                  cell-template="tag"
-                  data-field="name"
-                />
+                <DxColumn caption="성명 (상호)" cell-template="tag" data-field="name" />
                 <template #tag="{ data }" class="custom-action">
                   <div class="custom-action">
-                    <employee-info
-                      :idEmployee="+data.data.employeeId"
-                      :name="data.data.name"
-                      :idCardNumber="data.data.residentId"
-                      :status="data.data.status"
-                      :foreigner="data.data.foreigner"
-                      :checkStatus="false"
-                    />
+                    <employee-info :idEmployee="+data.data.employeeId" :name="data.data.name"
+                      :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
+                      :checkStatus="false" />
                   </div>
                 </template>
-                <DxColumn
-                  caption="주민등록번호"
-                  data-field="residentId"
-                  cell-template="resident-id"
-                  width="150"
-                />
+                <DxColumn caption="주민등록번호" data-field="residentId" cell-template="resident-id" width="150" />
                 <template #resident-id="{ data }" class="custom-action">
                   <resident-id :residentId="data.data.residentId"></resident-id>
                 </template>
-                <DxColumn
-                  caption="소득구분"
-                  cell-template="grade-cell"
-                  width="300"
-                  data-field="TypeCodeAndName"
-                  :calculateCellValue="calculateIncomeTypeCodeAndName"
-                />
+                <DxColumn caption="소득구분" cell-template="grade-cell" width="300" data-field="TypeCodeAndName"
+                  :calculateCellValue="calculateIncomeTypeCodeAndName" />
                 <template #grade-cell="{ data }" class="custom-action">
-                  <income-type
-                    :typeCode="data.data.incomeTypeCode"
-                    :typeName="data.data.incomeTypeName"
-                  />
+                  <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.incomeTypeName" />
                 </template>
                 <DxColumn :width="50" cell-template="popup" />
                 <template #popup="{ data }" class="custom-action">
                   <div class="custom-action" style="text-align: center">
-                    <a-tooltip
-                      placement="top"
-                      v-if="data.data.deletable == true"
-                      @click="actionDelete(data.data.employeeId,data.data.incomeTypeCode)"
-                      title=""
-                    >
+                    <a-tooltip placement="top" v-if="data.data.deletable == true"
+                      @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)" title="">
                       <DeleteOutlined />
                     </a-tooltip>
                   </div>
@@ -130,72 +76,37 @@
 
         </a-col>
         <!-- section right -->
-        <a-col :span="8" class="custom-layout" :style="(storeDataSourceCount === 0 && !isNewRow || isDataInvalidAttributionYear) && 'pointer-events: none;'">
+        <a-col :span="8" class="custom-layout"
+          :style="(storeDataSourceCount === 0 && !isNewRow || isDataInvalidAttributionYear) && 'pointer-events: none;'">
           <a-spin :spinning="loadingUpdate || loadingCreated" size="large">
             <standard-form formName="pa-610" ref="formRef">
               <a-form-item label="코드" label-align="right" class="red">
                 <div class="custom-note">
-                  <text-number-box
-                    width="200px"
-                    v-model:valueInput="dataShow.employeeId"
-                    placeholder="숫자만 입력 가능"
-                    :disabled="!isNewRow"
-                    :required="true"
-                  />
+                  <text-number-box width="200px" v-model:valueInput="dataShow.employeeId" placeholder="숫자만 입력 가능"
+                    :disabled="!isNewRow" :required="true" />
                   <span>
-                    <img
-                      src="@/assets/images/iconInfo.png"
-                      style="width: 14px"
-                    />
+                    <img src="@/assets/images/iconInfo.png" style="width: 14px" />
                     최초 저장된 이후 수정 불가
                   </span>
                 </div>
               </a-form-item>
               <a-form-item label="성명(상호)" label-align="right" class="red">
-                <default-text-box
-                  v-model:valueInput="dataShow.name"
-                  width="200px"
-                  placeholder="한글,영문(대문자) 입력 가능"
-                  :required="true"
-                />
+                <default-text-box v-model:valueInput="dataShow.name" width="200px" placeholder="한글,영문(대문자) 입력 가능"
+                  :required="true" />
               </a-form-item>
               <a-form-item label="내/외국인" label-align="right" class="red">
-                <radio-group
-                  :arrayValue="arrForeigner"
-                  width="200px"
-                  :disabled="!dataShow.deletable && !isNewRow"
-                  v-model:valueRadioCheck="dataShow.foreigner"
-                  layoutCustom="horizontal"
-                  @update:valueRadioCheck="changeRadioForeigner"
-                />
+                <radio-group :arrayValue="arrForeigner" width="200px" :disabled="!dataShow.deletable && !isNewRow"
+                  v-model:valueRadioCheck="dataShow.foreigner" layoutCustom="horizontal"
+                  @update:valueRadioCheck="changeRadioForeigner" />
               </a-form-item>
-              <a-form-item
-                label="외국인 국적"
-                label-align="right"
-                :class="!dataShow.foreigner ? '' : 'red'"
-              >
-                <country-code-select-box
-                  v-if="dataShow.foreigner"
-                  v-model:valueCountry="dataShow.nationalityCode"
-                  @textCountry="changeTextCountry"
-                  width="200px"
-                  :hiddenOptionKR="true"
-                  :required="true"
-                />
-                <DxSelectBox
-                  v-else
-                  :data-source="[{key: 'KR', value: '대한민국'}]"
-                  :value="'KR'"
-                  field-template="field"
-                  value-expr="key"
-                  display-expr="value"
-                  :required="true"
-                  :disabled="true"
-                  width="200px"
-                  item-template="item"
-                >
+              <a-form-item label="외국인 국적" label-align="right" :class="!dataShow.foreigner ? '' : 'red'">
+                <country-code-select-box v-if="dataShow.foreigner" v-model:valueCountry="dataShow.nationalityCode"
+                  @textCountry="changeTextCountry" width="200px" :hiddenOptionKR="true" :required="true" />
+                <DxSelectBox v-else :data-source="[{ key: 'KR', value: '대한민국' }]" :value="'KR'" field-template="field"
+                  value-expr="key" display-expr="value" :required="true" :disabled="true" width="200px"
+                  item-template="item">
                   <template #field="{ data }">
-                    <div class="d-flex-center ml-5" >
+                    <div class="d-flex-center ml-5">
                       <a-tag color="default">{{ data.key }}</a-tag>
                       <div>
                         <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
@@ -204,68 +115,32 @@
                   </template>
                 </DxSelectBox>
               </a-form-item>
-              <a-form-item
-                label="외국인 체류자격"
-                label-align="right"
-                :class="!dataShow.foreigner ? '' : 'red'"
-              >
-                <stay-qualification-select-box
-                  :disabled="!dataShow.foreigner"
-                  :required="dataShow.foreigner"
-                  v-model:valueStayQualifiction="dataShow.stayQualification"
-                  width="200px"
-                />
+              <a-form-item label="외국인 체류자격" label-align="right" :class="!dataShow.foreigner ? '' : 'red'">
+                <stay-qualification-select-box :disabled="!dataShow.foreigner" :required="dataShow.foreigner"
+                  v-model:valueStayQualifiction="dataShow.stayQualification" width="200px" />
               </a-form-item>
-              <a-form-item
-                :label="dataShow.foreigner ? '외국인번호 유효성' : '주민등록번호'"
-                label-align="right"
-                class="red"
-              >
-              <!-- :disabled="!isNewRow && !dataShow.deletable" -->
-                <id-number-text-box
-                  v-model:valueInput="dataShow.residentId"
-                  width="200px"
-                  placeholder="숫자 13자리"
-                  :required="true"
-                  :disabled="!dataShow.deletable && !isNewRow"
-                  :foreigner="dataShow.foreigner"
-                />
+              <a-form-item :label="dataShow.foreigner ? '외국인번호 유효성' : '주민등록번호'" label-align="right" class="red">
+                <!-- :disabled="!isNewRow && !dataShow.deletable" -->
+                <id-number-text-box v-model:valueInput="dataShow.residentId" width="200px" placeholder="숫자 13자리"
+                  :required="true" :disabled="!dataShow.deletable && !isNewRow" :foreigner="dataShow.foreigner" />
               </a-form-item>
               <a-form-item label="소득구분" label-align="right" class="red">
-                <type-code-select-box
-                  width="200px"
-                  v-model:valueInput="dataShow.incomeTypeCode"
-                  @textTypeCode="changeTextTypeCode"
-                  :disabled="!isNewRow"
-                />
+                <type-code-select-box width="200px" v-model:valueInput="dataShow.incomeTypeCode"
+                  @textTypeCode="changeTextTypeCode" :disabled="!isNewRow" />
               </a-form-item>
               <a-form-item label="이메일" label-align="right">
                 <div class="custom-note">
-                  <mail-text-box
-                    width="300px"
-                    v-model:valueInput="dataShow.email"
-                    placeholder="abc@example.com"
-                  />
+                  <mail-text-box width="300px" v-model:valueInput="dataShow.email" placeholder="abc@example.com" />
                   <span>
-                    <img
-                      src="@/assets/images/iconInfo.png"
-                      style="width: 14px"
-                    />
+                    <img src="@/assets/images/iconInfo.png" style="width: 14px" />
                     원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                   </span>
                 </div>
               </a-form-item>
               <a-row class="mt-25">
                 <a-col :span="8" :offset="8" style="text-align: center">
-                  <button-basic
-                    text="저장"
-                    type="default"
-                    mode="contained"
-                    :width="90"
-                    id="btn-save"
-                    @onClick="saving()"
-                    :disabled="storeDataSourceCount === 0 && !isNewRow"
-                  />
+                  <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save" @onClick="saving()"
+                    :disabled="storeDataSourceCount === 0 && !isNewRow" />
                 </a-col>
               </a-row>
             </standard-form>
@@ -274,31 +149,19 @@
       </a-row>
     </div>
   </div>
-  <PopupMessage :modalStatus="isDiscardDelete" @closePopup="isDiscardDelete = false" typeModal="confirm"
-                :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete"
-  />
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupDataHistory"
-                title="변경이력" typeHistory="pa-610"
-  />
+    title="변경이력" typeHistory="pa-610" />
   <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'"
-                      :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요"
-                      @checkConfirm="handleConfirm"
-  />
-  <PopupMessageCustom
-    :modalStatus="isPopupVisible"
-    @closePopup="hidePopup"
-    :typeModal="'confirm'"
-    :title="Message.getMessage('COMMON', '501').message"
-    content=""
-    :okText="Message.getMessage('COMMON', '501').yes"
-    :cancelText="Message.getMessage('COMMON', '501').no"
-    @checkConfirm="confirmPopup"
-  />
+    :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요"
+    @checkConfirm="handleConfirm" />
+  <PopupMessageCustom :modalStatus="isPopupVisible" @closePopup="hidePopup" :typeModal="'confirm'"
+    :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
+    :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="confirmPopup" />
 </template>
 <script lang="ts">
 import queries from "@/graphql/queries/PA/PA6/PA610/index";
 import notification from "@/utils/notification";
-import {useMutation, useQuery} from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   DxColumn,
   DxDataGrid,
@@ -315,15 +178,15 @@ import {
 } from "devextreme-vue/data-grid";
 import DxSelectBox from "devextreme-vue/select-box";
 
-import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
-import {computed, defineComponent, reactive, ref, watch, watchEffect} from "vue";
-import {useStore} from "vuex";
+import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
+import { computed, defineComponent, reactive, ref, watch, watchEffect } from "vue";
+import { useStore } from "vuex";
 
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import Tooltip from "@/components/common/Tooltip.vue";
-import {Message} from "@/configs/enum";
+import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
-import {companyId, onExportingCommon} from "@/helpers/commonFunction";
+import { companyId, onExportingCommon } from "@/helpers/commonFunction";
 import isEqual from "lodash/isEqual";
 
 import {
@@ -339,18 +202,20 @@ import {
   SearchOutlined,
 } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
-import {Store} from "devextreme/data";
+import { Store } from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import PopupMessageCustom from "./components/PopupMessageCustom.vue";
-import {ArrForeigner, valueDefaultAction} from "./utils";
-import {ClickYearStatus, FormStatus} from "@/store/settingModule/types";
+import { ArrForeigner, valueDefaultAction } from "./utils";
+import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
 import DxTextBox from "devextreme-vue/text-box";
 import dayjs from "dayjs";
+import deletePopup from "@/utils/deletePopup";
+import { h } from "vue";
 
 export default defineComponent({
   name: 'MyForm',
   components: {
-    DxDataGrid,DxScrolling,
+    DxDataGrid, DxScrolling,
     DxColumn,
     DxSelection,
     DxExport,
@@ -380,7 +245,8 @@ export default defineComponent({
     DxTextBox
   },
   setup() {
-    const contentDelete ='선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?';
+
+    const contentDelete = h('div', [h('div', '선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며,'), h('div', '삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?')])
     const arrForeigner = ArrForeigner;
 
     const store = useStore();
@@ -435,14 +301,14 @@ export default defineComponent({
       } else {
         store.commit('settings/setFormStatus', FormStatus.none);
       }
-    }, {deep: true});
+    }, { deep: true });
 
     // Watch listen clickYearStatus
-    watch(clickYearStatus, async (newVal : ClickYearStatus) => {
+    watch(clickYearStatus, async (newVal: ClickYearStatus) => {
       if (newVal !== ClickYearStatus.none) {
         store.commit('settings/setPopupVisible', true)
       }
-    }, {deep: true});
+    }, { deep: true });
     const hidePopup = (e: boolean) => {
       if (!e) {
         store.dispatch('settings/hidePopup')
@@ -461,7 +327,7 @@ export default defineComponent({
         // focusedRowKey.value = newVal[0]?.items()[0]?.residentId || 0;
         storeDataSourceCount.value = newVal[0]?.totalCount() || 0
       }
-    }, {deep: true});
+    }, { deep: true });
     // Watch resultGetEmployeeBusinesses
 
 
@@ -472,7 +338,7 @@ export default defineComponent({
     });
     const resetForm = () => {
       formRef.value.resetValidate();
-      previousRowData.value = {...valueDefaultAction};
+      previousRowData.value = { ...valueDefaultAction };
       dataShow.value = valueDefaultAction;
     }
     const {
@@ -481,17 +347,17 @@ export default defineComponent({
       onError: errorGetEmployeeBusinesses,
       onResult: resEmployeeBusinesses,
       result: resultGetEmployeeBusinesses,
-    } = useQuery( queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
-        enabled: trigger.value,
-        fetchPolicy: "no-cache",
-      })
+    } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
+      enabled: trigger.value,
+      fetchPolicy: "no-cache",
+    })
     );
     // watch listen paYear change then focus first row
     watch(paYear, async (newVal, oldValue) => {
       if (newVal !== oldValue) {
         focusedRowKey.value = resultGetEmployeeBusinesses.value?.getEmployeeBusinesses[0]?.residentId || 0;
       }
-    }, {deep: true});
+    }, { deep: true });
     resEmployeeBusinesses((res) => {
       if (isDataInvalidAttributionYear.value) {
         focusedRowKey.value = 0;
@@ -528,11 +394,11 @@ export default defineComponent({
         if (previousRowData.value && !isEqual(previousRowData.value, dataShow.value)) {
           isDiscard.value = true;
         } else {
-        // create new row
+          // create new row
           addNewRow()
         }
       } else {
-         if (previousRowData.value && !isEqual(previousRowData.value, dataShow.value)) {
+        if (previousRowData.value && !isEqual(previousRowData.value, dataShow.value)) {
           selectRowKeyAction.value = 0
           isClickAddRow.value = true;
           isDiscard.value = true;
@@ -590,7 +456,7 @@ export default defineComponent({
 
     // handle onFocusedRowChanged to row, function run then auto set focusedRowKey
     const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
-      selectRowKeyAction.value =e.row?.key ?? 0;
+      selectRowKeyAction.value = e.row?.key ?? 0;
       dataShow.value = e.row?.data;
       previousRowData.value = { ...e.row?.data };
     };
@@ -599,7 +465,7 @@ export default defineComponent({
     const handleDiscardPopup = (e: boolean) => {
       isDiscard.value = e;
       if (isNewRow.value) {
-          formRef.value.resetValidate()
+        formRef.value.resetValidate()
         // when have new row and click row other then discard
         if (focusedRowKey.value === 0) {
           storeDataSource.value.remove(0).then(() => {
@@ -649,7 +515,7 @@ export default defineComponent({
     } = useMutation(mutations.updateEmployeeBusiness);
     updateDone((res) => {
       valueCallApiGetEmployeeBusiness.incomeTypeCode =
-      dataShow.value.incomeTypeCode;
+        dataShow.value.incomeTypeCode;
       valueCallApiGetEmployeeBusiness.employeeId = dataShow.value.employeeId;
       previousRowData.value = { ...dataShow.value };
       // update when click discard
@@ -690,10 +556,10 @@ export default defineComponent({
     createdDone(async (res) => {
       // tạo mới xong và kiểm tra có phải là thêm mới hay không, nếu đúng thì thêm row mới
       await refetchData();
-      if(isClickAddRow.value) {
+      if (isClickAddRow.value) {
         addNewRow()
       } else {
-        if(selectRowKeyAction.value !==0) {
+        if (selectRowKeyAction.value !== 0) {
           focusedRowKey.value = selectRowKeyAction.value
         } else {
           focusedRowKey.value = res.data.createEmployeeBusiness.residentId;
@@ -747,7 +613,7 @@ export default defineComponent({
       dataShow.value.incomeTypeName = text;
     };
     const changeRadioForeigner = (value: Boolean) => {
-      if(!value) {
+      if (!value) {
         dataShow.value.nationality = '대한민국'
         dataShow.value.nationalityCode = 'KR'
         dataShow.value.stayQualification = null
@@ -757,7 +623,7 @@ export default defineComponent({
           dataShow.value.nationalityCode = ''
           dataShow.value.stayQualification = null
         } else {
-          if(previousRowData.value.foreigner) {
+          if (previousRowData.value.foreigner) {
             dataShow.value.nationality = previousRowData.value.nationality
             dataShow.value.nationalityCode = previousRowData.value.nationalityCode
             dataShow.value.stayQualification = previousRowData.value.stayQualification
@@ -855,11 +721,15 @@ export default defineComponent({
     const actionDelete = (employeeId: any, incomeTypeCode: any) => {
       valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode;
       valueCallApiGetEmployeeBusiness.employeeId = employeeId;
-      isDiscardDelete.value = true;
+      deletePopup({
+        callback: () => {
+          actionDeleteApi(valueCallApiGetEmployeeBusiness);
+        },
+        message: contentDelete,
+        width: 550,
+      })
     };
-    const handleDelete = (res: any) => {
-      if (res) actionDeleteApi(valueCallApiGetEmployeeBusiness);
-    };
+
     const modalHistory = () => (modalHistoryStatus.value = true);
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return rowData.incomeTypeCode + ' ' + rowData.incomeTypeName;
@@ -882,7 +752,6 @@ export default defineComponent({
       isDiscardDelete,
       contentDelete,
       handleConfirm,
-      handleDelete,
       actionDelete,
       changeTextTypeCode,
       onExporting,
@@ -912,7 +781,8 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped lang="scss" src="./style/style.scss"></style>
+<style scoped lang="scss" src="./style/style.scss">
+</style>
 <!-- Flow
   onFocusedRowChanging -> onFocusedRowChanged ->  onRowClick ->
 -->

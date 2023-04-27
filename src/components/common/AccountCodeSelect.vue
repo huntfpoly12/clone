@@ -37,7 +37,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { useStore } from 'vuex';
-import { accountSubject } from "@/helpers/commonFunction"
+// import { accountSubject } from "@/helpers/commonFunction"
 export default {
     props: {
         required: {
@@ -91,20 +91,20 @@ export default {
         if (props.messRequired != "") {
             messageRequired.value = props.messRequired;
         }
+        const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
         const resetSelect = ref(0)
         let value: any = ref(null);
-        // const arrAllCallApi = accountSubject
         let accountSubjects: any = ref([])
         onMounted(() => {
             fillData()
         });
-        watch(accountSubject, (newValue) => {
+        watch(dataAccountSubject.value, (newValue) => {
             fillData()
         });
         const fillData = () => {
             accountSubjects.value = []
-            if (accountSubject.length) {
-                accountSubject?.map((row: any) => {
+            if (dataAccountSubject.value.length) {
+                dataAccountSubject.value?.map((row: any) => {
                     if (props.useStartDate && !props.useFinishDate) {
                         if (row.useStartDate >= props.useStartDate) {
                             fillRow(row)
