@@ -9,7 +9,7 @@
               key-expr="companyId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
               :column-auto-width="true">
               <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
-              <template #col-first="{}">
+              <template #col-first>
                 <b>지급연월</b>
               </template>
               <DxColumn caption="01" width="100px" cell-template="month-1" :cssClass="customColumnClass(1)"
@@ -167,7 +167,7 @@
                 </div>
               </template>
               <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
-              <template #detailRow="{}">
+              <template #detailRow>
                 <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="false" :column-auto-width="true"
                   :allow-column-reordering="move_column" :show-column-headers="false"
                   :allow-column-resizing="colomn_resize">
