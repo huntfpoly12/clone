@@ -110,7 +110,7 @@ import { taxWaring } from '../../utils/index';
 import { h } from 'vue';
 import { Message } from '@/configs/enum';
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
-const messageUpdate = Message.getMessage('COMMON', '106').message;
+const messageDelete = Message.getMessage('COMMON', '402').message;
 const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 '), h('div', '합니다. 그래도 삭제하시겠습니까?')])
 export default defineComponent({
   components: {},
@@ -127,14 +127,13 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const trigger = ref<boolean>(true);
-    const store = useStore();
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const modalStatusDelete = ref(false)
     const idAction = ref()
     let disabledButton = ref<boolean>(false);
-    const labelResidebId = ref("주민등록번호");
     let formState = reactive<any>({ ...props.dependentItem });
     let formStateToCompare = ({ ...props.dependentItem });
+    const labelResidebId = ref(formState.foreigner?'외국인번호 유효성':'주민등록번호')
     const ageCount = ref<any>(convertAge(props.dependentItem?.residentId));
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
     const itemSelected = ref<any>([...props.relationAll]);
@@ -261,7 +260,7 @@ export default defineComponent({
       notification('error', e.message)
     })
     successDelete(e => {
-      notification('success', messageUpdate)
+      notification('success', messageDelete)
       trigger.value = true
       emit('closePopup', false)
       emit('upDateData');

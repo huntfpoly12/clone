@@ -1,12 +1,12 @@
 <template>
   <a-modal class="form-modal" width="50%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
-    title="급여변경신고" centered @cancel="onCanCelModal" :footer="null" :mask-closable="false">
+    title="휴복직신고 신규 등록" centered @cancel="onCanCelModal" :footer="null" :mask-closable="false">
     <standard-form ref="formRef">
       <!-- {{ formData }} -->
       <div class="mb-10">
         <a-row>
           <a-col :span="col.left">
-            <DxField label="직원선택">
+            <DxField label="직원유행">
               <radio-group :arrayValue="INITIAL_FORM.employeeFashionArr" v-model:valueRadioCheck="formData.employeeType"
                 layoutCustom="horizontal" class="mt-1"></radio-group>
             </DxField>
@@ -45,7 +45,7 @@
         </a-col>
         <a-col :span="col.right">
           <DxField label="주민등록번호" class="field-custom">
-            <default-text-box v-model:valueInput="showData.residentId" placeholder="주민등록번호" width="200px" disabled />
+            <id-number-text-box :disabled="true" width="200px" v-model:valueInput="showData.residentId" />
           </DxField>
         </a-col>
 
@@ -99,8 +99,8 @@
         <!-- row 5 -->
         <a-col :span="col.left">
           <DxField label="휴직시작일">
-            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.startDateOfLeave" width="200px"
-              :disabled="!isStatusLeaveOfAbsence" :teleport = "true"/>
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.startDateOfLeave"
+              width="200px" :disabled="!isStatusLeaveOfAbsence" :teleport="true" />
           </DxField>
         </a-col>
         <a-col :span="col.right">
@@ -110,14 +110,15 @@
         <!-- row 6 -->
         <a-col :span="col.left">
           <DxField label="휴직종료(예정)">
-            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.endDateOfLeave" width="200px"
-              :disabled="!isStatusLeaveOfAbsence" :teleport = "true" />
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.endDateOfLeave"
+              :style="{width:'200px'}" :disabled="!isStatusLeaveOfAbsence" :teleport="true" />
           </DxField>
         </a-col>
         <a-col :span="col.right" class="pl-50">
           <DxField label="연도" class="field-custom">
-            <year-picker-box-custom v-model:valueDate="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
-              color="#a6a6a6" :disabled="isStatusLeaveOfAbsence" />
+            <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
+              :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px">
+            </Datepicker>
           </DxField>
         </a-col>
 
@@ -166,7 +167,7 @@
 
         <!-- row 8 -->
         <a-col :span=" col.left ">
-          <DxField label="국민연금납부예외 사유부호" class="field-custom-2">
+          <DxField label="건강보험납부유예 사유" class="field-custom-2">
             <DxSelectBox :search-enabled=" false " width="200px"
               :data-source=" INITIAL_FORM.ReasonForDeferringHealthInsurancePayments " display-expr="name" value-expr="id"
               :disabled=" !isStatusLeaveOfAbsence " v-model=" formData.healthInsurancePaymentExceptionReasonCode "
@@ -305,12 +306,14 @@ import { EmploymentStatus, PaymentDesire, } from '../utils';
 import notification from '@/utils/notification';
 import { getCurrentInstance } from "vue";
 import { DxTextBox } from 'devextreme-vue';
+import Datepicker from "@vuepic/vue-datepicker";
 
 export default defineComponent({
   components: {
     DxSelectBox,
-    DxTextBox
-},
+    DxTextBox,
+    Datepicker
+  },
   props: {
     isOpenModalCreate: {
       type: Boolean,
@@ -505,7 +508,7 @@ export default defineComponent({
             employeementInsuranceLeaveReasonCode: formData.value.employeementInsuranceLeaveReasonCode,
           }
           makeDataClean(dataType1, ['']);
-          console.log(`output->dataType1`,dataType1);
+          console.log(`output->dataType1`, dataType1);
           // createLeaveOfAbsenceMutate({ companyId: companyId, imputedYear: globalYear.value, input: dataType1 });
         } else {
           let dataType2 = {
@@ -557,6 +560,7 @@ export default defineComponent({
       employeeArr,
       formDataToCompare,
       showData,
+      globalYear
     }
   },
 })
@@ -579,5 +583,14 @@ export default defineComponent({
 :deep .dx-template-wrapper {
   width: 100%;
   padding: 3px;
+}
+
+:deep .dx-state-disabled input {
+  color: #999 !important;
+}
+
+:deep .dp__disabled {
+  color: #999 !important;
+  opacity: 0.5;
 }
 </style>
