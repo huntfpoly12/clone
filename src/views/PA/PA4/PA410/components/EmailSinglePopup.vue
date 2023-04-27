@@ -50,7 +50,7 @@ export default defineComponent({
                 return item.employeeId ==  store.state.common.employeeIdPA410; 
             })
         )
-        let emailAddress = ref(empployeeDetail[0].email);
+        let emailAddress = ref(empployeeDetail[0].email ?? userInfor.email);
         const setModalVisible = () => {
             emit("closePopup", false)
         };

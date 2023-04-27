@@ -726,9 +726,7 @@ export default defineComponent({
           actionDeleteApi(valueCallApiGetEmployeeBusiness);
         },
         message: contentDelete,
-        icon: DeleteOutlined,
         width: 550,
-        wrapClassName: 'delete-popup'
       })
     };
 
@@ -788,10 +786,3 @@ export default defineComponent({
 <!-- Flow
   onFocusedRowChanging -> onFocusedRowChanged ->  onRowClick ->
 -->
-<style lang="scss">
-.delete-popup {
-  .anticon {
-    color: #000 !important;
-  }
-}
-</style>
