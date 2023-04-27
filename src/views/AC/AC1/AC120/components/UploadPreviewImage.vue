@@ -290,12 +290,12 @@ export default defineComponent({
         width: 120px;
         height: 120px;
         border-radius: 15px;
-        margin: 0;
+        // margin: 0;
     }
 
     .ant-btn-upload {
-        display: flex;
-        flex-direction: column;
+        // display: flex;
+        // flex-direction: column;
         align-items: center;
         justify-content: space-between;
 
@@ -318,9 +318,15 @@ export default defineComponent({
             padding: 0 15px;
         }
     }
-}
 
-.ac110-disable-form-upload {
-    pointer-events: none;
+    .ant-upload-list {
+        display: flex;
+        flex-direction: row-reverse;
+        flex-wrap: wrap-reverse;
+    }
+
+    .ant-upload-list-picture-card-container {
+        width: 45%;
+    }
 }
 </style>
