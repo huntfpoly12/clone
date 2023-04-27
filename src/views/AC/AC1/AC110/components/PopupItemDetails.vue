@@ -123,7 +123,7 @@
         </DxDataGrid>
         <div class="ac-110-popup-detail-btn">
           <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
-            :disabled="disabled || !dataSource.statementOfGoodsItems.length" />
+            :disabled="!dataSource.statementOfGoodsItems.length || isDisableBtnSave" />
         </div>
       </standard-form>
     </a-spin>
@@ -196,6 +196,8 @@ export default defineComponent({
     const triggerSearchStatementOfGoodsItems = ref(false)
     const triggerSearchStatementOfGoodsStandards = ref(false)
     const triggerSearchStatementOfGoodsUnits = ref(false)
+
+    const isDisableBtnSave = ref(true)
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -220,6 +222,7 @@ export default defineComponent({
     } = useMutation(mutations.saveStatementOfGoods);
     doneSaveStatementOfGoods((e) => {
       emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
+      emit("closePopup", false)
       setData()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
@@ -354,7 +357,8 @@ export default defineComponent({
           }
         }
       });
-      const result = spending - total
+      const result =  spending - total
+      isDisableBtnSave.value = result !== 0
       return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
@@ -520,7 +524,8 @@ export default defineComponent({
       rowKeyfocused,
       inputChange,
       eventEnter,
-      focusInput
+      focusInput,
+      isDisableBtnSave
     }
   },
 })

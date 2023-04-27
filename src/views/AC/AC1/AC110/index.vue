@@ -593,17 +593,19 @@ export default defineComponent({
       loading: loadingSaveTransactionDetails,
     } = useMutation(mutations.saveTransactionDetails);
     doneSaveTransactionDetails((e) => {
-      if (Number.isInteger(itemChange.value)) {
-        dataSourceTransactionDetails.value.transactionDetails = []
-        listTransactionDetailsOrigin.value = []
-        rowKeyfocused.value = null
-        firstLoad.value = true
-        monthSelected.value = itemChange.value
-        payloadGetAccountingProcessLogs.month = itemChange.value
-      } else {
-        rowKeyfocused.value = itemChange.value.bankbookDetailId
-        payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
-        payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
+      if(itemChange.value) {
+        if (Number.isInteger(itemChange.value)) {
+          dataSourceTransactionDetails.value.transactionDetails = []
+          listTransactionDetailsOrigin.value = []
+          rowKeyfocused.value = null
+          firstLoad.value = true
+          monthSelected.value = itemChange.value
+          payloadGetAccountingProcessLogs.month = itemChange.value
+        } else {
+          rowKeyfocused.value = itemChange.value.bankbookDetailId
+          payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
+          payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
+        }
         itemChange.value = null
       }
       triggerBankbookDetails.value = true
