@@ -165,7 +165,7 @@
           <div class="d-flex-center">
             <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementStartDate"
-                                  :startDate="joinedAt ? dayjs(String(joinedAt)).add(1, 'day') : joinedAt"
+                                  :startDate="interimPaymentTab1? dayjs(String(formState.prevRetiredYearsOfService.settlementFinishDate)).add(1, 'day') : (joinedAt ? dayjs(String(joinedAt)).add(1, 'day') : joinedAt)"
                                   :finishDate="finishDateRetirement && dayjs(String(finishDateRetirement))"
                                   ref="lastSettlementStartDate"/>
             <div class="ml-5 d-flex-center">
@@ -492,6 +492,10 @@ watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: an
 
 watch(() => formState.lastRetiredYearsOfService.settlementStartDate, (value: any) => {
   if (!interimPaymentTab1.value) formState.incomeCalculationInput.settlementStartDate = value
+  // else if (value && +value > +formState.prevRetiredYearsOfService.settlementFinishDate) {
+  //   formState.lastRetiredYearsOfService.settlementStartDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
+  //   // formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
+  // }
 });
 watch(() => formState.lastRetiredYearsOfService.settlementFinishDate, (value: any) => {
   formState.incomeCalculationInput.settlementFinishDate = value

@@ -162,7 +162,7 @@
           <div class="d-flex-center">
             <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementStartDate"
-                                  :startDate="employee.joinedAt ? dayjs(String(employee.joinedAt)).add(1, 'day') : employee.joinedAt"
+                                  :startDate="interimPaymentTab1? dayjs(String(formState.prevRetiredYearsOfService.settlementFinishDate)).add(1, 'day') : (employee.joinedAt ? dayjs(String(employee.joinedAt)).add(1, 'day') : employee.joinedAt)"
                                   :finishDate="finishDateRetirement"
                                   ref="lastSettlementStartDate"/>
             <div class="ml-5 d-flex-center">
