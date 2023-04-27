@@ -3,11 +3,11 @@
   <a-modal :visible="true" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="445" :height="500">
     <div class="auth-form">
-        <div class="dx-fieldset-header text-a">비밀번호 찾기</div>
-        <standard-form  formName="forget-password" ref="forgetPassword"> 
+        <div class="dx-fieldset-header text-a">아이디 찾기</div>
+        <standard-form  formName="find-username" ref="findUsername"> 
           <div class="input-field">
              <a-form-item label="성명" label-align="right" class="text-a">
-              <default-text-box width="150px" v-model:valueInput="form.name" :required="true"   name="username"   id="username"  placeholder="" />
+              <default-text-box width="150px" v-model:valueInput="form.name" :required="true"   name="name"   id="name"  placeholder="" />
             </a-form-item>  
           </div>
           <div class="input-field">
@@ -53,7 +53,7 @@
         },
     },
     setup(props, { emit }) {
-      const forgetPassword = ref()
+      const findUsername = ref()
       const messageRes = ref('')
       const trigger = ref(false)
       const modalConfirm = ref(false)
@@ -67,7 +67,7 @@
             emit("closePopup", false)
       };
       const submitForm = () => {
-        var res = forgetPassword.value.validate();
+        var res = findUsername.value.validate();
         if (!res.isValid) {
           res.brokenRules[0].validator.focus();
           return
@@ -100,7 +100,7 @@
  
       return {
         form,
-        forgetPassword,
+        findUsername,
         setModalVisible,
         submitForm,
         modalConfirm,
