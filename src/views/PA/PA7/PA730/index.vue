@@ -50,7 +50,7 @@
           @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           ref="gridRef" :column-auto-width="true" @selection-changed="onSelectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
           <DxToolbar>
             <DxItem template="send-group-mail" />
             <DxItem template="send-group-print" />
