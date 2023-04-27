@@ -21,24 +21,72 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <div :key="`item${keyRefreshSelect}`">
-              <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true"
-                :readOnly="disabled" />
-            </div>
+              <DxSelectBox
+                :search-enabled="true"
+                v-model:value="data.data.item" 
+                :data-source="arrSelectItem"
+                placeholder="선택 또는 직접입력"
+                search-mode="contains"
+                search-expr="value"
+                :search-timeout="200"
+                :min-search-length="0"
+                :show-data-before-search="false"
+                display-expr="value"
+                value-expr="value"
+                @input="(e: any) => inputChange(e, data.rowIndex, 'item')"
+                @enter-key="eventEnter"
+                @focus-in="(e: any) => focusInput(e, data.rowIndex, 'item')"
+              >
+                <DxValidator name="품목">
+                  <DxRequiredRule message="품목 Required" />
+                </DxValidator>
+              </DxSelectBox>
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
-            <div :key="`standard${keyRefreshSelect}`">
-              <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
-                :required="true" :readOnly="disabled" />
-            </div>
+              <DxSelectBox
+                :search-enabled="true"
+                v-model:value="data.data.standard" 
+                :data-source="arrSelectStandard"
+                placeholder="선택 또는 직접입력"
+                search-mode="contains"
+                search-expr="value"
+                :search-timeout="200"
+                :min-search-length="0"
+                :show-data-before-search="false"
+                display-expr="value"
+                value-expr="value"
+                @input="(e: any) => inputChange(e, data.rowIndex, 'standard')"
+                @enter-key="eventEnter"
+                @focus-in="(e: any) => focusInput(e, data.rowIndex, 'standard')"
+              >
+                <DxValidator name="규격">
+                  <DxRequiredRule message="규격 Required" />
+                </DxValidator>
+              </DxSelectBox>
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <div :key="`unit${keyRefreshSelect}`">
-              <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true"
-                :readOnly="disabled" />
-            </div>
+              <DxSelectBox
+                :search-enabled="true"
+                v-model:value="data.data.unit" 
+                :data-source="arrSelectUnit"
+                placeholder="선택 또는 직접입력"
+                search-mode="contains"
+                search-expr="value"
+                :search-timeout="200"
+                :min-search-length="0"
+                :show-data-before-search="false"
+                display-expr="value"
+                value-expr="value"
+                @input="(e: any) => inputChange(e, data.rowIndex, 'unit')"
+                @enter-key="eventEnter"
+                @focus-in="(e: any) => focusInput(e, data.rowIndex, 'unit')"
+              >
+                <DxValidator name="단위">
+                  <DxRequiredRule message="단위 Required" />
+                </DxValidator>
+              </DxSelectBox>
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
@@ -140,10 +188,14 @@ export default defineComponent({
     let dataSourceCopy: any = ref()
     let itemDelete: any = ref()
     let rowKeyfocused: any = ref(null)
-    let keyRefreshSelect = ref(0)
-    const triggerSearchStatementOfGoodsItems = ref(true)
-    const triggerSearchStatementOfGoodsStandards = ref(true)
-    const triggerSearchStatementOfGoodsUnits = ref(true)
+    let objNewSlect = ref({
+      key: '',
+      keyword: '',
+      indexRow: 0
+    })
+    const triggerSearchStatementOfGoodsItems = ref(false)
+    const triggerSearchStatementOfGoodsStandards = ref(false)
+    const triggerSearchStatementOfGoodsUnits = ref(false)
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -169,64 +221,62 @@ export default defineComponent({
     doneSaveStatementOfGoods((e) => {
       emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
       setData()
-      arrSelectItem.value = []
-      arrSelectStandard.value = []
-      arrSelectUnit.value = []
-      keyRefreshSelect.value++
-      setDataSelect()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveStatementOfGoods(e => {
       notification('error', e.message)
     })
-    // const {
-    //   onResult: onResultSearchStatementOfGoodsItems,
-    // } = useQuery(queries.searchStatementOfGoodsItems, {
-    //   companyId: companyId,
-    //   keyword: 'items'
-    // },
-    //   () => ({
-    //     enabled: triggerSearchStatementOfGoodsItems.value,
-    //     fetchPolicy: "no-cache",
-    //   }))
-    // onResultSearchStatementOfGoodsItems((res) => {
-    //   console.log('ItemsItems', res);
-    //   triggerSearchStatementOfGoodsItems.value = false
-    // })
+    const {
+      onResult: onResultSearchStatementOfGoodsItems,
+    } = useQuery(queries.searchStatementOfGoodsItems, {
+      companyId: companyId,
+      keyword: null
+    },
+      () => ({
+        enabled: triggerSearchStatementOfGoodsItems.value,
+        fetchPolicy: "no-cache",
+      }))
+    onResultSearchStatementOfGoodsItems((res) => {
+      arrSelectItem.value = res.data.searchStatementOfGoodsItems.map((item: any) => ({value: item}))
+      triggerSearchStatementOfGoodsItems.value = false
+    })
 
-    // const {
-    //   onResult: onResultSearchStatementOfGoodsStandards,
-    // } = useQuery(queries.searchStatementOfGoodsStandards, {
-    //   companyId: companyId,
-    // },
-    //   () => ({
-    //     enabled: triggerSearchStatementOfGoodsStandards.value,
-    //     fetchPolicy: "no-cache",
-    //   }))
+    const {
+      onResult: onResultSearchStatementOfGoodsStandards,
+    } = useQuery(queries.searchStatementOfGoodsStandards, {
+      companyId: companyId,
+      keyword: null
+    },
+      () => ({
+        enabled: triggerSearchStatementOfGoodsStandards.value,
+        fetchPolicy: "no-cache",
+      }))
     
-    // onResultSearchStatementOfGoodsStandards((res) => {
-    //   console.log('StandardsStandards', res);
-    //   triggerSearchStatementOfGoodsStandards.value = false
-    // })
-    // const {
-    //   onResult: onResultSearchStatementOfGoodsUnits,
-    // } = useQuery(queries.searchStatementOfGoodsUnits, {
-    //   companyId: companyId,
-    //   keyword: 'units'
-    // },
-    //   () => ({
-    //     enabled: triggerSearchStatementOfGoodsUnits.value,
-    //     fetchPolicy: "no-cache",
-    //   }))
+    onResultSearchStatementOfGoodsStandards((res) => {
+      arrSelectStandard.value = res.data.searchStatementOfGoodsStandards.map((item: any) => ({value: item}))
+      triggerSearchStatementOfGoodsStandards.value = false
+    })
+
+    const {
+      onResult: onResultSearchStatementOfGoodsUnits,
+    } = useQuery(queries.searchStatementOfGoodsUnits, {
+      companyId: companyId,
+      keyword: null
+    },
+      () => ({
+        enabled: triggerSearchStatementOfGoodsUnits.value,
+        fetchPolicy: "no-cache",
+      }))
     
-    // onResultSearchStatementOfGoodsUnits((res) => {
-    //   console.log('UnitsUnits', res);
-    //   triggerSearchStatementOfGoodsUnits.value = false
-    // })
-
-
+    onResultSearchStatementOfGoodsUnits((res) => {
+      arrSelectUnit.value = res.data.searchStatementOfGoodsUnits.map((item: any) => ({value: item}))
+      triggerSearchStatementOfGoodsUnits.value = false
+    })
 
     watch(() => props.data, (value) => {
+      triggerSearchStatementOfGoodsItems.value = true
+      triggerSearchStatementOfGoodsStandards.value = true
+      triggerSearchStatementOfGoodsUnits.value = true
       dataSource.value = cloneDeep(value)
       setData()
     })
@@ -242,29 +292,6 @@ export default defineComponent({
         dataSource.value.statementOfGoodsItems = []
       }
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
-    }
-    watch(() => dataSource.value.statementOfGoodsItems, (value, oldValue) => {
-      if (!value) return
-      const lengthOldVal = !!oldValue ? oldValue.length : 0
-      if (value.length !== lengthOldVal) {
-        setDataSelect()
-      }
-    }, {
-      deep: true,
-    })
-
-    const setDataSelect = () => {
-      dataSource.value.statementOfGoodsItems.forEach((item: any, index: number) => {
-        if (!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())) {
-          arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item.toString().trim() }]
-        }
-        if (!!item.standard && !arrSelectStandard.value.some((option: any) => option.value === item.standard.toString().trim())) {
-          arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard.toString().trim() }]
-        }
-        if (!!item.unit && !arrSelectUnit.value.some((option: any) => option.value === item.unit.toString().trim())) {
-          arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit.toString().trim() }]
-        }
-      })
     }
 
     const cancel = () => {
@@ -417,6 +444,57 @@ export default defineComponent({
         elTotalDifference.textContent = totalDifference(key, index)
       }
     }
+
+    const inputChange = (e: any, indexRow: number, key: string) => {
+      objNewSlect.value = {
+        key: key,
+        keyword: e.event.target.value,
+        indexRow: indexRow
+      }
+    }
+
+    const eventEnter = (e: any) => {
+      const el = e.component.instance()
+      if(objNewSlect.value.key === 'item') {
+        if(!arrSelectItem.value.some((item: any) => item.value.includes(objNewSlect.value.keyword.trim()))) {
+          el.close()
+          arrSelectItem.value.push({value: objNewSlect.value.keyword.trim()})
+          el.reset()
+          dataSource.value.statementOfGoodsItems[objNewSlect.value.indexRow][objNewSlect.value.key] = objNewSlect.value.keyword.trim()
+        }
+      }
+
+      if(objNewSlect.value.key === 'standard') {
+        if(!arrSelectStandard.value.some((item: any) => item.value.includes(objNewSlect.value.keyword.trim()))) {
+          el.close()
+          arrSelectStandard.value.push({value: objNewSlect.value.keyword.trim()})
+          el.reset()
+          dataSource.value.statementOfGoodsItems[objNewSlect.value.indexRow][objNewSlect.value.key] = objNewSlect.value.keyword.trim()
+        }
+      }
+
+      if(objNewSlect.value.key === 'unit') {
+        if(!arrSelectUnit.value.some((item: any) => item.value.includes(objNewSlect.value.keyword.trim()))) {
+          el.close()
+          arrSelectUnit.value.push({value: objNewSlect.value.keyword.trim()})
+          el.reset()
+          dataSource.value.statementOfGoodsItems[objNewSlect.value.indexRow][objNewSlect.value.key] = objNewSlect.value.keyword.trim()
+        }
+      }
+      
+      nextTick(() => {
+        el.focus()
+      })
+    }
+
+    const focusInput = (e: any, indexRow: number, key: string) => {
+      objNewSlect.value = {
+        key: key,
+        keyword: e.event.target.value,
+        indexRow: indexRow
+      }
+    }
+
     return {
       move_column,
       colomn_resize,
@@ -440,7 +518,9 @@ export default defineComponent({
       handleConfirmChange,
       changeInput,
       rowKeyfocused,
-      keyRefreshSelect
+      inputChange,
+      eventEnter,
+      focusInput
     }
   },
 })
