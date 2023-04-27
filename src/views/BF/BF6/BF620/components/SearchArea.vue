@@ -154,6 +154,13 @@ export default defineComponent({
         filterBF620.value.productionStatuses = [0, 1, 2, -1];
       }
     }, { deep: true })
+    watch(() => filterBF620.value.productionStatuses, (newVal: any) => {
+      if (!newVal.length) {
+        filterBF620.value.beforeProduction = true;
+      } else {
+        filterBF620.value.beforeProduction = false;
+      }
+    }, { deep: true })
 
     // ----------------convert companyCode to upper case------------
 

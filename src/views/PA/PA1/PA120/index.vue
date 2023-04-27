@@ -10,8 +10,8 @@
             :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey" ref="gridRef"
             @focused-row-changing="onFocusedRowChanging">
             <DxPaging :page-size="0" />
-            <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
-              :search-visible-columns="['TypeCodeAndName']" placeholder="검색"  />
+            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']"
+              placeholder="검색" />
             <DxExport :enabled="true" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxToolbar>
@@ -75,37 +75,37 @@
             </template>
             <DxColumn caption="성명" width="180" cell-template="company-name" data-field="name" />
             <template #company-name="{ data }: any">
-              <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
-                :checkStatus="false" @toolTopErorr="toolTopErorr" :employeeId="data.data.employeeId"
-                @mouseenter="defaultVisible = true" @mouseleave="defaultVisible = false" />
+              <employee-info :idEmployee=" data.data.employeeId " :name=" data.data.name "
+                :idCardNumber=" data.data.residentId " :status=" data.data.status " :foreigner=" data.data.foreigner "
+                :checkStatus=" false " @toolTopErorr=" toolTopErorr " :employeeId=" data.data.employeeId "
+                @mouseenter=" defaultVisible = true " @mouseleave=" defaultVisible = false " />
             </template>
             <DxColumn caption="주민등록번호" cell-template="residentId" width="110" data-field="residentId" />
-            <template #residentId="{ data }: any">
-              <resident-id :residentId="data.data.residentId"></resident-id>
+            <template #residentId=" { data }: any ">
+              <resident-id :residentId=" data.data.residentId "></resident-id>
             </template>
             <DxColumn caption="비고" cell-template="grade-cell" data-field="incomeTaxMagnification"
-              :calculateCellValue="calculateIncomeTypeCodeAndName" />
-            <template #grade-cell="{ data }: any">
+              :calculateCellValue=" calculateIncomeTypeCodeAndName " />
+            <template #grade-cell=" { data }: any ">
               <div>
-                <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
-                <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2" :typeValue="1" />
-                <four-major-insurance v-if="data.data.employeementInsuranceDeduction" :typeTag="4" :typeValue="1" />
-                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6"
-                  :ratio="data.data.nationalPensionSupportPercent" />
-                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7"
-                  :ratio="data.data.employeementInsuranceSupportPercent" />
-                <four-major-insurance v-if="data.data.employeementReductionRatePercent" :typeTag="8"
-                  :ratio="data.data.employeementReductionRatePercent" />
-                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10"
-                  :ratio="data.data.incomeTaxMagnification" />
+                <four-major-insurance v-if=" data.data.nationalPensionDeduction " :typeTag=" 1 " :typeValue=" 1 " />
+                <four-major-insurance v-if=" data.data.healthInsuranceDeduction " :typeTag=" 2 " :typeValue=" 1 " />
+                <four-major-insurance v-if=" data.data.employeementInsuranceDeduction " :typeTag=" 4 " :typeValue=" 1 " />
+                <four-major-insurance v-if=" data.data.nationalPensionSupportPercent " :typeTag=" 6 "
+                  :ratio=" data.data.nationalPensionSupportPercent " />
+                <four-major-insurance v-if=" data.data.employeementInsuranceSupportPercent " :typeTag=" 7 "
+                  :ratio=" data.data.employeementInsuranceSupportPercent " />
+                <four-major-insurance v-if=" data.data.employeementReductionRatePercent " :typeTag=" 8 "
+                  :ratio=" data.data.employeementReductionRatePercent " />
+                <four-major-insurance v-if=" data.data.incomeTaxMagnification " :typeTag=" 10 "
+                  :ratio=" data.data.incomeTaxMagnification " />
               </div>
             </template>
             <DxColumn cell-template="pupop" width="40" />
-            <template #pupop="{ data }: any">
-              <div class="custom-action" style="text-align: center" v-if="data.data.deletable">
-                <a-space :size="10">
-                  <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
+            <template #pupop=" { data }: any ">
+              <div class="custom-action" style="text-align: center" v-if=" data.data.deletable ">
+                <a-space :size=" 10 ">
+                  <DeleteOutlined @click=" actionDeleteFuc(data.data.employeeId) " />
                 </a-space>
               </div>
             </template>
@@ -114,19 +114,32 @@
         </a-spin>
         <!-- <input v-model="focusedRowKey"/> -->
       </a-col>
-      <a-col :span="13" class="col-right">
-        <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
-          v-if="actionChangeComponent == 1" :key="addComponentKey" />
-        <PA120PopupEdit :idRowEdit="idRowEdit" v-if="actionChangeComponent == 2" />
+      <a-col :span=" 13 " class="col-right">
+        <PA120PopupAddNewVue ref="addNew" :idRowEdit=" idRowEdit " :modalStatus=" modalAddNewStatus "
+          v-if=" actionChangeComponent == 1 " :key=" addComponentKey " />
+        <PA120PopupEdit :idRowEdit=" idRowEdit " v-if=" actionChangeComponent == 2 " />
       </a-col>
     </a-row>
-    <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete"
-      okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-      :idRowEdit="idRowEdit" typeHistory="pa-120" />
-    <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
-      :title="messageSave" :content="''" :keyAccept="'1234'" :okText="'네'" cancelText="아니요"
-      @checkConfirm="onRowChangeComfirm" />
+    <a-modal :visible=" delStatus " @cancel=" delStatus = false " :mask-closable=" false " class="confirm-md"
+      footer="" :width=" 500 ">
+      <standard-form action="" name="delete-510">
+        <div class="custom-modal-delete">
+          <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
+          <span>{{ contentDelete }}</span>
+        </div>
+        <div class="text-align-center mt-30">
+          <button-basic class="button-form-modal" :text=" '아니요' " :type=" 'default' " :mode=" 'outlined' "
+            @onClick=" delStatus = false " />
+          <button-basic class="button-form-modal" :text=" '네. 삭제합니다' " :width=" 140 " :type=" 'default' " :mode=" 'contained' "
+            @onClick=" statusComfirm " />
+        </div>
+      </standard-form>
+    </a-modal>
+    <history-popup :modalStatus=" modalHistoryStatus " @closePopup=" modalHistoryStatus = false " title="변경이력"
+      :idRowEdit=" idRowEdit " typeHistory="pa-120" />
+    <PopupMessage :modalStatus=" rowChangeStatus " @closePopup=" rowChangeStatus = false " :typeModal=" 'confirm' "
+      :title=" messageSave " :content=" '' " :keyAccept=" '1234' " :okText=" '네' " cancelText="아니요"
+      @checkConfirm=" onRowChangeComfirm " />
   </div>
 </template>
 <script lang="ts">
@@ -503,7 +516,7 @@ export default defineComponent({
     }
 
     // get config
-    const yearPA120 = computed(()=> store.state.common.yearPA120);
+    const yearPA120 = computed(() => store.state.common.yearPA120);
     const withholdingTrigger = ref(true);
     const dataQueryCm130 = ref({ companyId: companyId, imputedYear: yearPA120 });
     const { result: resultConfigCm130 } = useQuery(
