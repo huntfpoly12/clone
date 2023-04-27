@@ -16,16 +16,10 @@
                 :data-detail="dataDetail"
           />
         </template>
-      </keep-alive>
-
-      <keep-alive>
-        <template v-if="step === 1">
+        <template v-else-if="step === 1">
           <Tab2 :data-detail="dataDetail"/>
         </template>
-
-      </keep-alive>
-      <keep-alive>
-        <template v-if="step === 2">
+        <template v-else>
           <Tab3 ref="formEditTab3" :data-detail="dataDetail"/>
         </template>
       </keep-alive>
@@ -41,6 +35,7 @@
         @onClick="prevStep"
         v-if="step != 0"
       />
+      {{ isDisableBtnTab2  }}
       <button-basic
         text="다음"
         type="default"
@@ -249,9 +244,9 @@ const setModalVisible = () => {
     comfirmClosePopup(() => {
       emit("closePopup", false)
       statusModal.value = false;
-      store.commit('common/resetForm');
     })
   }
+  store.commit('common/resetForm');
 };
 
 </script>
