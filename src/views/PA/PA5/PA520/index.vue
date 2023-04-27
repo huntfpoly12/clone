@@ -51,7 +51,7 @@
                   v-model:focused-row-key="focusedRowKey" 
                   @exporting="onExporting" 
                   id="gridContainer" 
-                  style="max-height: 776px;"
+                  
                   ref="pa520Grid"
                   @focused-row-changing="onFocusedRowChanging"
                   @focused-row-changed="onFocusedRowChanged"
@@ -161,8 +161,23 @@
           </a-col>
       </a-row>
   </div>
-  <PopupMessage :modalStatus="modalComfirmDelete" @closePopup="modalComfirmDelete = false" typeModal="confirm"
-      :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onConfirmDelete" />
+  <a-modal :visible="modalComfirmDelete" @cancel="modalComfirmDelete = false" :mask-closable="false" class="confirm-md"
+            footer="" :width="500">
+        <standard-form action="" name="delete-510">
+            <div class="custom-modal-delete">
+                <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
+                <span>{{ contentDelete }}</span>
+            </div>
+            <div class="text-align-center mt-30">
+                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+                    @onClick="modalComfirmDelete = false" />
+                <button-basic class="button-form-modal" :text="'네. 삭제합니다'" :width="140" :type="'default'"
+                    :mode="'contained'" @onClick="onConfirmDelete" />
+            </div>
+        </standard-form>
+  </a-modal>
+  <!-- <PopupMessage :modalStatus="modalComfirmDelete" @closePopup="modalComfirmDelete = false" typeModal="confirm"
+      :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onConfirmDelete" /> -->
   <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
       :idRowEdit="idRowEdit" typeHistory="pa-520" />
   <!-- confirm for case edit   -->
