@@ -347,7 +347,7 @@
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
                             mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
-
+                        <DxPaging :enabled="false" />
                         <DxColumn caption="일자" cell-template="transactionDetailDate" data-field="transactionDetailDate"
                             width="85" />
                         <template #transactionDetailDate="{ data }">
@@ -679,7 +679,7 @@ import { useStore } from 'vuex';
 import DxButton from "devextreme-vue/button"
 import { defineComponent, ref, reactive, computed, onMounted, watch } from "vue";
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxRowDragging } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxRowDragging, DxPaging } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, initialStateFormData } from "./utils/index"
 import { Message } from "@/configs/enum"
@@ -707,7 +707,7 @@ export default defineComponent({
         DxTotalItem,
         ModalDelete,
         ModalAdd,
-        // PopupCopyData,
+        DxPaging,
         EditOutlined,
         PlusOutlined,
         PopupItemDetails,
@@ -817,12 +817,17 @@ export default defineComponent({
 
             // })
             await dataApi.value.map((item: any, index: number) => {
-                item.balance = lastBalance.value + item.income - item.spending
+                if (index == 0) {
+                    item.balance = lastBalance.value + item.income - item.spending
+                } else {
+                    item.balance = item.income - item.spending
+                }
+                
                 const totalBefore: any = ref(0)
                 const maxOrder: any = ref(1)
                 dataApi.value.slice(0, index).forEach((data) => {
+                    totalBefore.value = data.balance
                     if (item.transactionDetailDate == data.transactionDetailDate) {
-                        totalBefore.value = data.balance
                         maxOrder.value = data.documentOrderByDate + 1
                     }
                 });
@@ -902,6 +907,8 @@ export default defineComponent({
                 Object.assign(store.state.common.ac120.formData, initialStateFormData)
                 store.state.common.ac120.keyRefreshForm++
             }
+            store.state.common.ac120.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
+            store.state.common.ac120.resetDataAccountingDocumentProofs++
         }
         const selectionChanged = (data: any) => {
             // store.state.common.ac120.selectedRowKeys
@@ -924,6 +931,7 @@ export default defineComponent({
                 store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
                 store.state.common.ac120.keyRefreshForm++
+                store.state.common.ac120.resetDataAccountingDocumentProofs++
                 if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
                     deleteRowAdd()
                 }
@@ -1030,9 +1038,10 @@ export default defineComponent({
 
             
             store.state.common.ac120.keyRefreshForm++
+            store.state.common.ac120.resetDataAccountingDocumentProofs++
             setTimeout(() => {
                 store.state.common.ac120.statusShowFull = true
-            }, 500);
+            }, 300);
             // await (loadingGetAccountingDocuments.value = false)
         }
 
@@ -1080,13 +1089,13 @@ export default defineComponent({
         }
         const customBalance = () => {
             let total = 0;
-            let totalIncome = 0;
-            let totalSpending = 0;
-            dataSource.value.forEach((item: any) => {
-                totalIncome += item.income ? item.income : 0
-                totalSpending += item.spending ? item.spending : 0
+            dataSource.value.forEach((item: any, index: number) => {
+                if (index == 0) {
+                    total += lastBalance.value + (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
+                } else {
+                    total += (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
+                }
             });
-            total = lastBalance.value + totalIncome - totalSpending
             return `전월 잔액: ${filters.formatCurrency(lastBalance.value)}, 예상 잔액: ${filters.formatCurrency(total)}`
         }
         const countResolutionNormalStatus = () => {

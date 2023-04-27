@@ -56,7 +56,7 @@
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
-                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem name="exportButton" css-class="cell-button-export" />

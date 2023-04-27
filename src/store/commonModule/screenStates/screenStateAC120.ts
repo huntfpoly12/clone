@@ -11,6 +11,8 @@ let statesAC120 = {
         // onDoneAdd: 0,
         resetDataTable: 0,
         resetDataAccountingProcesses: 0,
+        resetDataAccountingDocumentProofs: 0,
+
         statusFormAdd: true,
         // dataRowFocus: {},
         arrResolutionType: [],
