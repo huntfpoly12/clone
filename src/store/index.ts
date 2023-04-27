@@ -21,6 +21,6 @@ const token = sessionStorage.getItem('token')
 if (token) { 
   const expirationTime = getJwtObject(token).expiredTime;
   const timeRemaining = expirationTime - now;
-  setTimeout(() => store.dispatch('auth/checkToken'), timeRemaining);
+  //setTimeout(() => store.dispatch('auth/checkToken'), timeRemaining);
 }
 
