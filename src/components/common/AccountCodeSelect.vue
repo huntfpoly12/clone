@@ -1,18 +1,19 @@
 <template>
-    <DxSelectBox :onOpened="onOpened" :width="width" :search-enabled="false" :searchExpr="['name', 'shortCode']" :data-source="accountSubjects"
-        placeholder="선택" value-expr="code" display-expr="name" :show-clear-button="clearButton" v-model:value="value"
-        field-template="field" item-template="item" :key="resetSelect" :disabled="disabled" :read-only="readOnly"
-        @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
+    <DxSelectBox :onOpened="onOpened" :width="width" :search-enabled="false" :searchExpr="['name', 'shortCode']"
+        :data-source="accountSubjects" placeholder="선택" value-expr="code" display-expr="name"
+        :show-clear-button="clearButton" v-model:value="value" field-template="field" item-template="item"
+        :key="resetSelect" :disabled="disabled" :read-only="readOnly" @value-changed="updateValue(value)"
+        :height="$config_styles.HeightInput" :name="nameInput">
         <template #field="{ data }">
-            <template v-if="data">
-              <a-tooltip v-if="!!lengthText" zIndex="9999999" placement="top" color="black">
-                  <template #title>{{ data.name + ' ' + data.shortCode }}</template>
-                  <div>
-                    <DxTextBox :read-only="readOnly" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
-                  </div>
+            <div v-if="data">
+                <a-tooltip v-if="!!lengthText" zIndex="9999999" placement="top" color="black">
+                    <template #title>{{ data.name + ' ' + data.shortCode }}</template>
+                    <div>
+                        <DxTextBox :read-only="readOnly" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+                    </div>
                 </a-tooltip>
-              <DxTextBox v-else :read-only="readOnly" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
-            </template>
+                <DxTextBox v-else :read-only="readOnly" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+            </div>
             <DxTextBox :read-only="readOnly" v-else placeholder="선택" height="26" />
         </template>
         <template #item="{ data }">
@@ -72,8 +73,8 @@ export default {
             default: null,
         },
         lengthText: {
-          type: Number,
-          default: null,
+            type: Number,
+            default: null,
         }
     },
     components: {
@@ -129,7 +130,7 @@ export default {
         const fillRow = (row: any) => {
             const filteredArr = ref(row.codes)
             if (props.classification) {
-              filteredArr.value = row.codes.filter((item: any) => props.classification.includes(item.classification));
+                filteredArr.value = row.codes.filter((item: any) => props.classification.includes(item.classification));
             }
             filteredArr.value?.map((val: any) => {
                 accountSubjects.value.push({
@@ -151,9 +152,9 @@ export default {
 
         watch(() => props.valueInput, (newValue) => {
             value.value = !!newValue ? newValue : null;
-        },{
-          deep: true,
-          immediate: true,
+        }, {
+            deep: true,
+            immediate: true,
         });
         const onOpened = (e: any) => {
             e.component._popup.option('width', props.width);
@@ -172,14 +173,15 @@ export default {
 .form-group {
     margin-top: 30px;
 }
+
 .custom-value-account-code {
-  div{
-    max-width: 100%;
-    display:inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    div {
+        max-width: 100%;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 </style>
   
