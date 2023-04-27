@@ -26,7 +26,7 @@
                             <!-- <date-time-box width="150px" :required="true"
                                 v-model:valueDate="formDataAdd.resolutionDate" /> -->
                             <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
-                                v-model:valueDate="store.state.common.ac120.transactionDetailDate" />
+                                v-model:valueDate="formDataAdd.transactionDetailDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrResolutionType"
@@ -88,7 +88,7 @@ export default defineComponent({
             companyId: companyId,
             fiscalYear: acYear.value,
         })
-        let formDataAdd = ref({...initialStateFormAdd});
+        let formDataAdd: any = ref({...initialStateFormAdd});
         const statusShowLetterOfApprovalType = ref(false)
         // const arraySelectBox = ref([]);
         const triggerBankbooks = ref<boolean>(true);
@@ -122,8 +122,10 @@ export default defineComponent({
 
         watch(() => props.modalStatus, (newValue, old) => {
             if (newValue) {
+                statusShowLetterOfApprovalType.value = false;
                 formDataAdd.value = {...initialStateFormAdd}
-                store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate())
+                formDataAdd.value.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate())
+                // store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate())
                 // dataStateFormAdd = {
                 //     bankbookId: store.state.common.ac120.formData.bankbookId,
                 //     // resolutionDate: store.state.common.ac120.formData.resolutionDate,
@@ -154,8 +156,12 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+                
                 // statusRemoveRow.value = false;
-                emit('submit', formDataAdd.value)
+                store.state.common.ac120.transactionDetailDate = formDataAdd.value.transactionDetailDate
+                let dataAdd = {...formDataAdd.value}
+                delete dataAdd.transactionDetailDate
+                emit('submit', dataAdd)
             }
         }
         const cancel = () => {
@@ -183,10 +189,10 @@ export default defineComponent({
             // }
             if (value == 21 || value == 22) {
                 statusShowLetterOfApprovalType.value = true
-                store.state.common.ac120.formData.letterOfApprovalType = 1
+                formDataAdd.value.letterOfApprovalType = 1
             } else {
                 statusShowLetterOfApprovalType.value = false
-                store.state.common.ac120.formData.letterOfApprovalType = null
+                formDataAdd.value.letterOfApprovalType = null
             }
 
         }

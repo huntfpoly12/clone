@@ -3,9 +3,9 @@
            width="70%" style="top: 20px">
     <div class="header-text-title mt-20">퇴직소득자료입력</div>
     <a-steps :current="step" type="navigation">
-      <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" @click="changeStep(0)"/>
-      <a-step :status="checkStepTwo" title="퇴직금계산" @click="changeStep(1)"/>
-      <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)"/>
+      <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" />
+      <a-step :status="checkStepTwo" title="퇴직금계산"/>
+      <a-step :status="checkStepThree" title="퇴직소득세"/>
     </a-steps>
     <div class="step-content pt-20">
       <keep-alive>
@@ -16,16 +16,10 @@
                 :data-detail="dataDetail"
           />
         </template>
-      </keep-alive>
-
-      <keep-alive>
-        <template v-if="step === 1">
+        <template v-else-if="step === 1">
           <Tab2 :data-detail="dataDetail"/>
         </template>
-
-      </keep-alive>
-      <keep-alive>
-        <template v-if="step === 2">
+        <template v-else>
           <Tab3 ref="formEditTab3" :data-detail="dataDetail"/>
         </template>
       </keep-alive>
@@ -41,6 +35,7 @@
         @onClick="prevStep"
         v-if="step != 0"
       />
+      {{ isDisableBtnTab2  }}
       <button-basic
         text="다음"
         type="default"
@@ -249,9 +244,9 @@ const setModalVisible = () => {
     comfirmClosePopup(() => {
       emit("closePopup", false)
       statusModal.value = false;
-      store.commit('common/resetForm');
     })
   }
+  store.commit('common/resetForm');
 };
 
 </script>

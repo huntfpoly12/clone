@@ -11,7 +11,7 @@
                             :column-auto-width="true" @focused-row-changing="onFocusedRowChanging" ref="gridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
-                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                             <DxPaging :enabled="false" />
                             <DxExport :enabled="true"/>
                             <DxToolbar>

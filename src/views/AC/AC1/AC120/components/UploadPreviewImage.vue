@@ -131,13 +131,13 @@ export default defineComponent({
         });
 
         // ================== WATCH ================
-        watch(() => store.state.common.ac120.formData.accountingDocumentId, (value) => {
-            if (value != 'AC120') {
+        watch(() => store.state.common.ac120.resetDataAccountingDocumentProofs, (value) => {
+            if (store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
                 statusDisabledImg.value = false;
                 dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.transactionDetailDate
-                dataGetAccountingDocumentProofs.value.accountingDocumentId = value
+                dataGetAccountingDocumentProofs.value.accountingDocumentId = store.state.common.ac120.formData.accountingDocumentId
                 triggerAccountingDocumentProofs.value = true;
-            } else if (value == 'AC120') {
+            } else if (store.state.common.ac120.formData.accountingDocumentId == 'AC120') {
                 statusDisabledImg.value = true;
                 fileList.value = []
             }

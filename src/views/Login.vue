@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="auth-form">
-    <div class="dx-fieldset-header">로그인</div>
+    <div class="dx-fieldset-header" style="font-weight: bold;">로그인</div>
     <form @submit="submitForm">
       <p v-if="errors" class="invalid">
         {{ errors }}

@@ -230,7 +230,7 @@
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         :onRowPrepared="changeColorRow">
                         <DxScrolling mode="standard" show-scrollbar="always" />
-                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                         <DxExport :enabled="true" />
                         <DxToolbar>
                             <DxItem name="searchPanel" />
@@ -290,7 +290,7 @@
                         @focused-row-changing="onFocusedRowChanging"
                          :auto-navigate-to-focused-row="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
-                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                         <DxExport :enabled="true" />
                         <DxToolbar>
                             <DxItem name="searchPanel" />

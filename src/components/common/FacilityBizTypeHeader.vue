@@ -51,12 +51,12 @@
               <p>시설사업을 변경하시면,</p>
               <p>- 모든 작업창이 닫히고 처음 로그인한 상태로 새로 설정됩니다.</p>
               <p>- 저장하지 않은 데이터는 모두 사라집니다.</p>
-              <p>그래도 변경하시겠습니까?</p>
+              <p style="margin-top: 15px;">그래도 변경하시겠습니까?</p>
             </a-col>
           </a-row>
       </div>
       <a-row>
-        <a-col :span="9" :offset="8">
+        <a-col :span="9" :offset="paStateYear && acStateYear ? 8 : 9">
           <div style="display: flex;">
             <button-basic v-if="paStateYear && acStateYear" class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="handleCancel" style="margin-right: 10px;"/>
             <button-basic class="button-form-modal" :text="paStateYear && acStateYear ? '네' : '확인'" :width="74" :type="'default'"

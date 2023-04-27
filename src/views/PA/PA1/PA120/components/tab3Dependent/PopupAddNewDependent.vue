@@ -120,7 +120,6 @@ export default defineComponent({
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
     const ageCount = ref();
-    const labelResidebId = ref('주민등록번호');
     const itemSelected = ref<any>([...props.relationAll]);
     const initialFormState = {
       relation: 1,
@@ -140,6 +139,7 @@ export default defineComponent({
     let formStateToCompare = ({ ...initialFormState, foreigner: isForeignerPA120.value });
     const messageSave = Message.getMessage('COMMON', '106').message;
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
+    const labelResidebId = ref(formState.foreigner?'외국인번호 유효성':'주민등록번호')
 
     const setModalVisible = () => {
       if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
