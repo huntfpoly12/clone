@@ -144,12 +144,12 @@
   }
 .result{
   padding-top: 15px;
+  display: flex;
+  justify-content: center;
   .has-result{
     font-weight: bold;
-    margin-left: 30px;
   }
   .empty-result {
-    text-align: center;
     font-weight: bold;
   }
 }
