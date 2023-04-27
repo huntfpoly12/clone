@@ -41,7 +41,9 @@
         <a-spin :spinning="loadingTableDetail" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                 :show-borders="true" key-expr="incomeId" class="mt-10"
-                :allow-column-resizing="colomn_resize"  @selection-changed="selectionChanged">
+                :allow-column-resizing="colomn_resize"  @selection-changed="selectionChanged"
+                style="height: 650px;"
+                >
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사원" cell-template="tag" width="200" header-cell-template="title-header-사원"/>

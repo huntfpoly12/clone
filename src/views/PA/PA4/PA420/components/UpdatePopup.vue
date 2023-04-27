@@ -3,9 +3,9 @@
            width="70%" style="top: 20px">
     <div class="header-text-title mt-20">퇴직소득자료입력</div>
     <a-steps :current="step" type="navigation">
-      <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" @click="changeStep(0)"/>
-      <a-step :status="checkStepTwo" title="퇴직금계산" @click="changeStep(1)"/>
-      <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)"/>
+      <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" />
+      <a-step :status="checkStepTwo" title="퇴직금계산"/>
+      <a-step :status="checkStepThree" title="퇴직소득세"/>
     </a-steps>
     <div class="step-content pt-20">
       <keep-alive>

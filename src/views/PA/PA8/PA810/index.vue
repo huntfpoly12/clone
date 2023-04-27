@@ -223,7 +223,7 @@ const {
   onError: onDoneAcquisitionError,
 } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeAcquisition);
 onDoneAcquisitionDone(() => {
-  notification('success', Message.getMessage('COMMON', '402').message);
+  notification('success', Message.getMessage('COMMON', '302').message);
   refetch();
 });
 onDoneAcquisitionError((res) => {
@@ -238,7 +238,9 @@ const handleDelete = (workId: number) => {
         workId: workId,
       });
     },
-    message: Message.getCommonMessage('303').message
+    message: Message.getCommonMessage('303').message,
+    cancelText: Message.getCommonMessage('303').no,
+    okText: Message.getCommonMessage('303').yes,
   })
 }
 const dateFormat = (value: any) => {

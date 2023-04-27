@@ -338,7 +338,7 @@
                     <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                        v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true"
+                        v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
                         @focused-row-changing="onFocusedRowChanging"
                         :column-auto-width="true" v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
                         @selection-changed="selectionChanged">
@@ -347,7 +347,7 @@
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
                             mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
-
+                        <DxPaging :enabled="false" />
                         <DxColumn caption="일자" cell-template="transactionDetailDate" data-field="transactionDetailDate"
                             width="85" />
                         <template #transactionDetailDate="{ data }">
@@ -386,7 +386,7 @@
                             </DxDataGrid>
                         </template> -->
 
-                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="120" />
+                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="80" />
                         <template #bankbook="{ data }">
                             <a-tooltip placement="top"
                                 :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
@@ -482,7 +482,7 @@
                             </DxDataGrid>
                         </template> -->
 
-                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200" />
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode"/>
                         <template #accountCode="{ data }">
                             <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
                             <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
@@ -497,7 +497,7 @@
                             </DxDataGrid> -->
                         </template>
 
-                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150" />
+                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="170" />
                         <template #relationCode="{ data }">
                             <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
                             <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
@@ -629,14 +629,14 @@
 
                     </DxDataGrid>
                     <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;">
-                        <div style="width: 250px; margin-left: 200px;">
+                        <div style="width: 250px; margin-left: 180px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customCountRow()">
                             </div>
                         </div>
-                        <div style="width: 150px;">
+                        <div style="width: 170px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfIncome()"></div>
                         </div>
-                        <div style="width: 150px;">
+                        <div style="width: 170px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfExpenses()">
                             </div>
                         </div>
@@ -679,7 +679,7 @@ import { useStore } from 'vuex';
 import DxButton from "devextreme-vue/button"
 import { defineComponent, ref, reactive, computed, onMounted, watch } from "vue";
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxRowDragging } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxRowDragging, DxPaging } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, initialStateFormData } from "./utils/index"
 import { Message } from "@/configs/enum"
@@ -707,7 +707,7 @@ export default defineComponent({
         DxTotalItem,
         ModalDelete,
         ModalAdd,
-        // PopupCopyData,
+        DxPaging,
         EditOutlined,
         PlusOutlined,
         PopupItemDetails,
@@ -726,7 +726,7 @@ export default defineComponent({
         const clients = computed(() => store.state.settings.clients)
         const dataApi = ref<any[]>([])
         // let statusAdjusting = ref(30);
-        let focusedRowKey = ref()
+        // let focusedRowKey = ref()
 
         let isModalRetrieveStatements = ref(false);
         let statusModalDelete = ref(false);
@@ -811,19 +811,27 @@ export default defineComponent({
         watch(resGetAccountingDocuments, async (value) => {
             triggerGetAccountingDocuments.value = false
             dataApi.value = value.getAccountingDocuments?.accountingDocuments
-            let dataAll: any = []
+            // let dataAll: any = []
 
             // await dataApi.value.map((item: any, index: number) => {
 
             // })
             await dataApi.value.map((item: any, index: number) => {
-                item.balance = lastBalance.value + item.income - item.spending
+                if (index == 0) {
+                    item.balance = lastBalance.value + item.income - item.spending
+                } else {
+                    item.balance = item.income - item.spending
+                }
+                
                 const totalBefore: any = ref(0)
+                const maxOrder: any = ref(1)
                 dataApi.value.slice(0, index).forEach((data) => {
+                    totalBefore.value = data.balance
                     if (item.transactionDetailDate == data.transactionDetailDate) {
-                        totalBefore.value = data.balance
+                        maxOrder.value = data.documentOrderByDate + 1
                     }
                 });
+                item.documentOrderByDate = maxOrder.value
                 item.balance = totalBefore.value + item.balance
 
                 // if (item.bankbookDetailId) { // nếu có data bankbookDetailId
@@ -883,21 +891,24 @@ export default defineComponent({
             if (dataSource.value.length) { // if table has data source
                 if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
                     store.state.common.ac120.statusKeppRow = false;
-                    return
+                    store.state.common.ac120.selectedRowKeys = [store.state.common.ac120.focusedRowKey]
+                    Object.assign(store.state.common.ac120.formData, dataSource.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey))
                     // Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
                 } else { // lấy row đầu tiên
-                    focusedRowKey.value = dataSource.value[0].accountingDocumentId
+                    store.state.common.ac120.focusedRowKey = dataSource.value[0].accountingDocumentId
                     store.state.common.ac120.selectedRowKeys = [dataSource.value[0].accountingDocumentId]
                     Object.assign(store.state.common.ac120.formData, dataSource.value[0])
                 }
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
                 store.state.common.ac120.statusFormAdd = false
             } else {
-                focusedRowKey.value = null
+                store.state.common.ac120.focusedRowKey = null
                 store.state.common.ac120.statusFormAdd = true
                 Object.assign(store.state.common.ac120.formData, initialStateFormData)
                 store.state.common.ac120.keyRefreshForm++
             }
+            store.state.common.ac120.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
+            store.state.common.ac120.resetDataAccountingDocumentProofs++
         }
         const selectionChanged = (data: any) => {
             // store.state.common.ac120.selectedRowKeys
@@ -912,7 +923,7 @@ export default defineComponent({
 
         const onFocusedRowChanging = (e: any) => {
             // gridRefAC120Detail.value?.instance.refresh()
-            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
+            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1) || !(e.event.currentTarget.outerHTML.search("dx-command-drag") == -1)) {
                 e.cancel = true;
             } else {
                 
@@ -920,6 +931,7 @@ export default defineComponent({
                 store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
                 store.state.common.ac120.keyRefreshForm++
+                store.state.common.ac120.resetDataAccountingDocumentProofs++
                 if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
                     deleteRowAdd()
                 }
@@ -1000,7 +1012,6 @@ export default defineComponent({
         const onDragChange = (e: any) => { }
 
         const onFillDataAdd = (dataAdd: any) => {
-            console.log(dataAdd);
             addNewRow(dataAdd)
             statusModalAdd.value = false; // close popup
         }
@@ -1023,10 +1034,14 @@ export default defineComponent({
             // dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ data: [initialStateFormData], bankbookDetailId: 'AC120' })
             store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
 
-            focusedRowKey.value = 'AC120'
+            store.state.common.ac120.focusedRowKey = 'AC120'
 
-            store.state.common.ac120.statusShowFull = true
+            
             store.state.common.ac120.keyRefreshForm++
+            store.state.common.ac120.resetDataAccountingDocumentProofs++
+            setTimeout(() => {
+                store.state.common.ac120.statusShowFull = true
+            }, 300);
             // await (loadingGetAccountingDocuments.value = false)
         }
 
@@ -1061,26 +1076,26 @@ export default defineComponent({
         const sumOfIncome = () => {
             let total = 0;
             dataSource.value.forEach((item: any) => {
-                total += item.income;
+                total += item.income ? item.income : 0;
             });
             return `수입액 합계: ${filters.formatCurrency(total)}`
         }
         const sumOfExpenses = () => {
             let total = 0;
             dataSource.value.forEach((item: any) => {
-                total += item.spending;
+                total += item.spending ? item.spending : 0;
             });
             return `지출액 합계: ${filters.formatCurrency(total)}`
         }
         const customBalance = () => {
             let total = 0;
-            let totalIncome = 0;
-            let totalSpending = 0;
-            dataSource.value.forEach((item: any) => {
-                totalIncome += item.income
-                totalSpending += item.spending
+            dataSource.value.forEach((item: any, index: number) => {
+                if (index == 0) {
+                    total += lastBalance.value + (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
+                } else {
+                    total += (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
+                }
             });
-            total = lastBalance.value + totalIncome - totalSpending
             return `전월 잔액: ${filters.formatCurrency(lastBalance.value)}, 예상 잔액: ${filters.formatCurrency(total)}`
         }
         const countResolutionNormalStatus = () => {
@@ -1114,7 +1129,7 @@ export default defineComponent({
             move_column,
             colomn_resize,
             acYear,
-            focusedRowKey,
+            // focusedRowKey,
             selectionChanged,
 
             isModalRetrieveStatements,

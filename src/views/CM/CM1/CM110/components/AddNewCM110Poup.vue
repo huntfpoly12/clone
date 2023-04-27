@@ -86,13 +86,14 @@ import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import queries from "@/graphql/queries/CM/CM110/index"
 import DxValidationGroup from 'devextreme-vue/validation-group';
 import { initialOptionsRadio, initialState } from "../utils/index";
+import { companyId } from "@/helpers/commonFunction"
 export default defineComponent({
 	props: {
 		modalStatus: {
 			default: false,
 			type: Boolean,
 		},
-		data: null,
+		// data: null,
 		bizTypeList: Array,
 	},
 	components: {
@@ -176,7 +177,7 @@ export default defineComponent({
 				res.brokenRules[0].validator.focus();
 			} else {
 				let dataCallApiCreate = {
-					companyId: props.data.companyId,
+					companyId: companyId,
 					input: {
 						username: formState.username,
 						name: formState.name,
