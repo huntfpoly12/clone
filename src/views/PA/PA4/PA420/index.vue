@@ -24,7 +24,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 1"
                   />
                 </div>
-                <div v-else :class="showMonth(1) ? `add-month` : `add-month disabled`" @click="showMonth(1) && addMonth(1)"> [+]</div>
+                <div v-else :class="!disableAddMonth(1) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(1) && addMonth(1)"> [+]</div>
               </template>
               <DxColumn caption="02" width="100px" cell-template="month-2" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 2 ? 'column-focus': ''"/>
@@ -36,7 +36,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 2"
                   />
                 </div>
-                <div v-else :class="showMonth(2) ? `add-month` : `add-month disabled`" @click="showMonth(2) && addMonth(2)">[+]</div>
+                <div v-else :class="!disableAddMonth(2) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(2) && addMonth(2)">[+]</div>
               </template>
               <DxColumn caption="03" width="100px" cell-template="month-3" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 3 ? 'column-focus': ''"/>
@@ -48,7 +48,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 3"
                   />
                 </div>
-                <div v-else :class="showMonth(3) ? `add-month` : `add-month disabled`" @click="showMonth(3) && addMonth(3)">[+]</div>
+                <div v-else :class="!disableAddMonth(3) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(3) && addMonth(3)">[+]</div>
               </template>
               <DxColumn caption="04" width="100px" cell-template="month-4" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 4 ? 'column-focus': ''"/>
@@ -60,7 +60,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 4"
                   />
                 </div>
-                <div v-else :class="showMonth(4) ? `add-month` : `add-month disabled`" @click="showMonth(4) && addMonth(4)">[+]</div>
+                <div v-else :class="!disableAddMonth(4) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(4) && addMonth(4)">[+]</div>
               </template>
               <DxColumn caption="05" width="100px" cell-template="month-5" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 5 ? 'column-focus': ''"/>
@@ -72,7 +72,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 5"
                   />
                 </div>
-                <div v-else :class="showMonth(5) ? `add-month` : `add-month disabled`" @click="showMonth(5) && addMonth(5)">[+]</div>
+                <div v-else :class="!disableAddMonth(5) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(5) && addMonth(5)">[+]</div>
               </template>
               <DxColumn caption="06" width="100px" cell-template="month-6" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 6 ? 'column-focus': ''"/>
@@ -84,7 +84,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 6"
                   />
                 </div>
-                <div v-else :class="showMonth(6) ? `add-month` : `add-month disabled`" @click="showMonth(6) && addMonth(6)">[+]</div>
+                <div v-else :class="!disableAddMonth(6) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(6) && addMonth(6)">[+]</div>
               </template>
               <DxColumn caption="07" width="100px" cell-template="month-7" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 7 ? 'column-focus': ''"/>
@@ -96,7 +96,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 7"
                   />
                 </div>
-                <div v-else :class="showMonth(7) ? `add-month` : `add-month disabled`" @click="showMonth(7) && addMonth(7)">[+]</div>
+                <div v-else :class="!disableAddMonth(7) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(7) && addMonth(7)">[+]</div>
               </template>
               <DxColumn caption="08" width="100px" cell-template="month-8" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 8 ? 'column-focus': ''"/>
@@ -108,7 +108,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 8"
                   />
                 </div>
-                <div v-else :class="showMonth(8) ? `add-month` : `add-month disabled`" @click="showMonth(8) && addMonth(8)">[+]</div>
+                <div v-else :class="!disableAddMonth(8) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(8) && addMonth(8)">[+]</div>
               </template>
               <DxColumn caption="09" width="100px" cell-template="month-9" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 9 ? 'column-focus': ''"/>
@@ -120,7 +120,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 9"
                   />
                 </div>
-                <div v-else :class="showMonth(9) ? `add-month` : `add-month disabled`" @click="showMonth(9) && addMonth(9)">[+]</div>
+                <div v-else :class="!disableAddMonth(9) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(9) && addMonth(9)">[+]</div>
               </template>
               <DxColumn caption="10" width="100px" cell-template="month-10"
                         :cssClass="selectMonthColumn.imputedMonth == 10 ? 'column-focus': ''"/>
@@ -132,7 +132,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 10"
                   />
                 </div>
-                <div v-else :class="showMonth(10) ? `add-month` : `add-month disabled`" @click="showMonth(10) && addMonth(10)">[+]</div>
+                <div v-else :class="!disableAddMonth(10) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(10) && addMonth(10)">[+]</div>
               </template>
               <DxColumn caption="11" width="100px" cell-template="month-11" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 11 ? 'column-focus': ''"/>
@@ -144,7 +144,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 11"
                   />
                 </div>
-                <div v-else :class="showMonth(11) ? `add-month` : `add-month disabled`" @click="showMonth(11) && addMonth(11)">[+]</div>
+                <div v-else :class="!disableAddMonth(11) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(11) && addMonth(11)">[+]</div>
               </template>
               <DxColumn caption="12" width="100px" cell-template="month-12" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 12 ? 'column-focus': ''"/>
@@ -156,7 +156,7 @@
                                   :isUnder="selectMonthColumn.imputedMonth == 12"
                   />
                 </div>
-                <div v-else :class="showMonth(12) ? `add-month` : `add-month disabled`" @click="showMonth(12) && addMonth(12)">[+]</div>
+                <div v-else :class="!disableAddMonth(12) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(12) && addMonth(12)">[+]</div>
               </template>
               <DxMasterDetail class="table-detail" :enabled="true" template="detailRow"/>
               <template #detailRow="{}">
@@ -291,7 +291,7 @@ import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import {DxColumn, DxDataGrid, DxMasterDetail, DxScrolling} from "devextreme-vue/data-grid";
 import {dataAddTableBigUtils, origindata} from "./utils";
-import {companyId} from "@/helpers/commonFunction";
+import {companyId, startYearMonth} from "@/helpers/commonFunction";
 import dayjs from 'dayjs';
 import filters from "@/helpers/filters";
 import ComponentDetail from "./components/ComponentDetail.vue";
@@ -451,6 +451,15 @@ const dataAddIncomeProcess = (data: any) => {
 const actionCopySuccess = () => {
   modalCopy.value = false
 }
+
+const disableAddMonth = (val: any) => {
+      let date = dayjs(globalYear.value + '' + val);
+      let dateToCompare = dayjs(`${startYearMonth}`, 'YYYYMM')
+      if (date.isBefore(dateToCompare)) {
+        return true;
+      }
+      return false;
+    }
 </script>
 <style scoped lang="scss" src="./style/style.scss">
 
