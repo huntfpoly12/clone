@@ -2,7 +2,7 @@
   <a-modal class="form-modal" width="50%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
     title="휴복직신고 신규 등록" centered @cancel="onCanCelModal" :footer="null" :mask-closable="false">
     <standard-form ref="formRef">
-      <!-- {{ formData }} -->
+      <!-- {{ formData.employeeId }} -->
       <div class="mb-10">
         <a-row>
           <a-col :span="col.left">
@@ -111,7 +111,7 @@
         <a-col :span="col.left">
           <DxField label="휴직종료(예정)">
             <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.endDateOfLeave"
-              :style="{width:'200px'}" :disabled="!isStatusLeaveOfAbsence" :teleport="true" />
+              :style="{ width: '200px' }" :disabled="!isStatusLeaveOfAbsence" :teleport="true" />
           </DxField>
         </a-col>
         <a-col :span="col.right" class="pl-50">
@@ -453,8 +453,12 @@ export default defineComponent({
     watch(() => formData.value.employeeType, (newVal: any) => {
       if (newVal == 10) {
         employeeArr.value = employeeWages.value;
+        formData.value.employeeId = null;
+        resetEmployeeWage();
       } else {
         employeeArr.value = employeeWageDailies.value;
+        formData.value.employeeId = null;
+        resetEmployeeWage();
       }
     }, { deep: true })
 
@@ -508,8 +512,7 @@ export default defineComponent({
             employeementInsuranceLeaveReasonCode: formData.value.employeementInsuranceLeaveReasonCode,
           }
           makeDataClean(dataType1, ['']);
-          console.log(`output->dataType1`, dataType1);
-          // createLeaveOfAbsenceMutate({ companyId: companyId, imputedYear: globalYear.value, input: dataType1 });
+          createLeaveOfAbsenceMutate({ companyId: companyId, imputedYear: globalYear.value, input: dataType1 });
         } else {
           let dataType2 = {
             employeeType: formData.value.employeeType,
