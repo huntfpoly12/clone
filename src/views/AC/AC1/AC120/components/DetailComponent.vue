@@ -12,14 +12,15 @@
                         <a-row class="text-align-center">
                             <a-col :span="8"></a-col>
                             <a-col :span="8">
-                                <div style="display: flex; justify-content: center; margin-left: 30px;">
-                                    <h2>결의서</h2>
-                                    <DxButton v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
-                                        :focusStateEnabled="false" text="O"
-                                        :style="{ backgroundColor: '#337614', color: 'white' }"
-                                        :height="$config_styles.HeightInput" />
-                                    <DxButton v-else
-                                        :focusStateEnabled="false" text="X"
+                                <div style="display: flex; justify-content: center; margin-left: 35px;">
+                                    <h2><pre>결의서 </pre></h2>
+                                    <a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
+                                        placement="top" color="black" title="정상 여부">
+                                        <DxButton :focusStateEnabled="false" text="O"
+                                            :style="{ backgroundColor: '#337614', color: 'white' }"
+                                            :height="$config_styles.HeightInput" />
+                                    </a-tooltip>
+                                    <DxButton v-else :focusStateEnabled="false" text="X"
                                         :style="{ backgroundColor: '#BB3835', color: 'white' }"
                                         :height="$config_styles.HeightInput" />
                                     <!-- <button-basic style="margin: 0 10px;" text="" type="success" :mode="'contained'" />
@@ -44,7 +45,7 @@
                                 <a-form-item label="결의구분">
                                     <default-text-box
                                         :valueInput="store.state.common.ac120.arrResolutionClassification.find((item: any) => store.state.common.ac120.formData.resolutionClassification == item.id)?.text"
-                                        width="70px" placeholder="지출" disabled="true" />
+                                        width="100px" placeholder="지출" disabled="true" />
                                 </a-form-item>
                                 <div class="input_info">
                                     <a-form-item label="결의서 종류">
@@ -52,17 +53,15 @@
                                             :valueInput="store.state.common.ac120.arrResolutionType.find((item: any) => store.state.common.ac120.formData.resolutionType == item.id)?.text"
                                             width="100px" placeholder="여입" disabled="true" />
                                     </a-form-item>
-                                    <button-basic @onClick="statusPopupCopyData = true"
-                                        :disabled="store.state.common.ac120.formData.resolutionType != 11"
+                                    <button-basic @onClick="actionOpenModalCopy"
                                         style="margin: -5px 0px 0px 5px" mode="contained" type="default"
                                         :text="textButton + '로 변경'" />
                                 </div>
                             </a-col>
                             <a-col :span="6" class="col-2">
                                 <a-form-item label="결의일자" class="red">
-                                    <date-time-box
-                                        v-model:valueDate="store.state.common.ac120.transactionDetailDate" width="150px"
-                                        :required="true" disabled="true" />
+                                    <date-time-box v-model:valueDate="store.state.common.ac120.transactionDetailDate"
+                                        width="150px" :required="true" disabled="true" />
                                     <!-- <date-time-box v-else
                                         v-model:valueDate="store.state.common.ac120.formData.resolutionDate" width="150px"
                                         :required="true" disabled="true" /> -->
@@ -132,7 +131,7 @@
                                 <a-col :span="6" class="col-3">
                                     <a-form-item label="거래처">
                                         <customer-select v-model:valueInput="store.state.common.ac120.formData.clientId"
-                                            width="150px" disabled="true" />
+                                            width="150px" />
                                     </a-form-item>
                                     <div class="input_info">
                                         <a-form-item :label="textLabelInputSource">
@@ -172,43 +171,49 @@
                                     </a-form-item>
                                 </a-col>
                             </a-row>
-                            <a-row>
-                                <a-col :span="24">
-                                    <div class="top-content">
-                                        <a-typography-title :level="5" style="margin-bottom: 0;">품의서
-                                            <span class="fz-10 ml-10" style="color: gray; font-weight: 300; width: 40%;">
-                                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
-                                                    class="mr-5">
-                                                지출결의서 기재 사항
-                                            </span>
-                                        </a-typography-title>
-                                    </div>
-                                </a-col>
-                            </a-row>
-                            <a-row>
-                                <a-col :span="12">
-                                    <a-form-item class="red" label="품의종류" v-if="store.state.common.ac120.formData.letterOfApprovalType">
-                                        <radio-group
-                                            v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType"
-                                            :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'" :required="true" />
-                                    </a-form-item>
-                                </a-col>
-                                <a-col :span="12">
-                                    <a-form-item label="물품내역수">
-                                        <default-text-box :disabled="true"
-                                            v-model:valueInput="store.state.common.ac120.formData.goodsCount"
-                                            width="150px" />
-                                    </a-form-item>
-                                </a-col>
-                            </a-row>
-                            <a-row>
-                                <a-col :span="24">
-                                    <a-form-item label="품의 원인 및 용도">
-                                        <text-area-box v-model:valueInput="store.state.common.ac120.formData.causeUsage"
-                                            :height="50" />
-                                    </a-form-item>
-                                </a-col>
-                            </a-row>
+                            <!-- {{ store.state.common.ac120.formData.resolutionClassification }} -->
+                            <div v-if="!(store.state.common.ac120.formData.resolutionClassification == 2)">
+                                <a-row>
+                                    <a-col :span="24">
+                                        <div class="top-content">
+                                            <a-typography-title :level="5" style="margin-bottom: 0;">품의서
+                                                <span class="fz-10 ml-10"
+                                                    style="color: gray; font-weight: 300; width: 40%;">
+                                                    <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
+                                                        class="mr-5">
+                                                    지출결의서 기재 사항
+                                                </span>
+                                            </a-typography-title>
+                                        </div>
+                                    </a-col>
+                                </a-row>
+                                <a-row>
+                                    <a-col :span="12">
+                                        <a-form-item class="red" label="품의종류"
+                                            v-if="store.state.common.ac120.formData.letterOfApprovalType">
+                                            <radio-group
+                                                v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType"
+                                                :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'"
+                                                :required="true" />
+                                        </a-form-item>
+                                    </a-col>
+                                    <a-col :span="12">
+                                        <a-form-item label="물품내역수">
+                                            <default-text-box :disabled="true"
+                                                v-model:valueInput="store.state.common.ac120.formData.goodsCount"
+                                                width="150px" />
+                                        </a-form-item>
+                                    </a-col>
+                                </a-row>
+                                <a-row>
+                                    <a-col :span="24">
+                                        <a-form-item label="품의 원인 및 용도">
+                                            <text-area-box v-model:valueInput="store.state.common.ac120.formData.causeUsage"
+                                                :height="50" />
+                                        </a-form-item>
+                                    </a-col>
+                                </a-row>
+                            </div>
                             <div class="text-align-center mt-20">
                                 <DxButton @click="onCancelDeleteRow" class="ml-4 custom-button-checkbox custom-button"
                                     type="default" :height="$config_styles.HeightInput">
@@ -351,6 +356,7 @@ export default defineComponent({
             }
         });
 
+
         watch(() => store.state.common.ac120.formData.resolutionType, (newValue, oldValue) => {
             switch (newValue) {
                 case 11:
@@ -378,13 +384,17 @@ export default defineComponent({
             }
         })
 
-        watch(() => store.state.common.ac120.onAddRow, (newValue, oldValue) => {
-            // keyRefreshForm.value++
+        watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
+            if (newValue == 2) {
+                heightForm.value = '160px'
+            } else {
+                heightForm.value = '280px'
+            }
         })
 
         watch(() => store.state.common.ac120.formData.causeActionDate, (newValue, oldValue) => {
             // if (store.state.common.ac120.statusFormAdd) {
-                colorDate.value = newValue == store.state.common.ac120.transactionDetailDate ? 'greenColor' : 'redColor'
+            colorDate.value = newValue == store.state.common.ac120.transactionDetailDate ? 'greenColor' : 'redColor'
             // } else {
             //     colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
             // }
@@ -399,6 +409,11 @@ export default defineComponent({
         // ================ FUNCTION ============================================
         const toggleTransition = () => {
             store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull
+        }
+        const actionOpenModalCopy = () => {
+            if (store.state.common.ac120.formData.resolutionType == 11) {
+                statusPopupCopyData.value = true
+            }
         }
 
         // const actionPopupCopyData = () => {
@@ -523,7 +538,7 @@ export default defineComponent({
             onSubmit,
             fileList,
             refFormAC120,
-            // refCssForm,
+            actionOpenModalCopy,
             heightForm,
             textButton,
             textLabelInputSource,
