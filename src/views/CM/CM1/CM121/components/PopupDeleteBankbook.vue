@@ -1,11 +1,13 @@
 <template>
   <a-modal :visible="isModalDelete" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-    :width="644">
-    <standard-form action="" name="request-file-630">
+    :width="550">
+    <standard-form action="" name="delete-confirm-121">
       <div class="text-align-center mt-10">
-
         <div class="cmc121-popup-comfirm-delete">
-          본 회계연도 내 연계된 통장, 거래, 전표, 결의서 내역이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?
+          <DeleteOutlined class="cmc121-popup-comfirm-delete-icon" :style="{fontSize: '35px'}" />
+          <div class="cmc121-popup-comfirm-delete-text">
+            본 회계연도 내 연계된 통장, 거래, 전표, 결의서 내역이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?
+          </div>
         </div>
         <button-basic class="button-form-modal" :text="'아니요'" :width="140" :type="'default'" :mode="'outlined'" @onClick="cancel" />
         <button-basic class="button-form-modal" :text="'네. 삭제합니다'" :width="140" :type="'default'" :mode="'contained'" @onClick="submit" />
@@ -15,8 +17,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch } from 'vue'
-import { FacilityBizType, BankType } from "@bankda/jangbuda-common";
+import { defineComponent } from 'vue'
+import { DeleteOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
   props: {
     isModalDelete: {
@@ -25,6 +27,7 @@ export default defineComponent({
     },
   },
   components: {
+    DeleteOutlined
   },
 
   setup(props, { emit }) {
@@ -48,13 +51,18 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .cmc121-popup-comfirm-delete {
-  margin: 20px 0;
+  padding: 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  &-icon {
+    margin-right: 20px;
+  }
+  &-text {
+    text-align: start;
+  }
 }
-
 .text-align-center {
   text-align: center;
 }
