@@ -4,9 +4,9 @@
     <p class="ac-110-popup-detail-title">물품내역</p>
     <a-spin :spinning="loadingSaveStatementOfGoods || loadingDeleteStatementOfGoods" size="large">
       <standard-form>
-        <DxDataGrid id="DxDataGrid-ac-110-popup-detail" key-expr="id" class="mt-20" :show-row-lines="true" v-model:focused-row-key="rowKeyfocused"
-          :data-source="dataSource.statementOfGoodsItems" :show-borders="true" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true">
+        <DxDataGrid id="DxDataGrid-ac-110-popup-detail" key-expr="id" class="mt-20" :show-row-lines="true"
+          v-model:focused-row-key="rowKeyfocused" :data-source="dataSource.statementOfGoodsItems" :show-borders="true"
+          :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
           <DxToolbar>
             <DxItem location="after" template="button-add" css-class="cell-button-add" />
           </DxToolbar>
@@ -14,41 +14,51 @@
             <a-tooltip placement="top">
               <template #title>신규</template>
               <div>
-                <DxButton icon="plus" @click="addNewRow" :disabled="disabled"/>
+                <DxButton icon="plus" @click="addNewRow" :disabled="disabled" />
               </div>
             </a-tooltip>
           </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" :readOnly="disabled" />
+            <div :key="`item${keyRefreshSelect}`">
+              <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true"
+                :readOnly="disabled" />
+            </div>
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
-              :required="true" :readOnly="disabled" />
+            <div :key="`standard${keyRefreshSelect}`">
+              <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
+                :required="true" :readOnly="disabled" />
+            </div>
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" :readOnly="disabled"/>
+            <div :key="`unit${keyRefreshSelect}`">
+              <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true"
+                :readOnly="disabled" />
+            </div>
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
-            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26" @changeInput="changeInput('quantity', data.rowIndex)" :readOnly="disabled" />
+            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26"
+              @changeInput="changeInput('quantity', data.rowIndex)" :readOnly="disabled" />
           </template>
           <DxColumn caption="단가" cell-template="unitPrice" />
           <template #unitPrice="{ data }">
-            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26" @changeInput="changeInput('unitPrice', data.rowIndex)" :readOnly="disabled" />
+            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26"
+              @changeInput="changeInput('unitPrice', data.rowIndex)" :readOnly="disabled" />
           </template>
-          <DxColumn caption="금액" cell-template="amount"/>
+          <DxColumn caption="금액" cell-template="amount" />
           <template #amount="{ data }">
-            <number-box-money v-model:valueInput="data.data.amount" 
-            :value="data.data.quantity && data.data.unitPrice ? data.data.quantity * data.data.unitPrice : 0" 
-            height="26" :readOnly="disabled"  :required="true" @changeInput="changeInput('amount', data.rowIndex)"/>
+            <number-box-money v-model:valueInput="data.data.amount"
+              :value="data.data.quantity && data.data.unitPrice ? data.data.quantity * data.data.unitPrice : 0"
+              height="26" :readOnly="disabled" :required="true" @changeInput="changeInput('amount', data.rowIndex)" />
           </template>
           <DxColumn caption="비고" cell-template="remark" />
           <template #remark="{ data }">
-            <default-text-box v-model:valueInput="data.data.remark" :readOnly="disabled"/>
+            <default-text-box v-model:valueInput="data.data.remark" :readOnly="disabled" />
           </template>
           <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
           <template #action="{ data }">
@@ -59,11 +69,13 @@
             <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalValue" column="단위" :customize-text="totalValue" />
             <DxTotalItem cssClass="custom-sumary" column="단가" :customize-text="totalExpenditure" />
-            <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalDifference" column="비고" :customize-text="totalDifference" />
+            <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalDifference" column="비고"
+              :customize-text="totalDifference" />
           </DxSummary>
         </DxDataGrid>
         <div class="ac-110-popup-detail-btn">
-          <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)" :disabled="disabled" />
+          <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
+            :disabled="disabled || !dataSource.statementOfGoodsItems.length" />
         </div>
       </standard-form>
     </a-spin>
@@ -79,7 +91,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from 'vue'
 import { useStore } from 'vuex';
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { InitStatementOfGoods } from '../utils/index'
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
@@ -87,10 +99,11 @@ import { DeleteOutlined } from "@ant-design/icons-vue";
 import { Message } from "@/configs/enum"
 import notification from '@/utils/notification';
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
+import queries from "@/graphql/queries/AC/AC1/AC110";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import { cloneDeep, isEqual } from 'lodash';
-import { makeDataClean } from "@/helpers/commonFunction"
+import { companyId, makeDataClean } from "@/helpers/commonFunction"
 export default defineComponent({
   props: {
     isModalItemDetail: {
@@ -127,6 +140,10 @@ export default defineComponent({
     let dataSourceCopy: any = ref()
     let itemDelete: any = ref()
     let rowKeyfocused: any = ref(null)
+    let keyRefreshSelect = ref(0)
+    const triggerSearchStatementOfGoodsItems = ref(true)
+    const triggerSearchStatementOfGoodsStandards = ref(true)
+    const triggerSearchStatementOfGoodsUnits = ref(true)
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -136,7 +153,7 @@ export default defineComponent({
     } = useMutation(mutations.deleteStatementOfGoods);
     doneDeleteStatementOfGoods((e) => {
       dataSource.value.statementOfGoodsItems = []
-      emit("updateGoodsCount",  props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
+      emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
       setData()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
@@ -150,13 +167,65 @@ export default defineComponent({
       loading: loadingSaveStatementOfGoods,
     } = useMutation(mutations.saveStatementOfGoods);
     doneSaveStatementOfGoods((e) => {
-      emit("updateGoodsCount",  props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
+      emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
       setData()
+      arrSelectItem.value = []
+      arrSelectStandard.value = []
+      arrSelectUnit.value = []
+      keyRefreshSelect.value++
+      setDataSelect()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveStatementOfGoods(e => {
       notification('error', e.message)
     })
+    // const {
+    //   onResult: onResultSearchStatementOfGoodsItems,
+    // } = useQuery(queries.searchStatementOfGoodsItems, {
+    //   companyId: companyId,
+    //   keyword: 'items'
+    // },
+    //   () => ({
+    //     enabled: triggerSearchStatementOfGoodsItems.value,
+    //     fetchPolicy: "no-cache",
+    //   }))
+    // onResultSearchStatementOfGoodsItems((res) => {
+    //   console.log('ItemsItems', res);
+    //   triggerSearchStatementOfGoodsItems.value = false
+    // })
+
+    // const {
+    //   onResult: onResultSearchStatementOfGoodsStandards,
+    // } = useQuery(queries.searchStatementOfGoodsStandards, {
+    //   companyId: companyId,
+    // },
+    //   () => ({
+    //     enabled: triggerSearchStatementOfGoodsStandards.value,
+    //     fetchPolicy: "no-cache",
+    //   }))
+    
+    // onResultSearchStatementOfGoodsStandards((res) => {
+    //   console.log('StandardsStandards', res);
+    //   triggerSearchStatementOfGoodsStandards.value = false
+    // })
+    // const {
+    //   onResult: onResultSearchStatementOfGoodsUnits,
+    // } = useQuery(queries.searchStatementOfGoodsUnits, {
+    //   companyId: companyId,
+    //   keyword: 'units'
+    // },
+    //   () => ({
+    //     enabled: triggerSearchStatementOfGoodsUnits.value,
+    //     fetchPolicy: "no-cache",
+    //   }))
+    
+    // onResultSearchStatementOfGoodsUnits((res) => {
+    //   console.log('UnitsUnits', res);
+    //   triggerSearchStatementOfGoodsUnits.value = false
+    // })
+
+
+
     watch(() => props.data, (value) => {
       dataSource.value = cloneDeep(value)
       setData()
@@ -175,24 +244,24 @@ export default defineComponent({
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
     }
     watch(() => dataSource.value.statementOfGoodsItems, (value, oldValue) => {
-      if(!value) return
+      if (!value) return
       const lengthOldVal = !!oldValue ? oldValue.length : 0
-      if(value.length !== lengthOldVal){
+      if (value.length !== lengthOldVal) {
         setDataSelect()
       }
     }, {
       deep: true,
-    }) 
+    })
 
     const setDataSelect = () => {
       dataSource.value.statementOfGoodsItems.forEach((item: any, index: number) => {
-        if(!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())){
+        if (!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())) {
           arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item.toString().trim() }]
         }
-        if(!!item.standard && !arrSelectStandard.value.some((option: any) =>  option.value === item.standard.toString().trim())){
+        if (!!item.standard && !arrSelectStandard.value.some((option: any) => option.value === item.standard.toString().trim())) {
           arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard.toString().trim() }]
         }
-        if(!!item.unit && !arrSelectUnit.value.some((option: any) =>  option.value === item.unit.toString().trim())){
+        if (!!item.unit && !arrSelectUnit.value.some((option: any) => option.value === item.unit.toString().trim())) {
           arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit.toString().trim() }]
         }
       })
@@ -216,18 +285,18 @@ export default defineComponent({
     const totalValue = (key: string, index: number) => {
       let total = 0;
       dataSource.value.statementOfGoodsItems.forEach((item: any, i: number) => {
-        if(index === i) {
-          if(key === 'amount') {
-            if(item.amount){
+        if (index === i) {
+          if (key === 'amount') {
+            if (item.amount) {
               total += item.amount
             }
-          }else{
-            if(item.quantity && item.unitPrice){
+          } else {
+            if (item.quantity && item.unitPrice) {
               total += item.quantity * item.unitPrice
             }
           }
-        }else {
-          if(item.amount){
+        } else {
+          if (item.amount) {
             total += item.amount
           }
         }
@@ -242,18 +311,18 @@ export default defineComponent({
       let total = 0;
       const spending = dataSource.value.spending || 0
       dataSource.value.statementOfGoodsItems.forEach((item: any, i: number) => {
-        if(index === i) {
-          if(key === 'amount') {
-            if(item.amount){
+        if (index === i) {
+          if (key === 'amount') {
+            if (item.amount) {
               total += item.amount
             }
-          }else{
-            if(item.quantity && item.unitPrice){
+          } else {
+            if (item.quantity && item.unitPrice) {
               total += item.quantity * item.unitPrice
             }
           }
-        }else {
-          if(item.amount){
+        } else {
+          if (item.amount) {
             total += item.amount
           }
         }
@@ -262,13 +331,17 @@ export default defineComponent({
       return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
-      if(props.disabled) return
+      if (props.disabled) return
       itemDelete.value = data
       isModalDelete.value = true
     }
     const handleDelete = (status: Boolean) => {
       if (!status) return
-      if (dataSource.value.statementOfGoodsItems.length === 1 && !dataSource.value.accountingDocumentId.toString().includes('create')) {
+      if (
+        dataSource.value.statementOfGoodsItems.length === 1
+        && !dataSource.value.accountingDocumentId.toString().includes('create')
+        && !dataSource.value.statementOfGoodsItems[0].id.toString().includes('create')
+      ) {
         const payloadRequest = { ...props.payload }
         delete payloadRequest.bankbookDetailDate
         delete payloadRequest.bankbookDetailId
@@ -296,7 +369,7 @@ export default defineComponent({
           unitPrice: item.unitPrice
         }
       })
-      if(!dataSource.value.accountingDocumentId.toString().includes('create')) {
+      if (!dataSource.value.accountingDocumentId.toString().includes('create')) {
         const payloadClear = makeDataClean({
           ...payloadRequest,
           transactionDetailDate: dataSource.value.transactionDetailDate,
@@ -304,9 +377,9 @@ export default defineComponent({
           items: dataTable
         })
         saveStatementOfGoods(payloadClear)
-      }else {
+      } else {
         setData()
-        emit("updateGoodsCount",  props.data.accountingDocumentId, dataTable)
+        emit("updateGoodsCount", props.data.accountingDocumentId, dataTable)
         notification('success', Message.getMessage('COMMON', '106').message)
       }
     }
@@ -315,7 +388,7 @@ export default defineComponent({
       let newObj: any = {}
       if (!!dataSource.value.statementOfGoodsItems && lengthArr) {
         newObj = { ...InitStatementOfGoods, id: dataSource.value.statementOfGoodsItems[lengthArr - 1].id + 'create' }
-        dataSource.value.statementOfGoodsItems = [ ...dataSource.value.statementOfGoodsItems, {...newObj} ]
+        dataSource.value.statementOfGoodsItems = [...dataSource.value.statementOfGoodsItems, { ...newObj }]
         nextTick(() => {
           setTimeout(() => {
             rowKeyfocused.value = newObj.id
@@ -337,10 +410,10 @@ export default defineComponent({
     const changeInput = (key: string, index: number) => {
       const elTotalValue: any = document.querySelector('.refPopupDetail110TotalValue')
       const elTotalDifference = document.querySelector('.refPopupDetail110TotalDifference')
-      if(elTotalValue){
+      if (elTotalValue) {
         elTotalValue.textContent = totalValue(key, index)
       }
-      if(elTotalDifference){
+      if (elTotalDifference) {
         elTotalDifference.textContent = totalDifference(key, index)
       }
     }
@@ -366,7 +439,8 @@ export default defineComponent({
       arrSelectUnit,
       handleConfirmChange,
       changeInput,
-      rowKeyfocused
+      rowKeyfocused,
+      keyRefreshSelect
     }
   },
 })
@@ -393,5 +467,4 @@ export default defineComponent({
   :deep .dx-freespace-row {
     display: none !important;
   }
-}
-</style>
+}</style>

@@ -101,7 +101,7 @@ const incomeCalculationInput = computed(() => store.getters['common/getIncomeCal
 const dataFormOld = computed(() => cloneDeep(incomeCalculationInput.value))
 
 const dataFormIncomeCalculation = reactive<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
-const dataIncomeRetirement = ref()
+const dataIncomeRetirement = ref(0)
 const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
 
 const isChangeForm = computed(() => !isEqual(dataFormIncomeCalculation, dataFormOld.value))
@@ -113,6 +113,7 @@ store.commit('common/setIsDisableBtnTab2', emptyForm.value)
 // watch isChangeForm to set value to store
 watch(isChangeForm, (value) => {
   store.commit('common/setIsChangeForm', {tab2: value})
+  store.commit('common/setIsDisableBtnTab2', value)
 }, {deep: true})
 
 watchEffect(() => {

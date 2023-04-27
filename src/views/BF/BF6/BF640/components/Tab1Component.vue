@@ -398,6 +398,13 @@ export default defineComponent({
       }
     }, { deep: true })
 
+    watch(() => dataSearch.value.productionStatuses, (newVal: any) => {
+      if (!newVal.length) {
+        dataSearch.value.beforeProduction = true;
+      } else {
+        dataSearch.value.beforeProduction = false;
+      }
+    }, { deep: true })
 
     /**
      *    If it is the first report of the year, the reporting date will be August 2 of this year. 
