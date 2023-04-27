@@ -1,30 +1,31 @@
 
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { createVNode } from 'vue';
 import { Modal } from 'ant-design-vue';
+import { createVNode, RendererElement, RendererNode, VNode } from 'vue';
 import { Message } from "../configs/enum";
 
 interface DeletePopup {
-  message?: string,
+  message?: VNode<RendererNode, RendererElement, { [key: string]: any; }> | string,
   okText?: string,
   cancelText?: string,
-  callback: Function
+  callback: Function,
+  width?: number,
+  icon?: any,
+  wrapClassName?: string
 }
-export default ({ callback, message = Message.getCommonMessage('401').message, okText = '네. 삭제합니다', cancelText = "아니요" }: DeletePopup) => {
+export default ({ callback, width = 400, wrapClassName = '', icon = ExclamationCircleOutlined, message = Message.getCommonMessage('401').message, okText = '네. 삭제합니다', cancelText = "아니요" }: DeletePopup) => {
   let status = false
   Modal.confirm({
     title: message,
-    icon: createVNode(ExclamationCircleOutlined),
+    icon: () => createVNode(icon),
     onOk() {
       callback();
     },
     onCancel() { status = false },
     cancelText,
     okText,
-    style: `.ant-modal-confirm-body svg {
-            font-size: 50px;
-          }`
-
+    width,
+    wrapClassName: wrapClassName,
   });
 
   return status;

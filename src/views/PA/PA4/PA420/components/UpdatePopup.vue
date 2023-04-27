@@ -35,7 +35,6 @@
         @onClick="prevStep"
         v-if="step != 0"
       />
-      {{ isDisableBtnTab2  }}
       <button-basic
         text="다음"
         type="default"
@@ -82,7 +81,6 @@ const emit = defineEmits(['closePopup', 'updateSuccess', 'closePopup'])
 
 const formEditTab3 = ref()
 const store = useStore();
-const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'))
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const isDisableCreate = computed(() => store.getters['common/getIsDisableCreate'])
 const getAllData = computed(() => store.getters['common/getAllDataUpdate'])
@@ -197,18 +195,9 @@ const checkStepThree = computed(() => {
     return "finish";
   }
 });
-const checkStepFour = computed(() => {
-  if (step.value < 3) {
-    return "wait";
-  } else if (step.value === 3) {
-    return "process";
-  } else {
-    return "finish";
-  }
-});
-const changeStep = (stepChange: any) => {
-  step.value = stepChange
-}
+// const changeStep = (stepChange: any) => {
+//   step.value = stepChange
+// }
 const nextStep = (event: any) => {
   if (step.value == 0) valueNextStep.value++;
   else if (step.value == 1) step.value++;

@@ -420,14 +420,9 @@ const dataIncomeRetirementTax: any = reactive(cloneDeep(initialIncomeRetirementT
 const statementsAfterCal1 = reactive(cloneDeep(initialIncomeRetirementTax_old.value.calculationOfDeferredRetirementIncomeTax.statements[0]))
 const statementsAfterCal2 = reactive(cloneDeep(initialIncomeRetirementTax_old.value.calculationOfDeferredRetirementIncomeTax.statements[1]))
 
-const isChangeRetirementBenefits = computed(() => {
-  return !isEqual(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0], FORM_STATE_OLD.value.calculationOfDeferredRetirementIncomeTax.statements[0]) ||
-    !isEqual(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1], FORM_STATE_OLD.value.calculationOfDeferredRetirementIncomeTax.statements[0])
-})
 const isChangeTaxInput = computed(() => !isEqual(formState, FORM_STATE_OLD.value))
-
-watchEffect(() => {
-  store.commit('common/setIsChangeForm', {tab3: isChangeRetirementBenefits.value || isChangeTaxInput.value})
+watch(isChangeTaxInput, (val) => {
+  store.commit('common/setIsChangeForm', {tab3: val})
 })
 watchEffect(() => {
   retirementBenefits.value = retirementBenefitsStore.value

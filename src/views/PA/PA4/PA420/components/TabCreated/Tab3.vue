@@ -100,7 +100,7 @@
               :required="isReqStatements1" width="25%" class="mr-5" placeholder="입금일" ref="statements1Ref"/>
             <number-box-money
               v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount"
-              :required="isReqStatements1" width="20%" placeholder="계좌입금금액"/>
+              :required="isReqStatements1" width="20%" placeholder="계좌입금금액" format="0,###"/>
           </div>
           <div class="d-flex mt-5">
             <default-text-box
@@ -117,7 +117,7 @@
               :required="isReqStatements2" width="25%" class="mr-5" placeholder="입금일" ref="statements2Ref"/>
             <number-box-money
               v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount"
-              :required="isReqStatements2" width="20%" placeholder="계좌입금금액"/>
+              :required="isReqStatements2" width="20%" placeholder="계좌입금금액" format="0,###"/>
           </div>
         </a-col>
         <div class="mb-10 wf-100 text-center">
@@ -367,15 +367,12 @@ const statementsAfterCal1 = ref({...initialIncomeRetirementTax.calculationOfDefe
 const statementsAfterCal2 = ref({...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]})
 const disableBtn = ref(true)
 
-const isChangeRetirementBenefits = computed(() => {
-  return !isEqual(taxCalculationInputStore.value.calculationOfDeferredRetirementIncomeTax.statements[0], initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] ) ||
-    !isEqual(taxCalculationInputStore.value.calculationOfDeferredRetirementIncomeTax.statements[1], initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] )
-})
 const isChangeTaxInput = computed(() => !isEqual(formState, FORM_STATE_TAB_3))
 
-watchEffect(() => {
-  store.commit('common/setIsChangeForm', {tab3: isChangeRetirementBenefits.value || isChangeTaxInput.value})
+watch(isChangeTaxInput, (val) => {
+  store.commit('common/setIsChangeForm', {tab3: val})
 })
+
 watchEffect(() => {
   retirementBenefits.value = retirementBenefitsStore.value
 })
@@ -384,7 +381,6 @@ watchEffect(() => {
 const taxableRetirementBenefitsRef = computed<number>(() => retirementBenefits.value - formState.nonTaxableRetirementBenefits)
 
 const {
-  result,
   loading,
   onError,
   onResult
@@ -468,9 +464,9 @@ const handleCalculateIncomeRetirementTax = () => {
 function compareObjects(obj1: any, obj2: any) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
-  if (keys1.length !== keys2.length) return false
+  if (keys1.length != keys2.length) return false
   for (let key of keys1) {
-    if (obj1[key] === obj2[key]) return false
+    if (obj1[key] == obj2[key]) return false
   }
   return true;
 }
@@ -491,7 +487,7 @@ watch(formState.calculationOfDeferredRetirementIncomeTax.statements, (value) => 
     }
     formState.calculationOfDeferredRetirementIncomeTax.totalAmount = +value[0].accountDepositAmount + +value[1].accountDepositAmount
   }
-}, {deep: true})
+})
 
 </script>
 
