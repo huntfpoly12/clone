@@ -97,7 +97,7 @@
                                         <a-form-item label="사업자등록번호" class="clr" label-align="left"
                                             :label-col="{ span: 9 }">
                                             <biz-number-text-box :disabled="!canChangeableBizNumber"
-                                                v-model:valueInput="formState.companyBizNumber" width="220" :required="true"
+                                                v-model:valueInput="formState.content.company.bizNumber" width="220" :required="true"
                                                 messRequired="이항목은 필수 입력사항입니다!" nameInput="companyBizNumber" />
                                         </a-form-item>
                                         <a-form-item label="사업자유형" class="clr" label-align="left" :label-col="{ span: 9 }">

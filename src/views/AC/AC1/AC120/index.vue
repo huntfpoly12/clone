@@ -71,7 +71,8 @@
         </div>
         <div class="main">
             <!-- {{ dataSource }} -->
-            <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? { height: heightTableHidden } : { height: heightTableFull }]">
+            <div class="data-grid"
+                :style="[store.state.common.ac120.statusShowFull ? { height: heightTableHidden } : { height: heightTableFull }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- {{ dataSource }} -->
                     <!-- {{ store.state.common.ac120.selectedRowKeys }}
@@ -334,7 +335,7 @@
                             </DxDataGrid>
                         </template>
                     </DxDataGrid> -->
-                    <!-- {{ focusedRowKey }} -->
+                    <!-- {{ store.state.common.ac120.transactionDetailDate }} -->
                     <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -559,8 +560,14 @@
 
                         <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" width="75" />
                         <template #normality="{ data }">
-                            <PlusOutlined v-if="data.data.resolutionClassification != 1" class="icon-add"
-                                @click="actionPopupItemDetail(data.data)" />
+                            <div v-if="data.data.resolutionClassification != 1">
+                                <PlusOutlined v-if="data.data.accountingDocumentId == 'AC120'" class="icon-add"
+                                    @click="actionPopupItemDetail(data.data)" />
+                                <div v-else style="cursor: pointer;" @click="actionPopupItemDetail(data.data)">
+                                    {{ data.data.goodsCount || 0 }}
+                                </div>
+                            </div>
+
                             <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
                                 :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
                                 :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
@@ -631,7 +638,7 @@
 
                     </DxDataGrid>
                     <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;">
-                        <div style="width: 250px; ">
+                        <div style="width: 250px; margin-left: 5px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customCountRow()">
                             </div>
                         </div>
@@ -643,9 +650,9 @@
                             </div>
                         </div>
                         <div style="width: 670px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" >
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
                                 <a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
-                                    <span>전월 잔액: {{$filters.formatCurrency(lastBalance)}}, </span>
+                                    <span>전월 잔액: {{ $filters.formatCurrency(lastBalance) }}, </span>
                                 </a-tooltip>
                                 <span v-text="customBalance()"></span>
                             </div>
@@ -722,8 +729,8 @@ export default defineComponent({
         DetailComponent,
     },
     setup() {
-        const heightTableFull: any = ref('calc(100vh - 445px)')
-        const heightTableHidden: any = ref('calc(100vh - 730px)')
+        const heightTableFull: any = ref('calc(100vh - 470px)')
+        const heightTableHidden: any = ref('calc(100vh - 745px)')
 
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
@@ -875,10 +882,10 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
-            if (newValue == 2) {
-                heightTableHidden.value = 'calc(100vh - 605px)'
+            if (newValue == 1) {
+                heightTableHidden.value = 'calc(100vh - 625px)'
             } else {
-                heightTableHidden.value = 'calc(100vh - 730px)'
+                heightTableHidden.value = 'calc(100vh - 745px)'
             }
         })
 
@@ -931,9 +938,10 @@ export default defineComponent({
             dataRows.value = []
             data.component.getSelectedRowsData().then((rowData: any) => {
                 rowData.map((data: any) => {
-                    dataRows.value = dataRows.value.concat(data.data)
+                    dataRows.value = dataRows.value.concat(data)
                 })
             })
+
         }
 
         const onFocusedRowChanging = (e: any) => {
