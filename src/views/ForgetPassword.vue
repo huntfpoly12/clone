@@ -4,7 +4,7 @@
         :width="445" :height="500">
     <div class="auth-form">
       <a-spin :spinning="loading" size="large">
-        <div class="dx-fieldset-header text-a">비밀번호 찾기</div>
+        <div class="dx-fieldset-header text-a" style="font-weight: bold;">비밀번호 찾기</div>
         <standard-form  formName="forget-password" ref="forgetPassword"> 
           <div class="input-field">
              <a-form-item label="아이디" label-align="right" class="text-a">
