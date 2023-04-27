@@ -93,13 +93,22 @@ interface DataFormIncomeCalculation {
 }
 
 const props = defineProps<{ dataDetail: IncomeRetirement }>()
-const emit = defineEmits(['closePopup', 'nextPage'])
+// const emit = defineEmits(['closePopup', 'nextPage'])
 
 const store = useStore();
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
+const prevRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService)
+const lastRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService)
 
-const dataFormOld = computed(() => cloneDeep(incomeCalculationInput.value))
-
+const dataFormOld = computed(() => ({
+  settlementStartDate: prevRetiredYearsOfService.value?.settlementStartDate || lastRetiredYearsOfService.value?.settlementStartDate,
+  settlementFinishDate:  prevRetiredYearsOfService.value?.settlementFinishDate || lastRetiredYearsOfService.value?.settlementFinishDate,
+  exclusionDays: (prevRetiredYearsOfService.value?.exclusionDays || 0) + (lastRetiredYearsOfService.value?.exclusionDays || 0),
+  additionalDays: lastRetiredYearsOfService.value?.additionalDays || 0,
+  annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
+  totalAnualBonus:props.dataDetail.specification?.totalAnualBonus || 0,
+  totalPay3Month:props.dataDetail.specification?.totalPay3Month || 0,
+}))
 const dataFormIncomeCalculation = reactive<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
 const dataIncomeRetirement = ref(0)
 const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
@@ -114,10 +123,9 @@ store.commit('common/setIsDisableBtnTab2', emptyForm.value)
 watch(isChangeForm, (value) => {
   store.commit('common/setIsChangeForm', {tab2: value})
   store.commit('common/setIsDisableBtnTab2', value)
-}, {deep: true})
+})
 
 watchEffect(() => {
-  console.log('props.', props.dataDetail)
   dataIncomeRetirement.value = props.dataDetail.specification?.expectedRetirementBenefits || 0
   definedRetirementBenefits.value= props.dataDetail.specification?.definedRetirementBenefits || 0
 })

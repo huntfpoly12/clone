@@ -567,7 +567,7 @@ const submitForm = (e: any) => {
       retirementReason: retirementReason.value
     })
     store.commit('common/setInterimPaymentTab1', interimPaymentTab1.value)
-    // store.commit('common/setIsDisableBtnTab2', true)
+    isChangeForm.value && store.commit('common/setIsDisableBtnTab2', true)
     emit('nextPage', true)
   }
 }

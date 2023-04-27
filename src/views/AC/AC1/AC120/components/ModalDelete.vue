@@ -6,6 +6,12 @@
                 <a-row justify="center">
                     <a-col :span="10">
                         <div class="input_info">
+                            <a-form-item label="전체 전표취소 건수">
+                                <number-box :width="60" :valueInput="sumHandwritingTrueFalse" disabled="true"/>
+                            </a-form-item>
+                            <span class="pl-5 mb-5">건</span>
+                        </div>
+                        <div class="input_info">
                             <a-form-item label="동일 통장내역의 전표">
                                 <number-box :width="60" :valueInput="sumHandwritingFalse" disabled="true"/>
                             </a-form-item>
@@ -17,12 +23,7 @@
                             </a-form-item>
                             <span class="pl-5 mb-5">건</span>
                         </div>
-                        <div class="input_info">
-                            <a-form-item label="전체 전표취소 건수">
-                                <number-box :width="60" :valueInput="sumHandwritingTrueFalse" disabled="true"/>
-                            </a-form-item>
-                            <span class="pl-5 mb-5">건</span>
-                        </div>
+                        
                     </a-col>
                 </a-row>
                 <div class="mt-10"><span>상기의 전표들을 취소하시겠습니까?</span></div>
@@ -82,6 +83,7 @@ export default defineComponent({
         // ============== ON DONE MUTATION GRAPHQL ===============
         // unregisterAccountingDocument
         doneUnregisterAccountingDocument((e) => {
+            emit("closePopup", false)
             notification('success', Message.getMessage('COMMON', '302').message)
             store.state.common.ac120.resetDataTable++
             store.state.common.ac120.resetDataAccountingProcesses++
@@ -92,6 +94,7 @@ export default defineComponent({
 
         // initializeTransactionDetails
          doneInitializeTransactionDetails((e) => {
+            emit("closePopup", false)
             notification('success', Message.getMessage('COMMON', '302').message)
             store.state.common.ac120.resetDataTable++
             store.state.common.ac120.resetDataAccountingProcesses++

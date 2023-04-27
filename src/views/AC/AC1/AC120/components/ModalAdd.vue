@@ -160,7 +160,7 @@ export default defineComponent({
                 // statusRemoveRow.value = false;
                 store.state.common.ac120.transactionDetailDate = formDataAdd.value.transactionDetailDate
                 let dataAdd = {...formDataAdd.value}
-                delete dataAdd.transactionDetailDate
+                // delete dataAdd.transactionDetailDate
                 emit('submit', dataAdd)
             }
         }
