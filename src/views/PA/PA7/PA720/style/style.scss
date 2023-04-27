@@ -296,7 +296,7 @@
       max-height: calc(calc(69vh) - 77px - 0px); // chiều cao bảng - chiều cao header - chiều cao footer
     }
 
-    :deep .dx-freespace-row {
+    .dx-freespace-row {
       display: none !important; // cục lúc hiện lúc không
     }
     :deep .ant-tag{

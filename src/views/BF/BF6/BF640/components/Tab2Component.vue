@@ -393,6 +393,13 @@ export default defineComponent({
         dataSearch.value.productionStatuses = [0, 1, 2, -1];
       }
     }, { deep: true })
+    watch(() => dataSearch.value.productionStatuses, (newVal: any) => {
+      if (!newVal.length) {
+        dataSearch.value.beforeProduction = true;
+      } else {
+        dataSearch.value.beforeProduction = false;
+      }
+    }, { deep: true })
 
     //watch date
 
