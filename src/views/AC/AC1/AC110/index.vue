@@ -1,7 +1,6 @@
 <template>
   <action-header title="통장내역" :buttonDelete="false" />
   <div class="ac-110">
-    {{ rowKeyfocused }}
     <div class="ac-110__top">
       <div class="ac-110__top-grid">
         <div v-for="(month, index) in 12" :key="index" class="ac-110__top-grid-items"
@@ -17,7 +16,7 @@
             :disabled="true" />
           <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
           </button-basic>
-          <a-tooltip >
+          <a-tooltip>
             <template #title>마감상태 변경이력</template>
             <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
           </a-tooltip>
@@ -44,7 +43,7 @@
             @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging" @row-click="onRowClick">
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
-            <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="always" :deferred="false"/>
+            <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="always" :deferred="false" />
             <DxColumn caption="통장" cell-template="nickName" />
             <template #nickName="{ data }">
               <a-tooltip placement="left"
@@ -62,7 +61,8 @@
             <template #bankbookDetailDate="{ data }">
               <div>
                 {{ data.data.bankbookDetailDate.toString().slice(0, 4) }}-{{
-                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{ data.data.bankbookDetailDate.toString().slice(6)}}
+                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{
+    data.data.bankbookDetailDate.toString().slice(6) }}
               </div>
             </template>
             <DxColumn caption="통장적요" data-field="summary" />
@@ -84,18 +84,18 @@
             <DxColumn caption="거래내역" data-field="transactionDetailsCount" />
             <DxColumn caption="정상여부" cell-template="normalTransactionDetails" width="80" alignment="center" />
             <template #normalTransactionDetails="{ data }">
-                <DxButton :focusStateEnabled="false" :text="data.data?.normalTransactionDetails ? 'O' : 'X'" 
-                :style="data.data?.normalTransactionDetails ? 'background-color: #337614' : 'background-color: #BB3835'" 
-              :height="$config_styles.HeightInput" style="color:white; width: 42px"  />
+              <DxButton :focusStateEnabled="false" :text="data.data.normalTransactionDetails ? 'O' : 'X'"
+                :style="data.data.normalTransactionDetails ? 'background-color: #337614' : 'background-color: #BB3835'"
+                :height="$config_styles.HeightInput" style="color:white; width: 42px" />
             </template>
             <DxColumn caption="전표등록" cell-template="documentRegistered" width="200" />
             <template #documentRegistered="{ data }">
               <div class="ac-110__main-main-slipRegistration">
-                <DxButton :focusStateEnabled="false" :text="data.data?.documentRegistered ? 'O' : 'X'"
-                :style="data.data?.documentRegistered ? 'background-color: #337614' : 'background-color: #BB3835'" 
-                :height="$config_styles.HeightInput" style="color:white; margin-right: 5px; width: 42px" />
-                <button-basic :text="data.data?.documentRegistered ? '전표취소' : '전표등록'" :type="'default'"
-                  :mode="data.data?.documentRegistered ? 'outlined' : 'contained'"
+                <DxButton :focusStateEnabled="false" :text="data.data.documentRegistered ? 'O' : 'X'"
+                  :style="data.data.documentRegistered ? 'background-color: #337614' : 'background-color: #BB3835'"
+                  :height="$config_styles.HeightInput" style="color:white; margin-right: 5px; width: 42px" />
+                <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'"
+                  :mode="data.data.documentRegistered ? 'outlined' : 'contained'"
                   @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails" />
               </div>
             </template>
@@ -116,14 +116,18 @@
               <b>거래내역-</b><span v-if="!!bankbookSelected">{{ bankbookSelected.bankbook.bankbookNickname }} {{
                 getNameBankBookUseType(bankbookSelected.bankbook.useType) }}</span>
               <b style="margin-right: 5px;">-정상여부: </b>
-                <DxButton v-if="!!bankbookSelected" :focusStateEnabled="false" :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'" 
-                :style="bankbookSelected.normalTransactionDetails ? 'background-color: #337614' : 'background-color: #BB3835'" 
+              <DxButton v-if="!!bankbookSelected" :focusStateEnabled="false"
+                :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'"
+                :style="bankbookSelected.normalTransactionDetails ? 'background-color: #337614' : 'background-color: #BB3835'"
                 :height="$config_styles.HeightInput" width="40" style="color:white; width: 42px" />
             </div>
-            <a-spin :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails" size="large">
+            <a-spin
+              :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails"
+              size="large">
               <standard-form ref="refFormDetailAc110">
-                <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110" v-model:focused-row-key="rowKeyfocusedGridDetail"
-                  :show-row-lines="true" :data-source="dataSourceTransactionDetails?.transactionDetails" :show-borders="true"
+                <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
+                  v-model:focused-row-key="rowKeyfocusedGridDetail" :show-row-lines="true"
+                  :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
                   :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                   <DxPaging :enabled="false" />
                   <DxScrolling mode="standard" show-scrollbar="always" />
@@ -159,24 +163,28 @@
                     <a-tooltip placement="top">
                       <template #title>신규</template>
                       <div>
-                        <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" :disabled="isRegistered || !rowKeyfocused" />
+                        <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails"
+                          :disabled="isRegistered || !rowKeyfocused" />
                       </div>
                     </a-tooltip>
                   </template>
-                  <template #button-save> 
+                  <template #button-save>
                     <a-tooltip placement="top">
                       <template #title>신규</template>
-                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails()" :disabled="isRegistered || !rowKeyfocused">
+                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails()"
+                        :disabled="isRegistered || !rowKeyfocused">
                         <SaveFilled style="font-size: 19px;" />
                       </DxButton>
                     </a-tooltip>
                   </template>
-                  <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center" :allowUpdating="true" width="70">
+                  <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center" :allowUpdating="true"
+                    width="70">
                     <DxLookup :data-source="resolutionClassification" display-expr="label" value-expr="value" />
                   </DxColumn>
                   <DxColumn caption="수입액" cell-template="income" width="110" />
                   <template #income="{ data }">
-                    <div v-if="rowKeyfocused" :id="`ac110income${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.spending}">
+                    <div :id="`ac110income${data.rowIndex}${data.columnIndex}`"
+                      :class="{ 'disable-input-column': !!data.data.spending }">
                       <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
                         :disabled="!!data.data.spending" height="26" :readOnly="isRegistered"
                         @focusInput="changeInputIncomeSpending(data, 'income')" />
@@ -184,49 +192,54 @@
                   </template>
                   <DxColumn caption="지출액" cell-template="spending" width="110" />
                   <template #spending="{ data }">
-                    <div v-if="rowKeyfocused" :id="`ac110spending${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.income}">
+                    <div :id="`ac110spending${data.rowIndex}${data.columnIndex}`"
+                      :class="{ 'disable-input-column': !!data.data.income }">
                       <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
                         :disabled="!!data.data.income" height="26" :readOnly="isRegistered"
-                        @focusInput="changeInputIncomeSpending(data, 'spending')" /> 
+                        @focusInput="changeInputIncomeSpending(data, 'spending')" />
                     </div>
                   </template>
                   <DxColumn caption="적요" cell-template="summary" width="150" />
                   <template #summary="{ data }">
-                    <default-text-box v-model:valueInput="data.data.summary" :required="true" :readOnly="isRegistered" />
+                    <a-tooltip placement="top" color="black">
+                      <template #title>{{ data.data.summary }}</template>
+                      <div>
+                        <default-text-box v-model:valueInput="data.data.summary" :required="true" />
+                      </div>
+                    </a-tooltip>
                   </template>
                   <DxColumn caption="계정과목" cell-template="accountCode" width="175" />
                   <template #accountCode="{ data }">
-                    <div v-if="rowKeyfocused">
+                    <div v-if="rowKeyfocused" :key="`accountCode${keyRefreshGridDetailAc}`">
                       <account-code-select v-model:valueInput="data.data.accountCode"
-                        :classification="!!data.data.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
+                        :classification="!!data.data?.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
                     </div>
                   </template>
                   <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
                   <template #relationCode="{ data }">
-                    <div v-if="rowKeyfocused" :class="{'disable-input-column': data.data.resolutionClassification === 1}" :key="`relationCode${rowKeyfocused}`">
+                    <div v-if="rowKeyfocused"
+                      :class="{ 'disable-input-column': data.data.resolutionClassification === 1 }"
+                      :key="`relationCode${keyRefreshGridDetailAc}`">
                       <account-code-select v-model:valueInput="data.data.relationCode"
-                      :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
-                      :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
+                        :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
+                        :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
                     </div>
                   </template>
                   <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                   <template #fundingSource="{ data }">
-                    <div v-if="rowKeyfocused">
-                      <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" :readOnly="isRegistered" />
-                    </div>
+                    <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true"
+                      :readOnly="isRegistered" />
                   </template>
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">
-                    <div v-if="rowKeyfocused">
-                      <customer-select v-if="rowKeyfocused" v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered" />
-                    </div>
+                    <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered" />
                   </template>
-                  <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100"/>
+                  <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
                   <template #letterOfApprovalType="{ data }">
-                    <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
-                      <LetterOfApprovalTypeSelect v-if="rowKeyfocused" v-model:valueInput="data.data.letterOfApprovalType"
-                      :disabled="data.data.resolutionClassification === 1" :readOnly="isRegistered"
-                      :required="data.data.resolutionClassification === 2" />
+                    <div :class="{ 'disable-input-column': data.data.resolutionClassification === 1 }">
+                      <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
+                        :disabled="data.data.resolutionClassification === 1" :readOnly="isRegistered"
+                        :required="data.data.resolutionClassification === 2" />
                     </div>
                   </template>
                   <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
@@ -246,7 +259,8 @@
                   <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                   <template #goodsCount="{ data }">
                     <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
-                      <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
+                      <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1"
+                        style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
                         {{ data.data.goodsCount || 0 }}
                       </span>
                       <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
@@ -275,15 +289,15 @@
           <div class="ac-110__main-detail-detail2-upload">
             <UploadPreviewImage width="295" :payLoadProofs="payloadGetTransactionDetails"
               @updateAddBankbookDetailProof="updateAddBankbookDetailProof"
-              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof"
-              :disabled="isRegistered" :limit="10" />
+              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" :disabled="isRegistered" :limit="10" />
           </div>
         </div>
       </div>
     </div>
     <PopupRetrieveStatements :isModalRetrieveStatements="isModalRetrieveStatements"
       @closePopup="isModalRetrieveStatements = false" :title="''" :content="Message.getMessage('AC110', '001').message"
-      :okText="Message.getMessage('AC110', '001').yes" :cancelText="Message.getMessage('AC110', '001').no" @confirm="handleConfirmRetrieveStatements" />
+      :okText="Message.getMessage('AC110', '001').yes" :cancelText="Message.getMessage('AC110', '001').no"
+      @confirm="handleConfirmRetrieveStatements" />
     <PopupSlipRegistrationSelected :isModalSlipRegistrationSelected="isModalSlipRegistrationSelected"
       :propListSlipRegistrationSelected="propListSlipRegistrationSelected"
       @closePopup="isModalSlipRegistrationSelected = false" @submit="handleConfirmSlipRegistrationSelected" />
@@ -303,8 +317,9 @@
     <HistoryPopup :modalStatus="isModalHistoryAccountingProcessLogs"
       @closePopup="isModalHistoryAccountingProcessLogs = false" title="변경이력" :idRowEdit="idRowEdit"
       typeHistory="ac-110-accounting" :data="payloadGetAccountingProcessLogs" />
-    <PopupMessage :modalStatus="isModalConfirmChangeData" @closePopup="isModalConfirmChangeData = false" :typeModal="'confirm'" 
-      title="" content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니요" @checkConfirm="handleConfirmChangeData" />
+    <PopupMessage :modalStatus="isModalConfirmChangeData" @closePopup="isModalConfirmChangeData = false"
+      :typeModal="'confirm'" title="" content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니요"
+      @checkConfirm="handleConfirmChangeData" />
   </div>
 </template>
 <script lang="ts">
@@ -365,7 +380,7 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    
+
     const globalYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
     const globalFacilityBizId = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
     const bankType = BankType.all();
@@ -446,7 +461,7 @@ export default defineComponent({
     let valueFundingSource = ref(null)
     const refFormDetailAc110: any = ref()
     let isModalConfirmChangeData = ref(false)
-    let itemChange:any = ref(null)
+    let itemChange: any = ref(null)
     const payloadGetTransactionDetails: any = reactive({
       companyId: companyId,
       fiscalYear: globalYear.value,
@@ -466,6 +481,7 @@ export default defineComponent({
     let idRowEdit = ref<number>(0);
     const refGridDetailAc110: any = ref()
     let rowKeyfocusedGridDetail: any = ref(null)
+    const keyRefreshGridDetailAc = ref(0)
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     const isRegistered = computed(() => {
@@ -577,14 +593,14 @@ export default defineComponent({
       loading: loadingSaveTransactionDetails,
     } = useMutation(mutations.saveTransactionDetails);
     doneSaveTransactionDetails((e) => {
-      if(Number.isInteger(itemChange.value)) {
+      if (Number.isInteger(itemChange.value)) {
         dataSourceTransactionDetails.value.transactionDetails = []
         listTransactionDetailsOrigin.value = []
         rowKeyfocused.value = null
         firstLoad.value = true
         monthSelected.value = itemChange.value
         payloadGetAccountingProcessLogs.month = itemChange.value
-      }else {
+      } else {
         rowKeyfocused.value = itemChange.value.bankbookDetailId
         payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
         payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
@@ -649,16 +665,19 @@ export default defineComponent({
       isModalHistoryAccountingProcessLogs.value = true
     }
     const selectedMonth = (month: number) => {
-      if(isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value) || !rowKeyfocused.value){
+      if (isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value) || !rowKeyfocused.value) {
+        dataSourceTransactionDetails.value.transactionDetails = []
+        listTransactionDetailsOrigin.value = []
+        rowKeyfocused.value = null
         firstLoad.value = true
         monthSelected.value = month
         payloadGetAccountingProcessLogs.month = month
         triggerBankbookDetails.value = true
-      }else{ 
+      } else {
         itemChange.value = month
         isModalConfirmChangeData.value = true
       }
-      
+
     }
     // Grid Main
     const selectionChanged = (event: any) => {
@@ -678,18 +697,16 @@ export default defineComponent({
       event.cancel = true
     }
     const onRowClick = (event: any) => {
-      if(!event?.data) return
+      if (!event?.data) return
       const item = event.data
-      if(rowKeyfocused.value === item.bankbookDetailId) return
-      console.log(dataSourceTransactionDetails.value.transactionDetails);
-      console.log(listTransactionDetailsOrigin.value);
-      if(isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value)){
+      if (rowKeyfocused.value === item.bankbookDetailId) return
+      if (isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value)) {
         rowKeyfocused.value = item.bankbookDetailId
         payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
         payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
         triggerTransactionDetails.value = true
-      }else{ 
-        itemChange.value = {...item}
+      } else {
+        itemChange.value = { ...item }
         isModalConfirmChangeData.value = true
       }
     }
@@ -935,14 +952,14 @@ export default defineComponent({
     }
     const changeInputIncomeSpending = (data: any, key: string) => {
       if (key === 'income') {
-        if(!data.data.income) {
+        if (!data.data.income) {
           data.data.income = null
         }
         data.data.resolutionClassification = 1
         data.data.spending = 0
       }
       else {
-        if(!data.data.spending) {
+        if (!data.data.spending) {
           data.data.spending = null
         }
         data.data.resolutionClassification = 2
@@ -950,7 +967,7 @@ export default defineComponent({
       }
       nextTick(() => {
         const elInput: any = document.querySelector(`#ac110${key}${data.rowIndex}${data.columnIndex} .dx-texteditor-input`)
-        if(!!elInput) {
+        if (!!elInput) {
           elInput.focus()
         }
       })
@@ -970,10 +987,10 @@ export default defineComponent({
     }
 
     const handleConfirmChangeData = (status: boolean) => {
-      if(status) {
+      if (status) {
         submitTransactionDetails()
-      }else {
-        if(Number.isInteger(itemChange.value)) {
+      } else {
+        if (Number.isInteger(itemChange.value)) {
           dataSourceTransactionDetails.value.transactionDetails = []
           listTransactionDetailsOrigin.value = []
           rowKeyfocused.value = null
@@ -981,7 +998,7 @@ export default defineComponent({
           monthSelected.value = itemChange.value
           payloadGetAccountingProcessLogs.month = itemChange.value
           triggerBankbookDetails.value = true
-        }else{
+        } else {
           rowKeyfocused.value = itemChange.value.bankbookDetailId
           payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
           payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
@@ -1071,7 +1088,8 @@ export default defineComponent({
       rowKeyfocusedGridDetail,
       isModalConfirmChangeData,
       handleConfirmChangeData,
-      refFormDetailAc110
+      refFormDetailAc110,
+      keyRefreshGridDetailAc
     };
   },
 });
@@ -1085,5 +1103,4 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-}
-</style>
+}</style>
