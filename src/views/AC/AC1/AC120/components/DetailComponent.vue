@@ -68,13 +68,13 @@
                                 </a-form-item>
 
                                 <a-form-item label="통장" class="red">
-                                    <div class="input_info">
-                                        <default-text-box v-model:valueInput="bankbookNickname" width="70px"
+                                    <!-- <div class="input_info"> -->
+                                        <default-text-box v-model:valueInput="bankbookNickname" width="150px"
                                             style="margin-right: 10px;" :required="true" disabled="true" />
-                                        <default-text-box v-model:valueInput="bankbookNumber" width="70px" :required="true"
-                                            disabled="true" />
-                                    </div>
+                                    <!-- </div> -->
+                                    
                                 </a-form-item>
+                                
                             </a-col>
                             <a-col :span="6" class="col-3">
                                 <a-form-item label="금액" class="red">
@@ -112,12 +112,17 @@
                                         <date-time-box v-model:valueDate="store.state.common.ac120.formData.paymentDate"
                                             width="150px" />
                                     </a-form-item>
-                                </a-col>
-                                <a-col :span="6" class="col-2">
                                     <a-form-item label="발의일자">
                                         <date-time-box v-model:valueDate="store.state.common.ac120.formData.proposedDate"
                                             width="150px" />
                                     </a-form-item>
+                                </a-col>
+                                <a-col :span="6" class="col-2">
+                                    <a-form-item :label="null" style="margin-left: 75px;">
+                                        <default-text-box v-model:valueInput="bankbookNumber" width="150px" :required="true"
+                                            disabled="true" />
+                                    </a-form-item>
+                                    
                                     <a-form-item label="출납일자">
                                         <date-time-box v-model:valueDate="store.state.common.ac120.formData.accountingDate"
                                             width="150px" />
@@ -172,7 +177,7 @@
                                 </a-col>
                             </a-row>
                             <!-- {{ store.state.common.ac120.formData.resolutionClassification }} -->
-                            <div v-if="!(store.state.common.ac120.formData.resolutionClassification == 2)">
+                            <div v-if="!(store.state.common.ac120.formData.resolutionClassification == 1)">
                                 <a-row>
                                     <a-col :span="24">
                                         <div class="top-content">
@@ -240,6 +245,7 @@
     </a-row>
     <PopupCopyData :modalStatus="statusPopupCopyData" @closePopup="statusPopupCopyData = false"
         @submit="statusPopupCopyData = false" />
+    <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows='[store.state.common.ac120.formData]' />
 </template>
 
 <script lang="ts">
@@ -251,6 +257,7 @@ import DxButton from "devextreme-vue/button"
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
 import dayjs from "dayjs";
+import ModalDelete from "./ModalDelete.vue"
 import queries from "@/graphql/queries/AC/AC1/AC120";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
@@ -261,7 +268,7 @@ export default defineComponent({
     components: {
         PopupCopyData,
         DxButton,
-        UploadPreviewImage,
+        UploadPreviewImage, ModalDelete,
     },
     setup() {
         const heightForm: any = ref('280px')
@@ -277,6 +284,7 @@ export default defineComponent({
         const requiredCauseActionDate = ref()
         const arrayRadioCheck = computed(() => store.state.common.ac120.arrLetterOfApprovalType)
         let colorDate = ref()
+        let statusModalDelete = ref(false);
         let bankbookNickname = ref<string>('')
         let bankbookNumber = ref<string>('')
         // =================== GRAPHQL ===================
@@ -357,8 +365,8 @@ export default defineComponent({
         });
 
 
-        watch(() => store.state.common.ac120.formData.resolutionType, (newValue, oldValue) => {
-            switch (newValue) {
+        watch(() => [store.state.common.ac120.formData.resolutionType, store.state.common.ac120.arrResolutionType], (newValue, oldValue) => {
+            switch (store.state.common.ac120.formData.resolutionType) {
                 case 11:
                     store.state.common.ac120.formData.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
@@ -385,7 +393,7 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
-            if (newValue == 2) {
+            if (newValue == 1) {
                 heightForm.value = '160px'
             } else {
                 heightForm.value = '280px'
@@ -436,7 +444,14 @@ export default defineComponent({
                     requiredCauseActionDate.value.validate(true)
                     return;
                 }
+                if (store.state.common.ac120.formData.resolutionClassification == 1) {
+                    store.state.common.ac120.formData.letterOfApprovalType = null;
+                    store.state.common.ac120.formData.causeUsage = null;
+                    // store.state.common.ac120.formData.goodsCount = null;
+
+                }   
                 if (store.state.common.ac120.statusFormAdd) {
+                    
                     let dataSubmit = {
                         companyId: companyId,
                         fiscalYear: acYear.value,
@@ -453,6 +468,7 @@ export default defineComponent({
                     delete dataSubmit.input.resolutionDate
                     delete dataSubmit.input.bankbook
                     delete (dataSubmit.input.accountingDocumentId)
+                    delete (dataSubmit.input.transactionDetailDate)
                     mutateCreateAccountingDocument(dataSubmit)
                 } else {
                     let dataSubmit = {
@@ -505,23 +521,24 @@ export default defineComponent({
             if (store.state.common.ac120.statusFormAdd) { // xóa row chưa lưu
                 store.state.common.ac120.onDeleteRowAdd++
             } else { // delete data
-                if (store.state.common.ac120.formData.handwriting === true) {
-                    mutateUnregisterAccountingDocument({
-                        companyId: companyId,
-                        fiscalYear: acYear.value,
-                        facilityBusinessId: globalFacilityBizId.value,
-                        transactionDetailDate: store.state.common.ac120.transactionDetailDate,
-                        accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId
-                    })
-                } else if (store.state.common.ac120.formData.handwriting === false) {
-                    mutateInitializeTransactionDetails({
-                        companyId: companyId,
-                        fiscalYear: acYear.value,
-                        facilityBusinessId: globalFacilityBizId.value,
-                        bankbookDetailDate: store.state.common.ac120.transactionDetailDate,
-                        bankbookDetailId: store.state.common.ac120.formData.bankbookDetailId
-                    })
-                }
+                statusModalDelete.value = true
+                // if (store.state.common.ac120.formData.handwriting === true) {
+                //     mutateUnregisterAccountingDocument({
+                //         companyId: companyId,
+                //         fiscalYear: acYear.value,
+                //         facilityBusinessId: globalFacilityBizId.value,
+                //         transactionDetailDate: store.state.common.ac120.transactionDetailDate,
+                //         accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId
+                //     })
+                // } else if (store.state.common.ac120.formData.handwriting === false) {
+                //     mutateInitializeTransactionDetails({
+                //         companyId: companyId,
+                //         fiscalYear: acYear.value,
+                //         facilityBusinessId: globalFacilityBizId.value,
+                //         bankbookDetailDate: store.state.common.ac120.transactionDetailDate,
+                //         bankbookDetailId: store.state.common.ac120.formData.bankbookDetailId
+                //     })
+                // }
             }
 
         }
@@ -546,6 +563,7 @@ export default defineComponent({
             onCancelDeleteRow,
             colorDate,
             bankbookNickname, bankbookNumber,
+            statusModalDelete,
         }
     }
 })
