@@ -26,7 +26,7 @@
                             </div> 
                             <div class="input-employee">
                                 <a-form-item label="정산종료(퇴사)일" label-align="right" class="red">
-                                    <date-time-box  width="150px" v-model:valueDate="formState.settlementFinishDate"></date-time-box>
+                                    <date-time-box-custom  width="150px" v-model:valueDate="formState.settlementFinishDate" :startDate="dayjs(String(formState.settlementStartDate)).add(1, 'day')"></date-time-box-custom>
                                 </a-form-item>  
                                 <span>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
@@ -36,7 +36,7 @@
                             <div class="input-employee">
                                 <a-form-item label="제외일수" label-align="right" class="red">
                                   <div class="d-flex-center">
-                                    <number-box  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  :required="true" format="0,###"> </number-box>
+                                    <number-box  width="172px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  :required="true" format="0,###"> </number-box>
                                     <span class="pl-5 pr-5">일</span>      
                                   </div>
                                 </a-form-item> 
@@ -48,7 +48,7 @@
                             <div class="input-employee">
                                 <a-form-item label="가산일수" label-align="right" class="red">
                                   <div class="d-flex-center">
-                                    <number-box  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays" :required="true" format="0,###"> </number-box>
+                                    <number-box  width="172px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays" :required="true" format="0,###"> </number-box>
                                     <span class="pl-5 pr-5">일</span>
                                   </div>
                                 </a-form-item> 
@@ -219,6 +219,7 @@ export default defineComponent({
 
           return {
             formPA410,
+            dayjs,
             loading,
             formState,
             caculateValue,
