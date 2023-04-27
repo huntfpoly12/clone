@@ -71,19 +71,19 @@
             </a-form-item>
             <a-form-item label="주소" class="clr" label-align="left">
                 <a-row>
-                    <a-col :span="5">
-                        <default-text-box width="100%" :disabled="true" v-model:valueInput="dataEdited.zipcode" />
+                    <a-col :span="12">
+                        <!-- <default-text-box width="100%" :disabled="true" v-model:valueInput="dataEdited.zipcode" /> -->
+                        <default-text-box :disabled="true" placeholder="도로명 주소" v-model:valueInput="dataEdited.roadAddress"
+                        style="width: 100%;" />
                     </a-col>
-                    <a-col :span="14">
+                    <a-col :span="10">
                         <div class="ml-5">
                             <post-code-button @dataAddress="funcAddress" />
                         </div>
                     </a-col>
                 </a-row>
                 <a-row class="d-flex-center pt-5">
-                    <default-text-box :disabled="true" placeholder="도로명 주소" v-model:valueInput="dataEdited.roadAddress"
-                        style="width: 50%;" />
-                    <div style="width: 50%; padding-left: 10px;">
+                    <div style="width: 50%;">
                         <default-text-box placeholder="상세 주소 입력" v-model:valueInput="dataEdited.addressExtend" />
                     </div>
                 </a-row>

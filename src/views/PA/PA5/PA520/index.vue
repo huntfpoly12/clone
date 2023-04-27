@@ -57,7 +57,7 @@
                   @focused-row-changed="onFocusedRowChanged"
                   >
                       <DxScrolling mode="virtual" show-scrollbar="always"/>
-                      <DxSearchPanel :visible="true" />
+                      <DxSearchPanel :visible="true" placeholder="검색"/>
                       <DxExport :enabled="true" />
                       <DxPaging :enabled="false" />
                       <DxToolbar>
@@ -102,7 +102,7 @@
                           
                       </DxToolbar>
                       <template #button-template>
-                        <a-tooltip placement="top" class="custom-tooltip">
+                        <a-tooltip placement="top" class="custom-tooltip btn-plus">
                             <template #title>
                               신규
                             </template>
