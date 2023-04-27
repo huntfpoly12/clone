@@ -33,7 +33,7 @@
         <a-form-item label="사원" class="label-required">
           <div class="d-flex-center">
             <employ-select :arrayValue="employeeList" :required="true"
-                           v-model:valueEmploy="formState.inputFormTab1.employeeId" width="300px"/>
+                           v-model:valueEmploy="formState.inputFormTab1.employeeId" width="200px"/>
             <div class="ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
               <div class="custom-waring" style="width: 180px;">
@@ -60,7 +60,7 @@
         </a-form-item>
         <a-form-item label="퇴직사유" class="label-required">
           <select-box-common :arrSelect="arrayReasonResignationUtils" :required="true"
-                             v-model:valueInput="retirementReason" placeholder="선택" width="300px"/>
+                             v-model:valueInput="retirementReason" placeholder="선택" width="100px"/>
         </a-form-item>
       </a-col>
       <div class="header-text-1">근속연수</div>
@@ -182,11 +182,10 @@
         </a-form-item>
         <a-form-item label="정산종료(퇴사)일" class="label-required">
           <div class="d-flex-center">
-
             <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementFinishDate"
                                   :disabled="retirementType == 1"
-                                  :startDate="dayjs(String(formState.lastRetiredYearsOfService.settlementStartDate))"
+                                  :startDate="dayjs(String(formState.lastRetiredYearsOfService.settlementStartDate)).add(1, 'day')"
                                   ref="lastSettlementFinishDate"/>
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
@@ -486,8 +485,8 @@ watch(() => formState.prevRetiredYearsOfService.settlementStartDate, (value: any
 });
 watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: any) => {
   if (value && +value > +formState.lastRetiredYearsOfService.settlementStartDate) {
-    formState.lastRetiredYearsOfService.settlementStartDate = value
-    formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
+    formState.lastRetiredYearsOfService.settlementStartDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
+    // formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
   }
 });
 
