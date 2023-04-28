@@ -5,7 +5,7 @@
                 <h2><b>물품내역</b></h2>
             </div>
             <standard-form ref="refFormItemAC120">
-                <DxDataGrid class="mt-20" ref="dataGridRef" :show-row-lines="true" :data-source="dataSource"
+                <DxDataGrid noDataText="내역이 없습니다" class="mt-20" ref="dataGridRef" :show-row-lines="true" :data-source="dataSource"
                     :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
                     <DxToolbar>
@@ -37,17 +37,20 @@
                     </template>
                     <DxColumn caption="수량" cell-template="quantity" width="90" />
                     <template #quantity="{ data }">
-                        <number-box-money v-model:valueInput="data.data.quantity" @changeInput="changeInput('quantity', data.rowIndex)" :required="true" height="26" />
+                        <number-box-money v-model:valueInput="data.data.quantity"
+                            @changeInput="changeInput('quantity', data.rowIndex)" :required="true" height="26" />
                     </template>
                     <DxColumn caption="단가" cell-template="unitPrice" width="90" />
                     <template #unitPrice="{ data }">
-                        <number-box-money v-model:valueInput="data.data.unitPrice" @changeInput="changeInput('unitPrice', data.rowIndex)" :required="true" height="26" />
+                        <number-box-money v-model:valueInput="data.data.unitPrice"
+                            @changeInput="changeInput('unitPrice', data.rowIndex)" :required="true" height="26" />
                     </template>
                     <DxColumn caption="금액" cell-template="amount" />
                     <template #amount="{ data }">
-                        <number-box-money v-model:valueInput="data.data.amount" @changeInput="changeInput('amount', data.rowIndex)" :required="true" height="26" />
+                        <number-box-money v-model:valueInput="data.data.amount"
+                            @changeInput="changeInput('amount', data.rowIndex)" :required="true" height="26" />
                     </template>
-                    <DxColumn caption="비고" cell-template="remark" width="100"/>
+                    <DxColumn caption="비고" cell-template="remark" width="100" />
                     <template #remark="{ data }">
                         <default-text-box v-model:valueInput="data.data.remark" />
                     </template>
@@ -59,19 +62,18 @@
                         <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}건" />
                         <!-- <DxTotalItem column="금액" summary-type="sum" display-format="금액합계: {0}원" value-format="#,###"/> -->
                         <DxTotalItem column="금액" cssClass="refTotalValue" :customize-text="customSumAmount" />
-                        <DxTotalItem cssClass="custom-sumary refTotalDifference" column="비고"
-              :customize-text="checkAlone" />
+                        <DxTotalItem cssClass="custom-sumary refTotalDifference" column="비고" :customize-text="checkAlone" />
                     </DxSummary>
                 </DxDataGrid>
             </standard-form>
         </div>
         <div class="btn_submit text-align-center mt-20">
-            <button-basic :disabled="disabledSubmit" @onClick="onSubmit" class="button-form-modal" :text="'저장'" :type="'default'"
-                :mode="'contained'" />
+            <button-basic :disabled="disabledSubmit" @onClick="onSubmit" class="button-form-modal" :text="'저장'"
+                :type="'default'" :mode="'contained'" />
         </div>
         <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
-    :title="Message.getMessage('AC110', '005').message" content="" :okText="Message.getMessage('AC110', '005').yes" :cancelText="Message.getMessage('AC110', '005').no"
-    @checkConfirm="handleDelete" />
+            :title="Message.getMessage('AC110', '005').message" content="" :okText="Message.getMessage('AC110', '005').yes"
+            :cancelText="Message.getMessage('AC110', '005').no" @checkConfirm="handleDelete" />
     </a-modal>
 </template>
 
@@ -249,12 +251,12 @@ export default defineComponent({
             }
             const elTotalValue: any = document.querySelector('.refTotalValue')
             const elTotalDifference: any = document.querySelector('.refTotalDifference')
-            
+
             elTotalValue.textContent = customSumAmount()
             elTotalDifference.textContent = checkAlone()
-            
+
         }
-        
+
         const customSumAmount = () => {
             let total = 0
             dataSource.value?.map((item: any) => {
@@ -330,4 +332,8 @@ export default defineComponent({
 .mt-10 {
     margin-top: 10px;
 }
-</style>
+
+:deep .dx-datagrid-rowsview .dx-row>td,
+.dx-datagrid-rowsview .dx-row>tr>td {
+    overflow: unset;
+}</style>
