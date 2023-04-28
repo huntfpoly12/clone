@@ -710,6 +710,41 @@
         </pre>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Select Search Edit</div>
+                        <div class="dx-field-value">
+                            <SelectSearchEdit v-model:valueInput="vualueSelectSearchEdit" :data="arrSelectSearchEdit" @updateArrSelect="(value) => arrSelectSearchEdit = [...value]"/>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li><strong>messRequired:</strong> {type: String,default: ""} </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li><strong>valueInput:</strong> [Number, String]</li>
+                        <li><strong>readOnly:</strong> Boolean (option)</li>
+                        <li><strong>placeholder:</strong> {type: String,default: '선택 또는 직접입력'}</li>
+                        <li><strong>required:</strong> Boolean (option)</li>
+                        <li><strong>displayExpr:</strong> {type: String,default: 'value'}</li>
+                        <li><strong>valueExpr:</strong> {type: String,default: 'value'}</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
+                &lt;select-search-edit 
+                v-model:valueInput="vualueSelectSearchEdit" 
+                :data="arrSelectSearchEdit" 
+                @updateArrSelect="(value) => arrSelectSearchEdit = [...value]" /&gt;
+        </pre>
+                </td>
+            </tr>
         </table>
     </form>
 </template>
@@ -754,6 +789,15 @@ export default defineComponent({
         const valueSelectBox = ref(1);
         const saleStatus = ref(10);
         const valTest = ref('Nancy');
+        // data demo select search edit
+        let vualueSelectSearchEdit = ref(null)
+        let arrSelectSearchEdit = ref([
+            { value: 'keyword 1'},
+            { value: 'keyword 2'},
+            { value: 'keyword 3'},
+            { value: 'keyword 4'},
+            { value: 'keyword 5'},
+        ])
         return {
             valTest,
             saleStatus,
@@ -766,6 +810,8 @@ export default defineComponent({
             valueEmploy,
             valueSelectBox,
             arraySelectBox,
+            vualueSelectSearchEdit,
+            arrSelectSearchEdit
         };
     },
 });
