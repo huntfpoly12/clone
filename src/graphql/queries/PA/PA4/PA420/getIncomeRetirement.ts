@@ -29,6 +29,7 @@ export default gql`
                     residentId
                     status
                     foreigner
+                    type
                     __typename @skip(if: true)
                   
                 }
@@ -40,6 +41,7 @@ export default gql`
                     residentId
                     status
                     foreigner
+                    type
                     __typename @skip(if: true)
 
                 }

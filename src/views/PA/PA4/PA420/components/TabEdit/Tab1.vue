@@ -55,7 +55,7 @@
         <a-form-item label="퇴직사유" class="label-required">
           <select-box-common :arrSelect="arrayReasonResignationUtils" :required="true"
                              v-model:valueInput="retirementReason" placeholder="선택"
-                             width="300px"/>
+                             width="150px"/>
         </a-form-item>
       </a-col>
       <div class="header-text-1">근속연수</div>
@@ -151,9 +151,9 @@
         </a-form-item>
         <div>
           근속연수 / 근속월수 / 근속일수:
-          {{ dataPrevRetiredYearsOfService.yearsOfService }}년/
-          {{ dataPrevRetiredYearsOfService.monthsOfService }}개월/
-          {{ dataPrevRetiredYearsOfService.daysOfService }}일
+          {{ dataPrevRetiredYearsOfService.yearsOfService || 0 }}년/
+          {{ dataPrevRetiredYearsOfService.monthsOfService || 0 }}개월/
+          {{ dataPrevRetiredYearsOfService.daysOfService || 0 }}일
         </div>
       </a-col>
       <a-col :span="12">
@@ -230,16 +230,14 @@
         </a-form-item>
         <div>
           근속연수 / 근속월수 / 근속일수:
-          {{ dataLastRetiredYearsOfService.yearsOfService }}년/
-          {{ dataLastRetiredYearsOfService.monthsOfService }}개월/
-          {{ dataLastRetiredYearsOfService.daysOfService }}일
+          {{ dataLastRetiredYearsOfService.yearsOfService || 0 }}년/
+          {{ dataLastRetiredYearsOfService.monthsOfService || 0 }}개월/
+          {{ dataLastRetiredYearsOfService.daysOfService || 0 }}일
         </div>
       </a-col>
       <a-col :span="12" class="mt-10 custom-label"
              :class="interimPaymentTab1 && validatePreRetirementBenefitStatus ? 'label-required' : ''">
         <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
-        {{ validatePreRetirementBenefitStatus  }}
-
         <a-form-item label="중간지급 퇴직급여">
           <div class="d-flex-center"
                :class="interimPaymentTab1 && validatePreRetirementBenefitStatus ? 'label-required' : ''">
@@ -286,8 +284,8 @@
                            ref="incomeCalculationInputSettlementFinishDate"/>
           </div>
         </a-form-item>
-        <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService }}년/{{ dataSettlement.monthsOfService }}개월/{{
-            dataSettlement.daysOfService
+        <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService || 0 }}년/{{ dataSettlement.monthsOfService || 0 }}개월/{{
+            dataSettlement.daysOfService || 0
           }}일
         </div>
       </a-col>
