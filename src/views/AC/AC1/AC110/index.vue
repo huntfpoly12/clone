@@ -35,7 +35,7 @@
     </div>
     <div class="ac-110__main">
       <div class="ac-110__main-main">
-        <a-spin :spinning="loadingGetBankbookDetails" size="large">
+        <a-spin :spinning="loadingGetBankbookDetails || loadingSyncBankbookDetails" size="large">
           <DxDataGrid id="DxDataGridMainAc110" key-expr="bankbookDetailId" :show-row-lines="true"
             :hoverStateEnabled="true" :data-source="dataSource" v-model:selected-row-keys="selectedRowKeys"
             :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused"
@@ -540,6 +540,13 @@ export default defineComponent({
       loading: loadingSyncBankbookDetails,
     } = useMutation(mutations.syncBankbookDetails);
     doneSyncBankbookDetails((e) => {
+      if(e.data.syncBankbookDetails.length) {
+        dataSource.value = [...dataSource.value, e.data.syncBankbookDetails]
+        rowKeyfocused.value = dataSource.value[0].bankbookDetailId
+        payloadGetTransactionDetails.bankbookDetailDate = dataSource.value[0].bankbookDetailDate
+        payloadGetTransactionDetails.bankbookDetailId = dataSource.value[0].bankbookDetailId
+        triggerBankbookDetails.value = true
+      }
       triggerAccountingProcesses.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
@@ -679,7 +686,6 @@ export default defineComponent({
         itemChange.value = month
         isModalConfirmChangeData.value = true
       }
-
     }
     // Grid Main
     const selectionChanged = (event: any) => {
@@ -1060,6 +1066,7 @@ export default defineComponent({
       loadingGetTransactionDetails,
       loadingGetBankbookDetails,
       loadingInitializeTransactionDetails,
+      loadingSyncBankbookDetails,
       dataSourceTransactionDetails,
       bankbookSelected,
       isModalHistory,
