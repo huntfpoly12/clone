@@ -1,114 +1,110 @@
 <template>
-    <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-        :width="500">
-        <standard-form action="" name="edit-510">
-            <div class="custom-modal-edit">
-                <EditOutlined class="fz-18" />
-                <span>선택된 내역 지급일을</span>
-                <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
-                    :spinButtons="true" />
-                <span>일로 변경하시겠습니까?</span>
-            </div>
-            <div class="text-align-center mt-30">
-                <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined"
-                    @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
-                    @onClick="onSubmit" />
-            </div>
-        </standard-form>
-    </a-modal>
+  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
+    :width="500">
+    <standard-form action="" name="edit-510">
+      <div class="custom-modal-edit">
+        <EditOutlined class="fz-18" />
+        <span>선택된 내역 지급일을</span>
+        <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue" :spinButtons="true" />
+        <span>일로 변경하시겠습니까?</span>
+      </div>
+      <div class="text-align-center mt-30">
+        <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined" @onClick="setModalVisible" />
+        <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
+          @onClick="onSubmit" />
+      </div>
+    </standard-form>
+  </a-modal>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
-import { useMutation } from "@vue/apollo-composable";
+import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
 import { EditOutlined } from "@ant-design/icons-vue";
-import {Message} from "@/configs/enum";
+import { Message } from "@/configs/enum";
+import { ApolloClient } from '@apollo/client';
 export default defineComponent({
-    props: {
-        modalStatus: {
-            type: Boolean,
-            default: false,
-        },
-        data: {
-            type: Array,
-            default: []
-        },
-        processKey: {
-            type: Object,
-        },
+  props: {
+    modalStatus: {
+      type: Boolean,
+      default: false,
     },
-    components: {
-        EditOutlined
+    data: {
+      type: Array,
+      default: []
     },
-    setup(props, { emit }) {
-        const dayValue = ref(1)
-        const setModalVisible = () => {
-            emit("closePopup", false)
-        };
-        const {
-            mutate,
-            onDone,
-            onError,
-        } = useMutation(mutations.changeIncomeRetirementPaymentDay);
-        onDone(() => {
-            notification('success', Message.getCommonMessage('106').message)
-            emit("closePopup", false)
+    processKey: {
+      type: Object,
+    },
+  },
+  components: {
+    EditOutlined
+  },
+  setup(props, { emit }) {
+    const dayValue = ref(1)
+    const setModalVisible = () => {
+      emit("closePopup", false)
+    };
+    const { client } = useApolloClient();
+    const onSubmit = () => {
+      Promise.all(props.data.map((val: any) => {
+        return client.mutate({
+          mutation: mutations.changeIncomeRetirementPaymentDay,
+          variables: {
+            companyId: companyId,
+            processKey: props.processKey,
+            incomeId: val,
+            day: dayValue.value
+          }
         })
-        onError((e: any) => {
-            notification('error', e.message)
-        })
+      })).then(() => {
+        notification('success', Message.getCommonMessage('106').message)
+      }).catch((e) => {
+        notification('error', e.message)
+      }).finally(() => {
+        emit("closePopup", false)
+      })
+    };
 
-        const onSubmit = () => {
-            props.data.map((val: any) => {
-                mutate({
-                    companyId: companyId,
-                    processKey: props.processKey,
-                    incomeId: val,
-                    day: dayValue.value
-                })
-            })
-        };
-
-        return {
-            setModalVisible,
-            onSubmit,
-            dayValue,
-        }
-    },
+    return {
+      setModalVisible,
+      onSubmit,
+      dayValue,
+    }
+  },
 })
 </script>
 
 <style lang="scss" scoped>
 .custom-modal-edit {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: center;
-    margin-top: 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  margin-top: 20px;
 
-    img {
-        width: 40px;
-        margin-right: 5px;
-    }
+  img {
+    width: 40px;
+    margin-right: 5px;
+  }
 
-    span {
-        padding: 0px 5px;
-    }
+  span {
+    padding: 0px 5px;
+  }
 }
 
 .mt-30 {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .text-align-center {
-    text-align: center;
+  text-align: center;
 }
 
 .button-form-modal {
-    margin: 0px 5px;
+  margin: 0px 5px;
 }
 </style>

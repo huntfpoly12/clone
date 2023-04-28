@@ -97,7 +97,9 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <DxSelectBox :search-enabled="false" width="357px" :data-source="nationaPersionSelectbox"
+                    <SelectCustomField :dataSource=" nationaPersionSelectbox " :disabled=" !formState.nationalPensionReport "
+                      v-model:valueInput=" formState.nationalPensionLossCode " width="357px" />
+                    <!-- <DxSelectBox :search-enabled="false" width="357px" :data-source="nationaPersionSelectbox"
                       :show-clear-button="false" display-expr="label" value-expr="value"
                       :disabled="!formState.nationalPensionReport" v-model="formState.nationalPensionLossCode"
                       placeholder="선택" field-template="field" item-template="item">
@@ -123,7 +125,7 @@
                           <DxTextBox style="display: none;" />
                         </div>
                       </template>
-                    </DxSelectBox>
+                    </DxSelectBox> -->
                   </div>
                   <!-- <select-box-common width="357px" :arrSelect="nationaPersionSelectbox" :required="true"
                     v-model:valueInput="formState.nationalPensionLossCode"
@@ -144,36 +146,8 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <DxSelectBox :search-enabled=" false " width="357px" :data-source=" healthInsuranceSelectbox "
-                      :show-clear-button=" false " display-expr="label" value-expr="value"
-                      :disabled=" !formState.healthInsuranceReport " v-model=" formState.healthInsuranceLossCode "
-                      :height=" $config_styles.HeightInput " placeholder="선택" field-template="field" item-template="item">
-                      <template #field=" { data } : any ">
-                        <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
-                          <a-tag>{{ data?.value }}</a-tag>
-                          <div>
-                            {{ data.label }}
-                            <DxTextBox style="display: none;" />
-                          </div>
-                        </div>
-                        <div v-else class="pt-5 pl-5">
-                          <span>선택</span>
-                          <DxTextBox style="display: none;" />
-                        </div>
-                      </template>
-                      <template #item=" { data } : any ">
-                        <div style="display: flex; align-items: center;">
-                          <a-tag>{{ data?.value }}</a-tag>
-                          <div>
-                            {{ data?.label }}
-                            <DxTextBox style="display: none;" />
-                          </div>
-                        </div>
-                      </template>
-                      <!-- <DxValidator>
-                        <DxRequiredRule v-if="required" :message="messageRequired" />
-                      </DxValidator> -->
-                    </DxSelectBox>
+                    <SelectCustomField :dataSource=" healthInsuranceSelectbox " :disabled="  !formState.healthInsuranceReport  "
+                      v-model:valueInput=" formState.healthInsuranceLossCode " width="357px" />
                   </div>
                 </div>
               </a-form-item>
@@ -183,35 +157,8 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <DxSelectBox :search-enabled=" false " width="357px" :data-source=" includeDependentsSelectbox "
-                      :show-clear-button=" false " display-expr="label" value-expr="value" :disabled=" isDisabled1 "
-                      v-model=" showData.healthInsuranceAcquisitionCode2 " placeholder="선택" field-template="field"
-                      item-template="item">
-                      <template #field=" { data } : any " style="padding: 4px;display: flex; align-items: center;">
-                        <div v-if=" data " style="padding: 2px;display: flex; align-items: center;">
-                          <a-tag>{{ data?.value }}</a-tag>
-                          <div class="text-overflow">
-                            {{ data.label }}
-                          </div>
-                          <DxTextBox style="display: none;" />
-                        </div>
-                        <div v-else class="pt-5 pl-5">
-                          <span>선택</span>
-                          <DxTextBox style="display: none;" />
-                        </div>
-                      </template>
-                      <template #item=" { data } : any " style="display: flex; align-items: center;">
-                        <div style="display: flex; align-items: center;">
-                          <a-tag>{{ data?.value }}</a-tag>
-                          <div class="text-overflow" style="width: 296px;">
-                            {{ data?.label }}
-                          </div>
-                          <DxTextBox style="display: none;" />
-                        </div>
-                      </template>
-                    </DxSelectBox>
-                    <!-- <select-box-common width="357px" :arrSelect=" includeDependentsSelectbox " :required=" true "
-                      v-model:valueInput=" showData.healthInsuranceAcquisitionCode2 " :disabled=" isDisabled1 " /> -->
+                    <SelectCustomField :dataSource=" includeDependentsSelectbox " :disabled=" isDisabled1 "
+                      v-model:valueInput=" showData.healthInsuranceAcquisitionCode2 " width="357px" />
                   </div>
                   <span class="ml-50">
                     <checkbox-basic size="14" label="이직확인서 발급희망"
@@ -343,7 +290,7 @@ export default defineComponent({
       residentId: '',
       joinedAt: '',
       acquisitionMonthPayment: false,
-      healthInsuranceAcquisitionCode2: 1,
+      healthInsuranceAcquisitionCode2: 0,
     })
     const formState = reactive({
       employeeType: 10,

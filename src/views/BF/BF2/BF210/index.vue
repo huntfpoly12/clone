@@ -150,6 +150,7 @@ import Field from './components/Field.vue';
 import { dataSearchIndex, productsValue } from "./utils/index";
 import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
+import { cloneDeep } from "lodash";
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -197,8 +198,7 @@ export default defineComponent({
         // const originData = ref()
         // let products = ref([...productsValue])
         const dataSource = ref([])
-        const { refetch: refetchData, onResult, loading: loading, onError } = useQuery(queries.searchUsers, { filter: dataSearch.value }, () => ({
-            enabled: triggerSearching.value,
+        const { refetch: refetchData, onResult, loading: loading, onError } = useQuery(queries.searchUsers, { filter: cloneDeep(dataSearch.value) }, () => ({
             fetchPolicy: "no-cache",
         }))
         onError((e) => {
@@ -212,6 +212,7 @@ export default defineComponent({
         const changePage = () => {
             makeDataClean(dataSearch.value)
             triggerSearching.value = true
+            refetchData()
         }
         const searching = () => {
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
@@ -221,8 +222,14 @@ export default defineComponent({
             } else {
                 delete dataSearch.value.active
             }
-            makeDataClean(dataSearch.value)
-            triggerSearching.value = true
+            const search = {...dataSearch.value}
+            if(!search.groupCode) delete search.groupCode
+            if(!search.groupName) delete search.groupName
+            if(!search.name) delete search.name
+            if(!search.username) delete search.username
+            refetchData({
+                filter: search
+            })
         }
         const changeValueCheckBox = (checkbox: any) => {
             if (checkbox == 'checkBox1')

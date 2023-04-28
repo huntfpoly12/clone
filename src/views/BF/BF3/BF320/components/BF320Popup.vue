@@ -13,7 +13,7 @@
                                             nameInput="formState-name" width="220px" />
                                     </a-form-item>
                                     <a-form-item label="사업자등록번호" class="clr">
-                                        <biz-number-text-box v-model:valueInput="formState.bizNumber" :required="true"
+                                        <biz-number-text-box v-model:valueInput="formState.bizNumber" disabled :required="true"
                                             nameInput="formState-bizNumber" width="220px" />
                                     </a-form-item>
                                     <a-form-item label="사업자유형" class="clr">
@@ -106,10 +106,10 @@
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
-                                    <default-text-box width="250px"
+                                    <id-number-text-box width="250px" checkAllResidentId
                                         v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" :required="true"
                                         nameInput="formState-extendInfoCmsBankOwnerBizNumber">
-                                    </default-text-box>
+                                    </id-number-text-box>
                                     <div class="warring-bank">
                                         <img src="@/assets/images/iconInfo.png"
                                             style="width: 14px; height: 14px; margin-top: 0px;" />
