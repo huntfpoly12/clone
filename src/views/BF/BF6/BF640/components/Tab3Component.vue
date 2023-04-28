@@ -42,7 +42,7 @@
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
                 <DxColumn caption="아이디" data-field="productionRequestUserId" />
                 <DxColumn caption="제작현황" cell-template="제작현황" />
-                <template #제작현황="{ data }: any">
+                <template #제작현황="{ data }: any" noDataText="내역이 없습니다">
                   <production-status :typeTag="2" v-if="(data.data.productionStatus==0)" padding="1px 10px" />
                   <production-status :typeTag="3" v-if="(data.data.productionStatus==1)" padding="1px 10px" />
                   <production-status :typeTag="4" v-if="(data.data.productionStatus==2)" padding="1px 10px" />
@@ -182,27 +182,5 @@ export default defineComponent({
 }
 :deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
-}
-:deep #tab3-bf640 {
-  height: calc(70vh);
-
-  :deep .dx-datagrid-total-footer {
-    height: 77px;
-    overflow: hidden;
-    position: absolute;
-    bottom: 0;
-  }
-
-  :deep .dx-datagrid-headers {
-    height: 27px;
-  }
-
-  :deep .dx-datagrid-rowsview {
-    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
-  }
-
-  .dx-freespace-row {
-    display: none !important; // cục lúc hiện lúc không
-  }
 }
 </style> 
