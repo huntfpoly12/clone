@@ -2,7 +2,7 @@
   <a-config-provider :locale="locale">
     <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
       <div class="form-upload-ac110" >
-        <div ref="elementUpload" class="upload-pewview-img">
+        <div ref="elementUpload" class="upload-pewview-img-ac-110">
           <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof || disabled" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
             @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
             accept="image/png, image/jpeg, image/jpg image/gif">
@@ -273,7 +273,7 @@ export default defineComponent({
 
 </script>
 <style lang="scss">
-.upload-pewview-img {
+.upload-pewview-img-ac-110 {
   padding: 14px;
   .ant-upload-list  {
     display: grid !important;
@@ -299,7 +299,9 @@ export default defineComponent({
     border-radius: 15px;
     margin: 0;
   }
-
+  .ant-upload.ant-upload-select-picture-card {
+    grid-row-start: 1;
+  }
   .ant-btn-upload {
     display: flex;
     flex-direction: column;

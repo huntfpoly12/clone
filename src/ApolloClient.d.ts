@@ -12,11 +12,9 @@ const httpLink = createHttpLink({
   uri: baseURL,
 });
 
-// get the new token from your server
-const accessToken = sessionStorage.getItem('token');
-const refreshToken = sessionStorage.getItem('refreshToken');
-
 const authLink = setContext(async (_, { headers }) => {
+  // get the authentication token from localstorage if it exists
+  const accessToken = sessionStorage.getItem("token");
   // return the headers to the context so httpLink can read them
   return {
     headers: {
@@ -32,7 +30,10 @@ const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }
     for (let err of graphQLErrors) {
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          console.log(err.extensions?.code);
+          // get the new token from your server
+          const accessToken = sessionStorage.getItem('token');
+          const refreshToken = sessionStorage.getItem('refreshToken');
+          console.log(err.extensions?.code,'dfgdfgdfg');
           // call the mutation to refresh token
           return client.mutate({
             mutation: mutations.refreshLogin,
