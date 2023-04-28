@@ -18,7 +18,7 @@
             <div class="dx-field-value">
               <a-form-item label="비밀번호 확인" class="label-red" label-align="right">
           <default-text-box width="100%" v-model:valueInput="confirmPassword" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
-              <p style="color: red;">{{ confirmMessage }}</p>
+              <p style="color: red;float: left;">{{ confirmMessage }}</p>
         </a-form-item>
             </div>
           </div>
