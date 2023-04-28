@@ -795,7 +795,7 @@ export default defineComponent({
   color: #1890ff;
 }
 .tab-main-emtytab {
-  height: 41px;
+  height: 40px;
   background-color: #337ab7;
   width: 100%;
 }
