@@ -28,11 +28,11 @@
         <a-form-item label="사원" class="label-required">
           <div class="d-flex-center">
             <employ-select :arrayValue="[employee]"
-                           :valueEmploy="employee.employeeId" width="200px"
+                           :valueEmploy="employee.employeeId" width="300px"
                            :required="true" disabled="true"/>
             <div class="ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-              <div class="custom-waring" style="width: 220px;">대상: 사원과 일용직사 원 중 퇴직금 대상자.</div>
+              <div class="custom-waring" style="width: 180px;">대상: 사원과 일용직사<br>원 중 퇴직금 대상자.</div>
             </div>
           </div>
         </a-form-item>
@@ -238,8 +238,6 @@
       <a-col :span="12" class="mt-10 custom-label"
              :class="interimPaymentTab1 && validatePreRetirementBenefitStatus ? 'label-required' : ''">
         <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
-        {{ validatePreRetirementBenefitStatus  }}
-
         <a-form-item label="중간지급 퇴직급여">
           <div class="d-flex-center"
                :class="interimPaymentTab1 && validatePreRetirementBenefitStatus ? 'label-required' : ''">

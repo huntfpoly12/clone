@@ -1,69 +1,66 @@
 <template>
-  <standard-form class="modal-add" name="tab-1-420" ref="formRef">
+  <standard-form class="modal-add">
     <a-row :gutter="16">
       <a-col :span="12">
         <a-form-item label="구분">
-          <a-tag :color="retirementType == 2 ? 'green' : 'red'">{{
-              retirementType == 2 ? '중간정산' : '퇴직소득'
-            }}
+          <a-tag :color="dataDetail.retirementType == 2 ? 'green' : 'red'">
+            {{ dataDetail.retirementType == 2 ? '중간정산' : '퇴직소득' }}
           </a-tag>
         </a-form-item>
         <a-form-item label="귀속/지급연월">
           <div class="d-flex-center">
-            <month-picker-box-custom v-model:valueDate="attributionDate" text="귀"
-                                     bgColor="gray"></month-picker-box-custom>
-            <month-picker-box-custom v-model:valueDate="paymentYearAndMonth" text="지"></month-picker-box-custom>
+            <month-picker-box-custom v-model:valueDate="attributionDate" disabled text="귀" bgColor="gray"/>
+            <month-picker-box-custom v-model:valueDate="paymentYearAndMonth" disabled text="지"/>
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="label-required">
           <div class="d-flex-center">
             <number-box min="1" max="31" :required="true" width="150px"
-                        v-model:valueInput="paymentDay" is-format/>
+                        v-model:valueInput="dataDetail.paymentDay" disabled/>
             <div class="ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-              <div class="custom-waring">
-                지급일은 저장 후 수정불가
-              </div>
+              <div class="custom-waring" style="width: 180px;">지급일은 저장 후 수정불가</div>
             </div>
           </div>
-
         </a-form-item>
       </a-col>
       <a-col :span="12">
         <a-form-item label="사원" class="label-required">
           <div class="d-flex-center">
-            <employ-select :arrayValue="employeeList" :required="true"
-                           v-model:valueEmploy="formState.inputFormTab1.employeeId" width="300px"/>
+            <employ-select :arrayValue="[employee]"
+                           :valueEmploy="employee.employeeId" width="300px"
+                           :required="true" disabled/>
             <div class="ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
               <div class="custom-waring" style="width: 180px;">대상: 사원과 일용직사<br>원 중 퇴직금 대상자.</div>
             </div>
           </div>
         </a-form-item>
-
         <a-form-item label="입사일">
           <div class="d-flex-center">
-            <date-time-box width="150px" :disabled="true" :valueDate="joinedAt"/>
+            <date-time-box width="130px" disabled :valueDate="employee.joinedAt"/>
             <div class="ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
               <div class="custom-waring">
-                수정이 필요한 경우 <b @click="openNewTab" style="cursor: pointer;">[사원등록]</b>에서 수정하시기 바랍니다.
+                수정이 필요한 경우 <span style="cursor: pointer; color: blue;" @click="openTabFuc">[사원등록]
+                                </span> 에서 수정하시기 바랍니다.
               </div>
             </div>
           </div>
         </a-form-item>
         <a-form-item label="임원여부">
-          <switch-basic textCheck="O" textUnCheck="X" width="60px"
+          <switch-basic textCheck="O" textUnCheck="X" width="60px" disabled
                         v-model:valueSwitch="formState.inputFormTab1.executive"/>
         </a-form-item>
         <a-form-item label="퇴직사유" class="label-required">
-          <select-box-common :arrSelect="arrayReasonResignationUtils" :required="true"
-                             v-model:valueInput="retirementReason" placeholder="선택" width="150px"/>
+          <select-box-common :arrSelect="arrayReasonResignationUtils" disabled
+                             v-model:valueInput="retirementReason" placeholder="선택"
+                             width="150px"/>
         </a-form-item>
       </a-col>
       <div class="header-text-1">근속연수</div>
       <a-col :span="24">
-        <checkbox-basic label="중간지급여부" class="mb-10"
+        <checkbox-basic label="중간지급여부" class="mb-10" disabled
                         v-model:valueCheckbox="interimPaymentTab1"/>
       </a-col>
       <a-col :span="12">
@@ -72,11 +69,11 @@
           <div class="d-flex-center">
             <!-- TODO PRE Settlement START DATE -->
             <date-time-box-custom
-              width="150px" :disabled="!interimPaymentTab1"
+              width="150px" disabled
               v-model:valueDate="formState.prevRetiredYearsOfService.settlementStartDate"
               ref="prevSettlementStartDate"
-              :startDate="joinedAt ? dayjs(String(joinedAt)) : joinedAt"
-              :finishDate="finishDateRetirement && dayjs(String(finishDateRetirement))"
+              :startDate="employee.joinedAt ? dayjs(String(employee.joinedAt)) : employee.joinedAt"
+              :finishDate="finishDateRetirement"
             />
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
@@ -94,9 +91,9 @@
           <div class="d-flex-center">
             <!-- TODO PRE Settlement END DATE -->
             <date-time-box-custom width="150px"
-                                  :disabled="!interimPaymentTab1"
+                                  disabled
                                   :startDate="dayjs(String(formState.prevRetiredYearsOfService.settlementStartDate)).add(1, 'day')"
-                                  :finishDate="finishDateRetirement && dayjs(String(finishDateRetirement))"
+                                  :finishDate="finishDateRetirement"
                                   v-model:valueDate="formState.prevRetiredYearsOfService.settlementFinishDate"
                                   ref="prevSettlementFinishDate"/>
             <div class="ml-5 d-flex-center">
@@ -111,16 +108,17 @@
         </a-form-item>
         <a-form-item label="지급일" :class="interimPaymentTab1 ? 'label-required' : ''">
           <date-time-box-custom
-            :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
+            :required="interimPaymentTab1" width="150px" disabled
             v-model:valueDate="formState.prevRetiredYearsOfService.paymentDate"
             ref="prevRetiredYearsOfServicePaymentDate"
           />
         </a-form-item>
         <a-form-item label="제외일수">
           <div class="d-flex-center">
-            <number-box
-              :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
+            <number-box-money
+              :required="interimPaymentTab1" width="150px" disabled
               v-model:valueInput="formState.prevRetiredYearsOfService.exclusionDays"
+
               format="#0,###"
             />
 
@@ -136,9 +134,10 @@
         </a-form-item>
         <a-form-item label="가산일수">
           <div class="d-flex-center">
-            <number-box :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
-                        v-model:valueInput="formState.prevRetiredYearsOfService.additionalDays"
-                        format="#0,###"
+            <number-box-money :required="interimPaymentTab1" width="150px" disabled
+                              v-model:valueInput="formState.prevRetiredYearsOfService.additionalDays"
+
+                              format="#0,###"
             />
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
@@ -152,19 +151,19 @@
         </a-form-item>
         <div>
           근속연수 / 근속월수 / 근속일수:
-          {{ dataPrevRetiredYearsOfService.yearsOfService }}년/
-          {{ dataPrevRetiredYearsOfService.monthsOfService }}개월/
-          {{ dataPrevRetiredYearsOfService.daysOfService }}일
+          {{ dataPrevRetiredYearsOfService.yearsOfService || 0 }}년/
+          {{ dataPrevRetiredYearsOfService.monthsOfService || 0 }}개월/
+          {{ dataPrevRetiredYearsOfService.daysOfService || 0 }}일
         </div>
       </a-col>
       <a-col :span="12">
         <div class="header-text-2 mb-10">최종 근속연수</div>
         <a-form-item label="정산시작(입사)일" class="label-required">
           <div class="d-flex-center">
-            <date-time-box-custom :required="true" width="150px"
+            <date-time-box-custom :required="true" width="150px" disabled
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementStartDate"
-                                  :startDate="interimPaymentTab1? dayjs(String(formState.prevRetiredYearsOfService.settlementFinishDate)).add(1, 'day') : (joinedAt ? dayjs(String(joinedAt)).add(1, 'day') : joinedAt)"
-                                  :finishDate="finishDateRetirement && dayjs(String(finishDateRetirement))"
+                                  :startDate="interimPaymentTab1? dayjs(String(formState.prevRetiredYearsOfService.settlementFinishDate)).add(1, 'day') : (employee.joinedAt ? dayjs(String(employee.joinedAt)).add(1, 'day') : employee.joinedAt)"
+                                  :finishDate="finishDateRetirement"
                                   ref="lastSettlementStartDate"/>
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
@@ -180,10 +179,11 @@
         </a-form-item>
         <a-form-item label="정산종료(퇴사)일" class="label-required">
           <div class="d-flex-center">
-            <date-time-box-custom :required="true" width="150px"
+
+            <date-time-box-custom :required="true" width="150px" 
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementFinishDate"
-                                  :disabled="retirementType == 1"
-                                  :startDate="dayjs(String(formState.lastRetiredYearsOfService.settlementStartDate)).add(1, 'day')"
+                                  disabled
+                                  :startDate="dayjs(String(formState.lastRetiredYearsOfService.settlementStartDate))"
                                   ref="lastSettlementFinishDate"/>
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
@@ -196,13 +196,13 @@
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="label-required">
-          <date-time-box-custom :required="false" width="150px"
+          <date-time-box-custom :required="false" width="150px" disabled
                                 v-model:valueDate="formState.lastRetiredYearsOfService.paymentDate"
                                 ref="lastRetiredYearsOfServicePaymentDate"/>
         </a-form-item>
         <a-form-item label="제외일수" class="label-required">
           <div class="d-flex-center">
-            <number-box :required="true" width="150px" format="#0,###"
+            <number-box :required="true" width="150px" disabled
                         v-model:valueInput="formState.lastRetiredYearsOfService.exclusionDays"/>
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
@@ -216,7 +216,7 @@
         </a-form-item>
         <a-form-item label="가산일수" class="label-required">
           <div class="d-flex-center">
-            <number-box :required="true" width="150px" format="#0,###"
+            <number-box :required="true" width="150px" disabled
                         v-model:valueInput="formState.lastRetiredYearsOfService.additionalDays"/>
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
@@ -230,18 +230,20 @@
         </a-form-item>
         <div>
           근속연수 / 근속월수 / 근속일수:
-          {{ dataLastRetiredYearsOfService.yearsOfService }}년/
-          {{ dataLastRetiredYearsOfService.monthsOfService }}개월/
-          {{ dataLastRetiredYearsOfService.daysOfService }}일
+          {{ dataLastRetiredYearsOfService.yearsOfService || 0 }}년/
+          {{ dataLastRetiredYearsOfService.monthsOfService || 0 }}개월/
+          {{ dataLastRetiredYearsOfService.daysOfService || 0 }}일
         </div>
       </a-col>
       <a-col :span="12" class="mt-10 custom-label"
              :class="interimPaymentTab1 && validatePreRetirementBenefitStatus ? 'label-required' : ''">
         <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
+        {{ validatePreRetirementBenefitStatus  }}
+
         <a-form-item label="중간지급 퇴직급여">
           <div class="d-flex-center"
                :class="interimPaymentTab1 && validatePreRetirementBenefitStatus ? 'label-required' : ''">
-            <number-box-money width="150px" :disabled="!interimPaymentTab1"
+            <number-box-money width="150px" disabled
                               :required="interimPaymentTab1 && validatePreRetirementBenefitStatus"
                               v-model:valueInput="formState.prevRetirementBenefitStatus.retirementBenefits"/>
             <span class="pl-5">원</span>
@@ -259,7 +261,7 @@
         <a-form-item label="중간지급 과세대상 퇴직급여"
                      :class="interimPaymentTab1 && validatePreRetirementBenefitStatus ? 'label-required' : ''">
           <div class="d-flex-center">
-            <number-box-money width="150px" :disabled="true"
+            <number-box-money width="150px" disabled
                               :required="interimPaymentTab1 && validatePreRetirementBenefitStatus"
                               v-model:valueInput="taxableRetirementBenefits"/>
             <span class="pl-5">원</span>
@@ -284,59 +286,83 @@
                            ref="incomeCalculationInputSettlementFinishDate"/>
           </div>
         </a-form-item>
-        <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService }}년/{{ dataSettlement.monthsOfService }}개월/{{
-            dataSettlement.daysOfService
+        <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService || 0 }}년/{{ dataSettlement.monthsOfService || 0 }}개월/{{
+            dataSettlement.daysOfService || 0
           }}일
         </div>
       </a-col>
     </a-row>
-    <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="btn-next-step"
-                  style="display: none;"/>
   </standard-form>
 </template>
-
 <script lang="ts" setup>
 import {computed, reactive, ref, watch, watchEffect} from 'vue'
 import dayjs from "dayjs";
-import {
-  arrayReasonResignationUtils,
-  FORM_STATE_TAB_1,
-  INPUT_FORM_TAB_1,
-  Prev_Retired_Years_Of_Service
-} from '../../utils'
-import {Formula} from "@bankda/jangbuda-common";
+import {openTab} from '@/helpers/commonFunction';
 import filters from '@/helpers/filters';
+import {arrayReasonResignationUtils, Prev_Retired_Years_Of_Service} from '../../utils/index'
+import {Formula} from "@bankda/jangbuda-common";
 import {useStore} from 'vuex';
+import {IncomeRetirement} from "@/views/PA/PA4/PA420/types";
 import cloneDeep from "lodash/cloneDeep";
 import NumberBoxMoney from "@/components/common/NumberBoxMoney.vue";
-import isEqual from "lodash/isEqual";
 import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
-import {useQuery} from "@vue/apollo-composable";
-import queries from "@/graphql/queries/PA/PA4/PA420";
-import {companyId} from "@/helpers/commonFunction";
+import isEqual from "lodash/isEqual";
 
-enum EmployeeWageType {
-  WAGE = 10,
-  WAGEDaily = 20,
-}
-interface Props {
-  retirementIncome: EmployeeWageType,
-  actionNextStep: number,
-  retirementType: number,
-}
+const props = defineProps<{ actionNextStep: number, dataDetail: IncomeRetirement }>()
+const emit = defineEmits(['closePopup', 'nextPage'])
 
-const store = useStore();
+const prevRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService)
+const lastRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService)
+const prevRetirementBenefitStatus = computed(() => props.dataDetail.specification?.specificationDetail.prevRetirementBenefitStatus)
+const FORM_STATE_OLD = computed(() => cloneDeep({
+  prevRetiredYearsOfService: {
+    settlementStartDate: prevRetiredYearsOfService.value?.settlementStartDate || null,
+    settlementFinishDate: prevRetiredYearsOfService.value?.settlementFinishDate || null,
+    paymentDate: prevRetiredYearsOfService.value?.paymentDate || null,
+    exclusionDays: prevRetiredYearsOfService.value?.exclusionDays || 0,
+    additionalDays: prevRetiredYearsOfService.value?.additionalDays || 0,
+  },
+  lastRetiredYearsOfService: {
+    settlementStartDate: lastRetiredYearsOfService.value?.settlementStartDate || null,
+    settlementFinishDate: lastRetiredYearsOfService.value?.settlementFinishDate || null,
+    paymentDate: lastRetiredYearsOfService.value?.paymentDate || null,
+    exclusionDays: lastRetiredYearsOfService.value?.exclusionDays || 0,
+    additionalDays: lastRetiredYearsOfService.value?.additionalDays  || 0,
+  },
+  prevRetirementBenefitStatus: {
+    retirementBenefits: prevRetirementBenefitStatus.value?.retirementBenefits || 0,
+    nonTaxableRetirementBenefits: prevRetirementBenefitStatus.value?.nonTaxableRetirementBenefits  || 0,
+    taxableRetirementBenefits: prevRetirementBenefitStatus.value?.taxableRetirementBenefits || 0,
+  },
+  incomeCalculationInput: {
+    settlementStartDate: prevRetiredYearsOfService.value?.settlementStartDate || lastRetiredYearsOfService.value?.settlementStartDate,
+    settlementFinishDate:  prevRetiredYearsOfService.value?.settlementFinishDate || lastRetiredYearsOfService.value?.settlementFinishDate,
+    exclusionDays: (prevRetiredYearsOfService.value?.exclusionDays || 0) + (lastRetiredYearsOfService.value?.exclusionDays || 0),
+    additionalDays: lastRetiredYearsOfService.value?.additionalDays || 0,
+    annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
+    totalAnualBonus:props.dataDetail.specification?.totalAnualBonus || 0,
+    totalPay3Month:props.dataDetail.specification?.totalPay3Month || 0,
+  },
+  inputFormTab1: {
+    employeeId: props.dataDetail.employeeId,
+    employeeType: props.dataDetail.employeeType,
+    retirementType: props.dataDetail.retirementType,
+    executive: props.dataDetail.specification?.executive,
+    retirementReason: props.dataDetail.specification?.retirementReason,
+  }
+}))
+const formState = reactive(cloneDeep(FORM_STATE_OLD.value))
+// watch FORM_STATE_OLD for changes to the formState
+watch(FORM_STATE_OLD, () => {
+  Object.assign(formState, cloneDeep(FORM_STATE_OLD.value))
+})
 
-const props = defineProps<Props>()
-const emit = defineEmits(['nextPage'])
-// const inputFormTab1:any = ref(cloneDeep(INPUT_FORM_TAB_1))
-// const formState:any = ref(cloneDeep(TAX_CALCULATION_INPUT))
-// const incomeCalculationInput:any = ref(cloneDeep(INCOME_CALCULATION_INPUT))
-
-const formState: any = reactive(cloneDeep(FORM_STATE_TAB_1))
-
+const retirementReason = computed(() => props.dataDetail.specification?.retirementReason)
+const finishDateRetirement = computed(() => props.dataDetail.retirementType === 1 ? formState.lastRetiredYearsOfService.settlementFinishDate : null)
 const interimPaymentTab1 = ref(false)
-
+watch(props.dataDetail, (value) => {
+  interimPaymentTab1.value = Boolean(value.specification?.specificationDetail.prevRetiredYearsOfService?.settlementStartDate)
+})
 const prevSettlementStartDate = ref()
 const prevSettlementFinishDate = ref()
 const lastSettlementStartDate = ref()
@@ -346,50 +372,21 @@ const incomeCalculationInputSettlementStartDate = ref()
 const incomeCalculationInputSettlementFinishDate = ref()
 const prevRetiredYearsOfServicePaymentDate = ref()
 
-const joinedAt = ref(null)
+const store = useStore();
+const employee = computed(() => store.getters['common/getEmployeeEdit']);
 const ProcessKey = computed(() => store.getters['common/getSelectMonthColumn'])
 // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
 let attributionDate = ref(`${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}`)
 let paymentYearAndMonth = ref(`${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}`)
-const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 
-// get employee list
-const {
-  result: resultEmployee
-} = useQuery(queries.findEmployeesForIncomeRetirement, {
-  companyId: companyId,
-  imputedMonth: selectMonthColumn.value.imputedMonth,
-  imputedYear: selectMonthColumn.value.imputedYear,
-  retirementType: props.retirementType,
-}, () => ({
-  fetchPolicy: "no-cache",
-}));
-const employeeList = computed(() => {
-  if (!resultEmployee.value)  return []
-  if (props.retirementIncome === EmployeeWageType.WAGE) return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWages
-  return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWageDailies
-})
-
-const validatePreRetirementBenefitStatus = computed(() => {
-  return +formState.prevRetirementBenefitStatus.retirementBenefits > 0 ||
-    +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits > 0 ||
-    +formState.prevRetirementBenefitStatus.taxableRetirementBenefits > 0
-})
-const taxableRetirementBenefits = computed(() => +formState.prevRetirementBenefitStatus.retirementBenefits - +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits )
-const retirementReason = computed(() => {
-  if (props.retirementType === 1 && formState.inputFormTab1.executive) {
-    return 4
-  } else if (props.retirementType === 2) {
-    return 5
-  }
-  return 99
-})
-// calculate date of service
 const dataPrevRetiredYearsOfService = computed(() => {
   if (formState.prevRetiredYearsOfService.settlementStartDate && formState.prevRetiredYearsOfService.settlementFinishDate) {
+      new Date((formState.prevRetiredYearsOfService.settlementFinishDate).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
+      formState.prevRetiredYearsOfService.exclusionDays,
+      formState.prevRetiredYearsOfService.additionalDays
     return Formula.getDateOfService(
-      new Date((formState.prevRetiredYearsOfService.settlementStartDate as string).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
-      new Date((formState.prevRetiredYearsOfService.settlementFinishDate as string).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
+      new Date((formState.prevRetiredYearsOfService.settlementStartDate).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
+      new Date((formState.prevRetiredYearsOfService.settlementFinishDate).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
       formState.prevRetiredYearsOfService.exclusionDays,
       formState.prevRetiredYearsOfService.additionalDays
     );
@@ -403,8 +400,8 @@ const dataPrevRetiredYearsOfService = computed(() => {
 const dataLastRetiredYearsOfService = computed(() => {
   if (formState.lastRetiredYearsOfService.settlementStartDate && formState.lastRetiredYearsOfService.settlementFinishDate) {
     return Formula.getDateOfService(
-      new Date((formState.lastRetiredYearsOfService.settlementStartDate as string).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
-      new Date((formState.lastRetiredYearsOfService.settlementFinishDate as string).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
+      new Date((formState.lastRetiredYearsOfService.settlementStartDate).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
+      new Date((formState.lastRetiredYearsOfService.settlementFinishDate).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
       formState.lastRetiredYearsOfService.exclusionDays,
       formState.lastRetiredYearsOfService.additionalDays
     );
@@ -430,45 +427,28 @@ const dataSettlement = computed(() => {
     daysOfService: 0,
   }
 })
-const finishDateRetirement = computed(() => props.retirementType === 1 ? formState.lastRetiredYearsOfService.settlementFinishDate : null)
-const paymentDayOld = store.getters['common/getPaymentDay']
-const paymentDay = ref(store.getters['common/getPaymentDay'])
-
-const formRef = ref()
-// =============== WATCH ==================================
+const validatePreRetirementBenefitStatus = computed(() => {
+  return +formState.prevRetirementBenefitStatus.retirementBenefits > 0 ||
+    +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits > 0 ||
+    +formState.prevRetirementBenefitStatus.taxableRetirementBenefits > 0
+})
+const taxableRetirementBenefits = computed(() => +formState.prevRetirementBenefitStatus.retirementBenefits - +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits )
 const isChangeForm = computed(() => {
-  return !isEqual(formState.inputFormTab1, INPUT_FORM_TAB_1) ||
-    !isEqual(formState, FORM_STATE_TAB_1) ||
-    !isEqual(formState.incomeCalculationInput, FORM_STATE_TAB_1.incomeCalculationInput) ||
+  return !isEqual(formState.inputFormTab1, FORM_STATE_OLD.value.inputFormTab1) ||
+    !isEqual(formState, FORM_STATE_OLD.value) ||
+    !isEqual(formState.incomeCalculationInput, FORM_STATE_OLD.value.incomeCalculationInput) ||
     attributionDate.value != `${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}` ||
     paymentYearAndMonth.value != `${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}` ||
-    interimPaymentTab1.value ||
-    paymentDay.value != paymentDayOld
+    interimPaymentTab1.value
 })
-watchEffect(() => {
-  store.commit('common/setIsChangeForm', {tab1: isChangeForm.value})
-})
-
-// Step 1:  watch employeeId
-watch(() => formState.inputFormTab1.employeeId, (value) => {
-  let dataEmployee: any = employeeList.value.find((element: any) => element.employeeId == value)
-  formState.inputFormTab1.employeeType = dataEmployee?.type
-  joinedAt.value = dataEmployee?.joinedAt // add join at of employee
-  formState.lastRetiredYearsOfService.settlementStartDate = dataEmployee?.joinedAt
-  formState.lastRetiredYearsOfService.settlementFinishDate = dataEmployee?.leavedAt
-  formState.incomeCalculationInput.settlementStartDate = dataEmployee?.joinedAt
-  if (interimPaymentTab1.value) {
-    formState.prevRetiredYearsOfService.settlementStartDate = dataEmployee?.joinedAt
-  }
-});
-// Step 2: Watch interimPaymentTab1 true or false
+// =============== WATCH ==================================
+// Step 1: Watch interimPaymentTab1 true or false
 watch(interimPaymentTab1, (value) => {
   if (!value) {
     formState.prevRetiredYearsOfService = {...Prev_Retired_Years_Of_Service}
-    formState.lastRetiredYearsOfService.settlementStartDate = cloneDeep(joinedAt.value)
+    formState.lastRetiredYearsOfService.settlementStartDate = cloneDeep(props.dataDetail.employee?.joinedAt) as number | null
   } else {
-    formState.prevRetiredYearsOfService.settlementStartDate = cloneDeep(joinedAt.value)
-    formState.incomeCalculationInput.settlementStartDate = cloneDeep(joinedAt.value)
+    formState.prevRetiredYearsOfService = cloneDeep(FORM_STATE_OLD.value.prevRetiredYearsOfService)
   }
 })
 
@@ -476,24 +456,20 @@ watch(() => formState.prevRetiredYearsOfService.settlementStartDate, (value: any
   if (value) {
 
     formState.incomeCalculationInput.settlementStartDate = value
-    if (+value >= +formState.prevRetiredYearsOfService.settlementFinishDate) {
+    if (+value >= Number(formState.prevRetiredYearsOfService.settlementFinishDate)) {
       formState.prevRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
     }
   }
 });
 watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: any) => {
-  if (value && +value > +formState.lastRetiredYearsOfService.settlementStartDate) {
-    formState.lastRetiredYearsOfService.settlementStartDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
-    // formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
+  if (value && +value > Number(formState.lastRetiredYearsOfService.settlementStartDate)) {
+    formState.lastRetiredYearsOfService.settlementStartDate = value
+    formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
   }
 });
 
 watch(() => formState.lastRetiredYearsOfService.settlementStartDate, (value: any) => {
   if (!interimPaymentTab1.value) formState.incomeCalculationInput.settlementStartDate = value
-  // else if (value && +value > +formState.prevRetiredYearsOfService.settlementFinishDate) {
-  //   formState.lastRetiredYearsOfService.settlementStartDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
-  //   // formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
-  // }
 });
 watch(() => formState.lastRetiredYearsOfService.settlementFinishDate, (value: any) => {
   formState.incomeCalculationInput.settlementFinishDate = value
@@ -511,90 +487,15 @@ watch(() => [
   formState.incomeCalculationInput.exclusionDays = +formState.lastRetiredYearsOfService.exclusionDays
 })
 
-watch(() => props.actionNextStep, () => {
+// =============== FUNCTION ================================
+const openTabFuc = () => {
+  emit('closePopup', true)
+  openTab({name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520"})
+}
+
+watch(() => props.actionNextStep, (newVal) => {
   (document.getElementById("btn-next-step") as HTMLInputElement).click();
 });
-
-// =============== FUNCTION ================================
-const openNewTab = () => {
-  window.open('pa-120')
-};
-const submitForm = (e: any) => {
-  // validate input date time
-  let dtValidate = true
-  if (interimPaymentTab1.value && !formState.prevRetiredYearsOfService.settlementStartDate) {
-    prevSettlementStartDate.value.validate(true)
-    dtValidate = false
-  } else {
-    prevSettlementStartDate.value.validate(false)
-  }
-  if (interimPaymentTab1.value && !formState.prevRetiredYearsOfService.settlementFinishDate) {
-    prevSettlementFinishDate.value.validate(true)
-    dtValidate = false
-  } else {
-    prevSettlementFinishDate.value.validate(false)
-  }
-
-  if (!interimPaymentTab1.value && !formState.lastRetiredYearsOfService.settlementStartDate) {
-    lastSettlementStartDate.value.validate(true)
-    dtValidate = false
-  } else {
-    lastSettlementStartDate.value.validate(false)
-  }
-  if (!interimPaymentTab1.value && !formState.lastRetiredYearsOfService.settlementFinishDate) {
-    lastSettlementFinishDate.value.validate(true)
-    dtValidate = false
-  } else {
-    lastSettlementFinishDate.value.validate(false)
-  }
-  if (interimPaymentTab1.value && !formState.prevRetiredYearsOfService.paymentDate) {
-    prevRetiredYearsOfServicePaymentDate.value.validate(true)
-    dtValidate = false
-  } else {
-    prevRetiredYearsOfServicePaymentDate.value.validate(false)
-  }
-  if (!formState.lastRetiredYearsOfService.paymentDate) {
-    lastRetiredYearsOfServicePaymentDate.value.validate(true)
-    dtValidate = false
-  }
-  if (!formState.incomeCalculationInput.settlementStartDate) {
-    incomeCalculationInputSettlementStartDate.value.validate(true)
-    dtValidate = false
-  }
-  if (!formState.incomeCalculationInput.settlementFinishDate) {
-    incomeCalculationInputSettlementFinishDate.value.validate(true)
-    dtValidate = false
-  }
-  const res = e.validationGroup.validate();
-  const res1 = formRef.value?.validate();
-  if (!res.isValid) {
-    res.brokenRules[0].validator.focus();
-    dtValidate = true
-  } else if (!dtValidate) {
-    dtValidate = true
-  } else {
-    console.log('formState', formState)
-    const {inputFormTab1, incomeCalculationInput, ...taxCalculationInput} = formState
-    store.commit('common/setIncomeCalculationInput', incomeCalculationInput)
-    store.commit('common/setTaxCalculationInput', {
-      ...taxCalculationInput,
-      prevRetirementBenefitStatus: {
-        ...taxCalculationInput.prevRetirementBenefitStatus,
-        taxableRetirementBenefits: taxableRetirementBenefits.value
-      }
-    })
-    store.commit('common/setIsDisableBtnTab1', false)
-    store.commit('common/setInputTab1', {
-      ...inputFormTab1,
-      retirementType: props.retirementType,
-      retirementReason: retirementReason.value,
-      paymentDay: paymentDay.value
-    })
-    store.commit('common/setInterimPaymentTab1', interimPaymentTab1.value)
-    // store.commit('common/setIsDisableBtnTab2', true)
-    emit('nextPage', true)
-  }
-}
 
 </script>
 <style lang="scss" scoped src="../../style/modalAdd.scss">
