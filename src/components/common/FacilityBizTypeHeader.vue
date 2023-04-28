@@ -106,6 +106,8 @@ export default defineComponent({
     onMounted(()=>{
       if(jwtObject.userType != 'm' && !globalFacilityBizId.value && !acStateYear.value && !paStateYear.value){
         modalConfirm.value = true
+      }
+      if(jwtObject.userType != 'm'){
         trigger.value = true
       }
     })
