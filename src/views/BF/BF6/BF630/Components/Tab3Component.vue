@@ -25,7 +25,7 @@
           <div class="checkbox-tab-1">
             <span>연간(1.1~12.31)지급분</span>
             <div class="group-checkbox">
-              <a-row :style="!filterForm.afterProduction ? 'opacity: 0.6': ''">
+              <a-row :style="!filterForm.afterProduction ? 'opacity: 0.6' : ''">
                 <a-col :span="12">
                   <div class="checkbox-item">
                     <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="!filterForm.afterProduction"
@@ -104,9 +104,10 @@
     </div>
     <div class="content-grid">
       <a-spin :spinning="loadingIncomeBusinessPayment || loadingElectronicFilings" size="large">
-        <DxDataGrid id="DxDataGrid-bf-630-tab3" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true" @selection-changed="selectionChanged" v-model:selected-row-keys="selectedRowKeys">
+        <DxDataGrid id="DxDataGrid-bf-630-tab3" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+          :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
+          v-model:selected-row-keys="selectedRowKeys" noDataText="내역이 없습니다">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
           <DxColumn caption="사업자코드" cell-template="companyCode" />
@@ -126,13 +127,13 @@
             format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="제작현황" cell-template="imputed" width="430" />
           <template #imputed="{ data }">
-            <GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data" tabName="tab3"
-              @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
+            <GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data"
+              tabName="tab3" @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
           </template>
 
           <DxSummary>
-            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
+            <DxTotalItem cssClass="bf-630-sumary" column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
+            <DxTotalItem cssClass="bf-630-sumary" column="제작현황" :customize-text="productStatusSummary" />
           </DxSummary>
         </DxDataGrid>
       </a-spin>
@@ -385,11 +386,11 @@ export default defineComponent({
           totalBeforeProduction++
         }
       });
-      return `제작요청전 ${totalBeforeProduction} 
-              제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 
-              제작중 ${countStatus(productionStatusArr.value, 1, 'productionStatus')} 
-              제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 
-              제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
+      return `제작요청전 [${totalBeforeProduction}] 
+              제작대기 [${countStatus(productionStatusArr.value, 0, 'productionStatus')}] 
+              제작중 [${countStatus(productionStatusArr.value, 1, 'productionStatus')}] 
+              제작실패 [${countStatus(productionStatusArr.value, -1, 'productionStatus')}] 
+              제작성공 [${countStatus(productionStatusArr.value, 2, 'productionStatus')}]`;
     };
     const productionStatusData = (emitVal: any, index: number) => {
       countListData.value++
@@ -468,7 +469,7 @@ export default defineComponent({
       }
     }
 
-    const formatBizNumber = (value:any) => {
+    const formatBizNumber = (value: any) => {
       const bizNumber = value.toString()
       return `${bizNumber.slice(0, 3)}-${bizNumber.slice(3, 5)}-${bizNumber.slice(5)}`
     }
