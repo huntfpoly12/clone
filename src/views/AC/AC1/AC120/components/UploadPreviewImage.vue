@@ -1,11 +1,8 @@
 <template>
     <a-config-provider :locale="locale">
         <a-spin :spinning="loadingGetAccountingDocumentProofs" size="large">
-            <div style="margin-right: -10px; overflow-x: hidden" :style="[
-                    !store.state.common.ac120.statusShowFull ? { height: '125px', overflow: 'hidden', transition: '.5s' } : {},
-                    `max-width: 387px; width: 100%`,
-                ]" :class="{ 'ac120-disable-form-upload': false }">
-                <div ref="elementUpload" class="upload-pewview-img">
+            <div class="form-upload-ac120" :class="{ 'ac120-disable-form-upload': false }">
+                <div ref="elementUpload" class="upload-pewview-img-ac-120">
                     <a-upload :disabled="statusDisabledImg" list-type="picture-card" :multiple="multiple"
                         v-model:file-list="fileList" @preview="handlePreview" :customRequest="customRequest"
                         :before-upload="beforeUpload" @remove="remove" accept="image/png, image/jpeg, image/jpg image/gif">
@@ -276,10 +273,27 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" >
-.upload-pewview-img {
+.form-upload-ac120 {
+    overflow-x: hidden;
+    height: calc(100vh - 765px);
+    max-width: 387px; 
+    width: 100%;
+}
+.upload-pewview-img-ac-120 {
+    padding: 14px;
+    .ant-upload-list  {
+        display: grid !important;
+        grid-template-columns: auto auto !important;
+        gap: 8px;
+        &::before {
+        display: none;
+        }
+    }
+
     .ant-upload-list-picture-card-container {
         width: 120px;
         height: 120px;
+        margin: 0;
     }
 
     .ant-upload-list-item {
@@ -290,7 +304,10 @@ export default defineComponent({
         width: 120px;
         height: 120px;
         border-radius: 15px;
-        // margin: 0;
+        margin: 0;
+    }
+    .ant-upload.ant-upload-select-picture-card {
+        grid-row-start: 1;
     }
 
     .ant-btn-upload {
@@ -317,16 +334,6 @@ export default defineComponent({
             border-radius: 5px;
             padding: 0 15px;
         }
-    }
-
-    .ant-upload-list {
-        display: flex;
-        flex-direction: row-reverse;
-        flex-wrap: wrap-reverse;
-    }
-
-    .ant-upload-list-picture-card-container {
-        width: 45%;
     }
 }
 </style>
