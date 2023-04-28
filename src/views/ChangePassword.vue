@@ -92,7 +92,7 @@
       });
       watch(confirmPassword, (newVal) => {
           if (form.password !== newVal) {
-            confirmMessage.value = 'Passwords are not matching, please try again' 
+            confirmMessage.value = '비밀번호가 일치하지 않습니다.' 
             isConfirm.value = false
           } else {
               confirmMessage.value = ''
