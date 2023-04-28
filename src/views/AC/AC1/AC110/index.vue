@@ -163,17 +163,18 @@
                     <a-tooltip placement="top">
                       <template #title>신규</template>
                       <div>
-                        <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails"
-                          :disabled="isRegistered || !rowKeyfocused" />
+                        <DxButton :focusStateEnabled="false"  @click="addNewRowTransactionDetails"
+                          :disabled="isRegistered || !rowKeyfocused" size="large">
+                          <PlusOutlined :style="{fontSize: '17px', color: 'black'}"/> 신규
+                        </DxButton>
                       </div>
                     </a-tooltip>
                   </template>
                   <template #button-save>
                     <a-tooltip placement="top">
                       <template #title>신규</template>
-                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails()"
-                        :disabled="isRegistered || !rowKeyfocused">
-                        <SaveFilled style="font-size: 19px;" />
+                      <DxButton :focusStateEnabled="false" @click="submitTransactionDetails()" size="large" :disabled="isRegistered || !rowKeyfocused">
+                        <SaveOutlined :style="{fontSize: '17px', color: 'black'}"/> 저장
                       </DxButton>
                     </a-tooltip>
                   </template>
@@ -311,7 +312,8 @@
       :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false, dataStatementOfGoodsItems = {}"
       @updateGoodsCount="updateGoodsCount" />
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" :transactionSelected="transactionSelected"
-      @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" :disabled="isRegistered" />
+      @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" :disabled="isRegistered" 
+      :placeholder="transactionSelected?.key === 'causeUsage' ? '원인/용도 입력 ...' : '메모 입력 ...'"/>
     <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
       typeHistory="ac-110-bankbook" :data="payloadGetTransactionDetails" />
     <HistoryPopup :modalStatus="isModalHistoryAccountingProcessLogs"
@@ -331,7 +333,7 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
-import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
+import { HistoryOutlined, EditOutlined, PlusOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
 import { Message } from "@/configs/enum"
 import notification from '@/utils/notification';
@@ -373,7 +375,7 @@ export default defineComponent({
     UploadPreviewImage,
     DxLookup,
     HistoryPopup,
-    SaveFilled,
+    SaveOutlined,
     DxPaging
   },
   setup() {
@@ -674,6 +676,7 @@ export default defineComponent({
       isModalHistoryAccountingProcessLogs.value = true
     }
     const selectedMonth = (month: number) => {
+      if(monthSelected.value === month) return
       if (isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value) || !rowKeyfocused.value) {
         dataSourceTransactionDetails.value.transactionDetails = []
         listTransactionDetailsOrigin.value = []
