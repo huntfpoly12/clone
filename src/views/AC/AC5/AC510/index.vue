@@ -2,7 +2,7 @@
     <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false"/>
     <div id="ac-510">
         <div class="top">
-            <div class="grid">
+            <!-- <div class="grid">
                 <div class="items" v-for="(status, index) in arrStatus" :key="index">
                     <div class="text">
                         <span class="">{{ $filters.formatMonth(index + 1) }}</span>
@@ -10,7 +10,14 @@
                     </div>
                     <ProcessStatus :disabled="true" :valueStatus="status" />
                 </div>
-            </div>
+            </div> -->
+            <div class="grid">
+                    <div v-for="(status, index) in arrStatus" :key="index" class="items">
+                        <colorful-badge
+                            :value="status"
+                            :year="2023" :month="status" />
+                    </div>
+                </div>
             <div class="flex">
                 <a-form-item label="서식 설정">
                     <div class="dflex custom-flex">
@@ -31,7 +38,7 @@
             </div>
         </div>
         <div class="main">
-            <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceAC510"
+            <DxDataGrid noDataText="내역이 없습니다" key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceAC510"
                 :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                 :column-auto-width="true">
                 <DxColumn cell-template="col-first" caption="서식" />

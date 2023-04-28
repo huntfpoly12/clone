@@ -37,9 +37,9 @@
   <div class="grid-view">
     <div class="content-grid">
       <a-spin :spinning="loadingElectronicFiling" size="large">
-        <DxDataGrid id="DxDataGrid-bf-630-tab5" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true">
+        <DxDataGrid id="DxDataGrid-bf-630-tab5" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+          :show-borders="true" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true" noDataText="내역이 없습니다">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="일련번호" data-field="electronicFilingId" width="100px" alignment="center" />
           <DxColumn caption="참고사항" data-field="referenceInformation" />
@@ -69,7 +69,7 @@
             </div>
           </template>
           <DxSummary>
-            <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
+            <DxTotalItem cssClass="bf-630-sumary" column="일련번호" summary-type="count" display-format="전체: [{0}]" />
           </DxSummary>
         </DxDataGrid>
       </a-spin>

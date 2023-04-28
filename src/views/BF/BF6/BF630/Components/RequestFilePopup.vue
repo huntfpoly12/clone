@@ -1,7 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-        :width="644">
-        <standard-form action="" name="request-file-630">
+        :width="550">
+        <standard-form class="bf-630-form-request" action="" name="request-file-630">
             <div>
               <div>
                 <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
@@ -154,11 +154,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.bf-630-form-request {
+    display: flex;
+    justify-content: center;
+}
 .eamil-input {
     display: flex;
     align-items: center;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 20px;
     span {
         padding-left: 10px;
     }

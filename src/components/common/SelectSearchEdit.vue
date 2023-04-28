@@ -17,6 +17,7 @@
     @input="inputChange" 
     @enter-key="eventEnter"
     @focus-in="focusInput"
+    noDataText="내역이 없습니다"
     >
     <DxValidator name="규격">
       <DxRequiredRule v-if="required" :message="messRequired" />
