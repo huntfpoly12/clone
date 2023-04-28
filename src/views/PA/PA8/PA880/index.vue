@@ -42,7 +42,7 @@
         <template #downA=" { data }: any " class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
-              <DownloadOutlined :size=" 12 " />
+              <DownloadOutlined :style="{fontSize: 12}"/>
             </DxButton>
           </div>
         </template>

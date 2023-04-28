@@ -522,6 +522,7 @@ export default defineComponent({
                     dataActiveRow.value = dataSource.value[0]
                     focusedRowKey.value = 0
                 }
+                checkedService.value = value.getSubscriptionRequest.usedWithholding;
                 dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
                 triggerCheckPer.value = true;
             }
