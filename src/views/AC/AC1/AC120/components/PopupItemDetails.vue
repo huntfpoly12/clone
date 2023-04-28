@@ -59,14 +59,19 @@
                         <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}건" />
                         <!-- <DxTotalItem column="금액" summary-type="sum" display-format="금액합계: {0}원" value-format="#,###"/> -->
                         <DxTotalItem column="금액" cssClass="refTotalValue" :customize-text="customSumAmount" />
+                        <DxTotalItem cssClass="custom-sumary refTotalDifference" column="비고"
+              :customize-text="checkAlone" />
                     </DxSummary>
                 </DxDataGrid>
             </standard-form>
         </div>
         <div class="btn_submit text-align-center mt-20">
-            <button-basic @onClick="onSubmit" class="button-form-modal" :text="'저장'" :type="'default'"
+            <button-basic :disabled="disabledSubmit" @onClick="onSubmit" class="button-form-modal" :text="'저장'" :type="'default'"
                 :mode="'contained'" />
         </div>
+        <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
+    :title="Message.getMessage('AC110', '005').message" content="" :okText="Message.getMessage('AC110', '005').yes" :cancelText="Message.getMessage('AC110', '005').no"
+    @checkConfirm="handleDelete" />
     </a-modal>
 </template>
 
@@ -111,8 +116,10 @@ export default defineComponent({
         let arrSelectStandard: any = ref([])
         let arrSelectUnit: any = ref([])
         const dataSource = ref<any>([])
+        let dataDelete: any = ref({})
         const refFormItemAC120 = ref()
-
+        let isModalDelete = ref(false)
+        const disabledSubmit = ref(false)
         // =================== GRAPHQL ===================
         // mutation deleteStatementOfGoods    
         const {
@@ -186,8 +193,13 @@ export default defineComponent({
         }
 
         const deleteItem = (data: any) => {
-            dataSource.value = dataSource.value.filter((item: any) => item.id !== data.id)
+            isModalDelete.value = true
+            dataDelete.value = data
+        }
+        const handleDelete = () => {
+            dataSource.value = dataSource.value.filter((item: any) => item.id !== dataDelete.value.id)
             if (!store.state.common.ac120.statusFormAdd && dataSource.value.length == 0) { // status update = true and 1 data left
+                isModalDelete.value
                 mutateDeleteStatementOfGoods({
                     companyId: companyId,
                     fiscalYear: acYear.value,
@@ -236,15 +248,32 @@ export default defineComponent({
                 dataSource.value[index].amount = dataTotalValue * dataTotalDifference
             }
             const elTotalValue: any = document.querySelector('.refTotalValue')
+            const elTotalDifference: any = document.querySelector('.refTotalDifference')
+            
             elTotalValue.textContent = customSumAmount()
+            elTotalDifference.textContent = checkAlone()
             
         }
+        
         const customSumAmount = () => {
             let total = 0
             dataSource.value?.map((item: any) => {
                 total += item.amount
             })
             return `금액합계: ${filters.formatCurrency(total)} 원`
+        }
+        const checkAlone = () => {
+            let total = 0
+            dataSource.value?.map((item: any) => {
+                total += item.amount
+            })
+            let totalShow = store.state.common.ac120.formData?.spending - total
+            if (totalShow === 0) {
+                disabledSubmit.value = true
+            } else {
+                disabledSubmit.value = false
+            }
+            return `차액: ` + filters.formatCurrency(totalShow)
         }
         return {
             move_column,
@@ -263,6 +292,10 @@ export default defineComponent({
             arrSelectStandard,
             arrSelectUnit,
             refFormItemAC120,
+            isModalDelete, checkAlone,
+            Message,
+            handleDelete,
+            disabledSubmit,
         }
     },
 })
