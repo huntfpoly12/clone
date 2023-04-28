@@ -62,7 +62,7 @@
               </template>
               <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
               <template #submission-date="{ data }">
-                <date-time-box v-model:valueDate="data.data.submissionDate" :disabled="dataSource[0].status != 10" teleport="true"></date-time-box>
+                <date-time-box v-model:valueDate="data.data.submissionDate" :disabled="dataSource[0].status != 10" :teleport="true"></date-time-box>
               </template>
             </DxDataGrid>
           </div>
