@@ -364,7 +364,7 @@
                         </template>
                     </DxDataGrid> -->
                     <!-- {{ store.state.common.ac120.transactionDetailDate }} -->
-                    <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
+                    <DxDataGrid noDataText="내역이 없습니다" id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
