@@ -6,7 +6,8 @@
       <standard-form>
         <DxDataGrid id="DxDataGrid-ac-110-popup-detail" key-expr="id" class="mt-20" :show-row-lines="true"
           v-model:focused-row-key="rowKeyfocused" :data-source="dataSource.statementOfGoodsItems" :show-borders="true"
-          :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+          :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+          noDataText="내역이 없습니다">
           <DxToolbar>
             <DxItem location="after" template="button-add" css-class="cell-button-add" />
           </DxToolbar>
@@ -21,15 +22,18 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-              <SelectSearchEdit v-model:valueInput="data.data.item" :data="arrSelectItem" @updateArrSelect="(value: any) => arrSelectItem = [...value]" :required="true" />
+            <SelectSearchEdit v-model:valueInput="data.data.item" :data="arrSelectItem"
+              @updateArrSelect="(value: any) => arrSelectItem = [...value]" :required="true" />
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
-            <SelectSearchEdit v-model:valueInput="data.data.standard" :data="arrSelectStandard" @updateArrSelect="(value: any) => arrSelectStandard = [...value]" :required="true" />
+            <SelectSearchEdit v-model:valueInput="data.data.standard" :data="arrSelectStandard"
+              @updateArrSelect="(value: any) => arrSelectStandard = [...value]" :required="true" />
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <SelectSearchEdit v-model:valueInput="data.data.unit" :data="arrSelectUnit" @updateArrSelect="(value: any) => arrSelectUnit = [...value]" :required="true" />
+            <SelectSearchEdit v-model:valueInput="data.data.unit" :data="arrSelectUnit"
+              @updateArrSelect="(value: any) => arrSelectUnit = [...value]" :required="true" />
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
@@ -176,7 +180,7 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       }))
     onResultSearchStatementOfGoodsItems((res) => {
-      arrSelectItem.value = res.data.searchStatementOfGoodsItems.map((item: any) => ({value: item}))
+      arrSelectItem.value = res.data.searchStatementOfGoodsItems.map((item: any) => ({ value: item }))
       triggerSearchStatementOfGoodsItems.value = false
     })
 
@@ -190,9 +194,9 @@ export default defineComponent({
         enabled: triggerSearchStatementOfGoodsStandards.value,
         fetchPolicy: "no-cache",
       }))
-    
+
     onResultSearchStatementOfGoodsStandards((res) => {
-      arrSelectStandard.value = res.data.searchStatementOfGoodsStandards.map((item: any) => ({value: item}))
+      arrSelectStandard.value = res.data.searchStatementOfGoodsStandards.map((item: any) => ({ value: item }))
       triggerSearchStatementOfGoodsStandards.value = false
     })
 
@@ -206,9 +210,9 @@ export default defineComponent({
         enabled: triggerSearchStatementOfGoodsUnits.value,
         fetchPolicy: "no-cache",
       }))
-    
+
     onResultSearchStatementOfGoodsUnits((res) => {
-      arrSelectUnit.value = res.data.searchStatementOfGoodsUnits.map((item: any) => ({value: item}))
+      arrSelectUnit.value = res.data.searchStatementOfGoodsUnits.map((item: any) => ({ value: item }))
       triggerSearchStatementOfGoodsUnits.value = false
     })
 
@@ -293,7 +297,7 @@ export default defineComponent({
           }
         }
       });
-      const result =  spending - total
+      const result = spending - total
       isDisableBtnSave.value = result !== 0
       return `차액: ${formatNumber(result)}`
     }
