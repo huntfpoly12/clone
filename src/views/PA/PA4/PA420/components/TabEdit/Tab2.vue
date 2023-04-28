@@ -26,10 +26,10 @@
           </div>
         </a-form-item>
 
-        <div class="d-flex mt-20 mb-20 wf-100">
-          <div class="d-flex-center" style="margin-left: 250px;">
+        <div class="mt-20 mb-20 wf-100">
+          <div class="d-flex-center justify-content-center">
             <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement"/>
-            <div class="ml-5 d-flex-center">
+            <div class="absolute ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
               <span class="custom-waring">상기 급여(수당)으로 퇴직금 계산합니다.</span>
             </div>
@@ -93,13 +93,22 @@ interface DataFormIncomeCalculation {
 }
 
 const props = defineProps<{ dataDetail: IncomeRetirement }>()
-const emit = defineEmits(['closePopup', 'nextPage'])
+// const emit = defineEmits(['closePopup', 'nextPage'])
 
 const store = useStore();
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
+const prevRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService)
+const lastRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService)
 
-const dataFormOld = computed(() => cloneDeep(incomeCalculationInput.value))
-
+const dataFormOld = computed(() => ({
+  settlementStartDate: prevRetiredYearsOfService.value?.settlementStartDate || lastRetiredYearsOfService.value?.settlementStartDate,
+  settlementFinishDate:  prevRetiredYearsOfService.value?.settlementFinishDate || lastRetiredYearsOfService.value?.settlementFinishDate,
+  exclusionDays: (prevRetiredYearsOfService.value?.exclusionDays || 0) + (lastRetiredYearsOfService.value?.exclusionDays || 0),
+  additionalDays: lastRetiredYearsOfService.value?.additionalDays || 0,
+  annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
+  totalAnualBonus:props.dataDetail.specification?.totalAnualBonus || 0,
+  totalPay3Month:props.dataDetail.specification?.totalPay3Month || 0,
+}))
 const dataFormIncomeCalculation = reactive<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
 const dataIncomeRetirement = ref(0)
 const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
@@ -113,10 +122,10 @@ store.commit('common/setIsDisableBtnTab2', emptyForm.value)
 // watch isChangeForm to set value to store
 watch(isChangeForm, (value) => {
   store.commit('common/setIsChangeForm', {tab2: value})
-}, {deep: true})
+  store.commit('common/setIsDisableBtnTab2', value)
+})
 
 watchEffect(() => {
-  console.log('props.', props.dataDetail)
   dataIncomeRetirement.value = props.dataDetail.specification?.expectedRetirementBenefits || 0
   definedRetirementBenefits.value= props.dataDetail.specification?.definedRetirementBenefits || 0
 })
@@ -164,8 +173,11 @@ const calculateIncomeRetirement = async () => {
 ::v-deep label {
   min-width: 250px !important;
 }
-
 ::v-deep .custom-input-number .dx-texteditor-input {
   color: red;
+}
+.absolute {
+  position: absolute;
+  left: 60%;
 }
 </style>

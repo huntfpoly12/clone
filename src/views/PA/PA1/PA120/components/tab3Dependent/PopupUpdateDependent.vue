@@ -1,7 +1,7 @@
 <template>
   <div>
-    <a-modal :visible="modalStatus" title="부양가족 등록" centered @cancel="setModalVisible()" :mask-closable="false" :width="750"
-      :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
+    <a-modal :visible="modalStatus" title="부양가족 등록" centered @cancel="setModalVisible()" :mask-closable="false"
+      :width="750" :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
       <div class="page-content" id="add-new-dependent-pa-120">
         <a-row>
           <a-col :span="12">
@@ -92,8 +92,26 @@
           :disabled="disabledButton || formState.relation == 0" />
       </a-row>
 
-      <PopupMessage :modalStatus="modalStatusDelete" @closePopup="modalStatusDelete = false" typeModal="confirm"
-        :content="() => vnode" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="statusComfirm" />
+      <!-- <PopupMessage :modalStatus="modalStatusDelete" @closePopup="modalStatusDelete = false" typeModal="confirm"
+        :content="() => vnode" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="statusComfirm" /> -->
+      <a-modal :visible="modalStatusDelete" @cancel="modalStatusDelete = false" :mask-closable="false" class="confirm-md" footer=""
+        :width="500">
+        <standard-form action="" name="delete-510">
+          <div class="custom-modal-delete">
+            <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
+            <div>
+              <div>연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야</div>
+              <div>합니다. 그래도 삭제하시겠습니까?</div>
+            </div>
+          </div>
+          <div class="text-align-center mt-20">
+            <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+              @onClick="modalStatusDelete = false" />
+            <button-basic class="button-form-modal" :text="'네. 삭제합니다'" :width="140" :type="'default'"
+              :mode="'contained'" @onClick="statusComfirm" />
+          </div>
+        </standard-form>
+      </a-modal>
       <!-- </a-spin> -->
     </a-modal>
   </div>
@@ -133,7 +151,7 @@ export default defineComponent({
     let disabledButton = ref<boolean>(false);
     let formState = reactive<any>({ ...props.dependentItem });
     let formStateToCompare = ({ ...props.dependentItem });
-    const labelResidebId = ref(formState.foreigner?'외국인번호 유효성':'주민등록번호')
+    const labelResidebId = ref(formState.foreigner ? '외국인번호 유효성' : '주민등록번호')
     const ageCount = ref<any>(convertAge(props.dependentItem?.residentId));
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
     const itemSelected = ref<any>([...props.relationAll]);

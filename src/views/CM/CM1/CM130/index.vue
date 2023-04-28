@@ -576,7 +576,7 @@ export default defineComponent({
             notification('error', error.message)
         })
         onDoneUpdated(() => {
-            notification('success', `업데이트 성공되었습니다!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             // refetchConfig();
             triggerWithholdingConfig.value = true;
             store.state.common.isDisableInsuranceSupport = formState.insuranceSupport;
@@ -606,7 +606,7 @@ export default defineComponent({
             notification('error', error.message)
         })
         onDoneUpdatedDeduction(() => {
-            notification('success', `업데이트 성공되었습니다!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             // refetchConfigDeduction();
             // if (checkClickYear.value) {
             //     runOne.value = true;
@@ -698,7 +698,7 @@ export default defineComponent({
             mutations.deleteWithholdingConfigPayItem
         );
         onDoneDelete(() => {
-            notification('success', `업데이트 성공되었습니다!`)
+            notification('success', Message.getMessage('COMMON', '402').message)
             // refetchWithholdingConfig()
             triggerWithholdingConfigPayItems.value = true;
         });

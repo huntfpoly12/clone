@@ -71,7 +71,8 @@
         </div>
         <div class="main">
             <!-- {{ dataSource }} -->
-            <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
+            <div class="data-grid"
+                :style="[store.state.common.ac120.statusShowFull ? { height: heightTableHidden } : { height: heightTableFull }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- {{ dataSource }} -->
                     <!-- {{ store.state.common.ac120.selectedRowKeys }}
@@ -334,15 +335,17 @@
                             </DxDataGrid>
                         </template>
                     </DxDataGrid> -->
-                    <!-- {{ focusedRowKey }} -->
+                    <!-- {{ store.state.common.ac120.transactionDetailDate }} -->
                     <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
-                        @focused-row-changing="onFocusedRowChanging"
-                        :column-auto-width="true" v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
+                        @focused-row-changing="onFocusedRowChanging" :column-auto-width="true"
+                        v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
                         @selection-changed="selectionChanged">
-                        <DxRowDragging v-if="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status == 10" :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
+                        <DxRowDragging
+                            v-if="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status == 10"
+                            :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
                             :on-drag-change="onDragChange" />
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
                             mode="multiple" />
@@ -482,7 +485,7 @@
                             </DxDataGrid>
                         </template> -->
 
-                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode"/>
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
                         <template #accountCode="{ data }">
                             <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
                             <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
@@ -557,8 +560,14 @@
 
                         <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" width="75" />
                         <template #normality="{ data }">
-                            <PlusOutlined v-if="data.data.resolutionClassification != 1" class="icon-add"
-                                @click="actionPopupItemDetail(data.data)" />
+                            <div v-if="data.data.resolutionClassification != 1">
+                                <PlusOutlined v-if="data.data.accountingDocumentId == 'AC120'" class="icon-add"
+                                    @click="actionPopupItemDetail(data.data)" />
+                                <div v-else style="cursor: pointer;" @click="actionPopupItemDetail(data.data)">
+                                    {{ data.data.goodsCount || 0 }}
+                                </div>
+                            </div>
+
                             <!-- <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId"
                                 :onRowClick="actionEditTaxPay" @focused-row-changing="onFocusedRowChanging"
                                 :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
@@ -629,11 +638,11 @@
 
                     </DxDataGrid>
                     <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;">
-                        <div style="width: 250px; margin-left: 180px;">
+                        <div style="width: 250px; margin-left: 5px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customCountRow()">
                             </div>
                         </div>
-                        <div style="width: 170px;">
+                        <div style="width: 170px; margin-left: 180px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfIncome()"></div>
                         </div>
                         <div style="width: 170px;">
@@ -641,7 +650,11 @@
                             </div>
                         </div>
                         <div style="width: 670px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customBalance()">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                                <a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
+                                    <span>전월 잔액: {{ $filters.formatCurrency(lastBalance) }}, </span>
+                                </a-tooltip>
+                                <span v-text="customBalance()"></span>
                             </div>
                         </div>
                         <div style=" width: 230px;">
@@ -716,7 +729,8 @@ export default defineComponent({
         DetailComponent,
     },
     setup() {
-        const heightTable: any = ref('calc(100vh - 445px)')
+        const heightTableFull: any = ref('calc(100vh - 470px)')
+        const heightTableHidden: any = ref('calc(100vh - 745px)')
 
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
@@ -822,7 +836,7 @@ export default defineComponent({
                 } else {
                     item.balance = item.income - item.spending
                 }
-                
+
                 const totalBefore: any = ref(0)
                 const maxOrder: any = ref(1)
                 dataApi.value.slice(0, index).forEach((data) => {
@@ -865,6 +879,14 @@ export default defineComponent({
 
         watch(() => store.state.common.ac120.onDeleteRowAdd, (value) => {
             deleteRowAdd()
+        })
+
+        watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
+            if (newValue == 1) {
+                heightTableHidden.value = 'calc(100vh - 625px)'
+            } else {
+                heightTableHidden.value = 'calc(100vh - 745px)'
+            }
         })
 
         // ================ FUNCTION ============================================
@@ -916,9 +938,10 @@ export default defineComponent({
             dataRows.value = []
             data.component.getSelectedRowsData().then((rowData: any) => {
                 rowData.map((data: any) => {
-                    dataRows.value = dataRows.value.concat(data.data)
+                    dataRows.value = dataRows.value.concat(data)
                 })
             })
+
         }
 
         const onFocusedRowChanging = (e: any) => {
@@ -926,7 +949,7 @@ export default defineComponent({
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1) || !(e.event.currentTarget.outerHTML.search("dx-command-drag") == -1)) {
                 e.cancel = true;
             } else {
-                
+
                 Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
                 store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
@@ -1022,9 +1045,9 @@ export default defineComponent({
             // gridRefAC120.value?.instance.addRow()
             // gridRefAC120.value?.instance.deselectAll()
             store.state.common.ac120.statusFormAdd = true
-            let dataInitial:any = { ...initialStateFormData }
+            let dataInitial: any = { ...initialStateFormData }
             // dataInitial.transactionDetailDate = store.state.common.ac120.transactionDetailDate
-            
+
             Object.assign(dataInitial, dataAdd)
             // await dataSource.value.push({ data: [{ ...initialStateFormData }], bankbookDetailId: 'AC120' })
             // await dataSource.value.push({ ...dataInitial })
@@ -1036,7 +1059,7 @@ export default defineComponent({
 
             store.state.common.ac120.focusedRowKey = 'AC120'
 
-            
+
             store.state.common.ac120.keyRefreshForm++
             store.state.common.ac120.resetDataAccountingDocumentProofs++
             setTimeout(() => {
@@ -1096,7 +1119,7 @@ export default defineComponent({
                     total += (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
                 }
             });
-            return `전월 잔액: ${filters.formatCurrency(lastBalance.value)}, 예상 잔액: ${filters.formatCurrency(total)}`
+            return `예상 잔액: ${filters.formatCurrency(total)}`
         }
         const countResolutionNormalStatus = () => {
             let totalResolutionNormalStatuTrue = 0;
@@ -1125,7 +1148,7 @@ export default defineComponent({
             customCountRow, sumOfIncome, sumOfExpenses, customBalance, countResolutionNormalStatus,
 
             store,
-            heightTable,
+            heightTableFull, heightTableHidden,
             move_column,
             colomn_resize,
             acYear,

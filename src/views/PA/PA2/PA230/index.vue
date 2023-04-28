@@ -60,11 +60,14 @@
           </template>
           <template #send-group-print>
             <div class="custom-mail-group">
-              <DxButton @click="printFunc" id="print">
-                <img src="@/assets/images/printGroup.png" alt=""
-                  style="width: 28px; margin-right: 3px; cursor: pointer" />
-              </DxButton>
-              <Tooltip target="#print" content="출력 / 저장" />
+              <a-tooltip placement="top" color="black" title="출력 / 저장">
+                <div>
+                  <DxButton @click="printFunc" >
+                    <img src="@/assets/images/printGroup.png" alt=""
+                      style="width: 28px; margin-right: 3px; cursor: pointer" />
+                  </DxButton>
+                </div>
+              </a-tooltip>
             </div>
           </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
@@ -108,9 +111,11 @@
             <div class="custom-action" style="text-align: center;">
               <img src="@/assets/images/email.svg" alt="" style="width: 25px; margin-right: 3px; cursor: pointer;"
                 @click="sendMail(data.data.employee)" />
-              <img :id="`print-action${data.data.employeeId}`" src="@/assets/images/print.svg" alt=""
+              <a-tooltip placement="top" color="black">
+                <template #title>출력 / 저장</template>
+                <img src="@/assets/images/print.svg" alt=""
                 style="width: 25px;cursor: pointer" @click="printFunc(data.data.employeeId)" />
-              <Tooltip :target="`#print-action${data.data.employeeId}`" content="출력 / 저장" />
+            </a-tooltip>
             </div>
           </template>
           <DxSummary>
@@ -326,7 +331,6 @@ const sendMail = (e: any) => {
   modalSendMail.value = true
 }
 const printFunc = (val: any) => {
-  clearSelection()
   triggerPrint.value = true
   dataPrint.value = {
     ...dataPrint.value,
@@ -337,7 +341,6 @@ const printFunc = (val: any) => {
     },
     "employeeIds": []
   }
-
   // Print single row
   if (typeof val == "number") {
     dataPrint.value.employeeIds = [val]
@@ -349,10 +352,11 @@ const printFunc = (val: any) => {
       return;
     } else
       dataPrint.value.employeeIds = selectedItemKeys.value
-
     if (dataPrint.value)
       refetchPrint()
   }
+  clearSelection()
+
 }
 const confirmSendMail = (e: any) => {
   var res = e.validationGroup.validate();
