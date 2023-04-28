@@ -9,6 +9,9 @@ query me {
     email
     president
     managerGrade
+    compactCompany{
+      name
+    }
     createdAt
     updatedAt
   }
