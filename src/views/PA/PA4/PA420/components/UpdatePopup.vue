@@ -235,7 +235,6 @@ const setModalVisible = () => {
       statusModal.value = false;
     })
   }
-  store.commit('common/resetForm');
 };
 
 </script>

@@ -32,7 +32,7 @@
     }
   }
   &__main {
-    margin-top: 30px;
+    margin-top: 10px;
     &-main {
       &-slipRegistration {
         display: flex;
@@ -42,7 +42,7 @@
         }
       }
       #DxDataGridMainAc110 {
-        height: calc(100vh - 560px);
+        height: calc(100vh - 540px);
         :deep .dx-freespace-row {
           display: none !important;
         }
