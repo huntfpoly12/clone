@@ -415,26 +415,4 @@ export default defineComponent({
   display: inline-block;
 }
 
-:deep #tab2-bf620 {
-  height: calc(62vh);
-
-  :deep .dx-datagrid-total-footer {
-    height: 77px;
-    overflow: hidden;
-    position: absolute;
-    bottom: 0;
-  }
-
-  :deep .dx-datagrid-headers {
-    height: 27px;
-  }
-
-  :deep .dx-datagrid-rowsview {
-    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
-  }
-
-  .dx-freespace-row {
-    display: none !important; // cục lúc hiện lúc không
-  }
-}
 </style>

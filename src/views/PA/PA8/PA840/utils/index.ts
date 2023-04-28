@@ -31,7 +31,7 @@ export const INITIAL_FORM_PA840 = {
   returnDate: +dayjs().format("YYYYMMDD"),
   salaryAfterReturn: 0,
   pensionPaymentAtReturnMonth: false,
-  heathInstallmentPaymentCount: null,
+  heathInstallmentPaymentCount: 0,
 };
 const LeaveOfAbsenceDocument = [
   { name: "휴직", id: 1 },
