@@ -1,46 +1,47 @@
 <template>
-    <a-row class="detail">
-        <a-col class="detail1">
-            <div class="text-align-center button-arrow" :class="store.state.common.ac120.statusShowFull ? 'rotate' : ''">
+    <!-- <a-row class="detail">
+        <a-col class="detail1"> -->
+    <!-- <div class="text-align-center button-arrow" :class="store.state.common.ac120.statusShowFull ? 'rotate' : ''">
                 <img @click="toggleTransition" src="@/assets/images/iconArrowUp.png" alt="">
+            </div> -->
+    <div class="column">
+        <div class="detail" :class="store.state.common.ac120.statusShowFull ? 'showFull' : ''">
+            <div class="detail-header">
+                <a-row class="text-align-center">
+                    <a-col :span="8" @click="openShowFull">click here</a-col>
+                    <a-col :span="8">
+                        <div style="display: flex; justify-content: center; margin-left: 35px;">
+                            <span style="font-weight: bold; font-size: 18px;">결의서</span>
+                            <a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
+                                placement="top" color="black" title="정상 여부">
+                                <DxButton :focusStateEnabled="false" text="O"
+                                    :style="{ backgroundColor: '#337614', color: 'white' }"
+                                    :height="$config_styles.HeightInput" />
+                            </a-tooltip>
+                            <DxButton v-else :focusStateEnabled="false" text="X"
+                                :style="{ backgroundColor: '#BB3835', color: 'white' }"
+                                :height="$config_styles.HeightInput" />
+                        </div>
+                    </a-col>
+                    <a-col :span="8">
+                        <div style="display: flex; justify-content: flex-end;">
+                            <a-form-item label="결의번호">
+                                {{ store.state.common.ac120.formData.resolutionNumber ?
+                                    store.state.common.ac120.formData.resolutionNumber : '_____' }}
+                                <DxButton v-if="store.state.common.ac120.formData.handwriting == true"
+                                    :focusStateEnabled="false" text="수기"
+                                    :style="{ backgroundColor: '#BB3835', color: 'white' }"
+                                    :height="$config_styles.HeightInput" />
+                            </a-form-item>
+                        </div>
+                    </a-col>
+                </a-row>
             </div>
-            <div class="column">
-                <!-- {{ store.state.common.ac120.formData }} -->
-                <!-- {{  store.state.common.ac120.arrResolutionType }} -->
-                <a-spin :spinning="false">
+            <a-row class="detail-body">
+                <a-col class="detail1">
                     <StandardForm formName="ac-120-form" ref="refFormAC120" :key='store.state.common.ac120.keyRefreshForm'>
-                        <a-row class="text-align-center">
-                            <a-col :span="8"></a-col>
-                            <a-col :span="8">
-                                <div style="display: flex; justify-content: center; margin-left: 35px;">
-                                    <h2><pre>결의서 </pre></h2>
-                                    <a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
-                                        placement="top" color="black" title="정상 여부">
-                                        <DxButton :focusStateEnabled="false" text="O"
-                                            :style="{ backgroundColor: '#337614', color: 'white' }"
-                                            :height="$config_styles.HeightInput" />
-                                    </a-tooltip>
-                                    <DxButton v-else :focusStateEnabled="false" text="X"
-                                        :style="{ backgroundColor: '#BB3835', color: 'white' }"
-                                        :height="$config_styles.HeightInput" />
-                                    <!-- <button-basic style="margin: 0 10px;" text="" type="success" :mode="'contained'" />
-                                    <button-basic text="X" type="danger" :mode="'contained'" /> -->
-                                </div>
-                            </a-col>
-                            <a-col :span="8">
-                                <div style="display: flex; justify-content: flex-end;">
-                                    <a-form-item label="결의번호">
-                                        {{ store.state.common.ac120.formData.resolutionNumber ?
-                                            store.state.common.ac120.formData.resolutionNumber : '_____' }}
-                                        <DxButton v-if="store.state.common.ac120.formData.handwriting == true"
-                                            :focusStateEnabled="false" text="수기"
-                                            :style="{ backgroundColor: '#BB3835', color: 'white' }"
-                                            :height="$config_styles.HeightInput" />
-                                    </a-form-item>
-                                </div>
-                            </a-col>
-                        </a-row>
-                        <a-row class="mt-20">
+                        <div class="ac120">
+                            <a-row class="mt-20">
                             <a-col :span="7" class="col-1">
                                 <a-form-item label="결의구분">
                                     <default-text-box
@@ -53,28 +54,21 @@
                                             :valueInput="store.state.common.ac120.arrResolutionType.find((item: any) => store.state.common.ac120.formData.resolutionType == item.id)?.text"
                                             width="100px" placeholder="여입" disabled="true" />
                                     </a-form-item>
-                                    <button-basic @onClick="actionOpenModalCopy"
-                                        style="margin: -5px 0px 0px 5px" mode="contained" type="default"
-                                        :text="textButton + '로 변경'" />
+                                    <button-basic @onClick="actionOpenModalCopy" style="margin: -5px 0px 0px 5px"
+                                        mode="contained" type="default" :text="textButton + '으로 변경'" />
                                 </div>
                             </a-col>
                             <a-col :span="6" class="col-2">
                                 <a-form-item label="결의일자" class="red">
                                     <date-time-box v-model:valueDate="store.state.common.ac120.transactionDetailDate"
                                         width="150px" :required="true" disabled="true" />
-                                    <!-- <date-time-box v-else
-                                        v-model:valueDate="store.state.common.ac120.formData.resolutionDate" width="150px"
-                                        :required="true" disabled="true" /> -->
                                 </a-form-item>
 
                                 <a-form-item label="통장" class="red">
-                                    <!-- <div class="input_info"> -->
-                                        <default-text-box v-model:valueInput="bankbookNickname" width="150px"
-                                            style="margin-right: 10px;" :required="true" disabled="true" />
-                                    <!-- </div> -->
-                                    
+                                    <default-text-box v-model:valueInput="bankbookNickname" width="150px"
+                                        style="margin-right: 10px;" :required="true" disabled="true" />
                                 </a-form-item>
-                                
+
                             </a-col>
                             <a-col :span="6" class="col-3">
                                 <a-form-item label="금액" class="red">
@@ -88,7 +82,6 @@
                                 </a-form-item>
                             </a-col>
                             <a-col :span="5" class="col-4">
-                                <!-- {{  store.state.common.ac120.formData.accountCode + 1 }} -->
                                 <a-form-item label="계정과목" class="red">
                                     <account-code-select v-model:valueInput="store.state.common.ac120.formData.accountCode"
                                         width="190px" :required="true" />
@@ -99,153 +92,147 @@
                                         :required="true" />
                                 </a-form-item>
                             </a-col>
-                        </a-row>
-                        <div class="hidden-show"
-                            :style="[store.state.common.ac120.statusShowFull ? { height: heightForm, overflow: 'unset' } : {}]">
-                            <a-row>
-                                <a-col :span="7" class="col-1">
-                                    <a-form-item label="원인행위일자" class="red" :class="colorDate">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.formData.causeActionDate"
-                                            width="150px" :required="true" ref="requiredCauseActionDate" />
-                                    </a-form-item>
-                                    <a-form-item label="결재일자">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.formData.paymentDate"
+                            <a-col :span="7" class="col-1">
+                                <a-form-item label="원인행위일자" class="red" :class="colorDate">
+                                    <date-time-box v-model:valueDate="store.state.common.ac120.formData.causeActionDate"
+                                        width="150px" :required="true" ref="requiredCauseActionDate" />
+                                </a-form-item>
+                                <a-form-item label="결재일자">
+                                    <date-time-box v-model:valueDate="store.state.common.ac120.formData.paymentDate"
+                                        width="150px" />
+                                </a-form-item>
+                                <a-form-item label="발의일자">
+                                    <date-time-box v-model:valueDate="store.state.common.ac120.formData.proposedDate"
+                                        width="150px" />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="6" class="col-2">
+                                <a-form-item :label="null" style="margin-left: 75px;">
+                                    <default-text-box v-model:valueInput="bankbookNumber" width="150px" :required="true"
+                                        disabled="true" />
+                                </a-form-item>
+
+                                <a-form-item label="출납일자">
+                                    <date-time-box v-model:valueDate="store.state.common.ac120.formData.accountingDate"
+                                        width="150px" />
+                                </a-form-item>
+                                <a-form-item label="등기일자">
+                                    <date-time-box v-model:valueDate="store.state.common.ac120.formData.registrationDate"
+                                        width="150px" />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="6" class="col-3">
+                                <a-form-item label="거래처">
+                                    <customer-select v-model:valueInput="store.state.common.ac120.formData.clientId"
+                                        width="150px" />
+                                </a-form-item>
+                                <div class="input_info">
+                                    <a-form-item :label="textLabelInputSource">
+                                        <default-text-box v-model:valueInput="store.state.common.ac120.formData.source"
                                             width="150px" />
                                     </a-form-item>
-                                    <a-form-item label="발의일자">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.formData.proposedDate"
+                                    <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
+                                        <template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서 {{ textLabelInputSource
+                                        }}
+                                            을
+                                            참조합니다.</template>
+                                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
+                                            class="mr-5">
+                                    </a-tooltip>
+                                </div>
+                                <div class="input_info">
+                                    <a-form-item label="작성자">
+                                        <default-text-box v-model:valueInput="store.state.common.ac120.formData.writer"
                                             width="150px" />
                                     </a-form-item>
-                                </a-col>
-                                <a-col :span="6" class="col-2">
-                                    <a-form-item :label="null" style="margin-left: 75px;">
-                                        <default-text-box v-model:valueInput="bankbookNumber" width="150px" :required="true"
-                                            disabled="true" />
-                                    </a-form-item>
-                                    
-                                    <a-form-item label="출납일자">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.formData.accountingDate"
-                                            width="150px" />
-                                    </a-form-item>
-                                    <a-form-item label="등기일자">
-                                        <date-time-box
-                                            v-model:valueDate="store.state.common.ac120.formData.registrationDate"
-                                            width="150px" />
-                                    </a-form-item>
-                                </a-col>
-                                <a-col :span="6" class="col-3">
-                                    <a-form-item label="거래처">
-                                        <customer-select v-model:valueInput="store.state.common.ac120.formData.clientId"
-                                            width="150px" />
-                                    </a-form-item>
-                                    <div class="input_info">
-                                        <a-form-item :label="textLabelInputSource">
-                                            <default-text-box v-model:valueInput="store.state.common.ac120.formData.source"
-                                                width="150px" />
-                                        </a-form-item>
-                                        <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
-                                            <template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서 {{ textLabelInputSource }} 을
-                                                참조합니다.</template>
-                                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
-                                                class="mr-5">
-                                        </a-tooltip>
-                                    </div>
-                                    <div class="input_info">
-                                        <a-form-item label="작성자">
-                                            <default-text-box v-model:valueInput="store.state.common.ac120.formData.writer"
-                                                width="150px" />
-                                        </a-form-item>
-                                        <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
-                                            <template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서 작성자를 참조합니다.</template>
-                                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
-                                                class="mr-5">
-                                        </a-tooltip>
-                                    </div>
-                                </a-col>
-                                <a-col :span="5" class="col-4">
-                                    <a-form-item label="상대계정">
-                                        <account-code-select
-                                            v-model:valueInput="store.state.common.ac120.formData.relationCode"
-                                            width="190px" />
-                                    </a-form-item>
-                                    <a-form-item label="메모">
-                                        <!-- <default-text-box v-model:valueInput="store.state.common.ac120.formData.memo"
+                                    <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
+                                        <template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서 작성자를 참조합니다.</template>
+                                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
+                                            class="mr-5">
+                                    </a-tooltip>
+                                </div>
+                            </a-col>
+                            <a-col :span="5" class="col-4">
+                                <a-form-item label="상대계정">
+                                    <account-code-select v-model:valueInput="store.state.common.ac120.formData.relationCode"
+                                        width="190px" />
+                                </a-form-item>
+                                <a-form-item label="메모">
+                                    <!-- <default-text-box v-model:valueInput="store.state.common.ac120.formData.memo"
                                             width="150px" height="60px" /> -->
-                                        <text-area-box width="190px"
-                                            v-model:valueInput="store.state.common.ac120.formData.memo" :height="60" />
+                                    <text-area-box width="190px" v-model:valueInput="store.state.common.ac120.formData.memo"
+                                        :height="60" />
+                                </a-form-item>
+                            </a-col>
+
+                        </a-row>
+                        <div v-if="!(store.state.common.ac120.formData.resolutionClassification == 1)">
+                            <a-row>
+                                <a-col :span="24">
+                                    <div class="top-content">
+                                        <a-typography-title :level="5" style="margin-bottom: 0;">품의서
+                                            <span class="fz-10 ml-10" style="color: gray; font-weight: 300; width: 40%;">
+                                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
+                                                    class="mr-5">
+                                                지출결의서 기재 사항
+                                            </span>
+                                        </a-typography-title>
+                                    </div>
+                                </a-col>
+                            </a-row>
+                            <a-row>
+                                <a-col :span="12">
+                                    <a-form-item class="red" label="품의종류"
+                                        v-if="store.state.common.ac120.formData.letterOfApprovalType">
+                                        <radio-group
+                                            v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType"
+                                            :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'" :required="true" />
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="12">
+                                    <a-form-item label="물품내역수">
+                                        <default-text-box :disabled="true"
+                                            v-model:valueInput="store.state.common.ac120.formData.goodsCount"
+                                            width="150px" />
                                     </a-form-item>
                                 </a-col>
                             </a-row>
-                            <!-- {{ store.state.common.ac120.formData.resolutionClassification }} -->
-                            <div v-if="!(store.state.common.ac120.formData.resolutionClassification == 1)">
-                                <a-row>
-                                    <a-col :span="24">
-                                        <div class="top-content">
-                                            <a-typography-title :level="5" style="margin-bottom: 0;">품의서
-                                                <span class="fz-10 ml-10"
-                                                    style="color: gray; font-weight: 300; width: 40%;">
-                                                    <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
-                                                        class="mr-5">
-                                                    지출결의서 기재 사항
-                                                </span>
-                                            </a-typography-title>
-                                        </div>
-                                    </a-col>
-                                </a-row>
-                                <a-row>
-                                    <a-col :span="12">
-                                        <a-form-item class="red" label="품의종류"
-                                            v-if="store.state.common.ac120.formData.letterOfApprovalType">
-                                            <radio-group
-                                                v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType"
-                                                :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'"
-                                                :required="true" />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="12">
-                                        <a-form-item label="물품내역수">
-                                            <default-text-box :disabled="true"
-                                                v-model:valueInput="store.state.common.ac120.formData.goodsCount"
-                                                width="150px" />
-                                        </a-form-item>
-                                    </a-col>
-                                </a-row>
-                                <a-row>
-                                    <a-col :span="24">
-                                        <a-form-item label="품의 원인 및 용도">
-                                            <text-area-box v-model:valueInput="store.state.common.ac120.formData.causeUsage"
-                                                :height="50" />
-                                        </a-form-item>
-                                    </a-col>
-                                </a-row>
-                            </div>
-                            <div class="text-align-center mt-20">
-                                <DxButton @click="onCancelDeleteRow" class="ml-4 custom-button-checkbox custom-button"
-                                    type="default" :height="$config_styles.HeightInput">
-                                    <div class="d-flex-center">
-                                        <checkbox-basic :valueCheckbox="true" disabled="true" />
-                                        <span class="pl-5">전표취소</span>
-                                    </div>
-                                </DxButton>
-                                <button-basic @onClick="onSubmit" style="margin: 0px 5px" mode="contained" type="default"
-                                    text="저장" />
-                            </div>
+                            <a-row>
+                                <a-col :span="24">
+                                    <a-form-item label="품의 원인 및 용도">
+                                        <text-area-box v-model:valueInput="store.state.common.ac120.formData.causeUsage"
+                                            :height="50" />
+                                    </a-form-item>
+                                </a-col>
+                            </a-row>
+                        </div>
                         </div>
                     </StandardForm>
-                </a-spin>
-            </div>
-        </a-col>
-        <a-col class="detail2">
-            <div class="upload">
-                <!-- <UploadPreviewImage v-model:list-image-file="fileList" width="387"
-                    :heightHidden="store.state.common.ac120.statusShowFull ? '' : '130px'" /> -->
-                <UploadPreviewImage v-model:list-image-file="fileList" />
-            </div>
-        </a-col>
-    </a-row>
+                    <div class="text-align-center mt-20">
+                            <DxButton @click="onCancelDeleteRow" class="ml-4 custom-button-checkbox custom-button"
+                                type="default" :height="$config_styles.HeightInput">
+                                <div class="d-flex-center">
+                                    <checkbox-basic :valueCheckbox="true" disabled="true" />
+                                    <span class="pl-5">전표취소</span>
+                                </div>
+                            </DxButton>
+                            <button-basic @onClick="onSubmit" style="margin: 0px 5px" mode="contained" type="default"
+                                text="저장" />
+                        </div>
+                </a-col>
+                <a-col class="upload detail2">
+                    <UploadPreviewImage v-model:list-image-file="fileList" />
+                </a-col>
+            </a-row>
+
+            <!-- </template>
+            </DxDrawer> -->
+        </div>
+    </div>
     <PopupCopyData :modalStatus="statusPopupCopyData" @closePopup="statusPopupCopyData = false"
         @submit="statusPopupCopyData = false" />
-    <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows='[store.state.common.ac120.formData]' />
+    <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false"
+        :dataRows='[store.state.common.ac120.formData]' />
 </template>
 
 <script lang="ts">
@@ -263,15 +250,19 @@ import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
 import { companyId } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
+import DxToolbar from 'devextreme-vue/toolbar';
+import DxDrawer from 'devextreme-vue/drawer';
 import UploadPreviewImage from './UploadPreviewImage.vue'
 export default defineComponent({
     components: {
         PopupCopyData,
         DxButton,
         UploadPreviewImage, ModalDelete,
+        DxToolbar,
+        DxDrawer
     },
     setup() {
-        const heightForm: any = ref('280px')
+        // const heightForm: any = ref('280px')
         const store = useStore();
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
@@ -284,6 +275,7 @@ export default defineComponent({
         const requiredCauseActionDate = ref()
         const arrayRadioCheck = computed(() => store.state.common.ac120.arrLetterOfApprovalType)
         let colorDate = ref()
+        // const openState = ref(false);
         let statusModalDelete = ref(false);
         let bankbookNickname = ref<string>('')
         let bankbookNumber = ref<string>('')
@@ -392,13 +384,13 @@ export default defineComponent({
             }
         })
 
-        watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
-            if (newValue == 1) {
-                heightForm.value = '160px'
-            } else {
-                heightForm.value = '280px'
-            }
-        })
+        // watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
+        //     if (newValue == 1) {
+        //         heightForm.value = '160px'
+        //     } else {
+        //         heightForm.value = '280px'
+        //     }
+        // })
 
         watch(() => store.state.common.ac120.formData.causeActionDate, (newValue, oldValue) => {
             // if (store.state.common.ac120.statusFormAdd) {
@@ -449,9 +441,9 @@ export default defineComponent({
                     store.state.common.ac120.formData.causeUsage = null;
                     // store.state.common.ac120.formData.goodsCount = null;
 
-                }   
+                }
                 if (store.state.common.ac120.statusFormAdd) {
-                    
+
                     let dataSubmit = {
                         companyId: companyId,
                         fiscalYear: acYear.value,
@@ -542,6 +534,18 @@ export default defineComponent({
             }
 
         }
+        const openShowFull = () => {
+            store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull;
+        }
+
+        // const toolbarContent = ref([{
+        //     widget: 'dxButton',
+        //     location: 'before',
+        //     options: {
+        //         icon: 'menu',
+        //         onClick: () => { openState.value = !openState.value; },
+        //     },
+        // }])
 
 
 
@@ -556,7 +560,7 @@ export default defineComponent({
             fileList,
             refFormAC120,
             actionOpenModalCopy,
-            heightForm,
+            // heightForm,
             textButton,
             textLabelInputSource,
             requiredCauseActionDate,
@@ -564,6 +568,7 @@ export default defineComponent({
             colorDate,
             bankbookNickname, bankbookNumber,
             statusModalDelete,
+            openShowFull,
         }
     }
 })
