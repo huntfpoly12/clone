@@ -121,6 +121,7 @@ export class Message extends BaseType {
         '002': { "message" : "png, jpg, jpeg, gif 파일만 업로드할 수 있습니다" }, //  You can only upload png, jpg, jpeg, gif file!
         '003': { "message" : "파일 크기는 10MB보다 작아야합니다"}, // Image must smaller than 10MB! 
         '004': { "message" : "중복된 이미지는 업로드가 불가합니다" }, // Duplicate image are not allowed 
+        '005': { "message" : "물품내역을 삭제하시겠습니까?", "yes": "네. 삭제합니다", "no":"아니요" }, // Do you want to delete item details?
     });
        
   
