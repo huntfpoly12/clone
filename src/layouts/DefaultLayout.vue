@@ -204,6 +204,7 @@ import { openTab, setMenuTab } from "@/helpers/commonFunction";
 import useCheckPermission from "@/helpers/useCheckPermission";
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
+import notification from '@/utils/notification';
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -485,6 +486,7 @@ export default defineComponent({
     const tabIndex = ref()
     let isRemoveTab = ref(false);
     let tabRemove = ref();
+    let isClickArrowTab = ref(false)
     const token = sessionStorage.getItem("token");
     const jwtObject = getJwtObject(token);
 
@@ -542,9 +544,23 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
+      if(isClickArrowTab.value) {
+        isClickArrowTab.value = false
+        const itemNew = itemId === '' ? tabDashboard : menuData.find(item => item.id === itemId);
+        if (itemNew.url == '#') {
+          return
+        }
+        const indexActive = menuTab.value.findIndex(tab => tab.id === itemId)
+        if (indexActive >= 0) {
+          tabIndex.value = indexActive
+        }
+        activeTab.value = itemNew
+        openTab(itemNew)
+        return
+      }
       if(ENVIRONMENT === 'DEVELOP'){
-        if (menuTab.value.length >= MAX_TAB) {
-          alert(`Maximum only ${MAX_TAB} tab`)
+        if (menuTab.value.length >= MAX_TAB && !menuTab.value.some((tab) => tab.id === itemId)) {
+          notification('error', `이미 최대 개수의 탭을 열었기 때문에 새 탭을 열 수없습니다. (최대 ${MAX_TAB}탭)`)
           return
         }
         const itemNew = itemId === '' ? tabDashboard : menuData.find(item => item.id === itemId);
@@ -561,8 +577,8 @@ export default defineComponent({
         if(itemId === '') {
           setMenuTab([])
         }else {
-          if (menuTab.value.length >= MAX_TAB) {
-            alert(`Maximum only ${MAX_TAB} tab`)
+          if (menuTab.value.length >= MAX_TAB && !menuTab.value.some((tab) => tab.id === itemId)) {
+            notification('error', `이미 최대 개수의 탭을 열었기 때문에 새 탭을 열 수없습니다. (최대 ${MAX_TAB}탭)`)
             return
           }
           const itemNew = menuData.find(item => item.id === itemId);
@@ -690,10 +706,12 @@ export default defineComponent({
         if (!!btnArrowTab && btnArrowTab.length) {
           btnArrowTab[0].addEventListener("click", (e) => {
             e.preventDefault();
+            isClickArrowTab.value = true
             addMenuTab(menuTab.value[0].id)
           });
           btnArrowTab[1].addEventListener("click", (e) => {
             e.preventDefault();
+            isClickArrowTab.value = true
             addMenuTab(menuTab.value[menuTab.value.length - 1].id)
           });
         }
