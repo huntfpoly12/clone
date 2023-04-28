@@ -53,6 +53,7 @@ import { dataFormAction } from "./../utils/index"
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
 import { useStore } from "vuex";
+import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {},
     props: {
@@ -83,6 +84,7 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resPrint(res => {
+            notification('success', Message.getCommonMessage('801').message)
             trigger.value = false
             emit('closePopup', true)
         })
