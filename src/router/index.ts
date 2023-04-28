@@ -463,6 +463,10 @@ router.beforeEach((to, from, next) => {
   if(to.fullPath == '/login' && token){
     next("/dashboard");
   }
+
+  if(to.fullPath == '/' && token){
+    next("/dashboard");
+  }
   
   if ((requiresAuth && !token)) {
     next("/login");

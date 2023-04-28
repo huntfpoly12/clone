@@ -13,12 +13,7 @@
 
     <a-layout-content>
       <a-layout>
-        <a-layout-sider
-          width="250"
-          v-model:collapsed="collapsed"
-          :trigger="null"
-          collapsible
-        >
+        <a-layout-sider width="250" v-model:collapsed="collapsed" :trigger="null" collapsible>
           <div class="header-content header-content-left">
             <a-button type="primary" @click="() => (collapsed = !collapsed)">
               <menu-unfold-outlined v-if="collapsed" class="trigger" />
@@ -26,31 +21,17 @@
             </a-button>
 
             <div v-if="!collapsed" class="wrap-search">
-              <a-select
-                v-model:value="selectedItems"
-                :options="menuData.map((item) => ({
-                    value: item.id,
-                    label: item.id + ' | ' + item.name
-                  }))"
-                show-search
-                placeholder="메뉴를 입력해보세요"
-                style="width: 180px"
-                optionFilterProp="label"
-                :disabled="menuTab.length >= MAX_TAB"
-                @change="addMenuTab"
-              />
+              <a-select v-model:value="selectedItems" :options="menuData.map((item) => ({
+                  value: item.id,
+                  label: item.id + ' | ' + item.name
+                }))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px" optionFilterProp="label"
+                :disabled="menuTab.length >= MAX_TAB" @change="addMenuTab" />
             </div>
           </div>
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            theme="dark"
-            mode="inline"
-            :inline-collapsed="false"
-            :open-keys="openKeys"
-            @openChange="onOpenChange"
-          >
+          <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :inline-collapsed="false"
+            :open-keys="openKeys" @openChange="onOpenChange">
             <div v-for="menuItem in menuItems" :key="menuItem.id" v-check-permission:read="menuItem.roles">
-              <a-sub-menu :key="menuItem.id" >
+              <a-sub-menu :key="menuItem.id">
                 <!-- list main menu lavel 0 -->
                 <template #icon v-if="menuItem.icon">
                   <div id="icon-menu">
@@ -59,92 +40,67 @@
                 </template>
                 <template #title>{{ menuItem.title }}</template>
                 <!-- list sub menu level 1 -->
-                <template v-for="itemLevel1 in menuItem.subMenus"  :key="'sub-level-1-'+itemLevel1.id">
-                    <div  v-check-permission:read="itemLevel1?.roles" class="menuuuuu">
-                      <a-menu-item v-if="!itemLevel1?.subMenus"
-                                   :class="[
-                          itemLevel1.id === activeTab.id
-                            ? 'ant-menu-item-selected-active'
+                <template v-for="itemLevel1 in menuItem.subMenus" :key="'sub-level-1-'+itemLevel1.id">
+                  <div v-check-permission:read="itemLevel1?.roles" class="menuuuuu">
+                    <a-menu-item v-if="!itemLevel1?.subMenus" :class="[
+                        itemLevel1.id === activeTab?.id
+                          ? 'ant-menu-item-selected-active'
                           : '',
-                          itemLevel1.url == '#' ? 'not-done' : ''
+                        itemLevel1.url == '#' ? 'not-done' : ''
+                      ]
+                      " @click.enter="addMenuTab(itemLevel1.id)">
+                      <router-link :to="itemLevel1.url">{{ itemLevel1.title }}</router-link>
+                    </a-menu-item>
+                    <a-sub-menu v-else :title="itemLevel1.title" :key="itemLevel1.id">
+                      <!-- list sub menu level 2 if have subMenus -->
+                      <template v-for="itemLevel2 in itemLevel1.subMenus" :key="'sub-'+itemLevel2.id">
+                        <div v-check-permission:read="itemLevel2?.roles">
+                          <a-menu-item v-if="!itemLevel2.hasOwnProperty('subMenus')" :class="[
+                              itemLevel2.id === activeTab?.id
+                                ? 'ant-menu-item-selected-active'
+                                : '',
+                              itemLevel2.url == '#' ? 'not-done' : ''
                             ]
-                          "
-                                   @click.enter="addMenuTab(itemLevel1.id)"
-                      >
-                        <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
-                      </a-menu-item>
-                      <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
-                        <!-- list sub menu level 2 if have subMenus -->
-                        <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
-                          <div v-check-permission:read="itemLevel2?.roles">
-                            <a-menu-item
-                              v-if="!itemLevel2.hasOwnProperty('subMenus')"
-                              :class="[
-                            itemLevel2.id === activeTab.id
-                              ? 'ant-menu-item-selected-active'
-                            : '',
-                            itemLevel2.url == '#' ? 'not-done' : ''
+                            " @click.enter="addMenuTab(itemLevel2.id)">
+                            <router-link :to="itemLevel2.url">{{ itemLevel2.title }}</router-link>
+                          </a-menu-item>
+                          <a-sub-menu v-else :title="itemLevel2.title" :key="itemLevel2.id">
+                            <a-menu-item v-for="subMenu1 in itemLevel2.subMenus" :key="subMenu1.id" :class="[
+                                subMenu1.id === activeTab?.id
+                                  ? 'ant-menu-item-selected-active'
+                                  : '',
+                                subMenu1.url == '#' ? 'not-done' : ''
                               ]
-                            "
-                              @click.enter="addMenuTab(itemLevel2.id)"
-                            >
-                              <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
+                              " @click.enter="addMenuTab(subMenu1.id)">
+                              <router-link :to="subMenu1.url">{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
                             </a-menu-item>
-                            <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id">
-                              <a-menu-item
-                                v-for="subMenu1 in itemLevel2.subMenus"
-                                :key="subMenu1.id"
-                                :class="[
-                            subMenu1.id === activeTab.id
-                              ? 'ant-menu-item-selected-active'
-                            : '',
-                            subMenu1.url == '#' ? 'not-done' : ''
-                              ]
-                            "
-                                @click.enter="addMenuTab(subMenu1.id)"
-                              >
-                                <router-link :to="subMenu1.url" >{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
-                              </a-menu-item>
-                            </a-sub-menu>
-                          </div>
-                        </template>
-                      </a-sub-menu>
-                    </div>
-                  </template>
+                          </a-sub-menu>
+                        </div>
+                      </template>
+                    </a-sub-menu>
+                  </div>
+                </template>
               </a-sub-menu>
             </div>
           </a-menu>
         </a-layout-sider>
         <a-layout>
-          <a-layout-content
-            :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
-          >
+          <a-layout-content :style="{ background: '#fff', margin: 0, minHeight: '280px' }">
             <div class="tab-main">
-              <DxSortable 
-                filter=".dx-tab"
-                v-model:data="menuTab" 
-                item-orientation="horizontal" 
-                drag-direction="horizontal"
-                @drag-start="onTabDragStart($event)"
-                @reorder="onTabDrop($event)">
-                <DxTabs 
-                  :data-source="menuTab" 
-                  v-model:selected-index="tabIndex"
-                  itemTemplate="titleTab"
-                  :scrollByContent="true"
-                  >
+              <div v-if="!menuTab.length && VITE_ENVIRONMENT !== 'DEVELOP'" class="tab-main-emtytab"></div>
+              <DxSortable v-else filter=".dx-tab" v-model:data="menuTab" item-orientation="horizontal"
+                drag-direction="horizontal" @drag-start="onTabDragStart($event)" @reorder="onTabDrop($event)">
+                <DxTabs :data-source="menuTab" v-model:selected-index="tabIndex" itemTemplate="titleTab"
+                  :scrollByContent="true">
                   <template #titleTab="{ data: itemTab }">
                     <div class="tab-main-title-tab" @click="changeActiveTab(itemTab)">
-                      <span :class="{'color-active-tab': activeTab.id === itemTab.id}">{{ itemTab.name }}</span>
-                      <close-circle-filled
-                        @click.stop="removeItemTab(itemTab)"
-                        :style="{
-                          marginLeft: '5px',
-                          color: activeTab.id === itemTab.id ? 'red' : '#888',
-                        }"
-                      />
+                      <span :class="{ 'color-active-tab': activeTab?.id === itemTab.id }">{{ itemTab.name }}</span>
+                      <close-circle-filled @click.stop="removeItemTab(itemTab)" :style="{
+                        marginLeft: '5px',
+                        color: activeTab?.id === itemTab.id ? 'red' : '#888',
+                      }" />
                     </div>
-                </template>
+                  </template>
                 </DxTabs>
               </DxSortable>
             </div>
@@ -155,7 +111,7 @@
                 </keep-alive>
               </template>
               <template v-else>
-                <keep-alive>
+                <keep-alive v-if="menuTab.length">
                   <component v-bind:is="'Example'" />
                 </keep-alive>
               </template>
@@ -168,7 +124,7 @@
 </template>
 <script>
 import { defineComponent, ref, watch, computed, onMounted, nextTick } from "vue";
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
 import menuData from "./menuData";
@@ -243,8 +199,8 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
-import { getJwtObject} from '@bankda/jangbuda-common';
-import {  openTab, setMenuTab } from "@/helpers/commonFunction";
+import { getJwtObject } from '@bankda/jangbuda-common';
+import { openTab, setMenuTab } from "@/helpers/commonFunction";
 import useCheckPermission from "@/helpers/useCheckPermission";
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
@@ -329,32 +285,43 @@ export default defineComponent({
     DxTabs
   },
   created() {
-    menuData.forEach((item) => {
-      if (this.$route.fullPath.includes(item.id)) {
-        // clear vuex value cachedTab
-        this.$store.state.common.cachedTab.push(item.id.toUpperCase().replaceAll('-', ''))
-        this.activeTab = item;
-        this.$store.state.common.activeTab = item
-        return;
-      } else if (
+    if (import.meta.env.VITE_ENVIRONMENT === 'DEVELOP') {
+      menuData.forEach((item) => {
+        if (this.$route.fullPath.includes(item.id)) {
+          // clear vuex value cachedTab
+          // this.$store.state.common.cachedTab.push(item.id.toUpperCase().replaceAll('-', ''))
+          this.activeTab = item;
+          this.$store.state.common.activeTab = item
+          return;
+        } else if (
+          this.$route.fullPath === "/dashboard/" ||
+          this.$route.fullPath === "/dashboard"
+        ) {
+          this.activeTab = { name: "dashboard", url: "/dashboard", id: "" };
+        }
+      });
+
+      if (
         this.$route.fullPath === "/dashboard/" ||
         this.$route.fullPath === "/dashboard"
       ) {
-        this.activeTab = { name: "dashboard", url: "/dashboard", id: "" };
+        this.activeTab = { name: "Dashboard", url: "/dashboard", id: "" };
       }
-    });
-
-    if (
-      this.$route.fullPath === "/dashboard/" ||
-      this.$route.fullPath === "/dashboard"
-    ) {
-      this.activeTab = { name: "Dashboard", url: "/dashboard", id: "" };
+    }else {
+      menuData.forEach((item) => {
+        if (this.$route.fullPath.includes(item.id)) {
+          // clear vuex value cachedTab
+          // this.$store.state.common.cachedTab.push(item.id.toUpperCase().replaceAll('-', ''))
+          this.activeTab = item;
+          this.$store.state.common.activeTab = item
+        } 
+      });
     }
   },
   watch: {
-     activeTab: {
+    activeTab: {
       handler(newValue, oldVal) {
-         if (newValue) {
+        if (newValue) {
           if (newValue.id.includes("bf-1")) {
             this.openKeys = ["bf-000", "bf-100"];
           }
@@ -496,19 +463,20 @@ export default defineComponent({
     },
   },
   setup() {
-
+    const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT
     const MAX_TAB = 20
     const inputSearchText = ref("");
-    const filteredResult =ref([]);
+    const filteredResult = ref([]);
     const openKeys = ref([]);
     const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
     let menuItems = menuTree;
     const store = useStore();
-    const count = computed(()=> store.getters['settings/changeFacilityBusiness'])
+    const count = computed(() => store.getters['settings/changeFacilityBusiness'])
 
     const route = useRoute();
+    const router = useRouter();
     const collapsed = ref(false);
     const selectedItems = ref(null);
     const activeTab = ref();
@@ -519,6 +487,7 @@ export default defineComponent({
     let tabRemove = ref();
     const token = sessionStorage.getItem("token");
     const jwtObject = getJwtObject(token);
+
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = computed(() => {
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
@@ -529,31 +498,35 @@ export default defineComponent({
     //   store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
     // }
 
-    onMounted(async() => {
-      store.commit('auth/setTokenInfo',jwtObject)
- 
+    onMounted(async () => {
+      store.commit('auth/setTokenInfo', jwtObject)
+
       // store.commit('auth/setTokenInfo',jwtObject)
-      if(route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
-        openTab(tabDashboard)
+
+      // open first menu route dashboard
+      if (route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
+        if(ENVIRONMENT === 'DEVELOP') {
+          openTab(tabDashboard)
+        }
         nextTick(() => {
           let count = 0
           menuItems.forEach(item => {
             const { read } = useCheckPermission(item.roles)
-            if(read && count === 0) {
-              openKeys.value =  [item.id]
+            if (read && count === 0) {
+              openKeys.value = [item.id]
               count++
             }
           })
         })
       }
       menuData.forEach(tab => {
-        if(route.fullPath.includes(tab.id)) {
+        if (route.fullPath.includes(tab.id)) {
           openTab(tab)
         }
       })
     })
 
-    const onSearch  = (key)=>{
+    const onSearch = (key) => {
       state.value = true;
       filteredResult.value = [];
       inputSearchText.value = key;
@@ -569,20 +542,41 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
-      if (menuTab.value.length >= MAX_TAB) {
-        alert(`Maximum only ${MAX_TAB} tab`)
-        return
+      if(ENVIRONMENT === 'DEVELOP'){
+        if (menuTab.value.length >= MAX_TAB) {
+          alert(`Maximum only ${MAX_TAB} tab`)
+          return
+        }
+        const itemNew = itemId === '' ? tabDashboard : menuData.find(item => item.id === itemId);
+        if (itemNew.url == '#') {
+          return
+        }
+        const indexActive = menuTab.value.findIndex(tab => tab.id === itemId)
+        if (indexActive >= 0) {
+          tabIndex.value = indexActive
+        }
+        activeTab.value = itemNew
+        openTab(itemNew)
+      }else {
+        if(itemId === '') {
+          setMenuTab([])
+        }else {
+          if (menuTab.value.length >= MAX_TAB) {
+            alert(`Maximum only ${MAX_TAB} tab`)
+            return
+          }
+          const itemNew = menuData.find(item => item.id === itemId);
+          if (itemNew.url == '#') {
+            return
+          }
+          const indexActive = menuTab.value.findIndex(tab => tab.id === itemId)
+          if (indexActive >= 0) {
+            tabIndex.value = indexActive
+          }
+          activeTab.value = itemNew
+          openTab(itemNew)
+        }
       }
-      const itemNew = itemId === '' ? tabDashboard : menuData.find(item => item.id === itemId);
-      if (itemNew.url == '#') {
-        return
-      }
-      const indexActive = menuTab.value.findIndex(tab => tab.id === itemId)
-      if(indexActive >= 0) {
-        tabIndex.value = indexActive
-      }
-      activeTab.value = itemNew
-      openTab(itemNew)
     }
 
 
@@ -590,22 +584,22 @@ export default defineComponent({
      * event when click icon close one tab
      */
     const removeItemTab = (item) => {
-      if(menuTab.value.length === 1 && item.id === '') return
+      if (menuTab.value.length === 1 && item.id === '') return
       tabRemove.value = item
       isRemoveTab.value = true
-      if(menuTab.value.length === 1) {
+      if (menuTab.value.length === 1) {
         setMenuTab([])
-      }else {
+      } else {
         const newMenuTab = menuTab.value.filter(item => item.id !== tabRemove.value.id)
         setMenuTab(newMenuTab)
       }
     }
-    const changeActiveTab  = (item)=>{
-      if(activeTab.value.id === item.id) return
+    const changeActiveTab = (item) => {
+      if (activeTab.value.id === item.id) return
       activeTab.value = {
         id: item.id,
-        name: item.name, 
-        url: item.url, 
+        name: item.name,
+        url: item.url,
         roles: item.roles,
       };
       store.state.common.activeTab = activeTab.value
@@ -626,72 +620,81 @@ export default defineComponent({
     /**
      * monitor activeTab variable on vuex to blow activeTab variable at component
      */
-    watch(()=>store.state.common.activeTab, (newValue)=>{
-        selectedItems.value = null
-        activeTab.value = newValue;
+    watch(() => store.state.common.activeTab, (newValue) => {
+      selectedItems.value = null
+      activeTab.value = newValue;
     }, { deep: true })
 
     watch(() => store.state.common.menuTab, (value) => {
-      if(isRemoveTab.value) {
-        if(value.length){
+      if (isRemoveTab.value) {
+        if (value.length) {
           const indexTabRemove = menuTab.value.findIndex(tab => tab.id === tabRemove.value.id)
           menuTab.value = menuTab.value.filter(tab => tab.id !== tabRemove.value.id)
-          const maxInexBeforeRemove =  menuTab.value.length
+          const maxInexBeforeRemove = menuTab.value.length
           let indexActive = 0
 
-          if(tabIndex.value === maxInexBeforeRemove && indexTabRemove === maxInexBeforeRemove){
+          if (tabIndex.value === maxInexBeforeRemove && indexTabRemove === maxInexBeforeRemove) {
             indexActive = tabIndex.value - 1
-          }else {
-            if(indexTabRemove < tabIndex.value){
+          } else {
+            if (indexTabRemove < tabIndex.value) {
               indexActive = tabIndex.value - 1
-            }else{
+            } else {
               indexActive = tabIndex.value
             }
           }
           activeTab.value = {
             id: menuTab.value[indexActive].id,
-            name: menuTab.value[indexActive].name, 
-            url: menuTab.value[indexActive].url, 
+            name: menuTab.value[indexActive].name,
+            url: menuTab.value[indexActive].url,
             roles: menuTab.value[indexActive].roles,
           };
-          store.state.common.activeTab =  {...activeTab.value}
+          store.state.common.activeTab = { ...activeTab.value }
           nextTick(() => {
             tabIndex.value = indexActive
           })
-        }else{
-          isRemoveTab.value = false
+        } else {
           menuTab.value = []
-          openTab(tabDashboard)
-          return 
+          isRemoveTab.value = false
+          activeTab.value = null
+          if(ENVIRONMENT === 'DEVELOP'){
+            openTab(tabDashboard)
+            return
+          }else {
+            router.push(`/dashboard`);
+          }
         }
         isRemoveTab.value = false
         return
       }
-      if(value.length){
-        const newItem = value[value.length - 1]
-        menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
-        nextTick(() => {
-          tabIndex.value = menuTab.value.length - 1
-        })
-      }else {
-        menuTab.value = []
-        openTab(tabDashboard)
-      }
-
+        if(!value.length) {
+          if(ENVIRONMENT === 'DEVELOP') {
+            menuTab.value = []
+            openTab(tabDashboard)
+          }else {
+            activeTab.value = null
+            menuTab.value = []
+          }
+        }else {
+          const newItem = value[value.length - 1]
+          menuTab.value = [...menuTab.value, { ...newItem, text: newItem.name }]
+          nextTick(() => {
+            tabIndex.value = menuTab.value.length - 1
+          })
+        }
     }, {
       deep: true,
     })
     watch(() => menuTab.value, () => {
       nextTick(() => {
         const btnArrowTab = document.querySelector('.tab-main')?.querySelectorAll('.dx-button-content')
-        if(!!btnArrowTab && btnArrowTab.length) {
+        if (!!btnArrowTab && btnArrowTab.length) {
           btnArrowTab[0].addEventListener("click", (e) => {
             e.preventDefault();
             addMenuTab(menuTab.value[0].id)
           });
           btnArrowTab[1].addEventListener("click", (e) => {
             e.preventDefault();
-            addMenuTab(menuTab.value[menuTab.value.length-1].id)
+            addMenuTab(menuTab.value[menuTab.value.length - 1].id)
           });
         }
       })
@@ -736,6 +739,7 @@ export default defineComponent({
       onTabDrop,
       MAX_TAB,
       count,
+      ENVIRONMENT
     }
   },
 });
@@ -749,11 +753,12 @@ export default defineComponent({
   background: v-bind('styles.main');
 }
 
-.not-done{
+.not-done {
   color: red;
 }
+
 ::v-deep .dx-datagrid .dx-row>td {
-    padding: 5px;
+  padding: 5px;
 }
 </style>
 <style>
@@ -765,12 +770,18 @@ export default defineComponent({
 .color-active-tab {
   color: #1890ff;
 }
+.tab-main-emtytab {
+  height: 41px;
+  background-color: #337ab7;
+  width: 100%;
+}
 :deep .tab-main .dx-tabs-wrapper {
   display: flex;
   align-items: end;
   background-color: #337ab7;
   padding-top: 4px;
 }
+
 :deep .tab-main .dx-tab {
   background-color: rgb(228, 228, 228);
   height: 36px;
@@ -779,50 +790,61 @@ export default defineComponent({
   border-radius: 8px 8px 0 0;
   padding: 0;
 }
+
 :deep .tab-main .dx-tab-content {
-    span:first-child {
-      width: 150px;
-      display:inline-block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: left;
+  span:first-child {
+    width: 150px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+
+  span:last-child {
+    margin-left: 0 !important;
+
+    svg {
+      margin-bottom: 3px;
     }
-    span:last-child {
-      margin-left: 0 !important;
-      svg {
-        margin-bottom: 3px;
-      }
-    }
+  }
 }
+
 :deep .tab-main .tab-main-title-tab {
   padding: 9px;
 }
+
 :deep .tab-main .dx-tab-selected {
   background-color: #ffffff !important;
   border-radius: 8px 8px 0 0 !important;
 }
+
 :deep .tab-main .dx-tabs {
   background-color: #337ab7;
   -webkit-box-shadow: none;
   border: none;
   outline: none;
 }
+
 :deep .dx-tabpanel.dx-state-focused>.dx-tabpanel-tabs .dx-tabs {
   -webkit-box-shadow: none;
   border: none;
   outline: none;
 }
+
 :deep .dx-tab-selected::after {
   border: none;
 }
+
 :deep .tab-main .dx-tabs-nav-button {
   top: 4px;
   height: 37px;
 }
+
 :deep .tab-main .dx-sortable {
   height: 40px;
 }
+
 :deep .tab-main .dx-tabs-scrollable .dx-tabs-wrapper {
   border-left: 0;
   border-right: 0;
