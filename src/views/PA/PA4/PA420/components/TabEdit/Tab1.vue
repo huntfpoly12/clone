@@ -311,34 +311,34 @@ import isEqual from "lodash/isEqual";
 const props = defineProps<{ actionNextStep: number, dataDetail: IncomeRetirement }>()
 const emit = defineEmits(['closePopup', 'nextPage'])
 
-const prevRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService)
-const lastRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService)
-const prevRetirementBenefitStatus = computed(() => props.dataDetail.specification?.specificationDetail.prevRetirementBenefitStatus)
-const FORM_STATE_OLD = computed(() => cloneDeep({
+const prevRetiredYearsOfService = props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService
+const lastRetiredYearsOfService = props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService
+const prevRetirementBenefitStatus = props.dataDetail.specification?.specificationDetail.prevRetirementBenefitStatus
+const FORM_STATE_OLD = cloneDeep({
   prevRetiredYearsOfService: {
-    settlementStartDate: prevRetiredYearsOfService.value?.settlementStartDate || null,
-    settlementFinishDate: prevRetiredYearsOfService.value?.settlementFinishDate || null,
-    paymentDate: prevRetiredYearsOfService.value?.paymentDate || null,
-    exclusionDays: prevRetiredYearsOfService.value?.exclusionDays || 0,
-    additionalDays: prevRetiredYearsOfService.value?.additionalDays || 0,
+    settlementStartDate: prevRetiredYearsOfService?.settlementStartDate || null,
+    settlementFinishDate: prevRetiredYearsOfService?.settlementFinishDate || null,
+    paymentDate: prevRetiredYearsOfService?.paymentDate || null,
+    exclusionDays: prevRetiredYearsOfService?.exclusionDays || 0,
+    additionalDays: prevRetiredYearsOfService?.additionalDays || 0,
   },
   lastRetiredYearsOfService: {
-    settlementStartDate: lastRetiredYearsOfService.value?.settlementStartDate || null,
-    settlementFinishDate: lastRetiredYearsOfService.value?.settlementFinishDate || null,
-    paymentDate: lastRetiredYearsOfService.value?.paymentDate || null,
-    exclusionDays: lastRetiredYearsOfService.value?.exclusionDays || 0,
-    additionalDays: lastRetiredYearsOfService.value?.additionalDays  || 0,
+    settlementStartDate: lastRetiredYearsOfService?.settlementStartDate || null,
+    settlementFinishDate: lastRetiredYearsOfService?.settlementFinishDate || null,
+    paymentDate: lastRetiredYearsOfService?.paymentDate || null,
+    exclusionDays: lastRetiredYearsOfService?.exclusionDays || 0,
+    additionalDays: lastRetiredYearsOfService?.additionalDays  || 0,
   },
   prevRetirementBenefitStatus: {
-    retirementBenefits: prevRetirementBenefitStatus.value?.retirementBenefits || 0,
-    nonTaxableRetirementBenefits: prevRetirementBenefitStatus.value?.nonTaxableRetirementBenefits  || 0,
-    taxableRetirementBenefits: prevRetirementBenefitStatus.value?.taxableRetirementBenefits || 0,
+    retirementBenefits: prevRetirementBenefitStatus?.retirementBenefits || 0,
+    nonTaxableRetirementBenefits: prevRetirementBenefitStatus?.nonTaxableRetirementBenefits  || 0,
+    taxableRetirementBenefits: prevRetirementBenefitStatus?.taxableRetirementBenefits || 0,
   },
   incomeCalculationInput: {
-    settlementStartDate: prevRetiredYearsOfService.value?.settlementStartDate || lastRetiredYearsOfService.value?.settlementStartDate,
-    settlementFinishDate:  prevRetiredYearsOfService.value?.settlementFinishDate || lastRetiredYearsOfService.value?.settlementFinishDate,
-    exclusionDays: (prevRetiredYearsOfService.value?.exclusionDays || 0) + (lastRetiredYearsOfService.value?.exclusionDays || 0),
-    additionalDays: lastRetiredYearsOfService.value?.additionalDays || 0,
+    settlementStartDate: prevRetiredYearsOfService?.settlementStartDate || lastRetiredYearsOfService?.settlementStartDate,
+    settlementFinishDate:  prevRetiredYearsOfService?.settlementFinishDate || lastRetiredYearsOfService?.settlementFinishDate,
+    exclusionDays: lastRetiredYearsOfService?.exclusionDays || 0,
+    additionalDays: (prevRetiredYearsOfService?.additionalDays || 0) + (lastRetiredYearsOfService?.additionalDays || 0) ,
     annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
     totalAnualBonus:props.dataDetail.specification?.totalAnualBonus || 0,
     totalPay3Month:props.dataDetail.specification?.totalPay3Month || 0,
@@ -350,19 +350,17 @@ const FORM_STATE_OLD = computed(() => cloneDeep({
     executive: props.dataDetail.specification?.executive,
     retirementReason: props.dataDetail.specification?.retirementReason,
   }
-}))
-const formState = reactive(cloneDeep(FORM_STATE_OLD.value))
+})
+const formState = reactive(cloneDeep(FORM_STATE_OLD))
 // watch FORM_STATE_OLD for changes to the formState
 watch(FORM_STATE_OLD, () => {
-  Object.assign(formState, cloneDeep(FORM_STATE_OLD.value))
+  Object.assign(formState, cloneDeep(FORM_STATE_OLD))
 })
 
 const retirementReason = computed(() => props.dataDetail.specification?.retirementReason)
 const finishDateRetirement = computed(() => props.dataDetail.retirementType === 1 ? formState.lastRetiredYearsOfService.settlementFinishDate : null)
-const interimPaymentTab1 = ref(false)
-watch(props.dataDetail, (value) => {
-  interimPaymentTab1.value = Boolean(value.specification?.specificationDetail.prevRetiredYearsOfService?.settlementStartDate)
-})
+const interimPaymentTab1Old = Boolean(props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService?.settlementStartDate)
+const interimPaymentTab1 = ref(interimPaymentTab1Old)
 const prevSettlementStartDate = ref()
 const prevSettlementFinishDate = ref()
 const lastSettlementStartDate = ref()
@@ -434,12 +432,12 @@ const validatePreRetirementBenefitStatus = computed(() => {
 })
 const taxableRetirementBenefits = computed(() => +formState.prevRetirementBenefitStatus.retirementBenefits - +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits )
 const isChangeForm = computed(() => {
-  return !isEqual(formState.inputFormTab1, FORM_STATE_OLD.value.inputFormTab1) ||
-    !isEqual(formState, FORM_STATE_OLD.value) ||
-    !isEqual(formState.incomeCalculationInput, FORM_STATE_OLD.value.incomeCalculationInput) ||
+  return !isEqual(formState.inputFormTab1, FORM_STATE_OLD.inputFormTab1) ||
+    !isEqual(formState, FORM_STATE_OLD) ||
+    !isEqual(formState.incomeCalculationInput, FORM_STATE_OLD.incomeCalculationInput) ||
     attributionDate.value != `${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}` ||
     paymentYearAndMonth.value != `${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}` ||
-    interimPaymentTab1.value
+    interimPaymentTab1.value !== interimPaymentTab1Old
 })
 watchEffect(() => {
   store.commit('common/setIsChangeForm', {tab1: isChangeForm.value})
@@ -451,7 +449,7 @@ watch(interimPaymentTab1, (value) => {
     formState.prevRetiredYearsOfService = {...Prev_Retired_Years_Of_Service}
     formState.lastRetiredYearsOfService.settlementStartDate = cloneDeep(props.dataDetail.employee?.joinedAt) as number | null
   } else {
-    formState.prevRetiredYearsOfService = cloneDeep(FORM_STATE_OLD.value.prevRetiredYearsOfService)
+    formState.prevRetiredYearsOfService = cloneDeep(FORM_STATE_OLD.prevRetiredYearsOfService)
   }
 })
 
