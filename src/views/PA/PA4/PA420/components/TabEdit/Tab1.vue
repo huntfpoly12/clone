@@ -28,11 +28,11 @@
         <a-form-item label="사원" class="label-required">
           <div class="d-flex-center">
             <employ-select :arrayValue="[employee]"
-                           :valueEmploy="employee.employeeId" width="300px"
+                           :valueEmploy="employee.employeeId" width="200px"
                            :required="true" disabled="true"/>
             <div class="ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-              <div class="custom-waring" style="width: 180px;">대상: 사원과 일용직사<br>원 중 퇴직금 대상자.</div>
+              <div class="custom-waring" style="width: 220px;">대상: 사원과 일용직사 원 중 퇴직금 대상자.</div>
             </div>
           </div>
         </a-form-item>
@@ -55,7 +55,7 @@
         <a-form-item label="퇴직사유" class="label-required">
           <select-box-common :arrSelect="arrayReasonResignationUtils" :required="true"
                              v-model:valueInput="retirementReason" placeholder="선택"
-                             width="300px"/>
+                             width="150px"/>
         </a-form-item>
       </a-col>
       <div class="header-text-1">근속연수</div>
@@ -151,9 +151,9 @@
         </a-form-item>
         <div>
           근속연수 / 근속월수 / 근속일수:
-          {{ dataPrevRetiredYearsOfService.yearsOfService }}년/
-          {{ dataPrevRetiredYearsOfService.monthsOfService }}개월/
-          {{ dataPrevRetiredYearsOfService.daysOfService }}일
+          {{ dataPrevRetiredYearsOfService.yearsOfService || 0 }}년/
+          {{ dataPrevRetiredYearsOfService.monthsOfService || 0 }}개월/
+          {{ dataPrevRetiredYearsOfService.daysOfService || 0 }}일
         </div>
       </a-col>
       <a-col :span="12">
@@ -230,9 +230,9 @@
         </a-form-item>
         <div>
           근속연수 / 근속월수 / 근속일수:
-          {{ dataLastRetiredYearsOfService.yearsOfService }}년/
-          {{ dataLastRetiredYearsOfService.monthsOfService }}개월/
-          {{ dataLastRetiredYearsOfService.daysOfService }}일
+          {{ dataLastRetiredYearsOfService.yearsOfService || 0 }}년/
+          {{ dataLastRetiredYearsOfService.monthsOfService || 0 }}개월/
+          {{ dataLastRetiredYearsOfService.daysOfService || 0 }}일
         </div>
       </a-col>
       <a-col :span="12" class="mt-10 custom-label"
@@ -286,8 +286,8 @@
                            ref="incomeCalculationInputSettlementFinishDate"/>
           </div>
         </a-form-item>
-        <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService }}년/{{ dataSettlement.monthsOfService }}개월/{{
-            dataSettlement.daysOfService
+        <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService || 0 }}년/{{ dataSettlement.monthsOfService || 0 }}개월/{{
+            dataSettlement.daysOfService || 0
           }}일
         </div>
       </a-col>

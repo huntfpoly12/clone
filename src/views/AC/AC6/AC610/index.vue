@@ -169,6 +169,7 @@
                 v-model:valueInput="formState.residentId"
                 :disabled="!!formState.bizNumber"
                 :isResidentId="true"
+                checkAllResidentId
               />
             </a-form-item>
 

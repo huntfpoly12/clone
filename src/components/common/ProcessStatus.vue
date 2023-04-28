@@ -1,5 +1,5 @@
 <template>
-    <span v-if="(disabled || managerGrade == 3)">
+    <span v-if="disabled">
         <span v-for="item in arrayRadioManager" :key="item.id">
             <button-basic v-if="(currentBt == item.id)" :width="90" :height="heightBtn" :text="item.text" :class="item.class"
                 class="buttonModal disabled-button-process">
@@ -29,7 +29,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { managerGrade, userType } from "@/helpers/commonFunction";
+import { userType } from "@/helpers/commonFunction";
 export default defineComponent({
     props: {
         valueStatus: {
@@ -97,7 +97,6 @@ export default defineComponent({
             showModal,
             submit,
             userType,
-            managerGrade,
         }
     },
 });
