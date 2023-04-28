@@ -85,7 +85,7 @@
           <a-spin :spinning="loadingTable" size="large">
               <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="createdAt" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: 710px">
                   <DxScrolling mode="standard" show-scrollbar="always" />
 <!--                  <DxSelection mode="multiple" :fixed="true" />-->
                   <DxColumn caption="출력 메일" cell-template="action" />
@@ -234,6 +234,7 @@ import PopupAddStatus from "./components/PopupAddStatus.vue";
 import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 import dayjs from "dayjs";
+import { Message } from "@/configs/enum";
 export default defineComponent({
   components: {
       DxDataGrid, DxToolbar, DxButton, DxColumn, DxItem, DxScrolling, PlusOutlined
@@ -382,7 +383,7 @@ export default defineComponent({
           onError: errChangeStatus
       } = useMutation(mutations.changeTaxWithholdingStatusReportStatus);
       doneChangeStatus(() => {
-          notification('success', `업부상태 변경되었습니다!`)
+          notification('success', Message.getCommonMessage('106').message)
           trigger.value = true
           refetchTable()
       })

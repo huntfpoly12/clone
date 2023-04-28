@@ -36,8 +36,8 @@
                            v-model:valueEmploy="formState.inputFormTab1.employeeId" width="200px"/>
             <div class="ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-              <div class="custom-waring" style="width: 180px;">
-                대상: 사원과 일용직사<br>원 중 퇴직금 대상자.
+              <div class="custom-waring" style="width: 220px;">
+                대상: 사원과 일용직사 원 중 퇴직금 대상자.
               </div>
             </div>
           </div>
@@ -60,7 +60,7 @@
         </a-form-item>
         <a-form-item label="퇴직사유" class="label-required">
           <select-box-common :arrSelect="arrayReasonResignationUtils" :required="true"
-                             v-model:valueInput="retirementReason" placeholder="선택" width="100px"/>
+                             v-model:valueInput="retirementReason" placeholder="선택" width="150px"/>
         </a-form-item>
       </a-col>
       <div class="header-text-1">근속연수</div>
@@ -589,7 +589,8 @@ const submitForm = (e: any) => {
     store.commit('common/setInputTab1', {
       ...inputFormTab1,
       retirementType: props.retirementType,
-      retirementReason: retirementReason.value
+      retirementReason: retirementReason.value,
+      paymentDay: paymentDay.value
     })
     store.commit('common/setInterimPaymentTab1', interimPaymentTab1.value)
     // store.commit('common/setIsDisableBtnTab2', true)
