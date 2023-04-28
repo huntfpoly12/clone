@@ -1,9 +1,15 @@
 <template>
   <a-layout>
     <a-layout-header class="header">
-      <div class="nav-logo">
-        <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
+      <div class="nav-logo" style="display: flex;">
+        <div class="logo">
+          <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
+        </div>
+        <div class="company-info" style="display: flex; margin-left: 100px;">
+          <company-infor />
+        </div>
       </div>
+ 
       <div class="user-info">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
