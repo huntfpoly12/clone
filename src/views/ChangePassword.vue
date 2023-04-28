@@ -1,21 +1,25 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-          :width="445" :height="500">
+          :width="445">
+    <div class="dx-fieldset-header">비밀번호 변경</div>
     <a-spin :spinning="resetLoading" size="large">
       <standard-form  formName="change-password" ref="changePass"  class="auth-form">
+
+
         <div class="dx-fieldset">
-          <div class="dx-fieldset-header">비밀번호 변경</div>
           <div class="dx-field">
-            <div class="dx-field-label">비밀번호</div>
             <div class="dx-field-value">
-              <default-text-box width="100%" v-model:valueInput="form.password" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
+              <a-form-item label="비밀번호" class="label-red" label-align="right">
+                <default-text-box width="100%" v-model:valueInput="form.password" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
+              </a-form-item>
             </div>
           </div>
           <div class="dx-field">
-            <div class="dx-field-label">비밀번호 확인</div>
             <div class="dx-field-value">
-              <default-text-box width="100%" v-model:valueInput="confirmPassword" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
+              <a-form-item label="비밀번호 확인" class="label-red" label-align="right">
+          <default-text-box width="100%" v-model:valueInput="confirmPassword" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
               <p style="color: red;">{{ confirmMessage }}</p>
+        </a-form-item>
             </div>
           </div>
         </div>
@@ -112,7 +116,7 @@
     },
   };
   </script>
-<style scoped>
+<style scoped lang="scss">
 .auth-form {
     max-width: 400px;
     margin: 0 auto;
@@ -193,5 +197,18 @@ button:disabled {
   cursor: no-drop;
   background-color: silver;
   color: #000000;
+}
+:deep .ant-form-item-label {
+    >label {
+        width: 100px;
+    }
+}
+.dx-fieldset {
+    margin: 10px 20px;
+    padding: 0;
+    text-align: center;
+}
+:deep .ant-modal-body{
+  padding: 20px;
 }
 </style>
