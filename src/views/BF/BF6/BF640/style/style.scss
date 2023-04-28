@@ -191,3 +191,21 @@
     width: 120px;
 }
 }
+#tab1-bf640 {
+  height: calc(100vh - 360px) !important;
+  :deep .dx-freespace-row {
+      display: none !important;
+  }
+}
+#tab2-bf640 {
+  height: calc(100vh - 360px) !important;
+  :deep .dx-freespace-row {
+      display: none !important;
+  }
+}
+#tab3-bf640 {
+  height: calc(100vh - 360px) !important;
+  :deep .dx-freespace-row {
+      display: none !important;
+  }
+}

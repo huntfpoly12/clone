@@ -28,6 +28,33 @@
                     </DxButton>
                 </div>
                 <div class="action">
+                    <div style="border: 1px solid #ddd; width: 100%; display: flex; padding: 5px 0;">
+                        <div style="width: 90px; margin-left: 5px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customCountRow()">
+                            </div>
+                        </div>
+                        <div style="width: 120px; margin-left: 30px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfIncome()"></div>
+                        </div>
+                        <div style="width: 150px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfExpenses()">
+                            </div>
+                        </div>
+                        <div style="width: 250px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                                <a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
+                                    <div style="display: inline;">전월 잔액 <span>{{ $filters.formatCurrency(lastBalance) }}</span> </div>
+                                </a-tooltip>
+                                <div style="display: inline;" v-html="customBalance()"></div>
+                            </div>
+                        </div>
+                        <div style=" width: 230px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                                v-html="countResolutionNormalStatus()"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="action">
                     <a-tooltip placement="top" color="black">
                         <template #title>전표 신규 건별 등록</template>
                         <span>
@@ -71,8 +98,9 @@
         </div>
         <div class="main">
             <!-- {{ dataSource }} -->
-            <div class="data-grid"
-                :style="[store.state.common.ac120.statusShowFull ? { height: heightTableHidden } : { height: heightTableFull }]">
+            <!-- <div class="data-grid"
+                :style="[store.state.common.ac120.statusShowFull ? { height: heightTableHidden } : { height: heightTableFull }]"> -->
+                <div class="data-grid">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- {{ dataSource }} -->
                     <!-- {{ store.state.common.ac120.selectedRowKeys }}
@@ -336,7 +364,7 @@
                         </template>
                     </DxDataGrid> -->
                     <!-- {{ store.state.common.ac120.transactionDetailDate }} -->
-                    <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
+                    <DxDataGrid noDataText="내역이 없습니다" id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
@@ -561,10 +589,10 @@
                         <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" width="75" />
                         <template #normality="{ data }">
                             <div v-if="data.data.resolutionClassification != 1">
-                                <PlusOutlined v-if="data.data.accountingDocumentId == 'AC120'" class="icon-add"
+                                <PlusOutlined v-if="data.data.goodsCount == 0" class="icon-add"
                                     @click="actionPopupItemDetail(data.data)" />
                                 <div v-else style="cursor: pointer;" @click="actionPopupItemDetail(data.data)">
-                                    {{ data.data.goodsCount || 0 }}
+                                    {{ data.data.goodsCount }}
                                 </div>
                             </div>
 
@@ -637,31 +665,7 @@
                         </DxSummary> -->
 
                     </DxDataGrid>
-                    <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;">
-                        <div style="width: 250px; margin-left: 5px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="customCountRow()">
-                            </div>
-                        </div>
-                        <div style="width: 170px; margin-left: 180px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfIncome()"></div>
-                        </div>
-                        <div style="width: 170px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-text="sumOfExpenses()">
-                            </div>
-                        </div>
-                        <div style="width: 670px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-                                <a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
-                                    <span>전월 잔액: {{ $filters.formatCurrency(lastBalance) }}, </span>
-                                </a-tooltip>
-                                <span v-text="customBalance()"></span>
-                            </div>
-                        </div>
-                        <div style=" width: 230px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content"
-                                v-text="countResolutionNormalStatus()"></div>
-                        </div>
-                    </div>
+                    
                 </a-spin>
             </div>
             <!-- {{ store.state.common.ac120.dataRowFocus }} -->
@@ -729,8 +733,8 @@ export default defineComponent({
         DetailComponent,
     },
     setup() {
-        const heightTableFull: any = ref('calc(100vh - 470px)')
-        const heightTableHidden: any = ref('calc(100vh - 745px)')
+        // const heightTableFull: any = ref('calc(100vh - 470px)')
+        // const heightTableHidden: any = ref('calc(100vh - 745px)')
 
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
@@ -882,11 +886,11 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
-            if (newValue == 1) {
-                heightTableHidden.value = 'calc(100vh - 625px)'
-            } else {
-                heightTableHidden.value = 'calc(100vh - 745px)'
-            }
+            // if (newValue == 1) {
+            //     heightTableHidden.value = 'calc(100vh - 625px)'
+            // } else {
+            //     heightTableHidden.value = 'calc(100vh - 745px)'
+            // }
         })
 
         // ================ FUNCTION ============================================
@@ -1094,21 +1098,21 @@ export default defineComponent({
 
         // ================ CUSTOM SUMMARY TABLE ============================================
         const customCountRow = () => {
-            return `전표 건수: ` + dataSource.value.length
+            return `전표 건수 <span>[${dataSource.value.length}]</span>`
         }
         const sumOfIncome = () => {
             let total = 0;
             dataSource.value.forEach((item: any) => {
                 total += item.income ? item.income : 0;
             });
-            return `수입액 합계: ${filters.formatCurrency(total)}`
+            return `수입액 합계 <span>[${filters.formatCurrency(total)}]</span>`
         }
         const sumOfExpenses = () => {
             let total = 0;
             dataSource.value.forEach((item: any) => {
                 total += item.spending ? item.spending : 0;
             });
-            return `지출액 합계: ${filters.formatCurrency(total)}`
+            return `지출액 합계 <span>[${filters.formatCurrency(total)}]</span>`
         }
         const customBalance = () => {
             let total = 0;
@@ -1119,7 +1123,7 @@ export default defineComponent({
                     total += (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
                 }
             });
-            return `예상 잔액: ${filters.formatCurrency(total)}`
+            return ` 예상 잔액 <span>[${filters.formatCurrency(total)}]</span>`
         }
         const countResolutionNormalStatus = () => {
             let totalResolutionNormalStatuTrue = 0;
@@ -1131,7 +1135,7 @@ export default defineComponent({
                     totalResolutionNormalStatuFalse++
                 }
             });
-            return `정상 내역 건수: ${filters.formatCurrency(totalResolutionNormalStatuTrue)}, 비정상 내역 건: ${filters.formatCurrency(totalResolutionNormalStatuFalse)}`
+            return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span> 비정상 내역 건 <span>[${filters.formatCurrency(totalResolutionNormalStatuFalse)}]</span>`
         };
 
         return {
@@ -1148,7 +1152,7 @@ export default defineComponent({
             customCountRow, sumOfIncome, sumOfExpenses, customBalance, countResolutionNormalStatus,
 
             store,
-            heightTableFull, heightTableHidden,
+            // heightTableFull, heightTableHidden,
             move_column,
             colomn_resize,
             acYear,

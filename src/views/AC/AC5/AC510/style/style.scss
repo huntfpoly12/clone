@@ -7,23 +7,20 @@
             justify-content: space-between;
 
             .items {
-                border: 1px solid #BFBFBF;
-                border-radius: 10px;
+                border: 1px solid #bfbfbf;
+                border-left: none;
                 text-align: center;
-                padding: 8px;
-                display: flex;
-                align-items: center;
+                padding: 10px;
+                overflow: hidden;
+                flex-grow: 1;
+                cursor: pointer;
 
-                .text {
-                    margin-right: 8px;
-                    display: flex;
-                    flex-direction: column;
+                &:first-child {
+                    border-left: 1px solid #bfbfbf;
+                }
 
-                    span {
-                        font-size: 11px;
-                        line-height: 12px;
-                        color: #7F7F7F;
-                    }
+                &-active {
+                    background-color: #D1E1F8;
                 }
             }
         }

@@ -36,7 +36,7 @@
         </div>
         <a-spin tip="Loading..." :spinning="loadingSearchSpendingAccountingDocuments">
             <div style="margin: 48px 0">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                     key-expr="accountingDocumentId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     v-model:focused-row-key="focusedRowKey" focused-row-enabled="true" :onRowClick="onSelectionChanged"
                     :column-auto-width="true">
