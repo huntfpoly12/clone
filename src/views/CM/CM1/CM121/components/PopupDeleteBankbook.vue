@@ -4,7 +4,7 @@
     <standard-form action="" name="delete-confirm-121">
       <div class="text-align-center mt-10">
         <div class="cmc121-popup-comfirm-delete">
-          <DeleteOutlined class="cmc121-popup-comfirm-delete-icon" :style="{fontSize: '35px'}" />
+          <img class="cmc121-popup-comfirm-delete-icon" src="@/assets/images/icon_delete.png" alt="delete">
           <div class="cmc121-popup-comfirm-delete-text">
             본 회계연도 내 연계된 통장, 거래, 전표, 결의서 내역이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?
           </div>
@@ -57,7 +57,7 @@ export default defineComponent({
   align-items: center;
   width: 100%;
   &-icon {
-    margin-right: 20px;
+    margin-right: 15px;
   }
   &-text {
     text-align: start;

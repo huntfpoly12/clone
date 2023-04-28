@@ -11,7 +11,7 @@
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
                 <DxButton icon="plus" @click="addRow" :disabled="checkActionValue" />
-                <DxButton @click="onItemClick('history')" :disabled="checkActionValue">
+                <DxButton @click="onItemClick('history')" :disabled="statusButton !== 10 && statusButton !== 20">
                     <a-tooltip placement="top">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
@@ -19,7 +19,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="onItemClick('historyEdit')" :disabled="checkActionValue">
+                <DxButton @click="onItemClick('historyEdit')" :disabled="statusButton !== 10 && statusButton !== 20">
                     <a-tooltip placement="left">
                         <template #title>근로소득 마감상태 변경이력</template>
                         <div class="text-center">
@@ -117,7 +117,7 @@
                 <DxColumn caption="" cell-template="action" width="50px" fixedPosition="right"/>
                 <template #action="{ data }">
                     <div class=" text-center">
-                        <EditOutlined class="" @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) :''" />
+                        <EditOutlined class="" @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) : handleView(data.data.incomeId)" />
                     </div>
                 </template>
                 <DxSummary v-if="dataSourceDetail.length > 0">
@@ -148,6 +148,7 @@
     <AddPopup v-if="modalAdd" :modalStatus="modalAdd" @closePopup="handleClose" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
     <UpdatePopup v-if="modalUpdate" :modalStatus="modalUpdate" @closePopup="actionClosePopup" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
+    <ViewDetail v-if="modalView" :modalStatus="modalView" @closePopup="modalView = false" :keyRowIndex="keyDetailRow" />
 </template>
 <script lang="ts">
 import {computed, defineComponent, reactive, ref, watch} from "vue";
@@ -194,14 +195,41 @@ import filters from "@/helpers/filters";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import {companyId} from '@/helpers/commonFunction';
 import {Message} from '@/configs/enum';
+import ViewDetail from "./ViewDetail.vue";
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
-        EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
-        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined,
-        DeletePopup, EditPopup, AddPopup, UpdatePopup
-    },
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxSelection,
+    DxExport,
+    DxSearchPanel,
+    DxScrolling,
+    DxToolbar,
+    DxEditing,
+    DxDropDownButton,
+    DxGrouping,
+    DxItem,
+    DxButton,
+    DxMasterDetail,
+    DxSummary,
+    DxTotalItem,
+    EditOutlined,
+    HistoryOutlined,
+    SearchOutlined,
+    DeleteOutlined,
+    SaveOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeletePopup,
+    EditPopup,
+    AddPopup,
+    UpdatePopup,
+    ViewDetail
+},
     props: {
         statusButton: {
             type: Number,
@@ -234,6 +262,7 @@ export default defineComponent({
         const modalHistory = ref<boolean>(false)
         const modalAdd = ref(false)
         const modalUpdate = ref(false)
+        const modalView = ref(false)
         const modalHistoryStatus = ref<boolean>(false)
         const resetFormNum = ref(1);
       // console.log('props.statusButton', props.statusButton)
@@ -372,6 +401,11 @@ export default defineComponent({
             modalUpdate.value = true
             keyDetailRow.value = data
         }
+        const handleView = (data: any) => {
+          console.log('view')
+            modalView.value = true
+            keyDetailRow.value = data
+        }
         const statusComfirm = () => {
             mutate({
                 companyId: companyId,
@@ -410,7 +444,9 @@ export default defineComponent({
             resetFormNum,
             listEmployeeId,
             closeChangePaymentDay,store,hasDataIncRetirements,
-            handleClose
+            handleClose,
+            handleView,
+            modalView
         }
     }
 });

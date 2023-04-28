@@ -43,7 +43,7 @@
                       </div>
 
                     </template>
-                    <span v-if="data.data.status == 40" class="tag-custom-3">{{ dayjs(data.data.updatedAt).format("MM-DD") }}</span>
+                    <span v-if="data.data.updatedAt" class="tag-custom-3">{{ dayjs(data.data.updatedAt).format("MM-DD") }}</span>
                   </a-tooltip>
                 </template>
             </DxDataGrid>
