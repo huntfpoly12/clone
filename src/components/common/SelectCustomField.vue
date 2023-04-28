@@ -42,13 +42,14 @@ const messageRequired = Message.getCommonMessage('102').message;
 </script>
 <template>
   <DxSelectBox :search-enabled="false" :width="widthCustom" :data-source="props.dataSource"
-    :display-expr="props.displayeExpr" :value-expr="props.valueExpr" :disabled="props.disabled" v-model="selectedValue"
-    :placeholder="props.placeholder" field-template="field" item-template="item" validation-message-position="bottom">
+    :height="$config_styles.HeightInput" :display-expr="props.displayeExpr" :value-expr="props.valueExpr"
+    :disabled="props.disabled" v-model="selectedValue" :placeholder="props.placeholder" field-template="field"
+    item-template="item" validation-message-position="bottom">
     <template #field=" { data } : any ">
       <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
         <a-tag>{{ data[props.valueExpr] }}</a-tag>
         <a-tooltip zIndex="9999" placement="top" color="black">
-          <template #title v-if=" data.name.length > 10 ">
+          <template #title v-if=" data[props.displayeExpr].length > 10 ">
             <div>{{data[props.displayeExpr]}}</div>
           </template>
           <div class="text-overflow" :style=" { width: `calc(${widthCustom} - 75px)` } ">
@@ -66,7 +67,7 @@ const messageRequired = Message.getCommonMessage('102').message;
       <div style="display: flex; align-items: center;">
         <a-tag>{{ data[props.valueExpr] }}</a-tag>
         <a-tooltip zIndex="9999" placement="top" color="black">
-          <template #title v-if=" data.name.length > 10 ">
+          <template #title v-if=" data[props.displayeExpr].length > 10 ">
             <div>{{ data[props.displayeExpr] }}</div>
           </template>
           <div class="text-overflow">
