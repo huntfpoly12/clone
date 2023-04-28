@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-mutation RequestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile(
+mutation requestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile(
   $filter: ElectronicFilingIncomeBusinessSimplifiedPaymentStatementSearchFilter!
   $emailInput: ReceiveEmailRequestInput!
   $companyIds: [Int!]!

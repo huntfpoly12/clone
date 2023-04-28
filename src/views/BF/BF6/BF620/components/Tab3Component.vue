@@ -39,7 +39,7 @@
     <div class="content-grid mt-10">
       <DxDataGrid id="tab3-bf620" :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" dataSource "
         :show-borders=" true " key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering=" move_column "
-        :allow-column-resizing=" colomn_resize " :column-auto-width=" true ">
+        :allow-column-resizing=" colomn_resize " :column-auto-width=" true " noDataText="내역이 없습니다">
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled=" true " />
         <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" />
@@ -73,7 +73,7 @@
         <br />
         <DxDataGrid :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" companiesInElectronicDataSource "
           :show-borders=" true " key-expr="code" class="mt-10" :allow-column-reordering=" move_column "
-          :allow-column-resizing=" colomn_resize " :column-auto-width=" true ">
+          :allow-column-resizing=" colomn_resize " :column-auto-width=" true " noDataText="내역이 없습니다">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="사업자코드" data-field="code" />
           <DxColumn caption="사업자번호" cell-template="bizNumber" data-field="bizNumber" />

@@ -9,7 +9,7 @@
       <a-col class="ml-30">
         <a-form-item label="제작요청상태" label-align="left">
           <div class="custom-note d-flex-center">
-            <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작요청후" textUnCheck="제작요청전" />
+            <switch-basic v-model:valueSwitch="setBefore" textCheck="제작요청후" textUnCheck="제작요청전" />
             <div class="d-flex-center ml-5">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
               <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -68,7 +68,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
-          id="tab2-bf640">
+          id="tab2-bf640" noDataText="내역이 없습니다">
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="code" cell-template="company-code" />
@@ -95,18 +95,28 @@
           </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
             format="yyyy-MM-dd HH:mm" />
-          <DxColumn caption="제작현황" cell-template="제작현황" width="360" />
+          <DxColumn caption="제작현황" cell-template="제작현황" width="360" alignment="center" />
           <template #제작현황=" { data }: any ">
-            <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
+            <div class="d-flex-center justify-content-center">
+              <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
+              <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
+            </div>
           </template>
-          <DxSummary>
-            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
-          </DxSummary>
         </DxDataGrid>
+        <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
+          <div style="width: 250px; margin-left: 70px;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              전체
+              <span style="font-size: 16px;">[{{ filteredDataSource.length }}]</span>
+            </div>
+          </div>
+          <div style=" margin-left: 56%;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
+          </div>
+        </div>
       </a-spin>
     </div>
-    <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1"
+    <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab2"
       @cancel=" modalStatus = false " />
     <!-- <GetStatusTableHidden :data="data" @productionStatusData="productionStatusData" /> -->
   </div>
@@ -144,7 +154,7 @@ export default defineComponent({
     GetStatusTable,
     CheckboxGroup,
     DxLoadPanel
-},
+  },
   props: {
     search: {
       type: Number,
@@ -305,9 +315,10 @@ export default defineComponent({
     };
     // custom summary
     const productStatusSummary = () => {
-      return `제작요청전 ${countStatus(filteredDataSource.value, true, 'beforeProduction')} 제작대기 ${countStatus(filteredDataSource.value, 0, 'productionStatus')} 제작중 ${countStatus(
-        filteredDataSource.value, 1, 'productionStatus')} 제작성공 ${countStatus(filteredDataSource.value, 2, 'productionStatus')} 제작실패 ${countStatus(filteredDataSource.value, -1, 'productionStatus')} `;
+      return `제작요청전 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, true, 'beforeProduction')}]</span> 제작대기 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 0, 'productionStatus')}]</span> 제작중 <span style="font-size: 16px;">[${countStatus(
+        filteredDataSource.value, 1, 'productionStatus')}]</span> 제작성공 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 2, 'productionStatus')}]</span> 제작실패 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, -1, 'productionStatus')}]</span> `;
     };
+
 
     //--------------------on Search----------------------
 
@@ -335,7 +346,7 @@ export default defineComponent({
     // ----------------request file withholding---------
 
     const requestFileData = ref<any>({
-      reportKeyInputs: [],
+      companyIds: [],
       filter: dataSearch.value,
       emailInput: {
         receiverName: userInfor?.value?.name,
@@ -353,8 +364,8 @@ export default defineComponent({
         return;
       }
       if (event.selectedRowsData)
-        requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
-          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
+        requestFileData.value.companyIds = event.selectedRowsData.map((item: any) => {
+          return item.companyId;
         });
     };
     const modalStatus = ref<boolean>(false);
@@ -365,7 +376,7 @@ export default defineComponent({
       };
       const { active, ...customFilter } = dataSearch.value;
       requestFileData.value.filter = customFilter;
-      if (requestFileData.value.reportKeyInputs.length > 0) {
+      if (requestFileData.value.companyIds.length > 0) {
         modalStatus.value = true;
       } else {
         notification('warning', messageDelNoItem);
