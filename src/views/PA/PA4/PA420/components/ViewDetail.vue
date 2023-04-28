@@ -5,42 +5,39 @@
     <a-steps :current="step" type="navigation">
       <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" @click="changeStep(0)" />
       <a-step :status="checkStepTwo" title="퇴직금계산" @click="changeStep(1)" />
-      <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)"/>
+      <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
     </a-steps>
-    <div class="step-content pt-20">
-      <keep-alive>
-        <template v-if="step === 0">
-          <Tab1 @closePopup="setModalVisible" :actionNextStep="valueNextStep" @nextPage="step++" :data-detail="dataDetail"/>
-        </template>
-        <template v-else-if="step === 1">
-          <Tab2 :data-detail="dataDetail" />
-        </template>
-        <template v-else>
-          <Tab3 ref="formEditTab3" :data-detail="dataDetail" />
-        </template>
-      </keep-alive>
-
-
+    <div class="step-content pt-20" v-if="dataDetail.incomeId !== 0">
+      <a-spin :spinning="loading">
+        <keep-alive>
+          <template v-if="step === 0">
+            <Tab1 @closePopup="setModalVisible" :actionNextStep="valueNextStep" @nextPage="step++"
+              :data-detail="dataDetail" />
+          </template>
+          <template v-else-if="step === 1">
+            <Tab2 :data-detail="dataDetail" />
+          </template>
+          <template v-else>
+            <Tab3 ref="formEditTab3" :data-detail="dataDetail" />
+          </template>
+        </keep-alive>
+      </a-spin>
     </div>
   </a-modal>
 </template>
 <script lang="ts" setup>
-import { computed, reactive, ref, watch } from 'vue'
-import notification from "@/utils/notification";
+import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
+import notification from "@/utils/notification";
+import { IncomeRetirement } from "@/views/PA/PA4/PA420/types";
+import { dataDefaultDetailUtils } from "@/views/PA/PA4/PA420/utils";
+import { useQuery } from "@vue/apollo-composable";
+import cloneDeep from "lodash/cloneDeep";
+import { computed, reactive, ref, watch } from 'vue';
+import { useStore } from 'vuex';
 import Tab1 from './TabView/Tab1.vue';
 import Tab2 from './TabView/Tab2.vue';
 import Tab3 from './TabView/Tab3.vue';
-import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import { useStore } from 'vuex';
-import comfirmClosePopup from '@/utils/comfirmClosePopup';
-import { Message } from "@/configs/enum";
-import { dataDefaultDetailUtils } from "@/views/PA/PA4/PA420/utils";
-import cloneDeep from "lodash/cloneDeep";
-import { IncomeRetirement } from "@/views/PA/PA4/PA420/types";
-import { message } from 'ant-design-vue';
 
 interface Props {
   modalStatus: boolean,
@@ -53,7 +50,6 @@ const emit = defineEmits(['closePopup'])
 const formEditTab3 = ref()
 const store = useStore();
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
-const interimPaymentTab1 = computed(() => store.getters['common/getInterimPaymentTab1'])
 
 const step = ref(0)
 const valueNextStep = ref(0)
@@ -144,15 +140,6 @@ const changeStep = (stepChange: any) => {
   console.log('stepChange', stepChange)
   step.value = stepChange
 }
-const nextStep = (event: any) => {
-  if (step.value == 0) valueNextStep.value++;
-  else if (step.value == 1) step.value++;
-};
-
-const prevStep = () => {
-  step.value--
-}
-
 const setModalVisible = () => {
   emit('closePopup')
 };

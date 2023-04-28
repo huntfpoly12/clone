@@ -355,7 +355,7 @@ const isReqStatements2 = ref<boolean>(false)
 const variables: any = ref({})
 const retirementBenefits = ref(retirementBenefitsStore.value)
 
-const FORM_STATE_OLD = computed(() => cloneDeep({
+const FORM_STATE_OLD = {
   calculationOfDeferredRetirementIncomeTax: {
     totalAmount: props.dataDetail.specification?.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
     statements: [
@@ -381,7 +381,7 @@ const FORM_STATE_OLD = computed(() => cloneDeep({
   prevRetirementBenefitStatus: props.dataDetail.specification?.specificationDetail.prevRetirementBenefitStatus,
   prevRetiredYearsOfService: props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService,
   lastRetiredYearsOfService: props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService
-}))
+}
 const initialIncomeRetirementTax_old = computed(() => cloneDeep({
   taxBaseCalculation: props.dataDetail.specification?.specificationDetail.taxBaseCalculation,
   taxAmountCalculation: props.dataDetail.specification?.specificationDetail.taxAmountCalculation,
@@ -408,13 +408,13 @@ const initialIncomeRetirementTax_old = computed(() => cloneDeep({
   taxAmountToBeReported: props.dataDetail.specification?.specificationDetail.taxAmountToBeReported,
   retirementIncomeTax: props.dataDetail.specification?.specificationDetail.retirementIncomeTax
 }))
-const formState = reactive(cloneDeep(FORM_STATE_OLD.value))
+const formState = reactive(cloneDeep(FORM_STATE_OLD))
 
 const dataIncomeRetirementTax: any = reactive(cloneDeep(initialIncomeRetirementTax_old.value))
 const statementsAfterCal1 = reactive(cloneDeep(initialIncomeRetirementTax_old.value.calculationOfDeferredRetirementIncomeTax.statements[0]))
 const statementsAfterCal2 = reactive(cloneDeep(initialIncomeRetirementTax_old.value.calculationOfDeferredRetirementIncomeTax.statements[1]))
 
-const isChangeTaxInput = computed(() => !isEqual(formState, FORM_STATE_OLD.value))
+const isChangeTaxInput = computed(() => !isEqual(formState, FORM_STATE_OLD))
 watch(isChangeTaxInput, (val) => {
   store.commit('common/setIsChangeForm', { tab3: val })
 })
@@ -478,7 +478,7 @@ const handleCalculateIncomeRetirementTax = () => {
       retirementBenefits: retirementBenefits.value
     },
     lastRetiredYearsOfService: {
-      ...FORM_STATE_OLD.value.lastRetiredYearsOfService
+      ...FORM_STATE_OLD.lastRetiredYearsOfService
     },
   }
 
@@ -486,12 +486,12 @@ const handleCalculateIncomeRetirementTax = () => {
     result = {
       ...result,
       prevRetiredYearsOfService: {
-        ...FORM_STATE_OLD.value.prevRetiredYearsOfService,
-        paymentDate: FORM_STATE_OLD.value.prevRetiredYearsOfService?.paymentDate
+        ...FORM_STATE_OLD.prevRetiredYearsOfService,
+        paymentDate: FORM_STATE_OLD.prevRetiredYearsOfService?.paymentDate
       },
     }
-    if (FORM_STATE_OLD.value.prevRetirementBenefitStatus?.nonTaxableRetirementBenefits) {
-      result.prevRetirementBenefitStatus = FORM_STATE_OLD.value.prevRetirementBenefitStatus
+    if (FORM_STATE_OLD.prevRetirementBenefitStatus?.nonTaxableRetirementBenefits) {
+      result.prevRetirementBenefitStatus = FORM_STATE_OLD.prevRetirementBenefitStatus
     }
   } else {
     // delete key prevRetiredYearsOfService, prevRetirementBenefitStatus

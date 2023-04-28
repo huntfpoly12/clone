@@ -18,6 +18,8 @@ query getSubscriptionRequest($id: Int!) {
       name
       startYearMonth
     }
+    usedAccounting
+    usedWithholding
     processedAt
     approvedAt
     approvedBy

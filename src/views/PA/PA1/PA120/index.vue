@@ -64,13 +64,13 @@
                   신규
                 </template>
                 <div style="text-align: center;">
-                  <DxButton icon="plus" @click="openAddNewModal" :disabled="disableAddMonth()" />
+                  <DxButton icon="plus" @click="openAddNewModal" />
                 </div>
               </a-tooltip>
             </template>
             <template #button-history>
               <DxButton icon="plus">
-                <HistoryOutlined style="font-size: 18px" @click="modalHistory" :disabled="disableAddMonth()" />
+                <HistoryOutlined style="font-size: 18px" @click="modalHistory" />
               </DxButton>
             </template>
             <DxColumn caption="성명" width="180" cell-template="company-name" data-field="name" />
@@ -101,13 +101,19 @@
                   :ratio=" data.data.incomeTaxMagnification " />
               </div>
             </template>
-            <DxColumn cell-template="pupop" width="40" />
-            <template #pupop=" { data }: any ">
-              <div class="custom-action" style="text-align: center" v-if=" data.data.deletable ">
-                <a-space :size=" 10 ">
-                  <DeleteOutlined @click=" actionDeleteFuc(data.data.employeeId) " />
-                </a-space>
-              </div>
+            <DxColumn cell-template="action" width="48" />
+            <template #action=" { data }: any ">
+              <DxButton type="ghost" style="cursor: pointer" @click=" actionDeleteFuc(data.data.employeeId) "
+                v-if=" data.data.deletable ">
+                <a-tooltip zIndex="9999999" placement="top" color="black">
+                  <template #title>
+                    <div>
+                      삭제
+                    </div>
+                  </template>
+                  <DeleteOutlined style="font-size: 16px" />
+                </a-tooltip>
+              </DxButton>
             </template>
             <DxScrolling column-rendering-mode="virtual" />
           </DxDataGrid>
@@ -120,8 +126,8 @@
         <PA120PopupEdit :idRowEdit=" idRowEdit " v-if=" actionChangeComponent == 2 " />
       </a-col>
     </a-row>
-    <a-modal :visible=" delStatus " @cancel=" delStatus = false " :mask-closable=" false " class="confirm-md"
-      footer="" :width=" 500 ">
+    <a-modal :visible=" delStatus " @cancel=" delStatus = false " :mask-closable=" false " class="confirm-md" footer=""
+      :width=" 500 ">
       <standard-form action="" name="delete-510">
         <div class="custom-modal-delete">
           <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
@@ -130,8 +136,8 @@
         <div class="text-align-center mt-30">
           <button-basic class="button-form-modal" :text=" '아니요' " :type=" 'default' " :mode=" 'outlined' "
             @onClick=" delStatus = false " />
-          <button-basic class="button-form-modal" :text=" '네. 삭제합니다' " :width=" 140 " :type=" 'default' " :mode=" 'contained' "
-            @onClick=" statusComfirm " />
+          <button-basic class="button-form-modal" :text=" '네. 삭제합니다' " :width=" 140 " :type=" 'default' "
+            :mode=" 'contained' " @onClick=" statusComfirm " />
         </div>
       </standard-form>
     </a-modal>
@@ -148,7 +154,7 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling, DxSearc
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { companyId, startYearMonth } from '@/helpers/commonFunction';
+import { companyId } from '@/helpers/commonFunction';
 import notification from '@/utils/notification';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import mutations from '@/graphql/mutations/PA/PA1/PA120/index';
@@ -159,7 +165,6 @@ import { DxTooltip } from 'devextreme-vue/tooltip';
 import { initFormStateTab1 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import queryCM130 from "@/graphql/queries/CM/CM130/index";
-import dayjs from 'dayjs';
 
 export default defineComponent({
   components: {
@@ -213,20 +218,19 @@ export default defineComponent({
       delStatus.value = true;
     };
     const statusComfirm = (res: any) => {
-      if (res == true) {
-        actionDelete({
-          companyId: companyId,
-          imputedYear: globalYear.value,
-          employeeId: idAction.value,
-        });
-        actionChangeComponent.value = 1;
-      }
+      actionDelete({
+        companyId: companyId,
+        imputedYear: globalYear.value,
+        employeeId: idAction.value,
+      });
+      actionChangeComponent.value = 1;
     };
     successDelete((e) => {
       notification('success', messageDel);
       isFirstRun.value = true;
       actionChangeComponent.value = 2;
       trigger.value = true;
+      delStatus.value = false;
     });
     errorDelete((e) => {
       notification('error', e.message);
@@ -506,14 +510,14 @@ export default defineComponent({
       if (element)
         dataGridRef.value?.refresh();
     }
-    const disableAddMonth = (val: any = 1) => {
-      let date = dayjs(globalYear.value + 1 + '' + val);
-      let dateToCompare = dayjs(`${startYearMonth}`, 'YYYYMM')
-      if (dateToCompare.isBefore(date)) {
-        return false;
-      }
-      return true;
-    }
+    // const disableAddMonth = (val: any = 1) => {
+    //   let date = dayjs(globalYear.value + 1 + '' + val);
+    //   let dateToCompare = dayjs(`${startYearMonth}`, 'YYYYMM')
+    //   if (dateToCompare.isBefore(date)) {
+    //     return false;
+    //   }
+    //   return true;
+    // }
 
     // get config
     const yearPA120 = computed(() => store.state.common.yearPA120);
@@ -576,7 +580,7 @@ export default defineComponent({
       calculateIncomeTypeCodeAndName,
       isCalculateEditPA120,
       onFocusedRowChanging,
-      disableAddMonth,
+      // disableAddMonth,
     };
   },
 });

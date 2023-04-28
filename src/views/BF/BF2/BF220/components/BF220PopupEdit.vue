@@ -98,6 +98,7 @@ import { DxCheckBox } from 'devextreme-vue/check-box';
 import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { makeDataClean } from '@/helpers/commonFunction';
+import { Message } from '@/configs/enum';
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
@@ -168,7 +169,7 @@ export default defineComponent({
             onError: editError
         } = useMutation(mutations.updateScreenRoleGroup);
         editDone(e => {
-            notification('success', "그룹이 생성되었습니다.")
+            notification('success', Message.getCommonMessage('106').message);
             emit("closePopupEdit", false)
         })
         editError(e => {
