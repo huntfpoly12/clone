@@ -1,6 +1,6 @@
 <template>
     <div ref="root">
-        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered @cancel="setModalVisible()"
+        <a-modal :visible="modalStatus" title="영업자관리" centered @cancel="setModalVisible()"
             :mask-closable="false" :width="1028" :footer="null">
             <a-spin :spinning="loading">
                 <standard-form ref="formAddBF340">
