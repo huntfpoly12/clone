@@ -357,6 +357,8 @@ export default defineComponent({
         }
         const actionClosePopup = () => {
             modalUpdate.value = false
+            store.commit('common/resetForm');
+
         }
 
         const closeChangePaymentDay = () => {
@@ -373,6 +375,7 @@ export default defineComponent({
             }
         }
         const editPaymentDate = () => {
+          console.log('popupDataDelete', popupDataDelete.value)
             if (popupDataDelete.value.length > 0) {
                 modalEdit.value = true
             }else{

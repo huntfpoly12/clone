@@ -54,14 +54,12 @@
                                         :show-borders="true" ref="gridRefName" :data-source="dataSource"
                                         key-expr="rowIndex" :allow-column-reordering="move_column"
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                                        :show-row-lines="true" :focused-row-enabled="true" @row-removing="removingRow"
+                                        :show-row-lines="true" :focused-row-enabled="true"
                                         @focused-row-changed="onFocusedRowChanged" :focused-row-key="focusedRowKey"
                                         @init-new-row="onInitRow">
                                         <DxScrolling mode="standard" show-scrollbar="always" />
-                                        <DxEditing :use-icons="true" :allow-adding="true" template="button-template"
-                                            new-row-position="pageBottom" :allow-deleting="true" mode="cell">
-                                            <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                        </DxEditing>
+                                        <DxEditing :use-icons="true" :allow-adding="true"
+                                            new-row-position="pageBottom" mode="cell" :confirmDelete="false"/>
                                         <DxToolbar>
                                             <DxItem location="after" template="button-template"
                                                 css-class="cell-button-add" />
@@ -90,6 +88,19 @@
                                         <template #totalPrice="{ data }">
                                             {{ $filters.formatCurrency(getTotalAmount(data.data)) }}
                                         </template>
+                                        <DxColumn cell-template="action" width="48" />
+                                        <template #action=" { data }: any ">
+                                          <DxButton type="ghost" style="cursor: pointer" @click=" onDelete(data) ">
+                                            <a-tooltip zIndex="9999999" placement="top" color="black">
+                                              <template #title>
+                                                <div>
+                                                  삭제
+                                                </div>
+                                              </template>
+                                              <DeleteOutlined style="font-size: 16px" />
+                                            </a-tooltip>
+                                          </DxButton>
+                                        </template>
                                     </DxDataGrid>
                                     <DxDataGrid v-else id="gridContainer" :show-borders="true" ref="gridRefName"
                                         disabled="true">
@@ -102,6 +113,20 @@
                                         <DxColumn caption="서비스시작년월" />
                                         <DxColumn caption="정원수 (명)" />
                                         <DxColumn caption="회계서비스이용료" />
+                                        <DxColumn cell-template="action" width="40" />
+                                        <template #action=" { data }: any ">
+                                          <DxButton type="ghost" style="cursor: pointer" @click=" onDelete(data) "
+                                            v-if=" data.data.deletable">
+                                            <a-tooltip zIndex="9999999" placement="top" color="black">
+                                              <template #title>
+                                                <div>
+                                                  삭제
+                                                </div>
+                                              </template>
+                                              <DeleteOutlined style="font-size: 16px" />
+                                            </a-tooltip>
+                                          </DxButton>
+                                        </template>
                                     </DxDataGrid>
                                     <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length"
                                         :key="resetFormNum">
@@ -302,6 +327,21 @@
                 </a-spin>
             </standard-form>
         </a-modal>
+        <a-modal :visible=" deleteModal " @cancel=" deleteModal = false " :mask-closable=" false " class="confirm-md"
+          footer="" :width=" 500 ">
+          <standard-form action="" name="delete-510">
+            <div class="custom-modal-delete">
+              <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
+              <span>{{ contentDelete }}</span>
+            </div>
+            <div class="text-align-center mt-30">
+              <button-basic class="button-form-modal" :text=" '아니요' " :type=" 'default' " :mode=" 'outlined' "
+                @onClick=" deleteModal = false " />
+              <button-basic class="button-form-modal" :text=" '네. 삭제합니다' " :width=" 140 " :type=" 'default' " :mode=" 'contained' "
+                @onClick=" onDelConfirm " />
+            </div>
+          </standard-form>
+        </a-modal>
     </div>
 </template>
 <script lang="ts">
@@ -321,6 +361,7 @@ import dayjs from "dayjs";
 import { initialState, initialFormStateMomes } from "../utils/index"
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from '@/utils/notification';
+import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxEditing, DxLookup, DxButton, DxToolbar, DxScrolling, DxItem, DxNumberBox, DxTexts, DxCheckBox, DeleteOutlined, PlusSquareOutlined, imgUpload, SaveOutlined
@@ -356,7 +397,10 @@ export default defineComponent({
         const dataActiveRow = ref<any>(JSON.parse(JSON.stringify({ ...initialState.info.accounting[0] })))
         const withholdingServiceType = ref(false)
         const rowIndex = ref<number>(0);
-        const focusedRowKey = ref(0)
+        const focusedRowKey = ref(0);
+        const deleteModal = ref(false);
+        const rowIndexDelete = ref(0);
+        const contentDelete = Message.getCommonMessage('401').message;
         // ============ GRAPQL ===============================
         // get service contract
         const { result } = useQuery(
@@ -698,10 +742,13 @@ export default defineComponent({
                 focusedRowKey.value = keyNew;
             }, 100);
         };
-        const removingRow = (data: any) => {
-            if (data.data.rowIndex == rowIndex.value) {
-                rowIndex.value = 0
-            }
+        const onDelete = (data: any) => {
+          deleteModal.value = true;
+          rowIndexDelete.value = data.rowIndex;
+        }
+        const onDelConfirm = () => {
+          gridRefName.value.instance.deleteRow(rowIndexDelete.value);
+          deleteModal.value = false;
         }
         const onFocusedRowChanged = (e: any) => {
             resetFormNum.value++;
@@ -714,8 +761,8 @@ export default defineComponent({
         }
 
         return {
-            handleInputTexService, getImgUrl, checkOption, disableInput, getPriceOption, changeChecked, changeValueInput, getTotalAmount, setModalVisible, removeImg, handleAdd, handleDeleteMemo, handleAddMemo, actionUpdateServiceContract, addRow, removingRow, onFocusedRowChanged, onInitRow,
-            move_column, colomn_resize, loading, activeKey, formState, facilityBizType, formStateMomes, loadingUpdate, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum,
+            handleInputTexService, getImgUrl, checkOption, disableInput, getPriceOption, changeChecked, changeValueInput, getTotalAmount, setModalVisible, removeImg, handleAdd, handleDeleteMemo, handleAddMemo, actionUpdateServiceContract, addRow, onDelConfirm, onFocusedRowChanged, onInitRow,
+            move_column, colomn_resize, loading, activeKey, formState, facilityBizType, formStateMomes, loadingUpdate, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum, onDelete, deleteModal, contentDelete
         };
     },
 });

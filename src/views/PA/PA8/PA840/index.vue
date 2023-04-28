@@ -59,7 +59,7 @@
           <div v-if=" data.data.leaveOfAbsenceRequestFileStorageId " class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer"
               @click=" onGetFileStorageId(data.data.type, data.data.leaveOfAbsenceRequestFileStorageId) ">
-              <DownloadOutlined :size=" 12 " />
+              <DownloadOutlined :style="{fontSize: 12}"/>
             </DxButton>
           </div>
         </template>
@@ -67,7 +67,7 @@
           <div v-if=" data.data.leaveOfAbsenceRequestFileStorageId " class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer"
               @click=" onGetFileStorageId(data.data.type, data.data.leaveOfAbsenceRequestFileStorageId) ">
-              <DownloadOutlined :size=" 12 " />
+              <DownloadOutlined :style="{fontSize: 12}"/>
             </DxButton>
           </div>
         </template>
@@ -75,7 +75,7 @@
           <div v-if=" data.data.leaveOfAbsenceRequestFileStorageId " class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer"
               @click=" onGetFileStorageId(data.data.type, data.data.leaveOfAbsenceRequestFileStorageId) ">
-              <DownloadOutlined :size=" 12 " />
+              <DownloadOutlined :style="{fontSize: 12}"/>
             </DxButton>
           </div>
         </template>

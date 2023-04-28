@@ -97,23 +97,23 @@ const props = defineProps<{ dataDetail: IncomeRetirement }>()
 
 const store = useStore();
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
-const prevRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService)
-const lastRetiredYearsOfService = computed(() => props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService)
+const prevRetiredYearsOfService = props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService
+const lastRetiredYearsOfService = props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService
 
-const dataFormOld = computed(() => ({
-  settlementStartDate: prevRetiredYearsOfService.value?.settlementStartDate || lastRetiredYearsOfService.value?.settlementStartDate,
-  settlementFinishDate:  prevRetiredYearsOfService.value?.settlementFinishDate || lastRetiredYearsOfService.value?.settlementFinishDate,
-  exclusionDays: (prevRetiredYearsOfService.value?.exclusionDays || 0) + (lastRetiredYearsOfService.value?.exclusionDays || 0),
-  additionalDays: lastRetiredYearsOfService.value?.additionalDays || 0,
+const dataFormOld = {
+  settlementStartDate: prevRetiredYearsOfService?.settlementStartDate || lastRetiredYearsOfService?.settlementStartDate,
+  settlementFinishDate:  prevRetiredYearsOfService?.settlementFinishDate || lastRetiredYearsOfService?.settlementFinishDate,
+  exclusionDays: (prevRetiredYearsOfService?.exclusionDays || 0) + (lastRetiredYearsOfService?.exclusionDays || 0),
+  additionalDays: lastRetiredYearsOfService?.additionalDays || 0,
   annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
   totalAnualBonus:props.dataDetail.specification?.totalAnualBonus || 0,
   totalPay3Month:props.dataDetail.specification?.totalPay3Month || 0,
-}))
+}
 const dataFormIncomeCalculation = reactive<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
 const dataIncomeRetirement = ref(0)
 const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
 
-const isChangeForm = computed(() => !isEqual(dataFormIncomeCalculation, dataFormOld.value))
+const isChangeForm = computed(() => !isEqual(dataFormIncomeCalculation, dataFormOld))
 const emptyForm = computed(() => {
   return dataFormIncomeCalculation.totalAnualBonus === 0 || dataFormIncomeCalculation.totalPay3Month === 0 || dataFormIncomeCalculation.annualLeaveAllowance === 0
 })
