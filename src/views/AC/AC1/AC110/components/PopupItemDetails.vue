@@ -21,72 +21,15 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-              <DxSelectBox
-                :search-enabled="true"
-                v-model:value="data.data.item" 
-                :data-source="arrSelectItem"
-                placeholder="선택 또는 직접입력"
-                search-mode="contains"
-                search-expr="value"
-                :search-timeout="200"
-                :min-search-length="0"
-                :show-data-before-search="false"
-                display-expr="value"
-                value-expr="value"
-                @input="(e: any) => inputChange(e, data.rowIndex, 'item')"
-                @enter-key="eventEnter"
-                @focus-in="(e: any) => focusInput(e, data.rowIndex, 'item')"
-              >
-                <DxValidator name="품목">
-                  <DxRequiredRule message="품목 Required" />
-                </DxValidator>
-              </DxSelectBox>
+              <SelectSearchEdit v-model:valueInput="data.data.item" :data="arrSelectItem" @updateArrSelect="(value: any) => arrSelectItem = [...value]" :required="true" />
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
-              <DxSelectBox
-                :search-enabled="true"
-                v-model:value="data.data.standard" 
-                :data-source="arrSelectStandard"
-                placeholder="선택 또는 직접입력"
-                search-mode="contains"
-                search-expr="value"
-                :search-timeout="200"
-                :min-search-length="0"
-                :show-data-before-search="false"
-                display-expr="value"
-                value-expr="value"
-                @input="(e: any) => inputChange(e, data.rowIndex, 'standard')"
-                @enter-key="eventEnter"
-                @focus-in="(e: any) => focusInput(e, data.rowIndex, 'standard')"
-              >
-                <DxValidator name="규격">
-                  <DxRequiredRule message="규격 Required" />
-                </DxValidator>
-              </DxSelectBox>
+            <SelectSearchEdit v-model:valueInput="data.data.standard" :data="arrSelectStandard" @updateArrSelect="(value: any) => arrSelectStandard = [...value]" :required="true" />
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-              <DxSelectBox
-                :search-enabled="true"
-                v-model:value="data.data.unit" 
-                :data-source="arrSelectUnit"
-                placeholder="선택 또는 직접입력"
-                search-mode="contains"
-                search-expr="value"
-                :search-timeout="200"
-                :min-search-length="0"
-                :show-data-before-search="false"
-                display-expr="value"
-                value-expr="value"
-                @input="(e: any) => inputChange(e, data.rowIndex, 'unit')"
-                @enter-key="eventEnter"
-                @focus-in="(e: any) => focusInput(e, data.rowIndex, 'unit')"
-              >
-                <DxValidator name="단위">
-                  <DxRequiredRule message="단위 Required" />
-                </DxValidator>
-              </DxSelectBox>
+            <SelectSearchEdit v-model:valueInput="data.data.unit" :data="arrSelectUnit" @updateArrSelect="(value: any) => arrSelectUnit = [...value]" :required="true" />
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
@@ -148,8 +91,6 @@ import { Message } from "@/configs/enum"
 import notification from '@/utils/notification';
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import queries from "@/graphql/queries/AC/AC1/AC110";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import DxSelectBox from "devextreme-vue/select-box";
 import { cloneDeep, isEqual } from 'lodash';
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 export default defineComponent({
@@ -172,7 +113,7 @@ export default defineComponent({
     }
   },
   components: {
-    DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxToolbar, DxButton, DxValidator, DxRequiredRule, DxSelectBox,
+    DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxToolbar, DxButton
   },
 
   setup(props, { emit }) {
@@ -188,11 +129,6 @@ export default defineComponent({
     let dataSourceCopy: any = ref()
     let itemDelete: any = ref()
     let rowKeyfocused: any = ref(null)
-    let objNewSlect = ref({
-      key: '',
-      keyword: '',
-      indexRow: 0
-    })
     const triggerSearchStatementOfGoodsItems = ref(false)
     const triggerSearchStatementOfGoodsStandards = ref(false)
     const triggerSearchStatementOfGoodsUnits = ref(false)
@@ -449,56 +385,6 @@ export default defineComponent({
       }
     }
 
-    const inputChange = (e: any, indexRow: number, key: string) => {
-      objNewSlect.value = {
-        key: key,
-        keyword: e.event.target.value,
-        indexRow: indexRow
-      }
-    }
-
-    const eventEnter = (e: any) => {
-      const el = e.component.instance()
-      if(objNewSlect.value.key === 'item') {
-        if(!arrSelectItem.value.some((item: any) => item.value.includes(objNewSlect.value.keyword.trim()))) {
-          el.close()
-          arrSelectItem.value.push({value: objNewSlect.value.keyword.trim()})
-          el.reset()
-          dataSource.value.statementOfGoodsItems[objNewSlect.value.indexRow][objNewSlect.value.key] = objNewSlect.value.keyword.trim()
-        }
-      }
-
-      if(objNewSlect.value.key === 'standard') {
-        if(!arrSelectStandard.value.some((item: any) => item.value.includes(objNewSlect.value.keyword.trim()))) {
-          el.close()
-          arrSelectStandard.value.push({value: objNewSlect.value.keyword.trim()})
-          el.reset()
-          dataSource.value.statementOfGoodsItems[objNewSlect.value.indexRow][objNewSlect.value.key] = objNewSlect.value.keyword.trim()
-        }
-      }
-
-      if(objNewSlect.value.key === 'unit') {
-        if(!arrSelectUnit.value.some((item: any) => item.value.includes(objNewSlect.value.keyword.trim()))) {
-          el.close()
-          arrSelectUnit.value.push({value: objNewSlect.value.keyword.trim()})
-          el.reset()
-          dataSource.value.statementOfGoodsItems[objNewSlect.value.indexRow][objNewSlect.value.key] = objNewSlect.value.keyword.trim()
-        }
-      }
-      
-      nextTick(() => {
-        el.focus()
-      })
-    }
-
-    const focusInput = (e: any, indexRow: number, key: string) => {
-      objNewSlect.value = {
-        key: key,
-        keyword: e.event.target.value,
-        indexRow: indexRow
-      }
-    }
-
     return {
       move_column,
       colomn_resize,
@@ -522,9 +408,6 @@ export default defineComponent({
       handleConfirmChange,
       changeInput,
       rowKeyfocused,
-      inputChange,
-      eventEnter,
-      focusInput,
       isDisableBtnSave
     }
   },

@@ -58,8 +58,8 @@
         </a-col>
         <a-col :span="col.right">
           <DxField label="납부재개 예정일" class="field-custom">
-            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model="formData.returnDate" width="200px"
-              :disabled="isStatusLeaveOfAbsence" />
+            <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.returnDate"
+              width="200px" :disabled="isStatusLeaveOfAbsence" :teleport="true" />
           </DxField>
         </a-col>
 
@@ -114,10 +114,10 @@
               :style="{ width: '200px' }" :disabled="!isStatusLeaveOfAbsence" :teleport="true" />
           </DxField>
         </a-col>
-        <a-col :span="col.right" class="pl-50">
+        <a-col :span="11" class="pl-50">
           <DxField label="연도" class="field-custom">
             <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
-              :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px">
+              :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true">
             </Datepicker>
           </DxField>
         </a-col>
@@ -125,17 +125,24 @@
         <!-- row 7 -->
         <a-col :span="col.left">
           <DxField label="국민연금납부예외 사유부호" class="field-custom-2">
-            <DxSelectBox :search-enabled="false" width="200px"
+            <SelectCustomField :dataSource="INITIAL_FORM.NationalPensionPaymentExemptionCode"
+              :disabled="!isStatusLeaveOfAbsence" v-model:valueInput="formData.pensionPaymentExceptionReasonCode" />
+            <!-- <DxSelectBox :search-enabled="false" width="200px"
               :data-source="INITIAL_FORM.NationalPensionPaymentExemptionCode" display-expr="name" value-expr="id"
               :disabled="!isStatusLeaveOfAbsence" v-model="formData.pensionPaymentExceptionReasonCode" placeholder="선택"
               field-template="field" item-template="item">
               <template #field=" { data } : any ">
                 <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
                   <a-tag>{{ data?.id }}</a-tag>
-                  <div>
-                    {{ data.name }}
-                    <DxTextBox style="display: none;" />
-                  </div>
+                  <a-tooltip zIndex="9999" placement="top" color="black">
+                    <template #title v-if=" data.name.length > 10 ">
+                      <div>asdsd</div>
+                    </template>
+                    <div class="text-overflow">
+                      {{ data?.name }}
+                      <DxTextBox style="display: none;" />
+                    </div>
+                  </a-tooltip>
                 </div>
                 <div v-else class="pt-5 pl-5">
                   <span>선택</span>
@@ -145,13 +152,18 @@
               <template #item=" { data } : any ">
                 <div style="display: flex; align-items: center;">
                   <a-tag>{{ data?.id }}</a-tag>
-                  <div>
-                    {{ data?.name }}
-                    <DxTextBox style="display: none;" />
-                  </div>
+                  <a-tooltip zIndex="9999" placement="top" color="black">
+                    <template #title v-if=" data.name.length > 10 ">
+                      <div>asdsd</div>
+                    </template>
+                    <div class="text-overflow">
+                      {{ data?.name }}
+                      <DxTextBox style="display: none;" />
+                    </div>
+                  </a-tooltip>
                 </div>
               </template>
-            </DxSelectBox>
+            </DxSelectBox> -->
             <!-- <DxSelectBox v-model=" formData.pensionPaymentExceptionReasonCode " :search-enabled=" true "
               :data-source=" INITIAL_FORM.NationalPensionPaymentExemptionCode " display-expr="name" value-expr="id"
               name="type" placeholder="선택" width="200px" :disabled=" !isStatusLeaveOfAbsence " /> -->
@@ -168,7 +180,9 @@
         <!-- row 8 -->
         <a-col :span=" col.left ">
           <DxField label="건강보험납부유예 사유" class="field-custom-2">
-            <DxSelectBox :search-enabled=" false " width="200px"
+            <SelectCustomField :dataSource="INITIAL_FORM.ReasonForDeferringHealthInsurancePayments"
+              :disabled="!isStatusLeaveOfAbsence" v-model:valueInput="formData.healthInsurancePaymentExceptionReasonCode" />
+            <!-- <DxSelectBox :search-enabled=" false " width="200px"
               :data-source=" INITIAL_FORM.ReasonForDeferringHealthInsurancePayments " display-expr="name" value-expr="id"
               :disabled=" !isStatusLeaveOfAbsence " v-model=" formData.healthInsurancePaymentExceptionReasonCode "
               placeholder="선택" field-template="field" item-template="item">
@@ -194,7 +208,7 @@
                   </div>
                 </div>
               </template>
-            </DxSelectBox>
+            </DxSelectBox> -->
             <!-- <DxSelectBox v-model="formData.healthInsurancePaymentExceptionReasonCode" :search-enabled="true"
               :data-source="INITIAL_FORM.ReasonForDeferringHealthInsurancePayments" display-expr="name" value-expr="id"
               name="type" placeholder="선택" width="200px" :disabled="!isStatusLeaveOfAbsence" /> -->
@@ -202,16 +216,18 @@
         </a-col>
         <a-col :span=" col.right " class="pl-50">
           <DxField label="분할납부횟수" class="field-custom">
-
-            <number-box v-model:valueInput=" formData.heathInstallmentPaymentCount " placeholder="건" width="200px"
-              :disabled=" isStatusLeaveOfAbsence " />
+            <!-- {{ formData.heathInstallmentPaymentCount }} -->
+            <number-box-money v-model:valueInput=" formData.heathInstallmentPaymentCount " placeholder="건" format="#,### 건" width="200px"
+              :disabled=" isStatusLeaveOfAbsence " :required="true" />
           </DxField>
         </a-col>
 
         <!-- row 9 chua co ten truong-->
         <a-col :span=" col.left ">
           <DxField label="고용산재 보험구분" class="field-custom-2">
-            <DxSelectBox :search-enabled=" false " width="200px"
+            <SelectCustomField :dataSource="INITIAL_FORM.TypeOfWorkersCompensationInsurance"
+              :disabled="!isStatusLeaveOfAbsence"/>
+            <!-- <DxSelectBox :search-enabled=" false " width="200px"
               :data-source=" INITIAL_FORM.TypeOfWorkersCompensationInsurance " display-expr="name" value-expr="id"
               :disabled=" !isStatusLeaveOfAbsence " placeholder="선택" field-template="field" item-template="item">
               <template #field=" { data } : any ">
@@ -236,7 +252,7 @@
                   </div>
                 </div>
               </template>
-            </DxSelectBox>
+            </DxSelectBox> -->
             <!-- <DxSelectBox v-model=" formData.employeementInsuranceLeaveReasonCode " :search-enabled=" true "
               :data-source=" INITIAL_FORM.TypeOfWorkersCompensationInsurance " display-expr="name" value-expr="id"
               name="type" placeholder="선택" width="200px" :disabled=" !isStatusLeaveOfAbsence " /> -->
@@ -247,7 +263,9 @@
         <!-- row 10 -->
         <a-col :span=" col.left ">
           <DxField label="고용산재 휴직사유 코드" class="field-custom-2">
-            <DxSelectBox :search-enabled=" false " width="200px"
+            <SelectCustomField :dataSource="INITIAL_FORM.EmploymentInjuryLeaveReasonCode"
+              :disabled="!isStatusLeaveOfAbsence" v-model:valueInput="formData.employeementInsuranceLeaveReasonCode" />
+            <!-- <DxSelectBox :search-enabled=" false " width="200px"
               :data-source=" INITIAL_FORM.EmploymentInjuryLeaveReasonCode " display-expr="name" value-expr="id"
               :disabled=" !isStatusLeaveOfAbsence " v-model=" formData.employeementInsuranceLeaveReasonCode "
               placeholder="선택" field-template="field" item-template="item">
@@ -273,7 +291,7 @@
                   </div>
                 </div>
               </template>
-            </DxSelectBox>
+            </DxSelectBox> -->
             <!-- <DxSelectBox :search-enabled=" true " :data-source=" INITIAL_FORM.EmploymentInjuryLeaveReasonCode "
               display-expr="name" value-expr="id" name="type" placeholder="선택" width="200px"
               :disabled=" !isStatusLeaveOfAbsence " /> -->
@@ -493,6 +511,7 @@ export default defineComponent({
     const onSubmit = async (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
+        console.log(`output->res.brokenRules[0].validator`,res)
         res.brokenRules[0].validator.focus();
       } else {
         if (showData.employmentStatus === 4) {
@@ -533,6 +552,7 @@ export default defineComponent({
       }
     }
     const getFileId = (fileId: { id: number }) => {
+      console.log(`output->fileId`,fileId)
       formData.value.leaveOfAbsenceRequestFileStorageId = fileId.id;
     };
     const isStatusLeaveOfAbsence = computed(() => showData.employmentStatus === 4);
@@ -595,5 +615,9 @@ export default defineComponent({
 :deep .dp__disabled {
   color: #999 !important;
   opacity: 0.5;
+}
+
+:deep .dx-field {
+  padding-right: 0;
 }
 </style>

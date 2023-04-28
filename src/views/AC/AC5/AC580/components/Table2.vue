@@ -5,7 +5,7 @@
       key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
       :column-auto-width="true">
       <DxPaging :page-size="0" />
-      <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
+      <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" placeholder="검색"/>
       <DxExport :enabled="true" />
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxToolbar>
