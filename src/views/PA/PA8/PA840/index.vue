@@ -319,7 +319,7 @@ const viewUrlParam = reactive({
 })
 //--dataType == 4--
 const leaveOfAbsenceViewUrlTrigger = ref<boolean>(false);
-const { result: leaveOfAbsenceViewUrlResult, onError: leaveOfAbsenceViewUrlError } = useQuery(
+const { result: leaveOfAbsenceViewUrlResult, onError: leaveOfAbsenceViewUrlError, refetch: leaveOfAbsenceViewUrlRefetch } = useQuery(
   queries.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl,
   viewUrlParam,
   () => ({
@@ -338,7 +338,7 @@ watch(leaveOfAbsenceViewUrlResult, (newVal: any) => {
 });
 //--dataType == 5--
 const returnToWorkViewUrlTrigger = ref<boolean>(false);
-const { result: returnToWorkViewUrl, onError: returnToWorkViewUrlError } = useQuery(
+const { result: returnToWorkViewUrl, onError: returnToWorkViewUrlError, refetch: returnToWorkViewUrlRefetch } = useQuery(
   queries.getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl,
   viewUrlParam,
   () => ({
@@ -358,10 +358,12 @@ watch(returnToWorkViewUrl, (newVal: any) => {
 const onGetFileStorageId = (type: number, workId: any) => {
   viewUrlParam.workId = workId;
   if (type === 4) {
-    returnToWorkViewUrlTrigger.value = true;
+    leaveOfAbsenceViewUrlTrigger.value = true;
+    leaveOfAbsenceViewUrlRefetch();
   }
   if (type === 5) {
     returnToWorkViewUrlTrigger.value = true;
+    returnToWorkViewUrlRefetch();
   }
 };
 </script>
