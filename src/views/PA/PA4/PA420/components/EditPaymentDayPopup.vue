@@ -15,17 +15,26 @@
       </div>
     </standard-form>
   </a-modal>
+  <a-modal v-model:visible="modalResponseDelete" okText="확인" :closable="false" :footer="null" width="350px">
+    <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ errors.length + successes }}건</p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{ successes }}건</p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{ errors.length }} 건 </p>
+    <ul>
+      <li v-for="(error) in errors"> {{ error }}</li>
+    </ul>
+    <a-row justify="center">
+      <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
+        @onClick="modalResponseDelete = false" />
+    </a-row>
+  </a-modal>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import notification from "@/utils/notification";
+import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
-import { useApolloClient, useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
 import { EditOutlined } from "@ant-design/icons-vue";
-import { Message } from "@/configs/enum";
-import { ApolloClient } from '@apollo/client';
+import { useMutation } from "@vue/apollo-composable";
+import { defineComponent, ref, watch } from 'vue';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -44,35 +53,50 @@ export default defineComponent({
     EditOutlined
   },
   setup(props, { emit }) {
+    const errors = ref<string[]>([])
+    const successes = ref(0)
+    const modalResponseDelete = ref(false)
     const dayValue = ref(1)
     const setModalVisible = () => {
       emit("closePopup", false)
     };
-    const { client } = useApolloClient();
-    const onSubmit = () => {
-      Promise.all(props.data.map((val: any) => {
-        return client.mutate({
-          mutation: mutations.changeIncomeRetirementPaymentDay,
-          variables: {
-            companyId: companyId,
-            processKey: props.processKey,
-            incomeId: val,
-            day: dayValue.value
-          }
-        })
-      })).then(() => {
-        notification('success', Message.getCommonMessage('106').message)
-      }).catch((e) => {
-        notification('error', e.message)
-      }).finally(() => {
+    const {
+      mutate,
+      onDone,
+      onError,
+      loading
+    } = useMutation(mutations.changeIncomeRetirementPaymentDay);
+    onDone(() => {
+      successes.value++
+    })
+    onError((error) => {
+      errors.value.push(error.message)
+    })
+    // watch loaded
+    watch(loading, (val) => {
+      if(!val) {
         emit("closePopup", false)
+        modalResponseDelete.value = true
+      }
+    })
+    const onSubmit = () => {
+      props.data.forEach(async (val: any) => {
+      await mutate({
+        companyId: companyId,
+        processKey: props.processKey,
+        incomeId: val,
+        day: dayValue.value
       })
+    })
     };
 
     return {
       setModalVisible,
       onSubmit,
       dayValue,
+      modalResponseDelete,
+      errors,
+      successes
     }
   },
 })
