@@ -11,8 +11,10 @@
       </div>
       <div class="ac-130__top-status">
         <ProcessStatus :valueStatus="statusAdjusting" />
-        <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-        <span class="style-note style-note-cm121">마감변경시 [통장내역] 및 [전표]메뉴에 동일하게 반영됩니다</span>
+        <a-tooltip color="black" placement="top">
+          <template #title>마감변경시 [통장내역] 및 [전표]메뉴에 동일하게 반영됩니다.</template>
+          <img src="@/assets/images/iconInfo.png" class="img-info" />
+        </a-tooltip>
       </div>
     </div>
     <a-row class="ac-130__main">
@@ -27,10 +29,10 @@
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>현금출납부 잔액 -></span>
-                    <DxButton v-if="true" class="mr-5" text="확인필요"
-                      style="background-color: #BB3835; color: white" :height="$config_styles.HeightInput" width="90" />
-                    <DxButton v-else text="정상"
-                      style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-if="true" class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                      :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-else text="정상" style="background-color: #337614; color: white"
+                      :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
                 <TableBalanceOfCashRegister />
@@ -39,10 +41,10 @@
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>예산서 -></span>
-                    <DxButton v-if="false" class="mr-5" text="확인필요"
-                      style="background-color: #BB3835; color: white" :height="$config_styles.HeightInput" width="90" />
-                    <DxButton v-else text="정상"
-                      style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-if="false" class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                      :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-else text="정상" style="background-color: #337614; color: white"
+                      :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
                 <TableBudget />
@@ -51,10 +53,10 @@
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>인건비 -></span>
-                    <DxButton v-if="false" class="mr-5" text="확인필요"
-                      style="background-color: #BB3835; color: white" :height="$config_styles.HeightInput" width="90" />
-                    <DxButton v-else text="정상"
-                      style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-if="false" class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                      :height="$config_styles.HeightInput" width="90" />
+                    <DxButton v-else text="정상" style="background-color: #337614; color: white"
+                      :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
                 <TablePersonnelExpenses />

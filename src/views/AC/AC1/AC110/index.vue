@@ -102,7 +102,7 @@
             </template>
 
             <DxSummary>
-              <DxTotalItem column="통장" summary-type="count" display-format="통장내역수: {0}" />
+              <DxTotalItem column="통장" summary-type="count" display-format="통장내역수: [{0}]" />
               <DxTotalItem cssClass="custom-sumary" column="입금액" :customize-text="totalDeposits" />
               <DxTotalItem cssClass="custom-sumary" column="출금액" :customize-text="totalWithdrawal" />
               <DxTotalItem cssClass="custom-sumary" column="전표등록" :customize-text="countSlipRegistration" />
@@ -553,7 +553,7 @@ export default defineComponent({
         triggerBankbookDetails.value = true
       }
       triggerAccountingProcesses.value = true
-      notification('success', Message.getMessage('COMMON', '106').message)
+      notification('success', Message.getMessage('COMMON', '201').message)
     })
     errorSyncBankbookDetails(e => {
       notification('error', e.message)
@@ -746,14 +746,14 @@ export default defineComponent({
       dataSource.value.forEach((item) => {
         total += item.deposit;
       });
-      return `입금액 합계: ${formatNumber(total)}`
+      return `입금액 합계: [${formatNumber(total)}]`
     };
     const totalWithdrawal = () => {
       let total = 0;
       dataSource.value.forEach((item) => {
         total += item.withdraw;
       });
-      return `출금액 합계: ${formatNumber(total)}`
+      return `출금액 합계: [${formatNumber(total)}]`
     };
     const countSlipRegistration = () => {
       let totalRegistration = 0;
@@ -765,7 +765,7 @@ export default defineComponent({
           totalCancellation++
         }
       });
-      return `전표등록 여부 (O: ${totalRegistration}, X: ${totalCancellation})`
+      return `전표등록 여부 [(O: ${totalRegistration}, X: ${totalCancellation})]`
     };
     // ---------------Grid detail----------------
     const totalTransactions = () => {
