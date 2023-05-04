@@ -118,7 +118,9 @@
           <a-col :span="11" class="pl-50">
             <DxField label="연도" class="field-custom">
               <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
-                :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true">
+                :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
+                :enable-time-picker="false"
+              >
               </Datepicker>
             </DxField>
           </a-col>

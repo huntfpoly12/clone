@@ -3,22 +3,14 @@
     <template #title>
       <slot />
     </template>
-    <div>
-      <img src="@/assets/images/iconInfo.png" style="width: 14px" />
+    <div style="cursor: pointer" class="d-flex-center">
+      <img src="@/assets/images/iconInfo.png" style="width: 16px" />
     </div>
   </a-tooltip>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
 
-export default defineComponent({
-  setup () {
-
-
-    return {}
-  }
-})
 </script>
 
 <style lang="scss">

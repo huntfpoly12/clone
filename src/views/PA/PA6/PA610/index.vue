@@ -82,13 +82,12 @@
           <a-spin :spinning="loadingUpdate || loadingCreated" size="large">
             <standard-form formName="pa-610" ref="formRef">
               <a-form-item label="코드" label-align="right" class="red">
-                <div class="custom-note">
+                <div class="d-flex-center">
                   <text-number-box width="200px" v-model:valueInput="dataShow.employeeId" placeholder="숫자만 입력 가능"
                     :disabled="!isNewRow" :required="true" />
-                  <span>
-                    <img src="@/assets/images/iconInfo.png" style="width: 14px" />
+                  <info-tool-tip class="ml-5">
                     최초 저장된 이후 수정 불가
-                  </span>
+                  </info-tool-tip>
                 </div>
               </a-form-item>
               <a-form-item label="성명(상호)" label-align="right" class="red">
@@ -130,12 +129,11 @@
                   @textTypeCode="changeTextTypeCode" :disabled="!isNewRow" />
               </a-form-item>
               <a-form-item label="이메일" label-align="right">
-                <div class="custom-note">
-                  <mail-text-box width="300px" v-model:valueInput="dataShow.email" placeholder="abc@example.com" />
-                  <span>
-                    <img src="@/assets/images/iconInfo.png" style="width: 14px" />
+                <div class="d-flex-center">
+                  <mail-text-box width="200px" v-model:valueInput="dataShow.email" placeholder="abc@example.com" />
+                  <info-tool-tip class="ml-5">
                     원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
-                  </span>
+                  </info-tool-tip>
                 </div>
               </a-form-item>
               <a-row class="mt-25">

@@ -27,10 +27,9 @@
         <a-row>
           <a-col :span="12">
             <a-form-item label="서식 설정" class="red">
-              <div class="format-settings-text">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                <span class="style-note">본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</span>
-              </div>
+              <info-tool-tip>
+                본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
+              </info-tool-tip>
             </a-form-item>
             <div class="tax-select">
               <radio-group :arrayValue="radioCheckData" v-model:valueRadioCheck="checkBoxOption2" />

@@ -6,6 +6,7 @@
         :placeholder="placeholder" :range="true"
         :multi-calendars="multiCalendars"
         :teleport="teleport"
+        :enable-time-picker="false"
     >
     </Datepicker>
 </template>
