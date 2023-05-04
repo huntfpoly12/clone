@@ -117,7 +117,7 @@
                                     :foreigner="formState.foreigner" />
                             </a-form-item>
                             <a-form-item label="소득구분" :label-col="labelCol" class="red">
-                                <type-code-select-box style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
+                                <type-code-select-box :screenCode="710" style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
                                     @textTypeCode="textTypeCode" :required="true" :disabled="statusFormUpdate">
                                 </type-code-select-box>
                             </a-form-item>
