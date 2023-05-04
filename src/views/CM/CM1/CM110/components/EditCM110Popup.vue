@@ -8,7 +8,7 @@
                     <a-row :gutter="24" class="cm-100-popup-edit">
                         <a-col :span="18">
                             <a-form-item label="이용자ID" :label-col="labelCol">
-                                <default-text-box :width="150" v-model:valueInput="formState.username" :disabled="true">
+                                <default-text-box :width="150" :replaceRegex="true" v-model:valueInput="formState.username" :disabled="true">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>

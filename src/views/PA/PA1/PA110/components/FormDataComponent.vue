@@ -24,10 +24,10 @@
                             <span class="w-120">소득수당합계</span>
                             <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItem" />
                             <span class="pl-5">원</span>
-                            <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
-                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                                수당 합계 = 수당 과세 + 수당 비과세
-                            </span>
+                            <a-tooltip color="black" placement="top">
+                                <template #title>수당 합계 = 수당 과세 + 수당 비과세</template>
+                                <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                            </a-tooltip>
                         </div>
                         <div class="text1 d-flex-center">
                             <span class="w-110">수당 과세합계</span>
@@ -49,19 +49,19 @@
                             <span class="w-120">차인지급액</span>
                             <number-box-money :disabled="true" width="100px" v-model:valueInput="subPayment" />
                             <span class="pl-5">원</span>
-                            <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
-                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                                차인지급액 = 수당 합계 - 공제 합계
-                            </span>
+                            <a-tooltip color="black" placement="top">
+                                <template #title>차인지급액 = 수당 합계 - 공제 합계</template>
+                                <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                            </a-tooltip>
                         </div>
                     </div>
                 </a-col>
                 <a-col :span="10" class="input-items">
                     <div class="header-text-2">근로시간
-                        <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
-                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            사원별 급여명세서에 표시 됩니다.
-                        </span>
+                        <a-tooltip color="black" placement="top">
+                            <template #title>사원별 급여명세서에 표시 됩니다.</template>
+                            <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                        </a-tooltip>
                     </div>
                     <a-form-item label="근무일수" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">

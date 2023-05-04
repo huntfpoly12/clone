@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="loading" size="large">
-    <action-header title="기타소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true"/>
+    <action-header title="기타소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true" />
     <div id="pa-730">
       <div class="search-form">
         <a-row>
@@ -23,12 +23,10 @@
               <div class="dflex custom-flex">
                 <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자 보관용'"
                   :textUnCheck="'발행자 보관용'" />
-                <div style="margin-left: 10px;">
-                  <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                  <span>
-                    본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
-                  </span>
-                </div>
+                <a-tooltip color="black" placement="top">
+                  <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
+                  <img src="@/assets/images/iconInfo.png" class="img-info" />
+                </a-tooltip>
               </div>
             </a-form-item>
           </a-col>
@@ -46,11 +44,12 @@
               :textUnCheck="'발행자보관용'" />
           </a-col>
         </a-row> -->
-        <DxDataGrid id="gridContainerPA730" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          ref="gridRef" :column-auto-width="true" @selection-changed="onSelectionChanged">
+        <DxDataGrid id="gridContainerPA730" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+          :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" ref="gridRef" :column-auto-width="true"
+          @selection-changed="onSelectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
           <DxToolbar>
             <DxItem template="send-group-mail" />
             <DxItem template="send-group-print" />
@@ -84,9 +83,9 @@
             </div>
           </template>
           <DxColumn caption="주민등록번호" :width="130" cell-template="residentId" data-field="employee.residentId" />
-            <template #residentId="{ data }">
-              <resident-id :residentId="data.data.employee?.residentId"></resident-id>
-            </template>
+          <template #residentId="{ data }">
+            <resident-id :residentId="data.data.employee?.residentId"></resident-id>
+          </template>
           <DxColumn caption="소득구분" cell-template="grade-cell" width="160" />
           <template #grade-cell="{ data }">
             <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
@@ -132,8 +131,7 @@
           </template>
         </DxDataGrid>
         <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal" :data="popupSingleData" />
-        <EmailGroupPopup :modalStatus="modalEmailGroup"
-          @closePopup="onCloseEmailGroupModal" :data="popupGroupData" />
+        <EmailGroupPopup :modalStatus="modalEmailGroup" @closePopup="onCloseEmailGroupModal" :data="popupGroupData" />
       </div>
       <!-- <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'"
         :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" /> -->

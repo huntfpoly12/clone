@@ -77,14 +77,14 @@
                     <a-spin :spinning="loadingDetail" size="large" :key="resetFormNum">
                         <StandardForm formName="pa-710-form" ref="pa710FormRef">
                             <a-form-item label="코드" :label-col="labelCol" class="red">
-                                <div class="custom-note d-flex-center">
+                                <div class="d-flex-center">
                                     <number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
                                         placeholder="숫자만 입력 가능" :disabled="statusFormUpdate">
                                     </number-box>
-                                    <div class="pl-5">
-                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                        <span class="style-note">최초 저장된 이후 수정 불가</span>
-                                    </div>
+                                    <a-tooltip color="black" placement="top">
+                                        <template #title>최초 저장된 이후 수정 불가</template>
+                                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                    </a-tooltip>
                                 </div>
                             </a-form-item>
                             <a-form-item label="성명(상호) " :label-col="labelCol" class="red">
@@ -117,19 +117,18 @@
                                     :foreigner="formState.foreigner" />
                             </a-form-item>
                             <a-form-item label="소득구분" :label-col="labelCol" class="red">
-                                <type-code-select-box style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
+                                <type-code-select-box :screenCode="710" style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
                                     @textTypeCode="textTypeCode" :required="true" :disabled="statusFormUpdate">
                                 </type-code-select-box>
                             </a-form-item>
                             <a-form-item label="이메일" :label-col="labelCol">
-                                <div class="custom-note">
-                                    <mail-text-box placeholder="abc@example.com" v-model:valueInput="formState.email"
+                                <div class="d-flex-center">
+                                    <mail-text-box :width='200' placeholder="abc@example.com" v-model:valueInput="formState.email"
                                         id="email" />
-                                    <span>
-                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요
-                                        서류를
-                                        메일로 전달 가능합니다.
-                                    </span>
+                                    <a-tooltip color="black" placement="top">
+                                        <template #title>원천징수영수증 등 주요서류를메일로 전달 가능합니다.</template>
+                                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                    </a-tooltip>
                                 </div>
                             </a-form-item>
                             <div class="text-align-center mt-20">

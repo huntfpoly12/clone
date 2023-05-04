@@ -3,13 +3,17 @@
         value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
         :disabled="disabled" @value-changed="updateValue">
         <template #field="{ data }">
-            <div class="select-content" style="padding: 3px 0px;">
+            <div v-if="data" class="select-content" style="padding: 3px 0px;">
                 <a-tag color="default">{{ data.key }}</a-tag>
                 <div>
                     <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
                     {{ data.value }}
                 </div>
             </div>
+            <div v-else style="padding: 3px 0px 3px 5px;">
+				<span>선택</span>
+				<DxTextBox style="display: none;" />
+			</div>
         </template>
         <template #item="{ data }">
             <div class="custom-value">
@@ -27,7 +31,7 @@ import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
-import { IncomeTypeCode610, enum2KeysByValueMap, getEnumKey } from "../configs/enum"
+import { IncomeTypeCode610, IncomeTypeCode710, enum2KeysByValueMap, getEnumKey } from "../configs/enum"
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
     props: {
@@ -51,6 +55,10 @@ export default defineComponent({
             type: String,
             default: '',
         },
+        screenCode: {
+            type: Number,
+            default: 610,
+        }
     },
     components: {
         DxSelectBox,
@@ -61,16 +69,30 @@ export default defineComponent({
     setup(props, { emit }) {
         let arrSelect = ref(Array());
 
-        enum2KeysByValueMap(IncomeTypeCode610).forEach((name, id) => {
-            arrSelect.value.push({ key: id, value: name });
-        });
+        if (props.screenCode == 610) {
+            console.log(1);
+            
+            enum2KeysByValueMap(IncomeTypeCode610).forEach((name, id) => {
+                arrSelect.value.push({ key: id, value: name });
+            }); 
+        } else if (props.screenCode == 710) {
+            console.log(3);
+            enum2KeysByValueMap(IncomeTypeCode710).forEach((name, id) => {
+                arrSelect.value.push({ key: id, value: name });
+            });
+        }
+        
         const data = new ArrayStore({
             data: arrSelect.value,
             key: "key",
         });
 
         const updateValue = (value: any) => {
-            emit('textTypeCode', getEnumKey(IncomeTypeCode610, value.value))
+            if (props.screenCode == 610) {
+                emit('textTypeCode', getEnumKey(IncomeTypeCode610, value.value))
+            } else if (props.screenCode == 710) {
+                emit('textTypeCode', getEnumKey(IncomeTypeCode710, value.value))
+            }
             emit("update:valueInput", value.value);
         };
         return {

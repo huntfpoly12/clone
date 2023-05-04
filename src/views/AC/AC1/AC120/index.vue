@@ -43,7 +43,7 @@
                         <div style="width: 300px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
                                 <a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
-                                    <div style="display: inline;">전월 잔액 <span>{{ $filters.formatCurrency(lastBalance) }}</span> </div>
+                                    <div style="display: inline;">전월 잔액 <span>[{{ $filters.formatCurrency(lastBalance) }}]</span> </div>
                                 </a-tooltip>
                                 <div style="display: inline;" v-html="customBalance()"></div>
                             </div>

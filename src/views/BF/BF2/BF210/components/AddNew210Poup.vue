@@ -8,7 +8,7 @@
                     <a-col :span="12">
                         <a-form-item label="회원ID" class="red dflex">
                             <div class="dflex">
-                                <default-text-box v-model:valueInput="formState.username"
+                                <default-text-box v-model:valueInput="formState.username" :replaceRegex="true"
                                     style="width: 190px; margin-right: 10px" :required="true"
                                     mess-required="이항목은 필수 입력사항입니다!">
                                 </default-text-box>
