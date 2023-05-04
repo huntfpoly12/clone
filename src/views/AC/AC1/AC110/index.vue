@@ -553,7 +553,7 @@ export default defineComponent({
         triggerBankbookDetails.value = true
       }
       triggerAccountingProcesses.value = true
-      notification('success', Message.getMessage('COMMON', '106').message)
+      notification('success', Message.getMessage('COMMON', '201').message)
     })
     errorSyncBankbookDetails(e => {
       notification('error', e.message)
