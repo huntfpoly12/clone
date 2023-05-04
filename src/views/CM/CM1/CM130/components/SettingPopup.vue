@@ -15,6 +15,7 @@
 						style="margin-right: 10px;" width="350" :required="true"
 						v-model:valueInput="search">
 					</default-text-box>
+					<input type="text" style="display: none;">
 				</StandardForm>
 				<button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'" @onClick="onSearch"/>
 			</div>

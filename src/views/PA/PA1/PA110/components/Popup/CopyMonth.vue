@@ -10,7 +10,9 @@
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
-            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" />
+            <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+                v-model:valueDate="paymentDayCopy" />
+            <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" /> -->
         </a-form-item>
 
         <div class="text-align-center mt-30">
@@ -102,6 +104,10 @@ export default defineComponent({
         const paymentDayCopy = ref()
         const dataApiCopy: any = ref({})
         const trigger = ref<boolean>(false)
+
+        const startDate = ref(dayjs(`${paYear.value}-${month.value}`).startOf('month').toDate());
+        const finishDate = ref(dayjs(`${paYear.value}-${month.value}`).endOf('month').toDate());
+
         watch(() => props.data, (val) => {
             month.value = val
             trigger.value = true
@@ -121,15 +127,16 @@ export default defineComponent({
         watch(resultConfig, (value) => {
             trigger.value = false;
             let paymentMonth = month.value
+            month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
             if (value) {
-                paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(value.getWithholdingConfig.paymentDay)}`)
                 sampleDataIncomeWage.paymentDay = value.getWithholdingConfig.paymentDay
                 if (value.getWithholdingConfig.paymentType == 2) {
                     paymentMonth = month.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
-            
+            startDate.value = dayjs(`${month2.value}`).startOf('month').toDate();
+            finishDate.value = dayjs(`${month2.value}`).endOf('month').toDate();
         });
         const updateValue = (value: any) => {
             dataApiCopy.value = value.value
@@ -172,7 +179,7 @@ export default defineComponent({
                 paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
-            sampleDataIncomeWage.paymentDay = paymentDayCopy.value
+            sampleDataIncomeWage.paymentDay = parseInt(paymentDayCopy.value.toString().slice(6, 8)) 
             // store.state.common.pa110.paymentDayCopy = paymentDayCopy.value
             // store.state.common.pa110.actionCopy++
             store.state.common.pa110.resetArrayEmploySelect++
@@ -214,6 +221,7 @@ export default defineComponent({
             setModalVisibleCopy,
             onSubmit,
             updateValue,
+            startDate, finishDate,
         }
     },
 })
