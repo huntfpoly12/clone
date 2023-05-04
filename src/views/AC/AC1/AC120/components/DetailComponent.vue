@@ -1,9 +1,4 @@
 <template>
-    <!-- <a-row class="detail">
-        <a-col class="detail1"> -->
-    <!-- <div class="text-align-center button-arrow" :class="store.state.common.ac120.statusShowFull ? 'rotate' : ''">
-                <img @click="toggleTransition" src="@/assets/images/iconArrowUp.png" alt="">
-            </div> -->
     <div class="column">
         <div class="detail" :class="store.state.common.ac120.statusShowFull ? 'showFull' : ''">
             <div class="detail-header">
@@ -11,7 +6,7 @@
                     <a-col :span="8" @click="openShowFull">click here</a-col>
                     <a-col :span="8">
                         <div style="display: flex; justify-content: center; margin-left: 35px;">
-                            <span style="font-weight: bold; font-size: 18px;">결의서</span>
+                            <span style="font-weight: bold; font-size: 18px; margin-right: 5px;">결의서</span>
                             <a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
                                 placement="top" color="black" title="정상 여부">
                                 <DxButton :focusStateEnabled="false" text="O"
@@ -224,9 +219,6 @@
                     <UploadPreviewImage v-model:list-image-file="fileList" />
                 </a-col>
             </a-row>
-
-            <!-- </template>
-            </DxDrawer> -->
         </div>
     </div>
     <PopupCopyData :modalStatus="statusPopupCopyData" @closePopup="statusPopupCopyData = false"
@@ -250,19 +242,14 @@ import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
 import { companyId } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
-import DxToolbar from 'devextreme-vue/toolbar';
-import DxDrawer from 'devextreme-vue/drawer';
 import UploadPreviewImage from './UploadPreviewImage.vue'
 export default defineComponent({
     components: {
         PopupCopyData,
         DxButton,
         UploadPreviewImage, ModalDelete,
-        DxToolbar,
-        DxDrawer
     },
     setup() {
-        // const heightForm: any = ref('280px')
         const store = useStore();
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
@@ -275,7 +262,6 @@ export default defineComponent({
         const requiredCauseActionDate = ref()
         const arrayRadioCheck = computed(() => store.state.common.ac120.arrLetterOfApprovalType)
         let colorDate = ref()
-        // const openState = ref(false);
         let statusModalDelete = ref(false);
         let bankbookNickname = ref<string>('')
         let bankbookNumber = ref<string>('')
@@ -291,14 +277,14 @@ export default defineComponent({
         } = useMutation(mutations.updateAccountingDocument);
 
         // mutation unregisterAccountingDocument    ----- handwriting = true
-        const {
-            mutate: mutateUnregisterAccountingDocument, onDone: doneUnregisterAccountingDocument, onError: errorUnregisterAccountingDocument,
-        } = useMutation(mutations.unregisterAccountingDocument);
+        // const {
+        //     mutate: mutateUnregisterAccountingDocument, onDone: doneUnregisterAccountingDocument, onError: errorUnregisterAccountingDocument,
+        // } = useMutation(mutations.unregisterAccountingDocument);
 
         // mutation initializeTransactionDetails    ----- handwriting = false
-        const {
-            mutate: mutateInitializeTransactionDetails, onDone: doneInitializeTransactionDetails, onError: errorInitializeTransactionDetails,
-        } = useMutation(mutations.initializeTransactionDetails);
+        // const {
+        //     mutate: mutateInitializeTransactionDetails, onDone: doneInitializeTransactionDetails, onError: errorInitializeTransactionDetails,
+        // } = useMutation(mutations.initializeTransactionDetails);
 
         const { result: resultCompany } = useQuery(queries.getMyCompany, { companyId: companyId }, () => ({ fetchPolicy: "no-cache" }));
 
@@ -329,24 +315,24 @@ export default defineComponent({
         })
 
         // unregisterAccountingDocument
-        doneUnregisterAccountingDocument((e) => {
-            notification('success', Message.getMessage('COMMON', '302').message)
-            store.state.common.ac120.resetDataTable++
-            store.state.common.ac120.resetDataAccountingProcesses++
-        })
-        errorUnregisterAccountingDocument(e => {
-            notification('error', e.message)
-        })
+        // doneUnregisterAccountingDocument((e) => {
+        //     notification('success', Message.getMessage('COMMON', '302').message)
+        //     store.state.common.ac120.resetDataTable++
+        //     store.state.common.ac120.resetDataAccountingProcesses++
+        // })
+        // errorUnregisterAccountingDocument(e => {
+        //     notification('error', e.message)
+        // })
 
         // initializeTransactionDetails
-        doneInitializeTransactionDetails((e) => {
-            notification('success', Message.getMessage('COMMON', '302').message)
-            store.state.common.ac120.resetDataTable++
-            store.state.common.ac120.resetDataAccountingProcesses++
-        })
-        errorInitializeTransactionDetails(e => {
-            notification('error', e.message)
-        })
+        // doneInitializeTransactionDetails((e) => {
+        //     notification('success', Message.getMessage('COMMON', '302').message)
+        //     store.state.common.ac120.resetDataTable++
+        //     store.state.common.ac120.resetDataAccountingProcesses++
+        // })
+        // errorInitializeTransactionDetails(e => {
+        //     notification('error', e.message)
+        // })
 
         // ================== WATCH ================
         watch(resultCompany, (value) => {
@@ -384,14 +370,6 @@ export default defineComponent({
             }
         })
 
-        // watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
-        //     if (newValue == 1) {
-        //         heightForm.value = '160px'
-        //     } else {
-        //         heightForm.value = '280px'
-        //     }
-        // })
-
         watch(() => store.state.common.ac120.formData.causeActionDate, (newValue, oldValue) => {
             // if (store.state.common.ac120.statusFormAdd) {
             colorDate.value = newValue == store.state.common.ac120.transactionDetailDate ? 'greenColor' : 'redColor'
@@ -416,11 +394,6 @@ export default defineComponent({
             }
         }
 
-        // const actionPopupCopyData = () => {
-        //     if (store.state.common.ac120.formData.resolutionType == 11) {
-        //         statusPopupCopyData.value = true
-        //     }
-        // }
         const onSubmit = () => {
             if (!store.state.common.ac120.formData.causeActionDate) {
                 requiredCauseActionDate.value.validate(true)
@@ -537,18 +510,6 @@ export default defineComponent({
         const openShowFull = () => {
             store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull;
         }
-
-        // const toolbarContent = ref([{
-        //     widget: 'dxButton',
-        //     location: 'before',
-        //     options: {
-        //         icon: 'menu',
-        //         onClick: () => { openState.value = !openState.value; },
-        //     },
-        // }])
-
-
-
 
         return {
             store,
