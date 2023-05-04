@@ -35,7 +35,7 @@
         <div class="form-table">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다">
                 <DxColumn caption="일련번호" data-field="electronicFilingId" data-type="string" />
                 <DxColumn caption="참고사항" data-field="referenceInformation" data-type="string" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />

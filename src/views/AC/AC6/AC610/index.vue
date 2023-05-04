@@ -48,6 +48,7 @@
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
               style="height: 740px"
+              noDataText="내역이 없습니다"
             >
 <!--              <DxScrolling mode="standard" show-scrollbar="always" />-->
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
