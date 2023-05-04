@@ -70,8 +70,8 @@
       <a-spin :spinning="loadingTable">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                     key-expr="index" class="mt-10" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged" style="height: 590px">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
+                    @selection-changed="selectionChanged" style="height: calc(100vh - 380px)">
           <DxSelection mode="multiple" :fixed="true"/>
           <DxColumn caption="사업자코드" cell-template="company-code" data-field="company.code"/>
           <template #company-code="{ data }">
@@ -100,12 +100,19 @@
             </template>
             <GetStatusTable :data="data.data"/>
           </template>
-          <DxSummary>
-            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}"/>
-            <!-- <DxTotalItem column="제작현황" :customize-text="customizeTotalMonthly" value-format="#,###" /> -->
-            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="customTextSummary"/>
-          </DxSummary>
         </DxDataGrid>
+        <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+             class="fs-14">
+          <div style="margin-left: 70px;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              전체
+              <span style="font-size: 16px;">[{{ dataSource.length }}]</span>
+            </div>
+          </div>
+          <div style="margin-right: 20%;">
+            <span class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummary()"/>
+          </div>
+        </div>
       </a-spin>
     </div>
   </div>
@@ -334,7 +341,12 @@ export default defineComponent({
       keySelect.value = res.selectedRowsData.map((i: any) => i.companyId)
     }
     const customTextSummary = () => {
-      return `제작요청전: ${beforeProductionRequest}, 제작대기: ${waitingForProduction}, 제작중: ${productionInProgress}, 제작실패: ${productionFailed}, 제작성공: ${productionSuccess}`;
+      return `
+      제작요청전 <span style="font-size: 16px">[${beforeProductionRequest}]</span>
+      제작대기 <span style="font-size: 16px">[${waitingForProduction}]</span>
+      제작중 <span style="font-size: 16px">[${productionInProgress}]</span>
+      제작실패 <span style="font-size: 16px">[${productionFailed}]</span>
+      제작성공 <span style="font-size: 16px">[${productionSuccess}]</span>`;
     }
     let arr = ref<any>([])
     let productionStatusArr = ref<any>([]);
