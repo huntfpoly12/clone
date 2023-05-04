@@ -8,17 +8,21 @@
       <span class="mr-5 ml-5">~</span>
       <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="monthEnd" :min="monthStart" />
       <ProcessStatus :valueStatus="statusEntering" />
-      <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-      <span class="style-note style-note-cm121">조정마감된 월만 해당 (조정마감이 아닌 월은 제외).</span>
+      <a-tooltip color="black" placement="top">
+        <template #title>조정마감된 월만 해당 (조정마감이 아닌 월은 제외).</template>
+        <img src="@/assets/images/iconInfo.png" class="img-info" />
+      </a-tooltip>
     </div>
     <div class="ac-530-formatting">
       <p class="ac-530-formatting-title">서식설정</p>
       <div class="ac-530-formatting-option">
         <span class="ac-530-formatting-option-label">보조기관:</span>
         <checkbox-basic :valueCheckbox="false" class="mr-10" label="거래처" :disabled="false" :size="'20'" />
-        <checkbox-basic :valueCheckbox="true" class="mr-20" label="통장적요" :disabled="false" :size="'20'"/>
-        <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-        <span class="style-note style-note-cm121">보조기간 컬럼에 해당 항목이 있는 경우 기재됩니다. 모두 해제시 공란으로 표시됩니다.</span>
+        <checkbox-basic :valueCheckbox="true" class="mr-20" label="통장적요" :disabled="false" :size="'20'" />
+        <a-tooltip color="black" placement="top">
+          <template #title>보조기간 컬럼에 해당 항목이 있는 경우 기재됩니다. 모두 해제시 공란으로 표시됩니다.</template>
+          <img src="@/assets/images/iconInfo.png" class="img-info" />
+        </a-tooltip>
       </div>
     </div>
     <div class="ac-530-table">
@@ -29,7 +33,8 @@
         <DxColumn caption="메일/출력" width="100px" cell-template="action" />
         <template #action="{}">
           <div class="custom-action" style="text-align: center;">
-            <img src="@/assets/images/email.svg" alt="" style="width: 25px; margin-right: 3px; cursor: pointer;" @click="openPopupSendMail"/>
+            <img src="@/assets/images/email.svg" alt="" style="width: 25px; margin-right: 3px; cursor: pointer;"
+              @click="openPopupSendMail" />
             <a-tooltip>
               <template #title>출력 / 저장</template>
               <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer" />
@@ -38,7 +43,7 @@
         </template>
       </DxDataGrid>
     </div>
-    <PopupSendMail :isModalSendMail="isModalSendMail" @closePopup="isModalSendMail = false"/>
+    <PopupSendMail :isModalSendMail="isModalSendMail" @closePopup="isModalSendMail = false" />
   </div>
 </template>
 <script lang="ts">

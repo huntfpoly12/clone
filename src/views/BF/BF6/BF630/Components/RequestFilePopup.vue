@@ -6,7 +6,7 @@
               <div>
                 <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
               </div>
-              <div class="eamil-input">
+              <div class="email-input">
                 <mail-text-box width="250px" :required="true" v-model:valueInput="dataRequestFile.emailInput.receiverAddress" placeholder="abc@example.com"></mail-text-box>
                 <span>로 메일을 발송하시겠습니까?</span>
               </div>
@@ -155,14 +155,15 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .bf-630-form-request {
+    margin-top: 25px;
     display: flex;
     justify-content: center;
 }
-.eamil-input {
+.email-input {
     display: flex;
     align-items: center;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 5px;
     span {
         padding-left: 10px;
     }
