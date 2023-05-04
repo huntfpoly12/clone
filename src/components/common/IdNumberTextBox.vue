@@ -4,8 +4,8 @@
     :height="$config_styles.HeightInput" :name="nameInput">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxCustomRule v-if="isResidentId" :validation-callback="checkAllResidentId ? checkAllID :(foreigner ? checkID : checkIdNotForeigner)"
-        :message="msgError" />
+      <!-- <DxCustomRule v-if="isResidentId" :validation-callback="checkAllResidentId ? checkAllID :(foreigner ? checkID : checkIdNotForeigner)"
+        :message="msgError" /> -->
     </DxValidator>
   </DxTextBox>
 </template>
