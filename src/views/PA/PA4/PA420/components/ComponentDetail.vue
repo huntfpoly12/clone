@@ -48,7 +48,7 @@
   </a-col>
   <a-col :span="24">
     <a-spin :spinning="loadingTableDetail" size="large">
-      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
+      <DxDataGrid ref="dataGrid" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                   :show-borders="true" key-expr="incomeId" class="mt-10"
                   :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged"
                   noDataText="내역이 없습니다" style="height: calc(100vh - 270px)"
@@ -194,6 +194,8 @@ import ViewDetail from "./ViewDetail.vue";
 
 const props = defineProps<{ statusButton: number, actionSave: number }>()
 const emit = defineEmits(['createdDone'])
+
+const dataGrid = ref();
 let statusButton = ref(0)
 const dataSourceDetail = ref([]);
 const listEmployeeId = ref<any>([]);
@@ -217,9 +219,7 @@ const modalUpdate = ref(false)
 const modalView = ref(false)
 const modalHistoryStatus = ref<boolean>(false)
 const resetFormNum = ref(1);
-// console.log('props.statusButton', props.statusButton)
 let checkActionValue = ref(props.statusButton != 10) // disabeld button
-// console.log('checkActionValue', checkActionValue.value)
 let dataAction: any = reactive({
   ...dataActionUtils
 })
@@ -227,6 +227,11 @@ let dataTableDetail = ref({
   companyId: companyId,
   processKey: {...selectMonthColumn.value}
 })
+const clearSelection = () => {
+  const dataGridRef = dataGrid.value?.instance;
+  dataGridRef?.clearSelection();
+}
+
 // ================GRAPQL==============================================
 const {
   refetch: refetchTableDetail,
@@ -290,7 +295,6 @@ const changeIncomeTypeCode = (res: string) => {
 const selectionChanged = (event: any) => {
   popupDataDelete.value = event.selectedRowKeys
   dataSelected.value = event.selectedRowsData
-  console.log(event.selectedRowsData)
 }
 const deleteItem = () => {
   if (popupDataDelete.value.length > 0) {
@@ -320,10 +324,13 @@ const actionClosePopup = () => {
 
 }
 
-const closeChangePaymentDay = () => {
+const closeChangePaymentDay = (e: boolean) => {
+  if (e) {
+    refetchTableDetail()
+    triggerDetail.value = true
+    clearSelection()
+  }
   modalEdit.value = false
-  triggerDetail.value = true
-  refetchTableDetail()
 }
 
 const onItemClick = (key: String) => {
@@ -334,7 +341,6 @@ const onItemClick = (key: String) => {
   }
 }
 const editPaymentDate = () => {
-  console.log('popupDataDelete', popupDataDelete.value)
   if (popupDataDelete.value.length > 0) {
     modalEdit.value = true
   } else {

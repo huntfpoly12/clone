@@ -35,7 +35,7 @@
         <div class="form-table">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다">
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다" style="height: calc(100vh - 250px)">
                 <DxColumn caption="일련번호" data-field="electronicFilingId" data-type="string" />
                 <DxColumn caption="참고사항" data-field="referenceInformation" data-type="string" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
@@ -61,6 +61,9 @@
                             @click="openPopupDetail(data.data)" />
                     </div>
                 </template>
+                <DxSummary>
+                  <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
+                </DxSummary>
             </DxDataGrid>
         </div>
     </div>
@@ -72,7 +75,7 @@ import { defineComponent, ref, computed, getCurrentInstance, watch } from "vue";
 import { dataSearchStep2Utils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
-import { DxDataGrid, DxToolbar, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import {DxDataGrid, DxToolbar, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem} from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -80,6 +83,7 @@ import notification from "@/utils/notification"
 import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
 export default defineComponent({
     components: {
+      DxTotalItem, DxSummary,
         SaveOutlined, DxDataGrid, DxToolbar, DxColumn, DxItem, DxScrolling, DxRadioGroup,
         ElectronicFilingFileProductions
     },

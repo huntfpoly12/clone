@@ -10,8 +10,8 @@
       </div>
     </a-form-item>
     <a-form-item label="지급일" label-align="right" class="label-required">
-      <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayConfig" :required="true"
-                  is-format/>
+      <select-box-common width="85px" :arrSelect="daySelectArr" :required="true"
+                         v-model:valueInput="paymentDayConfig"/>
     </a-form-item>
     <div class="text-align-center mt-30">
       <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
@@ -27,20 +27,11 @@ import {companyId} from "@/helpers/commonFunction";
 import {useStore} from 'vuex';
 import filters from "@/helpers/filters";
 import dayjs from "dayjs";
+import SelectBox from "@/views/base/SelectBox.vue";
 
-function convertToDate({day, month, year}: { day: number, month: number, year: number }): number {
-  // Tính số ngày của tháng đó
+function convertToDate({month, year}: { month: number, year: number }) {
   const daysInMonth = new Date(year, month, 0).getDate();
-  // Nếu ngày nhập vào lớn hơn số ngày của tháng đó thì chuyển thành ngày cuối cùng của tháng
-  if (day > daysInMonth) {
-    day = daysInMonth;
-  }
-  // Định dạng ngày theo dạng DD
-  const formattedDay = String(day).padStart(2, '0');
-  // // Định dạng tháng theo dạng MM
-  // const formattedMonth = String(month).padStart(2, '0');
-  // Kết hợp ngày và tháng thành chuỗi dạng DD/MM
-  return day;
+  return String(daysInMonth).padStart(2, '0');
 }
 
 interface Props {
@@ -50,6 +41,7 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['closePopup', 'dataAddIncomeProcess'])
 
+
 const store = useStore();
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const paymentDate = computed(() => store.getters['common/getPaymentDay'])
@@ -57,6 +49,14 @@ const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs(
 
 const attributionMonth: any = ref(0)
 const paymentYearMonthChoose = ref(0)
+const daySelectArr = computed(() => {
+  const day = convertToDate({month: Number(paymentYearMonthChoose.value.toString().slice(-2)), year: paYear.value})
+  let result: any = [];
+  for (let i = 0; i < +day; i++) {
+    result.push({value: i+1, label: i + 1});
+  }
+  return result
+})
 
 const dataQuery = ref({companyId: companyId, imputedYear: paYear.value});
 

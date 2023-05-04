@@ -31,8 +31,9 @@
               </a-col>
               <a-col span="12">
                 <a-space :size="4">
-                  <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-                  <span class="ml-5">해당사항이 있는 경우만 신청해 주세요.</span>
+                  <info-tool-tip>
+                    해당사항이 있는 경우만 신청해 주세요.
+                  </info-tool-tip>
                 </a-space>
               </a-col>
             </a-row>
@@ -218,8 +219,9 @@
                 <checkbox-basic label="산재보험" v-model:value-checkbox="formState.electronicNotificationWeb" />
               </a-col>
               <a-col span="8">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-                <span class="ml-5">신청하는 경우 아래 항목을 반드시 입력해 주세요.</span>
+                <info-tool-tip>
+                  신청하는 경우 아래 항목을 반드시 입력해 주세요.
+                </info-tool-tip>
               </a-col>
             </a-row>
 
@@ -484,9 +486,10 @@ import { useCompanyInfo } from "@/helpers/useCompanyInfo";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import notification from '@/utils/notification';
 import { getCurrentInstance } from 'vue';
+import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
 export default defineComponent({
-  components: {},
+  components: {InfoToolTip},
   props: {
     isOpenModalCreate: {
       type: Boolean,
@@ -539,7 +542,7 @@ export default defineComponent({
         formStateToCompare.value = { ...formState.value };
       }
     });
-    
+
     //-----------------------------API CREATE && FORM ACTION--------------------------------
 
     const messageCreate = messages.getCommonMessage('101').message;

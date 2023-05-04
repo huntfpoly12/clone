@@ -18,12 +18,12 @@
   <a-modal v-model:visible="modalResponseDelete" okText="확인" :closable="false" :footer="null" width="350px">
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5"/>
       요청건수: {{ errors.length + successes }}건</p>
-    <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5"/>처리건수: {{ successes.length }}건
+    <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5"/>처리건수: {{ successes }}건
     </p>
     <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5"/>
       미처리건수 및 내역: {{ errors.length }} 건 </p>
     <ul v-if="errorsMessage.length > 0">
-      <li v-for="(error) in errors"> {{ error.name }} {{ error.incomeId }} {{ error.message }}</li>
+      <li v-for="(error) in errors"> {{ error.incomeId }} {{ error.name }} {{ error.message }}</li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
@@ -37,7 +37,7 @@ import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import {companyId} from '@/helpers/commonFunction';
 import {EditOutlined} from "@ant-design/icons-vue";
 import {useMutation} from "@vue/apollo-composable";
-import {defineComponent, ref, watch} from 'vue';
+import {ref, watch} from 'vue';
 
 interface Props {
   modalStatus: boolean,
@@ -48,10 +48,15 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['closePopup'])
 const errorsMessage = ref<string[]>([])
-const errors:any = ref([])
-const successes:any = ref([])
+const successes:any = ref(0)
 const modalResponseDelete = ref(false)
 const dayValue = ref(1)
+const errors:any = ref([])
+
+const err :any = ref([])
+watch(() => props.data, (val) => {
+  err.value = val
+})
 const setModalVisible = () => {
   emit("closePopup", false)
 };
@@ -62,43 +67,42 @@ const {
   loading,
 } = useMutation(mutations.changeIncomeRetirementPaymentDay);
 onDone(({data}) => {
-  console.log(data)
-  if (data) {
-    successes.value.push(data.changeIncomeRetirementPaymentDay.incomeId)
-  }
+  if (!data) return
+  successes.value++
+  err.value = err.value.filter((err: any) => err.incomeId !== data.changeIncomeRetirementPaymentDay.incomeId)
+  errors.value = err.value.filter((err: any) => err.incomeId !== data.changeIncomeRetirementPaymentDay.incomeId)
 })
-onError((err) => {
-  console.log(!!err)
-  if (err )
-    errorsMessage.value.push(err.message)
+onError((error) => {
+  if (error )
+    errorsMessage.value.push(error.message)
 })
 // watch loaded
 watch(loading, (val) => {
   if (!val) {
-    emit("closePopup", false)
     modalResponseDelete.value = true
-    if (errorsMessage.value.length > 0) {
-      let result:any = [];
-      for (let i = 0; i < props.data.length; i++) {
-        if (!successes.value.includes(props.data[i])) {
-          result.push(props.data[i]);
-        }
-      }
-      errors.value = errorsMessage.value.map((val:any, index) => ({
-        message: val,
-        incomeId: result[index]?.incomeId,
-        name: result[index]?.name
+    if (!errors.value.length) {
+      errors.value = err.value.map((val:any, index: number) => ({
+        message: errorsMessage.value[0],
+        incomeId: val.incomeId,
+        name: val.employee.name
+      }));
+    } else {
+      errors.value = errors.value.map((val:any, index: number) => ({
+        message: errorsMessage.value[0],
+        incomeId: val.incomeId,
+        name: val.employee.name
       }));
     }
+    emit("closePopup", true)
   }
 })
 watch(modalResponseDelete, (val) =>{
   if (!val) {
     errorsMessage.value = []
     errors.value = []
+    successes.value = 0
+    err.value = []
   }
-  console.log('errorsMessage', errorsMessage.value)
-
 })
 const onSubmit = () => {
   props.data.forEach(async (val: any) => {
