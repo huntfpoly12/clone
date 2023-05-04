@@ -62,6 +62,7 @@
             <li><strong>valueInput:</strong> {type: String,default: "",}</li>
             <li><strong>placeholder:</strong> String (option)</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
+            <li><strong>select:</strong> {type: Boolean,default: true}</li>
           </ul>
         </td>
         <td>
@@ -99,6 +100,7 @@
             <li><strong>valueInput:</strong> {type: String,default: "",}</li>
             <li><strong>placeholder:</strong> String (option)</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
+            <li><strong>select:</strong> {type: Boolean,default: true}</li>
           </ul>
         </td>
         <td>
@@ -136,6 +138,7 @@
             <li><strong>valueInput:</strong> {type: String,default: "",}</li>
             <li><strong>placeholder:</strong> String (option)</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
+            <li><strong>select:</strong> {type: Boolean,default: true}</li>
           </ul>
         </td>
         <td>
@@ -168,6 +171,7 @@
             <li><strong>disabled:</strong> Boolean (option)</li>
             <li><strong>valueInput:</strong> {type: String,default: "",}</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
+            <li><strong>select:</strong> {type: Boolean,default: true}</li>
           </ul>
         </td>
         <td>
@@ -203,6 +207,7 @@
             <li><strong>valueInput:</strong> {type: String,default: "",}</li>
             <li><strong>placeholder:</strong> String (option)</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
+            <li><strong>select:</strong> {type: Boolean,default: true}</li>
           </ul>
         </td>
         <td>
@@ -237,6 +242,7 @@
             <li><strong>disabled:</strong> Boolean (option)</li>
             <li><strong>valueInput:</strong> {type: String,default: "",}</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
+            <li><strong>select:</strong> {type: Boolean,default: true}</li>
           </ul>
         </td>
         <td>

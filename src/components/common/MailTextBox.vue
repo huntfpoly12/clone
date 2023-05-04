@@ -1,7 +1,7 @@
 <template>
   <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" mode="mail"
     :placeholder="placeholder" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
-    @input="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
+    @input="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxEmailRule message="이메일 형식이 정확하지 않습니다" />
@@ -43,6 +43,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    select: {
+      type: Boolean,
+      default: true,
+    }
   },
   components: {
     DxTextBox,
@@ -68,11 +72,18 @@ export default defineComponent({
         value.value = newValue;
       }
     );
-
+    
+    const onFocusIn = (e: any) => {
+      if(props.select && !props.readOnly){
+          e.event.target.select()
+      }
+      emit("focusInput", e);
+    }
     return {
       updateValue,
       value,
-      messageRequired
+      messageRequired,
+      onFocusIn
     };
   },
 });
