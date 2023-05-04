@@ -732,27 +732,27 @@ export default defineComponent({
             formState.localIncomeTaxArea = data.localIncomeTaxArea
         }
 
-        // const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
-        //     value: TaxPayItem.all()[index].enumOrdinal,
-        //     label: TaxPayItem.all()[index].name,
-        // }));
+        const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
+            value: TaxPayItem.all()[index].enumOrdinal,
+            label: TaxPayItem.all()[index].name,
+        }));
 
-        // const arrLabel = Array();
-        // TaxFreePayItem.all().forEach((k, index) => {
-        //     if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
-        //         arrLabel[index] = TaxFreePayItem.all()[index].name + ' 월' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit
-        //     } else if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit) {
-        //         arrLabel[index] = TaxFreePayItem.all()[index].name + ' 년' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit
-        //     } else {
-        //         arrLabel[index] = TaxFreePayItem.all()[index].name
-        //     }
-        // });
+        const arrLabel = Array();
+        TaxFreePayItem.all().forEach((k, index) => {
+            if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
+                arrLabel[index] = TaxFreePayItem.all()[index].name + ' 월' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit
+            } else if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit) {
+                arrLabel[index] = TaxFreePayItem.all()[index].name + ' 년' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit
+            } else {
+                arrLabel[index] = TaxFreePayItem.all()[index].name
+            }
+        });
 
-        // const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
-        //     value: TaxFreePayItem.all()[index].enumKey,
-        //     label: arrLabel[index],
-        //     submission: JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission,
-        // }));
+        const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
+            value: TaxFreePayItem.all()[index].enumKey,
+            label: arrLabel[index],
+            submission: JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission,
+        }));
 
         const changeColorRow = (e: any) => {
             if (e.data?.use) {
