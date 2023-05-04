@@ -5,7 +5,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="electronicFilingId" class="mt-10"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                    :column-auto-width="true" noDataText="내역이 없습니다">
                     <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
                     <DxColumn caption="신고구분" data-field="reportType" data-type="string" />
                     <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
@@ -35,7 +35,7 @@
             <a-spin :spinning="loading">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" class="mt-10" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다">
                     <DxColumn caption="사업자코드" data-field="code" data-type="string" />
                     <DxColumn caption="사업자번호" data-field="bizNumber" data-type="string" />
                     <DxColumn caption="상호" data-field="name" data-type="string" />
@@ -105,7 +105,7 @@ export default defineComponent({
         }
     }
 })
-</script>  
+</script>
 <style scoped lang="scss">
 .form-table {
     margin-top: 30px;

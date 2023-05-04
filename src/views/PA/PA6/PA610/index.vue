@@ -11,7 +11,8 @@
                 :show-borders="true" key-expr="key" :allow-column-reordering="move_column"
                 :allow-column-resizing="column_resize" :focused-row-enabled="true"
                 @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged"
-                v-model:focused-row-key="focusedRowKey" :focusedRowIndex="0" style="height: 775px;">
+                v-model:focused-row-key="focusedRowKey" :focusedRowIndex="0" noDataText="내역이 없습니다"
+                style="height: calc(100vh - 160px);">
                 <DxPaging :page-size="0" />
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
