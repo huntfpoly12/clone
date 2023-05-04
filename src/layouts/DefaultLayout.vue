@@ -647,6 +647,10 @@ export default defineComponent({
     watch(() => store.state.common.activeTab, (newValue) => {
       selectedItems.value = null
       activeTab.value = newValue;
+      const indexTab = menuTab.value.findIndex(tab => tab.id === activeTab.value.id)
+      if(indexTab >= 0) {
+        tabIndex.value = indexTab
+      }
     }, { deep: true })
 
     watch(() => store.state.common.menuTab, (value) => {
