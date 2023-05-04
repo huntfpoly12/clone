@@ -62,9 +62,17 @@
           </div>
         </template>
         <DxSummary>
-          <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
+          <!-- <DxTotalItem column="일련번호" summary-type="count" display-format="" /> -->
         </DxSummary>
       </DxDataGrid>
+      <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
+        <div style="width: 250px; margin-left: 70px;">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+            전체
+            <span style="font-size: 16px;">[{{ dataSource.length }}]</span>
+          </div>
+        </div>
+      </div>
       <!-- <div @click="onShow">Kính lúp</div> -->
     </div>
     <a-modal :visible=" modalStatus " @cancel=" modalStatus = false " :mask-closable=" false " class="confirm-md"
@@ -263,5 +271,4 @@ export default defineComponent({
   width: 14px;
   height: 14px;
 }
-
 </style>

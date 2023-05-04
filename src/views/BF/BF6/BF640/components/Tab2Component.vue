@@ -95,9 +95,9 @@
           </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
             format="yyyy-MM-dd HH:mm" />
-          <DxColumn caption="제작현황" cell-template="제작현황" width="360" alignment="center" />
+          <DxColumn caption="제작현황" cell-template="제작현황" width="360"/>
           <template #제작현황=" { data }: any ">
-            <div class="d-flex-center justify-content-center">
+            <div class="d-flex-center ">
               <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
               <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
             </div>
@@ -445,27 +445,4 @@ export default defineComponent({
 </script> 
 <style lang="scss" scoped>
 @import '../style/style.scss';
-
-:deep #tab2-bf640 {
-  height: calc(62vh);
-
-  :deep .dx-datagrid-total-footer {
-    height: 77px;
-    overflow: hidden;
-    position: absolute;
-    bottom: 0;
-  }
-
-  :deep .dx-datagrid-headers {
-    height: 27px;
-  }
-
-  :deep .dx-datagrid-rowsview {
-    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
-  }
-
-  .dx-freespace-row {
-    display: none !important; // cục lúc hiện lúc không
-  }
-}
 </style>
