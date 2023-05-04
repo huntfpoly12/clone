@@ -7,6 +7,7 @@ import mutations from "@/graphql/mutations/index";
 import { setContext } from  '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import store from '@/store'
+import { Observable } from 'rxjs';
 const baseURL = import.meta.env.VITE_GRAPHQL_ENDPOINT;
 const httpLink = createHttpLink({
   uri: baseURL,
@@ -14,7 +15,7 @@ const httpLink = createHttpLink({
 
 const authLink = setContext(async (_, { headers }) => {
   // get the authentication token from localstorage if it exists
-  const accessToken = sessionStorage.getItem("token");
+  const accessToken = sessionStorage.getItem('token');
   // return the headers to the context so httpLink can read them
   return {
     headers: {
@@ -33,34 +34,42 @@ const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }
           // get the new token from your server
           const accessToken = sessionStorage.getItem('token');
           const refreshToken = sessionStorage.getItem('refreshToken');
-          console.log(err.extensions?.code,'dfgdfgdfg');
+   
           // call the mutation to refresh token
-          return client.mutate({
-            mutation: mutations.refreshLogin,
-            variables: { 
-              accessToken : accessToken,
-              refreshToken:refreshToken 
-            },
-          })
-            .then(({ data }) => {
-              // save the new tokens
-              sessionStorage.setItem('token', data.refreshLogin.accessToken);
-              sessionStorage.setItem('refreshToken', data.refreshLogin.refreshToken);
-              // update the headers with the new token
-              const oldHeaders = operation.getContext().headers;
-              operation.setContext({
-                headers: {
-                  ...oldHeaders,
-                  authorization: `Bearer ${data.refreshLogin.accessToken}`,
-                },
-              });
-              // retry the request, returning the new observable
-              return forward(operation);
+          return new Observable((observer) => {
+            client.mutate({
+              mutation: mutations.refreshLogin,
+              variables: { 
+                accessToken : accessToken,
+                refreshToken:refreshToken 
+              },
             })
-            .catch((error) => {
-              // handle error
-              console.log(error);
-            });
+              .then(({ data }) => {
+                console.log(data)
+                // save the new tokens
+                sessionStorage.setItem('token', data.refreshLogin.accessToken);
+                sessionStorage.setItem('refreshToken', data.refreshLogin.refreshToken);
+                // update the headers with the new token
+                const oldHeaders = operation.getContext().headers;
+                operation.setContext({
+                  headers: {
+                    ...oldHeaders,
+                    authorization: `Bearer ${data.refreshLogin.accessToken}`,
+                  },
+                });
+                // retry the request, returning the new observable
+                const subscriber = {
+                  next: observer.next.bind(observer),
+                  error: observer.error.bind(observer),
+                  complete: observer.complete.bind(observer),
+                };
+                return forward(operation).subscribe(subscriber);
+              })
+              .catch((error) => {
+                // handle error
+                console.log(error);
+              });
+          });
       }
     }
   }
@@ -68,6 +77,7 @@ const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }
     console.log(`[Network error]: ${networkError}`);
   }
 });
+
 export const client = new ApolloClient({
   link: refreshLink.concat(authLink.concat(httpLink)),
   cache: new InMemoryCache(),
