@@ -11,6 +11,7 @@
         key-expr="companyId"
         :allow-column-resizing="colomn_resize"
         :column-auto-width="true"
+        noDataText="내역이 없습니다"
         style="max-height: 770px"
       >
         <DxPaging :page-size="0"/>

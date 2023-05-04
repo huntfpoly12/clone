@@ -69,7 +69,7 @@
             <div v-else></div>
           </div>
         </template>
-        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="180px" alignment="center" />
+        <DxColumn caption="신고 종류" cell-template="afterDeadline" alignment="center" />
         <template #afterDeadline=" { data }: any ">
           <div class="d-flex-center justify-content-center">
             <div v-if=" !data.data.afterDeadline && data.data.index == 0 " class="deadline-tag tag-white">정기</div>
@@ -82,12 +82,12 @@
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"
           width="120" />
-        <DxColumn caption="제작현황" cell-template="productionStatus" width="400" alignment="center" />
+        <DxColumn caption="제작현황" cell-template="productionStatus" width="400"/>
         <template #productionStatus=" { data }: any ">
-          <div class="d-flex-center justify-content-center">
+          <!-- <div class="d-flex-center justify-content-center"> -->
             <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
             <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
-          </div>
+          <!-- </div> -->
         </template>
         <!-- <DxSummary>
           <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
