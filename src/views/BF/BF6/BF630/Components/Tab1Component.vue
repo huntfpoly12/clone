@@ -15,9 +15,10 @@
                 <switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작요청후'"
                   :textUnCheck="'제작요청전'" />
               </a-form-item>
-              <span class="style-note">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
-              </span>
+              <a-tooltip color="black" placement="top">
+                <template #title>제작전은 제작요청되지 않은 상태입니다.</template>
+                <img src="@/assets/images/iconInfo.png" class="img-info"/>
+              </a-tooltip>
             </div>
           </a-col>
         </a-row>
@@ -131,11 +132,15 @@
               tabName="tab1" @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
           </template>
 
-          <DxSummary>
+          <!-- <DxSummary>
             <DxTotalItem cssClass="bf-630-sumary" column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
             <DxTotalItem cssClass="bf-630-sumary" column="제작현황" :customize-text="productStatusSummary" />
-          </DxSummary>
+          </DxSummary> -->
         </DxDataGrid>
+        <div class="DxDataGrid-bf-630-tab1-sumary">
+          <div v-html="`전체: <span style='font-size: 16px'>[${dataSource.length}]</span>`"></div>
+          <div v-html="productStatusSummary()"></div>
+        </div>
       </a-spin>
     </div>
   </div>
@@ -390,11 +395,11 @@ export default defineComponent({
           totalBeforeProduction++
         }
       });
-      return `제작요청전 [${totalBeforeProduction}]
-              제작대기 [${countStatus(productionStatusArr.value, 0, 'productionStatus')}] 
-              제작중 [${countStatus(productionStatusArr.value, 1, 'productionStatus')}] 
-              제작실패 [${countStatus(productionStatusArr.value, -1, 'productionStatus')}] 
-              제작성공 [${countStatus(productionStatusArr.value, 2, 'productionStatus')}]`;
+      return `제작요청전 <span style="font-size: 16px">[${totalBeforeProduction}]</span>
+              제작대기 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 0, 'productionStatus')}]</span> 
+              제작중 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 1, 'productionStatus')}]</span> 
+              제작실패 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, -1, 'productionStatus')}]</span> 
+              제작성공 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 2, 'productionStatus')}]</span>`;
     };
     const productionStatusData = (emitVal: any, index: number) => {
       countListData.value++
@@ -512,6 +517,18 @@ export default defineComponent({
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss"></style>
 <style scoped lang="scss">
+.DxDataGrid-bf-630-tab1-sumary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: 7px;
+  padding-left: 80px;
+  color: rgba(51, 51, 51, .7);
+}
+
 :deep(.ant-form-item-label>label) {
   width: 110px;
   padding-left: 10px;

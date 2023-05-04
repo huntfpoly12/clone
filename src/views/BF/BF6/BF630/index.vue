@@ -101,6 +101,6 @@ export default defineComponent({
 </style>
 <style>
 .bf-630-sumary {
-  font-size:  14px !important;
+  font-weight: bold;
 }
 </style>

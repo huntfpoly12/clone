@@ -68,10 +68,13 @@
                 @click="openPopupDetail(data.data)" />
             </div>
           </template>
-          <DxSummary>
+          <!-- <DxSummary>
             <DxTotalItem cssClass="bf-630-sumary" column="일련번호" summary-type="count" display-format="전체: [{0}]" />
-          </DxSummary>
+          </DxSummary> -->
         </DxDataGrid>
+        <div class="DxDataGrid-bf-630-tab5-sumary">
+          <div v-html="`전체: <span style='font-size: 16px'>[${dataSource.length}]</span>`"></div>
+        </div>
       </a-spin>
     </div>
   </div>
@@ -205,5 +208,17 @@ export default defineComponent({
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss"></style>
 
+<style scoped lang="scss">
+.DxDataGrid-bf-630-tab5-sumary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: 7px 20px;
+  color: rgba(51, 51, 51, .7);
+}
+</style>
 
 

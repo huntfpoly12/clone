@@ -135,11 +135,11 @@
       </div>
       <div v-if="listFileUpload.length" class="form-chat-bottom-input-files">
           <div v-for="(file, index) in listFileUpload" class="form-chat-bottom-input-files-item">
-            <div class="form-chat-bottom-input-files-item-wrapper">
+            <div class="form-chat-bottom-input-files-item-file">
               <FileOutlined  style="margin-right: 10px;"/>
-              <div class="form-chat-bottom-input-files-item-wrapper-info">
-                <p>{{ file.file.name }}</p>
-                <p>{{ formatFileSize(file.file.size) }}</p>
+              <div class="form-chat-bottom-input-files-item-file-info">
+                <p class="form-chat-bottom-input-files-item-file-info-name">{{ file.file.name }}</p>
+                <p class="form-chat-bottom-input-files-item-file-info-size">({{ formatFileSize(file.file.size) }})</p>
               </div>
             </div>
             <DeleteOutlined class="form-chat-bottom-input-files-item-delete" @click="removeFile(index)"/>
@@ -818,12 +818,16 @@ export default defineComponent({
           justify-content: space-between;
           align-items: center;
           padding: 4px;
-          &-wrapper {
+          &-file {
             display: flex;
             align-items: center;
             &-info { 
               p {
                 margin: 0;
+                line-height: 15px;
+              }
+              &-size {
+                color: #A6A6A6;
               }
             }
           }
