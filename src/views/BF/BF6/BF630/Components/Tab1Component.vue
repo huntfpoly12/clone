@@ -107,32 +107,32 @@
       <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
         <DxDataGrid id="DxDataGrid-bf-630-tab1" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
-          v-model:selected-row-keys="selectedRowKeys" noDataText="내역이 없습니다">
-          <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
-          <DxColumn caption="사업자코드" cell-template="companyCode" />
-          <template #companyCode="{ data }">
-            {{ data.data.companyServiceContract.active ? data.data.company.code : '해지' }}
-          </template>
-          <DxColumn caption="상호 주소" cell-template="companyName" />
-          <template #companyName="{ data }">
-            {{ data.data.company.name }}
-            {{ data.data.company.address }}
-          </template>
-          <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
-          <template #bizNumber="{ data }">
-            {{ formatBizNumber(data.data.company.bizNumber) }}
-          </template>
-          <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
-            format="yyyy-MM-dd HH:mm" />
-          <DxColumn caption="제작현황" cell-template="imputed" width="430" />
-          <template #imputed="{ data }">
-            <GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data"
-              tabName="tab1" @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
-          </template>
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged" 
+        v-model:selected-row-keys="selectedRowKeys" noDataText="내역이 없습니다">
+        <DxPaging :enabled="false" />
+        <DxScrolling mode="standard" show-scrollbar="always" />
+        <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
+        <DxColumn caption="사업자코드" cell-template="companyCode" />
+        <template #companyCode="{ data }">
+          {{ data.data.companyServiceContract.active ? data.data.company.code : '해지' }}
+        </template>
+        <DxColumn caption="상호 주소" cell-template="companyName" />
+        <template #companyName="{ data }">
+          {{ data.data.company.name }}
+          {{ data.data.company.address }}
+        </template>
+        <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+        <template #bizNumber="{ data }">
+          {{ formatBizNumber(data.data.company.bizNumber) }}
+        </template>
+        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
+        <DxColumn caption="제작현황" cell-template="imputed" width="430" />
+        <template #imputed="{ data }">
+          <GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data" tabName="tab1"
+            @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
+        </template>
 
-          <!-- <DxSummary>
+        <!-- <DxSummary>
             <DxTotalItem cssClass="bf-630-sumary" column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
             <DxTotalItem cssClass="bf-630-sumary" column="제작현황" :customize-text="productStatusSummary" />
           </DxSummary> -->
@@ -153,7 +153,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import DxCheckBox from 'devextreme-vue/check-box';
 import { useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, DxPaging } from "devextreme-vue/data-grid";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
@@ -165,7 +165,7 @@ import GetStatusTable from "./GetStatusTable.vue";
 import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {
-    DxCheckBox, SaveOutlined, DxButton, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, RequestFilePopup, GetStatusTable
+    DxCheckBox, SaveOutlined, DxButton, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, RequestFilePopup, GetStatusTable, DxPaging
   },
   props: {
     activeSearch: {

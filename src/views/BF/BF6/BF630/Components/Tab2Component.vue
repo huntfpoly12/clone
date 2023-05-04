@@ -109,6 +109,7 @@
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
           v-model:selected-row-keys="selectedRowKeys" noDataText="내역이 없습니다">
+          <DxPaging :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
           <DxColumn caption="사업자코드" cell-template="companyCode" />
@@ -156,7 +157,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import DxCheckBox from 'devextreme-vue/check-box';
 import { useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, DxPaging } from "devextreme-vue/data-grid";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
@@ -168,7 +169,7 @@ import GetStatusTable from "./GetStatusTable.vue";
 import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {
-    DxCheckBox, SaveOutlined, DxButton, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, RequestFilePopup, GetStatusTable
+    DxCheckBox, SaveOutlined, DxButton, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, RequestFilePopup, GetStatusTable, DxPaging
   },
   props: {
     activeSearch: {

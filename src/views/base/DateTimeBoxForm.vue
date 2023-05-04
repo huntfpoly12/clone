@@ -66,6 +66,7 @@
             </li>
             <li><strong>id:</strong> { type: String, default: "",}</li>
             <li><strong>className:</strong>{type: String,} (option)</li>
+            <li><strong>timePicker:</strong> {type: Boolean,default: false}</li>
           </ul>
         </td>
         <td>
