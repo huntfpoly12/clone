@@ -9,8 +9,10 @@
                 <span class="mr-5 ml-5">~</span>
                 <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="monthEnd" />
                 <ProcessStatus :disabled="true" :valueStatus="status" />
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                <span class="style-note style-note-cm121">조정마감된 월만 해당 (조정마감이 아닌 월은 제외).</span>
+                <a-tooltip color="black" placement="top">
+                    <template #title>조정마감된 월만 해당 (조정마감이 아닌 월은 제외).</template>
+                    <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                </a-tooltip>
             </div>
         </div>
         <div class="main">

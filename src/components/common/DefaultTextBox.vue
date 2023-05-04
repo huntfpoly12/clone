@@ -104,7 +104,8 @@ export default defineComponent({
     const valueChanged = () => {
       if (props.replaceRegex) {
         setTimeout(() => {
-          value.value = value.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+          // value.value = value.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+          value.value = value.value.replace(/[^A-Za-z0-9 ]/g, '')
         }, 100);
       }
     }
