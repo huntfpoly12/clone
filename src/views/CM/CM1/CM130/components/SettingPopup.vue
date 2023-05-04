@@ -51,7 +51,7 @@
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { employees } from "../utils/data";
+// import { employees } from "../utils/data";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import queries from "@/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -74,7 +74,7 @@ export default defineComponent({
 			modalParam: {
 				checkBox: "",
 			},
-			employees,
+			// employees,
 		};
 	},
 	setup(props, { emit }) {
