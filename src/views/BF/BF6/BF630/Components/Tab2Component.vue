@@ -15,9 +15,10 @@
                 <switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작요청후'"
                   :textUnCheck="'제작요청전'" />
               </a-form-item>
-              <span class="style-note">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
-              </span>
+              <a-tooltip color="black" placement="top">
+                <template #title>제작전은 제작요청되지 않은 상태입니다.</template>
+                <img src="@/assets/images/iconInfo.png" class="img-info" />
+              </a-tooltip>
             </div>
           </a-col>
         </a-row>
@@ -83,10 +84,10 @@
       <a-form-item label="파일 제작 설정" label-align="left">
         <div class="custom-note d-flex-center">
           <switch-basic textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true" />
-          <span class="style-note">
-            <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-            <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
-          </span>
+          <a-tooltip color="black" placement="top">
+            <template #title>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</template>
+            <img src="@/assets/images/iconInfo.png" class="img-info" />
+          </a-tooltip>
         </div>
       </a-form-item>
       <a-form-item label="제출연월일" label-align="left">
@@ -291,7 +292,7 @@ export default defineComponent({
     })
 
     // watch checkbox change
-    watch(checkbox1, (value) => {
+    watch(() => checkbox1.value, (value) => {
       if (value) {
         filterForm.productionStatuses.push(0)
       } else {
@@ -299,8 +300,11 @@ export default defineComponent({
           return item !== 0
         })
       };
+      if (!checkbox1.value && !checkbox2.value && !checkbox3.value && !checkbox4.value) {
+        filterForm.afterProduction = false
+      }
     })
-    watch(checkbox2, (value) => {
+    watch(() => checkbox2.value, (value) => {
       if (value) {
         filterForm.productionStatuses.push(1)
       } else {
@@ -308,8 +312,11 @@ export default defineComponent({
           return item !== 1
         })
       };
+      if (!checkbox1.value && !checkbox2.value && !checkbox3.value && !checkbox4.value) {
+        filterForm.afterProduction = false
+      }
     })
-    watch(checkbox3, (value) => {
+    watch(() => checkbox3.value, (value) => {
       if (value) {
         filterForm.productionStatuses.push(2)
       } else {
@@ -317,8 +324,11 @@ export default defineComponent({
           return item !== 2
         })
       };
+      if (!checkbox1.value && !checkbox2.value && !checkbox3.value && !checkbox4.value) {
+        filterForm.afterProduction = false
+      }
     })
-    watch(checkbox4, (value) => {
+    watch(() => checkbox4.value, (value) => {
       if (value) {
         filterForm.productionStatuses.push(-1)
       } else {
@@ -326,6 +336,9 @@ export default defineComponent({
           return item !== -1
         })
       };
+      if (!checkbox1.value && !checkbox2.value && !checkbox3.value && !checkbox4.value) {
+        filterForm.afterProduction = false
+      }
     })
 
     // watch active searching
@@ -534,6 +547,7 @@ export default defineComponent({
   padding-left: 80px;
   color: rgba(51, 51, 51, .7);
 }
+
 :deep(.ant-form-item-label>label) {
   width: 110px;
   padding-left: 10px;
