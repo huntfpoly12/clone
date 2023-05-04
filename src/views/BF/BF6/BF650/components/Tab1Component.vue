@@ -11,10 +11,9 @@
         <a-form-item label="제작요청상태" label-align="left">
           <div class="custom-note d-flex-center">
             <switch-basic v-model:valueSwitch="filter.beforeProduction" textCheck="제작요청후" textUnCheck="제작요청전"/>
-            <div class="d-flex-center ml-5">
-              <img src="@/assets/images/iconInfo.png" style="width: 14px;"/>
-              <span>제작전은 제작요청되지 않은 상태입니다.</span>
-            </div>
+            <info-tool-tip class="ml-5">
+              제작전은 제작요청되지 않은 상태입니다.
+            </info-tool-tip>
           </div>
         </a-form-item>
         <div id="checkBoxSearchBF650">
@@ -47,10 +46,9 @@
         <div class="custom-note d-flex-center">
           <switch-basic :disabled="true" v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고"
                         textUnCheck="납세자자진신고"/>
-          <span class="d-flex-center">
-                        <img src="@/assets/images/iconInfo.png" style="width: 16px;"/>
-                        <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
-                    </span>
+          <info-tool-tip class="ml-5">
+            본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
+          </info-tool-tip>
         </div>
       </a-form-item>
       <a-form-item label="제출연월일" label-align="left">
@@ -92,7 +90,7 @@
                         </span>
           </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
-                    format="yyyy-MM-dd hh:mm"/>
+                    format="yyyy-MM-dd hh:mm a"/>
           <DxColumn caption="제작현황" cell-template="productionStatus"/>
           <template #productionStatus="{ data }">
             <template v-if="data.data.lastProductionRequestedAt === null">

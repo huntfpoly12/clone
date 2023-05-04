@@ -7,6 +7,7 @@
           :multi-calendars="multiCalendars"
           :teleport="teleport" :disabled="disabled"
           :clearable="clearable"
+          :enable-time-picker="false"
           >
       </Datepicker>
       <div v-if="isValid" class="message-error">

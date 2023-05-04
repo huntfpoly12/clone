@@ -34,22 +34,19 @@
           <div class="d-flex-center">
             <employ-select :arrayValue="employeeList" :required="true"
                            v-model:valueEmploy="formState.inputFormTab1.employeeId" width="300px"/>
-            <div class="ml-5 d-flex-center">
-              <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-              <div class="custom-waring" style="width: 180px;">대상: 사원과 일용직사<br>원 중 퇴직금 대상자.</div>
-            </div>
+            <info-tool-tip class="ml-5">
+                  <div>대상: 사원과 일용직사</div>
+                  <div>원 중 퇴직금 대상자.</div>
+            </info-tool-tip>
           </div>
         </a-form-item>
 
         <a-form-item label="입사일">
           <div class="d-flex-center">
             <date-time-box width="150px" :disabled="true" :valueDate="joinedAt"/>
-            <div class="ml-5 d-flex-center">
-              <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-              <div class="custom-waring">
-                수정이 필요한 경우 <b @click="openNewTab" style="cursor: pointer;">[사원등록]</b>에서 수정하시기 바랍니다.
-              </div>
-            </div>
+            <info-tool-tip class="ml-5">
+              수정이 필요한 경우 <b @click="openNewTab" style="cursor: pointer;">[사원등록]</b>에서 수정하시기 바랍니다.
+            </info-tool-tip>
           </div>
         </a-form-item>
         <a-form-item label="임원여부">
@@ -79,14 +76,10 @@
               :finishDate="finishDateRetirement && dayjs(String(finishDateRetirement))"
             />
             <div class="ml-5 d-flex-center">
-              <a-tooltip placement="top">
-                <template #title>퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의
-                  다음날입니다.
-                </template>
-                <div>
-                  <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의
+                다음날입니다.
+              </info-tool-tip>
             </div>
           </div>
         </a-form-item>
@@ -100,12 +93,9 @@
                                   v-model:valueDate="formState.prevRetiredYearsOfService.settlementFinishDate"
                                   ref="prevSettlementFinishDate"/>
             <div class="ml-5 d-flex-center">
-              <a-tooltip placement="top">
-                <template #title>퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</template>
-                <div>
-                  <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.
+              </info-tool-tip>
             </div>
           </div>
         </a-form-item>
@@ -125,12 +115,9 @@
             />
 
             <div class="ml-5 d-flex-center">
-              <a-tooltip placement="top">
-                <template #title>정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</template>
-                <div>
-                  <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.
+              </info-tool-tip>
             </div>
           </div>
         </a-form-item>
@@ -141,12 +128,9 @@
                         format="#0,###"
             />
             <div class="ml-5 d-flex-center">
-              <a-tooltip placement="top">
-                <template #title>정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</template>
-                <div>
-                  <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.
+              </info-tool-tip>
             </div>
           </div>
         </a-form-item>
@@ -167,14 +151,10 @@
                                   :finishDate="finishDateRetirement && dayjs(String(finishDateRetirement))"
                                   ref="lastSettlementStartDate"/>
             <div class="ml-5 d-flex-center">
-              <a-tooltip placement="top">
-                <template #title>퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의
-                  다음날입니다.
-                </template>
-                <div>
-                  <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의
+                다음날입니다.
+              </info-tool-tip>
             </div>
           </div>
         </a-form-item>
@@ -186,12 +166,9 @@
                                   :startDate="dayjs(String(formState.lastRetiredYearsOfService.settlementStartDate)).add(1, 'day')"
                                   ref="lastSettlementFinishDate"/>
             <div class="ml-5 d-flex-center">
-              <a-tooltip placement="top">
-                <template #title>퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</template>
-                <div>
-                  <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.
+              </info-tool-tip>
             </div>
           </div>
         </a-form-item>
@@ -205,12 +182,9 @@
             <number-box :required="true" width="150px" format="#0,###"
                         v-model:valueInput="formState.lastRetiredYearsOfService.exclusionDays"/>
             <div class="ml-5 d-flex-center">
-              <a-tooltip placement="top">
-                <template #title>정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</template>
-                <div>
-                  <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.
+              </info-tool-tip>
             </div>
           </div>
         </a-form-item>
@@ -219,12 +193,9 @@
             <number-box :required="true" width="150px" format="#0,###"
                         v-model:valueInput="formState.lastRetiredYearsOfService.additionalDays"/>
             <div class="ml-5 d-flex-center">
-              <a-tooltip placement="top">
-                <template #title>정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</template>
-                <div>
-                  <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.
+              </info-tool-tip>
             </div>
           </div>
         </a-form-item>
