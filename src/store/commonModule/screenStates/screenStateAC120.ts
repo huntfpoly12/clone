@@ -13,7 +13,7 @@ let statesAC120 = {
         resetDataAccountingProcesses: 0,
         resetDataAccountingDocumentProofs: 0,
 
-        statusFormAdd: true,
+        statusFormAdd: false,
         // dataRowFocus: {},
         arrResolutionType: [],
         arrLetterOfApprovalType: [],
