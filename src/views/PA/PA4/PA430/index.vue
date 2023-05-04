@@ -34,12 +34,10 @@
                             <div class="dflex custom-flex">
                                 <radio-group :arrayValue="arrayRadioType" :layoutCustom="'horizontal'"
                                     v-model:valueRadioCheck="dataInputReport.input.type" />
-                                <div style="margin-left: 10px;">
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                    <span>
-                                        본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
-                                    </span>
-                                </div>
+                                <a-tooltip color="black" placement="top">
+                                    <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
+                                    <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                                </a-tooltip>
                             </div>
                         </a-form-item>
                     </a-col>
