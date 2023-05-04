@@ -29,9 +29,11 @@
                         </div>
                         <checkbox-basic v-model:valueCheckbox="valueCheckBox" :disabled="false" :size="'20'" />
                         <span>결산서 (세목까지 출력)</span>
-                        <div style="margin-left: 10px;">
-                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                            <span>선택시 결산서 서식에 세목까지 출력됩니다</span>
+                        <div>
+                            <a-tooltip color="black" placement="top">
+                                <template #title>선택시 결산서 서식에 세목까지 출력됩니다</template>
+                                <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                            </a-tooltip>
                         </div>
                     </div>
                 </a-form-item>

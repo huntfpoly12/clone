@@ -166,11 +166,10 @@
                                 <a-col :span="24">
                                     <div class="top-content">
                                         <a-typography-title :level="5" style="margin-bottom: 0;">품의서
-                                            <span class="fz-10 ml-10" style="color: gray; font-weight: 300; width: 40%;">
-                                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
-                                                    class="mr-5">
-                                                지출결의서 기재 사항
-                                            </span>
+                                            <a-tooltip color="black" placement="top">
+                                                <template #title>지출결의서 기재 사항</template>
+                                                <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                                            </a-tooltip>
                                         </a-typography-title>
                                     </div>
                                 </a-col>
