@@ -27,9 +27,9 @@
         <a-row>
           <a-col :span="12">
             <a-form-item label="서식 설정" class="red">
-              <info-tool-tip>
-                본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
-              </info-tool-tip>
+              <div style="width: fit-content">
+                <info-tool-tip style="width: fit-content">본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</info-tool-tip>
+              </div>
             </a-form-item>
             <div class="tax-select">
               <radio-group :arrayValue="radioCheckData" v-model:valueRadioCheck="checkBoxOption2" />
@@ -119,7 +119,7 @@
           </template>
           <DxSummary>
             <DxTotalItem :customize-text="customTextSummaryInfo" show-in-column="성명" />
-            <DxTotalItem column="totalPay" name="total_summary" summary-type="sum" display-format="총급여계합계: {0}"
+            <DxTotalItem column="totalPay" name="total_summary" summary-type="sum" display-format="총급여계합계: [{0}]"
               value-format="#,###" />
           </DxSummary>
         </DxDataGrid>
@@ -392,7 +392,7 @@ const customTextSummaryInfo = () => {
     }
 
   })
-  return '전체: ' + total + " (계속: " + 계속 + ", 중도: " + 중도 + ")"
+  return `전체: [${total}] (계속: [${계속}], 중도: [${중도}])`
 }
 const dataGrid = ref()
 const clearSelection = () => {

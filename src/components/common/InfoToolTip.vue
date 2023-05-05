@@ -1,5 +1,5 @@
 <template>
-  <a-tooltip :placement="placement">
+  <a-tooltip :placement="placement" :overlayStyle="{'max-width': width}">
     <template #title>
       <slot/>
     </template>
@@ -10,26 +10,17 @@
 </template>
 
 <script lang="ts">
-import { useStore } from 'vuex';
-import { ref, watch, getCurrentInstance, computed } from "vue";
-import queries from "@/graphql/queries/AC/AC6/AC610/index";
-import { useQuery } from "@vue/apollo-composable";
-import { companyId } from "@/helpers/commonFunction";
-import DxSelectBox from "devextreme-vue/select-box";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 export default {
     props: {
       placement: {
         type: String,
         default: "top",
+      },
+      width: {
+        type: String,
+        default: "300px",
       }
     },
 
 };
 </script>
-
-<style lang="scss">
-.ant-tooltip {
-  max-width: 300px !important;
-}
-</style>

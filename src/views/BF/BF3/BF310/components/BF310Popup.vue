@@ -178,7 +178,7 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                         <div id="data-grid-demo">
-                                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
+                                            <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
                                                 :data-source="dataSource" :show-borders="true"
                                                 :allow-column-reordering="move_column"
                                                 :allow-column-resizing="colomn_resize" :column-auto-width="true"
