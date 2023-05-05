@@ -101,13 +101,19 @@
               </div>
             </template>
 
-            <DxSummary>
-              <DxTotalItem column="통장" summary-type="count" display-format="통장내역수: [{0}]" />
+            <!-- <DxSummary>
+              <DxTotalItem column="통장" summary-type="count" display-format="" />
               <DxTotalItem cssClass="custom-sumary" column="입금액" :customize-text="totalDeposits" />
               <DxTotalItem cssClass="custom-sumary" column="출금액" :customize-text="totalWithdrawal" />
               <DxTotalItem cssClass="custom-sumary" column="전표등록" :customize-text="countSlipRegistration" />
-            </DxSummary>
+            </DxSummary> -->
           </DxDataGrid>
+          <div class="DxDataGridMain-ac-110-sumary">
+              <div v-html="`통장내역수: <span style='font-size: 16px !important'>${dataSource.length}</span>`"></div>
+              <div v-html="totalDeposits()"></div>
+              <div v-html="totalWithdrawal()"></div>
+              <div v-html="countSlipRegistration()"></div>
+          </div>
         </a-spin>
       </div>
       <div class="ac-110__main-detail">
@@ -487,6 +493,7 @@ export default defineComponent({
     const refGridDetailAc110: any = ref()
     let rowKeyfocusedGridDetail: any = ref(null)
     const keyRefreshGridDetailAc = ref(0)
+    let rowElementFocus: any = ref(null)
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     const isRegistered = computed(() => {
@@ -708,6 +715,12 @@ export default defineComponent({
       }
     }
     const onFocusedRowChanging = (event: any) => {
+      if (rowKeyfocused.value !== event.rows[event.newRowIndex].data.bankbookDetailId) {
+        if (!isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value)){
+          rowElementFocus.value = event.rowElement[0]
+          rowElementFocus.value?.classList.add("dx-state-hover-custom")
+        }
+      }
       event.cancel = true
     }
     const onRowClick = (event: any) => {
@@ -746,14 +759,14 @@ export default defineComponent({
       dataSource.value.forEach((item) => {
         total += item.deposit;
       });
-      return `입금액 합계: [${formatNumber(total)}]`
+      return `입금액 합계: <span style='font-size: 16px !important'>[${formatNumber(total)}]</span>`
     };
     const totalWithdrawal = () => {
       let total = 0;
       dataSource.value.forEach((item) => {
         total += item.withdraw;
       });
-      return `출금액 합계: [${formatNumber(total)}]`
+      return `출금액 합계: <span style='font-size: 16px !important'>[${formatNumber(total)}]</span>`
     };
     const countSlipRegistration = () => {
       let totalRegistration = 0;
@@ -765,7 +778,7 @@ export default defineComponent({
           totalCancellation++
         }
       });
-      return `전표등록 여부 [(O: ${totalRegistration}, X: ${totalCancellation})]`
+      return `전표등록 여부 <span style='font-size: 16px !important'>[O: ${totalRegistration}, X: ${totalCancellation}]</span>`
     };
     // ---------------Grid detail----------------
     const totalTransactions = () => {
@@ -1020,6 +1033,7 @@ export default defineComponent({
         }
         itemChange.value = null
       }
+      rowElementFocus.value.classList.remove("dx-state-hover-custom");
       isModalConfirmChangeData.value = false
     }
     return {
