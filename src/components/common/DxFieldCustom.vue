@@ -38,7 +38,7 @@ export default defineComponent({
       return `dx-field-label ${props.required ? 'required' : ''}`
     })
     const computedClass = computed(() => {
-      return `dx-field px-10 d-flex items-center ${props.class}`;
+      return `dx-field d-flex items-center ${props.class}`;
     });
 
     return {
