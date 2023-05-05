@@ -5,47 +5,43 @@
     </p>
     <div ref="formTimeline" class="form-chat-timeline">
       <div v-for="(items, index) in listChat" :key="index">
-        <div class="form-chat-timeline-common" :class="{
-          'form-chat-timeline-right': items.userId === userId,
-          'form-chat-timeline-left': items.userId !== userId,
-          'mt-1': index > 0 && listChat[index - 1].userId === items.userId,
-          'mt-10': index > 0 && listChat[index - 1].userId !== items.userId,
-        }">
-          <div class="form-chat-timeline-avatar" :class="{ 'hidden-avatar': items.userId === userId }">
-            <!-- <img :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.userId, }" :src="items.avatar"
-              alt=""> -->
+        <!-- <div :class="{'form-chat-timeline-line': index > 0 && listChat[index - 1].userId !== items.userId}"></div> -->
+        <div class="form-chat-timeline-line"></div>
+        <div class="form-chat-timeline-common">
+          <!-- <div class="form-chat-timeline-avatar" >
             <a-badge :dot="true" :offset="[-5, 33]" :status="items.userId === userId ? 'success' : 'error'"
               :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].userId === items.userId }">
               <a-avatar shape="circle" size="large"
                 :style="`background-color: ${items.userId === userId ? '#1890ff' : '#f56a00'}`">{{ items.name
                 }}</a-avatar>
             </a-badge>
-          </div>
+          </div> -->
 
-
-          <div class="form-chat-timeline-content" :class="{
-            'borderRadiusleft10': (index === 0 || listChat[index - 1]?.userId !== items.userId) && items.userId !== userId,
-            'borderRadiusRight10': (index === 0 || listChat[index - 1]?.userId !== items.userId) && items.userId === userId,
-            'form-chat-timeline-content-right': items.userId === userId,
-            'borderEdit': itemEditComment?.key === items.key
-          }">
+          <div class="form-chat-timeline-content">
             <div class="form-chat-timeline-content-info">
               <div class="form-chat-timeline-content-info-user">
-                <span class="form-chat-timeline-content-info-user-status"
+                <!-- <span class="form-chat-timeline-content-info-user-status"
                   :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].userId === items.userId }">{{ items.status
                   }}</span>
                 <div class="form-chat-timeline-content-info-user-name"
-                  :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].userId === items.userId }">{{ items.name }}
+                  :class="{ 
+                    'hidden-avatar': index > 0 && listChat[index - 1].userId === items.userId, 
+                    'form-chat-timeline-content-info-user-name-login': items.userId === userId,
+                  }">{{ items.name }}
+                </div> -->
+                <span class="form-chat-timeline-content-info-user-status">{{ items.status }}</span>
+                <div class="form-chat-timeline-content-info-user-name"
+                  :class="{'form-chat-timeline-content-info-user-name-login': items.userId === userId}">{{ items.name }}
                 </div>
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
+            <div class="form-chat-timeline-content-text" v-html="items.text"></div>
             <div class="form-chat-timeline-content-files">
               <a-spin v-for="(file, indexFile) in items.files" :spinning="isLoadingUpload && !!file?.isUploading" size="small" :key="file.url">
                 <img class="form-chat-timeline-content-files-items" :src="file.url" alt="" @click="previewImage(items.files, indexFile)"> 
               </a-spin>
             </div>
-            <div class="form-chat-timeline-content-text" v-html="items.text"></div>
           </div>
 
 
@@ -93,16 +89,32 @@
     </div>
 
     <div class="form-chat-bottom">
-      <a-badge :dot="true" :offset="[-5, 33]" status="success" class="mr-5">
-        <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff">{{ userName }}</a-avatar>
-      </a-badge>
+      <div class="form-chat-bottom-category">
+        <StatusChat with="150"/>
+        <span style="margin: 0 10px;">분류:</span>
+        <span>회계-마감-({{ currentTime }})</span>
+      </div>
       <div class="form-chat-bottom-input">
-        <textarea rows="1" ref="inputChat" :class="{ 'active-input-file': listFileUpload.length }" placeholder="댓글을 입력하세요…"
+        <textarea rows="1" ref="inputChat" placeholder="댓글을 입력하세요…"
           v-model="textChat" @input="changeInput" @keypress.enter.exact.prevent="submitChat"></textarea>
-        <div class="form-chat-bottom-input-tool">
-          <CloseOutlined @click="removeText()" />
+        
+        <!-- <div v-if="listFileUpload.length" class="form-chat-bottom-input-files">
+          <div v-for="(file, index) in listFileUpload" class="form-chat-bottom-input-files-item">
+            <img :src="file.url" alt="" :key="index">
+            <CloseOutlined class="form-chat-bottom-input-files-item-close" @click="removeFile(index)"/>
+          </div>
+        </div> -->
+      </div>
+      
+      <div class="form-chat-bottom-input-action">
+        <div class="form-chat-bottom-input-action-icon">
+          <div class="form-chat-bottom-input-action-icon-files" @click="openFile">
+            <FileAddOutlined />
+          </div>
           <a-dropdown :visible="isVisibleEmojiForm">
-            <SmileOutlined style="margin: 0 5px;" @click.stop="isVisibleEmojiForm = !isVisibleEmojiForm"/>
+            <div class="form-chat-bottom-input-action-icon-emoji" @click.stop="isVisibleEmojiForm = !isVisibleEmojiForm">
+              <SmileOutlined style="margin: 0 5px;"/>
+            </div>
             <template #overlay>
               <EmojiPicker 
               theme="dark" 
@@ -114,18 +126,25 @@
               v-click-outside="clickOutside"/>
             </template>
           </a-dropdown>
-          <FileAddOutlined @click="openFile" />
         </div>
-        <div v-if="listFileUpload.length" class="form-chat-bottom-input-files">
+        <div class="form-chat-bottom-input-action-btn">
+          <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80"
+            @onClick="removeText()" />
+          <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()" />
+        </div>
+      </div>
+      <div v-if="listFileUpload.length" class="form-chat-bottom-input-files">
           <div v-for="(file, index) in listFileUpload" class="form-chat-bottom-input-files-item">
-            <img :src="file.url" alt="" :key="index">
-            <CloseOutlined class="form-chat-bottom-input-files-item-close" @click="removeFile(index)"/>
+            <div class="form-chat-bottom-input-files-item-file">
+              <FileOutlined  style="margin-right: 10px;"/>
+              <div class="form-chat-bottom-input-files-item-file-info">
+                <p class="form-chat-bottom-input-files-item-file-info-name">{{ file.file.name }}</p>
+                <p class="form-chat-bottom-input-files-item-file-info-size">({{ formatFileSize(file.file.size) }})</p>
+              </div>
+            </div>
+            <DeleteOutlined class="form-chat-bottom-input-files-item-delete" @click="removeFile(index)"/>
           </div>
         </div>
-      </div>
-      <div class="form-chat-bottom-send" @click.stop="submitChat">
-        <SendOutlined class="form-chat-bottom-send-icon" />
-      </div>
     </div>
     <input v-show="false" ref="inputFile" type="file" accept="image/png, image/jpeg, image/jpg image/gif"
       @change="uploadPreviewFile" />
@@ -137,7 +156,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, nextTick, watch, computed } from 'vue'
-import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, SendOutlined } from '@ant-design/icons-vue';
+import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, SendOutlined } from '@ant-design/icons-vue';
 import { databaseFirebase, storage } from "@/firebaseConfig";
 import {
   ref as reffb,
@@ -157,6 +176,7 @@ import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage
 import notification from '@/utils/notification';
 import { getJwtObject  } from "@bankda/jangbuda-common";
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
+import StatusChat from './StatusChat.vue'
 // import picker compopnent
 import EmojiPicker from 'vue3-emoji-picker'
 // import css
@@ -180,10 +200,12 @@ export default defineComponent({
     DeleteOutlined,
     CloseOutlined,
     SmileOutlined,
+    FileOutlined,
     FileAddOutlined,
     SendOutlined,
     ModalPreviewListImage,
-    EmojiPicker
+    EmojiPicker,
+    StatusChat
   },
   setup(props, { emit }) {
     const token  = ref(sessionStorage.getItem("token"))
@@ -236,7 +258,8 @@ export default defineComponent({
     let chatListRef: any = computed(() => {
       return !!channelChatSubrights() ? reffb(databaseFirebase, channelChatSubrights()) : null
     });
-
+    const date = new Date()
+    const currentTime = date.getFullYear() + '-' + ((date.getMonth() + 1) < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1))
     const getListContentChat = () => {
       onValue(
         chatListRef.value,
@@ -549,6 +572,15 @@ export default defineComponent({
       isVisibleEmojiForm.value = false
     }
 
+    const formatFileSize = (bytes: number) => {
+      if(bytes === 0) return '0 Bytes'
+        const k = 1000
+        const decimalPoint = 2
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+        const  i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i];
+    }
+
     return {
       userName,
       listChat,
@@ -577,7 +609,9 @@ export default defineComponent({
       openComfirmDetele,
       onSelectEmoji,
       clickOutside,
-      isVisibleEmojiForm
+      isVisibleEmojiForm,
+      currentTime,
+      formatFileSize
     }
   },
 })
@@ -606,11 +640,15 @@ export default defineComponent({
     padding-bottom: 10px;
     padding-top: 2px;
     overflow-y: auto;
-
+    &-line {
+      margin: 10px 0;
+      height: 1px;
+      background-color: #e7e6e6;
+    }
     &-avatar {
       width: 40px;
       height: 40px;
-
+      margin-right: 5px;
       img {
         width: 100%;
         height: 100%;
@@ -623,7 +661,7 @@ export default defineComponent({
     &-common {
       display: flex;
       align-items: flex-start;
-
+      margin-top: 1px;
       &-menu {
         margin: 0 5px;
         display: none;
@@ -640,52 +678,10 @@ export default defineComponent({
       }
     }
 
-    &-left {
-      display: flex;
-
-      .form-chat-timeline-avatar {
-        margin-right: 10px;
-      }
-    }
-
-    &-right {
-      display: flex;
-      justify-content: end;
-      flex-direction: row-reverse;
-
-      .form-chat-timeline-avatar {
-        margin-left: 10px;
-      }
-
-      .form-chat-timeline-content-info {
-        display: flex;
-        flex-direction: row-reverse;
-
-        &-user {
-          margin: 0;
-          margin-left: 30px;
-          display: flex;
-          flex-direction: row-reverse;
-
-          &-status {
-            margin-left: 5px;
-            margin-right: 0;
-          }
-        }
-
-        &-time {
-          margin: 0;
-        }
-      }
-    }
-
     &-content {
       max-width: 70%;
-      background-color: #DCE6F2;
+      // background-color: #DCE6F2;
       padding: 5px 12px 8px 12px;
-      &-right {
-        background-color: #EBF1DE;
-      }
       &-files {
         display: flex;
         flex-wrap: wrap;
@@ -705,18 +701,21 @@ export default defineComponent({
       &-info {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        // justify-content: space-between;
 
         &-user {
           display: flex;
           align-items: center;
-          margin-right: 30px;
+          // margin-right: 30px;
+          margin-right: 20px;
 
           &-status {
             display: inline;
             padding: 0 10px;
             border-radius: 5px;
+            border: 1px solid #7f7f7f;
             background-color: #ffffff;
+            color: #7f7f7f;
             font-size: 10px;
             margin-right: 5px;
           }
@@ -724,6 +723,9 @@ export default defineComponent({
           &-name {
             font-size: 16px;
             font-weight: bold;
+            &-login {
+              color: #1a73e8;
+            }
           }
         }
 
@@ -744,9 +746,12 @@ export default defineComponent({
   }
 
   &-bottom {
-    display: flex;
-    align-items: flex-start;
-
+    padding-top: 5px;
+    &-category {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
     &-avatar {
       width: 36px;
       height: 36px;
@@ -758,8 +763,6 @@ export default defineComponent({
 
     &-input {
       flex-grow: 1;
-      position: relative;
-
       textarea {
         scrollbar-width: thin;
         outline: none;
@@ -767,10 +770,39 @@ export default defineComponent({
         width: 100%;
         min-height: 40px;
         max-height: 100px;
-        border-radius: 20px;
+        // border-radius: 20px;
         padding: 7px 75px 7px 10px;
         font-size: 15px;
         border: 1px solid #385D8A;
+      }
+
+      &-action {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &-icon {
+          display: flex;
+          align-items: center;
+          &-files {
+            background-color: #cfd8dc;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-right: 5px;
+          }
+          &-emoji {
+            background-color: #cfd8dc;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+          }
+        }
       }
 
       .active-input-file {
@@ -778,73 +810,31 @@ export default defineComponent({
         border-top: none;
       }
 
-      &-tool {
-        position: absolute;
-        right: 8px;
-        top: 10px;
-
-        .anticon {
-          font-size: 18px;
-          cursor: pointer;
-        }
-      }
-
       &-files {
-        position: absolute;
         width: 100%;
-        top: 0;
-        transform: translateY(-100%);
         background-color: #fff;
-        padding: 5px;
-        border-radius: 5px 5px 0 0;
-        display: flex;
-        flex-wrap: wrap;
-        border: 1px solid #385D8A;
-        border-bottom: none;
         &-item {
-          position: relative;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
           padding: 4px;
-
-          img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-          }
-
-          &-close {
-            position: absolute;
-            top: 0;
-            right: 0;
-            border-radius: 10px;
-            padding: 3px;
-            background-color: #70707042;;
-            cursor: pointer;
-            &:hover{
-              background-color: #33333373;
+          &-file {
+            display: flex;
+            align-items: center;
+            &-info { 
+              p {
+                margin: 0;
+                line-height: 15px;
+              }
+              &-size {
+                color: #A6A6A6;
+              }
             }
           }
+          &-delete {
+            cursor: pointer;
+          }
         }
-      }
-    }
-
-    &-send {
-      box-sizing: border-box;
-      margin-left: 4px;
-      height: 40px;
-      width: 40px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-
-      &:hover {
-        background-color: rgba(22, 90, 238, 0.075);
-      }
-
-      &-icon {
-        font-size: 20px;
-        color: rgb(22, 90, 238);
       }
     }
   }
@@ -855,11 +845,11 @@ export default defineComponent({
 }
 
 .mt-10 {
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
-.mt-10 {
-  margin-top: 10px;
+.mr-10 {
+  margin-right: 10px;
 }
 
 .hidden-avatar {

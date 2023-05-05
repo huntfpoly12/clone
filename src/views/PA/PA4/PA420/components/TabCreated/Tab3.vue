@@ -8,12 +8,9 @@
               <number-box-money :required="false" width="150px" v-model:valueInput="retirementBenefits" format="#0,###"
                 :min="1" />
               <span class="pl-5 mr-5">원</span>
-              <a-tooltip placement="top">
-                <template #title>실제 지급된 퇴직급여를 입력합니다.</template>
-                <div>
-                  <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                실제 지급된 퇴직급여를 입력합니다.
+              </info-tool-tip>
             </div>
           </a-form-item>
           <a-form-item label="비과세퇴직급여(확정)">
@@ -35,12 +32,9 @@
                 </div>
               </div>
               <span class="pl-5 mr-5">원</span>
-              <a-tooltip placement="top">
-                <template #title>= 퇴직급여(확정) - 비과세퇴직급여(확정)</template>
-                <div>
-                  <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                </div>
-              </a-tooltip>
+              <info-tool-tip class="ml-5">
+                = 퇴직급여(확정) - 비과세퇴직급여(확정)
+              </info-tool-tip>
             </div>
           </a-form-item>
           <a-form-item label="세액공제">
@@ -49,15 +43,11 @@
                 <number-box-money :required="false" width="150px" v-model:valueInput="formState.taxCredit" format="0,###"
                   :min="0" />
                 <span class="pl-5 mr-5">원</span>
-                <a-tooltip placement="top">
-                  <template #title>거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할
-                    것이
-                    있을 때에는 해당 금액을 기재합니다.
-                  </template>
-                  <div>
-                    <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                  </div>
-                </a-tooltip>
+                <info-tool-tip class="ml-5">
+                  거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할
+                  것이
+                  있을 때에는 해당 금액을 기재합니다.
+                </info-tool-tip>
               </div>
             </div>
           </a-form-item>

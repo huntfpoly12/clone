@@ -1,7 +1,7 @@
 <template>
   <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" v-model:value="value"
     :disabled="disabled" :readOnly="readOnly" @input="updateValue(value)" :mask="mask" :mask-invalid-message="maskMess"
-    :height="$config_styles.HeightInput" :name="nameInput">
+    :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <!-- <DxCustomRule v-if="isResidentId" :validation-callback="checkAllResidentId ? checkAllID :(foreigner ? checkID : checkIdNotForeigner)"
@@ -60,6 +60,10 @@ export default defineComponent({
     checkAllResidentId: {
       type: Boolean,
       default: false,
+    },
+    select: {
+      type: Boolean,
+      default: true,
     }
   },
   components: {
@@ -122,6 +126,12 @@ export default defineComponent({
         return false
       }
     }
+    const onFocusIn = (e: any) => {
+      const input = e.event.target;
+      setTimeout(() => {
+        input.selectionStart = input.selectionEnd = 0;
+      }, 50);
+    }
     
     return {
       updateValue,
@@ -133,7 +143,8 @@ export default defineComponent({
       validResidentId,
       checkID,
       checkIdNotForeigner,
-      checkAllID
+      checkAllID,
+      onFocusIn, 
     };
   },
 });

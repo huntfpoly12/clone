@@ -1,7 +1,7 @@
 <template>
   <DxTextBox :ref="numberTextBox" :width="width" value-change-event="input" :show-clear-button="clearButton"
     :placeholder="placeholder" v-model:value="value" mode="text" :disabled="disabled" :readOnly="readOnly"
-    :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput" :maxLength="maxLength" :rtlEnabled="rtlEnabled">
+    :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput" :maxLength="maxLength" :rtlEnabled="rtlEnabled" @focusIn="onFocusIn">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
@@ -53,6 +53,10 @@ export default defineComponent({
     rtlEnabled: {
       type: Boolean,
       default: false,
+    },
+    select: {
+      type: Boolean,
+      default: true,
     }
   },
   components: {
@@ -84,12 +88,19 @@ export default defineComponent({
         value.value = newValue?.toString();
       }
     );
+    const onFocusIn = (e: any) => {
+      if(props.select && !props.readOnly){
+          e.event.target.select()
+      }
+      emit("focusInput", e);
+    }
     return {
       onInputValue,
       numberTextBox,
       messageRequired,
       value,
       rules,
+      onFocusIn
     };
   },
 });

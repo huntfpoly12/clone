@@ -45,18 +45,18 @@
                                     </div>
                                 </a-tooltip>
                             </template>
-                            <DxColumn caption="전용일자" data-field="name" />
-                            <DxColumn caption="관" data-field="name" />
-                            <DxColumn caption="항" data-field="name" />
-                            <DxColumn caption="목" data-field="name" />
-                            <DxColumn caption="세목" data-field="name" />
-                            <DxColumn caption="예산액" data-field="name" />
-                            <DxColumn caption="전용액" data-field="name" />
-                            <DxColumn caption="예산현액" data-field="name" />
-                            <DxColumn caption="지출액" data-field="name" />
-                            <DxColumn caption="불용액" data-field="name" />
-                            <DxColumn caption="최종저장일시" data-field="name" />
-                            <DxColumn caption="최종저장아이디" data-field="name" />
+                            <DxColumn caption="전용일자" data-field="name1" />
+                            <DxColumn caption="관" data-field="name2" />
+                            <DxColumn caption="항" data-field="name3" />
+                            <DxColumn caption="목" data-field="name4" />
+                            <DxColumn caption="세목" data-field="name5" />
+                            <DxColumn caption="예산액" data-field="name6" />
+                            <DxColumn caption="전용액" data-field="name7" />
+                            <DxColumn caption="예산현액" data-field="name8" />
+                            <DxColumn caption="지출액" data-field="name9" />
+                            <DxColumn caption="불용액" data-field="name10" />
+                            <DxColumn caption="최종저장일시" data-field="name11" />
+                            <DxColumn caption="최종저장아이디" data-field="name12" />
                             <DxColumn :width="50" cell-template="pupop" css-class="cell-center" />
                             <template #pupop="{ data }">
                                 <a-tooltip placement="top">

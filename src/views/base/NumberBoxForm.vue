@@ -44,6 +44,7 @@
                         <li><strong>placeholder:</strong> String (option)</li>
                         <li><strong>readOnly:</strong> Boolean (option)</li>
                         <li><strong>mode:</strong> String (option)</li>
+                        <li><strong>select:</strong> {type: Boolean,default: true}</li>
                     </ul>
                 </td>
                 <td>
@@ -93,6 +94,7 @@
                         <li><strong>placeholder:</strong> String (option)</li>
                         <li><strong>readOnly:</strong> Boolean (option)</li>
                         <li><strong>mode:</strong> String (option)</li>
+                        <li><strong>select:</strong> {type: Boolean,default: true}</li>
                     </ul>
                 </td>
                 <td>

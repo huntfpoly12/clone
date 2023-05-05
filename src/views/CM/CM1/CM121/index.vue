@@ -76,8 +76,8 @@
                 <a-col span="12">
                   <a-form-item label="사업구분" class="form-item-top">
                     <select-box-common :arrSelect="listFacilityBizTypeForUser" :required="true"
-                      v-model:valueInput="dataDetailBankbook.facilityBusinessId" displayeExpr="name" valueExpr="facilityBusinessId"
-                      width="150px" :disabled="true" />
+                      v-model:valueInput="dataDetailBankbook.facilityBusinessId" displayeExpr="name"
+                      valueExpr="facilityBusinessId" width="150px" :disabled="true" />
                   </a-form-item>
                   <a-form-item label="금융기관" class="form-item-top">
                     <bank-select-box v-model:valueInput="dataDetailBankbook.bankbookInput.type" width="150px"
@@ -87,8 +87,10 @@
                     <div class="custom-note d-flex-center">
                       <text-number-box :required="true" :width="150"
                         v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNumber" :disabled="!isCreate" />
-                      <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note style-note-cm121">최초 저장된 이후 수정 불가</span>
+                      <a-tooltip color="black" placement="top">
+                        <template #title>최초 저장된 이후 수정 불가</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                      </a-tooltip>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장별명" class="form-item-top red">
@@ -96,8 +98,10 @@
                       <default-text-box :required="true" :width="150" placeholder="영어,한글,숫자만 가능"
                         v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname"
                         :ruleCustom="() => isDuplicaseName" messageRuleCustom="중복 등록 불가" />
-                      <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note style-note-cm121">중복 등록 불가</span>
+                      <a-tooltip color="black" placement="top">
+                        <template #title>중복 등록 불가</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                      </a-tooltip>
                     </div>
                   </a-form-item>
                 </a-col>
@@ -106,8 +110,10 @@
                     <div class="custom-note d-flex-center form-item-top-switch">
                       <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification"
                         :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private || !isCreate" />
-                      <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note style-note-cm121">최초 저장된 이후 수정 불가</span>
+                      <a-tooltip color="black" placement="top">
+                        <template #title>최초 저장된 이후 수정 불가</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                      </a-tooltip>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장용도" class="form-item-top">
@@ -115,8 +121,10 @@
                       <DxSelectBox :search-enabled="true" width="150" display-expr="label" value-expr="value"
                         :data-source="bankbookUseType" v-model:value="dataDetailBankbook.bankbookInput.useType"
                         placeholder="통장용도" />
-                      <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note style-note-cm121">관련 계정과목 적용 또는 관련 서식에 기재됩니다.</span>
+                      <a-tooltip color="black" placement="top">
+                        <template #title>관련 계정과목 적용 또는 관련 서식에 기재됩니다.</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                      </a-tooltip>
                     </div>
                   </a-form-item>
                   <a-form-item label="예금주" class="form-item-top red">
@@ -133,8 +141,10 @@
               <div class="cm-121_detail-infomation cm-121_detail-infomation-bottom d-flex-center">
                 <span>스크래핑 (통장내역 자동 조회) 정보</span>
                 <div class="pl-5">
-                  <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                  <span class="style-note style-note-cm121">(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단, 업데이트는 가능합니다.</span>
+                  <a-tooltip color="black" placement="top">
+                    <template #title>(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단, 업데이트는 가능합니다.</template>
+                    <img src="@/assets/images/iconInfo.png" class="img-info" />
+                  </a-tooltip>
                 </div>
               </div>
               <a-row>
@@ -143,8 +153,10 @@
                     <div class="custom-note d-flex-center form-item-bottom-switch">
                       <switch-basic :textCheck="'O'" :textUnCheck="'X'"
                         v-model:valueSwitch="dataDetailBankbook.bankbookInput.useScrap" />
-                      <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note style-note-cm121">이용하지 않는 경우 스크래핑 중지가 되어 통장 불러오기를 할 수 없습니다.</span>
+                      <a-tooltip color="black" placement="top">
+                        <template #title>이용하지 않는 경우 스크래핑 중지가 되어 통장 불러오기를 할 수 없습니다.</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                      </a-tooltip>
                     </div>
                   </a-form-item>
                 </a-col>

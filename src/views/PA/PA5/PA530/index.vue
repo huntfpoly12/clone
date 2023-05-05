@@ -1,5 +1,5 @@
 <template>
-    <action-header title="일용직근로소득원천징수영수증" @actionSearch="searching"  :buttonSearch="true"/>
+    <action-header title="일용직근로소득원천징수영수증" @actionSearch="searching" :buttonSearch="true" />
     <div id="pa-530">
         <div class="search-form">
             <a-row :gutter="[24, 8]">
@@ -24,13 +24,11 @@
                                 <checkbox-basic v-model:valueCheckbox="year2.value" :label="year2.label" />
                             </a-col>
                             <a-col :span="8" class="custom-info">
-                                <div>
-                                    <img src="@/assets/images/iconInfo.png" alt="">
-                                </div>
-                                <span>
-                                    12월 말일까지 미지급한 경우,
-                                    서식 출력시 12월에 지급한걸로 표시됩니다.
-                                </span>
+                                <a-tooltip color="black" placement="top">
+                                    <template #title>12월 말일까지 미지급한 경우,
+                                        서식 출력시 12월에 지급한걸로 표시됩니다.</template>
+                                    <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                </a-tooltip>
                             </a-col>
                             <!-- ================== Row 2 =========================== -->
                             <a-col :span="6" @click="clickQuarter1">
@@ -105,32 +103,30 @@
         </div>
         <div class="page-content">
             <div class="title-body">
-                  <div class="title-body-left-1">
-                      <div>
-                          서식 설정 :
-                          <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용"
-                              textUnCheck="지급자보관용" />
-                      </div>
-                      <div>
-                          <img src="@/assets/images/iconInfo.png" alt="">
-                      </div>
-                      <span>
-                          본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
-                      </span>
-                  </div>
-                  <div class="title-body-right">
-                      <a-form-item label="영수일">
-                          <div>
-                              <date-time-box width="150px" v-model:valueDate="dateSendEmail" />
-                          </div>
-                      </a-form-item>
-                      <!-- <date-time-box width="160px" v-model:valueDate="dateSendEmail" /> -->
-                  </div>
+                <div class="title-body-left-1">
+                    <div>
+                        서식 설정 :
+                        <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용" textUnCheck="지급자보관용" />
+                    </div>
+                    <a-tooltip color="black" placement="top">
+                        <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                    </a-tooltip>
+                </div>
+                <div class="title-body-right">
+                    <a-form-item label="영수일">
+                        <div>
+                            <date-time-box width="150px" v-model:valueDate="dateSendEmail" />
+                        </div>
+                    </a-form-item>
+                    <!-- <date-time-box width="160px" v-model:valueDate="dateSendEmail" /> -->
+                </div>
             </div>
             <a-spin :spinning="loadingGetEmployeeBusinesses || loadingPrint" size="large">
                 <DxDataGrid id="DxDataGrid-pa530" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" v-model:selected-row-keys="vModalSelectedRowKeys" @selection-changed="selectionChanged">
+                    :allow-column-resizing="colomn_resize" v-model:selected-row-keys="vModalSelectedRowKeys"
+                    @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
@@ -141,8 +137,8 @@
                             <template #title>출력 / 저장</template>
                             <div class="custom-mail-group">
                                 <DxButton>
-                                <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;"
-                                    @click="printGroup" />
+                                    <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;"
+                                        @click="printGroup" />
                                 </DxButton>
                             </div>
                         </a-tooltip>
@@ -169,11 +165,11 @@
                     </template>
                     <DxColumn caption="주민등록번호" cell-template="residentId" width="150px" />
                     <template #residentId="{ data }">
-                      {{ data.data.employee.residentId.slice(0, 6) + '-' + data.data.employee.residentId.slice(6, 13) }}
+                        {{ data.data.employee.residentId.slice(0, 6) + '-' + data.data.employee.residentId.slice(6, 13) }}
                     </template>
                     <DxColumn caption="비고" cell-template="four-major" width="300px" />
                     <template #four-major="{ data }">
-                        <div  class="custom-grade-cell">
+                        <div class="custom-grade-cell">
                             <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                                 :typeValue="1" />
                             <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
@@ -182,10 +178,10 @@
                                 :typeValue="1" />
                             <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
                                 :ratio="data.data.employee.nationalPensionSupportPercent" />
-                            <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent"
-                                :typeTag="7" :ratio="data.data.employee.employeementInsuranceSupportPercent" />
-                            <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent"
-                                :typeTag="8" :ratio="data.data.employee.employeementReductionRatePercent" />
+                            <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
+                                :ratio="data.data.employee.employeementInsuranceSupportPercent" />
+                            <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
+                                :ratio="data.data.employee.employeementReductionRatePercent" />
                             <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
                                 :ratio="data.data.employee.incomeTaxMagnification" />
                         </div>
@@ -211,7 +207,7 @@
                             <a-tooltip>
                                 <template #title>출력 / 저장</template>
                                 <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
-                                @click.stop="actionPrint(data.data.employee.employeeId)" />
+                                    @click.stop="actionPrint(data.data.employee.employeeId)" />
                             </a-tooltip>
                         </div>
                     </template>
@@ -416,11 +412,11 @@ export default defineComponent({
         })
         // ================WATCHING============================================
         watch(globalYear, (value) => {
-            const subValue =  parseInt(globalYear.value + 1 + '01')
+            const subValue = parseInt(globalYear.value + 1 + '01')
             year1.label = globalYear.value + 1 + '년 01월',
-            year1.subValue = subValue
+                year1.subValue = subValue
             year2.label = globalYear.value + 1 + '년 02월',
-            year2.subValue = subValue
+                year2.subValue = subValue
             dataApiSearch.filter.imputedYear = value
             trigger.value = true
             refetchData()
@@ -624,7 +620,7 @@ export default defineComponent({
                 notification('error', Message.getCommonMessage('601').message)
         }
         const selectionChanged = (data: any) => {
-          selectedItemKeys.value = data.selectedRowKeys
+            selectedItemKeys.value = data.selectedRowKeys
         }
 
         const checkAll = () => {
@@ -693,6 +689,4 @@ export default defineComponent({
 </script>   
 
 
-<style scoped lang="scss" src="./style/style.scss">
-
-</style>
+<style scoped lang="scss" src="./style/style.scss"></style>

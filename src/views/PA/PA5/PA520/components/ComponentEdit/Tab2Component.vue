@@ -12,12 +12,9 @@
                             v-model:valueCheckbox="originDataUpdate.input.healthInsuranceDeduction" :disabled="true"/>
                         <checkbox-basic size="14px" label="고용보험" class="check-box-tab1"
                             v-model:valueCheckbox="originDataUpdate.input.employeementInsuranceDeduction" />
-                        <div class="pr-5 pl-10">
-                            <img src="@/assets/images/iconInfo.png" style="width: 16px;">
-                        </div>
-                        <span class="style-note" style="font-size: 10px; color: #888888">본 항목은 공제 계산을 위한 설정으로 실제 4대보험
+                            <info-tool-tip>본 항목은 공제 계산을 위한 설정으로 실제 4대보험
                             <br> 신고 여부와는 무관합니다.
-                        </span>
+                          </info-tool-tip>
                     </div>
                 </a-form-item>
             </a-col>
@@ -51,8 +48,9 @@
         </a-row>
         <div class="header-text-3">급여 (기본값)
             <span>
-                <img src="@/assets/images/iconInfoWrite.png" style="width: 16px;">
-                <p style="font-size: 10px; font-weight: 400;">급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
+              <info-tool-tip placement="left">급여소득자료 입력시 본 급여 기본값을 불러옵니다</info-tool-tip>
+                <!-- <img src="@/assets/images/iconInfoWrite.png" style="width: 16px;">
+                <p style="font-size: 10px; font-weight: 400;">급여소득자료 입력시 본 급여 기본값을 불러옵니다</p> -->
             </span>
         </div>
         <a-row :gutter="16">
@@ -81,14 +79,15 @@
                             <number-box-money :min="0" width="100px" class="mr-5" v-else
                                 v-model:valueInput="originDataUpdate.input.dailyWage" placeholder="일급여"
                                 @changeInput="onChangeDailyWage" />
+                                <info-tool-tip> {{ originDataUpdate.input.monthlyPaycheck ? messageMonthlySalary : messageDaylySalary }}</info-tool-tip>
                         </div>
                     </a-form-item>
-                    <div class="mb-5">
+                    <!-- <div class="mb-5">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;">
                         <span class="pl-5 fz-11" style="font-size: 10px; color: #888888">
                             {{ originDataUpdate.input.monthlyPaycheck ? messageMonthlySalary : messageDaylySalary }}
                         </span>
-                    </div>
+                    </div> -->
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
                           <standard-form ref="workingDayInput">

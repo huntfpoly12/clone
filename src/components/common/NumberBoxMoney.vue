@@ -1,9 +1,10 @@
 
 <template>
-    <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input" @focusIn="focus"
+    <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input" @focusIn="onFocusIn"
         :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-        :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange" :rtlEnabled="rtlEnabled"
-        :mode="mode" :style="{ height: $config_styles.HeightInput }" :format="format" :name="nameInput" :readOnly="readOnly">
+        :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange"
+        :mode="mode" :style="{ height: $config_styles.HeightInput, textAlign: rtlEnabled ? 'right' : 'left', }"
+         :format="format" :name="nameInput" :readOnly="readOnly">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
             <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
@@ -14,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import DxNumberBox from "devextreme-vue/number-box";
-import {DxValidator, DxRequiredRule, DxCustomRule} from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule, DxCustomRule } from "devextreme-vue/validator";
 export default defineComponent({
     props: {
         width: String,
@@ -33,8 +34,8 @@ export default defineComponent({
             default: "",
         },
         format: {
-          type: String,
-          default: "#,###",
+            type: String,
+            default: "#,###",
         },
         valueInput: {
             type: Object as () => string | number | null,
@@ -56,17 +57,17 @@ export default defineComponent({
             type: String,
             default: '',
         },
-      ruleCustom: {
-        type: Function,
-        default: () => true,
-      },
-      messageRuleCustom: {
-        type: String,
-        default: "",
-      },
+        ruleCustom: {
+            type: Function,
+            default: () => true,
+        },
+        messageRuleCustom: {
+            type: String,
+            default: "",
+        },
     },
     components: {
-      DxCustomRule,
+        DxCustomRule,
         DxNumberBox,
         DxValidator,
         DxRequiredRule,
@@ -79,7 +80,7 @@ export default defineComponent({
             messageRequired.value = props.messRequired;
         }
         const value = ref(props.valueInput);
-      const maxNum = ref(props.max??0);
+      const maxNum = ref(props.max??2147483647);
       const minNum = ref(props.min);
       const updateValue = (e: any) => {
           if (maxNum.value && e.value >= maxNum.value) {
@@ -102,23 +103,25 @@ export default defineComponent({
             }
         );
         const onChange = (e: any) => {
-            emit("changeInput",e);
+            emit("changeInput", e);
         }
-        const focus = (e: any) => {
+        const onFocusIn = (e: any) => {
           emit("focusInput",e);
+          const input = e.event.target;
+          input.select();
         }
         return {
             updateValue,
             value,
             messageRequired,
             onChange,
-            focus
+            onFocusIn,
         };
     },
 });
 </script>
 <style lang="scss" scoped>
-:deep.dx-numberbox .dx-texteditor-input{
-  text-align: right;
+:deep.dx-numberbox .dx-texteditor-input {
+    text-align: right;
 }
 </style>
