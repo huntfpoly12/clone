@@ -44,6 +44,7 @@
                 v-model:focused-row-key="focusedRowKey"
                 :focusedRowIndex="0"
                 style="height: 740px"
+                noDataText="내역이 없습니다"
               >
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                 <DxPaging :page-size="0" />
@@ -217,12 +218,12 @@
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
                 <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateResidentId" :disabled="isDisableBtnCheckResidentId || isCheckedResidentId || formState.type !== 1" />
-                <InfoToolTip >
+                <info-tool-tip >
                   <span class="">
                     주민등록번호 저장시 개인정보 처리 방침에 동의한걸로 간주합니다.<br />
                     기부금영수증 발행시 반드시 필요합니다.
                   </span>
-                </InfoToolTip>
+                </info-tool-tip>
               </div>
             </a-form-item>
 
@@ -236,9 +237,9 @@
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
                 <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || isCheckedBizNumber || formState.type === 1" />
-                <InfoToolTip>
+                <info-tool-tip>
                   기부금영수증 발행시 반드시 필요합니다.
-                </InfoToolTip>
+                </info-tool-tip>
               </div>
             </a-form-item>
 
@@ -251,9 +252,9 @@
                 <div style="margin-left: -5px">
                   <post-code-button @dataAddress="funcAddress" text="주소검색" width="90"/>
                 </div>
-                <InfoToolTip>
+                <info-tool-tip>
                   기부금영수증 발행시 반드시 필요합니다.
-                </InfoToolTip>
+                </info-tool-tip>
               </div>
               <default-text-box v-model:valueInput="formState.addressExtend" width="300px" placeholder="상세 주소 입력" />
             </a-form-item>
@@ -274,12 +275,12 @@
                   :textCheck="'O'"
                   :textUnCheck="'X'"
                 />
-                <InfoToolTip>
+                <info-tool-tip>
                   <span>
                     이용하지 않는 경우 삭제되지 않으며<br />
                     거래처 리스트에서 조회되지 않습니다
                   </span>
-                </InfoToolTip>
+                </info-tool-tip>
               </div>
             </a-form-item>
 
@@ -331,7 +332,6 @@ import {computed, defineComponent, ref, watch} from "vue";
 import { useStore } from "vuex";
 import {checkAndAddKeyToObject, initBackerCreateInput} from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
-import InfoToolTip from './components/InfoToolTip.vue'
 import {isEqual, cloneDeep} from "lodash";
 import {message} from "ant-design-vue";
 import dayjs from "dayjs";
@@ -372,7 +372,6 @@ export default defineComponent({
     DxScrolling,
     DxPaging,
     PopupMessageCustom,
-    InfoToolTip,
     DxSelectBox
   },
   setup() {

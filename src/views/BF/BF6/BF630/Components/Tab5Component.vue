@@ -37,9 +37,10 @@
   <div class="grid-view">
     <div class="content-grid">
       <a-spin :spinning="loadingElectronicFiling" size="large">
-        <DxDataGrid id="DxDataGrid-bf-630-tab5" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true">
+        <DxDataGrid id="DxDataGrid-bf-630-tab5" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+          :show-borders="true" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true" noDataText="내역이 없습니다">
+          <DxPaging :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="일련번호" data-field="electronicFilingId" width="100px" alignment="center" />
           <DxColumn caption="참고사항" data-field="referenceInformation" />
@@ -68,10 +69,13 @@
                 @click="openPopupDetail(data.data)" />
             </div>
           </template>
-          <DxSummary>
-            <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
-          </DxSummary>
+          <!-- <DxSummary>
+            <DxTotalItem cssClass="bf-630-sumary" column="일련번호" summary-type="count" display-format="전체: [{0}]" />
+          </DxSummary> -->
         </DxDataGrid>
+        <div class="DxDataGrid-bf-630-tab5-sumary">
+          <div v-html="`전체: <span style='font-size: 16px'>[${dataSource.length}]</span>`"></div>
+        </div>
       </a-spin>
     </div>
   </div>
@@ -82,7 +86,7 @@
 import { computed, defineComponent, reactive, ref, watch } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, DxPaging } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
 import notification from "@/utils/notification";
@@ -92,7 +96,7 @@ import CompaniesPopup from "./CompaniesPopup.vue";
 
 export default defineComponent({
   components: {
-    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup
+    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup, DxPaging
   },
   props: {
     activeSearch: {
@@ -205,5 +209,17 @@ export default defineComponent({
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss"></style>
 
+<style scoped lang="scss">
+.DxDataGrid-bf-630-tab5-sumary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: 7px 20px;
+  color: rgba(51, 51, 51, .7);
+}
+</style>
 
 

@@ -1,5 +1,5 @@
 <template>
-    <action-header title="일용직근로소득원천징수영수증" @actionSearch="onSearch"   :buttonSearch="true"/>
+    <action-header title="일용직근로소득원천징수영수증" @actionSearch="onSearch" :buttonSearch="true" />
     <div id="pa-220">
         <div class="search-form">
             <a-row :gutter="[24, 8]">
@@ -10,15 +10,14 @@
                 <a-col>
                     <div class="selectRatio">
                         <label class="lable-item">구분 :</label>
-                        <radio-group :arrayValue="arrayRadioDivision"
-                        v-model:valueRadioCheck="searchParam.filter.leaved" :layoutCustom="'horizontal'"
-                        valueExpr="value" />
+                        <radio-group :arrayValue="arrayRadioDivision" v-model:valueRadioCheck="searchParam.filter.leaved"
+                            :layoutCustom="'horizontal'" valueExpr="value" />
                     </div>
                 </a-col>
                 <a-col>
                     <div class="selectRatio">
                         <label class="lable-item">성명 :</label>
-                        <default-text-box v-model:valueInput="searchParam.filter.name"  width="200px" />
+                        <default-text-box v-model:valueInput="searchParam.filter.name" width="200px" />
                     </div>
                 </a-col>
             </a-row>
@@ -31,12 +30,10 @@
                             <div stlyle="font-size: 12px">
                                 서식 설정 :
                             </div>
-                            <div>
-                                <img src="@/assets/images/iconInfo.png" alt="">
-                            </div>
-                            <span class="style-note">
-                                본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
-                            </span>
+                            <a-tooltip color="black" placement="top">
+                                <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
+                                <img src="@/assets/images/iconInfo.png" class="img-info" />
+                            </a-tooltip>
                         </div>
                         <div class="title-body-left-2">
                             <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
@@ -55,7 +52,7 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged" :column-auto-width="true">
-                <DxScrolling mode="standard" show-scrollbar="always"/>
+                <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxToolbar>
                     <DxItem template="pagination-send-group-mail" />
                     <DxItem template="send-group-print" />
@@ -71,9 +68,9 @@
                     <div class="custom-mail-group">
                         <DxButton @click="onPrintGroup">
                             <a-tooltip>
-                                  <template #title>출력 / 저장</template>
-                                  <img src="@/assets/images/printGroup.png" alt=""
-                                      style="width: 28px; margin-right: 3px; cursor: pointer" /> 
+                                <template #title>출력 / 저장</template>
+                                <img src="@/assets/images/printGroup.png" alt=""
+                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
                             </a-tooltip>
                         </DxButton>
                     </div>
@@ -83,8 +80,8 @@
                 <template #tag="{ data }">
                     <div class="custom-action">
                         <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                            :idCardNumber="data.data.residentId" :status="data.data.status"
-                            :foreigner="data.data.foreigner" :checkStatus="false" />
+                            :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
+                            :checkStatus="false" />
                     </div>
                 </template>
                 <DxColumn caption="주민등록번호" data-field="residentId" width="150px" />
@@ -107,18 +104,18 @@
                             :ratio="data.data.employee.incomeTaxMagnification" />
                     </div>
                 </template>
-                <DxColumn caption="구분" data-field="leaved" cell-template="leaved"/>
+                <DxColumn caption="구분" data-field="leaved" cell-template="leaved" />
                 <template #leaved="{ data }">
                     <span class="status-blue" v-if="data.data.leaved">중도</span>
                     <span class="status-red" v-else>계속</span>
                 </template>
-                <DxColumn caption="총급여액" data-field="totalSalary"/>
-                <DxColumn caption="비과세금액" data-field="taxFreeIncome"/>
-                <DxColumn caption="결정세액" data-field="decidedTaxAmount"/>
-                <DxColumn caption="기납부세액 (현)" data-field="prePaidTaxAmount"/>
+                <DxColumn caption="총급여액" data-field="totalSalary" />
+                <DxColumn caption="비과세금액" data-field="taxFreeIncome" />
+                <DxColumn caption="결정세액" data-field="decidedTaxAmount" />
+                <DxColumn caption="기납부세액 (현)" data-field="prePaidTaxAmount" />
                 <!-- <DxColumn caption="기납부세액 (전)" />
                 <DxColumn caption="납부특례세액" /> -->
-                <DxColumn caption="차감징수세액" data-field="deductibleTaxAmount"/>
+                <DxColumn caption="차감징수세액" data-field="deductibleTaxAmount" />
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }">
                     <div class="custom-action" style="text-align: center;">
@@ -127,9 +124,9 @@
                         <a-tooltip>
                             <template #title>출력 / 저장</template>
                             <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
-                            style="width: 25px;" />
+                                style="width: 25px;" />
                         </a-tooltip>
-                        
+
                     </div>
                 </template>
             </DxDataGrid>
@@ -329,6 +326,4 @@ export default defineComponent({
     },
 });
 </script>  
-<style scoped lang="scss" src="./style/style.scss">
-
-</style>
+<style scoped lang="scss" src="./style/style.scss"></style>

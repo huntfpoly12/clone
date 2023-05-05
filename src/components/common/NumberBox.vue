@@ -2,7 +2,7 @@
   <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input"
     :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
     :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange" :rtlEnabled="rtlEnabled" :min="min" :format="isFormat && formatNumber"
-    :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly">
+    :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly" @focusIn="onFocusIn">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxRangeRule v-if="required && min" :min="min" :message="messageMin"/>
@@ -54,6 +54,10 @@ export default defineComponent({
     isFormat:{
       type: Boolean,
       default: false,
+    },
+    select: {
+      type: Boolean,
+      default: true,
     }
   },
   components: {
@@ -101,7 +105,12 @@ export default defineComponent({
       }
       return value;
     }
-
+    const onFocusIn = (e: any) => {
+      if(props.select && !props.readOnly){
+          e.event.target.select()
+      }
+      emit("focusInput", e);
+    }
     return {
       updateValue,onChange,
       value,
@@ -109,7 +118,8 @@ export default defineComponent({
       formatValue:(value:any)=> {
         return value < 10 ? `0${value}` : value;
       },
-      formatNumber
+      formatNumber,
+      onFocusIn
     };
   },
 });

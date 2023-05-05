@@ -9,7 +9,7 @@
                         <a-form-item label="회원ID" class="red" :label-col="labelCol">
                             <div class="dflex">
                                 <default-text-box disabled v-model:valueInput="formState.username"
-                                    style="width: 150px; margin-right: 10px" />
+                                    style="width: 150px; margin-right: 10px" :replaceRegex="true"/>
                                 <button-basic :text="'중복체크'" :type="'default'" :mode="'contained'" :disabled="true" />
                             </div>
                         </a-form-item>

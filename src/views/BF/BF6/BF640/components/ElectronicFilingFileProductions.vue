@@ -5,7 +5,7 @@
       <a-spin :spinning="companiesInElectronicLoading" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           key-expr="id" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true">
+          :column-auto-width="true" noDataText="내역이 없습니다">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="사업자코드" data-field="code" />
           <DxColumn caption="사업자번호" cell-template="bizNumber" data-field="bizNumber" />

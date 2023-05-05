@@ -3,7 +3,7 @@
   <a-space :size="16" class="mx-10 my-10">
     <a-space :size="4">
       <span>서식 설정:</span>
-      <InfoToolTip>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</InfoToolTip>
+      <info-tool-tip>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</info-tool-tip>
     </a-space>
     <a-space :size="4" align="center">
       <checkbox-basic class="" label="예산서 (세목까지 출력)" :size="'20'"/>
@@ -61,10 +61,9 @@
 
 <script setup lang="ts">
 import {computed, ref} from "vue";
-import InfoToolTip from "@/views/AC/AC5/components/InfoToolTip.vue";
 import {useStore} from "vuex";
-import {DeleteOutlined, DownloadOutlined, HistoryOutlined, ZoomInOutlined} from '@ant-design/icons-vue';
-import {DxColumn, DxDataGrid, DxScrolling, DxToolbar, DxPaging} from 'devextreme-vue/data-grid';
+import {DeleteOutlined} from '@ant-design/icons-vue';
+import {DxColumn, DxDataGrid} from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import ProcessStatus from "@/components/common/ProcessStatus.vue";
 import BudgetPopup from "@/views/AC/AC5/AC520/components/BudgetPopup.vue";

@@ -99,3 +99,8 @@ export default defineComponent({
 <style scoped lang="scss" src="./style/style.scss">
 
 </style>
+<style>
+.bf-630-sumary {
+  font-weight: bold;
+}
+</style>

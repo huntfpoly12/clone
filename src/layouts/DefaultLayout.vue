@@ -93,7 +93,7 @@
         <a-layout>
           <a-layout-content :style="{ background: '#fff', margin: 0, minHeight: '280px' }">
             <div class="tab-main">
-              <div v-if="!menuTab.length && VITE_ENVIRONMENT !== 'DEVELOP'" class="tab-main-emtytab"></div>
+              <div v-if="!menuTab.length && VITE_ENVIRONMENT !== 'DEVELOP' && false" class="tab-main-emtytab"></div>
               <DxSortable v-else filter=".dx-tab" v-model:data="menuTab" item-orientation="horizontal"
                 drag-direction="horizontal" @drag-start="onTabDragStart($event)" @reorder="onTabDrop($event)">
                 <DxTabs :data-source="menuTab" v-model:selected-index="tabIndex" itemTemplate="titleTab"
@@ -292,7 +292,7 @@ export default defineComponent({
     DxTabs
   },
   created() {
-    if (import.meta.env.VITE_ENVIRONMENT === 'DEVELOP') {
+    if (import.meta.env.VITE_ENVIRONMENT === 'DEVELOP' || true) {
       menuData.forEach((item) => {
         if (this.$route.fullPath.includes(item.id)) {
           // clear vuex value cachedTab
@@ -513,7 +513,7 @@ export default defineComponent({
 
       // open first menu route dashboard
       if (route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
-        if(ENVIRONMENT === 'DEVELOP') {
+        if(ENVIRONMENT === 'DEVELOP' || true) {
           openTab(tabDashboard)
         }
         nextTick(() => {
@@ -564,7 +564,7 @@ export default defineComponent({
         openTab(itemNew)
         return
       }
-      if(ENVIRONMENT === 'DEVELOP'){
+      if(ENVIRONMENT === 'DEVELOP' || true){
         if (menuTab.value.length >= MAX_TAB && !menuTab.value.some((tab) => tab.id === itemId)) {
           notification('error', `이미 최대 개수의 탭을 열었기 때문에 새 탭을 열 수없습니다. (최대 ${MAX_TAB}탭)`)
           return
@@ -581,7 +581,9 @@ export default defineComponent({
         openTab(itemNew)
       }else {
         if(itemId === '') {
-          setMenuTab([])
+          // clear all tab
+          // setMenuTab([])
+          return
         }else {
           if (menuTab.value.length >= MAX_TAB && !menuTab.value.some((tab) => tab.id === itemId)) {
             notification('error', `이미 최대 개수의 탭을 열었기 때문에 새 탭을 열 수없습니다. (최대 ${MAX_TAB}탭)`)
@@ -645,6 +647,10 @@ export default defineComponent({
     watch(() => store.state.common.activeTab, (newValue) => {
       selectedItems.value = null
       activeTab.value = newValue;
+      const indexTab = menuTab.value.findIndex(tab => tab.id === activeTab.value.id)
+      if(indexTab >= 0) {
+        tabIndex.value = indexTab
+      }
     }, { deep: true })
 
     watch(() => store.state.common.menuTab, (value) => {
@@ -678,7 +684,7 @@ export default defineComponent({
           menuTab.value = []
           isRemoveTab.value = false
           activeTab.value = null
-          if(ENVIRONMENT === 'DEVELOP'){
+          if(ENVIRONMENT === 'DEVELOP' || true){
             openTab(tabDashboard)
             return
           }else {
@@ -689,7 +695,7 @@ export default defineComponent({
         return
       }
         if(!value.length) {
-          if(ENVIRONMENT === 'DEVELOP') {
+          if(ENVIRONMENT === 'DEVELOP' || true) {
             menuTab.value = []
             openTab(tabDashboard)
           }else {

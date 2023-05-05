@@ -1,9 +1,9 @@
 <template>
-  <action-header title="통장 관리" @actionSave="onSubmitConfig" :buttonSave="true"/>
+    <action-header title="통장 관리" @actionSave="onSubmitConfig" :buttonSave="true" />
     <div id="cm-130" class="cm-130" style="padding: 24px;">
         <!-- <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig || loadingDeduction"> -->
-            <a-tabs v-model:activeKey="activeKey" type="card">
-                <!-- <template #rightExtra>
+        <a-tabs v-model:activeKey="activeKey" type="card">
+            <!-- <template #rightExtra>
                     <div class="list-action">
                         <div v-if="activeKey == '1'">
                             <a-tooltip color="black">
@@ -36,17 +36,17 @@
                             </div>
                         </div>
                         <div v-if="activeKey == '3'"> -->
-                            <!-- <a-tooltip color="black">
+            <!-- <a-tooltip color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfigDeduction">
                                     <SaveOutlined />
                                 </a-button>
                             </a-tooltip> -->
-                        <!-- </div>
+            <!-- </div>
                     </div>
                 </template> -->
-                <a-tab-pane key="1" tab="기본">
-                    <a-spin tip="Loading..." :spinning="loading">
+            <a-tab-pane key="1" tab="기본">
+                <a-spin tip="Loading..." :spinning="loading">
                     <a-row>
                         <a-col :span="24">
                             <div class="container">
@@ -56,72 +56,78 @@
                                     </h2>
                                     <a-row>
                                         <a-col :span="24">
-                                            <a-form-item label="급여신고주기" :label-col="labelCol">
-                                                <radio-group :disabled="formState.undeclaredIncomeStatus"
-                                                    :arrayValue="optionsRadioReportType"
-                                                    v-model:valueRadioCheck="formState.reportType"
-                                                    :layoutCustom="'horizontal'" />
-                                            </a-form-item>
-                                            <div style="margin: -10px 0px 20px 150px">
-                                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                                <span class="style-note">
-                                                    신고가 안된 소득자료가 있으면 수정불가합니다. 입력된 소득자료에 대해 신고하거나 삭제 후 변경가능합니다.
-                                                </span>
+                                            <div style="display: -webkit-inline-box;">
+                                                <a-form-item label="급여신고주기" :label-col="labelCol">
+                                                    <radio-group style="padding-top: 5px;"
+                                                        :disabled="formState.undeclaredIncomeStatus"
+                                                        :arrayValue="optionsRadioReportType"
+                                                        v-model:valueRadioCheck="formState.reportType"
+                                                        :layoutCustom="'horizontal'" />
+                                                </a-form-item>
                                             </div>
+                                            <a-tooltip color="black" placement="top">
+                                                <template #title>신고가 안된 소득자료가 있으면 수정불가합니다. 입력된 소득자료에 대해 신고하거나 삭제 후
+                                                    변경가능합니다.</template>
+                                                <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                            </a-tooltip>
                                         </a-col>
                                     </a-row>
                                     <a-row>
                                         <a-col :span="24">
-                                            <a-form-item label="급여지급형태" :label-col="labelCol">
-                                                <radio-group :disabled="formState.undeclaredIncomeStatus"
-                                                    :arrayValue="optionsRadioPaymentType"
-                                                    v-model:valueRadioCheck="formState.paymentType"
-                                                    :layoutCustom="'horizontal'" />
-                                            </a-form-item>
-                                            <div style="margin: -10px 0px 20px 150px">
-                                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                                <span class="style-note">
-                                                    신고가 안된 소득자료가 있으면 수정불가합니다. 입력된 소득자료에 대해 신고하거나 삭제 후 변경가능합니다.
-                                                </span>
+                                            <div style="display: -webkit-inline-box;">
+                                                <a-form-item label="급여지급형태" :label-col="labelCol">
+                                                    <radio-group style="padding-top: 5px;"
+                                                        :disabled="formState.undeclaredIncomeStatus"
+                                                        :arrayValue="optionsRadioPaymentType"
+                                                        v-model:valueRadioCheck="formState.paymentType"
+                                                        :layoutCustom="'horizontal'" />
+                                                </a-form-item>
                                             </div>
+                                            <a-tooltip color="black" placement="top">
+                                                <template #title>신고가 안된 소득자료가 있으면 수정불가합니다. 입력된 소득자료에 대해 신고하거나 삭제 후
+                                                    변경가능합니다.</template>
+                                                <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                            </a-tooltip>
                                         </a-col>
                                     </a-row>
                                     <a-row>
                                         <a-col :span="24">
-                                            <a-form-item label="급여지급일자" :label-col="labelCol">
-                                                <div style="display: flex; align-items: center">
-                                                    <number-box :width="150" :min="0" :max="30"
-                                                        v-model:valueInput="formState.paymentDay" :spinButtons="true">
-                                                    </number-box>
-                                                    <span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
-                                                </div>
-                                            </a-form-item>
-                                            <div style="margin: 0px 0px 20px 150px">
-                                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                                <span class="style-note">
-                                                    급여지급일자는 선택사항으로 지정시 급여명세서 등에
-                                                    해당 급여일자가 입력되며, 수정 가능합니다.
-                                                </span>
+                                            <div style="display: -webkit-inline-box;">
+                                                <a-form-item label="급여지급일자" :label-col="labelCol">
+                                                    <div style="display: flex; align-items: center">
+                                                        <number-box :width="150" :min="0" :max="30"
+                                                            v-model:valueInput="formState.paymentDay" :spinButtons="true">
+                                                        </number-box>
+                                                        <span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
+                                                    </div>
+                                                </a-form-item>
                                             </div>
+                                            <a-tooltip color="black" placement="top">
+                                                <template #title>급여지급일자는 선택사항으로 지정시 급여명세서 등에
+                                                    해당 급여일자가 입력되며, 수정 가능합니다.</template>
+                                                <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                            </a-tooltip>
+
                                         </a-col>
                                     </a-row>
                                     <a-row>
                                         <a-col :span="24">
-                                            <a-form-item>
-                                                <div style="margin-left: 50px">
-                                                    <span>두루누리 적용 여부 (사업자):</span>
-                                                    <switch-basic style="width: 80px; margin-left: 8px;"
-                                                        v-model:valueSwitch="formState.insuranceSupport"
-                                                        :textCheck="'적용'" :textUnCheck="'미적용'" />
-                                                </div>
-                                            </a-form-item>
-                                            <div style="margin: 0px 0px 20px 150px">
-                                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                                <span class="style-note">
-                                                    사업자 두루누리 미적용시 해당 사원이 두루누리
-                                                    적용이더라도 급여계산에 반영되지 않습니다.
-                                                </span>
+                                            <div style="display: -webkit-inline-box;">
+                                                <a-form-item>
+                                                    <div style="margin-left: 50px">
+                                                        <span>두루누리 적용 여부 (사업자):</span>
+                                                        <switch-basic style="width: 80px; margin-left: 8px;"
+                                                            v-model:valueSwitch="formState.insuranceSupport"
+                                                            :textCheck="'적용'" :textUnCheck="'미적용'" />
+                                                    </div>
+                                                </a-form-item>
                                             </div>
+
+                                            <a-tooltip color="black" placement="top">
+                                                <template #title>사업자 두루누리 미적용시 해당 사원이 두루누리
+                                                    적용이더라도 급여계산에 반영되지 않습니다.</template>
+                                                <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                            </a-tooltip>
                                         </a-col>
                                     </a-row>
                                     <a-row>
@@ -153,9 +159,8 @@
                                                 </default-text-box>
                                                 <button-basic class="button-form-modal" :text="'자동선택'" :type="'default'"
                                                     :mode="'contained'" @onClick="showModal" />
-                                                <a-modal class="container_email" v-model:visible="isShow"
-                                                    okText="네. 적용합니다" cancelText="아니오" @ok="handleSuccsess"
-                                                    :mask-closable="false" footer="">
+                                                <a-modal class="container_email" v-model:visible="isShow" okText="네. 적용합니다"
+                                                    cancelText="아니오" @ok="handleSuccsess" :mask-closable="false" footer="">
                                                     <div id="modal">
                                                         <div style="display: flex">
                                                             <question-circle-outlined
@@ -200,8 +205,7 @@
                                                 <a-col>
                                                     <div style="margin-left: 20px; margin-right: 3px;">
                                                         <a-form-item label="지방소득세 납세지" :label-col="labelCol">
-                                                            <default-text-box width="170"
-                                                                :disabled="true"
+                                                            <default-text-box width="170" :disabled="true"
                                                                 v-model:valueInput="formState.localIncomeTaxArea">
                                                             </default-text-box>
                                                         </a-form-item>
@@ -217,24 +221,24 @@
                                 </standard-form>
                             </div>
                         </a-col>
-                        <button-basic style="margin-left: 350px; margin-top: 20px;" :text="'저장'" type="default" @onClick="onSubmitConfig()"/>
+                        <button-basic style="margin-left: 350px; margin-top: 20px;" :text="'저장'" type="default"
+                            @onClick="onSubmitConfig()" />
                     </a-row>
                     <SettingPopup :modalStatus="modalSettingStatus" @closePopup="modalSettingStatus = false"
                         @dataEmit="changeValueAddress" title="원천설정" />
-                    </a-spin>
-                </a-tab-pane>
-                <a-tab-pane key="2" tab="급여항목">
-                    <a-spin tip="Loading..." :spinning="loadingWithholdingConfig">
+                </a-spin>
+            </a-tab-pane>
+            <a-tab-pane key="2" tab="급여항목">
+                <a-spin tip="Loading..." :spinning="loadingWithholdingConfig">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        :onRowPrepared="changeColorRow">
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowPrepared="changeColorRow">
                         <DxScrolling mode="standard" show-scrollbar="always" />
-                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                         <DxExport :enabled="true" />
                         <DxToolbar>
                             <DxItem name="searchPanel" />
-                            <DxItem name="exportButton" css-class="cell-button-export"/>
+                            <DxItem name="exportButton" css-class="cell-button-export" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             <DxItem name="groupPanel" />
                             <DxItem name="addRowButton" show-text="always" />
@@ -247,7 +251,7 @@
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
                         <template #use="{ data }">
-                            <tag-color-use :valueUse="data.value"/>
+                            <tag-color-use :valueUse="data.value" />
                         </template>
                         <DxColumn data-field="printName" caption="과세구분" />
                         <DxColumn data-field="name" caption="항목명" />
@@ -278,19 +282,17 @@
                         title="원천설정" :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                         :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-130" />
-                    </a-spin>
-                </a-tab-pane>
-                <a-tab-pane key="3" tab="공제항목">
-                    <a-spin tip="Loading..." :spinning="loadingDeduction">
+                </a-spin>
+            </a-tab-pane>
+            <a-tab-pane key="3" tab="공제항목">
+                <a-spin tip="Loading..." :spinning="loadingDeduction">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        v-model:focused-row-key="focusedRowKey"
-                        ref="gridRefCM110Key3"
-                        @focused-row-changing="onFocusedRowChanging"
-                         :auto-navigate-to-focused-row="true">
+                        v-model:focused-row-key="focusedRowKey" ref="gridRefCM110Key3"
+                        @focused-row-changing="onFocusedRowChanging" :auto-navigate-to-focused-row="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
-                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                         <DxExport :enabled="true" />
                         <DxToolbar>
                             <DxItem name="searchPanel" />
@@ -300,7 +302,7 @@
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
                         <template #use="{ data }">
-                            <tag-color-use :valueUse="data.value"/>
+                            <tag-color-use :valueUse="data.value" />
                         </template>
                         <DxColumn caption="구분" cell-template="deduction" />
                         <template #deduction>
@@ -320,52 +322,53 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    </a-spin>
-                    <standard-form formName="add-deduction-310" v-if="dataSourceDeduction.length"
-                        style="border: 1px solid #ddd; margin-top: 20px; padding: 10px;">
-                        <h2 style="font-weight: 600; color: gray" class="title_modal">
-                            급여상세항목
-                        </h2>
-                        <a-row :gutter="24">
-                            <a-col :span="5">
-                                <a-form-item label="코드" :label-col="labelCol">
-                                    <number-box :width="150" :min="0"
-                                        v-model:valueInput="formStateDeduction.itemCode" :spinButtons="true"
-                                        :disabled="true">
-                                    </number-box>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="6">
-                                <switch-basic style="width: 80px;" v-model:valueSwitch="formStateDeduction.use"
-                                    :textCheck="'이용중'" :textUnCheck="'이용중지'" :disabled="true" />
-                            </a-col>
-                        </a-row>
-                        <a-row>
-                            <a-col :span="14">
-                                <a-form-item label="항목명" :label-col="labelCol">
-                                    <default-text-box style="width: 150px; margin-right: 10px"
-                                        v-model:valueInput="formStateDeduction.name" :disabled="true">
-                                    </default-text-box>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                        <a-row>
-                            <a-col :span="24">
-                                <a-form-item label="산출방법" :label-col="labelCol">
-                                    <default-text-box style="width: 320px"
-                                        v-model:valueInput="formStateDeduction.formula">
-                                    </default-text-box>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                        <button-basic style="margin-left: 250px" :text="'저장'" type="default" @onClick="onSubmitConfigDeduction"/>
-                    </standard-form>
-                    <HistoryPopup :modalStatus="modalHistoryStatusDeduction" @closePopup="modalHistoryStatusDeduction = false"
-                        :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-deduction-130" />
-                </a-tab-pane>
-            </a-tabs>
-            <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
-        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirm" />
+                </a-spin>
+                <standard-form formName="add-deduction-310" v-if="dataSourceDeduction.length"
+                    style="border: 1px solid #ddd; margin-top: 20px; padding: 10px;">
+                    <h2 style="font-weight: 600; color: gray" class="title_modal">
+                        급여상세항목
+                    </h2>
+                    <a-row :gutter="24">
+                        <a-col :span="5">
+                            <a-form-item label="코드" :label-col="labelCol">
+                                <number-box :width="150" :min="0" v-model:valueInput="formStateDeduction.itemCode"
+                                    :spinButtons="true" :disabled="true">
+                                </number-box>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="6">
+                            <switch-basic style="width: 80px;" v-model:valueSwitch="formStateDeduction.use"
+                                :textCheck="'이용중'" :textUnCheck="'이용중지'" :disabled="true" />
+                        </a-col>
+                    </a-row>
+                    <a-row>
+                        <a-col :span="14">
+                            <a-form-item label="항목명" :label-col="labelCol">
+                                <default-text-box style="width: 150px; margin-right: 10px"
+                                    v-model:valueInput="formStateDeduction.name" :disabled="true">
+                                </default-text-box>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row>
+                        <a-col :span="24">
+                            <a-form-item label="산출방법" :label-col="labelCol">
+                                <default-text-box style="width: 320px" v-model:valueInput="formStateDeduction.formula">
+                                </default-text-box>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <button-basic style="margin-left: 250px" :text="'저장'" type="default"
+                        @onClick="onSubmitConfigDeduction" />
+                </standard-form>
+                <HistoryPopup :modalStatus="modalHistoryStatusDeduction" @closePopup="modalHistoryStatusDeduction = false"
+                    :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-deduction-130" />
+            </a-tab-pane>
+        </a-tabs>
+        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
+            :title="Message.getMessage('COMMON', '501').message" content=""
+            :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
+            @checkConfirm="statusComfirm" />
         <!-- </a-spin> -->
     </div>
 </template>
@@ -442,7 +445,7 @@ export default defineComponent({
         const modalAddNewStatus = ref<boolean>(false);
         const modalHistoryStatus = ref<boolean>(false);
         const modalHistoryStatusDeduction = ref<boolean>(false);
-            
+
         const isShow = ref<boolean>(false);
         const idRowEdit = ref(0);
         const formState = reactive({ ...initialFormState });
@@ -458,7 +461,7 @@ export default defineComponent({
         const focusedRowKey = ref<number>();
         const dataOldFormStateDeduction = reactive({ ...initialFormStateDeduction });
         // const dataQueryWithholding = ref({ companyId: companyId, imputedYear: globalYear });
-        
+
         const modalStatus = ref<boolean>(false)
         const statusClickSaveModal = ref<boolean>(false)
         const gridRefCM110Key3 = ref(); // ref of grid
@@ -479,7 +482,7 @@ export default defineComponent({
             formState.localIncomeTaxArea = dataPublicInstitution.value.localIncomeTaxArea
             isShow.value = false;
         };
-        
+
         const { result: resultConfig, loading, refetch: refetchConfig } = useQuery(
             queries.getWithholdingConfig,
             dataQuery,
@@ -511,7 +514,7 @@ export default defineComponent({
             }
         });
 
-        
+
         // const dataQueryDeduction = ref({ companyId: companyId, imputedYear: globalYear });
         const { result: resultConfigDeduction, loading: loadingDeduction, refetch: refetchConfigDeduction } = useQuery(
             queries.getWithholdingConfigDeductionItems,
@@ -550,8 +553,8 @@ export default defineComponent({
             } else {
                 dataSourceDeduction.value = []
                 // clear data
-                Object.assign(dataOldFormStateDeduction, JSON.parse(JSON.stringify({...initialFormStateDeduction})));
-                Object.assign(formStateDeduction, JSON.parse(JSON.stringify({...initialFormStateDeduction})));
+                Object.assign(dataOldFormStateDeduction, JSON.parse(JSON.stringify({ ...initialFormStateDeduction })));
+                Object.assign(formStateDeduction, JSON.parse(JSON.stringify({ ...initialFormStateDeduction })));
             }
         });
 
@@ -770,7 +773,7 @@ export default defineComponent({
             modalHistoryStatusDeduction.value = true;
             popupData.value = data;
         }
-        
+
         const changeValueAddress = (data: any) => {
             formState.competentTaxOfficeCode = data.taxOfficeName
             formState.localIncomeTaxArea = data.localIncomeTaxArea
@@ -848,7 +851,7 @@ export default defineComponent({
         //         triggerWithholdingConfigPayItems.value = true
         //         triggerWithholdingConfigDeductionItems.value = true
         //     }
-            
+
         // })
         return {
             changeValueAddress,
@@ -899,6 +902,4 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped src="./style/style.scss">
-
-</style>
+<style lang="scss" scoped src="./style/style.scss"></style>

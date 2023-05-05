@@ -11,10 +11,9 @@
         <a-form-item label="제작요청상태" label-align="left">
           <div class="custom-note d-flex-center">
             <switch-basic v-model:valueSwitch="filter.beforeProduction" textCheck="제작요청후" textUnCheck="제작요청전"/>
-            <div class="d-flex-center ml-5">
-              <img src="@/assets/images/iconInfo.png" style="width: 14px;"/>
-              <span>제작전은 제작요청되지 않은 상태입니다.</span>
-            </div>
+            <info-tool-tip class="ml-5">
+              제작전은 제작요청되지 않은 상태입니다.
+            </info-tool-tip>
           </div>
         </a-form-item>
         <div id="checkBoxSearchBF650">
@@ -47,10 +46,9 @@
         <div class="custom-note d-flex-center">
           <switch-basic :disabled="true" v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고"
                         textUnCheck="납세자자진신고"/>
-          <span class="d-flex-center">
-                        <img src="@/assets/images/iconInfo.png" style="width: 16px;"/>
-                        <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
-                    </span>
+          <info-tool-tip class="ml-5">
+            본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
+          </info-tool-tip>
         </div>
       </a-form-item>
       <a-form-item label="제출연월일" label-align="left">
@@ -70,8 +68,8 @@
       <a-spin :spinning="loadingTable">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                     key-expr="index" class="mt-10" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged" style="height: 590px">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
+                    @selection-changed="selectionChanged" style="height: calc(100vh - 380px)">
           <DxSelection mode="multiple" :fixed="true"/>
           <DxColumn caption="사업자코드" cell-template="company-code" data-field="company.code"/>
           <template #company-code="{ data }">
@@ -92,7 +90,7 @@
                         </span>
           </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
-                    format="yyyy-MM-dd hh:mm"/>
+                    format="yyyy-MM-dd hh:mm a"/>
           <DxColumn caption="제작현황" cell-template="productionStatus"/>
           <template #productionStatus="{ data }">
             <template v-if="data.data.lastProductionRequestedAt === null">
@@ -100,12 +98,19 @@
             </template>
             <GetStatusTable :data="data.data"/>
           </template>
-          <DxSummary>
-            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}"/>
-            <!-- <DxTotalItem column="제작현황" :customize-text="customizeTotalMonthly" value-format="#,###" /> -->
-            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="customTextSummary"/>
-          </DxSummary>
         </DxDataGrid>
+        <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+             class="fs-14">
+          <div style="margin-left: 70px;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              전체
+              <span style="font-size: 16px;">[{{ dataSource.length }}]</span>
+            </div>
+          </div>
+          <div style="margin-right: 20%;">
+            <span class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummary()"/>
+          </div>
+        </div>
       </a-spin>
     </div>
   </div>
@@ -334,7 +339,12 @@ export default defineComponent({
       keySelect.value = res.selectedRowsData.map((i: any) => i.companyId)
     }
     const customTextSummary = () => {
-      return `제작요청전: ${beforeProductionRequest}, 제작대기: ${waitingForProduction}, 제작중: ${productionInProgress}, 제작실패: ${productionFailed}, 제작성공: ${productionSuccess}`;
+      return `
+      제작요청전 <span style="font-size: 16px">[${beforeProductionRequest}]</span>
+      제작대기 <span style="font-size: 16px">[${waitingForProduction}]</span>
+      제작중 <span style="font-size: 16px">[${productionInProgress}]</span>
+      제작실패 <span style="font-size: 16px">[${productionFailed}]</span>
+      제작성공 <span style="font-size: 16px">[${productionSuccess}]</span>`;
     }
     let arr = ref<any>([])
     let productionStatusArr = ref<any>([]);

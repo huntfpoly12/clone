@@ -3,15 +3,15 @@
         :width="600">
             <div class="custom-modal">
                 <div class="text-align-center">
-                    <div style="display: flex;">
-                        <h3>4대보험 EDI 조회 결과</h3>
-                        <img src="@/assets/images/iconInfo.png" style="width: 16px; height: 16px; margin: 5px 5px 0px 10px;" />
-                        <div class="style-note">
-                            <span>4대보험 EDI 정보를 불러오기 전이거나 오류인 경
+                    <div style="display: -webkit-inline-box;">
+                    <h3>4대보험 EDI 조회 결과</h3>
+                    <a-tooltip color="black" placement="top">
+                        <template #title><span>4대보험 EDI 정보를 불러오기 전이거나 오류인 경
                                 <br>
-                            우 4대보험 EDI 값이 공란으로 표시될 수 있습니다.</span>
-                        </div>
-                    </div>
+                                우 4대보험 EDI 값이 공란으로 표시될 수 있습니다.</span></template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                    </a-tooltip>
+                </div>
 
                     <div>
                         <table class="table text-align-left">

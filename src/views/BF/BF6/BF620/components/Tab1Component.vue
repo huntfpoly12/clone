@@ -28,7 +28,7 @@
       <DxDataGrid id="tab1-bf620" :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
         :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
         :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
-        :allowSelection="true">
+        :allowSelection="true" noDataText="내역이 없습니다">
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
@@ -37,12 +37,12 @@
           {{ data.data.companyCode }}
           {{ data.data.active ? '' : '해지' }}
         </template>
-        <DxColumn caption="상호 주소" cell-template="companyName" width="300" />
+        <DxColumn caption="상호 주소" cell-template="companyName" width="220" />
         <template #companyName=" { data }: any ">
           {{ data.data.companyName }}
           {{ data.data.address }}
         </template>
-        <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="115px" />
+        <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="110px" alignment="center" />
         <template #inputYearMonth=" { data }: any ">
           <!-- {{ data.data.imputedYear }} -->
           <a-tooltip color="black">
@@ -56,7 +56,7 @@
             " class="btn-date" />
           </a-tooltip>
         </template>
-        <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="115px" />
+        <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="110px" alignment="center" />
         <template #paymentYearMonth=" { data }: any ">
           <DxButton :text=" '지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth) " :style="
             {
@@ -66,35 +66,59 @@
             }
           " class="btn-date" />
         </template>
-        <DxColumn caption="신고 주기" cell-template="reportType" width="100px" />
+        <DxColumn caption="신고 주기" cell-template="reportType" width="115px" alignment="center" />
         <template #reportType=" { data }: any ">
-          <div v-if=" data.data.reportType == 1 " class="px-3 py-4 report-tag-black">매월</div>
-          <div v-if=" data.data.reportType == 6 " class="px-3 py-4 report-tag-gray">반기</div>
-          <div v-else></div>
+          <div class="d-flex-center justify-content-center">
+            <div v-if=" data.data.reportType == 1 " class="px-3 py-4 report-tag-black">매월</div>
+            <div v-if=" data.data.reportType == 6 " class="px-3 py-4 report-tag-gray">반기</div>
+            <div v-else></div>
+          </div>
         </template>
-        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
+        <DxColumn caption="신고 종류" cell-template="afterDeadline" alignment="center" />
         <template #afterDeadline=" { data }: any ">
-          <div v-if=" !data.data.afterDeadline && data.data.index == 0 " class="deadline-tag tag-white">정기</div>
-          <div v-if=" data.data.afterDeadline && data.data.index == 0 " class="deadline-tag tag-black">기한후</div>
-          <div v-if=" !data.data.afterDeadline && data.data.index > 0 " class="deadline-tag tag-orange">수정 {{
-            data.data.index }}</div>
+          <div class="d-flex-center justify-content-center">
+            <div v-if=" !data.data.afterDeadline && data.data.index == 0 " class="deadline-tag tag-white">정기</div>
+            <div v-if=" data.data.afterDeadline && data.data.index == 0 " class="deadline-tag tag-black">기한후</div>
+            <div v-if=" !data.data.afterDeadline && data.data.index > 0 " class="deadline-tag tag-orange">수정 {{
+              data.data.index }}</div>
+          </div>
         </template>
         <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###" width="100" />
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"
           width="120" />
-        <DxColumn caption="제작현황" cell-template="productionStatus" width="360" />
+        <DxColumn caption="제작현황" cell-template="productionStatus" width="400" />
         <template #productionStatus=" { data }: any ">
-          <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
-          <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
+          <div class="d-flex-center">
+            <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
+            <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
+          </div>
         </template>
-        <DxSummary>
-          <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+        <!-- <DxSummary>
+          <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
           <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text=" reportTypeSummary " />
           <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text=" afterDeadlineSummary " />
           <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
-        </DxSummary>
+        </DxSummary> -->
       </DxDataGrid>
+      <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
+        <div style="width: 250px; margin-left: 70px;">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+            전체 
+            <span style="font-size: 16px;">[{{ filteredDataSource.length }}]</span>
+          </div>
+        </div>
+        <div style=" margin-left: 18%;">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="reportTypeSummary()">
+          </div>
+        </div>
+        <div style=" margin-left: 15px;">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="afterDeadlineSummary()"></div>
+        </div>
+        <div style=" margin-left: 19.8%;">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="productStatusSummary()"></div>
+        </div>
+      </div>
     </div>
     <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1"
       @cancel=" onRequestDone " />
@@ -303,15 +327,15 @@ export default defineComponent({
     };
     // custom summary
     const reportTypeSummary = () => {
-      return `매월 ${countStatus(filteredDataSource.value, 1, 'reportType')} 반기 ${countStatus(filteredDataSource.value, 6, 'reportType')}`
+      return `매월 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 1, 'reportType')}]</span> 반기 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 6, 'reportType')}]</span>`
     };
     const afterDeadlineSummary = () => {
-      return `정기 ${countStatus(filteredDataSource.value, 1, 'withholdingTaxType')} 수정 ${countStatus(filteredDataSource.value, 2, 'withholdingTaxType')} 기한후 ${countStatus(
-        filteredDataSource.value, 3, 'withholdingTaxType')}`;
+      return `정기 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 1, 'withholdingTaxType')}]</span> 수정 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 2, 'withholdingTaxType')}]</span>  기한후 <span style="font-size: 16px;">[${countStatus(
+        filteredDataSource.value, 3, 'withholdingTaxType')}]</span>`;
     };
     const productStatusSummary = () => {
-      return `제작요청전 ${countStatus(filteredDataSource.value, true, 'beforeProduction')} 제작대기 ${countStatus(filteredDataSource.value, 0, 'productionStatus')} 제작중 ${countStatus(
-        filteredDataSource.value, 1, 'productionStatus')} 제작성공 ${countStatus(filteredDataSource.value, 2, 'productionStatus')} 제작실패 ${countStatus(filteredDataSource.value, -1, 'productionStatus')} `;
+      return `제작요청전 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, true, 'beforeProduction')}]</span> 제작대기 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 0, 'productionStatus')}]</span> 제작중 <span style="font-size: 16px;">[${countStatus(
+        filteredDataSource.value, 1, 'productionStatus')}]</span> 제작성공 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 2, 'productionStatus')}]</span> 제작실패 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, -1, 'productionStatus')}]</span> `;
     };
 
     //--------------------on Search----------------------
@@ -413,5 +437,4 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 @import '../style/style.scss';
-
 </style>

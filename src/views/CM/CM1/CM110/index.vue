@@ -32,7 +32,7 @@
                             </a-form-item>
                             <div class="dflex">
                                 <div class="dflex">
-                                    <a-form-item label="대표번호" class="red" :label-col="labelCol">
+                                    <a-form-item label="휴대폰" class="red" :label-col="labelCol">
                                         <text-number-box v-model:valueInput="formState.presidentMobilePhone"
                                             :required="true" style="width: 150px;">
                                         </text-number-box>
@@ -61,15 +61,13 @@
                                         <a-col :span="14">
                                             <div class="preview-image">
                                                 <a-row>
-                                                    <a-col :span="5">
-                                                        <button-basic :text="'직인자동생성'" :width="130" :type="'default'"
+                                                    <a-col :span="5" style="display: -webkit-inline-box;">
+                                                        <button-basic style="display: block" :text="'직인자동생성'" :width="130" :type="'default'"
                                                             :mode="'contained'" @onClick="stampReview" />
-                                                    </a-col>
-                                                    <a-col :span="16">
-                                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                                        <a-typography-text class="style-note">
-                                                            직인 이미지를 자동으로 생성하여 등록합니다.
-                                                        </a-typography-text>
+                                                        <a-tooltip color="black" placement="top">
+                                                            <template #title>직인 이미지를 자동으로 생성하여 등록합니다.</template>
+                                                            <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                                                        </a-tooltip>
                                                     </a-col>
                                                 </a-row>
                                             </div>
@@ -86,13 +84,11 @@
                                                 accept=".png,.jpeg,.jpg">
                                                 <a-button class="btn-upload-image">직인업로드</a-button>
                                             </a-upload>
-                                        </a-col>
-                                        <a-col :span="14" :xl="14">
-                                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                            <a-typography-text class="style-note">
-                                                이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 /
-                                                종류 : GIF, JPG, PNG
-                                            </a-typography-text>
+                                            <a-tooltip color="black" placement="top">
+                                                <template #title>이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 /
+                                                종류 : GIF, JPG, PNG</template>
+                                                <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                                            </a-tooltip>
                                         </a-col>
                                     </a-row>
                                 </a-col>
@@ -107,7 +103,7 @@
                                     </a-form-item>
                                 </div>
                                 <div style="display: flex; margin-left: 150px;">
-                                    <a-form-item label="휴대폰" class="red" :label-col="labelCol">
+                                    <a-form-item label="대표번호" class="red" :label-col="labelCol">
                                         <tel-text-box v-model:valueInput="formState.extendInfo.detail.phone"
                                             style="width: 150px;" :required="true">
                                         </tel-text-box>
@@ -177,7 +173,7 @@
                         <DxColumn caption="회계권한(담당사업)" data-field="facilityBusinesses"
                             cell-template="checked-facility" />
                         <template #checked-facility="{ data }">
-                            {{ changeValueRow(data.value) }}
+                            <a-tag v-for="item in data.value" :key="item">{{ item.name }}</a-tag>
                         </template>
                         <DxColumn data-field="withholdingRole" caption="원천권한" cell-template="checked-status" :width="80"
                             :allowEditing="true" />

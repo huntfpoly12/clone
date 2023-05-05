@@ -74,7 +74,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
-          id="tab1-bf640">
+          id="tab1-bf640" noDataText="내역이 없습니다">
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="code" cell-template="company-code" />
@@ -101,15 +101,29 @@
           </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
             format="yyyy-MM-dd HH:mm" />
-          <DxColumn caption="제작현황" cell-template="제작현황" width="360" />
+          <DxColumn caption="제작현황" cell-template="제작현황" width="360"/>
           <template #제작현황=" { data }: any ">
-            <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
+            <!-- <div class="d-flex-center justify-content-center"> -->
+              <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
+              <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
+            <!-- </div> -->
           </template>
-          <DxSummary>
+          <!-- <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
-          </DxSummary>
+          </DxSummary> -->
         </DxDataGrid>
+        <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
+          <div style="width: 250px; margin-left: 70px;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              전체
+              <span style="font-size: 16px;">[{{ filteredDataSource.length }}]</span>
+            </div>
+          </div>
+          <div style=" margin-left: 56%;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
+          </div>
+        </div>
       </a-spin>
     </div>
     <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1"
@@ -149,7 +163,7 @@ export default defineComponent({
     GetStatusTable,
     CheckboxGroup,
     DxLoadPanel
-},
+  },
   props: {
     search: {
       type: Number,
@@ -309,8 +323,8 @@ export default defineComponent({
     };
     // custom summary
     const productStatusSummary = () => {
-      return `제작요청전 ${countStatus(filteredDataSource.value, true, 'beforeProduction')} 제작대기 ${countStatus(filteredDataSource.value, 0, 'productionStatus')} 제작중 ${countStatus(
-        filteredDataSource.value, 1, 'productionStatus')} 제작성공 ${countStatus(filteredDataSource.value, 2, 'productionStatus')} 제작실패 ${countStatus(filteredDataSource.value, -1, 'productionStatus')} `;
+      return `제작요청전 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, true, 'beforeProduction')}]</span> 제작대기 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 0, 'productionStatus')}]</span> 제작중 <span style="font-size: 16px;">[${countStatus(
+        filteredDataSource.value, 1, 'productionStatus')}]</span> 제작성공 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, 2, 'productionStatus')}]</span> 제작실패 <span style="font-size: 16px;">[${countStatus(filteredDataSource.value, -1, 'productionStatus')}]</span> `;
     };
 
     //--------------------on Search----------------------
@@ -451,29 +465,6 @@ export default defineComponent({
 #dataGrid1 {
   :deep .custom-sumary {
     white-space: break-spaces;
-  }
-}
-
-:deep #tab1-bf640 {
-  height: calc(62vh);
-
-  :deep .dx-datagrid-total-footer {
-    height: 77px;
-    overflow: hidden;
-    position: absolute;
-    bottom: 0;
-  }
-
-  :deep .dx-datagrid-headers {
-    height: 27px;
-  }
-
-  :deep .dx-datagrid-rowsview {
-    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
-  }
-
-  .dx-freespace-row {
-    display: none !important; // cục lúc hiện lúc không
   }
 }
 </style>

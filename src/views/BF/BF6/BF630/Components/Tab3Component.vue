@@ -15,9 +15,10 @@
                 <switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작요청후'"
                   :textUnCheck="'제작요청전'" />
               </a-form-item>
-              <span class="style-note">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
-              </span>
+              <a-tooltip color="black" placement="top">
+                <template #title>제작전은 제작요청되지 않은 상태입니다.</template>
+                <img src="@/assets/images/iconInfo.png" class="img-info" />
+              </a-tooltip>
             </div>
           </a-col>
         </a-row>
@@ -25,7 +26,7 @@
           <div class="checkbox-tab-1">
             <span>연간(1.1~12.31)지급분</span>
             <div class="group-checkbox">
-              <a-row :style="!filterForm.afterProduction ? 'opacity: 0.6': ''">
+              <a-row :style="!filterForm.afterProduction ? 'opacity: 0.6' : ''">
                 <a-col :span="12">
                   <div class="checkbox-item">
                     <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="!filterForm.afterProduction"
@@ -83,10 +84,10 @@
       <a-form-item label="파일 제작 설정" label-align="left">
         <div class="custom-note d-flex-center">
           <switch-basic textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true" />
-          <span class="style-note">
-            <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-            <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
-          </span>
+          <a-tooltip color="black" placement="top">
+            <template #title>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</template>
+            <img src="@/assets/images/iconInfo.png" class="img-info" />
+          </a-tooltip>
         </div>
       </a-form-item>
       <a-form-item label="제출연월일" label-align="left">
@@ -104,9 +105,11 @@
     </div>
     <div class="content-grid">
       <a-spin :spinning="loadingIncomeBusinessPayment || loadingElectronicFilings" size="large">
-        <DxDataGrid id="DxDataGrid-bf-630-tab3" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true" @selection-changed="selectionChanged" v-model:selected-row-keys="selectedRowKeys">
+        <DxDataGrid id="DxDataGrid-bf-630-tab3" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+          :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
+          v-model:selected-row-keys="selectedRowKeys" noDataText="내역이 없습니다">
+          <DxPaging :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
           <DxColumn caption="사업자코드" cell-template="companyCode" />
@@ -126,15 +129,19 @@
             format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="제작현황" cell-template="imputed" width="430" />
           <template #imputed="{ data }">
-            <GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data" tabName="tab3"
-              @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
+            <GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data"
+              tabName="tab3" @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
           </template>
 
-          <DxSummary>
-            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
-          </DxSummary>
+          <!-- <DxSummary>
+            <DxTotalItem cssClass="bf-630-sumary" column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
+            <DxTotalItem cssClass="bf-630-sumary" column="제작현황" :customize-text="productStatusSummary" />
+          </DxSummary> -->
         </DxDataGrid>
+        <div class="DxDataGrid-bf-630-tab3-sumary">
+          <div v-html="`전체: <span style='font-size: 16px'>[${dataSource.length}]</span>`"></div>
+          <div v-html="productStatusSummary()"></div>
+        </div>
       </a-spin>
     </div>
   </div>
@@ -147,7 +154,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import DxCheckBox from 'devextreme-vue/check-box';
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, DxPaging } from "devextreme-vue/data-grid";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
@@ -159,7 +166,7 @@ import GetStatusTable from "./GetStatusTable.vue";
 import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {
-    DxCheckBox, SaveOutlined, DxButton, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, RequestFilePopup, GetStatusTable
+    DxCheckBox, SaveOutlined, DxButton, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, RequestFilePopup, GetStatusTable, DxPaging
   },
   props: {
     activeSearch: {
@@ -277,7 +284,7 @@ export default defineComponent({
     })
 
     // watch checkbox change
-    watch(checkbox1, (value) => {
+    watch(() => checkbox1.value, (value) => {
       if (value) {
         filterForm.productionStatuses.push(0)
       } else {
@@ -285,8 +292,11 @@ export default defineComponent({
           return item !== 0
         })
       };
+      if (!checkbox1.value && !checkbox2.value && !checkbox3.value && !checkbox4.value) {
+        filterForm.afterProduction = false
+      }
     })
-    watch(checkbox2, (value) => {
+    watch(() => checkbox2.value, (value) => {
       if (value) {
         filterForm.productionStatuses.push(1)
       } else {
@@ -294,8 +304,11 @@ export default defineComponent({
           return item !== 1
         })
       };
+      if (!checkbox1.value && !checkbox2.value && !checkbox3.value && !checkbox4.value) {
+        filterForm.afterProduction = false
+      }
     })
-    watch(checkbox3, (value) => {
+    watch(() => checkbox3.value, (value) => {
       if (value) {
         filterForm.productionStatuses.push(2)
       } else {
@@ -303,8 +316,11 @@ export default defineComponent({
           return item !== 2
         })
       };
+      if (!checkbox1.value && !checkbox2.value && !checkbox3.value && !checkbox4.value) {
+        filterForm.afterProduction = false
+      }
     })
-    watch(checkbox4, (value) => {
+    watch(() => checkbox4.value, (value) => {
       if (value) {
         filterForm.productionStatuses.push(-1)
       } else {
@@ -312,6 +328,9 @@ export default defineComponent({
           return item !== -1
         })
       };
+      if (!checkbox1.value && !checkbox2.value && !checkbox3.value && !checkbox4.value) {
+        filterForm.afterProduction = false
+      }
     })
 
     // watch active searching
@@ -385,11 +404,11 @@ export default defineComponent({
           totalBeforeProduction++
         }
       });
-      return `제작요청전 ${totalBeforeProduction} 
-              제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 
-              제작중 ${countStatus(productionStatusArr.value, 1, 'productionStatus')} 
-              제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 
-              제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
+      return `제작요청전 <span style="font-size: 16px">[${totalBeforeProduction}]</span> 
+              제작대기 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 0, 'productionStatus')}]</span> 
+              제작중 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 1, 'productionStatus')}]</span> 
+              제작실패 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, -1, 'productionStatus')}]</span> 
+              제작성공 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 2, 'productionStatus')}]</span>`;
     };
     const productionStatusData = (emitVal: any, index: number) => {
       countListData.value++
@@ -468,7 +487,7 @@ export default defineComponent({
       }
     }
 
-    const formatBizNumber = (value:any) => {
+    const formatBizNumber = (value: any) => {
       const bizNumber = value.toString()
       return `${bizNumber.slice(0, 3)}-${bizNumber.slice(3, 5)}-${bizNumber.slice(5)}`
     }
@@ -507,6 +526,18 @@ export default defineComponent({
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss"></style>
 <style scoped lang="scss">
+.DxDataGrid-bf-630-tab3-sumary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: 7px;
+  padding-left: 80px;
+  color: rgba(51, 51, 51, .7);
+}
+
 :deep(.ant-form-item-label>label) {
   width: 110px;
   padding-left: 10px;

@@ -39,7 +39,7 @@
     <div class="content-grid mt-10">
       <DxDataGrid id="tab3-bf620" :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" dataSource "
         :show-borders=" true " key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering=" move_column "
-        :allow-column-resizing=" colomn_resize " :column-auto-width=" true ">
+        :allow-column-resizing=" colomn_resize " :column-auto-width=" true " noDataText="내역이 없습니다">
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled=" true " />
         <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" />
@@ -62,9 +62,17 @@
           </div>
         </template>
         <DxSummary>
-          <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
+          <!-- <DxTotalItem column="일련번호" summary-type="count" display-format="" /> -->
         </DxSummary>
       </DxDataGrid>
+      <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
+        <div style="width: 250px; margin-left: 70px;">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+            전체
+            <span style="font-size: 16px;">[{{ dataSource.length }}]</span>
+          </div>
+        </div>
+      </div>
       <!-- <div @click="onShow">Kính lúp</div> -->
     </div>
     <a-modal :visible=" modalStatus " @cancel=" modalStatus = false " :mask-closable=" false " class="confirm-md"
@@ -73,7 +81,7 @@
         <br />
         <DxDataGrid :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" companiesInElectronicDataSource "
           :show-borders=" true " key-expr="code" class="mt-10" :allow-column-reordering=" move_column "
-          :allow-column-resizing=" colomn_resize " :column-auto-width=" true ">
+          :allow-column-resizing=" colomn_resize " :column-auto-width=" true " noDataText="내역이 없습니다">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="사업자코드" data-field="code" />
           <DxColumn caption="사업자번호" cell-template="bizNumber" data-field="bizNumber" />
@@ -263,5 +271,4 @@ export default defineComponent({
   width: 14px;
   height: 14px;
 }
-
 </style>

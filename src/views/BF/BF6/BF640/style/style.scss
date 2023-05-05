@@ -192,20 +192,27 @@
 }
 }
 #tab1-bf640 {
-  height: calc(100vh - 360px) !important;
+  height: calc(100vh - 385px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
 }
 #tab2-bf640 {
-  height: calc(100vh - 360px) !important;
+  height: calc(100vh - 385px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
 }
 #tab3-bf640 {
-  height: calc(100vh - 360px) !important;
+  height: calc(100vh - 300px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
+}
+.before-production-tag {
+  background-color: #ababab;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 1px 10px;
 }

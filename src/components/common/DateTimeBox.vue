@@ -7,6 +7,7 @@
           :multi-calendars="multiCalendars"
           :teleport="teleport" :disabled="disabled"
           :clearable="clearable"
+          :enable-time-picker="timePicker"
           >
       </Datepicker>
       <div v-if="isValid" class="message-error">
@@ -70,6 +71,10 @@ export default defineComponent({
         clearable: {
           type: Boolean,
           default: true,
+        },
+        timePicker: {
+            type: Boolean,
+            default: false,
         }
     },
     components: {

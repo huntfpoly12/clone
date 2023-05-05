@@ -27,10 +27,9 @@
         <a-row>
           <a-col :span="12">
             <a-form-item label="서식 설정" class="red">
-              <div class="format-settings-text">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                <span class="style-note">본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</span>
-              </div>
+              <info-tool-tip>
+                본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
+              </info-tool-tip>
             </a-form-item>
             <div class="tax-select">
               <radio-group :arrayValue="radioCheckData" v-model:valueRadioCheck="checkBoxOption2" />
@@ -46,7 +45,7 @@
         <DxDataGrid ref="dataGrid" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
           :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
-          @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" style="height: 610px;">
+          @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" noDataText="내역이 없습니다" style="height: calc(100vh - 310px)">
           <DxToolbar>
             <DxItem template="pagination-send-group-mail" />
             <DxItem template="send-group-print" />

@@ -1,7 +1,7 @@
 <template>
   <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" :placeholder="placeholder"
     v-model="value" :disabled="disabled" :maxLength="maxCharacter" :readOnly="readOnly" @input="updateValue(value)"
-    :height="$config_styles.HeightInput" @value-changed="valueChanged" :name="nameInput" :rtlEnabled="rtlEnabled">
+    :height="$config_styles.HeightInput" @value-changed="valueChanged" :name="nameInput" :rtlEnabled="rtlEnabled"  @focusIn="onFocusIn">
     <DxValidator :name="nameInput" :value="textBoxValue" v-bind="$props">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxStringLengthRule v-if="minCharacter > 0" :min="minCharacter" :message="messageString" />
@@ -74,6 +74,10 @@ export default defineComponent({
     lengthFixed: {
       type: Number,
       default: 0,
+    },
+    select: {
+      type: Boolean,
+      default: true,
     }
   },
   components: {
@@ -104,9 +108,16 @@ export default defineComponent({
     const valueChanged = () => {
       if (props.replaceRegex) {
         setTimeout(() => {
-          value.value = value.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+          // value.value = value.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+          value.value = value.value.replace(/[^A-Za-z0-9 ]/g, '')
         }, 100);
       }
+    }
+    const onFocusIn = (e: any) => {
+      if(props.select && !props.readOnly){
+          e.event.target.select()
+      }
+      emit("focusInput", e);
     }
     return {
       valueChanged,
@@ -114,6 +125,7 @@ export default defineComponent({
       messageRequired,
       updateValue,
       value,
+      onFocusIn
     };
   },
 });

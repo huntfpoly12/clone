@@ -48,6 +48,7 @@
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
               style="height: 740px"
+              noDataText="내역이 없습니다"
             >
 <!--              <DxScrolling mode="standard" show-scrollbar="always" />-->
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
@@ -189,18 +190,17 @@
             </a-form-item>
 
             <a-form-item label="이용/여부" :label-col="labelCol">
-              <switch-basic
-                :width="50"
-                v-model:valueSwitch="formState.use"
-                :textCheck="'O'"
-                :textUnCheck="'X'"
-              />
-              <div style="margin-left: 10px; display: inline-table">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-                <span class="style-note">
+              <div class="d-flex-center">
+                <switch-basic
+                  :width="50"
+                  v-model:valueSwitch="formState.use"
+                  :textCheck="'O'"
+                  :textUnCheck="'X'"
+                />
+                <info-tool-tip class="ml-10">
                   이용하지 않는 경우 삭제되지 않으며,<br />
                   거래처 리스트에서 조회되지 않습니다
-                </span>
+                </info-tool-tip>
               </div>
             </a-form-item>
 
@@ -262,7 +262,7 @@ import {computed, defineComponent, ref} from "vue";
 import {useStore} from "vuex";
 import {initialState} from "./utils/index";
 import isEqual from "lodash/isEqual";
-import cloneDeep from "lodash/cloneDeep";
+import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
 const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: any}) => {
   if (value) {
@@ -272,6 +272,7 @@ const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: a
 };
 export default defineComponent({
   components: {
+    InfoToolTip,
     DxDataGrid,
     DxColumn,
     EditOutlined,

@@ -57,7 +57,6 @@
     text-align: center;
     color: white;
     width: 85px;
-    margin-left: 5px;
     border-radius: 5px;
     padding: 3px 10px;
   }
@@ -103,20 +102,26 @@
   }
 }
 #tab1-bf620 {
-  height: calc(100vh - 360px) !important;
+  height: calc(100vh - 385px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
 }
 #tab2-bf620 {
-  height: calc(100vh - 360px) !important;
+  height: calc(100vh - 385px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
 }
 #tab3-bf620 {
-  height: calc(100vh - 360px) !important;
+  height: calc(100vh - 312px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
+}
+.fs-17{
+  font-size: 17px;
+}
+.fs-14{
+  font-size: 14px;
 }

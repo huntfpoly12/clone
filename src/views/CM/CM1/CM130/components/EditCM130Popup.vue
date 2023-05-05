@@ -42,17 +42,17 @@
                     </a-row>
                     <a-row>
                         <a-col :span="24">
-                            <a-form-item label="산출방법" :label-col="labelCol">
-                                <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
-                                    v-model:valueInput="formState.formula">
-                                </default-text-box>
-                            </a-form-item>
-                            <div style="margin: 0px 0px 20px 150px">
-                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                <span class="style-note">
-                                    급여명세서 계산방법에 표시됩니다.
-                                </span>
+                            <div style="display: -webkit-inline-box;">
+                                <a-form-item label="산출방법" :label-col="labelCol">
+                                    <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                                        v-model:valueInput="formState.formula">
+                                    </default-text-box>
+                                </a-form-item>
                             </div>
+                            <a-tooltip color="black" placement="top">
+                                <template #title>급여명세서 계산방법에 표시됩니다.</template>
+                                <img src="@/assets/images/iconInfo.png" class="img-info" />
+                            </a-tooltip>
                         </a-col>
                     </a-row>
                 </a-spin>
