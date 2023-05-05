@@ -1,0 +1,11 @@
+import getMajorInsuranceCompanyEmployeeSalaryChanges from "./getMajorInsuranceCompanyEmployeeSalaryChanges";
+import getMajorInsuranceCompanyEmployeeSalaryChange from "./getMajorInsuranceCompanyEmployeeSalaryChange";
+import getMajorInsuranceCompanyEmployeeLossLogs from "./getMajorInsuranceCompanyEmployeeLossLogs";
+import getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl from "./getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl";
+
+export default {
+  getMajorInsuranceCompanyEmployeeSalaryChanges,
+  getMajorInsuranceCompanyEmployeeSalaryChange,
+  getMajorInsuranceCompanyEmployeeLossLogs,
+  getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl,
+};
