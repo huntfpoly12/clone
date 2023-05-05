@@ -1,7 +1,7 @@
 <template>
   <div>
-    <a-modal :visible="modalStatus" title="부양가족 등록" centered @cancel="setModalVisible()" :mask-closable="false" :width="750"
-      :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
+    <a-modal :visible="modalStatus" title="부양가족 등록" centered @cancel="setModalVisible()" :mask-closable="false"
+      :width="750" :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
       <a-spin :spinning="loading" size="large">
         <div class="page-content" id="add-new-dependent-pa-120">
           <a-row>
@@ -34,9 +34,14 @@
               <a-form-item label="한부모" label-align="right">
                 <div class="input-text">
                   <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.singleParent" />
-                  <span style="color: #888888; font-size:11px">
-                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 부녀자 공제와 중복 공제 불가
-                  </span>
+                  <a-tooltip placement="top" class="custom-tooltip">
+                    <template #title>
+                      부녀자 공제와 중복 공제 불가.
+                    </template>
+                    <div style="text-align: center;">
+                      <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-5 ml-10" />
+                    </div>
+                  </a-tooltip>
                 </div>
               </a-form-item>
             </a-col>
@@ -44,9 +49,14 @@
               <a-form-item label="경로우대" label-align="right">
                 <div class="input-text">
                   <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" :disabled="isDisabledSenior" />
-                  <span style="color: #888888; font-size:11px">
-                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 만 70세 이상
-                  </span>
+                  <a-tooltip placement="top" class="custom-tooltip">
+                    <template #title>
+                      만 70세 이상.
+                    </template>
+                    <div style="text-align: center;">
+                      <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-5 ml-10" />
+                    </div>
+                  </a-tooltip>
                 </div>
               </a-form-item>
               <a-form-item label="장애인" label-align="right">
@@ -60,9 +70,14 @@
                 <div class="input-text long-text">
                   <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.descendant"
                     :disabled="consignDisabled" />
-                  <span style="color: #888888; font-size:11px">
-                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 7세 이상 20세 이하의 자녀인 경우 공제 대상
-                  </span>
+                  <a-tooltip placement="top" class="custom-tooltip">
+                    <template #title>
+                      7세 이상 20세 이하의 자녀인 경우 공제 대상.
+                    </template>
+                    <div style="text-align: center;">
+                      <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-5 ml-10" />
+                    </div>
+                  </a-tooltip>
                 </div>
               </a-form-item>
               <a-form-item label="위탁관계" label-align="right">
@@ -139,7 +154,7 @@ export default defineComponent({
     let formStateToCompare = ({ ...initialFormState, foreigner: isForeignerPA120.value });
     const messageSave = Message.getMessage('COMMON', '106').message;
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
-    const labelResidebId = ref(formState.foreigner?'외국인번호 유효성':'주민등록번호')
+    const labelResidebId = ref(formState.foreigner ? '외국인번호 유효성' : '주민등록번호')
 
     const setModalVisible = () => {
       if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
@@ -340,4 +355,5 @@ export default defineComponent({
       padding-top: 3px;
     }
   }
-}</style>
+}
+</style>

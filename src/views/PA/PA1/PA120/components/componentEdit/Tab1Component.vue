@@ -8,17 +8,28 @@
           <div class="input-text">
             <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능"
               :disabled="true" />
-            <span style="color: #888888; font-size:12px">
-              <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가.
-            </span>
+            <a-tooltip placement="top" class="custom-tooltip">
+              <template #title>
+                최초 저장된 이후 수정 불가.
+              </template>
+              <div style="text-align: center;">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+              </div>
+            </a-tooltip>
           </div>
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
           <div class="input-text">
             <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
               @onChange="onChangePresident" style="width: 80px"></switch-basic>
-            <span style="color: #888888; font-size: 12px"> <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-              대표자인 경우 고용보험 제외됩니다. </span>
+            <a-tooltip placement="top" class="custom-tooltip">
+              <template #title>
+                대표자인 경우 고용보험 제외됩니다.
+              </template>
+              <div style="text-align: center;">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+              </div>
+            </a-tooltip>
           </div>
         </a-form-item>
 
@@ -32,8 +43,15 @@
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
             <date-time-box width="150px" v-model:valueDate="initFormStateTabPA120.leavedAt"> </date-time-box>
-            <span style="color: #888888; font-size: 12px"> <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-              마지막 근무한 날 </span>
+            <a-tooltip placement="top" class="custom-tooltip">
+              <template #title>
+                마지막 근무한 날.
+              </template>
+              <div style="text-align: center;">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+              </div>
+            </a-tooltip>
+
           </div>
         </a-form-item>
         <a-form-item label="내/외국인" label-align="right">
@@ -64,9 +82,14 @@
           <div class="input-text">
             <number-box :required="true" :spinButtons="true" v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours"
               width="150px" :min="1" :max="52"></number-box>
-            <span style="color: #888888; font-size:12px">
-              <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 급여명세서 및 4대보험 취득신고시 이용됩니다.
-            </span>
+            <a-tooltip placement="top" class="custom-tooltip">
+              <template #title>
+                급여명세서 및 4대보험 취득신고시 이용됩니다.
+              </template>
+              <div style="text-align: center;">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+              </div>
+            </a-tooltip>
           </div>
         </a-form-item>
 
@@ -91,8 +114,15 @@
           <div class="input-text">
             <mail-text-box v-model:valueInput="initFormStateTabPA120.email" width="200px" placeholder="abc@example.com">
             </mail-text-box>
-            <span style="color: #888888; font-size: 12px"> <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-              원천징수영수증 등 주요 서류를 메일로 전달 가능합니다. </span>
+            <a-tooltip placement="top" class="custom-tooltip">
+              <template #title>
+                원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
+              </template>
+              <div style="text-align: center;">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+              </div>
+            </a-tooltip>
+
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
@@ -146,7 +176,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const yearPA120 = computed(() => store.state.common.yearPA120);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
     const arrDepartments = ref([]);
@@ -235,7 +265,7 @@ export default defineComponent({
     // get employee Information
     const originDataDetail = ref<any>({
       companyId: companyId,
-      imputedYear: yearPA120.value,
+      imputedYear: globalYear.value,
       employeeId: props.idRowEdit,
     });
     const getEmployeeWageTrigger = ref(false);
@@ -308,8 +338,11 @@ export default defineComponent({
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
     });
     watch(() => props.idRowEdit, (value: any) => {
-      originDataDetail.value = { ...originDataDetail.value, employeeId: value, imputedYear: yearPA120.value };
-      getEmployeeWageTrigger.value = true;
+      console.log(`output-1111`,1111)
+      if (value != 0) {
+        originDataDetail.value.employeeId = value;
+        getEmployeeWageTrigger.value = true;
+      }
     }, { immediate: true });
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {

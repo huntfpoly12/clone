@@ -127,11 +127,12 @@ export default defineComponent({
       }
     }
     const onFocusIn = (e: any) => {
-      if(props.select && !props.readOnly){
-          e.event.target.select()
-      }
-      emit("focusInput", e);
+      const input = e.event.target;
+      setTimeout(() => {
+        input.selectionStart = input.selectionEnd = 0;
+      }, 50);
     }
+    
     return {
       updateValue,
       value,
@@ -143,7 +144,7 @@ export default defineComponent({
       checkID,
       checkIdNotForeigner,
       checkAllID,
-      onFocusIn
+      onFocusIn, 
     };
   },
 });
