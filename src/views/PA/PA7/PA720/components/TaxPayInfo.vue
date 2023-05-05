@@ -51,7 +51,7 @@
       </template>
       <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px"
         alignment="right" />
-      <DxSummary v-if="dataSourceDetail?.length > 0">
+      <!-- <DxSummary v-if="dataSourceDetail?.length > 0">
         <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
         <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
           value-format="#,###" />
@@ -62,8 +62,46 @@
         <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
         <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}"
           value-format="#,###" />
-      </DxSummary>
+      </DxSummary> -->
     </DxDataGrid>
+    <div style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 0;" class="fs-14">
+      <div style="margin-left: 15px;width: 30%;">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+          사업소득자[소득구분]수
+          <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
+        </div>
+      </div>
+      <div style="margin-left: 18%;">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+          지급액합계
+          <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'paymentAmount') }}]</span>
+        </div>
+      </div>
+      <div style="margin-left: 0%;">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+          필요경비합계
+          <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'requiredExpenses') }}]</span>
+        </div>
+      </div>
+      <div style="margin-left: 0%;">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+          소득금액합계
+          <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'incomePayment') }}]</span>
+        </div>
+      </div>
+      <div style="margin-left: 0%;">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+          공제합계
+          <span style="font-size: 16px;">[{{ customTextSummary() }}]</span>
+        </div>
+      </div>
+      <div style="margin-left: 0.5%;">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+          차인지급액합계
+          <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</span>
+        </div>
+      </div>
+    </div>
   </a-spin>
 </template>
 
@@ -87,7 +125,7 @@ import {
   DxSummary,
   DxTotalItem,
 } from 'devextreme-vue/data-grid';
-import { companyId } from '@/helpers/commonFunction';
+import { calcSummary, companyId } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import filters from '@/helpers/filters';
 import { formatMonth } from '../utils/index';
@@ -223,7 +261,7 @@ export default defineComponent({
       dataSourceDetail.value.map((val: any) => {
         total += val.withholdingIncomeTax + val.withholdingLocalIncomeTax;
       });
-      return '공제합계: ' + filters.formatCurrency(total);
+      return filters.formatCurrency(total);
     };
     const formateMoney = (options: any) => {
       return filters.formatCurrency(options.value);
@@ -329,7 +367,7 @@ export default defineComponent({
       removeHoverRowKey,
       store,
       changeDayDataPA720,
-      selectRow
+      selectRow, calcSummary,
     };
   },
 });

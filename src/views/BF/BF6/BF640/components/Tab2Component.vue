@@ -10,10 +10,14 @@
         <a-form-item label="제작요청상태" label-align="left">
           <div class="custom-note d-flex-center">
             <switch-basic v-model:valueSwitch="setBefore" textCheck="제작요청후" textUnCheck="제작요청전" />
-            <div class="d-flex-center ml-5">
-              <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-              <span>제작전은 제작요청되지 않은 상태입니다.</span>
-            </div>
+            <a-tooltip placement="top" class="custom-tooltip">
+              <template #title>
+                제작전은 제작요청되지 않은 상태입니다.
+              </template>
+              <div style="text-align: center;">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+              </div>
+            </a-tooltip>
           </div>
         </a-form-item>
         <div class="production-check">
@@ -95,7 +99,7 @@
           </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
             format="yyyy-MM-dd HH:mm" />
-          <DxColumn caption="제작현황" cell-template="제작현황" width="360"/>
+          <DxColumn caption="제작현황" cell-template="제작현황" width="360" />
           <template #제작현황=" { data }: any ">
             <div class="d-flex-center ">
               <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
@@ -117,7 +121,7 @@
       </a-spin>
     </div>
     <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab2"
-      @cancel=" modalStatus = false " />
+      @cancel=" onRequestDone" />
     <!-- <GetStatusTableHidden :data="data" @productionStatusData="productionStatusData" /> -->
   </div>
 </template>
