@@ -1,6 +1,6 @@
 #pa-430 {
     #gridContainerPA430 {
-        height: calc(100vh - 220px);
+        height: calc(100vh - 255px);
     }
     :deep .dx-freespace-row {
         display: none !important;
@@ -124,5 +124,9 @@
     }
     :deep .dx-radiogroup-horizontal {
         padding-top: 5px;
+    }
+    :deep .dx-datagrid-text-content span {
+        font-size: 15px;
+        font-weight: bold;
     }
 }

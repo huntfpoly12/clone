@@ -1,24 +1,24 @@
 <template>
-    <DxSelectBox :search-enabled="true" :data-source="arrSelect" :value="valueInput" :read-only="readOnly"
-        value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
-        :disabled="disabled" @value-changed="updateValue">
+    <DxSelectBox :search-enabled="true" :data-source="arrSelect" :value="valueInput" :read-only="readOnly" value-expr="key"
+        display-expr="value" field-template="field" item-template="item" :style="{ width: width }" :disabled="disabled"
+        @value-changed="updateValue">
         <template #field="{ data }">
             <div v-if="data" class="select-content" style="padding: 3px 0px;">
                 <a-tag color="default">{{ data.key }}</a-tag>
-                <div>
+                <div class="custom-text">
                     <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
                     {{ data.value }}
                 </div>
             </div>
             <div v-else style="padding: 3px 0px 3px 5px;">
-				<span>선택</span>
-				<DxTextBox style="display: none;" />
-			</div>
+                <span>선택</span>
+                <DxTextBox style="display: none;" />
+            </div>
         </template>
         <template #item="{ data }">
             <div class="custom-value">
                 <a-tag color="default">{{ data.key }}</a-tag>
-                <div>
+                <div class="custom-text">
                     <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
                     {{ data.value }}
                 </div>
@@ -70,18 +70,15 @@ export default defineComponent({
         let arrSelect = ref(Array());
 
         if (props.screenCode == 610) {
-            console.log(1);
-            
             enum2KeysByValueMap(IncomeTypeCode610).forEach((name, id) => {
                 arrSelect.value.push({ key: id, value: name });
-            }); 
+            });
         } else if (props.screenCode == 710) {
-            console.log(3);
             enum2KeysByValueMap(IncomeTypeCode710).forEach((name, id) => {
                 arrSelect.value.push({ key: id, value: name });
             });
         }
-        
+
         const data = new ArrayStore({
             data: arrSelect.value,
             key: "key",
@@ -103,7 +100,7 @@ export default defineComponent({
     },
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
 ::v-deep .dx-texteditor-input {
     padding: 0;
     color: black;
@@ -118,6 +115,9 @@ export default defineComponent({
     display: flex;
     align-items: center;
     margin-left: 5px;
+    .custom-text {
+        width: 120px;
+    }
 }
 
 .dx-list-item-content {
@@ -128,16 +128,22 @@ export default defineComponent({
     border-style: none;
 }
 
-.ant-tag {
+/* .ant-tag span {
     text-align: center;
     align-items: center;
     width: 55px;
     height: 25px;
-}
+} */
 
 .custom-value {
     display: flex;
     align-items: center;
     padding: 3px 4px !important;
+}
+
+.custom-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

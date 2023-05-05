@@ -43,7 +43,8 @@
                         <div style="width: 300px;">
                             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
                                 <a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
-                                    <div style="display: inline;">전월 잔액 <span>[{{ $filters.formatCurrency(lastBalance) }}]</span> </div>
+                                    <div style="display: inline;">전월 잔액 <span>[{{ $filters.formatCurrency(lastBalance)
+                                    }}]</span> </div>
                                 </a-tooltip>
                                 <div style="display: inline;" v-html="customBalance()"></div>
                             </div>
@@ -95,11 +96,11 @@
             </div>
         </div>
         <div class="main">
-                <div class="data-grid">
+            <div class="data-grid">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
-                    <DxDataGrid noDataText="내역이 없습니다" id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
-                        :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
-                        :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                    <DxDataGrid noDataText="내역이 없습니다" id="dataGridAc120" key-expr="accountingDocumentId"
+                        :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+                        ref="gridRefAC120" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
                         @focused-row-changing="onFocusedRowChanging" :column-auto-width="true"
                         v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
@@ -108,21 +109,20 @@
                             v-if="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status == 10"
                             :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
                             :on-drag-change="onDragChange" />
-                        <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
-                            mode="multiple" />
+                        <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxPaging :enabled="false" />
                         <DxColumn caption="일자" cell-template="transactionDetailDate" data-field="transactionDetailDate"
                             width="85" />
                         <template #transactionDetailDate="{ data }">
                             {{ $filters.formatDate(data.value) }}
-                            
+
                         </template>
 
                         <DxColumn caption="순번" data-field="documentOrderByDate" width="45" />
 
                         <DxColumn caption="결의번호" data-field="resolutionNumber" width="68" />
-                        
+
                         <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="80" />
                         <template #bankbook="{ data }">
                             <a-tooltip placement="top"
@@ -139,15 +139,15 @@
                         </template>
 
                         <DxColumn caption="수입액" data-field="income" format="fixedPoint" width="75" />
-                       
+
                         <DxColumn caption="지출액" data-field="spending" format="fixedPoint" width="75" />
-                        
+
                         <DxColumn caption="잔액" data-field="balance" width="75" format="fixedPoint" />
-                        
+
                         <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" width="75" />
-                        
+
                         <DxColumn caption="적요" data-field="summary" width="75" />
-                        
+
                         <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
                         <template #accountCode="{ data }">
                             <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
@@ -158,7 +158,8 @@
                             <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
                         </template>
 
-                        <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource" width="75" />
+                        <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left"
+                            cell-template="fundingSource" width="75" />
                         <template #fundingSource="{ data }">
                             {{ store.state.common.ac120.arrFundingSource.find((item: any) => data.data.fundingSource
                                 == item.id)?.text }}
@@ -202,6 +203,7 @@
                     </DxDataGrid>
                 </a-spin>
             </div>
+            {{ store.state.common.ac120.selectedRowKeys }}
             <!-- {{ store.state.common.ac120.dataRowFocus }} -->
             <DetailComponent />
         </div>
@@ -289,7 +291,7 @@ export default defineComponent({
         const modalHistoryStatuAccountingDocuments = ref<boolean>(false);
 
         const dataRows: any = ref([])
-
+        let keySelect = ref()
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const lastBalance = ref<number>(0)
         const dataGetAccountingProcesses = ref<any>([])
@@ -394,12 +396,13 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
-           
+
         })
 
         // ================ FUNCTION ============================================
         const getOneRowData = () => {
             if (dataSource.value.length) { // if table has data source
+                gridRefAC120.value?.instance.deselectAll()
                 if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
                     store.state.common.ac120.statusKeppRow = false;
                     store.state.common.ac120.selectedRowKeys = [store.state.common.ac120.focusedRowKey]
@@ -422,25 +425,45 @@ export default defineComponent({
             store.state.common.ac120.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
             store.state.common.ac120.resetDataAccountingDocumentProofs++
         }
-
+        
         // check box selection row data source
         const selectionChanged = (data: any) => {
-            dataRows.value = []
-            data.component.getSelectedRowsData().then((rowData: any) => {
-                rowData.map((data: any) => {
-                    dataRows.value = dataRows.value.concat(data)
+            if (dataRows.value.length > data.selectedRowsData.length && keySelect.value) {
+                dataRows.value = dataRows.value.filter((item: any) => {
+                    if (item.bankbookDetailId != keySelect.value) {
+                        return item
+                    }
                 })
-            })
+            } else {
+                dataRows.value = []
+                data.selectedRowsData.map((data: any) => {
+                    if (data.bankbookDetailId) {
+                        if (!dataRows.value.find((item: any) => item.bankbookDetailId == data.bankbookDetailId)) {
+                            let dataSameBankbookDetailId = dataSource.value.filter((item: any) => item.bankbookDetailId == data.bankbookDetailId)
+                            dataRows.value = dataRows.value.concat(dataSameBankbookDetailId)
+                        }
+                    } else {
+                        dataRows.value = dataRows.value.concat(data)
+                    }
+                })
+            }
+            if (JSON.stringify(dataRows.value.map((item: any) => item.accountingDocumentId)) != JSON.stringify(store.state.common.ac120.selectedRowKeys)) {
+                store.state.common.ac120.selectedRowKeys = dataRows.value.map((item: any) => item.accountingDocumentId)
+            }
         }
 
         const onFocusedRowChanging = (e: any) => {
             // if clicked on the cell selection or cell dragging
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1) || !(e.event.currentTarget.outerHTML.search("dx-command-drag") == -1)) {
                 e.cancel = true;
+                if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
+                    keySelect.value = e.rows[e.newRowIndex]?.data.bankbookDetailId
+                }
             } else {
                 Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
                 store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
                 store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+                store.state.common.ac120.selectedRowKeys = [e.rows[e.newRowIndex]?.data.accountingDocumentId]
                 store.state.common.ac120.keyRefreshForm++
                 store.state.common.ac120.resetDataAccountingDocumentProofs++
                 if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {

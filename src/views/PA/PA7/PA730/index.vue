@@ -104,7 +104,7 @@
           <template #sumWithholding="{ data }">
             {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
           </template>
-          <DxSummary v-if="dataSource.length">
+          <!-- <DxSummary v-if="dataSource.length">
             <DxTotalItem show-in-column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem column="paymentAmount" summary-type="sum" display-format="지급총액합계: {0}" value-format="#,###" />
             <DxTotalItem show-in-column="비과세소득" summary-type="sum" display-format="비과세소득합계: 0" value-format="#,###" />
@@ -117,8 +117,9 @@
             <DxTotalItem show-in-column="원천징수세액 농어촌특별세" summary-type="sum" display-format="원천징수세액 지방소득세합계: 0"
               value-format="#,###" />
             <DxTotalItem column="원천징수세액계합계" :customize-text="customTextSummary" value-format="#,###" />
-          </DxSummary>
-          <DxColumn :width="80" cell-template="pupop" />
+          </DxSummary> -->
+          
+          <DxColumn cell-template="pupop" />
           <template #pupop="{ data }">
             <div class="custom-action" style="text-align: center">
               <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
@@ -130,6 +131,49 @@
             </div>
           </template>
         </DxDataGrid>
+        <div v-if="dataSource.length"
+            style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+            class="fs-14">
+            <div>
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                <div>전체<span>[{{ dataSource.length }}]</span></div>
+              </div>
+            </div>
+            <div style="margin-left: 20px;">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customPaymentAmount()">
+              </div>
+            </div>
+            <div style="margin-left: 20px;">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                <div>비과세소득합계<span>[0]</span></div>
+              </div>
+            </div>
+            <div style="margin-left: 20px;">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customRequiredExpenses()">
+              </div>
+            </div>
+            <div style=" margin-left: 20px;">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customIncomePayment()">
+              </div>
+            </div>
+            <div style=" margin-left: 20px;">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customWithholdingIncomeTax()">
+              </div>
+            </div>
+            <div style=" margin-left: 20px;">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customWithholdingLocalIncomeTax()">
+              </div>
+            </div>
+            <div style=" margin-left: 20px;">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                <div>원천징수세액 지방소득세합계<span>[0]</span></div>
+              </div>
+            </div>
+            <div style=" margin-left: 20px;">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummary()">
+              </div>
+            </div>
+          </div>
         <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal" :data="popupSingleData" />
         <EmailGroupPopup :modalStatus="modalEmailGroup" @closePopup="onCloseEmailGroupModal" :data="popupGroupData" />
       </div>
@@ -335,16 +379,49 @@ export default defineComponent({
         notification('error', messages.getCommonMessage('601').message)
       }
     };
+    const customPaymentAmount = () => {
+      let sum = 0
+      dataSource.value?.map((row: any) => {
+        sum += row.paymentAmount
+      })
+      return `지급총액합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+    }
+    const customRequiredExpenses = () => {
+      let sum = 0
+      dataSource.value?.map((row: any) => {
+        sum += row.requiredExpenses
+      })
+      return `필요경비합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+    }
+    const customIncomePayment = () => {
+      let sum = 0
+      dataSource.value?.map((row: any) => {
+        sum += row.incomePayment
+      })
+      return `소득금액합계 <span>[${filters.formatCurrency(sum)}]</span> `;
+    }
+    const customWithholdingIncomeTax = () => {
+      let sum = 0
+      dataSource.value?.map((row: any) => {
+        sum += row.withholdingIncomeTax
+      })
+      return `원천징수세액 소득세합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+    }
+    const customWithholdingLocalIncomeTax = () => {
+      let sum = 0
+      dataSource.value?.map((row: any) => {
+        sum += row.withholdingLocalIncomeTax
+      })
+      return `원천징수세액 지방소득세합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+    }
     const customTextSummary = () => {
       let total = 0
       dataSource.value.map((val: any) => {
         total += val.withholdingIncomeTax + val.withholdingLocalIncomeTax
       })
-      return '원천징수세액계합계: ' + filters.formatCurrency(total)
+      return `원천징수세액계합계 <span>[${filters.formatCurrency(total)}]</span> `
     }
-    // watch(paYear, (newValue) => {
-    //   trigger.value = true;
-    // })
+
     return {
       valueDefaultIncomeExtra,
       valueSwitch,
@@ -368,6 +445,7 @@ export default defineComponent({
       onPrint, onPrintGroup,
       receiptReportViewUrlParam,
       customTextSummary,
+      customPaymentAmount, customRequiredExpenses, customIncomePayment, customWithholdingIncomeTax, customWithholdingLocalIncomeTax,
     };
   },
 });
