@@ -19,19 +19,13 @@
                                 <a-form-item label="정산시작(입사)일" label-align="right" class="red">
                                     <date-time-box  width="150px"  v-model:valueDate="formState.settlementStartDate"></date-time-box>
                                 </a-form-item>
-                                <span>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
-                                    <p>퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.</p>
-                                </span>
+                                <info-tool-tip placement="right">퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.</info-tool-tip>
                             </div> 
                             <div class="input-employee">
                                 <a-form-item label="정산종료(퇴사)일" label-align="right" class="red">
                                     <date-time-box-custom  width="150px" v-model:valueDate="formState.settlementFinishDate" :startDate="dayjs(String(formState.settlementStartDate)).add(1, 'day')"></date-time-box-custom>
                                 </a-form-item>  
-                                <span>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
-                                    <p>퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</p>
-                                </span>
+                                <info-tool-tip placement="right">퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</info-tool-tip>
                             </div>  
                             <div class="input-employee">
                                 <a-form-item label="제외일수" label-align="right" class="red">
@@ -40,10 +34,7 @@
                                     <span class="pl-5 pr-5">일</span>      
                                   </div>
                                 </a-form-item> 
-                                <span>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
-                                    <p>정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</p>
-                                </span>
+                                <info-tool-tip placement="right">정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</info-tool-tip>
                             </div>
                             <div class="input-employee">
                                 <a-form-item label="가산일수" label-align="right" class="red">
@@ -52,11 +43,7 @@
                                     <span class="pl-5 pr-5">일</span>
                                   </div>
                                 </a-form-item> 
-                              
-                                <span>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
-                                    <p>정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</p>
-                                </span>
+                                <info-tool-tip placement="right">정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</info-tool-tip>
                             </div> 
                     </a-col>
                     <a-col :span="12">
@@ -86,10 +73,7 @@
                 <div class="time-service">근속연수 / 근속월수 / 근속일수: {{dataLastRetiredYearsOfService.yearsOfService}}년/{{dataLastRetiredYearsOfService.monthsOfService}}개월/{{dataLastRetiredYearsOfService.daysOfService}}일</div>
                 <div class="button-calculate">
                     <button-basic text="&#129155; 퇴직금 계산 &#129155;" type="default" @onClick="calculateIncomeRetirement"/> 
-                    <span class="style-note">
-                      <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span class="pl-5">상기 급여(수당)으로 퇴직금 계산합니다.</span>
-                </span>
+                    <info-tool-tip placement="right">상기 급여(수당)으로 퇴직금 계산합니다.</info-tool-tip>
                 </div>
               </standard-form>
             </div>
@@ -107,9 +91,8 @@
                     <a-col :span="12">
                         <div class="text-benefit">
                             <span>
-                                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" class="img-note"/>
-                                <p>상기 급여(수당)으로 계산된 퇴직금으로 실제 지급된 퇴직금과는 상이할 수 있습니다.</p>
-                                <img src="@/assets/images/email.svg" alt="" style="width: 40px;" class="img-email" @click="openMailPopup"/>
+                              <info-tool-tip placement="left">상기 급여(수당)으로 계산된 퇴직금으로 실제 지급된 퇴직금과는 상이할 수 있습니다.</info-tool-tip>
+                              <img src="@/assets/images/email.svg" alt="" style="width: 40px;" class="img-email" @click="openMailPopup"/>
                             </span>
                         </div>
                     </a-col>
@@ -289,8 +272,12 @@ export default defineComponent({
                 font-weight: bold;
             }
             .button-calculate{
-                    text-align: center;
-                    margin: 25px;
+                display: flex;
+                text-align: center;
+                margin: 25px;
+                align-items: center;
+                width: auto;
+                justify-content: center;
             }
             .salary{
                 ::v-deep .ant-form-item-label>label {

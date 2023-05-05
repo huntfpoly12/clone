@@ -89,15 +89,41 @@
           </template>
           <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string" :format="amountFormat"
             alignment="right" />
-          <DxSummary v-if="dataSourceDetail?.length > 0">
+          <!-- <DxSummary v-if="dataSourceDetail?.length > 0">
             <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수:{0}" />
             <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
               value-format="#,###" />
             <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
             <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}"
               value-format="#,###" />
-          </DxSummary>
+          </DxSummary> -->
         </DxDataGrid>
+        <div style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 0;" class="fs-14">
+          <div style="margin-left: 70px;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              사업소득자[소득구분]수
+              <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
+            </div>
+          </div>
+          <div style="margin-left: 21%;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              지급액합계
+              <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'paymentAmount') }}]</span>
+            </div>
+          </div>
+          <div style="margin-left: 1%;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              공제합계
+              <span style="font-size: 16px;">[{{ customTextSummary() }}]</span>
+            </div>
+          </div>
+          <div style="margin-left: 1%;">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              차인지급액합계
+              <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</span>
+            </div>
+          </div>
+        </div>
       </a-spin>
     </a-col>
     <a-col :span="10" class="form-tax form-action">
@@ -162,12 +188,16 @@
                   </a-form-item>
                 </div>
                 <div class="header-text-2 mb-10">
-                  <div>
+                  <div class="input-text">
                     차인지급액 <b class="ml-5"> {{ $filters.formatCurrency(dataAction.input.actualPayment) }}</b>원
-                    <span class="fz-11 ml-10" style="color: gray;">
-                      <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                      지급액 - 공제합계
-                    </span>
+                    <a-tooltip placement="top" class="custom-tooltip">
+                      <template #title>
+                        지급액 - 공제합계.
+                      </template>
+                      <div style="text-align: center;">
+                        <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+                      </div>
+                    </a-tooltip>
                   </div>
                 </div>
               </a-col>
@@ -200,7 +230,7 @@ import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxToolbar, DxEditing, DxScrolling, DxMasterDetail, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
-import { companyId, openTab } from "@/helpers/commonFunction";
+import { calcSummary, companyId, openTab } from "@/helpers/commonFunction";
 import { dataActionUtils, } from "../utils/index";
 import { Formula } from '@bankda/jangbuda-common';
 import notification from "@/utils/notification";
@@ -641,7 +671,7 @@ export default defineComponent({
       dataSourceDetail.value.map((val: any) => {
         total += val.withholdingIncomeTax + val.withholdingLocalIncomeTax
       })
-      return '공제합계: ' + filters.formatCurrency(total)
+      return filters.formatCurrency(total)
     }
 
     //---------------------- Action save status ----------------------
@@ -833,7 +863,8 @@ export default defineComponent({
     return {
       loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax,
       caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef, changeDayData, savePA610, popupAddStatus, titleModalConfirm, editParam, companyId,
-      paymentDayPA620, rowChangeStatus, checkLen, compareForm, triggerOption, refetchOption, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff, triggerIncomeBusiness, isClickEditClick
+      paymentDayPA620, rowChangeStatus, checkLen, compareForm, triggerOption, refetchOption, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff, triggerIncomeBusiness, isClickEditClick,
+      calcSummary,
     }
   }
 });
