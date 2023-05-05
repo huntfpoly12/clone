@@ -270,7 +270,7 @@ export default defineComponent({
     const isDisableInsuranceSupport = computed(() => store.state.common.isDisableInsuranceSupport);
     const messageUpdate = Message.getMessage('COMMON', '106').message;
     let countConfigPayItems = ref(0);
-    let countRestFirstRun = ref(0);
+    let countRestFirstRun = ref(-1);
     // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
