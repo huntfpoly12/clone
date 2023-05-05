@@ -45,7 +45,7 @@
                             :textUnCheck="'발행자보관용'" />
                     </a-col>
                 </a-row> -->
-                <DxDataGrid id="gridContainerPA630" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA630" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     ref="gridRef"

@@ -6,7 +6,7 @@
             <a-row>
                 <a-col span="16" class="data-table" :class="{ 'disabledBlock': disabledBlockTable }">
                     <a-spin :spinning="loading || loadingCreated" size="large">
-                        <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
+                        <DxDataGrid noDataText="내역이 없습니다" id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" @focused-row-changing="onFocusedRowChanging" ref="gridRef"
@@ -358,7 +358,6 @@ export default defineComponent({
         const pa710FormRef = ref()
         const actionSave = () => {
             statusClickButtonSave.value = true;
-            // checkClickYear.value = false
             submitForm()
         }
         const submitForm = () => {

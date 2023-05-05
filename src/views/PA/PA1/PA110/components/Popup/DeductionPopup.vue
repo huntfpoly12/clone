@@ -4,7 +4,7 @@
         <div class="custom-modal">
             <div class="text-align-center">
                 <h3>공제 재계산 결과</h3>
-                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data"
+                    <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="data"
                         allow-column-resizing="false"
                         :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
                         <!-- <DxScrolling mode="standard" show-scrollbar="always"/> -->

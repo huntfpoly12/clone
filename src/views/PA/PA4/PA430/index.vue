@@ -56,7 +56,7 @@
                         <switch-basic v-model:valueSwitch="valSwitch" :textCheck="'발행자보관용'" :textUnCheck="'발행자보고용'" />
                     </a-col> -->
                 </a-row>
-                <DxDataGrid id="gridContainerPA430" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+                <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA430" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always" />
