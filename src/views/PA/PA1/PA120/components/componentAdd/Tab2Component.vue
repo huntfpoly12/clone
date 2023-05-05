@@ -15,10 +15,14 @@
             <checkbox-basic size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction"
               :disabled="presidentPA120"></checkbox-basic>
           </span>
-          <p class="text-note mt-7 ml-7">
-            <img class="mt-2 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
-            본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
-          </p>
+          <a-tooltip placement="top" class="custom-tooltip">
+            <template #title>
+              본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
+            </template>
+            <div style="text-align: center;">
+              <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+            </div>
+          </a-tooltip>
         </a-form-item>
       </a-col>
       <a-col :span="11">
@@ -61,6 +65,15 @@
         <div class="header-text-4 d-flex">
           <a-col :span="13">
             중소기업취업 감면
+            <a-tooltip placement="top" class="custom-tooltip">
+              <template #title>
+                15세~34세 이하 청년, 60세 이상인 사람, 장애인, 경력단절여성이 중소기업에 취업하는 경우 취업일로 부터 3년간(청년 5년간) 근로소득세
+                70%(청년 90%, 150만원 한도) 감면
+              </template>
+              <div style="text-align: center;">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+              </div>
+            </a-tooltip>
           </a-col>
           <a-col :span="10" class="switch-bg">
             감면 여부:
@@ -70,11 +83,6 @@
           </a-col>
         </div>
         <a-row :gutter="[0, 10]">
-          <a-col :span="24">
-            <img src="@/assets/images/iconInfo.png" style="width: 14px" class="mr-5" />
-            <span class="text-note">15세~34세 이하 청년, 60세 이상인 사람, 장애인, 경력단절여성이 중소기업에 취업하는 경우 취업일로 부터 3년간(청년 5년간) 근로소득세 70%(청년
-              90%, 150만원 한도) 감면</span>
-          </a-col>
           <a-col span="7">
             감면기간:
           </a-col>
@@ -103,10 +111,14 @@
     </a-row>
     <div class="header-text-3">
       급여 (기본값)
-      <span>
-        <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-        <p>급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
-      </span>
+      <a-tooltip placement="top" class="custom-tooltip">
+        <template #title>
+          급여소득자료 입력시 본 급여 기본값을 불러옵니다.
+        </template>
+        <div style="text-align: center;">
+          <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-5 ml-10" />
+        </div>
+      </a-tooltip>
     </div>
     <a-row gutter="5">
       <a-col style="flex: 0 0 28%;">
@@ -118,7 +130,7 @@
                 수당 합계 = 수당 과세 + 수당 비과세
               </template>
               <div style="text-align: center;">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3" />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip> :
           </a-col>
@@ -139,7 +151,7 @@
                 차인지급액 = 수당 합계 - 공제 합계 + 감면 합계
               </template>
               <div style="text-align: center;">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3" />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip> :
           </a-col>
