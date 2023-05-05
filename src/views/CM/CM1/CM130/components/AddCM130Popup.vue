@@ -1,12 +1,10 @@
 <template>
     <div id="add-popup-130">
-        <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" :mask-closable="false" width="650px" footer="">
-            <standard-form formName="add-cm-310">
+        <!-- <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+            @cancel="setModalVisible()" :mask-closable="false" width="650px" footer=""> -->
+            <standard-form formName="add-cm-310" class="standard-form">
                 <a-spin tip="Loading..." :spinning="loading">
-                    <h2 style="font-weight: 600; color: gray" class="title_modal">
-                        급여항목추가
-                    </h2>
+                    <h2 class="title_modal">급여항목추가</h2>
                     <a-row>
                         <a-col :span="14">
                             <a-form-item label="항목명" :label-col="labelCol" class="red">
@@ -38,17 +36,16 @@
                                 <img src="@/assets/images/iconInfo.png" class="img-info" />
                             </a-tooltip>
                         </a-col>
-
                     </a-row>
                 </a-spin>
                 <div class="text-align-center mt-20">
-                    <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
-                        @onClick="setModalVisible()" />
+                    <!-- <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                        @onClick="setModalVisible()" /> -->
                     <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140"
                         :type="'default'" :mode="'contained'" @onClick="onSubmit($event)" />
                 </div>
             </standard-form>
-        </a-modal>
+        <!-- </a-modal> -->
     </div>
 </template>
 
@@ -60,7 +57,6 @@ import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/CM/CM130/index";
 import notification from "@/utils/notification";
 import { initialState } from "../utils/data";
-import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import dayjs, { Dayjs } from "dayjs";
 
 export default defineComponent({
@@ -124,18 +120,18 @@ export default defineComponent({
                 creactConfigPayItem(variables);
             }
         };
-        const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
-                emit("closePopup", false)
-            else
-                comfirmClosePopup(() => emit('closePopup', false))
-        };
+        // const setModalVisible = () => {
+        //     if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
+        //         emit("closePopup", false)
+        //     else
+        //         comfirmClosePopup(() => emit('closePopup', false))
+        // };
         return {
             formState,
             labelCol: { style: { width: "150px" } },
             onSubmit,
             loading,
-            setModalVisible,
+            // setModalVisible,
         };
     },
 });

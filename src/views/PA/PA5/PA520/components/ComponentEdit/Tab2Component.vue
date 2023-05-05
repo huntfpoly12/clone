@@ -12,7 +12,8 @@
                             v-model:valueCheckbox="originDataUpdate.input.healthInsuranceDeduction" :disabled="true"/>
                         <checkbox-basic size="14px" label="고용보험" class="check-box-tab1"
                             v-model:valueCheckbox="originDataUpdate.input.employeementInsuranceDeduction" />
-                            <info-tool-tip>본 항목은 공제 계산을 위한 설정으로 실제 4대보험
+                            <info-tool-tip width="310px">
+                              본 항목은 공제 계산을 위한 설정으로 실제 4대보험
                             <br> 신고 여부와는 무관합니다.
                           </info-tool-tip>
                     </div>
@@ -125,7 +126,7 @@
                             </span>
                             <div>
                                 <number-box-money :min="0" width="150px" :spinButtons="false"
-                                    v-model:valueInput="item.price" :disabled="true" />
+                                    v-model:valueInput="item.price" :disabled="false" />
                                 <span class="pl-5">원</span>
                             </div>
                         </div>
@@ -147,7 +148,6 @@ import { radioCheckPersenPension, originDataInputUpdate } from "../../utils/inde
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { useStore } from 'vuex';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
-import queriescm130 from "@/graphql/queries/CM/CM130/index";
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
@@ -220,6 +220,9 @@ export default defineComponent({
                     })
                 }   
             })
+
+            console.log(arrDeduction.value);
+            
         })
 
         const {
