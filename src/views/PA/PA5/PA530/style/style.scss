@@ -1,6 +1,6 @@
 #pa-530 {
     #DxDataGrid-pa530 {
-      height: calc(100vh - 260px);
+      height: calc(100vh - 300px);
       :deep .dx-freespace-row {
           display: none !important;
       }
@@ -87,6 +87,16 @@
     }
     .ant-switch-checked {
         background-color: black;
+    }
+    .DxDataGrid-pa-530-sumary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: bold;
+        border: 1px solid #ddd;
+        border-top: none;
+        padding: 7px;
+        color: rgba(51, 51, 51, .7);
     }
 }
 

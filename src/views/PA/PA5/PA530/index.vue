@@ -22,13 +22,13 @@
                             </a-col>
                             <a-col :span="4">
                                 <checkbox-basic v-model:valueCheckbox="year2.value" :label="year2.label" />
-                            </a-col>
-                            <a-col :span="8" class="custom-info">
                                 <a-tooltip color="black" placement="top">
                                     <template #title>12월 말일까지 미지급한 경우,
                                         서식 출력시 12월에 지급한걸로 표시됩니다.</template>
                                     <img src="@/assets/images/iconInfo.png" class="img-info" />
                                 </a-tooltip>
+                            </a-col>
+                            <a-col :span="8" class="custom-info">
                             </a-col>
                             <!-- ================== Row 2 =========================== -->
                             <a-col :span="6" @click="clickQuarter1">
@@ -127,6 +127,7 @@
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" v-model:selected-row-keys="vModalSelectedRowKeys"
                     @selection-changed="selectionChanged">
+                    <DxPaging :enabled="false" />
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
@@ -191,13 +192,13 @@
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" width="200px" format="fixedPoint" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" width="230px"
                         format="fixedPoint" />
-                    <DxSummary>
+                    <!-- <DxSummary>
                         <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
                         <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
                         <DxTotalItem :customize-text="customizeTotalTaxfreePay" show-in-column="비과세소득" />
                         <DxTotalItem :customize-text="customizeIncomeTax" column="withholdingIncomeTax" />
                         <DxTotalItem :customize-text="customizeDateLocalIncomeTax" column="원천징수세액 지방소득세" />
-                    </DxSummary>
+                    </DxSummary> -->
                     <DxColumn width="100px" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
@@ -212,6 +213,13 @@
                         </div>
                     </template>
                 </DxDataGrid>
+                <div class="DxDataGrid-pa-530-sumary">
+                    <div v-html="customizeTotal()"></div>
+                    <div v-html="customizeTotalTaxPay()"></div>
+                    <div v-html="customizeTotalTaxfreePay()"></div>
+                    <div v-html="customizeIncomeTax()"></div>
+                    <div v-html="customizeDateLocalIncomeTax()"></div>
+                </div>
             </a-spin>
             <PA530Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
                 :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
@@ -556,31 +564,31 @@ export default defineComponent({
             dataSource.value.map((val: any) => {
                 total += val.withholdingIncomeTax
             })
-            return "원천징수세액 소득세합계: " + filters.formatCurrency(total)
+            return `원천징수세액 소득세합계: <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
         }
         const customizeDateLocalIncomeTax = () => {
             let total = 0
             dataSource.value.map((val: any) => {
                 total += val.withholdingLocalIncomeTax
             })
-            return "원천징수세액 지방소득세합계: " + filters.formatCurrency(total)
+            return `원천징수세액 지방소득세합계:  <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
         }
         const customizeTotal = () => {
-            return "전체: " + dataSource.value.length
+            return `전체: <span style="font-size: 16px !important">[${dataSource.value.length}]</span>`
         }
         const customizeTotalTaxfreePay = () => {
             let total = 0
             dataSource.value.map((val: any) => {
                 total += val.totalTaxfreePay
             })
-            return "과세소득합계: " + filters.formatCurrency(total)
+            return `과세소득합계:  <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
         }
         const customizeTotalTaxPay = () => {
             let total = 0
             dataSource.value.map((val: any) => {
                 total += val.totalTaxPay
             })
-            return "과세소득합계: " + filters.formatCurrency(total)
+            return `과세소득합계:  <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
         }
         const actionPrint = (res: any) => {
             vModalSelectedRowKeys.value = [res]
