@@ -133,7 +133,7 @@
                         :data="fileImage" :previewImageCall="previewImage" @urlSeal="changeSealUrl" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="이용자">
-                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
+                    <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
                         :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true" key-expr="id"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" @exporting="onExporting">

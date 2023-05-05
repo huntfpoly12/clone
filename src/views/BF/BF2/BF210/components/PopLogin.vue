@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" :title="title" centered @cancel="setModalVisible()" width="50%"
             :mask-closable="false">
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrayLog" :show-borders="true"
+            <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrayLog" :show-borders="true"
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxPaging :page-size="rowTable" />
