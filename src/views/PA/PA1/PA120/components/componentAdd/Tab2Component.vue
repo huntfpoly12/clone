@@ -15,10 +15,14 @@
             <checkbox-basic size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction"
               :disabled="presidentPA120"></checkbox-basic>
           </span>
-          <p class="text-note mt-7 ml-7">
-            <img class="mt-2 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
-            본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
-          </p>
+          <a-tooltip placement="top" class="custom-tooltip">
+            <template #title>
+              본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
+            </template>
+            <div style="text-align: center;">
+              <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+            </div>
+          </a-tooltip>
         </a-form-item>
       </a-col>
       <a-col :span="11">
@@ -43,7 +47,7 @@
               :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport || !formStateTab2.nationalPensionDeduction"></radio-group>
           </a-col>
           <a-col span="7">
-            고용보험 적용율:
+            고용보험 적용율:{{ formStateTab2.employeementInsuranceSupportPercent }}
           </a-col>
           <a-col span="12">
             <radio-group :arrayValue="radioCheckPersenPension"
@@ -61,6 +65,15 @@
         <div class="header-text-4 d-flex">
           <a-col :span="13">
             중소기업취업 감면
+            <a-tooltip placement="top" class="custom-tooltip">
+              <template #title>
+                15세~34세 이하 청년, 60세 이상인 사람, 장애인, 경력단절여성이 중소기업에 취업하는 경우 취업일로 부터 3년간(청년 5년간) 근로소득세
+                70%(청년 90%, 150만원 한도) 감면
+              </template>
+              <div style="text-align: center;">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+              </div>
+            </a-tooltip>
           </a-col>
           <a-col :span="10" class="switch-bg">
             감면 여부:
@@ -70,11 +83,6 @@
           </a-col>
         </div>
         <a-row :gutter="[0, 10]">
-          <a-col :span="24">
-            <img src="@/assets/images/iconInfo.png" style="width: 14px" class="mr-5" />
-            <span class="text-note">15세~34세 이하 청년, 60세 이상인 사람, 장애인, 경력단절여성이 중소기업에 취업하는 경우 취업일로 부터 3년간(청년 5년간) 근로소득세 70%(청년
-              90%, 150만원 한도) 감면</span>
-          </a-col>
           <a-col span="7">
             감면기간:
           </a-col>
@@ -103,10 +111,14 @@
     </a-row>
     <div class="header-text-3">
       급여 (기본값)
-      <span>
-        <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-        <p>급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
-      </span>
+      <a-tooltip placement="top" class="custom-tooltip">
+        <template #title>
+          급여소득자료 입력시 본 급여 기본값을 불러옵니다.
+        </template>
+        <div style="text-align: center;">
+          <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-5 ml-10" />
+        </div>
+      </a-tooltip>
     </div>
     <a-row gutter="5">
       <a-col style="flex: 0 0 28%;">
@@ -118,7 +130,7 @@
                 수당 합계 = 수당 과세 + 수당 비과세
               </template>
               <div style="text-align: center;">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3" />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip> :
           </a-col>
@@ -139,7 +151,7 @@
                 차인지급액 = 수당 합계 - 공제 합계 + 감면 합계
               </template>
               <div style="text-align: center;">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3" />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip> :
           </a-col>
@@ -168,7 +180,7 @@
               </span>
               <div>
                 <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                  :min="0" @changeInput="onChangePayItem"> </number-box-money>
+                  :min="0" @changeInput="onCalcSum"> </number-box-money>
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -193,7 +205,7 @@
               </span>
               <div>
                 <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                  :disabled="true" :min="0"> </number-box-money>
+                  :min="0" @changeInput="onCalcSum" :disabled="disabledDeduction(item.itemCode)" />
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -286,7 +298,7 @@ export default defineComponent({
       }
       store.state.common.isCalculateEditPA120 = true;
     });
-    const onChangePayItem = (emitVal: any) => {
+    const onCalcSum = (emitVal: any) => {
       totalPayItem.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
@@ -531,11 +543,14 @@ export default defineComponent({
       (newValue) => {
         if (newValue) {
           formStateTab2.employeementInsuranceDeduction = false;
+        } else {
+          formStateTab2.employeementInsuranceDeduction = true;
+          formStateTab2.employeementInsuranceSupportPercent = 0;
         }
       },
-      { deep: true }
+      { immediate: true }
     );
-    //  // watch initFormTab2PA120 to check calculate button
+    //  // watch formStateTab2 to check calculate button
     const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
     watch(
       () => totalPayItemTax,
@@ -552,7 +567,7 @@ export default defineComponent({
     let countRestFirstRun = ref(0);
     let stopTrack = watchEffect(() => {
       const { deductionItems, payItems, ...rest } = formStateTab2;
-      if (countRestFirstRun.value < 1) {
+      if (countRestFirstRun.value < 2) {
         countRestFirstRun.value++;
         return;
       }
@@ -619,6 +634,26 @@ export default defineComponent({
       store.state.common.isAddFormErrorPA120 = false;
     });
 
+    //--------------------------------disabledDeduction---------------------------------------
+
+    const disabledDeduction = (e: any) => {
+      if (!formStateTab2.nationalPensionDeduction && e == 1001) {
+        dataConfigDeduction.value[0].value = 0;
+        return true;
+      }
+      if (!formStateTab2.healthInsuranceDeduction && (e == 1002 || e == 1003)) {
+        dataConfigDeduction.value[1].value = 0;
+        dataConfigDeduction.value[2].value = 0;
+
+        return true;
+      }
+      if (!formStateTab2.employeementInsuranceDeduction && e == 1004) {
+        dataConfigDeduction.value[3].value = 0;
+        return true;
+      }
+      return false;
+    }
+
     return {
       formStateTab2,
       loading1,
@@ -644,7 +679,7 @@ export default defineComponent({
       isAddFormErrorPA120,
       isBtnYellow,
       isDisableInsuranceSupport,
-      onChangePayItem
+      onCalcSum, disabledDeduction,
     };
   },
 });

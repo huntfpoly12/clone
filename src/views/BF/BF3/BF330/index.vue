@@ -44,7 +44,7 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
+                <DxDataGrid noDataText="내역이 없습니다" :data-source="listServiceContract" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :show-row-lines="true"  :hoverStateEnabled="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>

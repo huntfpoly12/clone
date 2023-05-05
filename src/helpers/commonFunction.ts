@@ -6,6 +6,7 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import store from "@/store";
 import Router from '../router';
+import filters from "./filters";
 
 let companyId: any = null
 let startYearMonth: any = null
@@ -199,6 +200,13 @@ const convertResidentId = (residentId: string) => {
   return residentId.slice(0, 6) + '-' + residentId.slice(6);
 }
 
+const calcSummary = (arr: any[], property1: string,) => {
+  let sum = arr.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue[property1];
+  }, 0)
+  return filters.formatCurrency(sum);
+}
+
 export {
     companyId,
     openTab,
@@ -217,6 +225,7 @@ export {
     makeDataClean,
     startYearMonth,
     convertResidentId,
-    accountSubject
+    accountSubject,
+    calcSummary
 }
 

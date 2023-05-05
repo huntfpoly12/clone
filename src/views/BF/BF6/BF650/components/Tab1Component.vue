@@ -90,7 +90,7 @@
                         </span>
           </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
-                    format="yyyy-MM-dd hh:mm a"/>
+                    format="yyyy-MM-dd HH:mm"/>
           <DxColumn caption="제작현황" cell-template="productionStatus"/>
           <template #productionStatus="{ data }">
             <template v-if="data.data.lastProductionRequestedAt === null">

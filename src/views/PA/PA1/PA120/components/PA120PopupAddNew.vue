@@ -4,10 +4,10 @@
             <div id="pa-120">
                 <a-tabs v-model:activeKey="activeTabAddKeyPA120" @change="onChangeTab" type="card">
                     <a-tab-pane key="1" tab="기본">
-                        <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId" @setTabsStatus="setTabsStatus($event)"></Tab1Component>
+                        <Tab1Component v-show="activeTabAddKeyPA120 == '1'" :popupStatus="modalStatus" @employeeId="setEmployeeId" @setTabsStatus="setTabsStatus($event)"></Tab1Component>
                     </a-tab-pane>
                     <a-tab-pane key="2" tab="급여" :disabled="tabStatus">
-                        <Tab2Component :employeeId="employeeId"></Tab2Component>
+                        <Tab2Component v-show="activeTabAddKeyPA120 == '2'" :employeeId="employeeId"></Tab2Component>
                     </a-tab-pane>
                     <a-tab-pane key="3" tab="부양가족" :disabled="tabStatus">
                         <Tab3Component :employeeId="employeeId"></Tab3Component>

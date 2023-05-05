@@ -520,9 +520,8 @@ export default defineComponent({
     // }
 
     // get config
-    const yearPA120 = computed(() => store.state.common.yearPA120);
     const withholdingTrigger = ref(true);
-    const dataQueryCm130 = ref({ companyId: companyId, imputedYear: yearPA120 });
+    const dataQueryCm130 = ref({ companyId: companyId, imputedYear: globalYear });
     const { result: resultConfigCm130 } = useQuery(
       queryCM130.getWithholdingConfig,
       dataQueryCm130,

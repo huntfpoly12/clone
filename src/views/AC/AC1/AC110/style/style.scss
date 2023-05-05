@@ -42,7 +42,7 @@
         }
       }
       #DxDataGridMainAc110 {
-        height: calc(100vh - 540px);
+        height: calc(100vh - 580px);
         :deep .dx-freespace-row {
           display: none !important;
         }
@@ -139,5 +139,15 @@
   .disable-input-column {
     pointer-events: none;
     opacity: .4;
+  }
+  .DxDataGridMain-ac-110-sumary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    border-top: none;
+    padding: 7px;
+    color: rgba(51, 51, 51, .7);
   }
 }

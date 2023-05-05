@@ -2,8 +2,9 @@
 <template>
     <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input" @focusIn="onFocusIn"
         :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-        :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange" :rtlEnabled="rtlEnabled" :mode="mode"
-        :style="{ height: $config_styles.HeightInput }" :format="format" :name="nameInput" :readOnly="readOnly">
+        :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange"
+        :mode="mode" :style="{ height: $config_styles.HeightInput, textAlign: rtlEnabled ? 'right' : 'left', }"
+         :format="format" :name="nameInput" :readOnly="readOnly">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
             <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
@@ -64,10 +65,6 @@ export default defineComponent({
             type: String,
             default: "",
         },
-        select: {
-            type: Boolean,
-            default: true,
-        }
     },
     components: {
         DxCustomRule,
@@ -83,20 +80,20 @@ export default defineComponent({
             messageRequired.value = props.messRequired;
         }
         const value = ref(props.valueInput);
-        const maxNum = ref(props.max ?? 0);
-        const minNum = ref(props.min);
-        const updateValue = (e: any) => {
-            if (maxNum.value && e.value >= maxNum.value) {
-                e.component.option('value', maxNum.value);
-                emit("update:valueInput", maxNum.value);
-                return;
-            }
-            if (typeof minNum.value == "number" && e.value <= minNum.value && e.value != null) {
-                e.component.option('value', minNum.value);
-                emit("update:valueInput", minNum.value);
-                return;
-            }
-            emit("update:valueInput", e.value);
+      const maxNum = ref(props.max??2147483647);
+      const minNum = ref(props.min);
+      const updateValue = (e: any) => {
+          if (maxNum.value && e.value >= maxNum.value) {
+              e.component.option('value', maxNum.value);
+              emit("update:valueInput", maxNum.value);
+              return;
+          }
+          if (typeof minNum.value == "number" && e.value <= minNum.value && e.value != null) {
+              e.component.option('value', minNum.value);
+              emit("update:valueInput", minNum.value);
+              return;
+          }
+          emit("update:valueInput", e.value);
         };
 
         watch(
@@ -109,17 +106,16 @@ export default defineComponent({
             emit("changeInput", e);
         }
         const onFocusIn = (e: any) => {
-            if(props.select && !props.readOnly){
-                e.event.target.select()
-            }
-            emit("focusInput", e);
+          emit("focusInput",e);
+          const input = e.event.target;
+          input.select();
         }
         return {
             updateValue,
             value,
             messageRequired,
             onChange,
-            onFocusIn
+            onFocusIn,
         };
     },
 });

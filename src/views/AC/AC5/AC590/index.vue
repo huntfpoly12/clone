@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="main">
-            <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceAC510"
+            <DxDataGrid noDataText="내역이 없습니다" key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceAC510"
                 :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                 :column-auto-width="true">
                 <DxColumn :width="1565" cell-template="col-first" caption="서식" />

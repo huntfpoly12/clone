@@ -47,8 +47,8 @@ export const initFormStateTab1 = {
   key: "0"
 };
 export const initFormStateTab2 = {
-  nationalPensionDeduction: false,
-  healthInsuranceDeduction: false,
+  nationalPensionDeduction: true,
+  healthInsuranceDeduction: true,
   longTermCareInsuranceDeduction: false,
   employeementInsuranceDeduction: false,
   insuranceSupport: false,

@@ -6,7 +6,7 @@
             <a-row
                 :class="{ 'ele-opacity': (store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd) }">
                 <a-spin :spinning="loadingIncomeProcessWages" size="large">
-                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         key-expr="companyId" :show-borders="true" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
@@ -136,7 +136,7 @@
                         </template>
                         <DxMasterDetail class="table-detail" :enabled="true" template="row-detail" />
                         <template #row-detail="{}">
-                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
+                            <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
                                 :show-borders="true" :column-auto-width="true" :show-column-headers="false">
                                 <DxColumn cell-template="col-first" data-type="string" />
                                 <template #col-first="{ data }">
@@ -230,7 +230,7 @@
                 <a-col :span="12" class="custom-layout custom-layout-table"
                     :class="{ 'ele-opacity': (store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd) }">
                     <a-spin :spinning="loadingTaxPayInfo" size="large">
-                        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
+                        <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="store.state.common.pa110.dataTaxPayInfo" :show-borders="true"
                             :allow-column-reordering="move_column" :focused-row-enabled="true"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
