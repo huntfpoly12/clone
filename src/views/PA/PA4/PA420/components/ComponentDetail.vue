@@ -51,7 +51,7 @@
       <DxDataGrid ref="dataGrid" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                   :show-borders="true" key-expr="incomeId" class="mt-10"
                   :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged"
-                  noDataText="내역이 없습니다" style="height: calc(100vh - 270px)"
+                  noDataText="내역이 없습니다" style="height: calc(100vh - 300px)"
       >
         <DxScrolling mode="standard" show-scrollbar="always"/>
         <DxSelection mode="multiple" :fixed="true"/>
@@ -139,20 +139,15 @@
                           @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) : handleView(data.data.incomeId)"/>
           </div>
         </template>
-        <DxSummary v-if="dataSourceDetail.length > 0">
-          <DxTotalItem column="사원" :customize-text="customTextSummaryInfo"/>
-          <DxTotalItem class="custom-sumary" column="retirementBenefits" summary-type="sum"
-                       display-format="퇴직급여합계: {0}" value-format="#,###"/>
-          <DxTotalItem class="custom-sumary" column="nonTaxableRetirementBenefits" summary-type="sum"
-                       display-format="비과세퇴직급여합계: {0}" value-format="#,###"/>
-          <DxTotalItem class="custom-sumary" column="taxableRetirementBenefits" summary-type="sum"
-                       display-format="과세대상퇴직급여합계: {0}" value-format="#,###"/>
-          <DxTotalItem class="custom-sumary" column="totalDeduction" summary-type="sum"
-                       display-format="공제합계: {0}" value-format="#,###"/>
-          <DxTotalItem class="custom-sumary" column="차인지급액" summary-type="sum" display-format="차인지급액합계: {0}"
-                       value-format="#,###"/>
-        </DxSummary>
       </DxDataGrid>
+      <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; align-items: center; padding: 5px 20px;">
+        <div style="width: 400px; ">
+          <span class="dx-datagrid-summary-item " v-html="customTextSummaryInfo()"/>
+        </div>
+        <div style="width: calc(100% - 400px);">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content d-flex-center" v-html="calculatorSummary()" />
+        </div>
+      </div>
     </a-spin>
   </a-col>
   <!--============================================= Components ============================================-->
@@ -347,12 +342,27 @@ const editPaymentDate = () => {
     notification('warning', Message.getMessage('COMMON', '404').message)
   }
 }
-const customTextSummary = () => {
-  let total = 0
-  dataSourceDetail.value.map((val: any) => {
-    total += val.withholdingIncomeTax + val.withholdingLocalIncomeTax
+const calculatorSummary = () => {
+  let retirementBenefits = 0;
+  let nonTaxableRetirementBenefits = 0;
+  let taxableRetirementBenefits = 0;
+  let totalDeduction = 0;
+  let actualPayment = 0;
+  dataSourceDetail.value.forEach((val: any) => {
+    retirementBenefits += val.retirementBenefits
+    nonTaxableRetirementBenefits += val.nonTaxableRetirementBenefits
+    taxableRetirementBenefits += val.taxableRetirementBenefits
+    totalDeduction += val.totalDeduction
+    actualPayment += val.actualPayment
+    return val
   })
-  return '공제합계: ' + filters.formatCurrency(total)
+  return `
+    <div class="ml-20 ">퇴직급여합계: <span style="font-size: 16px">[${filters.formatCurrency(retirementBenefits)}]</span></div>
+    <div class="ml-20">비과세퇴직급여합계: <span style="font-size: 16px">[${filters.formatCurrency(nonTaxableRetirementBenefits)}]</span></div>
+    <div class="ml-20">과세대상퇴직급여합계: <span style="font-size: 16px">[${filters.formatCurrency(taxableRetirementBenefits)}]</span></div>
+    <div class="ml-20">공제합계: <span style="font-size: 16px">[${filters.formatCurrency(totalDeduction)}]</span></div>
+    <div class="ml-20">차인지급액합계: <span style="font-size: 16px">[${filters.formatCurrency(actualPayment)}]</span></div>
+  `
 }
 const customTextSummaryInfo = () => {
   let total1 = 0
@@ -363,7 +373,9 @@ const customTextSummaryInfo = () => {
     else
       total2++
   })
-  return '사원수: ' + dataSourceDetail.value.length + " (퇴직:" + total1 + ", 중간:" + total2 + ")"
+  return `
+    <div>사원수: <span style="font-size: 16px">[${dataSourceDetail.value.length}]</span> (퇴직: <span style="font-size: 16px">[${total1}]</span>, 중간 <span style="font-size: 16px">[${total2}]</span>)</div>
+  `
 }
 const actionEditRow = (data: any) => {
   modalUpdate.value = true

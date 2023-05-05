@@ -4,17 +4,16 @@
            :mask-closable="false">
     <a-row >
       <a-col span="9">
-        <dx-field-custom label="산출내역">
+        <dx-field label="산출내역">
           <a-radio-group
             :value="typeCal"
             class="d-flex-center"
-
             required
           >
             <a-radio :value="1">제목</a-radio>
             <a-radio :value="2">계산식</a-radio>
           </a-radio-group>
-        </dx-field-custom>
+        </dx-field>
       </a-col>
 
       <a-col span="15" class="custom-content">
@@ -41,12 +40,8 @@
 <script lang="ts" setup>
 import {computed, ref, watch} from 'vue'
 
-import DxFieldCustom from "@/components/common/DxFieldCustom.vue";
 import {ModalProps} from "ant-design-vue";
-import DefaultTextBox from "@/components/common/DefaultTextBox.vue";
-import NumberBoxMoney from "@/components/common/NumberBoxMoney.vue";
 import DxButton from 'devextreme-vue/button'
-import StandardForm from "@/components/common/StandardForm.vue";
 import {cloneDeep, isEqual} from "lodash";
 import {Modal} from "ant-design-vue/es";
 import {Message} from "@/configs/enum";

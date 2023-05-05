@@ -64,44 +64,44 @@
           value-format="#,###" />
       </DxSummary> -->
     </DxDataGrid>
-    <div style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 0;" class="fs-14">
-      <div style="margin-left: 15px;width: 30%;">
-        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+    <a-row style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 10px;" class="fs-14">
+      <a-col span="8">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 60%;">
           사업소득자[소득구분]수
           <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 18%;">
+      </a-col>
+      <a-col  span="3" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           지급액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'paymentAmount') }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 0%;">
+      </a-col>
+      <a-col span="4"  class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           필요경비합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'requiredExpenses') }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 0%;">
+      </a-col>
+      <a-col span="4" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           소득금액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'incomePayment') }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 0%;">
+      </a-col>
+      <a-col span="3" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           공제합계
           <span style="font-size: 16px;">[{{ customTextSummary() }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 0.5%;">
+      </a-col>
+      <a-col span="4" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           차인지급액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</span>
         </div>
-      </div>
-    </div>
+      </a-col>
+    </a-row>
   </a-spin>
 </template>
 

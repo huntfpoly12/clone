@@ -331,7 +331,6 @@ import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/d
 import {computed, defineComponent, ref, watch} from "vue";
 import { useStore } from "vuex";
 import {checkAndAddKeyToObject, initBackerCreateInput} from "./utils/index";
-import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import {isEqual, cloneDeep} from "lodash";
 import {message} from "ant-design-vue";
 import dayjs from "dayjs";
@@ -357,7 +356,6 @@ const backerTypeArrayAll: Array<{ name: string,  id: BeckerType | 0 | null}> = [
 
 export default defineComponent({
   components: {
-    TextNumberBox,
     DxDataGrid,
     DxColumn,
     EditOutlined,
