@@ -22,6 +22,9 @@
       </div>
     </a-spin>
   </a-config-provider>
+  <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
+    :title="Message.getMessage('COMMON', '401').message" content="" :okText="Message.getMessage('COMMON', '401').yes" :cancelText="Message.getMessage('COMMON', '401').no"
+    @checkConfirm="handleDelete" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from "vue";
@@ -90,6 +93,7 @@ export default defineComponent({
     let triggerBankbookDetailProofs = ref(false);
     const elementUpload = ref<any>()
     let indexImgRemove = ref<any>(null)
+    let isModalDelete = ref(false)
     // computed
     const payload = computed(() => props.payLoadProofs)
     // graphQL
@@ -243,15 +247,25 @@ export default defineComponent({
     }
     const remove = (e: any) => {
       if(e.status === 'error') return true
-      const index = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
-      indexImgRemove.value = index
-      if (!listFileStorageId.value[index].fileStorageId) return false
-      removeBankbookDetailProof({
-        ...props.payLoadProofs,
-        fileStorageId: listFileStorageId.value[index].fileStorageId
-      })
+      indexImgRemove.value = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
+      isModalDelete.value = true
       return false
     }
+
+    const handleDelete = (status: boolean) => {
+      if(status) {
+        if (!listFileStorageId.value[indexImgRemove.value].fileStorageId) {
+          isModalDelete.value = false
+          return
+        } 
+        removeBankbookDetailProof({
+          ...props.payLoadProofs,
+          fileStorageId: listFileStorageId.value[indexImgRemove.value].fileStorageId
+        })
+      }
+      isModalDelete.value = false
+    }
+
     return {
       locale,
       handlePreview,
@@ -266,7 +280,10 @@ export default defineComponent({
       elementUpload,
       payload,
       loadingGetBankbookDetailProofs,
-      loadingRemoveBankbookDetailProof
+      loadingRemoveBankbookDetailProof,
+      isModalDelete,
+      handleDelete,
+      Message
     }
   }
 })

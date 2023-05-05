@@ -337,7 +337,6 @@ import { Message } from '@/configs/enum';
 import { useStore } from "vuex";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import DefaultTextBox from "@/components/common/DefaultTextBox.vue";
 import { IncomeRetirement } from "@/views/PA/PA4/PA420/types";
 
 const props = defineProps<{ dataDetail: IncomeRetirement }>()

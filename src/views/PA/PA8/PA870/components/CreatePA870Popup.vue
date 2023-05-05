@@ -465,6 +465,7 @@
           <button-basic :width="150" id="btn-save" @onClick="onSubmit($event)" style="margin: auto" mode="contained"
             type="default" text="4대보험 요청 등록" />
         </div>
+        <DxValidationSummary id="summary"/>
       </standard-form>
     </a-spin>
 
@@ -487,9 +488,10 @@ import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import notification from '@/utils/notification';
 import { getCurrentInstance } from 'vue';
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
+import { DxValidationSummary } from 'devextreme-vue';
 
 export default defineComponent({
-  components: {InfoToolTip},
+  components: { InfoToolTip, DxValidationSummary },
   props: {
     isOpenModalCreate: {
       type: Boolean,

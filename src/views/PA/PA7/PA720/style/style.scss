@@ -263,7 +263,7 @@
   }
 
   :deep .col-tax {
-    height: calc(70vh);
+    height: calc(100vh - 300px);
     border: 1px solid #d7d7d7;
     margin-top: 10px;
     margin-right: 10px;
@@ -279,29 +279,13 @@
   }
 
   #tax-pay-720 {
-    height: calc(69vh);
-
-    :deep .dx-datagrid-total-footer {
-      height: 77px;
-      overflow: hidden;
-      position: absolute;
-      bottom: 0;
-    }
-
-    :deep .dx-datagrid-headers {
-      height: 27px;
-    }
-
-    :deep .dx-datagrid-rowsview {
-      max-height: calc(calc(69vh) - 77px - 0px); // chiều cao bảng - chiều cao header - chiều cao footer
-    }
-
+    height: calc(100vh - 368px)!important;
     .dx-freespace-row {
-      display: none !important; // cục lúc hiện lúc không
+      display: none !important;
     }
-    :deep .ant-tag{
-      min-width: 29px;
-      text-align: center;
-    }
+  }
+  .sum-item{
+    text-align: right;
+    flex: 1;
   }
 }

@@ -262,7 +262,6 @@ import {computed, defineComponent, ref} from "vue";
 import {useStore} from "vuex";
 import {initialState} from "./utils/index";
 import isEqual from "lodash/isEqual";
-import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
 const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: any}) => {
   if (value) {
@@ -272,7 +271,6 @@ const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: a
 };
 export default defineComponent({
   components: {
-    InfoToolTip,
     DxDataGrid,
     DxColumn,
     EditOutlined,

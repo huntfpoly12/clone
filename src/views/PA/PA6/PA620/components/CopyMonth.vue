@@ -12,7 +12,9 @@
       </div>
     </a-form-item>
     <a-form-item label="지급일" label-align="right">
-      <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" :isFormat="true" />
+      <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+        v-model:valueDate="paymentDayPA620" />
+      <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" :isFormat="true" /> -->
     </a-form-item>
 
     <div class="text-align-center mt-20">
@@ -72,6 +74,7 @@ import { useStore } from 'vuex'
 import dayjs from "dayjs";
 import { Message } from '@/configs/enum';
 import DxButton from "devextreme-vue/button";
+import filters from '@/helpers/filters';
 
 export default defineComponent({
   props: {
@@ -100,12 +103,17 @@ export default defineComponent({
     const modalCopy = ref(false)
     const paymentDayPA620 = computed({
       get() {
-        return store.getters['common/paymentDayPA620'];
+        let day = store.getters['common/paymentDayPA620'];
+        let date = `${globalYear.value}${filters.formatMonth(month1.value)}${day}`;
+        return date;
       },
       set(value) {
-        store.commit('common/paymentDayPA620', value);
+        let day = value.toString().slice(-2);
+        store.commit('common/paymentDayPA620', day);
       },
     });
+    const startDate = ref(dayjs(`${globalYear.value}-${month1.value}`).startOf('month').toDate());
+    const finishDate = ref(dayjs(`${globalYear.value}-${month1.value}`).endOf('month').toDate());
     // ----------set month source default because dependent on the set up before--------------
     let month2: any = ref();
     watch(() => [props.monthVal, processKeyPA620.value.paymentYear], ([val]) => {
@@ -118,6 +126,8 @@ export default defineComponent({
         yearMonth = `${globalYear.value}${val}`;
       }
       month2.value = yearMonth;
+      startDate.value = dayjs(`${globalYear.value}${val}`).startOf('month').toDate();
+      finishDate.value = dayjs(`${globalYear.value}${val}`).endOf('month').toDate();
     });
     //-------------------------action copy data--------------------------------
     const {
@@ -219,6 +229,7 @@ export default defineComponent({
       updateValue,
       actionCopy,
       processKeyPA620,
+      startDate, finishDate,
     }
   },
 })

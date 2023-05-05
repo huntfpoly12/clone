@@ -47,7 +47,7 @@
               :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport || !formStateTab2.nationalPensionDeduction"></radio-group>
           </a-col>
           <a-col span="7">
-            고용보험 적용율:
+            고용보험 적용율:{{ formStateTab2.employeementInsuranceSupportPercent }}
           </a-col>
           <a-col span="12">
             <radio-group :arrayValue="radioCheckPersenPension"
@@ -180,7 +180,7 @@
               </span>
               <div>
                 <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                  :min="0" @changeInput="onChangePayItem"> </number-box-money>
+                  :min="0" @changeInput="onCalcSum"> </number-box-money>
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -205,7 +205,7 @@
               </span>
               <div>
                 <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                  :disabled="true" :min="0"> </number-box-money>
+                  :min="0" @changeInput="onCalcSum" :disabled="disabledDeduction(item.itemCode)" />
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -298,7 +298,7 @@ export default defineComponent({
       }
       store.state.common.isCalculateEditPA120 = true;
     });
-    const onChangePayItem = (emitVal: any) => {
+    const onCalcSum = (emitVal: any) => {
       totalPayItem.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
@@ -543,11 +543,14 @@ export default defineComponent({
       (newValue) => {
         if (newValue) {
           formStateTab2.employeementInsuranceDeduction = false;
+        } else {
+          formStateTab2.employeementInsuranceDeduction = true;
+          formStateTab2.employeementInsuranceSupportPercent = 0;
         }
       },
-      { deep: true }
+      { immediate: true }
     );
-    //  // watch initFormTab2PA120 to check calculate button
+    //  // watch formStateTab2 to check calculate button
     const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
     watch(
       () => totalPayItemTax,
@@ -564,7 +567,7 @@ export default defineComponent({
     let countRestFirstRun = ref(0);
     let stopTrack = watchEffect(() => {
       const { deductionItems, payItems, ...rest } = formStateTab2;
-      if (countRestFirstRun.value < 1) {
+      if (countRestFirstRun.value < 2) {
         countRestFirstRun.value++;
         return;
       }
@@ -631,6 +634,26 @@ export default defineComponent({
       store.state.common.isAddFormErrorPA120 = false;
     });
 
+    //--------------------------------disabledDeduction---------------------------------------
+
+    const disabledDeduction = (e: any) => {
+      if (!formStateTab2.nationalPensionDeduction && e == 1001) {
+        dataConfigDeduction.value[0].value = 0;
+        return true;
+      }
+      if (!formStateTab2.healthInsuranceDeduction && (e == 1002 || e == 1003)) {
+        dataConfigDeduction.value[1].value = 0;
+        dataConfigDeduction.value[2].value = 0;
+
+        return true;
+      }
+      if (!formStateTab2.employeementInsuranceDeduction && e == 1004) {
+        dataConfigDeduction.value[3].value = 0;
+        return true;
+      }
+      return false;
+    }
+
     return {
       formStateTab2,
       loading1,
@@ -656,7 +679,7 @@ export default defineComponent({
       isAddFormErrorPA120,
       isBtnYellow,
       isDisableInsuranceSupport,
-      onChangePayItem
+      onCalcSum, disabledDeduction,
     };
   },
 });

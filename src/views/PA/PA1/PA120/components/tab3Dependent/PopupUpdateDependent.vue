@@ -42,7 +42,7 @@
                   :disabled="formState.relation == 0" />
                 <a-tooltip placement="top" class="custom-tooltip">
                   <template #title>
-                    만 70세 이상.
+                    부녀자 공제와 중복 공제 불가.
                   </template>
                   <div style="text-align: center;">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-5 ml-10" />

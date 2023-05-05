@@ -4,9 +4,9 @@
       <a-row>
         <a-col :span="24">
           <a-form-item label="기타소득자" label-align="right" class="red">
-            <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" :arrayValue="arrayEmploySelect"
-              v-model:valueEmploy="formPA720.input.employeeId" width="350px" :required="true" :newLoadKey="formPA720.input.employee.key"
-              @incomeTypeCode="changeIncomeTypeCode" />
+            <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput"
+              :arrayValue="arrayEmploySelect" v-model:valueEmploy="formPA720.input.employeeId" width="350px"
+              :required="true" :newLoadKey="formPA720.input.employee.key" @incomeTypeCode="changeIncomeTypeCode" />
           </a-form-item>
         </a-col>
         <a-col span="24">
@@ -24,85 +24,92 @@
             </div>
           </a-form-item>
           <a-form-item label="지급일" class="red mt-15">
-            <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" width="150px"
-              class="mr-5" v-model:valueInput="formPA720.input.paymentDay" :required="true" :isFormat="true" />
+            <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput"
+              width="150px" class="mr-5" v-model:valueInput="formPA720.input.paymentDay" :required="true"
+              :isFormat="true" />
           </a-form-item>
           <div class="input-text">
             <a-form-item label="지급액" class="red mt-10">
               <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
-                v-model:valueInput="formPA720.input.paymentAmount" :required="true"
-                :disabled="idDisableInput" format="0,###" />
+                v-model:valueInput="formPA720.input.paymentAmount" :required="true" :disabled="idDisableInput"
+                format="0,###" />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="input-text">
             <a-form-item label="필요경비" class="red">
               <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
-                v-model:valueInput="formPA720.input.requiredExpenses" :disabled="idDisableInput"
-                class="red" format="0,###" />
+                v-model:valueInput="formPA720.input.requiredExpenses" :disabled="idDisableInput" class="red"
+                format="0,###" />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <a-form-item label="세율" class="red">
             <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" v-model="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
-               :required="true" :disabled="idDisableInput" >
+              :required="true" :disabled="idDisableInput">
               <template #item="{ data } : any">
                 <a-tooltip placement="top" zIndex="9999">
-                  <template #title v-if="data?.tooltip">
+                  <template #title v-if=" data?.tooltip ">
                     <span>{{ data.tooltip }}</span>
                   </template>
                   <span>{{ data.label }}</span>
                 </a-tooltip>
               </template>
               <DxValidator>
-                <DxRequiredRule :message="messageRequired" />
+                <DxRequiredRule :message=" messageRequired " />
               </DxValidator>
             </DxSelectBox>
           </a-form-item>
         </a-col>
-        <a-col class="input-group-4" :span="12" style="padding-left: 5px">
+        <a-col class="input-group-4" :span=" 12 " style="padding-left: 5px">
           <div class="header-text-2 mb-10">
             공제합계
             <b>{{
               $filters.formatCurrency(formPA720.input.withholdingIncomeTax +
-                formPA720.input.withholdingLocalIncomeTax)
-            }}</b>원
+              formPA720.input.withholdingLocalIncomeTax)
+              }}</b>원
           </div>
           <div class="input-text">
             <a-form-item label="소득세(공제)">
-              <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
-                v-model:valueInput="formPA720.input.withholdingIncomeTax" format="0,###" :min="0" />
+              <number-box-money :disabled=" true " style="margin-left: 20px; width: 150px"
+                v-model:valueInput=" formPA720.input.withholdingIncomeTax " format="0,###" :min=" 0 " />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="input-text">
             <a-form-item label="지방소득세(공제)">
-              <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
-                v-model:valueInput="formPA720.input.withholdingLocalIncomeTax" format="0,###" :min="0" />
+              <number-box-money :disabled=" true " style="margin-left: 20px; width: 150px"
+                v-model:valueInput=" formPA720.input.withholdingLocalIncomeTax " format="0,###" :min=" 0 " />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="top-con">
-            <div class="header-text-2 mb-10">
+            <div class="header-text-2 mb-10 d-flex">
               차인지급액
               <b>{{
                 $filters.formatCurrency(
-                  formPA720.input.paymentAmount -
-                  formPA720.input.withholdingIncomeTax -
-                  formPA720.input.withholdingLocalIncomeTax
+                formPA720.input.paymentAmount -
+                formPA720.input.withholdingIncomeTax -
+                formPA720.input.withholdingLocalIncomeTax
                 )
-              }}</b>
+                }}</b>
               원
-              <img src="@/assets/images/iconInfo.png" style="width: 16px" />
-              <span style="font-size: 10px; color: #7f7f7f; margin-left: 5px">지급액 - 공제합계</span>
+              <a-tooltip placement="top" class="custom-tooltip">
+                <template #title>
+                  지급액 - 공제합계.
+                </template>
+                <div style="text-align: center;">
+                  <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+                </div>
+              </a-tooltip>
             </div>
           </div>
         </a-col>
       </a-row>
       <a-row justify="center" class="my-10 mt-30">
-        <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="onSubmitForm($event)"
-          id="pa720-save-js" :disabled="idDisableInput">
+        <button-basic text="저장" type="default" mode="contained" :width=" 90 " @onClick="onSubmitForm($event)"
+          id="pa720-save-js" :disabled=" idDisableInput ">
         </button-basic>
       </a-row>
     </standard-form>
@@ -207,13 +214,13 @@ export default defineComponent({
     const messageCreate = messages.getCommonMessage('101').message;
     const pa720FormRef = ref();
     //store
-    const isNewRowPA720 = computed(()=>store.state.common.isNewRowPA720);
-    const isClickEditDiffPA720 = computed(()=>store.state.common.isClickEditDiffPA720);
-    const idDisableInput = computed(()=>{
-      if(props.isColumnData && !isEdit.value && !isNewRowPA720.value) {
+    const isNewRowPA720 = computed(() => store.state.common.isNewRowPA720);
+    const isClickEditDiffPA720 = computed(() => store.state.common.isClickEditDiffPA720);
+    const idDisableInput = computed(() => {
+      if (props.isColumnData && !isEdit.value && !isNewRowPA720.value) {
         return true;
       }
-      if(!props.isColumnData || props.isExpiredStatus){
+      if (!props.isColumnData || props.isExpiredStatus) {
         return true
       }
       return false;
@@ -241,10 +248,10 @@ export default defineComponent({
     }));
     watch(resultIncomeExtra, (newVal: any) => {
       let data = newVal.getIncomeExtra;
-      if(isClickEditDiffPA720.value){
+      if (isClickEditDiffPA720.value) {
         store.state.common.isClickEditDiffPA720 = false;
-      }else {
-        store.commit('common/selectedRowKeysPA720',data.incomeId);
+      } else {
+        store.commit('common/selectedRowKeysPA720', data.incomeId);
       }
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
@@ -273,7 +280,7 @@ export default defineComponent({
 
     //----------------------------get employee extras --------------------------------
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
-    const savePA710 = computed(()=>store.state.common.savePA710);
+    const savePA710 = computed(() => store.state.common.savePA710);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -283,12 +290,12 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(resultEmployeeExtras, (newValue: any) => {
-      arrayEmploySelect.value = newValue.getEmployeeExtras.map((item:any)=> ({
+      arrayEmploySelect.value = newValue.getEmployeeExtras.map((item: any) => ({
         ...item, key: item.incomeTypeCode.concat(item.employeeId)
       }));
     });
-    
-    watch(savePA710, ()=> {
+
+    watch(savePA710, () => {
       refetchEmployeeExtras();
     })
 
