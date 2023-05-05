@@ -32,7 +32,7 @@
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
         <DxColumn caption="사업자코드" data-field="code" width="90" />
-        <DxColumn caption="상호 주소" cell-template="companyName" width="220" />
+        <DxColumn caption="상호 주소" cell-template="companyName"/>
         <template #companyName=" { data }: any ">
           {{ data.data.companyName }}
           {{ data.data.address }}
@@ -82,7 +82,7 @@
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"
           width="120" />
-        <DxColumn caption="제작현황" cell-template="productionStatus" width="400"/>
+        <DxColumn caption="제작현황" cell-template="productionStatus"/>
         <template #productionStatus=" { data }: any ">
           <!-- <div class="d-flex-center justify-content-center"> -->
             <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />

@@ -281,7 +281,7 @@
   }
 
   :deep .col-tax {
-    height: calc(69vh);
+    height: calc(100vh - 300px);
     border: 1px solid #d7d7d7;
     margin-top: 10px;
     margin-right: 10px;
@@ -296,7 +296,7 @@
     padding-right: 10px;
   }
   #tax-pay-620 {
-    height: calc(100vh - 345px) !important;
+    height: calc(100vh - 347px)!important;
 
     :deep .dx-freespace-row {
       display: none !important;
@@ -307,4 +307,8 @@
 .input-text {
   display: flex;
   align-items: center;
+}
+.sum-item{
+  text-align: right;
+  flex: 1;
 }
