@@ -198,18 +198,21 @@ export default defineComponent({
             isModalDelete.value = true
             dataDelete.value = data
         }
-        const handleDelete = () => {
-            dataSource.value = dataSource.value.filter((item: any) => item.id !== dataDelete.value.id)
-            if (!store.state.common.ac120.statusFormAdd && dataSource.value.length == 0) { // status update = true and 1 data left
-                isModalDelete.value
-                mutateDeleteStatementOfGoods({
-                    companyId: companyId,
-                    fiscalYear: acYear.value,
-                    facilityBusinessId: globalFacilityBizId.value,
-                    transactionDetailDate: store.state.common.ac120.transactionDetailDate,
-                    accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
-                })
+        const handleDelete = (status: Boolean) => {
+            if (status) {
+                dataSource.value = dataSource.value.filter((item: any) => item.id !== dataDelete.value.id)
+                if (!store.state.common.ac120.statusFormAdd && dataSource.value.length == 0) { // status update = true and 1 data left
+                    isModalDelete.value
+                    mutateDeleteStatementOfGoods({
+                        companyId: companyId,
+                        fiscalYear: acYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        transactionDetailDate: store.state.common.ac120.transactionDetailDate,
+                        accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
+                    })
+                }
             }
+            
         }
         const onSubmit = (e: any) => {
             const res = refFormItemAC120.value?.validate();

@@ -6,9 +6,10 @@
             <a-row
                 :class="{ 'ele-opacity': (store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd) }">
                 <a-spin :spinning="loadingIncomeProcessWages" size="large">
-                    <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                        key-expr="companyId" :show-borders="true" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
+                        :data-source="dataSource" key-expr="companyId" :show-borders="true"
+                        :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                        :column-auto-width="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxColumn :caption="paYear + '귀속월'" cell-template="imputed-year" />
                         <template #imputed-year="{}">
@@ -136,8 +137,9 @@
                         </template>
                         <DxMasterDetail class="table-detail" :enabled="true" template="row-detail" />
                         <template #row-detail="{}">
-                            <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
-                                :show-borders="true" :column-auto-width="true" :show-column-headers="false">
+                            <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
+                                :data-source="dataCustomRes" :show-borders="true" :column-auto-width="true"
+                                :show-column-headers="false">
                                 <DxColumn cell-template="col-first" data-type="string" />
                                 <template #col-first="{ data }">
                                     <b>{{ data.data.name }}</b><br>
@@ -240,8 +242,9 @@
                             v-model:selected-row-keys="store.state.common.pa110.selectedRowKeys"
                             v-model:focused-row-key="store.state.common.pa110.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
-                            <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
-                                mode="multiple" width="40" />
+                            <DxPaging :enabled="false" />
+                            <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple"
+                                width="40" />
                             <DxColumn width="200" caption="사원" cell-template="tag" />
                             <template #tag="{ data }">
                                 <div class="custom-action">
@@ -292,7 +295,7 @@
                             <template #paymentDay="{ data }">
                                 <div class="text-center">{{ $filters.formatMonth(data.data.paymentDay) }}</div>
                             </template>
-                            <DxSummary v-if="store.state.common.pa110.dataTaxPayInfo.length">
+                            <!-- <DxSummary v-if="store.state.common.pa110.dataTaxPayInfo.length">
                                 <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
                                 <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}"
                                     value-format="#,###" />
@@ -300,8 +303,31 @@
                                     value-format="#,###" />
                                 <DxTotalItem column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}"
                                     value-format="#,###" />
-                            </DxSummary>
+                            </DxSummary> -->
                         </DxDataGrid>
+                        <div v-if="store.state.common.pa110.dataTaxPayInfo.length"
+                            style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+                            class="fs-14">
+                            <div style="margin-left: 70px;">
+                                <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                                    <div>사원수<span>[{{ store.state.common.pa110.dataTaxPayInfo.length }}]</span></div>
+                                </div>
+                            </div>
+                            <div style="margin-left: 50px;">
+                                <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalPay()">
+                                </div>
+                            </div>
+                            <div style=" margin-left: 50px;">
+                                <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                                    v-html="customTotalDeduction()">
+                                </div>
+                            </div>
+                            <div style=" margin-left: 50px;">
+                                <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                                    v-html="customActualPayment()">
+                                </div>
+                            </div>
+                        </div>
                     </a-spin>
                 </a-col>
                 <a-col :span="12" class="custom-layout custom-form-data" style="padding-right: 0px;"
@@ -542,6 +568,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         watch(resultTaxPayInfo, (value) => {
+
             triggerDataTaxPayInfo.value = false;
             if (value) {
                 // debugger
@@ -583,6 +610,7 @@ export default defineComponent({
                     store.state.common.pa110.incomeId = null;
                     store.state.common.pa110.actionResetForm++;
                 }
+                gridRefPA110.value?.instance.deselectAll()
                 store.state.common.pa110.selectedRowKeys = [store.state.common.pa110.incomeId]
             }
             store.state.common.pa110.focusedRowKey = store.state.common.pa110.incomeId
@@ -649,17 +677,19 @@ export default defineComponent({
             // hiện tại bỏ đi
         }
         const selectionChanged = (data: any) => {
-            data.component.getSelectedRowsData().then((rowData: any) => {
-                dataRows.value = rowData
-                if (rowData.find((element: any) => element.incomeId == "PA110" ?? null)) {
-                    gridRefPA110.value?.instance.deselectAll()
-                    dataRows.value = []
-                }
-                // if ( rowData.length > 1 ) {
-                //     // store.state.common.pa110.incomeId = rowData[0].
-                //     store.state.common.pa110.focusedRowKey = store.state.common.pa110.incomeId
-                // }
-            })
+            dataRows.value = data.selectedRowsData
+
+            // data.component.getSelectedRowsData().then((rowData: any) => {
+            //     dataRows.value = rowData
+            if (data.selectedRowsData.find((element: any) => element.incomeId == "PA110" ?? null)) {
+                gridRefPA110.value?.instance.deselectAll()
+                dataRows.value = []
+            }
+            // if ( rowData.length > 1 ) {
+            //     // store.state.common.pa110.incomeId = rowData[0].
+            //     store.state.common.pa110.focusedRowKey = store.state.common.pa110.incomeId
+            // }
+            // })
         }
         const dataMonthNew: any = ref()
         // const checkClickMonth = ref<Boolean>(false)
@@ -833,25 +863,6 @@ export default defineComponent({
             }
         }
 
-        // watch(paYear, (newVal, oldVal) => {
-        //     if ((store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd)) {
-        //         if (!store.state.common.pa110.checkClickYear) {
-        //             modalChangeRow.value = true
-        //             store.state.common.pa110.checkClickYear = true
-        //             store.state.settings.paYear = oldVal;
-        //             store.state.common.pa110.dataYearNew = newVal;
-        //             return
-        //         }
-        //         return
-        //     } else {
-        //         isRunOnce.value = true;
-        //         store.state.common.pa110.processKeyPA110.imputedYear = newVal
-        //         store.state.common.pa110.processKeyPA110.paymentYear = newVal
-        //         originData.value.imputedYear = newVal
-        //         originDataTaxPayInfo.value.processKey.imputedYear = newVal
-        //         trigger.value = true; //reset data table 1
-        //     }
-        // })
         const classObject = (month: number) => {
             let string = 'cell-center'
             store.state.common.pa110.processKeyPA110.imputedMonth == month ? string += ' column-focus' : ''
@@ -865,6 +876,28 @@ export default defineComponent({
             hoverColClick.value == month ? string += ' column-hover' : ''
             checkStartYearMonth(month) ? string += ' disabledBlock' : ''
             return string
+        }
+
+        const customTotalPay = () => {
+            let sum = 0
+            store.state.common.pa110.dataTaxPayInfo?.map((row: any) => {
+                sum += row.totalPay
+            })
+            return `급여합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+        }
+        const customTotalDeduction = () => {
+            let sum = 0
+            store.state.common.pa110.dataTaxPayInfo?.map((row: any) => {
+                sum += row.totalDeduction
+            })
+            return `공제합계 <span>[${filters.formatCurrency(sum)}]</span> `;
+        }
+        const customActualPayment = () => {
+            let sum = 0
+            store.state.common.pa110.dataTaxPayInfo?.map((row: any) => {
+                sum += row.actualPayment
+            })
+            return `차인지급액합계 <span>[${filters.formatCurrency(sum)}]</span>`;
         }
         return {
             paYear,
@@ -891,7 +924,7 @@ export default defineComponent({
             dataAddIncomeProcess,
             status,
             modalChangeRow, statusComfirmChange,
-            // modalChangeRowPrice, statusComfirmChangePrice,
+            customTotalPay, customTotalDeduction, customActualPayment,
             Message, gridRefPA110,
             statusDisabledBlock, onFocusedRowChanging,
             hoverColClick,

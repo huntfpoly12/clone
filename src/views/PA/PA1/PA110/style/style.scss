@@ -85,7 +85,7 @@
     width: 40px !important;
 }
 #pa-110-gridContainer {
-    height: calc(100vh - 290px);
+    height: calc(100vh - 321px);
     :deep .dx-freespace-row {
         display: none !important;
     }
@@ -108,5 +108,9 @@
 }
 :deep .dx-datagrid-table .dx-row .dx-command-expand.dx-datagrid-group-space {
     padding-top: 4px;
+}
+:deep .dx-datagrid-text-content span {
+    font-size: 15px;
+    font-weight: bold;
 }
 
