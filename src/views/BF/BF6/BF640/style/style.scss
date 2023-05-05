@@ -129,13 +129,6 @@
     border-radius: 5px;
   }
 
-  .production-check {
-    display: grid;
-    grid-template-columns: 45% 45%;
-    margin-left: 97px;
-    border-radius: 5px;
-  }
-
   .search-company {
     margin-right: 20px;
     display: grid;
@@ -154,8 +147,9 @@
 
   .production-check {
     display: grid;
-    grid-template-columns: 45% 45%;
     margin-left: 116px;
+    grid-template-columns: 50% 50%;
+    grid-column-gap: 5px;
   }
 
   :deep .check-box-group {
