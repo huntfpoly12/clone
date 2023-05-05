@@ -38,7 +38,7 @@
                 :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다" style="height: calc(100vh - 250px)">
                 <DxColumn caption="일련번호" data-field="electronicFilingId" data-type="string" />
                 <DxColumn caption="참고사항" data-field="referenceInformation" data-type="string" />
-                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
+                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
                 <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus"
                     data-type="string" />
@@ -62,7 +62,7 @@
                     </div>
                 </template>
                 <DxSummary>
-                  <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
+                  <DxTotalItem column="일련번호" summary-type="count" display-format="전체: [{0}]" />
                 </DxSummary>
             </DxDataGrid>
         </div>

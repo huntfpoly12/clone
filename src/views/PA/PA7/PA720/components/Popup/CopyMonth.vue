@@ -1,26 +1,28 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
     :width="500">
-      <a-form-item label="귀속/지급연월" label-align="right" class="mt-20">
+    <a-form-item label="귀속/지급연월" label-align="right" class="mt-20">
+      <div class="d-flex-center">
+        <DxButton :text="'귀 ' + globalYear + '-' + formatMonth(month1)"
+          :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
+          class="btn-date mr-2" />
         <div class="d-flex-center">
-          <DxButton :text="'귀 ' + globalYear + '-' + formatMonth(month1)"
-            :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
-            class="btn-date mr-2" />
-          <div class="d-flex-center">
-            <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
-          </div>
+          <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
         </div>
-      </a-form-item>
-      <a-form-item label="지급일" :colon="false" label-align="right">
-        <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA720" :isFormat="true" />
-      </a-form-item>
-
-      <div class="text-align-center mt-20">
-        <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
-          @onClick="onSubmit" />
-        <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
-          @onClick="openModalCopy" />
       </div>
+    </a-form-item>
+    <a-form-item label="지급일" :colon="false" label-align="right">
+      <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+        v-model:valueDate="paymentDayPA720" />
+      <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA720" :isFormat="true" /> -->
+    </a-form-item>
+
+    <div class="text-align-center mt-20">
+      <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
+        @onClick="onSubmit" />
+      <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
+        @onClick="openModalCopy" />
+    </div>
   </a-modal>
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
@@ -71,6 +73,8 @@ import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import { Message } from '@/configs/enum';
 import DxButton from "devextreme-vue/button";
+import filters from '@/helpers/filters';
+import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -98,13 +102,18 @@ export default defineComponent({
     const modalCopy = ref(false);
     const paymentDayPA720 = computed({
       get() {
-        return store.getters['common/paymentDayPA720'];
+        let day = store.getters['common/paymentDayPA720'];
+        let date = `${globalYear.value}${filters.formatMonth(month1.value)}${day}`;
+        return date;
       },
       set(value) {
-        store.commit('common/paymentDayPA720', value);
+        let day = value.toString().slice(-2);
+        store.commit('common/paymentDayPA720', day);
       },
     });
     const trigger = ref(false);
+    const startDate = ref(dayjs(`${globalYear.value}-${month1.value}`).startOf('month').toDate());
+    const finishDate = ref(dayjs(`${globalYear.value}-${month1.value}`).endOf('month').toDate());
 
     // ----------set month source default because dependent on the set up before--------------
 
@@ -123,6 +132,8 @@ export default defineComponent({
         month2.value = yearMonth;
         trigger.value = true;
         findIncomeRefetch();
+        startDate.value = dayjs(`${globalYear.value}${val}`).startOf('month').toDate();
+        finishDate.value = dayjs(`${globalYear.value}${val}`).endOf('month').toDate();
       }, { deep: true }
     );
 
@@ -246,6 +257,7 @@ export default defineComponent({
       month1,
       globalYear,
       paymentDayPA720,
+      startDate, finishDate,
     };
   },
 });

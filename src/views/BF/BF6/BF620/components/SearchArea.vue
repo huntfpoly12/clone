@@ -31,9 +31,17 @@
       <a-col>
         <div class="search-production">
           <a-form-item label="제작요청상태">
-            <switch-basic v-model:valueSwitch="setBefore" :textCheck="'제작요청후'" :textUnCheck="'제작요청전'" />
-            <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png"
-                style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
+            <div class="input-text">
+              <switch-basic v-model:valueSwitch="setBefore" :textCheck="'제작요청후'" :textUnCheck="'제작요청전'" />
+              <a-tooltip placement="top" class="custom-tooltip">
+                <template #title>
+                  제작전은 제작요청되지 않은 상태입니다.
+                </template>
+                <div style="text-align: center;">
+                  <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+                </div>
+              </a-tooltip>
+            </div>
           </a-form-item>
           <div class="mt-5 production-check">
             <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox"

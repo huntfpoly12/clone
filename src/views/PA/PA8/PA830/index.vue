@@ -99,6 +99,8 @@ import {companyId, convertBirthDayKorea} from "@/helpers/commonFunction";
 import {computed, reactive, ref} from "vue";
 import {useStore} from "vuex";
 import deletePopup from "@/utils/deletePopup";
+import queries from '@/graphql/queries/PA/PA8/PA830';
+import { useQuery } from '@vue/apollo-composable';
 
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
@@ -121,6 +123,23 @@ const actionParam = reactive({
   imputedYear: paYear.value,
   workId: null as (number | null),
 })
+
+// Graphql
+const paramsQueries = reactive({
+  companyId: companyId,
+  imputedYear: paYear.value,
+});
+
+const {
+  refetch, onResult, loading
+} = useQuery(queries.getMajorInsuranceCompanyEmployeeSalaryChanges, paramsQueries, () => ({
+  fetchPolicy: 'no-cache',
+}));
+
+onResult(({data}) => {
+  console.log('res', data)
+})
+
 const onOpenLogs = (e: any) => {
   modalHistory.value = true;
   actionParam.workId = e;
