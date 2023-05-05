@@ -5,12 +5,9 @@
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
                         placeholder="숫자만 입력 가능" :disabled="true" />
-                    <div class="pl-10">
-                        <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                        <span class="style-note">
+                        <info-tool-tip>
                             최초 저장된 이후 수정 불가
-                        </span>
-                    </div>
+                        </info-tool-tip>
                 </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
@@ -33,10 +30,9 @@
             <a-form-item label="퇴사년월일" label-align="right" class="leavedAt">
                 <div class="input-text">
                     <date-time-box width="150px" className="leavedAt" v-model:valueDate="dataEdited.leavedAt" />
-                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span class="style-note">
+                    <info-tool-tip>
                         마지막 근무한 날
-                    </span>
+                    </info-tool-tip>
                 </div>
             </a-form-item>
             <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
@@ -61,12 +57,9 @@
             <a-form-item label="주소정근무시간" class="label-red" label-align="right">
               <div class="input-text">
                 <number-box :required="true" :spinButtons="true" v-model:valueInput="dataEdited.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
-                <div class="pl-10">
-                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span class="style-note">
+                <info-tool-tip>
                       급여명세서 및 4대보험 취득신고시 이용됩니다.
-                    </span>
-                </div>
+                </info-tool-tip>
               </div>
             </a-form-item>
             <a-form-item label="주소" class="clr" label-align="left">
@@ -92,10 +85,9 @@
                 <div class="input-text">
                     <mail-text-box width="200px" v-model:valueInput="dataEdited.email" placeholder="abc@example.com">
                     </mail-text-box>
-                    <img src="@/assets/images/iconInfo.png" style="width: 16px;">
-                    <span class="style-note">
+                    <info-tool-tip>
                         원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
-                    </span>
+                    </info-tool-tip>
                 </div>
             </a-form-item>
             <a-form-item label="부서" label-align="right">

@@ -51,7 +51,6 @@
                   v-model:focused-row-key="focusedRowKey" 
                   @exporting="onExporting" 
                   id="gridContainer" 
-                  
                   ref="pa520Grid"
                   @focused-row-changing="onFocusedRowChanging"
                   @focused-row-changed="onFocusedRowChanged"
