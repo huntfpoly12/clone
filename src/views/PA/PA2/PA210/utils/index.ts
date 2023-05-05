@@ -34,7 +34,7 @@ export const getAfterDeadline = (index: number, afterDeadline :  boolean) => {
         return { "style": { color: 'white', backgroundColor: '1px solid black',width: '75px' }, "tag_name": "기한후" };
     } 
     if (index > 0 && afterDeadline == false) {
-        return { "style": { color: 'white', backgroundColor: 'orange',width: '75px' }, "tag_name": `수정(${index})`};
+        return { "style": { color: 'white', backgroundColor: 'orange',width: '75px' }, "tag_name": `수정 ${index}`};
     }
 }
 export const getReportType = (data: any) => {
