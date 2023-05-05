@@ -49,7 +49,7 @@
         </a-row>
         <div class="header-text-3">급여 (기본값)
             <span>
-              <info-tool-tip placement="left">급여소득자료 입력시 본 급여 기본값을 불러옵니다</info-tool-tip>
+              <info-tool-tip>급여소득자료 입력시 본 급여 기본값을 불러옵니다</info-tool-tip>
                 <!-- <img src="@/assets/images/iconInfoWrite.png" style="width: 16px;">
                 <p style="font-size: 10px; font-weight: 400;">급여소득자료 입력시 본 급여 기본값을 불러옵니다</p> -->
             </span>
@@ -114,19 +114,12 @@
                     <div class="deduction-main">
                         <div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
                             <span>
-                                <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                    :name="item.name" :type="1" subName="과세" width="100px" :showTooltip="false"/>
-                                <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                    :name="item.name" :type="2" subName="상여(과세)" width="100px" :showTooltip="false"/>
-                                <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                    :name="item.name" :type="3"
-                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" :showTooltip="false"/>
-                                <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                                <deduction-items
                                     :name="item.name" :type="4" subName="공제" width="100px" :showTooltip="false"/>
                             </span>
                             <div>
                                 <number-box-money :min="0" width="150px" :spinButtons="false"
-                                    v-model:valueInput="item.price" :disabled="true" />
+                                    v-model:valueInput="item.price" :disabled="isDisableDeduction(item.itemCode)" />
                                 <span class="pl-5">원</span>
                             </div>
                         </div>
@@ -202,7 +195,7 @@ export default defineComponent({
         //     // store.dispatch('common/setCheckEditTab2PA520',false)
         //   }
         // })    
-          
+        
         const {
             loading: loading,
             onResult: resWithholdingConfigPayItems,
@@ -220,9 +213,6 @@ export default defineComponent({
                     })
                 }   
             })
-
-            console.log(arrDeduction.value);
-            
         })
 
         const {
@@ -321,7 +311,15 @@ export default defineComponent({
             res.value.map((val: any) => {
                 total += val.price
             })
-            totalDeduction.value = total
+          totalDeduction.value = total
+          let arrCallApi: any = []
+          arrDeduction.value?.map((val: any) => {
+              arrCallApi.push({
+                      itemCode: val.deductionItemCode,
+                      amount: val.price
+              })
+          })
+          originDataUpdate.value.input.deductionItems = arrCallApi
         }, { deep: true })
 
         watch(() => store.state.common.actionUpdateTab2PA520, () => {
@@ -420,8 +418,7 @@ export default defineComponent({
               originDataUpdate.value.input.deductionItems = arrCallApi
               isBtnYellow.value = false
               validateCalculate.value = false
-              store.state.common.isTab2ValidateEditPA520 = false
-                            
+              store.state.common.isTab2ValidateEditPA520 = false          
           }
         }
         const funcCheckPrice = (id: any) => {
@@ -464,9 +461,25 @@ export default defineComponent({
                 originDataUpdate.value.input.dailyWage = dailyWage;
             }
         }
+
+        const isDisableDeduction = (itemCode : number) => {
+          if (itemCode == 1011 || itemCode == 1012) {
+            return false
+          }
+
+          if (itemCode == 1001 || itemCode == 1002 || itemCode == 1003) {
+            return true
+          }
+
+          if (originDataUpdate.value.input.employeementInsuranceDeduction) {
+            return false
+          } else {
+            return true
+          }
+        }
         return {dataDefaultGet,
           originDataDetail,store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily, messageDaylySalary,
-            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput,isDisableDeduction
         };
     },
 });
