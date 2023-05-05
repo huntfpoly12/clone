@@ -301,15 +301,15 @@
                         <div class="form-group">
                             <label>4. 기타</label>
                             <div class="form-item">
-                                <label>영업관리담당 :</label>
+                                <label class="red">영업관리담당 :</label>
                                 <!-- <list-sales-dropdown :required="true"
                                         v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" /> -->
                                 <select-box-common :arrSelect="optionSale" :required="true"
                                     v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" />
                             </div>
                             <div class="form-item">
-                                <label class="red">전달사항 :</label>
-                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment" :required="true"
+                                <label>전달사항 :</label>
+                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment"
                                     placeholder="전달사항입력" />
                             </div>
                         </div>
@@ -519,9 +519,9 @@ export default {
         };
         const nextStep = (e: any) => {
             var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
+            // if (!res.isValid) {
+            //     res.brokenRules[0].validator.focus();
+            // } else {
                 if (step.value == 0) {
                     if (
                         contractCreacted.terms == true &&
@@ -535,24 +535,24 @@ export default {
                         notification("error", "계속하려면 모든 조건을 수락하십시오!");
                     }
                 } else if (step.value == 1) {
-                    if (
-                        contractCreacted.nameCompany != "" &&
-                        contractCreacted.ownerBizNumber != "" &&
-                        contractCreacted.zipcode != "" &&
-                        contractCreacted.namePresident != "" &&
-                        contractCreacted.birthday != "" &&
-                        contractCreacted.mobilePhone != "" &&
-                        contractCreacted.email != "" &&
-                        contractCreacted.phone != "" &&
-                        contractCreacted.addressExtend != "" &&
-                        contractCreacted.ownerBizNumber.length == 10 &&
-                        statusMailValidate.value == false
-                    ) {
+                    // if (
+                    //     contractCreacted.nameCompany != "" &&
+                    //     contractCreacted.ownerBizNumber != "" &&
+                    //     contractCreacted.zipcode != "" &&
+                    //     contractCreacted.namePresident != "" &&
+                    //     contractCreacted.birthday != "" &&
+                    //     contractCreacted.mobilePhone != "" &&
+                    //     contractCreacted.email != "" &&
+                    //     contractCreacted.phone != "" &&
+                    //     contractCreacted.addressExtend != "" &&
+                    //     contractCreacted.ownerBizNumber.length == 10 &&
+                    //     statusMailValidate.value == false
+                    // ) {
                         step.value++;
                         window.scrollTo(0, 0);
-                    } else {
-                        notification("error", "계속하려면 모든 조건을 수락하십시오!");
-                    }
+                    // } else {
+                    //     notification("error", "계속하려면 모든 조건을 수락하십시오!");
+                    // }
                 } else if (step.value == 2) {
                     // if user not choose service
                     if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
@@ -581,7 +581,7 @@ export default {
                             window.scrollTo(0, 0);
                         }
                     }
-                }
+                // }
             }
         };
         const handleOk = () => {

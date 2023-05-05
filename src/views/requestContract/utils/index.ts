@@ -41,7 +41,7 @@ export const dataDefaultsUtil = {
     accountNumber: "",
     ownerBizNumber: "",
     withdrawDay: "5일",
-    salesRepresentativeId: parseInt(''),
+    salesRepresentativeId: parseInt('1'),
     comment: "",
     ownerName: "",
     registrationCardFileStorageId: 0
