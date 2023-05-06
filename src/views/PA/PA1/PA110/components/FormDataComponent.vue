@@ -63,35 +63,35 @@
                             <img src="@/assets/images/iconInfo.png" class="img-info"/>
                         </a-tooltip>
                     </div>
-                    <a-form-item label="근무일수" label-align="right" class="red">
+                    <a-form-item label="근무일수" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" :max="31" width="100px"
                                 v-model:valueInput="dataIW.workingDays" :required="true"/>
                             <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="총근로시간" label-align="right" class="red">
+                    <a-form-item label="총근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.totalWorkingHours" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="연장근로시간" label-align="right" class="red">
+                    <a-form-item label="연장근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.overtimeWorkingHours" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="야간근로시간" label-align="right" class="red">
+                    <a-form-item label="야간근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingHoursAtNight" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="휴일근로시간" label-align="right" class="red">
+                    <a-form-item label="휴일근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingHoursOnHolidays" :required="true"/>
@@ -173,7 +173,7 @@
                         <a-tooltip placement="top">
                             <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
                             <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
+                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || true" style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">

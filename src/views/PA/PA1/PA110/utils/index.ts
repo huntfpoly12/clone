@@ -2,7 +2,7 @@ export const sampleDataIncomeWage = {
   actualPayment: 0,
   monthlyWage: 0,
   dailyWage: 0,
-  workingDays: null,
+  workingDays: 0,
   paymentDay: 1,
   deductionItems: [],
   employee: {
@@ -17,10 +17,10 @@ export const sampleDataIncomeWage = {
   totalPayItemTaxFree: 0,
   totalDeduction: 0,
   subPayment: 0,
-  overtimeWorkingHours: null,
-  totalWorkingHours: null,
-  workingHoursAtNight: null,
-  workingHoursOnHolidays: null,
+  overtimeWorkingHours: 0,
+  totalWorkingHours: 0,
+  workingHoursAtNight: 0,
+  workingHoursOnHolidays: 0,
   payItems: [],
   incomeId: "PA110",
 };
