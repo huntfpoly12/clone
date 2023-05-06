@@ -1,11 +1,11 @@
 <template>
-  <a-modal class="form-modal" width="50%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
+  <a-modal class="form-modal" width="51%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
     title="휴복직신고 신규 등록" centered @cancel="onCanCelModal" :footer="null" :mask-closable="false">
     <standard-form ref="formRef">
       <!-- {{ formData.employeeId }} -->
       <a-spin :spinning="getEmployeeWageLoading || getEmployeeWageDailyLoading">
         <div class="mb-10">
-          <a-row>
+          <a-row class="px-10">
             <a-col :span="col.left">
               <DxField label="직원유행">
                 <radio-group :arrayValue="INITIAL_FORM.employeeFashionArr" v-model:valueRadioCheck="formData.employeeType"
@@ -20,7 +20,7 @@
             </a-col>
           </a-row>
         </div>
-        <a-row :gutter="[0, 0]" class="item-group mb-10">
+        <a-row :gutter="[0, 0]" class="item-group mb-10 row-bd">
           <a-col span="8">
             <DxField label="업체명">
               <default-text-box v-model:valueInput="infoCompany.name" placeholder="업체명" disabled />
@@ -37,33 +37,29 @@
             </DxField>
           </a-col>
         </a-row>
-        <a-row :gutter="[0, 0]" class="item-group mb-10">
-          <!-- row 1 -->
-          <a-col :span="col.left">
-            <DxField label="성명">
-              <default-text-box v-model:valueInput="showData.name" placeholder="성명" width="200px" disabled />
-            </DxField>
-          </a-col>
-          <a-col :span="col.right">
-            <DxField label="주민등록번호" class="field-custom">
-              <id-number-text-box :disabled="true" width="200px" v-model:valueInput="showData.residentId" />
-            </DxField>
-          </a-col>
 
+        <a-row :gutter="[0, 0]" class="item-group mb-10 row-bd">
+          <!-- row 1 -->
+          <a-col :span="8">
+            <DxField label="성명">
+              <default-text-box v-model:valueInput="showData.name" placeholder="성명" disabled />
+            </DxField>
+          </a-col>
+          <a-col :span="8">
+            <DxField label="주민등록번호">
+              <id-number-text-box :disabled="true" v-model:valueInput="showData.residentId" />
+            </DxField>
+          </a-col>
           <!-- row 2 -->
-          <a-col :span="col.left">
+          <a-col :span="8">
             <DxField label="휴직/복직">
               <radio-group :arrayValue="EmploymentStatus" v-model:valueRadioCheck="showData.employmentStatus"
                 layoutCustom="horizontal" class="mt-1"></radio-group>
             </DxField>
           </a-col>
-          <a-col :span="col.right">
-            <DxField label="납부재개 예정일" class="field-custom">
-              <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.returnDate"
-                width="200px" :disabled="isStatusLeaveOfAbsence" :teleport="true" />
-            </DxField>
-          </a-col>
+        </a-row>
 
+        <a-row :gutter="[0, 0]" class="item-group mb-10 row-bd">
           <!-- row 3 -->
           <a-col :span="col.left">
             <DxField label="휴직종류">
@@ -74,11 +70,10 @@
             </DxField>
           </a-col>
           <a-col :span="col.right">
-            <DxField label="복귀후 급여(납부재개)" class="field-custom">
-              <number-box-money width="200px" v-model:valueInput="formData.salaryAfterReturn"
-                :disabled="isStatusLeaveOfAbsence" placeholder="원" format="#,### 원" />
+            <DxField label="납부재개 예정일" class="field-custom">
+              <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.returnDate"
+                width="200px" :disabled="isStatusLeaveOfAbsence" :teleport="true" />
             </DxField>
-
           </a-col>
 
           <!-- row 4 -->
@@ -91,9 +86,9 @@
             </DxField>
           </a-col>
           <a-col :span="col.right">
-            <DxField label="재개월 납부 희망 여부" class="field-custom">
-              <radio-group :arrayValue="PaymentDesire" v-model:valueRadioCheck="formData.pensionPaymentAtReturnMonth"
-                layoutCustom="horizontal" :disabled="isStatusLeaveOfAbsence"></radio-group>
+            <DxField label="복귀후 급여(납부재개)" class="field-custom">
+              <number-box-money width="200px" v-model:valueInput="formData.salaryAfterReturn"
+                :disabled="isStatusLeaveOfAbsence" placeholder="원" format="#,### 원" />
             </DxField>
           </a-col>
 
@@ -104,8 +99,12 @@
                 width="200px" :disabled="!isStatusLeaveOfAbsence" :teleport="true" />
             </DxField>
           </a-col>
+
           <a-col :span="col.right">
-            <div class="px-10">(건강) 유예기간중 지급받은 보수</div>
+            <DxField label="재개월 납부 희망 여부" class="field-custom">
+              <radio-group :arrayValue="PaymentDesire" v-model:valueRadioCheck="formData.pensionPaymentAtReturnMonth"
+                layoutCustom="horizontal" :disabled="isStatusLeaveOfAbsence"></radio-group>
+            </DxField>
           </a-col>
 
           <!-- row 6 -->
@@ -115,14 +114,8 @@
                 :style="{ width: '200px' }" :disabled="!isStatusLeaveOfAbsence" :teleport="true" />
             </DxField>
           </a-col>
-          <a-col :span="11" class="pl-50">
-            <DxField label="연도" class="field-custom">
-              <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
-                :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
-                :enable-time-picker="false"
-              >
-              </Datepicker>
-            </DxField>
+          <a-col :span="col.right">
+            <div class="px-10">(건강) 유예기간중 지급받은 보수</div>
           </a-col>
 
           <!-- row 7 -->
@@ -132,11 +125,12 @@
                 :disabled="!isStatusLeaveOfAbsence" v-model:valueInput="formData.pensionPaymentExceptionReasonCode" />
             </DxField>
           </a-col>
-          <a-col :span="col.right" class="pl-50">
-            <DxField label="보수총액" class="field-custom">
-              <number-box-money width="200px"
-                v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].totalSalary" placeholder="원"
-                :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
+          <a-col :span="11" class="pl-50">
+            <DxField label="연도" class="field-custom">
+              <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
+                :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
+                :enable-time-picker="false">
+              </Datepicker>
             </DxField>
           </a-col>
 
@@ -149,10 +143,10 @@
             </DxField>
           </a-col>
           <a-col :span="col.right" class="pl-50">
-            <DxField label="분할납부횟수" class="field-custom">
-              <!-- {{ formData.heathInstallmentPaymentCount }} -->
-              <number-box-money v-model:valueInput="formData.heathInstallmentPaymentCount" placeholder="건"
-                format="#,### 건" width="200px" :disabled="isStatusLeaveOfAbsence" />
+            <DxField label="보수총액" class="field-custom">
+              <number-box-money width="200px"
+                v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].totalSalary" placeholder="원"
+                :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
             </DxField>
           </a-col>
 
@@ -163,7 +157,13 @@
                 :disabled="!isStatusLeaveOfAbsence" />
             </DxField>
           </a-col>
-          <a-col :span="col.right" />
+          <a-col :span="col.right" class="pl-50">
+            <DxField label="분할납부횟수" class="field-custom">
+              <!-- {{ formData.heathInstallmentPaymentCount }} -->
+              <number-box-money v-model:valueInput="formData.heathInstallmentPaymentCount" placeholder="건"
+                format="#,### 건" width="200px" :disabled="isStatusLeaveOfAbsence" />
+            </DxField>
+          </a-col>
 
           <!-- row 10 -->
           <a-col :span="col.left">
@@ -508,5 +508,12 @@ export default defineComponent({
 
 :deep .dx-field {
   padding-right: 0;
+}
+
+.row-bd {
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #d4d2d2;
+  border-radius: 10px;
 }
 </style>
