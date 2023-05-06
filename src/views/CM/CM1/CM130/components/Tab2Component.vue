@@ -1,11 +1,10 @@
 <template>
-    {{ focusedRowKeyTab2 }}
     <a-spin tip="Loading..." :spinning="loadingWithholdingConfig">
-        <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-            key-expr="itemCode" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKeyTab2"
-            :focused-row-enabled="true" ref="gridRefCM110Tab2" @focused-row-changing="onFocusedRowChangingTab2"
-            :auto-navigate-to-focused-row="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-            :onRowPrepared="changeColorRow">
+        <DxDataGrid id="dataGridTab2" noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
+            :data-source="dataSource" :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
+            v-model:focused-row-key="focusedRowKeyTab2" :focused-row-enabled="true" ref="gridRefCM110Tab2"
+            @focused-row-changing="onFocusedRowChangingTab2" :auto-navigate-to-focused-row="true"
+            :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowPrepared="changeColorRow">
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
             <DxExport :enabled="true" />
@@ -13,12 +12,21 @@
                 <DxItem name="searchPanel" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                <DxItem name="groupPanel" />
-                <DxItem name="addRowButton" show-text="always" />
-                <DxItem name="columnChooserButton" />
+                <DxItem location="after" template="button-history" css-class="cell-button-add" />
+                <!-- <DxItem name="groupPanel" /> -->
+                <!-- <DxItem name="addRowButton" show-text="always" /> -->
+                <!-- <DxItem name="columnChooserButton" /> -->
             </DxToolbar>
             <template #button-template>
                 <DxButton icon="plus" @click="openAddNewModal" />
+            </template>
+            <template #button-history>
+                <a-tooltip color="black" placement="top">
+                    <template #title>변경이력</template>
+                    <DxButton icon="plus">
+                        <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
+                    </DxButton>
+                </a-tooltip>
             </template>
             <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
             <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use" css-class="cell-center" />
@@ -31,20 +39,10 @@
             <DxColumn data-field="printTaxFreeIncludeSubmission" caption="제출여부" />
             <DxColumn data-field="printCode" caption="유형" />
             <DxColumn data-field="formula" caption="산출방법" />
-            <DxColumn cell-template="pupop" css-class="cell-center" :width="100" />
+            <DxColumn cell-template="pupop" css-class="cell-center" :width="50" />
             <template #pupop="{ data }">
                 <div class="custom-action">
-                    <a-space :size="10">
-                        <!-- <a-tooltip color="black" v-if="data.data.editable" placement="top">
-                            <template #title>편집</template>
-                            <EditOutlined @click="setModalEditVisible(data)" />
-                        </a-tooltip> -->
-                        <a-tooltip color="black" placement="top">
-                            <template #title>변경이력</template>
-                            <HistoryOutlined @click="modalHistory(data)" />
-                        </a-tooltip>
-                        <deleteOutlined v-if="data.data.editable" @click="statusAddRow ? '' : deleteConfig(data)" />
-                    </a-space>
+                    <deleteOutlined v-if="data.data.editable" @click="statusAddRow ? deleteConfig(data) : ''" />
                 </div>
             </template>
         </DxDataGrid>
@@ -84,17 +82,20 @@
                             </a-tooltip>
                         </a-col>
                     </a-row>
+                    <div class="mt-20" style="margin-left: 230px">
+                        <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
+                            :mode="'contained'" @onClick="actionSave" />
+                    </div>
                 </div>
                 <div v-else>
                     <a-row :gutter="24">
-                        <a-col :span="14">
+                        <a-col :span="5">
                             <a-form-item label="코드" :label-col="labelCol">
                                 <number-box :width="150" placeholder="Number box" :min="0" :max="30" :disabled="true"
                                     v-model:valueInput="formState.itemCode" :spinButtons="true">
                                 </number-box>
                             </a-form-item>
                         </a-col>
-                        <a-col :span="4"></a-col>
                         <a-col :span="6">
                             <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :disabled="editable"
                                 :textCheck="'이용중'" :textUnCheck="'이용중지'" />
@@ -134,21 +135,19 @@
                             </a-tooltip>
                         </a-col>
                     </a-row>
+                    <div class="mt-20" style="margin-left: 230px">
+                        <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
+                            :mode="'contained'" @onClick="actionSave" />
+                    </div>
                 </div>
             </a-spin>
-            <!-- <a-spin tip="Loading..." :spinning="loadingDetail" :key="resetFormNum">
-                <h2 style="font-weight: 600; color: gray" class="title_modal">
-                    급여상세항목
-                </h2>
-                
-            </a-spin> -->
-            <div class="text-align-center mt-20">
-                <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
-                    :mode="'contained'" @onClick="actionSave" />
-            </div>
         </standard-form>
-        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-            title="변경이력" typeHistory="cm-130" />
+        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+            typeHistory="cm-130" />
+        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
+            :title="Message.getMessage('COMMON', '501').message" content=""
+            :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
+            @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
             :title="Message.getMessage('COMMON', '501').message" content=""
             :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
@@ -182,13 +181,7 @@ import {
     DxItem, DxScrolling,
 } from "devextreme-vue/data-grid";
 import notification from "@/utils/notification";
-// import EditCM130Popup from "../CM130/components/EditCM130Popup.vue";
-// import SettingPopup from "./components/SettingPopup.vue";
-import { Workbook } from "exceljs";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { exportDataGrid } from "devextreme/excel_exporter";
-import { saveAs } from "file-saver-es";
-// import AddCM130Popup from "./components/AddCM130Popup.vue";
 import { Message } from "@/configs/enum"
 import { initialState, taxPayItem, taxFreePayItem } from "../utils/data";
 import dayjs from 'dayjs';
@@ -196,7 +189,6 @@ import dayjs from 'dayjs';
 export default defineComponent({
     components: {
         DxNumberBox,
-        // SettingPopup,
         DxDataGrid,
         DxColumn,
         DxExport,
@@ -207,9 +199,7 @@ export default defineComponent({
         DxItem,
         EditOutlined,
         HistoryOutlined,
-        // EditCM130Popup,
         HistoryPopup,
-        // AddCM130Popup,
         SearchOutlined,
         PrinterOutlined,
         DeleteOutlined,
@@ -221,10 +211,8 @@ export default defineComponent({
         const globalYear = dayjs().year()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        // const popupData = ref([]);
-        const modalHistoryStatus = ref<boolean>(false);
 
-        // const idRowEdit = ref(0);
+        const modalHistoryStatus = ref<boolean>(false);
         const triggerDetail = ref<boolean>(false);
 
         const editable = ref<boolean>(false);
@@ -233,19 +221,17 @@ export default defineComponent({
         let itemCodeMax = ref(0);
         const focusedRowKeyTab2 = ref();
         const formRefTab2 = ref()
-
         const gridRefCM110Tab2 = ref(); // ref of grid
 
         // get config
         const dataQueryConfigPayItems = ref({ companyId: companyId, imputedYear: globalYear });
-        const dataQueryConfigPayItem = ref({ companyId: companyId, imputedYear: globalYear, itemCode: null });
-        // const trigger = ref(false)
-        // const triggerWithholdingConfig = ref<boolean>(true)
+        const dataQueryConfigPayItem = ref<any>({ companyId: companyId, imputedYear: globalYear, itemCode: null });
         const triggerWithholdingConfigPayItems = ref<boolean>(true)
 
         const formState: any = ref({ ...initialState });
         let dataRow = reactive({ ...initialState });
         const resetFormNum = ref(0);
+        const modalStatus = ref<boolean>(false);
         const modalStatusAdd = ref<boolean>(false);
         const statusClickButtonAdd = ref<boolean>(false);
         const statusAddRow = ref<boolean>(true);
@@ -258,7 +244,7 @@ export default defineComponent({
         // =================== GRAPHQL ===================
         // get withholding config pay items  
         const {
-            result: resultWithholdingConfig, loading: loadingWithholdingConfig
+            result: resultWithholdingConfig, loading: loadingWithholdingConfig,
         } = useQuery(queries.getWithholdingConfigPayItems, dataQueryConfigPayItems, () => ({
             enabled: triggerWithholdingConfigPayItems.value,
             fetchPolicy: "no-cache",
@@ -291,22 +277,41 @@ export default defineComponent({
         errorAdd((error) => {
             notification('error', error.message)
         });
-        onDoneAdd((res) => {
+        onDoneAdd(async (res) => {
+            await (triggerWithholdingConfigPayItems.value = true);
+            if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
+                return
+            }
+            if (statusClickButtonSave.value) { // if click submit
+                dataQueryConfigPayItem.value.itemCode = res.data.createWithholdingConfigPayItem?.itemCode
+            } else { // if click save modal
+                dataQueryConfigPayItem.value.itemCode = dataRow.itemCode
+            }
+            await (triggerDetail.value = true);
+            await (statusFormUpdate.value = true);
+            await (statusAddRow.value = true);
             notification('success', `원천항목 새로 추가되었습니다!`)
         });
 
         errorUpdated((error) => {
             notification('error', error.message)
         })
-        onDoneUpdated(() => {
+        onDoneUpdated(async (res) => {
             notification('success', Message.getMessage('COMMON', '106').message)
-            // refetchConfigPayItem();
-            triggerDetail.value = true
+            await (triggerWithholdingConfigPayItems.value = true);
+            if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
+                return
+            }
+            if (statusClickButtonSave.value) { // if click submit
+                dataQueryConfigPayItem.value.itemCode = res.data.updateWithholdingConfigPayItem?.itemCode
+            } else { // if click save modal
+                dataQueryConfigPayItem.value.itemCode = dataRow.itemCode
+            }
+            await (triggerDetail.value = true);
         });
 
         onDoneDelete(() => {
             notification('success', Message.getMessage('COMMON', '402').message)
-            // refetchWithholdingConfig()
             triggerWithholdingConfigPayItems.value = true;
         });
 
@@ -343,16 +348,19 @@ export default defineComponent({
             if (runOne.value) {
                 runOne.value = false;
                 if (dataSource.value.length) {
-                    focusedRowKeyTab2.value = dataSource.value[0].itemCode
+                    // focusedRowKeyTab2.value = dataSource.value[0].itemCode
                     dataQueryConfigPayItem.value.itemCode = dataSource.value[0].itemCode
                     triggerDetail.value = true;
 
                 } else {
-                    focusedRowKeyTab2.value = null
+                    // focusedRowKeyTab2.value = null
                     statusFormUpdate.value = false;
                     resetFormNum.value++;
                     Object.assign(formState, initialState);
                 }
+            }
+            if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
+                addRow()
             }
 
         });
@@ -366,6 +374,8 @@ export default defineComponent({
                 formState.value.use = value.getWithholdingConfigPayItem.use;
                 formState.value.formula = value.getWithholdingConfigPayItem.formula;
                 dataRowOld = { ...formState.value }
+
+                focusedRowKeyTab2.value = value.getWithholdingConfigPayItem.itemCode
                 editable.value = value.getWithholdingConfigPayItem.editable;
                 // objDataDefault.value = { ...formState.value };
             }
@@ -374,60 +384,47 @@ export default defineComponent({
         //================================================= FUNCTION============================================
 
         const onFocusedRowChangingTab2 = (e: any) => {
-            // statusClickButtonAdd.value = false
             dataRow = e.rows[e.newRowIndex]?.data
             const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
             if (dataRow.itemCode && (dataRow.itemCode != formState.value.itemCode)) {
                 dataQueryConfigPayItem.value.itemCode = e.rows[e.newRowIndex]?.data.itemCode
-                triggerDetail.value = true;
-
-                // if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
-                //     modalStatus.value = true;
-                //     rowElement?.classList.add("dx-state-hover-custom")
-                //     e.cancel = true;
-                // } else {
-                //     if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
-                //         modalStatus.value = true;
-                //         rowElement?.classList.add("dx-state-hover-custom")
-                //         e.cancel = true;
-                //     } else {
-                //         if (!statusAddRow.value && listEmployeeExtra.value[listEmployeeExtra.value.length - 1]?.employeeId == null) {
-                //             listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
-                //             statusAddRow.value = true
-                //         }
-
-                //     }
-                //     statusFormUpdate.value = true;
-                // }
+                if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
+                    modalStatus.value = true;
+                    rowElement?.classList.add("dx-state-hover-custom")
+                    e.cancel = true;
+                } else {
+                    if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
+                        modalStatus.value = true;
+                        rowElement?.classList.add("dx-state-hover-custom")
+                        e.cancel = true;
+                    } else {
+                        if (!statusAddRow.value && dataSource.value[dataSource.value.length - 1]?.employeeId == null) {
+                            dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1)
+                            statusAddRow.value = true
+                        }
+                        triggerDetail.value = true;
+                    }
+                    statusFormUpdate.value = true;
+                }
             }
-            // const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
-            // let data = e.rows[e.newRowIndex]?.data
-            // if (JSON.stringify(dataOldFormStateDeduction) !== JSON.stringify(formStateDeduction)) {
-            //     if (data) {
-            //         dataOldFormStateDeduction.itemCode = data.itemCode;
-            //         dataOldFormStateDeduction.taxPayCode = data.taxfreePayItemCode != null ? ['비과세', data.taxfreePayItemCode] : ['과세', data.taxPayItemCode];
-            //         dataOldFormStateDeduction.name = data.name;
-            //         dataOldFormStateDeduction.use = data.use;
-            //         dataOldFormStateDeduction.formula = data.formula;
-            //     }
-            //     modalStatus.value = true;
-            //     rowElement?.classList.add("dx-state-hover-custom")
-            //     e.cancel = true;
-            // } else {
-            //     if (data) {
-            //         dataOldFormStateDeduction.itemCode = data.itemCode;
-            //         dataOldFormStateDeduction.taxPayCode = data.taxfreePayItemCode != null ? ['비과세', data.taxfreePayItemCode] : ['과세', data.taxPayItemCode];
-            //         dataOldFormStateDeduction.name = data.name;
-            //         dataOldFormStateDeduction.use = data.use;
-            //         dataOldFormStateDeduction.formula = data.formula;
-            //     }
-            //     Object.assign(formStateDeduction, dataOldFormStateDeduction);
-            // }
+        }
+        const statusComfirm = (val: any) => {
+            if (val) {
+                statusClickButtonSave.value = false;
+                onSubmit();
+            } else {
+                if (!statusAddRow.value) {
+                    dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1)
+                    statusAddRow.value = true
+                }
+                statusFormUpdate.value = true
+                triggerDetail.value = true;
+            }
+            gridRefCM110Tab2.value?.instance.refresh();
         }
         const statusComfirmAdd = (val: any) => {
             if (val) {
                 statusClickButtonSave.value = false;
-                // checkClickYear.value = false;
                 onSubmit();
             } else {
                 if (statusAddRow.value && statusClickButtonAdd.value) { // add row
@@ -453,14 +450,16 @@ export default defineComponent({
                 notification('error', `선택해 주세요 과세구분/유형!`)
             } else {
                 if (statusFormUpdate.value) {
+                    console.log(formState);
+
                     let variables = {
                         companyId: companyId,
                         imputedYear: globalYear,
-                        itemCode: formState.itemCode,
+                        itemCode: formState.value.itemCode,
                         input: {
-                            name: formState.name,
-                            use: formState.use,
-                            formula: formState.formula
+                            name: formState.value.name,
+                            use: formState.value.use,
+                            formula: formState.value.formula
                         }
                     };
                     makeDataClean(variables)
@@ -509,41 +508,42 @@ export default defineComponent({
 
         const openAddNewModal = () => {
             if (dataSource.value.length <= 20) {
-                let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState) && statusFormUpdate.value == false)
-                let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState) && statusFormUpdate.value == true)
-                if (statusChangeFormEdit || statusChangeFormAdd) { // if status form add and form not null
+                console.log(JSON.stringify(dataRowOld));
+                console.log(JSON.stringify(dataRowOld));
+
+                let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
+                let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
+                if (statusChangeFormEdit) { // if status form add and form not null
+                    console.log(1);
+
                     modalStatusAdd.value = true
                     statusClickButtonAdd.value = true
-                } else if (!statusAddRow.value) {
-                    addRow()
+                } else {
+                    if (statusChangeFormAdd) { // if status form add and form not null
+                        console.log(2);
+                        modalStatusAdd.value = true
+                        statusClickButtonAdd.value = true
+                    } else if (statusAddRow.value) {
+                        addRow()
+                    }
                 }
-                // resetFormNum.value++;
-                // modalAddNewStatus.value = true;
             } else {
                 notification('error', `이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
             }
         }
 
-        // const setModalEditVisible = (data: any) => {
-        //     // idRowEdit.value = data.data.itemCode;
-        //     // modalEditStatus.value = true;
-        //     // popupData.value = data;
-        // };
-
-        const modalHistory = (data: any) => {
-            // idRowEdit.value = data.data.itemCode;
+        const modalHistory = () => {
             modalHistoryStatus.value = true;
-            // popupData.value = data;
         }
 
         const addRow = () => {
-            // disabledBlock.value = false;
             statusClickButtonAdd.value = false;
-            statusAddRow.value = true;
+            statusAddRow.value = false;
+            initialState.itemCode = itemCodeMax.value + 1
             dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...initialState })
             formState.value = dataSource.value[dataSource.value.length - 1]
             resetFormNum.value++;
-            focusedRowKeyTab2.value = 'PA710';
+            focusedRowKeyTab2.value = initialState.itemCode;
             statusFormUpdate.value = false;
         }
 
@@ -560,7 +560,6 @@ export default defineComponent({
         }
 
         return {
-            // idRowEdit,
             move_column,
             colomn_resize,
             labelCol: { style: { width: "150px" } },
@@ -569,13 +568,9 @@ export default defineComponent({
             loadingWithholdingConfig,
 
             deleteConfig,
-            // popupData,
             modalHistoryStatus,
 
             openAddNewModal,
-
-            // setModalEditVisible,
-
             modalHistory,
             focusedRowKeyTab2,
             gridRefCM110Tab2,
@@ -583,8 +578,8 @@ export default defineComponent({
             actionSave, onFocusedRowChangingTab2,
             loadingDetail,
             resetFormNum, statusFormUpdate, editable,
-            statusAddRow, modalStatusAdd, Message,
-            statusComfirmAdd, formRefTab2,
+            statusAddRow, modalStatus, modalStatusAdd, Message,
+            statusComfirm, statusComfirmAdd, formRefTab2,
         };
     },
 });
