@@ -19,12 +19,9 @@
           <div class="d-flex-center">
             <number-box min="1" max="31" :required="true" width="150px"
                         v-model:valueInput="paymentDay" is-format/>
-            <div class="ml-5 d-flex-center">
-              <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-              <div class="custom-waring">
-                지급일은 저장 후 수정불가
-              </div>
-            </div>
+            <info-tool-tip class="ml-5">
+              지급일은 저장 후 수정불가
+            </info-tool-tip>
           </div>
 
         </a-form-item>
