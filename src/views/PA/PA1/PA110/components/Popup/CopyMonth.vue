@@ -102,15 +102,28 @@ export default defineComponent({
         const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
+        const paymentDayCallApi = ref()
+        const paymentTypeCallApi = ref()
         const dataApiCopy: any = ref({})
-        const trigger = ref<boolean>(false)
+        const trigger = ref<boolean>(true)
 
         const startDate = ref(dayjs(`${paYear.value}-${month.value}`).startOf('month').toDate());
         const finishDate = ref(dayjs(`${paYear.value}-${month.value}`).endOf('month').toDate());
 
         watch(() => props.data, (val) => {
             month.value = val
-            trigger.value = true
+            let paymentMonth = month.value
+            month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
+            // if (value) {
+                paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(paymentDayCallApi.value)}`)
+                sampleDataIncomeWage.paymentDay = paymentDayCallApi.value
+                if (paymentTypeCallApi.value == 2) {
+                    paymentMonth = month.value + 1
+                }
+            // }
+            startDate.value = dayjs(`${month2.value}`).startOf('month').toDate();
+            finishDate.value = dayjs(`${month2.value}`).endOf('month').toDate();
+            // trigger.value = true
         });
         const dataQuery = ref({ companyId: companyId, imputedYear: paYear.value });
         const { result: resultConfig } = useQuery(
@@ -126,17 +139,19 @@ export default defineComponent({
         })
         watch(resultConfig, (value) => {
             trigger.value = false;
-            let paymentMonth = month.value
-            month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
-            if (value) {
-                paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(value.getWithholdingConfig.paymentDay)}`)
-                sampleDataIncomeWage.paymentDay = value.getWithholdingConfig.paymentDay
-                if (value.getWithholdingConfig.paymentType == 2) {
-                    paymentMonth = month.value + 1
-                }
-            }
-            startDate.value = dayjs(`${month2.value}`).startOf('month').toDate();
-            finishDate.value = dayjs(`${month2.value}`).endOf('month').toDate();
+            paymentDayCallApi.value = value.getWithholdingConfig.paymentDay
+            paymentTypeCallApi.value = value.getWithholdingConfig.paymentType
+            // let paymentMonth = month.value
+            // month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
+            // if (value) {
+            //     paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(value.getWithholdingConfig.paymentDay)}`)
+            //     sampleDataIncomeWage.paymentDay = value.getWithholdingConfig.paymentDay
+            //     if (value.getWithholdingConfig.paymentType == 2) {
+            //         paymentMonth = month.value + 1
+            //     }
+            // }
+            // startDate.value = dayjs(`${month2.value}`).startOf('month').toDate();
+            // finishDate.value = dayjs(`${month2.value}`).endOf('month').toDate();
         });
         const updateValue = (value: any) => {
             dataApiCopy.value = value.value

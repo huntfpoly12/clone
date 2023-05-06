@@ -203,8 +203,6 @@
                     </DxDataGrid>
                 </a-spin>
             </div>
-            {{ store.state.common.ac120.selectedRowKeys }}
-            <!-- {{ store.state.common.ac120.dataRowFocus }} -->
             <DetailComponent />
         </div>
 
