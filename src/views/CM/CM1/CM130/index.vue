@@ -186,70 +186,14 @@
                 </a-spin>
             </a-tab-pane>
             <a-tab-pane key="2" tab="급여항목">
-                <!-- <a-spin tip="Loading..." :spinning="loadingWithholdingConfig"> -->
-                    <!-- <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
-                        v-model:focused-row-key="focusedRowKeyTab2" :focused-row-enabled="true" ref="gridRefCM110Tab2"
-                        @focused-row-changing="onFocusedRowChangingTab2" :auto-navigate-to-focused-row="true"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowPrepared="changeColorRow">
-                        <DxScrolling mode="standard" show-scrollbar="always" />
-                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
-                        <DxExport :enabled="true" />
-                        <DxToolbar>
-                            <DxItem name="searchPanel" />
-                            <DxItem name="exportButton" css-class="cell-button-export" />
-                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                            <DxItem name="groupPanel" />
-                            <DxItem name="addRowButton" show-text="always" />
-                            <DxItem name="columnChooserButton" />
-                        </DxToolbar>
-                        <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
-                        </template>
-                        <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
-                        <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
-                            css-class="cell-center" />
-                        <template #use="{ data }">
-                            <tag-color-use :valueUse="data.value" />
-                        </template>
-                        <DxColumn data-field="printName" caption="과세구분" />
-                        <DxColumn data-field="name" caption="항목명" />
-                        <DxColumn data-field="taxfreePayItemCode" caption="비과세코드" css-class="cell-center" />
-                        <DxColumn data-field="printTaxFreeIncludeSubmission" caption="제출여부" />
-                        <DxColumn data-field="printCode" caption="유형" />
-                        <DxColumn data-field="formula" caption="산출방법" />
-                        <DxColumn cell-template="pupop" css-class="cell-center" :width="100" />
-                        <template #pupop="{ data }">
-                            <div class="custom-action">
-                                <a-space :size="10">
-                                    <a-tooltip color="black" v-if="data.data.editable" placement="top">
-                                        <template #title>편집</template>
-                                        <EditOutlined @click="setModalEditVisible(data)" />
-                                    </a-tooltip>
-                                    <a-tooltip color="black" placement="top">
-                                        <template #title>변경이력</template>
-                                        <HistoryOutlined @click="modalHistory(data)" />
-                                    </a-tooltip>
-                                    <deleteOutlined v-if="data.data.editable" @click="deleteConfig(data)" />
-                                </a-space>
-                            </div>
-                        </template>
-                    </DxDataGrid> -->
-                    <Tab2Component></Tab2Component>
-                    <!-- <AddCM130Popup></AddCM130Popup> -->
-                    <!-- <AddCM130Popup :modalStatus="modalAddNewStatus" :itemCodeMax="itemCodeMax" :key="resetFormNum"
-                        @closePopup="modalAddNewStatus = false" @onDoneAdd="onDoneAdd" title="원천설정" /> -->
-                    <!-- <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="onCloseEditModal" :data="popupData"
-                        title="원천설정" :idRowEdit="idRowEdit" />
-                    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-130" /> -->
-                <!-- </a-spin> -->
+                <Tab2Component></Tab2Component>
             </a-tab-pane>
             <a-tab-pane key="3" tab="공제항목">
                 <a-spin tip="Loading..." :spinning="loadingDeduction">
-                    <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
-                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
-                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    <DxDataGrid id="dataGridTab3" noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
+                        :data-source="dataSourceDeduction" :show-borders="true" key-expr="itemCode"
+                        :allow-column-reordering="move_column" :focused-row-enabled="true"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         v-model:focused-row-key="focusedRowKeyTab3" ref="gridRefCM110Tab3"
                         @focused-row-changing="onFocusedRowChangingTab3" :auto-navigate-to-focused-row="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
@@ -258,7 +202,16 @@
                         <DxToolbar>
                             <DxItem name="searchPanel" />
                             <DxItem name="exportButton" css-class="cell-button-export" />
+                            <DxItem location="after" template="button-history" css-class="cell-button-add" />
                         </DxToolbar>
+                        <template #button-history>
+                            <a-tooltip color="black" placement="top">
+                                <template #title>변경이력</template>
+                                <DxButton icon="plus">
+                                    <HistoryOutlined style="font-size: 18px;" @click="modalHistoryDeduction" />
+                                </DxButton>
+                            </a-tooltip>
+                        </template>
                         <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
@@ -271,17 +224,6 @@
                         </template>
                         <DxColumn data-field="name" caption="항목명" />
                         <DxColumn data-field="formula" caption="산출방법" />
-                        <DxColumn cell-template="pupop" css-class="cell-center" :width="30" />
-                        <template #pupop="{ data }">
-                            <div class="custom-action">
-                                <a-space>
-                                    <a-tooltip color="black" placement="top">
-                                        <template #title>변경이력</template>
-                                        <HistoryOutlined @click="modalHistoryDeduction(data)" />
-                                    </a-tooltip>
-                                </a-space>
-                            </div>
-                        </template>
                     </DxDataGrid>
                 </a-spin>
                 <standard-form formName="add-deduction-310" v-if="dataSourceDeduction.length" class="standard-form">
@@ -320,7 +262,7 @@
                         @onClick="onSubmitConfigDeduction" />
                 </standard-form>
                 <HistoryPopup :modalStatus="modalHistoryStatusDeduction" @closePopup="modalHistoryStatusDeduction = false"
-                    :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-deduction-130" />
+                    title="변경이력" typeHistory="cm-deduction-130" />
             </a-tab-pane>
         </a-tabs>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
@@ -397,15 +339,15 @@ export default defineComponent({
         const globalYear = dayjs().year()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const popupData = ref([]);
+        // const popupData = ref([]);
         const modalSettingStatus = ref<boolean>(false);
-        const modalEditStatus = ref<boolean>(false);
+        // const modalEditStatus = ref<boolean>(false);
         // const modalAddNewStatus = ref<boolean>(false);
-        const modalHistoryStatus = ref<boolean>(false);
+        // const modalHistoryStatus = ref<boolean>(false);
         const modalHistoryStatusDeduction = ref<boolean>(false);
 
         const isShow = ref<boolean>(false);
-        const idRowEdit = ref(0);
+        // const idRowEdit = ref(0);
         const formState = reactive({ ...initialFormState });
         const formStateDeduction = reactive({ ...initialFormStateDeduction });
         const setModalVisible = () => {
@@ -427,7 +369,7 @@ export default defineComponent({
         const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
         const trigger = ref(false)
         const triggerWithholdingConfig = ref<boolean>(true)
-        const triggerWithholdingConfigPayItems = ref<boolean>(true)
+        // const triggerWithholdingConfigPayItems = ref<boolean>(true)
         const triggerWithholdingConfigDeductionItems = ref<boolean>(true)
         let runOne = ref<boolean>(true);
 
@@ -608,123 +550,12 @@ export default defineComponent({
             }
         }
 
-        
-
-        // // get withholding config pay items  
-        // const { result: resultWithholdingConfig, refetch: refetchWithholdingConfig, loading: loadingWithholdingConfig } = useQuery(
-        //     queries.getWithholdingConfigPayItems,
-        //     // dataQueryWithholding,
-        //     dataQuery,
-        //     () => ({
-        //         enabled: triggerWithholdingConfigPayItems.value,
-        //         fetchPolicy: "no-cache",
-        //     })
-        // );
-        // watch(resultWithholdingConfig, (value) => {
-        //     triggerWithholdingConfigPayItems.value = false;
-        //     dataSource.value = value.getWithholdingConfigPayItems;
-        //     dataSource.value.map((e: any) => {
-        //         if (e.itemCode > itemCodeMax.value) {
-        //             itemCodeMax.value = e.itemCode
-        //         }
-        //         if (e.taxPayItemCode != null) {
-        //             taxPayItem.map((eData: any) => {
-        //                 if (eData.value == e.taxPayItemCode) {
-        //                     e.printCode = eData.label
-        //                 }
-        //             })
-        //             e.printName = "과세"
-        //         } else {
-        //             taxFreePayItem.map((eData: any) => {
-        //                 if (eData.value == e.taxfreePayItemCode) {
-        //                     e.printCode = eData.label
-        //                     if (eData.submission) {
-        //                         e.printTaxFreeIncludeSubmission = 'O'
-        //                     } else {
-        //                         e.printTaxFreeIncludeSubmission = 'X'
-        //                     }
-        //                 }
-        //             })
-        //             e.printName = "비과세"
-        //         }
-        //     })
-        // });
-        // // delete withholding config pay item
-        // const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
-        //     mutations.deleteWithholdingConfigPayItem
-        // );
-        // onDoneDelete(() => {
-        //     notification('success', Message.getMessage('COMMON', '402').message)
-        //     // refetchWithholdingConfig()
-        //     triggerWithholdingConfigPayItems.value = true;
-        // });
-        // const deleteConfig = (data: any) => {
-        //     Modal.confirm({
-        //         title: '삭제하겠습니까?',
-        //         icon: createVNode(ExclamationCircleOutlined),
-        //         okText: '네',
-        //         cancelText: '아니요',
-        //         onOk() {
-        //             let variables = {
-        //                 companyId: companyId,
-        //                 imputedYear: globalYear,
-        //                 itemCode: data.data.itemCode
-        //             };
-        //             actionDelete(variables);
-        //         },
-        //         class: 'confirm',
-        //     });
-        // }
-        // const onExporting = (e: any) => {
-        //     const workbook = new Workbook();
-        //     const worksheet = workbook.addWorksheet("employees");
-        //     exportDataGrid({
-        //         component: e.component,
-        //         worksheet,
-        //         autoFilterEnabled: true,
-        //     }).then(() => {
-        //         workbook.xlsx.writeBuffer().then((buffer) => {
-        //             saveAs(
-        //                 new Blob([buffer], { type: "application/octet-stream" }),
-        //                 "DataGrid.xlsx"
-        //             );
-        //         });
-        //     });
-        //     e.cancel = true;
-        // };
         const modalSetting = () => {
             modalSettingStatus.value = true;
         }
-        const openAddNewModal = () => {
-            if (dataSource.value.length <= 20) {
-                resetFormNum.value++;
-                // modalAddNewStatus.value = true;
-            } else {
-                notification('error', `이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
-            }
-        }
-        const onDoneAdd = () => {
-            triggerWithholdingConfigPayItems.value = true;
-        };
-        const setModalEditVisible = (data: any) => {
-            idRowEdit.value = data.data.itemCode;
-            modalEditStatus.value = true;
-            popupData.value = data;
-        };
-        const onCloseEditModal = () => {
-            modalEditStatus.value = false;
-            triggerWithholdingConfigPayItems.value = true;
-            // refetchWithholdingConfig();
-        };
-        const modalHistory = (data: any) => {
-            idRowEdit.value = data.data.itemCode;
-            modalHistoryStatus.value = true;
-            popupData.value = data;
-        }
-        const modalHistoryDeduction = (data: any) => {
-            idRowEdit.value = data.data.itemCode;
+
+        const modalHistoryDeduction = () => {
             modalHistoryStatusDeduction.value = true;
-            popupData.value = data;
         }
 
         const changeValueAddress = (data: any) => {
@@ -732,39 +563,6 @@ export default defineComponent({
             formState.localIncomeTaxArea = data.localIncomeTaxArea
         }
 
-        // const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
-        //     value: TaxPayItem.all()[index].enumOrdinal,
-        //     label: TaxPayItem.all()[index].name,
-        // }));
-
-        // const arrLabel = Array();
-        // TaxFreePayItem.all().forEach((k, index) => {
-        //     if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
-        //         arrLabel[index] = TaxFreePayItem.all()[index].name + ' 월' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit
-        //     } else if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit) {
-        //         arrLabel[index] = TaxFreePayItem.all()[index].name + ' 년' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit
-        //     } else {
-        //         arrLabel[index] = TaxFreePayItem.all()[index].name
-        //     }
-        // });
-
-        // const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
-        //     value: TaxFreePayItem.all()[index].enumKey,
-        //     label: arrLabel[index],
-        //     submission: JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission,
-        // }));
-
-        const changeColorRow = (e: any) => {
-            if (e.data?.use) {
-                if (e.data.tax) {
-                    e.rowElement.style.backgroundColor = '#FFB6C1';
-                } else {
-                    e.rowElement.style.backgroundColor = '#D2ECFC';
-                }
-            } else if (e.data?.use == "false") {
-                e.rowElement.style.backgroundColor = '#ECECEC';
-            }
-        }
         const statusComfirm = (val: any) => {
             if (val) {
                 statusClickSaveModal.value = true
@@ -777,7 +575,6 @@ export default defineComponent({
         }
         return {
             changeValueAddress,
-            idRowEdit,
             move_column,
             colomn_resize,
             optionsRadioReportType,
@@ -788,7 +585,6 @@ export default defineComponent({
             activeKey: ref("1"),
             onSubmitConfig,
             onFocusedRowChangingTab3,
-            changeColorRow,
             isShow,
             setModalVisible,
             showModal,
@@ -796,24 +592,12 @@ export default defineComponent({
             dataSource,
             dataSourceDeduction,
             loading,
-            // loadingWithholdingConfig,
             loadingDeduction,
-            // deleteConfig,
-            popupData,
             modalSettingStatus,
-            modalEditStatus,
-            // modalAddNewStatus,
-            modalHistoryStatus,
             modalHistoryStatusDeduction,
             onSubmitConfigDeduction,
             modalSetting,
-            openAddNewModal,
-            onDoneAdd,
-            setModalEditVisible,
-            onCloseEditModal,
-            modalHistory,
             modalHistoryDeduction,
-            // onExporting,
             dataPublicInstitution,
             itemCodeMax,
             resetFormNum,

@@ -472,16 +472,6 @@ export default defineComponent({
                 statusClickButtonSave.value = false;
                 submitForm();
             } else {
-                // if (checkClickYear.value) {
-                //     originData.imputedYear = dataYearNew.value
-                //     runOne.value = true;
-                //     trigger.value = true;
-                //     store.state.settings.paYear = dataYearNew.value
-                //     setTimeout(() => {
-                //         checkClickYear.value = false;
-                //     }, 500);
-                //     return;
-                // }
                 if (!statusAddRow.value) {
                     listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
                     statusAddRow.value = true
@@ -494,7 +484,6 @@ export default defineComponent({
         const statusComfirmAdd = (val: any) => {
             if (val) {
                 statusClickButtonSave.value = false;
-                // checkClickYear.value = false;
                 submitForm();
             } else {
                 if (statusAddRow.value && statusClickButtonAdd.value) { // add row
