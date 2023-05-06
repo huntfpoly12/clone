@@ -60,14 +60,20 @@
             <DeleteOutlined style="font-size: 12px" @click="openPopupDeleteItem(data.data)" />
           </template>
 
-          <DxSummary>
+          <!-- <DxSummary>
             <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalValue" column="단위" :customize-text="totalValue" />
             <DxTotalItem cssClass="custom-sumary" column="단가" :customize-text="totalExpenditure" />
             <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalDifference" column="비고"
               :customize-text="totalDifference" />
-          </DxSummary>
+          </DxSummary> -->
         </DxDataGrid>
+        <div class="popup-detail-ac-110-sumary">
+          <div v-html="`전체: <span style='font-size: 16px !important'>[${dataSource?.statementOfGoodsItems.length || 0}]</span>`"></div>
+          <div v-html="totalValue()"></div>
+          <div v-html="totalExpenditure()"></div>
+          <div v-html="totalDifference()"></div>
+        </div>
         <div class="ac-110-popup-detail-btn">
           <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
             :disabled="!dataSource.statementOfGoodsItems.length || isDisableBtnSave" />
@@ -252,7 +258,7 @@ export default defineComponent({
         isModalConfirmSaveChange.value = false
       }
     }
-    const totalValue = (key: string, index: number) => {
+    const totalValue = (key?: string, index?: number) => {
       let total = 0;
       dataSource.value.statementOfGoodsItems.forEach((item: any, i: number) => {
         if (index === i) {
@@ -271,13 +277,13 @@ export default defineComponent({
           }
         }
       });
-      return `금액합계: ${formatNumber(total)}`
+      return `금액합계: <span style='font-size: 16px !important'>[${formatNumber(total)}]</span>`
     }
     const totalExpenditure = () => {
       const spending = dataSource.value.spending || 0
-      return `지출액: ${formatNumber(spending)}`
+      return `지출액: <span style='font-size: 16px !important'>[${formatNumber(spending)}]<span/>`
     }
-    const totalDifference = (key: string, index: number) => {
+    const totalDifference = (key?: string, index?: number) => {
       let total = 0;
       const spending = dataSource.value.spending || 0
       dataSource.value.statementOfGoodsItems.forEach((item: any, i: number) => {
@@ -299,7 +305,7 @@ export default defineComponent({
       });
       const result = spending - total
       isDisableBtnSave.value = result !== 0
-      return `차액: ${formatNumber(result)}`
+      return `차액: <span style='font-size: 16px !important'>[${formatNumber(result)}]</span>`
     }
     const openPopupDeleteItem = (data: any) => {
       if (props.disabled) return
@@ -439,4 +445,15 @@ export default defineComponent({
   :deep .dx-freespace-row {
     display: none !important;
   }
-}</style>
+}
+.popup-detail-ac-110-sumary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: 7px;
+  color: rgba(51, 51, 51, .7);
+}
+</style>
