@@ -61,7 +61,7 @@
                             </template>
                             <DxColumn caption="소득구분" cell-template="grade-cell" data-field="incomeTypeName" />
                             <template #grade-cell="{ data }">
-                                <income-type :typeCode="data.data.incomeTypeCode"
+                                <income-type v-if="data.data.incomeTypeCode" :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName"></income-type>
                             </template>
                             <DxColumn :width="50" cell-template="pupop" css-class="cell-center" />

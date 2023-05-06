@@ -134,6 +134,12 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
+
+        watch(() => month2.value, (newVal) => {
+            paymentDayCopy.value = parseInt(`${newVal}${filters.formatMonth(parseInt(paymentDayCopy.value?.toString().slice(6, 8)))}`)
+            startDate.value = dayjs(`${newVal}`).startOf('month').toDate();
+            finishDate.value = dayjs(`${newVal}`).endOf('month').toDate();
+        })
         watch(() => store.state.common.pa110.actionCallGetMonthDetail, (newVal) => {
             trigger.value = true;
         })
@@ -170,8 +176,8 @@ export default defineComponent({
             setModalVisibleCopy()
             notification('success', `완료!`)
             store.state.common.pa110.processKeyPA110.imputedMonth = month.value
-            store.state.common.pa110.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
-            store.state.common.pa110.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
+            store.state.common.pa110.processKeyPA110.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
+            store.state.common.pa110.processKeyPA110.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
             store.state.common.pa110.loadingTableInfo++
         })
 
@@ -185,16 +191,16 @@ export default defineComponent({
         const onSubmit = () => {
             store.state.common.pa110.processKeyPA110.imputedYear = paYear.value
             store.state.common.pa110.processKeyPA110.imputedMonth = month.value
-            store.state.common.pa110.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
-            store.state.common.pa110.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
+            store.state.common.pa110.processKeyPA110.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
+            store.state.common.pa110.processKeyPA110.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
             emit("dataAddIncomeProcess", {
                 imputedYear: processKey.value.imputedYear,
                 imputedMonth: month.value,
-                paymentYear: parseInt(month2.value.toString().slice(0, 4)),
-                paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
+                paymentYear: parseInt(month2.value?.toString().slice(0, 4)),
+                paymentMonth: parseInt(month2.value?.toString().slice(4, 6)),
             })
             emit("closePopup", false)
-            sampleDataIncomeWage.paymentDay = parseInt(paymentDayCopy.value.toString().slice(6, 8)) 
+            sampleDataIncomeWage.paymentDay = parseInt(paymentDayCopy.value?.toString().slice(6, 8)) ?? 1
             // store.state.common.pa110.paymentDayCopy = paymentDayCopy.value
             // store.state.common.pa110.actionCopy++
             store.state.common.pa110.resetArrayEmploySelect++
@@ -214,8 +220,8 @@ export default defineComponent({
                     target: {
                         imputedYear: processKey.value.imputedYear,
                         imputedMonth: month.value,
-                        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
-                        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
+                        paymentYear: parseInt(month2.value?.toString().slice(0, 4)),
+                        paymentMonth: parseInt(month2.value?.toString().slice(4, 6)),
                     },
                 })
 

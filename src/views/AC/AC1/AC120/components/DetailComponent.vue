@@ -304,7 +304,7 @@ export default defineComponent({
         doneCreateAccountingDocument((e: any) => {
             store.state.common.ac120.statusKeppRow = true
             store.state.common.ac120.focusedRowKey = e.data?.createAccountingDocument?.accountingDocumentId
-            notification('success', Message.getMessage('COMMON', '106').message)
+            notification('success', Message.getMessage('COMMON', '101').message)
             // store.state.common.ac120.onDoneAdd++
             store.state.common.ac120.resetDataTable++
             store.state.common.ac120.resetDataAccountingProcesses++
