@@ -5,9 +5,9 @@
                 <h2><b>물품내역</b></h2>
             </div>
             <standard-form ref="refFormItemAC120">
-                <DxDataGrid noDataText="내역이 없습니다" class="mt-20" ref="dataGridRef" :show-row-lines="true" :data-source="dataSource"
-                    :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                <DxDataGrid noDataText="내역이 없습니다" class="mt-20" ref="dataGridRef" :show-row-lines="true"
+                    :data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxToolbar>
                         <DxItem location="after" template="button-add" css-class="cell-button-add" />
                     </DxToolbar>
@@ -22,18 +22,24 @@
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxColumn caption="품목" cell-template="item" width="140" />
                     <template #item="{ data }">
-                        <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem"
-                            :required="true" />
+                        <!-- <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem"
+                            :required="true" /> -->
+                        <SelectSearchEdit v-model:valueInput="data.data.item" :data="arrSelectItem"
+                            @updateArrSelect="(value: any) => arrSelectItem = [...value]" :required="true" />
                     </template>
                     <DxColumn caption="규격" cell-template="standard" width="140" />
                     <template #standard="{ data }">
-                        <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
-                            :required="true" />
+                        <!-- <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
+                            :required="true" /> -->
+                        <SelectSearchEdit v-model:valueInput="data.data.standard" :data="arrSelectStandard"
+                            @updateArrSelect="(value: any) => arrSelectStandard = [...value]" :required="true" />
                     </template>
                     <DxColumn caption="단위" cell-template="unit" width="140" />
                     <template #unit="{ data }">
-                        <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit"
-                            :required="true" />
+                        <!-- <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit"
+                            :required="true" /> -->
+                        <SelectSearchEdit v-model:valueInput="data.data.unit" :data="arrSelectUnit"
+                            @updateArrSelect="(value: any) => arrSelectUnit = [...value]" :required="true" />
                     </template>
                     <DxColumn caption="수량" cell-template="quantity" width="90" />
                     <template #quantity="{ data }">
@@ -85,7 +91,7 @@ import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTo
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import { useMutation } from '@vue/apollo-composable';
+import { useMutation, useQuery } from '@vue/apollo-composable';
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
 import DxNumberBox from "devextreme-vue/number-box";
 import { companyId } from "@/helpers/commonFunction";
@@ -93,6 +99,7 @@ import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
 import { initStatementOfGoods } from '../utils/index'
 import filters from "@/helpers/filters";
+import queries from "@/graphql/queries/AC/AC1/AC120";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -122,6 +129,11 @@ export default defineComponent({
         const refFormItemAC120 = ref()
         let isModalDelete = ref(false)
         const disabledSubmit = ref(false)
+
+        const triggerSearchStatementOfGoodsItems = ref(false)
+        const triggerSearchStatementOfGoodsStandards = ref(false)
+        const triggerSearchStatementOfGoodsUnits = ref(false)
+
         // =================== GRAPHQL ===================
         // mutation deleteStatementOfGoods    
         const {
@@ -131,6 +143,28 @@ export default defineComponent({
         const {
             mutate: mutateSaveStatementOfGoods, onDone: doneSaveStatementOfGoods, onError: errorSaveStatementOfGoods,
         } = useMutation(mutations.saveStatementOfGoods);
+
+        const {
+            onResult: onResultSearchStatementOfGoodsItems
+        } = useQuery(queries.searchStatementOfGoodsItems, { companyId: companyId, keyword: null }, () => ({
+            enabled: triggerSearchStatementOfGoodsItems.value,
+            fetchPolicy: "no-cache",
+        }))
+
+        const {
+            onResult: onResultSearchStatementOfGoodsStandards,
+        } = useQuery(queries.searchStatementOfGoodsStandards, { companyId: companyId, keyword: null }, () => ({
+            enabled: triggerSearchStatementOfGoodsStandards.value,
+            fetchPolicy: "no-cache",
+        }))
+
+        const {
+            onResult: onResultSearchStatementOfGoodsUnits,
+        } = useQuery(queries.searchStatementOfGoodsUnits, { companyId: companyId, keyword: null }, () => ({
+            enabled: triggerSearchStatementOfGoodsUnits.value,
+            fetchPolicy: "no-cache",
+        }))
+
 
         // ============== ON DONE MUTATION GRAPHQL ===============
         // DeleteStatementOfGoods
@@ -155,33 +189,49 @@ export default defineComponent({
             notification('error', e.message)
         })
 
+        onResultSearchStatementOfGoodsItems((res) => {
+            arrSelectItem.value = res.data.searchStatementOfGoodsItems.map((item: any) => ({ value: item }))
+            triggerSearchStatementOfGoodsItems.value = false
+        })
+        onResultSearchStatementOfGoodsStandards((res) => {
+            arrSelectStandard.value = res.data.searchStatementOfGoodsStandards.map((item: any) => ({ value: item }))
+            triggerSearchStatementOfGoodsStandards.value = false
+        })
+        onResultSearchStatementOfGoodsUnits((res) => {
+            arrSelectUnit.value = res.data.searchStatementOfGoodsUnits.map((item: any) => ({ value: item }))
+            triggerSearchStatementOfGoodsUnits.value = false
+        })
+
         // ================== WATCH ================
         watch(() => props.modalStatus, async (newValue, old) => {
             if (newValue) {
+                triggerSearchStatementOfGoodsItems.value = true
+                triggerSearchStatementOfGoodsStandards.value = true
+                triggerSearchStatementOfGoodsUnits.value = true
                 dataSource.value = store.state.common.ac120.formData?.statementOfGoodsItems?.map((item: any, index: number) => {
                     return {
                         ...item,
                         id: index
                     }
                 })
-                await setDataSelect()
+                // await setDataSelect()
             }
         })
 
         // ================ FUNCTION ============================================
-        const setDataSelect = () => {
-            dataSource.value?.forEach((item: any, index: number) => {
-                if (!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())) {
-                    arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item.toString().trim() }]
-                }
-                if (!!item.standard && !arrSelectStandard.value.some((option: any) => option.value === item.standard.toString().trim())) {
-                    arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard.toString().trim() }]
-                }
-                if (!!item.unit && !arrSelectUnit.value.some((option: any) => option.value === item.unit.toString().trim())) {
-                    arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit.toString().trim() }]
-                }
-            })
-        }
+        // const setDataSelect = () => {
+        //     dataSource.value?.forEach((item: any, index: number) => {
+        //         if (!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())) {
+        //             arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item.toString().trim() }]
+        //         }
+        //         if (!!item.standard && !arrSelectStandard.value.some((option: any) => option.value === item.standard.toString().trim())) {
+        //             arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard.toString().trim() }]
+        //         }
+        //         if (!!item.unit && !arrSelectUnit.value.some((option: any) => option.value === item.unit.toString().trim())) {
+        //             arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit.toString().trim() }]
+        //         }
+        //     })
+        // }
         const cancel = () => {
             emit("closePopup", false)
         };
@@ -191,7 +241,7 @@ export default defineComponent({
             } else {
                 dataSource.value = [{ ...initStatementOfGoods, id: 'create' }]
             }
-            await setDataSelect()
+            // await setDataSelect()
         }
 
         const deleteItem = (data: any) => {
@@ -212,7 +262,7 @@ export default defineComponent({
                     })
                 }
             }
-            
+
         }
         const onSubmit = (e: any) => {
             const res = refFormItemAC120.value?.validate();
@@ -339,4 +389,5 @@ export default defineComponent({
 :deep .dx-datagrid-rowsview .dx-row>td,
 .dx-datagrid-rowsview .dx-row>tr>td {
     overflow: unset;
-}</style>
+}
+</style>
