@@ -214,7 +214,7 @@
                     <a-tooltip placement="top" color="black">
                       <template #title>{{ data.data.summary }}</template>
                       <div>
-                        <default-text-box v-model:valueInput="data.data.summary" :required="true" />
+                        <default-text-box v-model:valueInput="data.data.summary" :required="true" :readOnly="isRegistered" />
                       </div>
                     </a-tooltip>
                   </template>
@@ -494,6 +494,7 @@ export default defineComponent({
     let rowKeyfocusedGridDetail: any = ref(null)
     const keyRefreshGridDetailAc = ref(0)
     let rowElementFocus: any = ref(null)
+    let isRegisterTransaction = ref(false);
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     const isRegistered = computed(() => {
@@ -576,6 +577,7 @@ export default defineComponent({
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorRegisterTransactionDetailsToAccountingDocuments(e => {
+      isRegisterTransaction.value = false
       notification('error', e.message)
     })
     const {
@@ -627,10 +629,16 @@ export default defineComponent({
         }
         itemChange.value = null
       }
+      if(rowElementFocus.value) {
+        rowElementFocus.value.classList.remove("dx-state-hover-custom");
+      }
       triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveTransactionDetails(e => {
+      if(rowElementFocus.value) {
+        rowElementFocus.value.classList.remove("dx-state-hover-custom");
+      }
       notification('error', e.message)
     })
     // WATCH
@@ -715,6 +723,13 @@ export default defineComponent({
       }
     }
     const onFocusedRowChanging = (event: any) => {
+      if(isRegisterTransaction.value) {
+        isRegisterTransaction.value = false
+        selectedRowKeys.value = []
+      }
+      if(rowElementFocus.value) {
+        rowElementFocus.value.classList.remove("dx-state-hover-custom");
+      }
       if (rowKeyfocused.value !== event.rows[event.newRowIndex].data.bankbookDetailId) {
         if (!isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value)){
           rowElementFocus.value = event.rowElement[0]
@@ -816,7 +831,8 @@ export default defineComponent({
         month: monthSelected.value
       })
     }
-    const handleConfirmSlipRegistrationSelected = () => {
+    const handleConfirmSlipRegistrationSelected = (status: any) => {
+      isRegisterTransaction.value = true
       const keys: any = []
       dataSource.value.forEach(items => {
         if (selectedRowKeys.value.includes(items.bankbookDetailId)) {
@@ -913,9 +929,19 @@ export default defineComponent({
       })
     }
     const submitTransactionDetails = async () => {
-      if (rowKeyfocused.value === null || isRegistered.value) return
+      if (rowKeyfocused.value === null || isRegistered.value) {
+        if(rowElementFocus.value){
+          rowElementFocus.value.classList.remove("dx-state-hover-custom");
+        }
+        return
+      }
       const res = refFormDetailAc110.value.validate()
-      if (!res.isValid) return
+      if (!res.isValid) {
+        if(rowElementFocus.value){
+          rowElementFocus.value.classList.remove("dx-state-hover-custom");
+        }
+        return
+      }
       dataSourceTransactionDetails.value.transactionDetails = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => {
         if (Number.isInteger(item.accountingDocumentId)) {
           return item
@@ -1017,6 +1043,7 @@ export default defineComponent({
       if (status) {
         submitTransactionDetails()
       } else {
+        rowElementFocus.value.classList.remove("dx-state-hover-custom");
         if (Number.isInteger(itemChange.value)) {
           dataSourceTransactionDetails.value.transactionDetails = []
           listTransactionDetailsOrigin.value = []
@@ -1033,7 +1060,6 @@ export default defineComponent({
         }
         itemChange.value = null
       }
-      rowElementFocus.value.classList.remove("dx-state-hover-custom");
       isModalConfirmChangeData.value = false
     }
     return {
