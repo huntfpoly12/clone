@@ -51,6 +51,7 @@
                     ref="gridRef"
                     @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
+                    <DxPaging :enabled="false" />
                     <DxToolbar>
                         <DxItem template="send-group-mail" />
                         <DxItem template="send-group-print" />
@@ -98,7 +99,7 @@
                     <template #sumWithholdingRuralSpecialTax="{ data }" >
                         {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax + data.data.withholdingIncomeTax) }}
                     </template>
-                    <DxSummary v-if="dataSource.length">
+                    <!-- <DxSummary v-if="dataSource.length">
                         <DxTotalItem column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
                         <DxTotalItem column="지급총액" summary-type="sum" display-format="지급총액합계: {0}"
                             value-format="#,###" />
@@ -107,7 +108,7 @@
                         <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="원천징수세액 지방소득세합계: {0}"
                             value-format="#,###" />
                         <DxTotalItem column="원천징수세액 계" :customize-text="customTextSummaryWRST"/>
-                    </DxSummary>
+                    </DxSummary> -->
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
@@ -121,6 +122,31 @@
                         </div>
                     </template>
                 </DxDataGrid>
+                <div v-if="dataSource.length"
+                        style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+                        class="fs-14">
+                        <div style="margin-left: 70px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                                <div>전체 <span>[{{ dataSource.length }}]</span></div>
+                            </div>
+                        </div>
+                        <div style="margin-left: 200px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customPaymentAmount()">
+                            </div>
+                        </div>
+                        <div style=" margin-left: 20px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customWithholdingIncomeTax()">
+                            </div>
+                        </div>
+                        <div style=" margin-left: 20px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customWithholdingLocalIncomeTax()">
+                            </div>
+                        </div>
+                        <div style=" margin-left: 20px;">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryWRST()">
+                            </div>
+                        </div>
+                    </div>
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="onCloseEmailMultiModal"
@@ -329,15 +355,37 @@ export default defineComponent({
             ]
             triggerPrint.value = true;
         }
+        const customPaymentAmount = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.paymentAmount
+            })
+            return `지급총액합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+        }
+        const customWithholdingIncomeTax = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.withholdingIncomeTax
+            })
+            return `원천징수세액 소득세합계 <span>[${filters.formatCurrency(sum)}]</span> `;
+        }
+        const customWithholdingLocalIncomeTax = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.withholdingLocalIncomeTax
+            })
+            return `원천징수세액 지방소득세합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+        }
         const customTextSummaryWRST = () => {
             let sum = 0
             dataSource.value?.map((value: any) => {
                 sum+= value.withholdingLocalIncomeTax + value.withholdingIncomeTax
             })
-            return "원천징수세액 계합계: " + filters.formatCurrency(sum)
+            return `원천징수세액 계합계 <span>[${filters.formatCurrency(sum)}]</span>`
         }
 
         return {
+            customPaymentAmount, customWithholdingIncomeTax, customWithholdingLocalIncomeTax,
             valueDefaultIncomeBusiness,
             valueSwitch,
             loading,
