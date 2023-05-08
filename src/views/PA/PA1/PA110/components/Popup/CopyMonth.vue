@@ -106,7 +106,6 @@ export default defineComponent({
         const paymentTypeCallApi = ref()
         const dataApiCopy: any = ref({})
         const trigger = ref<boolean>(true)
-
         const startDate = ref(dayjs(`${paYear.value}-${month.value}`).startOf('month').toDate());
         const finishDate = ref(dayjs(`${paYear.value}-${month.value}`).endOf('month').toDate());
 
@@ -119,6 +118,7 @@ export default defineComponent({
             if (paymentTypeCallApi.value == 2) {
                 paymentMonth = month.value + 1
             }
+            paymentDayCallApi.value = paymentDayCallApi.value == 0 ? dayjs(`${paYear.value}-${paymentMonth}`).daysInMonth() : paymentDayCallApi.value
             paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(paymentDayCallApi.value)}`)
             month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
             // }
