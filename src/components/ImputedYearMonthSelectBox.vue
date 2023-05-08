@@ -1,5 +1,5 @@
 <template>
-	<DxSelectBox :search-enabled="searchEnabled" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueInput"
+	<DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="searchEnabled" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueInput"
 		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
 		:disabled="disabled" :required="required">
 		<template #field="{ data }">
@@ -28,6 +28,7 @@
 import { defineComponent, ref, getCurrentInstance } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum"
 import {
 	DxValidator,
 	DxRequiredRule,
@@ -87,7 +88,7 @@ export default defineComponent({
 			emit('update:valueInput', val.value)
 		}
 
-		return { onValueChanged, messageRequired };
+		return { onValueChanged, messageRequired, Message };
 	},
 });
 </script>

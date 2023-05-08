@@ -4,9 +4,9 @@ import getMajorInsuranceCompanyEmployeeReturnToWork from "./getMajorInsuranceCom
 import getMajorInsuranceCompanyEmployeeLeaveOfAbsences from "./getMajorInsuranceCompanyEmployeeLeaveOfAbsences";
 import getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl from "./getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl";
 import getMajorInsuranceCompanyEmployeeLeaveOfAbsence from "./getMajorInsuranceCompanyEmployeeLeaveOfAbsence";
-import getEmployeeWages from "@/graphql/queries/PA/PA8/PA810/getEmployeeWages";
-import getEmployeeWage from "@/graphql/queries/PA/PA8/PA810/getEmployeeWage";
-import getEmployeeWageDaily from "@/graphql/queries/PA/PA8/PA810/getEmployeeWageDaily";
+import getEmployeeWages from "@/graphql/queries/common/getEmployeeWages";
+import getEmployeeWage from "@/graphql/queries/common/getEmployeeWage";
+import getEmployeeWageDaily from "@/graphql/queries/common/getEmployeeWageDaily";
 import getEmployeeWageDailies from "@/graphql/queries/common/getEmployeeWageDailies";
 import getMyCompany from "@/graphql/queries/common/getMycompany";
 

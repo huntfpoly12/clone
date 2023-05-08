@@ -17,7 +17,7 @@ mutation createIncomeExtra(
     paymentDay
     employeeType
     employeeId
-    incomeTypeCode
+    # incomeTypeCode
     incomePayment
     withholdingIncomeTax
     withholdingLocalIncomeTax

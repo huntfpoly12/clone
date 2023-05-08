@@ -263,7 +263,7 @@
   }
 
   :deep .col-tax {
-    height: calc(70vh);
+    height: calc(100vh - 300px);
     border: 1px solid #d7d7d7;
     margin-top: 10px;
     margin-right: 10px;
@@ -279,10 +279,13 @@
   }
 
   #tax-pay-720 {
-    height: calc(100vh - 356px) !important;
-
+    height: calc(100vh - 368px)!important;
     .dx-freespace-row {
       display: none !important;
     }
+  }
+  .sum-item{
+    text-align: right;
+    flex: 1;
   }
 }

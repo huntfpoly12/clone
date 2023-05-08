@@ -3,7 +3,7 @@
 }
 
 #gridContainerPA630 {
-    height: calc(100vh - 220px);
+    height: calc(100vh - 260px);
 }
 :deep .dx-freespace-row {
     display: none !important;
@@ -62,4 +62,8 @@
     ::v-deep .ant-switch-checked {
         background-color: black;
     }
+}
+:deep .dx-datagrid-text-content span {
+    font-size: 15px;
+    font-weight: bold;
 }

@@ -26,6 +26,7 @@ import { defineComponent, ref } from 'vue';
 import mutations from "@/graphql/mutations/BF/BF6/BF640/index";
 import notification from '@/utils/notification';
 import { makeDataClean } from '@/helpers/commonFunction';
+import { Message } from '@/configs/enum';
 
 export default defineComponent({
   props: {
@@ -40,6 +41,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const dataRequestFile = ref(props.requestFileData);
+    const messageCreate = Message.getCommonMessage('106').message;
 
     //----------------- query send request file tab 1--------------------------------
 
@@ -83,7 +85,7 @@ export default defineComponent({
 
     // onDone tab 1
     onDoneTab1(() => {
-      notification('success', `업데이트 완료!`);
+      notification('success', messageCreate);
       emit('cancel', false);
     });
     onErrorTab1((e: any) => {
@@ -91,7 +93,7 @@ export default defineComponent({
     });
     // onDone tab 2
     onDoneTab2(() => {
-      notification('success', `업데이트 완료!`);
+      notification('success', messageCreate);
       emit('cancel', false);
     });
     onErrorTab2((e: any) => {

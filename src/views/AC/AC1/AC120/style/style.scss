@@ -106,6 +106,9 @@
 
                 .detail1 {
                     width: calc(100% - 307px);
+                    :deep .abc .ant-form-item-control-input-content {
+                        // position: fixed;
+                    }
                 }
                 .ac120 {
                     height: 185px;

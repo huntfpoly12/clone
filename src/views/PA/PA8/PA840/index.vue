@@ -4,7 +4,7 @@
     <a-spin :spinning="loading1 || loading2" size="large">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
         :allow-column-reordering="move_column" key-expr="companyId" :allow-column-resizing="colomn_resize"
-        :column-auto-width="true" style="max-height: 770px">
+        :column-auto-width="true" style="max-height: 770px" noDataText="내역이 없습니다">
         <DxPaging :page-size="0" />
         <DxSearchPanel :visible="true" placeholder="검색" />
         <DxExport :enabled="true" />

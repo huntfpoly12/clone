@@ -1,6 +1,6 @@
 #pa-730 {
   #gridContainerPA730 {
-    height: calc(100vh - 220px);
+    height: calc(100vh - 280px);
   }
   :deep .dx-freespace-row {
     display: none !important;
@@ -98,4 +98,8 @@
   .text-right {
     text-align: right !important;
   }
+  :deep .dx-datagrid-text-content span {
+    font-size: 15px;
+    font-weight: bold;
+}
 }

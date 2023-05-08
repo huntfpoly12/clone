@@ -65,7 +65,6 @@ import {useStore} from "vuex";
 import {DeleteOutlined} from '@ant-design/icons-vue';
 import {DxColumn, DxDataGrid} from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
-import ProcessStatus from "@/components/common/ProcessStatus.vue";
 import BudgetPopup from "@/views/AC/AC5/AC520/components/BudgetPopup.vue";
 import {Budget, ComponentCreateBudget} from "@/views/AC/AC5/AC520/type";
 

@@ -15,7 +15,6 @@ export default gql`
       paymentDay
       employeeType
       employeeId
-      incomeTypeCode
       incomePayment
       withholdingIncomeTax
       withholdingLocalIncomeTax
@@ -40,7 +39,6 @@ export default gql`
         ... on EmployeeWage {
           type
           employeeId
-          incomeTypeCode
           name
           foreigner
           nationality
@@ -78,7 +76,6 @@ export default gql`
         ... on EmployeeWageDaily {
           type
           employeeId
-          incomeTypeCode
           name
           foreigner
           nationality

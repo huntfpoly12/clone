@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DxSelectBox :search-enabled="true" :width="width"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="width"
       :data-source="result?.searchUsers?.datas.length > 0 ? result.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : []"
       :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
       :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택"
@@ -38,6 +38,7 @@
 import { defineComponent, ref, watch, getCurrentInstance, reactive } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum"
 import queries from "@/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 import DxTextBox from "devextreme-vue/text-box";
@@ -109,7 +110,8 @@ export default defineComponent({
       result,
       value,
       updateValue, dataSource,
-      messageRequired
+      messageRequired,
+      Message
     };
   },
 });

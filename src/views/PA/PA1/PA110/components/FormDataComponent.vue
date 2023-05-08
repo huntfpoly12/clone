@@ -63,35 +63,35 @@
                             <img src="@/assets/images/iconInfo.png" class="img-info"/>
                         </a-tooltip>
                     </div>
-                    <a-form-item label="근무일수" label-align="right" class="red">
+                    <a-form-item label="근무일수" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" :max="31" width="100px"
                                 v-model:valueInput="dataIW.workingDays" :required="true"/>
                             <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="총근로시간" label-align="right" class="red">
+                    <a-form-item label="총근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.totalWorkingHours" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="연장근로시간" label-align="right" class="red">
+                    <a-form-item label="연장근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.overtimeWorkingHours" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="야간근로시간" label-align="right" class="red">
+                    <a-form-item label="야간근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingHoursAtNight" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="휴일근로시간" label-align="right" class="red">
+                    <a-form-item label="휴일근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingHoursOnHolidays" :required="true"/>
@@ -173,19 +173,19 @@
                         <a-tooltip placement="top">
                             <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
                             <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
+                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || true" style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영</template>
                             <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 반영" />
+                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement" style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 반영" />
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영분 삭제</template>
                             <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px" @onClick="!store.state.common.pa110.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
+                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement" style="margin: 0px 5px" @onClick="!store.state.common.pa110.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
                             </div>
                         </a-tooltip>
                         <button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
@@ -286,6 +286,8 @@ export default defineComponent({
         const totalDeduction = ref<number>(0)
         const subPayment = ref<number>(0)
 
+        let statusMidTermSettlement = ref<boolean>(true);
+
         // ============ GRAPQL ===============================
         // get employeewage
         const { loading: loadingEmployeeWage, onResult: resEmployeeWage } = useQuery(queries.getEmployeeWages, originData, () => ({
@@ -299,13 +301,12 @@ export default defineComponent({
         const {
             onResult: resConfigDeductions,
             loading: loadingConfigDeductions,
-            refetch: refetchConfigDeduction,
         } = useQuery(queries.getWithholdingConfigDeductionItems, originDataConfig, () => ({
             enabled: triggerConfigDeductions.value,
             fetchPolicy: "no-cache",
         }))
         const {
-            refetch: refetchValueDetail, result, loading
+            result, loading
         } = useQuery(queries.getIncomeWage, incomeWageParams, () => ({
             fetchPolicy: "no-cache",
             enabled: triggerDetail.value,
@@ -328,7 +329,7 @@ export default defineComponent({
             onError: errorCreated,
             onDone: doneCreated,
         } = useMutation(mutations.createIncomeWage);
-        const { refetch: refetchEmployeeWage, result: resultEmployeeWage, loading: loadingGetEmployeeWage, } = useQuery(queries120.getEmployeeWage,
+        const { result: resultEmployeeWage, loading: loadingGetEmployeeWage, } = useQuery(queries120.getEmployeeWage,
             originDataEmployeeWage, () => ({
                 fetchPolicy: 'no-cache',
                 enabled: employeeWageTrigger.value,
@@ -573,6 +574,7 @@ export default defineComponent({
                         }
                     })
                 }));
+                statusMidTermSettlement.value = data.midTermSettlement 
                 dataIW.value.employee.employeeId = data.employee.employeeId
                 dataIW.value.paymentDay = data.paymentDay
                 dataIW.value.workingDays = data.workingDays
@@ -851,6 +853,7 @@ export default defineComponent({
             totalDeduction,
             subPayment,
             onChangeInputDeduction, onChangeInputPayItem,
+            statusMidTermSettlement,
         };
     },
 });

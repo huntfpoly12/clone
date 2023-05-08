@@ -83,8 +83,7 @@
             <standard-form formName="pa-610" ref="formRef">
               <a-form-item label="코드" label-align="right" class="red">
                 <div class="d-flex-center">
-                  <text-number-box width="200px" v-model:valueInput="dataShow.employeeId" placeholder="숫자만 입력 가능"
-                    :disabled="!isNewRow" :required="true" />
+                  <text-number-box width="200px" v-model:valueInput="dataShow.employeeId" placeholder="숫자만 입력 가능" disabled />
                   <info-tool-tip class="ml-5">
                     최초 저장된 이후 수정 불가
                   </info-tool-tip>
@@ -279,7 +278,6 @@ export default defineComponent({
     let valueCallApiGetEmployeeBusiness: any = reactive({
       companyId: companyId,
       imputedYear: paYear,
-      incomeTypeCode: "",
       employeeId: null,
     });
 
@@ -563,9 +561,10 @@ export default defineComponent({
         } else {
           focusedRowKey.value = res.data.createEmployeeBusiness.residentId;
           selectRowKeyAction.value = res.data.createEmployeeBusiness.residentId;
+          dataShow.value.employeeId = res.data.createEmployeeBusiness.employeeId
         }
         valueCallApiGetEmployeeBusiness.incomeTypeCode = dataShow.value.incomeTypeCode;
-        valueCallApiGetEmployeeBusiness.employeeId = parseInt(dataShow.value.employeeId);
+        // valueCallApiGetEmployeeBusiness.employeeId = parseInt(dataShow.value.employeeId);
         previousRowData.value = { ...dataShow.value };
         // Nếu không phải thêm row mới thì isNewRow = false
         isNewRow.value = false;
@@ -643,7 +642,7 @@ export default defineComponent({
         employeeId: parseInt(
           dataShow.value.employeeId ? dataShow.value.employeeId : ""
         ),
-        incomeTypeCode: dataShow.value.incomeTypeCode,
+        // incomeTypeCode: dataShow.value.incomeTypeCode,
         input: {
           name: dataShow.value.name,
           foreigner: dataShow.value.foreigner,
@@ -694,9 +693,9 @@ export default defineComponent({
               stayQualification: dataShow.value.stayQualification,
               residentId: dataShow.value.residentId,
               email: dataShow.value.email || null,
-              employeeId: parseInt(
-                dataShow.value.employeeId ? dataShow.value.employeeId : ""
-              ),
+              // employeeId: parseInt(
+              //   dataShow.value.employeeId ? dataShow.value.employeeId : ""
+              // ),
               incomeTypeCode: dataShow.value.incomeTypeCode,
               incomeTypeName: dataShow.value.incomeTypeName,
             },
@@ -718,7 +717,7 @@ export default defineComponent({
       }
     };
     const actionDelete = (employeeId: any, incomeTypeCode: any) => {
-      valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode;
+      // valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode;
       valueCallApiGetEmployeeBusiness.employeeId = employeeId;
       deletePopup({
         callback: () => {

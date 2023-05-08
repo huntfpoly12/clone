@@ -12,6 +12,7 @@
       </div>
     </a-form-item>
     <a-form-item label="지급일" label-align="right">
+      {{ startDate }}
       <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
         v-model:valueDate="paymentDayPA620" />
       <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" :isFormat="true" /> -->
@@ -104,7 +105,8 @@ export default defineComponent({
     const paymentDayPA620 = computed({
       get() {
         let day = store.getters['common/paymentDayPA620'];
-        let date = `${globalYear.value}${filters.formatMonth(month1.value)}${day}`;
+        const daysInMonth = dayjs(`${month2.value}`).daysInMonth();
+        let date = `${month2.value}${day > daysInMonth || day == 0 ? daysInMonth : day}`;
         return date;
       },
       set(value) {
@@ -112,8 +114,15 @@ export default defineComponent({
         store.commit('common/paymentDayPA620', day);
       },
     });
-    const startDate = ref(dayjs(`${globalYear.value}-${month1.value}`).startOf('month').toDate());
-    const finishDate = ref(dayjs(`${globalYear.value}-${month1.value}`).endOf('month').toDate());
+
+    const startDate = computed(() => {
+      let day = dayjs(`${month2.value}`).startOf('month').toDate();
+      return day;
+    });
+    const finishDate = computed(() => {
+      let day = dayjs(`${month2.value}`).endOf('month').toDate();
+      return day;
+    });
     // ----------set month source default because dependent on the set up before--------------
     let month2: any = ref();
     watch(() => [props.monthVal, processKeyPA620.value.paymentYear], ([val]) => {
@@ -123,11 +132,9 @@ export default defineComponent({
         yearMonth = val == 12 ? `${globalYear.value + 1}1` : `${globalYear.value}${val + 1}`;
       }
       if (props.dateType == 1) {
-        yearMonth = `${globalYear.value}${val}`;
+        yearMonth = `${globalYear.value}${filters.formatMonth(val)}`;
       }
       month2.value = yearMonth;
-      startDate.value = dayjs(`${globalYear.value}${val}`).startOf('month').toDate();
-      finishDate.value = dayjs(`${globalYear.value}${val}`).endOf('month').toDate();
     });
     //-------------------------action copy data--------------------------------
     const {
