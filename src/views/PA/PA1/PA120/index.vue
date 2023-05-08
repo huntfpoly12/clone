@@ -8,7 +8,7 @@
             key-expr="key" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
             :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey" ref="gridRef"
-            @focused-row-changing="onFocusedRowChanging">
+            @focused-row-changing="onFocusedRowChanging" noDataText="내역이 없습니다">
             <DxPaging :page-size="0" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']"
               placeholder="검색" />
@@ -314,8 +314,8 @@ export default defineComponent({
     };
     const compareType = ref(2); //2 is row click. 1 is add button click;
     const compareForm = () => {
-      const { stayQualification, ...obj1 } = editRowPA120.value;
-      const { stayQualification: stayQualification2, ...obj2 } = initFormStateTabPA120.value;
+      const { stayQualification, employeeId, ...obj1 } = editRowPA120.value;
+      const { stayQualification: stayQualification2, employeeId: employeeId2, ...obj2 } = initFormStateTabPA120.value;
       if (!initFormStateTabPA120.value.foreigner) {
         delete obj1.nationality;
         delete obj2.nationality;
