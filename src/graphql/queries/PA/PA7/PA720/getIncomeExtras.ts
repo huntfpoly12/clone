@@ -10,7 +10,7 @@ export default gql`
     ) {
         incomeId
         paymentDay
-        employeeType
+        # employeeType
         employeeId
         incomeTypeCode
         incomePayment

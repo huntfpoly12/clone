@@ -44,6 +44,13 @@
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
+          <div class="input-text">
+            <a-form-item label="소득금액">
+              <number-box-money width="150px" :min="0" max="2147483647" :required="true" v-model:valueInput="incomeAmount"
+                :disabled="true" format="0,###" />
+              <span class="ml-3">원</span>
+            </a-form-item>
+          </div>
           <a-form-item label="세율" class="red">
             <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" v-model="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
@@ -72,14 +79,14 @@
           </div>
           <div class="input-text">
             <a-form-item label="소득세(공제)">
-              <number-box-money :disabled=" true " style="margin-left: 20px; width: 150px"
+              <number-box-money :disabled=" idDisableInput " style="margin-left: 20px; width: 150px"
                 v-model:valueInput=" formPA720.input.withholdingIncomeTax " format="0,###" :min=" 0 " />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="input-text">
             <a-form-item label="지방소득세(공제)">
-              <number-box-money :disabled=" true " style="margin-left: 20px; width: 150px"
+              <number-box-money :disabled=" idDisableInput " style="margin-left: 20px; width: 150px"
                 v-model:valueInput=" formPA720.input.withholdingLocalIncomeTax " format="0,###" :min=" 0 " />
               <span class="ml-3">원</span>
             </a-form-item>
@@ -87,7 +94,7 @@
           <div class="top-con">
             <div class="header-text-2 mb-10 d-flex">
               차인지급액
-              <b>{{
+              <b class="mx-3">{{
                 $filters.formatCurrency(
                 formPA720.input.paymentAmount -
                 formPA720.input.withholdingIncomeTax -
@@ -204,7 +211,7 @@ export default defineComponent({
       return '';
     });
     // common
-    let incomeAmount = ref(0);
+    let incomeAmount = computed(() => formPA720.value.input.paymentAmount - formPA720.value.input.requiredExpenses);
     let incomeTax = ref(0);
     let localIncomeTax = ref(0);
     const app: any = getCurrentInstance();
@@ -259,7 +266,6 @@ export default defineComponent({
       editRowData.input = {
         paymentDay: data.paymentDay,
         employeeId: data.employeeId,
-        incomeTypeCode: data.incomeTypeCode,
         paymentAmount: data.paymentAmount,
         requiredExpenses: data.requiredExpenses,
         taxRate: data.taxRate,
@@ -267,7 +273,7 @@ export default defineComponent({
         withholdingLocalIncomeTax: data.withholdingLocalIncomeTax,
         incomeId: data.incomeId,
         employee: {
-          key: data.incomeTypeCode.concat(data.employeeId)
+          key:data.employeeId
         }
       };
       store.commit('common/formPA720', editRowData)
@@ -279,6 +285,7 @@ export default defineComponent({
     });
 
     //----------------------------get employee extras --------------------------------
+
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const savePA710 = computed(() => store.state.common.savePA710);
     const getEmployeeExtrasParams = reactive({
@@ -291,7 +298,7 @@ export default defineComponent({
     }));
     watch(resultEmployeeExtras, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeExtras.map((item: any) => ({
-        ...item, key: item.incomeTypeCode.concat(item.employeeId)
+        ...item, key:item.employeeId
       }));
     });
 
@@ -320,7 +327,6 @@ export default defineComponent({
         if (isEdit.value === true) {
           delete params.input.paymentDay;
           delete params.input.employeeId;
-          delete params.input.incomeTypeCode;
           params.incomeId = incomeExtraParam.value.incomeId;
           let updateData = { ...processKeyPA720.value, input: { ...params.input }, incomeId: incomeExtraParam.value.incomeId }
           updateIncomeExtra(updateData);
@@ -365,15 +371,10 @@ export default defineComponent({
     const caclInput = () => {
       let objIncomeAmount: any = Formula.getExtraEmployeeIncomeAmount(formPA720.value.input.paymentAmount, formPA720.value.input.requiredExpenses);
       let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, formPA720.value.input.taxRate);
-      incomeAmount.value = objIncomeAmount;
-      formPA720.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
+      formPA720.value.input.withholdingIncomeTax = incomeAmount.value * formPA720.value.input.taxRate / 100;
       formPA720.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
       formPA720.value.input.incomePayment = formPA720.value.input.paymentAmount - formPA720.value.input.requiredExpenses;
       formPA720.value.input.actualPayment = formPA720.value.input.paymentAmount - formPA720.value.input.withholdingIncomeTax - formPA720.value.input.withholdingLocalIncomeTax;
-    };
-    const updateValue = (value: any) => {
-      formPA720.value.input.taxRate = value.value;
-      caclInput();
     };
     const onChangeInput = () => {
       caclInput();
@@ -385,9 +386,11 @@ export default defineComponent({
       return text;
     };
     const changeIncomeTypeCode = (emitVal: any) => {
-      formPA720.value.input.incomeTypeCode = emitVal.incomeTypeCode;
       formPA720.value.input.employee = emitVal;
     };
+    watch(() => formPA720.value.input.taxRate, () => {
+      caclInput();
+    }, { deep: true });
     const resetForm = (e: any) => {
       e.validationGroup.reset();
     }
@@ -401,7 +404,6 @@ export default defineComponent({
       formPA720,
       changeIncomeTypeCode,
       taxRateOptions,
-      updateValue,
       isEdit,
       arrayEmploySelect,
       newDateLoading,

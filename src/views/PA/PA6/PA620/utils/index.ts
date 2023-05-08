@@ -37,7 +37,6 @@ import { companyId } from "@/helpers/commonFunction";
 export const dataActionUtils = {
   input: {
     employeeId: null,
-    incomeTypeCode: null,
     paymentAmount: 0,
     taxRate: 3,
     withholdingIncomeTax: 0,
