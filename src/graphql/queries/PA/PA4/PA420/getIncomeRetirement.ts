@@ -12,7 +12,7 @@ export default gql`
             retirementType
             employeeType
             employeeId
-            incomeTypeCode
+#            incomeTypeCode
             createdAt
             incomePayment
             withholdingIncomeTax

@@ -14,7 +14,6 @@ export default gql`
             employeeWages {
                 type
                 employeeId
-                incomeTypeCode
                 name
                 foreigner
                 nationality
@@ -52,7 +51,6 @@ export default gql`
             employeeWageDailies {
                 type
                 employeeId
-                incomeTypeCode
                 name
                 foreigner
                 nationality
