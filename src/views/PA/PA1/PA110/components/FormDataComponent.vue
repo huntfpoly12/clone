@@ -3,7 +3,7 @@
         <a-spin :key="countKey" :spinning="loading || loadingGetEmployeeWage" size="large"><StandardForm formName="pa-110-form" ref="pa110FormRef">
             <a-row class="row-1" >
                 <a-col :span="12">
-                    <a-form-item label="사원" class="red">
+                    <a-form-item label="사원" :class="store.state.common.pa110.statusFormAdd ? 'red' : ''">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus"
                             :required="true" v-model:valueEmploy="dataIW.employee.employeeId" width="316px"
                             @onChange="onUpdateValue" />

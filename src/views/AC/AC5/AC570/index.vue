@@ -11,6 +11,7 @@
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             @focused-row-changing="onFocusedRowChanging" ref="gridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
+                            <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                             <DxPaging :enabled="false" />
@@ -60,6 +61,7 @@
                             <DxColumn caption="최종저장아이디" data-field="name12" />
                             <DxColumn :width="50" cell-template="pupop" css-class="cell-center" />
                             <template #pupop="{ data }">
+                                <EditOutlined @click="onOpenPopupDetail(data.data)" />
                                 <a-tooltip placement="top">
                                     <template #title>과목전용조서 삭제</template>
                                     <div>
@@ -77,9 +79,10 @@
                 </a-col> -->
             </a-row>
         </div>
-        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
             title="변경이력" :idRowEdit="idRowEdit" typeHistory="ac-570" />
         <AddPopup :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :data="popupData" />
+        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" />
     </div>
 </template>
 <script lang="ts">
@@ -87,7 +90,7 @@ import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vu
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxExport, DxScrolling, DxPaging, DxSearchPanel, } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxSelection, DxItem, DxExport, DxScrolling, DxPaging, DxSearchPanel, } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/AC/AC5/AC570";
@@ -98,7 +101,7 @@ import AddPopup from './components/AddPopup.vue'
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        AddPopup,
+        AddPopup, DxSelection,
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxPaging, DxSearchPanel
     },
     setup() {
@@ -124,6 +127,7 @@ export default defineComponent({
         let formState: any = ref({});
         const resetFormNum = ref(1);
         const statusAddRow = ref(true);
+        const modalStatusDetail = ref<boolean>(false)
         const statusClickButtonSave = ref<boolean>(true);
         const statusClickButtonAdd = ref<boolean>(false);
         const gridRef = ref(); // ref of grid
@@ -236,15 +240,19 @@ export default defineComponent({
             modalStatusAdd.value = true
         }
 
+        const onOpenPopupDetail = (data: any) => {
+
+        }
+
         // A function that is called when the user clicks on the delete button.
 
 
 
         return {
-            confirmSave, move_column, colomn_resize, idRowEdit, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, statusFormUpdate, popupData, dataSource, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,
+            confirmSave, move_column, colomn_resize, idRowEdit, modalHistoryStatus, labelCol: { style: { width: "150px" } }, statusFormUpdate, popupData, dataSource, DeleteOutlined, modalStatus, focusedRowKey, modalStatusAdd,
             // confimSaveWhenChangeRow, 
             onFocusedRowChanging,
-            // actionToAddFromEdit, 
+            onOpenPopupDetail, modalStatusDetail,
             actionCreate, modalHistory,
             contentDelete, modalStatusDelete, statusAddRow, Message, ac570FormRef, disabledBlock, gridRef,
         };
