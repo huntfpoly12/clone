@@ -12,7 +12,7 @@ export default gql`
     ) {
       type
       employeeId
-      incomeTypeCode
+      # incomeTypeCode
       name
       foreigner
       nationality
@@ -69,7 +69,7 @@ export default gql`
       }
       dependents {
         employeeId
-        incomeTypeCode
+        # incomeTypeCode
         index
         relation
         name

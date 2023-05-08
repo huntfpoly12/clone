@@ -4,7 +4,7 @@ export default gql`
     $companyId: Int!
     $imputedYear: Int!
     $employeeId: Int!
-    $input: EmployeeWageUpdateInput!
+    $input: EmployeeWageInput!
   ) {
     updateEmployeeWage(
       companyId: $companyId

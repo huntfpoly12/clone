@@ -47,7 +47,7 @@
           :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
           @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
           v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging"
-          id="tax-pay-620">
+          id="tax-pay-620" noDataText="내역이 없습니다">
           <DxSelection select-all-mode="allPages" mode="multiple" />
           <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
           <template #tag="{ data }">

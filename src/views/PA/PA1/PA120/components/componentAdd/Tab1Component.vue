@@ -2,10 +2,10 @@
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
       <standard-form formName="tab1-pa120" :disabled="true">
-        <a-form-item label="사번(코드)" label-align="right" class="red">
+        <a-form-item label="사번(코드)" label-align="right">
           <div class="input-text">
-            <number-box placeholder="숫자만 입력 가능" width="200px" :min="1" :max="9999999999" :required="true"
-              v-model:valueInput="initFormStateTabPA120.employeeId" :disabled="isEdit || notDatasourcePA120" />
+            <number-box placeholder="숫자만 입력 가능" width="200px" :min="1" :max="9999999999" :disabled="true"
+              v-model:valueInput="initFormStateTabPA120.employeeId"/>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 최초 저장된 이후 수정 불가.
@@ -148,7 +148,6 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, watch, computed, onUnmounted } from "vue";
 import { useStore } from "vuex";
-import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/common/index";
@@ -283,7 +282,8 @@ export default defineComponent({
       onError,
     } = useMutation(mutations.createEmployeeWage);
 
-    onDoneAdd(() => {
+    onDoneAdd((res: any) => {
+      let employeeId = res.data.createEmployeeWage.employeeId;
       emit('setTabsStatus', false);
       notification("success", messageCreate);
       store.commit('common/actionFormDonePA120')
@@ -291,7 +291,8 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       store.state.common.isAddFormErrorPA120 = false;
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
-      store.state.common.rowKeyTab2PA120 = initFormStateTabPA120.value.employeeId;
+      initFormStateTabPA120.value.employeeId = employeeId;
+      store.state.common.rowKeyTab2PA120 = employeeId;
       isEdit.value = true;
     });
 
@@ -315,9 +316,9 @@ export default defineComponent({
         let formData = { ...initFormStateTabPA120.value, employeeId: +initFormStateTabPA120.value.employeeId, };
         delete formData.key;
         delete formData.deletable;
-        if (isEdit.value) {
-          delete formData.employeeId;
-        }
+        delete formData.employeeId;
+        // if (isEdit.value) {
+        // }
         let dataNew: any = {
           ...formParam,
           input: {

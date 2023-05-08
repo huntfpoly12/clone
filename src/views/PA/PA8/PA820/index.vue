@@ -5,7 +5,7 @@
     <a-spin :spinning="loading" size="large">
       <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true"
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-        :column-auto-width="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef">
+        :column-auto-width="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef" noDataText="내역이 없습니다">
         <DxPaging :page-size="0" />
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']"
           placeholder="검색" />
