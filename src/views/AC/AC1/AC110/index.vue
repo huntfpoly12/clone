@@ -100,16 +100,9 @@
                   @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails" />
               </div>
             </template>
-
-            <!-- <DxSummary>
-              <DxTotalItem column="통장" summary-type="count" display-format="" />
-              <DxTotalItem cssClass="custom-sumary" column="입금액" :customize-text="totalDeposits" />
-              <DxTotalItem cssClass="custom-sumary" column="출금액" :customize-text="totalWithdrawal" />
-              <DxTotalItem cssClass="custom-sumary" column="전표등록" :customize-text="countSlipRegistration" />
-            </DxSummary> -->
           </DxDataGrid>
           <div class="DxDataGridMain-ac-110-sumary">
-              <div v-html="`통장내역수: <span style='font-size: 16px !important'>${dataSource.length}</span>`"></div>
+              <div v-html="`통장내역수: <span style='font-size: 16px !important'>[${dataSource.length}]</span>`"></div>
               <div v-html="totalDeposits()"></div>
               <div v-html="totalWithdrawal()"></div>
               <div v-html="countSlipRegistration()"></div>
@@ -195,18 +188,24 @@
                   <template #income="{ data }">
                     <div :id="`ac110income${data.rowIndex}${data.columnIndex}`"
                       :class="{ 'disable-input-column': !!data.data.spending }">
-                      <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
+                      <number-box-money v-if="data.rowIndex === 0" v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
+                        :disabled="!!data.data.spending" height="26" :readOnly="isRegistered || data.rowIndex === 0"
+                        @focusInput="focusInputIncomeSpending(data, 'income')" />
+                      <number-box-money v-else v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
                         :disabled="!!data.data.spending" height="26" :readOnly="isRegistered"
-                        @focusInput="changeInputIncomeSpending(data, 'income')" />
+                        @focusInput="focusInputIncomeSpending(data, 'income')" @changeInput="changeInput()"/>
                     </div>
                   </template>
                   <DxColumn caption="지출액" cell-template="spending" width="110" />
                   <template #spending="{ data }">
                     <div :id="`ac110spending${data.rowIndex}${data.columnIndex}`"
                       :class="{ 'disable-input-column': !!data.data.income }">
-                      <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
+                      <number-box-money v-if="data.rowIndex === 0" v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
+                        :disabled="!!data.data.income" height="26" :readOnly="isRegistered || data.rowIndex === 0"
+                        @focusInput="focusInputIncomeSpending(data, 'spending')" />
+                      <number-box-money v-else v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
                         :disabled="!!data.data.income" height="26" :readOnly="isRegistered"
-                        @focusInput="changeInputIncomeSpending(data, 'spending')" />
+                        @focusInput="focusInputIncomeSpending(data, 'spending')" @changeInput="changeInput()"/>
                     </div>
                   </template>
                   <DxColumn caption="적요" cell-template="summary" width="150" />
@@ -917,8 +916,10 @@ export default defineComponent({
       const initTransactionDetails: any = { ...InitTransactionDetails }
       const lengthData = dataSourceTransactionDetails.value.transactionDetails.length
       if (lengthData > 0) {
-        initTransactionDetails.theOrder = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].theOrder + 1 || 1
-        initTransactionDetails.accountingDocumentId = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].accountingDocumentId + 1 + 'create' || 'create'
+        const firstTransactionDetail = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1]
+        initTransactionDetails.summary = firstTransactionDetail.summary
+        initTransactionDetails.theOrder = firstTransactionDetail.theOrder + 1 || 1
+        initTransactionDetails.accountingDocumentId = firstTransactionDetail.accountingDocumentId + 1 + 'create' || 'create'
       } else {
         initTransactionDetails.theOrder = 0
         initTransactionDetails.accountingDocumentId = 'create'
@@ -1003,7 +1004,7 @@ export default defineComponent({
       const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
       dataSource.value[indexSelected].proofCount--
     }
-    const changeInputIncomeSpending = (data: any, key: string) => {
+    const focusInputIncomeSpending = (data: any, key: string) => {
       if (key === 'income') {
         if (!data.data.income) {
           data.data.income = null
@@ -1029,6 +1030,26 @@ export default defineComponent({
       const indexTransition = dataSourceTransactionDetails.value.transactionDetails.findIndex((item: any) => item.accountingDocumentId === accountingDocumentId)
       dataSourceTransactionDetails.value.transactionDetails[indexTransition].goodsCount = value.length
       dataSourceTransactionDetails.value.transactionDetails[indexTransition].statementOfGoodsItems = [...value]
+    }
+
+    const changeInput = () => {
+      let totalInComeInput = 0
+      let totalSpendingInput = 0
+      dataSourceTransactionDetails.value.transactionDetails.forEach((item: any, i: number) => {
+        if(i > 0) {
+          if(!!item.income){
+            totalInComeInput += item.income
+          }
+          if(!!item.spending){
+            totalSpendingInput += item.spending
+          }
+        }
+      })
+      if(dataSourceTransactionDetails.value.deposit > 0) {
+        dataSourceTransactionDetails.value.transactionDetails[0].income = dataSourceTransactionDetails.value.deposit - totalInComeInput + totalSpendingInput
+      }else {
+        dataSourceTransactionDetails.value.transactionDetails[0].spending = dataSourceTransactionDetails.value.withdraw - totalSpendingInput + totalInComeInput
+      }
     }
     // ------------------method common------------------
     const formatNumber = (value: number) => {
@@ -1137,14 +1158,15 @@ export default defineComponent({
       arrAccoountSubjects,
       fundingSource,
       letterOfApprovalType,
-      changeInputIncomeSpending,
+      focusInputIncomeSpending,
       updateGoodsCount,
       isRegistered,
       rowKeyfocusedGridDetail,
       isModalConfirmChangeData,
       handleConfirmChangeData,
       refFormDetailAc110,
-      keyRefreshGridDetailAc
+      keyRefreshGridDetailAc,
+      changeInput
     };
   },
 });
