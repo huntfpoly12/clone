@@ -18,7 +18,6 @@
           {{ data.data?.employee?.name }}
           <a-tooltip placement="top" v-if="data.data?.employee?.incomeTypeName">
             <template #title>
-              {{ data.data.incomeTypeCode }}
               <span v-if="data.data?.employee?.incomeTypeName?.length > 10">{{ data.data?.employee?.incomeTypeName
               }}</span>
             </template>
@@ -269,15 +268,13 @@ export default defineComponent({
     const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
       if (e.selectedRowsData.length > 0) {
-        // changeDayDataPA720.value.employeeId = e.selectedRowsData[0]?.employeeId;
-        // changeDayDataPA720.value.incomeTypeCode = e.selectedRowsData[0]?.incomeTypeCode;
         incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
           return item.incomeId;
         });
         paymentData.value = e.selectedRowsData.map((item: any) => {
           return {
             param: { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value },
-            errorInfo: { employeeId: item.employee.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name, incomeTypeCode: item.employee.incomeTypeCode },
+            errorInfo: { employeeId: item.employee.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name },
           };
         });
       }
