@@ -1,5 +1,5 @@
-import getEmployeeWage from "./getEmployeeWage";
-import getEmployeeWages from "./getEmployeeWages";
+import getEmployeeWages from "@/graphql/queries/common/getEmployeeWages";
+import getEmployeeWage from "@/graphql/queries/common/getEmployeeWage";
 import getEmployeeWageDailies from "@/graphql/queries/common/getEmployeeWageDailies";
 import getMajorInsuranceCompanyEmployeeAcquisition from "./getMajorInsuranceCompanyEmployeeAcquisition";
 import getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl from "./getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl";
@@ -15,5 +15,6 @@ const queries = {
     getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl,
   getMajorInsuranceCompanyEmployeeAcquisitions,
   getMyCompany: getMyCompany,
+
 };
 export default queries;

@@ -180,7 +180,7 @@
         <a-form-item label="정산종료(퇴사)일" class="label-required">
           <div class="d-flex-center">
 
-            <date-time-box-custom :required="true" width="150px" 
+            <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementFinishDate"
                                   disabled
                                   :startDate="dayjs(String(formState.lastRetiredYearsOfService.settlementStartDate))"
@@ -304,8 +304,6 @@ import {Formula} from "@bankda/jangbuda-common";
 import {useStore} from 'vuex';
 import {IncomeRetirement} from "@/views/PA/PA4/PA420/types";
 import cloneDeep from "lodash/cloneDeep";
-import NumberBoxMoney from "@/components/common/NumberBoxMoney.vue";
-import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
 import isEqual from "lodash/isEqual";
 
 const props = defineProps<{ actionNextStep: number, dataDetail: IncomeRetirement }>()

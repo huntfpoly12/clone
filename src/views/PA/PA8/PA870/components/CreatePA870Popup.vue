@@ -486,10 +486,9 @@ import { useCompanyInfo } from "@/helpers/useCompanyInfo";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import notification from '@/utils/notification';
 import { getCurrentInstance } from 'vue';
-import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
 export default defineComponent({
-  components: {InfoToolTip},
+  components: {},
   props: {
     isOpenModalCreate: {
       type: Boolean,

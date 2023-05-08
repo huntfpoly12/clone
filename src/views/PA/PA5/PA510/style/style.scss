@@ -141,9 +141,13 @@
     padding-top: 4px;
 }
 #data-tax-pay-info {
-    height: calc(100vh - 300px);
+    height: calc(100vh - 334px);
     :deep .dx-freespace-row {
         display: none !important;
     }
+}
+:deep .dx-datagrid-text-content span {
+    font-size: 15px;
+    font-weight: bold;
 }
 

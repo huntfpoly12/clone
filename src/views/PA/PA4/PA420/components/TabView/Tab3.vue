@@ -317,7 +317,6 @@
 
 
 <script lang="ts" setup>
-import DefaultTextBox from "@/components/common/DefaultTextBox.vue";
 import { IncomeRetirement } from "@/views/PA/PA4/PA420/types";
 import { reactive, ref, watch } from 'vue';
 

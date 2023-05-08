@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading || loadingReport" size="large">
-        <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching"  :buttonSearch="true"/>
+        <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true" />
         <div id="pa-430">
             <div class="search-form">
                 <a-row :gutter="20">
@@ -12,7 +12,8 @@
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <range-month-time-box v-model:valueDate="rangeDate" :minDate="minDate" :maxDate="maxDate" placeholder="시작월 > 종료월" />
+                            <range-month-time-box v-model:valueDate="rangeDate" :minDate="minDate" :maxDate="maxDate"
+                                placeholder="시작월 > 종료월" />
                             <!-- <a-range-picker :placeholder="['Start month', 'End month']" format="YYYY-MM"
                                 :value="rangeDate" :mode="mode2" @panelChange="handlePanelChange2"
                                 @change="handleChange" :locale="locale" /> -->
@@ -36,7 +37,7 @@
                                     v-model:valueRadioCheck="dataInputReport.input.type" />
                                 <a-tooltip color="black" placement="top">
                                     <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
-                                    <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                                    <img src="@/assets/images/iconInfo.png" class="img-info" />
                                 </a-tooltip>
                             </div>
                         </a-form-item>
@@ -56,10 +57,11 @@
                         <switch-basic v-model:valueSwitch="valSwitch" :textCheck="'발행자보관용'" :textUnCheck="'발행자보고용'" />
                     </a-col> -->
                 </a-row>
-                <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA430" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged">
+                <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA430" :show-row-lines="true" :hoverStateEnabled="true"
+                    :data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxPaging :enabled="false" />
                     <DxToolbar>
                         <DxItem template="send-group-mail" />
                         <DxItem template="send-group-print" />
@@ -124,7 +126,8 @@
                         alignment="right" />
                     <DxColumn caption="과세대상 퇴직급여" data-field="taxableRetirementBenefits" width="123" format="#,###"
                         alignment="right" />
-                    <DxColumn caption="공제" data-field="totalDeduction" cell-template="total-deduction" width="90" format="#,###" alignment="right" />
+                    <DxColumn caption="공제" data-field="totalDeduction" cell-template="total-deduction" width="90"
+                        format="#,###" alignment="right" />
                     <template #total-deduction="{ data }">
                         <a-tooltip placement="top">
                             <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세 {{
@@ -132,7 +135,7 @@
                             <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
                         </a-tooltip>
                     </template>
-                    <DxColumn caption="차인지급액" data-field="actualPayment" width="90" format="#,###" alignment="right" />
+                    <DxColumn caption="차인지급액" data-field="actualPayment" width="70" format="#,###" alignment="right" />
                     <DxColumn caption="비고" cell-template="note" />
                     <template #note="{ data }">
                         <div class="custom-action">
@@ -164,7 +167,7 @@
                             </a-tooltip>
                         </div>
                     </template>
-                    <DxSummary v-if="dataSource.length">
+                    <!-- <DxSummary v-if="dataSource.length">
                         <DxTotalItem value-format="#,###" :customize-text="employeeType1" show-in-column="사원"
                             alignment="left" />
                         <DxTotalItem value-format="#,###" display-format="퇴직급여합계: {0}" column="retirementBenefits"
@@ -177,12 +180,37 @@
                             summary-type="sum" />
                         <DxTotalItem value-format="#,###" display-format="차인지급액합계: {0}" column="actualPayment"
                             summary-type="sum" />
-                    </DxSummary>
+                    </DxSummary> -->
                 </DxDataGrid>
+                <div v-if="dataSource.length"
+                    style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+                    class="fs-14">
+                    <div style="margin-left: 70px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                            <div v-html="employeeType1()"></div>
+                        </div>
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customNonTaxableRetirementBenefits()">
+                        </div>
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTaxableRetirementBenefits()">
+                        </div>
+                    </div>
+                    <div style=" margin-left: 50px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
+                        </div>
+                    </div>
+                    <div style=" margin-left: 50px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
+                        </div>
+                    </div>
+                </div>
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
-                    :data="popupDataEmailMulti"/>
+                    :data="popupDataEmailMulti" />
             </div>
         </div>
     </a-spin>
@@ -443,7 +471,35 @@ export default defineComponent({
         };
 
         const employeeType1 = () => {
-            return `사원수: ${totalEmployee.value} (퇴직: ${emplRetirementType1.value}, 중간: ${emplRetirementType2.value})`
+            return `사원수 <span>[${totalEmployee.value}]</span> (퇴직 <span>[${emplRetirementType1.value}]</span>, 중간 <span>[${emplRetirementType2.value}]</span>)`
+        }
+        const customNonTaxableRetirementBenefits = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.nonTaxableRetirementBenefits
+            })
+            return `비과세퇴직급여합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+        }
+        const customTaxableRetirementBenefits = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.taxableRetirementBenefits
+            })
+            return `과세대상퇴직급여합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+        }
+        const customTotalDeduction = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.totalDeduction
+            })
+            return `공제합계 <span>[${filters.formatCurrency(sum)}]</span> `;
+        }
+        const customActualPayment = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.actualPayment
+            })
+            return `차인지급액합계 <span>[${filters.formatCurrency(sum)}]</span>`;
         }
         return {
             employeeType1,
@@ -472,7 +528,7 @@ export default defineComponent({
             getColorTag,
             originData,
             minDate, maxDate,
-            // valSwitch
+            customNonTaxableRetirementBenefits, customTaxableRetirementBenefits, customTotalDeduction, customActualPayment,
         };
     },
 });

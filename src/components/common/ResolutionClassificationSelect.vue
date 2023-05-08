@@ -1,5 +1,5 @@
 <template>
-  <DxSelectBox :width="width" :data-source="resolutionClassification" placeholder="선택" :show-clear-button="clearButton"
+  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="resolutionClassification" placeholder="선택" :show-clear-button="clearButton"
       v-model:value="value" :read-only="readOnly" display-expr="label"
       value-expr="value" :disabled="disabled"
       @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
@@ -13,6 +13,7 @@ import { ref, watch, getCurrentInstance, computed, onMounted } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { ResolutionClassification, enum2Entries  } from "@bankda/jangbuda-common";
+import { Message } from "@/configs/enum"
 export default {
   props: {
       required: {
@@ -72,6 +73,7 @@ export default {
           resolutionClassification,
           updateValue,
           value,
+          Message
       };
   },
 };

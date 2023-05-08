@@ -82,14 +82,12 @@ export default defineComponent({
       incomeIdRender.value.push(resData.incomeId);
       succesState.value.push({
         employeeId: resData.employeeId,
-        incomeTypeCode: resData.incomeTypeCode,
       });
       if (dataUpdateLen.value == 0) {
         let allData = props.data;
         allData = allData.filter((item: any, index) => {
           const firstIndex = allData.findIndex((elem: any) =>
             elem.errorInfo.employeeId === item.errorInfo.employeeId
-            && elem.errorInfo.incomeTypeCode === item.errorInfo.incomeTypeCode
           );
           if (index == firstIndex) {
             return true
@@ -102,7 +100,6 @@ export default defineComponent({
           return !succesState.value.some((item2: any) => {
             return (
               item2.employeeId === item1.errorInfo.employeeId
-              && item2.incomeTypeCode === item1.errorInfo.incomeTypeCode
             )
           }
           );
@@ -119,7 +116,6 @@ export default defineComponent({
         allData = allData.filter((item: any, index) => {
           const firstIndex = allData.findIndex((elem: any) =>
             elem.errorInfo.employeeId === item.errorInfo.employeeId
-            && elem.errorInfo.incomeTypeCode === item.errorInfo.incomeTypeCode
           );
           if (index == firstIndex) {
             return true
@@ -132,7 +128,6 @@ export default defineComponent({
           return !succesState.value.some((item2: any) => {
             return (
               item2.employeeId === item1.errorInfo.employeeId
-              && item2.incomeTypeCode === item1.errorInfo.incomeTypeCode
             )
           }
           );

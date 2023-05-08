@@ -77,6 +77,7 @@ import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import { Message } from "@/configs/enum";
+import mutations from "@/graphql/mutations/AC/AC5/AC570";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -91,7 +92,17 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
-
+        // mutation updateBudgetSubjectTransition
+        const {
+            mutate: updateBudgetSubjectTransition, onDone: doneUpdateBudgetSubjectTransition, onError: errorUpdateBudgetSubjectTransition,
+        } = useMutation(mutations.updateBudgetSubjectTransition);
+        // updateBudgetSubjectTransition
+        doneUpdateBudgetSubjectTransition((e) => {
+            notification('success', Message.getMessage('COMMON', '106').message)
+        })
+        errorUpdateBudgetSubjectTransition(e => {
+            notification('error', e.message)
+        })
 
         const setModalVisible = () => {
             emit("closePopup", false)

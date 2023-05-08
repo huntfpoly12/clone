@@ -72,8 +72,9 @@
 
     .production-check {
       display: grid;
-      grid-template-columns: 45% 45%;
+      grid-template-columns: 50% 50%;
       margin-left: 97px;
+      grid-column-gap: 5px;
     }
 
     :deep .check-box-group {

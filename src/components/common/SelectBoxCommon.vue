@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :search-enabled="searchEnabled" :width="width" :data-source="arrSelect" :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="searchEnabled" :width="width" :data-source="arrSelect" :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr"
       :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택"
       :name="nameInput" >
         <DxValidator :name="nameInput">
@@ -11,6 +11,7 @@
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum"
 export default defineComponent({
     props: {
         required: {
@@ -73,7 +74,8 @@ export default defineComponent({
         return {
             value,
             updateValue,
-            messageRequired
+            messageRequired,
+            Message
         };
     },
 });

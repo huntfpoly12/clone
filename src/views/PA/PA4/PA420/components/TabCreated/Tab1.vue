@@ -19,12 +19,9 @@
           <div class="d-flex-center">
             <number-box min="1" max="31" :required="true" width="150px"
                         v-model:valueInput="paymentDay" is-format/>
-            <div class="ml-5 d-flex-center">
-              <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-              <div class="custom-waring">
-                지급일은 저장 후 수정불가
-              </div>
-            </div>
+            <info-tool-tip class="ml-5">
+              지급일은 저장 후 수정불가
+            </info-tool-tip>
           </div>
 
         </a-form-item>
@@ -65,7 +62,7 @@
       </a-col>
       <a-col :span="12">
         <div class="header-text-2 mb-10">중간지급 근속연수</div>
-        <a-form-item label="정산시작(기산)일" :class="interimPaymentTab1 ? 'label-required' : ''">
+        <DxFieldCustom label="정산시작(기산)일" :required="interimPaymentTab1" class="field-custom">
           <div class="d-flex-center">
             <!-- TODO PRE Settlement START DATE -->
             <date-time-box-custom
@@ -82,8 +79,8 @@
               </info-tool-tip>
             </div>
           </div>
-        </a-form-item>
-        <a-form-item label="정산종료(퇴사)일" :class="interimPaymentTab1 ? 'label-required' : ''">
+        </DxFieldCustom>
+        <DxFieldCustom label="정산종료(퇴사)일" :required="interimPaymentTab1" class="field-custom">
           <div class="d-flex-center">
             <!-- TODO PRE Settlement END DATE -->
             <date-time-box-custom width="150px"
@@ -98,15 +95,15 @@
               </info-tool-tip>
             </div>
           </div>
-        </a-form-item>
-        <a-form-item label="지급일" :class="interimPaymentTab1 ? 'label-required' : ''">
+        </DxFieldCustom>
+        <DxFieldCustom label="지급일" :required="interimPaymentTab1" class="field-custom">
           <date-time-box-custom
             :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
             v-model:valueDate="formState.prevRetiredYearsOfService.paymentDate"
             ref="prevRetiredYearsOfServicePaymentDate"
           />
-        </a-form-item>
-        <a-form-item label="제외일수">
+        </DxFieldCustom>
+        <DxFieldCustom label="제외일수" class="field-custom">
           <div class="d-flex-center">
             <number-box
               :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
@@ -120,8 +117,8 @@
               </info-tool-tip>
             </div>
           </div>
-        </a-form-item>
-        <a-form-item label="가산일수">
+        </DxFieldCustom>
+        <DxFieldCustom label="가산일수" class="field-custom">
           <div class="d-flex-center">
             <number-box :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
                         v-model:valueInput="formState.prevRetiredYearsOfService.additionalDays"
@@ -133,7 +130,7 @@
               </info-tool-tip>
             </div>
           </div>
-        </a-form-item>
+        </DxFieldCustom>
         <div>
           근속연수 / 근속월수 / 근속일수:
           {{ dataPrevRetiredYearsOfService.yearsOfService }}년/
@@ -143,7 +140,7 @@
       </a-col>
       <a-col :span="12">
         <div class="header-text-2 mb-10">최종 근속연수</div>
-        <a-form-item label="정산시작(입사)일" class="label-required">
+        <DxFieldCustom label="정산시작(입사)일" class="field-custom" required>
           <div class="d-flex-center">
             <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementStartDate"
@@ -157,8 +154,8 @@
               </info-tool-tip>
             </div>
           </div>
-        </a-form-item>
-        <a-form-item label="정산종료(퇴사)일" class="label-required">
+        </DxFieldCustom>
+        <DxFieldCustom label="정산종료(퇴사)일" class="field-custom" required>
           <div class="d-flex-center">
             <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementFinishDate"
@@ -171,13 +168,13 @@
               </info-tool-tip>
             </div>
           </div>
-        </a-form-item>
-        <a-form-item label="지급일" class="label-required">
+        </DxFieldCustom>
+        <DxFieldCustom label="지급일" class="field-custom" required>
           <date-time-box-custom :required="false" width="150px"
                                 v-model:valueDate="formState.lastRetiredYearsOfService.paymentDate"
                                 ref="lastRetiredYearsOfServicePaymentDate"/>
-        </a-form-item>
-        <a-form-item label="제외일수" class="label-required">
+        </DxFieldCustom>
+        <DxFieldCustom label="제외일수" class="field-custom" required>
           <div class="d-flex-center">
             <number-box :required="true" width="150px" format="#0,###"
                         v-model:valueInput="formState.lastRetiredYearsOfService.exclusionDays"/>
@@ -187,8 +184,8 @@
               </info-tool-tip>
             </div>
           </div>
-        </a-form-item>
-        <a-form-item label="가산일수" class="label-required">
+        </DxFieldCustom>
+        <DxFieldCustom label="가산일수" class="field-custom" required>
           <div class="d-flex-center">
             <number-box :required="true" width="150px" format="#0,###"
                         v-model:valueInput="formState.lastRetiredYearsOfService.additionalDays"/>
@@ -198,7 +195,7 @@
               </info-tool-tip>
             </div>
           </div>
-        </a-form-item>
+        </DxFieldCustom>
         <div>
           근속연수 / 근속월수 / 근속일수:
           {{ dataLastRetiredYearsOfService.yearsOfService }}년/
@@ -240,21 +237,21 @@
       <a-col :span="12" class="mt-10">
         <div class="header-text-2 mb-10">정산 근속연수</div>
         <!--        TODO incomeCalculationInput settlementStartDate -->
-        <a-form-item label="정산시작(기산)일" class="label-required">
+        <DxFieldCustom label="정산시작(기산)일" class="field-custom" required>
           <div class="d-flex-center">
             <date-time-box width="150px" disabled :required="true"
                            v-model:valueDate="formState.incomeCalculationInput.settlementStartDate"
                            ref="incomeCalculationInputSettlementStartDate"/>
           </div>
-        </a-form-item>
+        </DxFieldCustom>
         <!--        TODO incomeCalculationInput settlementFinishDate -->
-        <a-form-item label="정산종료(퇴사)일" class="label-required">
+        <DxFieldCustom label="정산종료(퇴사)일" class="field-custom" required>
           <div class="d-flex-center">
             <date-time-box width="150px" disabled
                            v-model:valueDate="formState.incomeCalculationInput.settlementFinishDate"
                            ref="incomeCalculationInputSettlementFinishDate"/>
           </div>
-        </a-form-item>
+        </DxFieldCustom>
         <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService }}년/{{ dataSettlement.monthsOfService }}개월/{{
             dataSettlement.daysOfService
           }}일
@@ -279,13 +276,10 @@ import {Formula} from "@bankda/jangbuda-common";
 import filters from '@/helpers/filters';
 import {useStore} from 'vuex';
 import cloneDeep from "lodash/cloneDeep";
-import NumberBoxMoney from "@/components/common/NumberBoxMoney.vue";
 import isEqual from "lodash/isEqual";
-import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420";
 import {companyId} from "@/helpers/commonFunction";
-
 enum EmployeeWageType {
   WAGE = 10,
   WAGEDaily = 20,
@@ -347,14 +341,15 @@ const validatePreRetirementBenefitStatus = computed(() => {
     +formState.prevRetirementBenefitStatus.taxableRetirementBenefits > 0
 })
 const taxableRetirementBenefits = computed(() => +formState.prevRetirementBenefitStatus.retirementBenefits - +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits )
-const retirementReason = computed(() => {
+const retirementReasonOld = () => {
   if (props.retirementType === 1 && formState.inputFormTab1.executive) {
     return 4
   } else if (props.retirementType === 2) {
     return 5
   }
   return 99
-})
+}
+const retirementReason = ref(retirementReasonOld())
 // calculate date of service
 const dataPrevRetiredYearsOfService = computed(() => {
   if (formState.prevRetiredYearsOfService.settlementStartDate && formState.prevRetiredYearsOfService.settlementFinishDate) {
@@ -414,7 +409,8 @@ const isChangeForm = computed(() => {
     attributionDate.value != `${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}` ||
     paymentYearAndMonth.value != `${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}` ||
     interimPaymentTab1.value ||
-    paymentDay.value != paymentDayOld
+    paymentDay.value != paymentDayOld ||
+    retirementReason.value !== retirementReasonOld()
 })
 watchEffect(() => {
   store.commit('common/setIsChangeForm', {tab1: isChangeForm.value})

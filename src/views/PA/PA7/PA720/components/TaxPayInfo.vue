@@ -5,7 +5,7 @@
       :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
       @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
       v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef"
-      id="tax-pay-720">
+      id="tax-pay-720" noDataText="내역이 없습니다">
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
@@ -18,7 +18,6 @@
           {{ data.data?.employee?.name }}
           <a-tooltip placement="top" v-if="data.data?.employee?.incomeTypeName">
             <template #title>
-              {{ data.data.incomeTypeCode }}
               <span v-if="data.data?.employee?.incomeTypeName?.length > 10">{{ data.data?.employee?.incomeTypeName
               }}</span>
             </template>
@@ -64,44 +63,44 @@
           value-format="#,###" />
       </DxSummary> -->
     </DxDataGrid>
-    <div style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 0;" class="fs-14">
-      <div style="margin-left: 15px;width: 30%;">
-        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+    <a-row style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 10px;" class="fs-14">
+      <a-col span="8">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 60%;">
           사업소득자[소득구분]수
           <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 18%;">
+      </a-col>
+      <a-col  span="3" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           지급액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'paymentAmount') }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 0%;">
+      </a-col>
+      <a-col span="4"  class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           필요경비합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'requiredExpenses') }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 0%;">
+      </a-col>
+      <a-col span="4" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           소득금액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'incomePayment') }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 0%;">
+      </a-col>
+      <a-col span="3" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           공제합계
           <span style="font-size: 16px;">[{{ customTextSummary() }}]</span>
         </div>
-      </div>
-      <div style="margin-left: 0.5%;">
+      </a-col>
+      <a-col span="4" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           차인지급액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</span>
         </div>
-      </div>
-    </div>
+      </a-col>
+    </a-row>
   </a-spin>
 </template>
 
@@ -269,15 +268,13 @@ export default defineComponent({
     const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
       if (e.selectedRowsData.length > 0) {
-        // changeDayDataPA720.value.employeeId = e.selectedRowsData[0]?.employeeId;
-        // changeDayDataPA720.value.incomeTypeCode = e.selectedRowsData[0]?.incomeTypeCode;
         incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
           return item.incomeId;
         });
         paymentData.value = e.selectedRowsData.map((item: any) => {
           return {
             param: { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value },
-            errorInfo: { employeeId: item.employee.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name, incomeTypeCode: item.employee.incomeTypeCode },
+            errorInfo: { employeeId: item.employee.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name },
           };
         });
       }

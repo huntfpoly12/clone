@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :width="width" :data-source="dataSource" placeholder="선택"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="dataSource" placeholder="선택"
         :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="label" value-expr="value"
         :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
         <DxValidator :name="nameInput">
@@ -14,6 +14,7 @@ import queries from "@/graphql/queries/AC/AC6/AC610/index";
 import { useQuery } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum"
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 export default {
     props: {
@@ -102,6 +103,7 @@ export default {
             dataSource,
             updateValue,
             value,
+            Message,
         };
     },
 };

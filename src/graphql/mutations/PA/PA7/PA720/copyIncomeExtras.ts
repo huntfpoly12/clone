@@ -17,7 +17,7 @@ mutation copyIncomeExtras(
     paymentDay
     employeeType
     employeeId
-    incomeTypeCode
+    # incomeTypeCode
     incomePayment
     withholdingIncomeTax
     withholdingLocalIncomeTax

@@ -1,5 +1,6 @@
 <template>
   <DxSelectBox 
+  :noDataText="Message.getMessage('COMMON', '901').message"
     v-model:value="valueBinding" 
     :data-source="arrData" 
     :search-enabled="searchEnabled" 
@@ -14,10 +15,10 @@
     :disabled="disabled"
     :read-only="readOnly"
     :width="width"
+    :height="$config_styles.HeightInput"
     @input="inputChange" 
     @enter-key="eventEnter"
     @focus-in="focusInput"
-    noDataText="내역이 없습니다"
     >
     <DxValidator name="규격">
       <DxRequiredRule v-if="required" :message="messRequired" />
@@ -27,6 +28,7 @@
 <script lang="ts">
 import { ref, watch, nextTick } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum"
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 export default {
   props: {
@@ -91,7 +93,7 @@ export default {
       }
     })
     const focusInput = (e: any) => {
-      e.element.querySelector('.dx-texteditor-input').select()
+      e.event.target.select()
       keywordSlect.value = e.event.target.value
     }
 
@@ -118,7 +120,8 @@ export default {
       arrData,
       inputChange,
       eventEnter,
-      focusInput
+      focusInput,
+      Message
     };
   },
 };

@@ -23,7 +23,7 @@
     <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5"/>
       미처리건수 및 내역: {{ errors.length }} 건 </p>
     <ul v-if="errorsMessage.length > 0">
-      <li v-for="(error) in errors"> {{ error.incomeId }} {{ error.name }} {{ error.message }}</li>
+      <li v-for="(error) in errors"> {{ error.employeeId }} {{ error.name }} {{ error.message }}</li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
@@ -80,19 +80,21 @@ onError((error) => {
 watch(loading, (val) => {
   if (!val) {
     modalResponseDelete.value = true
+    console.log(err.value)
     if (!errors.value.length) {
       errors.value = err.value.map((val:any, index: number) => ({
         message: errorsMessage.value[0],
-        incomeId: val.incomeId,
+        employeeId: val.employee.employeeId,
         name: val.employee.name
       }));
     } else {
       errors.value = errors.value.map((val:any, index: number) => ({
         message: errorsMessage.value[0],
-        incomeId: val.incomeId,
+        employeeId: val.employee.employeeId,
         name: val.employee.name
       }));
     }
+    console.log(errors.value)
     emit("closePopup", true)
   }
 })

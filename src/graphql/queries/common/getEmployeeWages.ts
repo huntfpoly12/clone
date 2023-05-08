@@ -1,18 +1,9 @@
 import gql from "graphql-tag";
 export default gql`
-  query getEmployeeWage(
-    $companyId: Int!,
-    $imputedYear: Int!,
-    $employeeId: Int!,
-  ) {
-    getEmployeeWage(
-      companyId: $companyId
-      imputedYear: $imputedYear
-      employeeId: $employeeId
-    ) {
+  query getEmployeeWages($companyId: Int!, $imputedYear: Int!) {
+    getEmployeeWages(companyId: $companyId, imputedYear: $imputedYear) {
       type
       employeeId
-      incomeTypeCode
       name
       foreigner
       nationality
@@ -39,6 +30,10 @@ export default gql`
       leavedAt
       president
       householder
+      weeklyWorkingHours
+      deductionDependentCount
+      incomeTaxMagnification
+      incomePayment
       nationalPensionDeduction
       healthInsuranceDeduction
       longTermCareInsuranceDeduction
@@ -51,12 +46,10 @@ export default gql`
       employeementReductionFinishDate
       employeementReductionRatePercent
       employeementReductionInput
-      weeklyWorkingHours
-      deductionDependentCount
-      incomeTaxMagnification
-      incomePayment
       totalPay
       totalDeduction
+      # totalDeduction
+      # totalReduction
       deletable
       payItems {
         itemCode
@@ -66,9 +59,12 @@ export default gql`
         itemCode
         amount
       }
+      # reductionItems {
+      #   itemCode
+      #   amount
+      # }
       dependents {
         employeeId
-        incomeTypeCode
         index
         relation
         name
@@ -83,7 +79,7 @@ export default gql`
         descendant
         consignmentRelationship
         householder
-        residentId
+        # residentId
       }
     }
   }
