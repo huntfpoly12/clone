@@ -103,7 +103,8 @@ export default defineComponent({
     const paymentDayPA720 = computed({
       get() {
         let day = store.getters['common/paymentDayPA720'];
-        let date = `${globalYear.value}${filters.formatMonth(month1.value)}${day}`;
+        const daysInMonth = dayjs(`${month2.value}`).daysInMonth();
+        let date = `${month2.value}${day > daysInMonth || day == 0 ? daysInMonth : day}`;
         return date;
       },
       set(value) {
@@ -112,8 +113,14 @@ export default defineComponent({
       },
     });
     const trigger = ref(false);
-    const startDate = ref(dayjs(`${globalYear.value}-${month1.value}`).startOf('month').toDate());
-    const finishDate = ref(dayjs(`${globalYear.value}-${month1.value}`).endOf('month').toDate());
+    const startDate = computed(() => {
+      let day = dayjs(`${month2.value}`).startOf('month').toDate();
+      return day;
+    });
+    const finishDate = computed(() => {
+      let day = dayjs(`${month2.value}`).endOf('month').toDate();
+      return day;
+    });
 
     // ----------set month source default because dependent on the set up before--------------
 
@@ -127,13 +134,11 @@ export default defineComponent({
           yearMonth = val == 12 ? `${globalYear.value + 1}1` : `${globalYear.value}${val + 1}`;
         }
         if (props.dateType == 1) {
-          yearMonth = `${globalYear.value}${val}`;
+          yearMonth = `${globalYear.value}${filters.formatMonth(val)}`;
         }
         month2.value = yearMonth;
         trigger.value = true;
         findIncomeRefetch();
-        startDate.value = dayjs(`${globalYear.value}${val}`).startOf('month').toDate();
-        finishDate.value = dayjs(`${globalYear.value}${val}`).endOf('month').toDate();
       }, { deep: true }
     );
 

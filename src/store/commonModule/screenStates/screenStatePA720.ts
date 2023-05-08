@@ -9,7 +9,6 @@ let statesPA720 = {
     input: {
       paymentDay: '',
       employeeId: 0,
-      incomeTypeCode: "",
       paymentAmount: 0,
       requiredExpenses: 0,
       taxRate: 20,
@@ -25,7 +24,6 @@ let statesPA720 = {
     input: {
       paymentDay: '',
       employeeId: 0,
-      incomeTypeCode: "",
       paymentAmount: 0,
       requiredExpenses: 0,
       taxRate: 20,
@@ -41,7 +39,6 @@ let statesPA720 = {
     input: {
         paymentDay: 1,
         employeeId: null,
-        incomeTypeCode: "",
         paymentAmount: 0,
         requiredExpenses: 0,
         taxRate: 20,
@@ -64,7 +61,6 @@ let statesPA720 = {
   },
   changeDayDataPA720: {
     employeeId: '',
-    incomeTypeCode: '',
   },
   isClickEditDiffPA720: false,
 };
