@@ -340,16 +340,19 @@ export default defineComponent({
         resEmployeeWage(value => {
             triggerEmployeeWages.value = false;
             dataEmployeeWageDailies.value = value.data.getEmployeeWages
-            arrayEmploySelect.value = []
-            if (store.state.common.pa110.statusFormAdd) {
-                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
-                    if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
-                        arrayEmploySelect.value.push(dataEmployee)
-                    }
-                })
-            } else {
-                arrayEmploySelect.value = dataEmployeeWageDailies.value
-            }
+            resetArrayEmploySelect()
+            // arrayEmploySelect.value = []
+            // if (store.state.common.pa110.statusFormAdd) {
+            //     dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+            //         if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+            //             if (!(dataEmployee.leavedAt && dataEmployee.leavedAt.slice(4, 6) >= store.state.common.pa110.processKeyPA110.imputedMonth)) {
+            //                  arrayEmploySelect.value.push(dataEmployee)
+            //             }
+            //         }
+            //     })
+            // } else {
+            //     arrayEmploySelect.value = dataEmployeeWageDailies.value
+            // }
         })
         resConfigPayItems(value => {
             triggerConfigPayItems.value = false;
@@ -503,19 +506,20 @@ export default defineComponent({
                 dataConfigPayItems.value.map((data: any) => {
                     data.amount = 0
                 })
-                arrayEmploySelect.value = []
-                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
-                    if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
-                        arrayEmploySelect.value.push(dataEmployee)
-                    }
-                })
+                // arrayEmploySelect.value = []
+                // dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                //     if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                //         arrayEmploySelect.value.push(dataEmployee)
+                //     }
+                // })
                 setTimeout(() => {
                     store.state.common.pa110.statusChangeFormPrice = false;
                     store.state.common.pa110.statusChangeFormAdd = false;
                 }, 500);
             } else {
-                arrayEmploySelect.value = dataEmployeeWageDailies.value
+                // arrayEmploySelect.value = dataEmployeeWageDailies.value
             }
+            resetArrayEmploySelect()
         })
         watch(() => dataIW.value, (value, oldVal) => {
             if (store.state.common.pa110.statusFormAdd) {
@@ -536,16 +540,17 @@ export default defineComponent({
             }
         }, { deep: true })
         watch(() => store.state.common.pa110.resetArrayEmploySelect, (newVal) => {
-            arrayEmploySelect.value = []
-            if (store.state.common.pa110.statusFormAdd) {
-                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
-                    if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
-                        arrayEmploySelect.value.push(dataEmployee)
-                    }
-                })
-            } else {
-                arrayEmploySelect.value = dataEmployeeWageDailies.value
-            }
+            resetArrayEmploySelect()
+            // arrayEmploySelect.value = []
+            // if (store.state.common.pa110.statusFormAdd) {
+            //     dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+            //         if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+            //             arrayEmploySelect.value.push(dataEmployee)
+            //         }
+            //     })
+            // } else {
+            //     arrayEmploySelect.value = dataEmployeeWageDailies.value
+            // }
         })
 
         watch(() => store.state.common.pa110.actionSubmit, () => {
@@ -666,6 +671,25 @@ export default defineComponent({
         //     triggerConfigDeductions.value = true;
         // })
         // ======================= FUNCTION ================================
+        const resetArrayEmploySelect = () => {
+            arrayEmploySelect.value = []
+            if (store.state.common.pa110.statusFormAdd) {
+                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                    if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                        if (dataEmployee.leavedAt) {
+                            if (parseInt(dataEmployee.leavedAt?.toString().slice(4, 6)) >= store.state.common.pa110.processKeyPA110.imputedMonth) {
+                                arrayEmploySelect.value.push(dataEmployee)
+                            }
+                        } else {
+                            arrayEmploySelect.value.push(dataEmployee)
+                        }
+                    }
+                })
+            } else {
+                arrayEmploySelect.value = dataEmployeeWageDailies.value
+            }
+        }
+
         const onChangeInputDeduction = () => {
             if (store.state.common.pa110.statusFormAdd) {
                 store.state.common.pa110.statusChangeFormAdd = true
