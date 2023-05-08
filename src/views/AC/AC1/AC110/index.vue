@@ -84,8 +84,8 @@
               </div>
             </template>
             <DxColumn caption="통장적요" data-field="summary" />
-            <DxColumn caption="내용|비고" cell-template="content" />
-            <template #content="{ data }">
+            <DxColumn caption="내용|비고" cell-template="content-bankbook" />
+            <template #content-bankbook="{ data }">
               <div>
                 {{ data.data?.content }} {{ data.data?.note }}
               </div>
