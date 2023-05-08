@@ -468,6 +468,7 @@ export default defineComponent({
                         paymentYear: data.paymentYear,
                         paymentMonth: data.paymentMonth,
                     })
+                    arrDataPoint.value.reverse()
 
                     let dataAdd = {
                         imputedYear: data.imputedYear,

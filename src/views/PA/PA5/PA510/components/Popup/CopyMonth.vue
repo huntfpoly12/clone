@@ -123,7 +123,7 @@ export default defineComponent({
 
         onResult((value: any) => {
             triggerFindIncome.value = false;
-            arrDataPoint.value = value.data.findIncomeProcessWageDailyStatViews
+            arrDataPoint.value = value.data.findIncomeProcessWageDailyStatViews.reverse()
         })
 
         const {
@@ -186,6 +186,7 @@ export default defineComponent({
                 if (paymentTypeCallApi.value == 2) {
                     paymentMonth = month.value + 1
                 }
+            paymentDayCallApi.value = paymentDayCallApi.value == 0 ? dayjs(`${paYear.value}-${paymentMonth}`).daysInMonth() : paymentDayCallApi.value
             paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(paymentDayCallApi.value)}`)
             month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
 

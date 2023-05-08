@@ -13,6 +13,8 @@ export default gql`
       facilityBusinessId: $facilityBusinessId
       bankbookDetailDate: $bankbookDetailDate
       bankbookDetailId: $bankbookDetailId
-    )
+    ) {
+      transactionDetailDate
+    }
   }
 `;

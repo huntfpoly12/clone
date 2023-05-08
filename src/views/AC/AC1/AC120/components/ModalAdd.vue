@@ -159,7 +159,14 @@ export default defineComponent({
                 
                 // statusRemoveRow.value = false;
                 store.state.common.ac120.transactionDetailDate = formDataAdd.value.transactionDetailDate
-                let dataAdd = {...formDataAdd.value, 'causeActionDate': formDataAdd.value.transactionDetailDate}
+                let dataAdd = {
+                    ...formDataAdd.value,
+                     'causeActionDate': formDataAdd.value.transactionDetailDate,
+                     'paymentDate': formDataAdd.value.transactionDetailDate,
+                     'accountingDate': formDataAdd.value.transactionDetailDate,
+                     'proposedDate': formDataAdd.value.transactionDetailDate,
+                     'registrationDate': formDataAdd.value.transactionDetailDate,
+                    }
                 // delete dataAdd.transactionDetailDate
                 emit('submit', dataAdd)
             }
