@@ -37,8 +37,8 @@
         <div class="input-edit-chat-input-files-item-file">
           <FileOutlined style="margin-right: 10px;" />
           <div class="input-edit-chat-input-files-item-file-info">
-            <p class="input-edit-chat-input-files-item-file-info-name">{{ file.file.name }}</p>
-            <p class="input-edit-chat-input-files-item-file-info-size">({{ formatFileSize(file.file.size) }})
+            <p class="input-edit-chat-input-files-item-file-info-name">{{ file?.file ? file.file.name : file.name }}</p>
+            <p class="input-edit-chat-input-files-item-file-info-size">({{ formatFileSize(file?.file ? file.file.size : file.size) }})
             </p>
           </div>
         </div>
@@ -131,6 +131,7 @@ export default defineComponent({
       inputChat.value.style.overflowY = "hidden"
       inputChat.value.style.height = "40px"
       inputChat.value.focus()
+      emit('cancel')
     }
 
     const formatDate = (timestamp: number) => {
@@ -206,6 +207,14 @@ export default defineComponent({
       return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i];
     }
 
+    const resizeInput = () => {
+      changeInput(inputChat.value)
+    }
+
+    const focus = () => {
+      inputChat.value.focus()
+    }
+
     return {
       listChat,
       changeInput,
@@ -225,7 +234,9 @@ export default defineComponent({
       isVisibleEmojiForm,
       currentTime,
       formatFileSize,
-      resetInputChat
+      resetInputChat,
+      resizeInput,
+      focus
     }
   },
 })
@@ -234,21 +245,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .input-edit-chat {
   padding-top: 5px;
-
-  &-category {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-
-  &-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-    margin-right: 5px;
-  }
 
   &-input {
     flex-grow: 1;
