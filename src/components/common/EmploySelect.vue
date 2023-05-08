@@ -1,7 +1,7 @@
 <template>
     <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
         value-expr="employeeId" display-expr="employeeId"
-        :value="valueEmploy" :name="nameInput"
+        :value="valueEmployee" :name="nameInput"
         field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
         :disabled="disabled">
         <template #field-data="{ data }: any">
@@ -74,7 +74,7 @@ export default defineComponent({
         if (props.messRequired != "") {
             messageRequired.value = props.messRequired;
         }
-        const valueEmploy = ref(props.valueEmploy);
+        const valueEmployee = ref(props.valueEmploy);
 
         const updateValue = (value: any) => {
             emit("update:valueEmploy", value.value);
@@ -91,7 +91,7 @@ export default defineComponent({
         watch(
             () => props.valueEmploy,
             (newValue) => {
-                valueEmploy.value = newValue;
+              valueEmployee.value = newValue;
             }
         );
 
@@ -100,7 +100,7 @@ export default defineComponent({
         }
         return {
             updateValue,
-            valueEmploy,
+            valueEmployee,
             convertBirthDay,
             eventItemClick,
             messageRequired,

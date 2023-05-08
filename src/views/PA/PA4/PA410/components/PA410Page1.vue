@@ -10,37 +10,29 @@
                       <employ-select :arrayValue="arrayEmployeeSelect" :required="true" width="300px" v-model:valueEmploy="valueSelected"/>
                   </div>
               </div>
-              <div class="button-next">
-                  <button-basic text="다음" type="default" @onClick="nextPage"/> 
-              </div>
         </div>
     </a-spin>
  </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, onMounted, ref } from 'vue'
 import { useStore } from 'vuex';
-import { companyId } from '@/helpers/commonFunction';
 export default defineComponent({
     components: {
     },
     setup() {
         const store = useStore();
-        const valueSelected = ref(0);
-        const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear")?? '0'));
+        const valueSelected = ref(store.state.common.employeeIdPA410);
         // Getting the token from the session storage and then dispatching the action to get the user
         // information.
         const token = computed(()=>sessionStorage.getItem("token"))
         store.dispatch('auth/getUserInfor', token.value);
-        
-        store.dispatch('common/getListEmployee', {
-                  companyId: companyId,
-                  imputedYear: globalYear,
-        })
+
         // take the employee array and add a null element to test the metric calculation
         const arrayEmployeeSelect = computed(() => {
-          store.state.common.arrayEmployeePA410.push({
+          var hasItem = store.state.common.arrayEmployeePA410.findIndex((item :  any) => item.employeeId== 0);
+          if(hasItem == -1) store.state.common.arrayEmployeePA410.push({
                                                       "type": null,
                                                       "employeeId": 0,
                                                       "name": "익명",
@@ -48,10 +40,10 @@ export default defineComponent({
           return store.state.common.arrayEmployeePA410
         })
         const nextPage = () => {
-          store.state.common.currentPagePA410 = 'PA410Page2';
-          store.state.common.employeeIdPA410 = valueSelected.value;
+          store.commit('common/setEmployeeIdPA410',valueSelected)
         }
-        return {
+      return {
+        store,
             nextPage,
             arrayEmployeeSelect,
             valueSelected,
@@ -62,18 +54,14 @@ export default defineComponent({
 
 <style lang="scss" scoped>
     .content-page1{
-        border: dashed;
-        border-width: 2px;
-        height: 400px;
-        display: block;
-        margin: 100px 50px;
-        border-radius: 50px;
-        border-color: #385D8A;
-      
+        min-height: 300px;
+        margin: 0px 50px;
         .select-employee{
             display: flex;
-            margin: 160px 480px;
             min-width: 490px;
+            justify-content: center;
+            align-items: center;
+            padding-top: 135px;
             .label{
                 font-size: 23px;
                 font-weight: bold;

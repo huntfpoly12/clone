@@ -39,8 +39,6 @@
       </div>
     </div>
   </div>
-  {{ dataAction }}dataAction<br/>
-  {{ dataActionEdit }}dataActionEdit<br/>
   <a-row style="flex-flow: row nowrap">
     <a-col :span="14" class="col-tax" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="(loadingIncomeBusinesses)" size="large">

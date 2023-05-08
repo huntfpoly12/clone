@@ -30,7 +30,7 @@
                             <div class="input-employee">
                                 <a-form-item label="제외일수" label-align="right" class="red">
                                   <div class="d-flex-center">
-                                    <number-box  width="172px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  :required="true" format="0,###"> </number-box>
+                                    <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  :required="true" format="0,###"> </number-box>
                                     <span class="pl-5 pr-5">일</span>      
                                   </div>
                                 </a-form-item> 
@@ -39,7 +39,7 @@
                             <div class="input-employee">
                                 <a-form-item label="가산일수" label-align="right" class="red">
                                   <div class="d-flex-center">
-                                    <number-box  width="172px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays" :required="true" format="0,###"> </number-box>
+                                    <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays" :required="true" format="0,###"> </number-box>
                                     <span class="pl-5 pr-5">일</span>
                                   </div>
                                 </a-form-item> 
@@ -70,37 +70,19 @@
                         </div>
                     </a-col>
                 </a-row>
-                <div class="time-service">근속연수 / 근속월수 / 근속일수: {{dataLastRetiredYearsOfService.yearsOfService}}년/{{dataLastRetiredYearsOfService.monthsOfService}}개월/{{dataLastRetiredYearsOfService.daysOfService}}일</div>
-                <div class="button-calculate">
+                <div class="time-service">
+                  <a-tag color="red" style="margin-left: 10px;margin-right: 48px;">근속연월일</a-tag>
+                  <a-tag>{{dataLastRetiredYearsOfService.yearsOfService}}년/{{dataLastRetiredYearsOfService.monthsOfService}}개월/{{dataLastRetiredYearsOfService.daysOfService}}일</a-tag>
+                  </div>
+                <!-- <div class="button-calculate">
                     <button-basic text="&#129155; 퇴직금 계산 &#129155;" type="default" @onClick="calculateIncomeRetirement"/> 
-                    <info-tool-tip placement="right">상기 급여(수당)으로 퇴직금 계산합니다.</info-tool-tip>
-                </div>
+                    <info-tool-tip placement="right"></info-tool-tip>
+                </div> -->
               </standard-form>
-            </div>
-            <div class="retirement-benefit">
-                <div class="header-text-2">퇴직급여</div>
-                <a-row>
-                    <a-col :span="12">
-                        <div class="input-benefit">
-                            <a-form-item label="퇴직급여(예상)" label-align="right" >
-                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" :readOnly="true" v-model:valueInput="caculateValue" format="0,###"> </number-box-money>
-                            </a-form-item>
-                            <span class="pl-5 pt-4">원</span>
-                        </div>
-                    </a-col>
-                    <a-col :span="12">
-                        <div class="text-benefit">
-                            <span>
-                              <info-tool-tip placement="left">상기 급여(수당)으로 계산된 퇴직금으로 실제 지급된 퇴직금과는 상이할 수 있습니다.</info-tool-tip>
-                              <img src="@/assets/images/email.svg" alt="" style="width: 40px;" class="img-email" @click="openMailPopup"/>
-                            </span>
-                        </div>
-                    </a-col>
-                </a-row>
             </div>
         </a-spin>
     </div>
-    <email-single-popup :modalStatus="modalMailStatus" @closePopup="modalMailStatus = false" :data="formState"></email-single-popup>
+    <div class="infor-text" style="text-align: center; margin-bottom: 20px;color: gray;">상기 급여(수당)으로 퇴직금을 계산합니다.</div>
  </div>
 </template>
 
@@ -112,17 +94,19 @@ import notification from "@/utils/notification";
 import { companyId } from "@/helpers/commonFunction"
 import queries from "@/graphql/queries/PA/PA4/PA410/index";
 import { initFormState } from '../utils';
-import EmailSinglePopup from './EmailSinglePopup.vue';
 import dayjs from 'dayjs';
 import filters from '@/helpers/filters';
 import { Formula } from "@bankda/jangbuda-common";
 import { onMounted } from 'vue';
+import isEmpty from "lodash/isEmpty";
 export default defineComponent({
     components: {
-        EmailSinglePopup
     },
-  setup(props, { emit }) {
-        onMounted(() => {
+    setup(props, { emit }) {
+      onMounted(() => {
+        if (!isEmpty(formStateStep2.value)) {
+          Object.assign(formState, formStateStep2.value)
+        } else {
           let employeeInfor = store.state.common.arrayEmployeePA410.find((item: any) => item.employeeId == store.state.common.employeeIdPA410)
           formState.settlementStartDate = employeeInfor && employeeInfor.joinedAt ? employeeInfor.joinedAt : filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
           formState.settlementFinishDate = employeeInfor && employeeInfor.leavedAt ? employeeInfor.leavedAt : filters.formatDateToInterger(dayjs().add(1, 'day').format("YYYY-MM-DD"))
@@ -132,13 +116,15 @@ export default defineComponent({
               formState.exclusionDays,
               formState.additionalDays
           )
+        }
+
         })
         const formPA410 =  ref()
         const store = useStore();
-        const caculateValue = ref(0);
+        const formStateStep2 = computed(() => store.getters['common/stateStep2PA410'])
         const trigger = ref<boolean>(false)
         const modalMailStatus = ref<boolean>(false)
-        const valueSelected = ref(store.state.common.employeeIdPA410)
+        const valueSelected = computed(()=>store.state.common.employeeIdPA410)
         const dataLastRetiredYearsOfService: any = ref({})
         const formState = reactive({
             ...initFormState,
@@ -176,8 +162,10 @@ export default defineComponent({
       
         watch(result, (value) => {
             if (value && value.calculateIncomeRetirement) {
-              caculateValue.value = value.calculateIncomeRetirement;
+              store.commit('common/setCaculateValuePA410', value.calculateIncomeRetirement);
               trigger.value = false;
+              store.commit('common/setStateStep2PA410',formState)
+              store.dispatch('common/setNextStep')
             }
         })
 
@@ -191,25 +179,14 @@ export default defineComponent({
           }
         }
 
-        const openMailPopup = () => {
-          var res = formPA410.value.validate();
-          if (!res.isValid) {
-            res.brokenRules[0].validator.focus();
-          } else {
-            modalMailStatus.value = true
-          }
-        }
-
           return {
             formPA410,
             dayjs,
             loading,
             formState,
-            caculateValue,
             calculateIncomeRetirement,
             arrayEmployeeSelect,
             valueSelected,
-            openMailPopup,
             modalMailStatus,
             dataLastRetiredYearsOfService
         }
@@ -220,6 +197,7 @@ export default defineComponent({
 <style lang="scss" scoped>
     .content-page2{
         margin: 10px 20px;
+        min-height: 300px;
         .select-employee{
             display: flex;
           
@@ -264,8 +242,10 @@ export default defineComponent({
                     }
 
                 }
-       
-          
+                ::v-deep .ant-form-item-label>label {
+                    width: 135px;
+                    padding-left: 10px;
+                }
             }
             .time-service{
                 font-size: 17px;
