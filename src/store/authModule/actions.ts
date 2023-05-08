@@ -45,7 +45,8 @@ const actions: ActionTree<AuthState, any> = {
       }
     })
     onError((error) => {
-      commit('logout')
+      console.log(error);
+      //commit('logout')
     });
     if (token && refreshToken) {
       const jwtObject = getJwtObject(token);
