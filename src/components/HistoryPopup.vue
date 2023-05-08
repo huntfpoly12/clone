@@ -6,7 +6,7 @@
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820|| loadingPA840_1|| loadingPA840_2||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
-                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments">
+                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments || loadingAC570">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" :keyExpr="keyExpr ? keyExpr : 'ts'" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -100,6 +100,7 @@ export default defineComponent({
         let triggerAC610 = ref<boolean>(false);
         let triggerCM121 = ref<boolean>(false);
         let triggerAC620 = ref<boolean>(false);
+        let triggerAC570 = ref<boolean>(false);
         let triggerAC110BankbookDetailLogs = ref<boolean>(false);
         let triggerAC110AccountingProcessLogs = ref<boolean>(false);
         let triggerAC120AccountingProcess = ref<boolean>(false);
@@ -113,6 +114,7 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const globalYear = dayjs().year()
+        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
         watch(
             () => props.modalStatus,
             async (newValue, old) => {
@@ -445,6 +447,14 @@ export default defineComponent({
                             triggerAC620.value = true;
                             // refetchAC620();
                             break;
+                        case 'ac-570':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                fiscalYear: globalYear,
+                                facilityBusinessId: globalFacilityBizId.value,
+                            };
+                            triggerAC570.value = true;
+                            break;
                         default:
                             break;
                     }
@@ -481,6 +491,7 @@ export default defineComponent({
                     triggerAC610.value = false;
                     triggerCM121.value = false;
                     triggerAC620.value = false;
+                    triggerAC570.value = false;
                     triggerAC110BankbookDetailLogs.value = false;
                     triggerAC110AccountingProcessLogs.value = false;
                     triggerAC120AccountingProcess.value = false;
@@ -1030,6 +1041,22 @@ export default defineComponent({
             triggerAC120AccountingDocuments.value = false;
         });
 
+        // get getBudgetSubjectTransitionsLogs ac570
+        const { result: resultAC570, loading: loadingAC570 } = useQuery(
+            queries.getBudgetSubjectTransitionsLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerAC570.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultAC570, (value) => {
+            triggerAC570.value = false;
+            if (value) {
+                dataTableShow.value = value.getAccountingDocumentsLogs;
+            }
+        });
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -1077,6 +1104,7 @@ export default defineComponent({
             loadingAC610,
             loadingCM121,
             loadingAC620,
+            loadingAC570,
             loadingAC110BankbookLogs,
             loadingAC110AccountingProcessLogs,
             loadingAC120AccountingProcess,

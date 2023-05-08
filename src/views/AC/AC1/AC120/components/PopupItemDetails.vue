@@ -323,9 +323,9 @@ export default defineComponent({
             })
             let totalShow = store.state.common.ac120.formData?.spending - total
             if (totalShow === 0) {
-                disabledSubmit.value = true
-            } else {
                 disabledSubmit.value = false
+            } else {
+                disabledSubmit.value = true
             }
             return `차액: ` + filters.formatCurrency(totalShow)
         }
