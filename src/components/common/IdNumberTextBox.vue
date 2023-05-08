@@ -1,28 +1,25 @@
 <template>
-  <div class="d-flex">
-    <DxTextBox id="resident-id" ref="residentRef" :width="width" value-change-event="input"
+  <div class="d-flex resident-ctn">
+    <DxTextBox id="resident-id" ref="residentRef" :width="widthCustom" value-change-event="input"
       :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
-      @input="updateValue(value)" :mask="mask" :height="$config_styles.HeightInput"
-      :name="nameInput" @focusIn="onFocusIn">
-      <!-- <DxButton v-if="errorCurrentType == 1" :options="requiredButton" name="nextDate" location="after">
-      12312
-    </DxButton>
-    <DxButton v-if="errorCurrentType == 2" name="hihi" location="after">
-      12312
-    </DxButton> -->
+      @input="updateValue(value)" :mask="mask" :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn"
+      :style="{ width: widthCustom }">
       <DxValidator ref="validatorRef" :name="nameInput">
         <DxRequiredRule v-if="required" :message="messageRequired" />
         <DxCustomRule v-if="isResidentId"
           :validation-callback="checkAllResidentId ? checkAllID : (foreigner ? checkID : checkIdNotForeigner)" />
       </DxValidator>
     </DxTextBox>
-    <div v-if="errorCurrentType == 1" class="custom-tooltip">x</div>
-    <a-tooltip placement="top" v-if="errorCurrentType == 2">
-      <template #title>
-        본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
-      </template>
-      <img class="custom-tooltip" src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" />
-    </a-tooltip>
+    <div class="custom-tooltip">
+      <span v-if="errorCurrentType == 1" class="error-1">x</span>
+      <a-tooltip placement="top" v-if="errorCurrentType == 2">
+        <template #title>
+          <b>잘못된 주민등록번호</b><br/>
+          입력하신 번호는 주민등록번호 생성규칙에 맞지 않습니다.
+        </template>
+        <WarningOutlined :style="{ fontSize: '19px', color: 'orange' }"/>
+      </a-tooltip>
+    </div>
   </div>
 
   <!-- <DxTextBox value="password" styling-mode="filled" placeholder="password">
@@ -36,11 +33,12 @@ import {
   DxRequiredRule,
   DxCustomRule,
 } from "devextreme-vue/validator";
-import { defineComponent, ref, watch, getCurrentInstance } from "vue";
+import { defineComponent, ref, watch, getCurrentInstance, onMounted } from "vue";
 import { DxTextBox, DxButton } from 'devextreme-vue/text-box';
 import { validResidentId } from "@bankda/jangbuda-common";
 import { Message } from '@/configs/enum';
-import { reactive } from "vue";
+import { WarningOutlined } from "@ant-design/icons-vue";
+import { computed } from "vue";
 export default defineComponent({
   props: {
     required: {
@@ -93,6 +91,7 @@ export default defineComponent({
     DxRequiredRule,
     DxCustomRule,
     DxButton,
+    WarningOutlined,
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
@@ -104,6 +103,14 @@ export default defineComponent({
     const residentRef = ref();
     const errorCurrentType = ref(0);
     const validatorRef = ref();
+    const widthCustom = computed(() => {
+      if (typeof +props.width == 'string') {
+        return props.width
+      } else if (typeof +props.width == 'number') {
+        return props.width + 'px';
+      }
+      return '200px';
+    })
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
@@ -115,13 +122,18 @@ export default defineComponent({
 
     const updateValue = (value: any) => {
       let isValid = validatorRef.value?.instance._validationInfo.result;
-      console.log(`output->isValid.value.brokenRule`, isValid)
       if (isValid.brokenRule?.type == 'custom') {
         errorCurrentType.value = 2;
+        residentRef.value.instance._$validationMessage[0].style.display = 'none';
+        residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
       } else if (isValid.brokenRule?.editorSpecific) {
         errorCurrentType.value = 1;
+        residentRef.value.instance._$validationMessage[0].style.display = 'none';
+        residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
       } else {
         errorCurrentType.value = 0;
+        residentRef.value.instance._$validationMessage[0].style.display = 'block';
+        residentRef.value.instance._$textEditorInputContainer[0].classList.remove('error-other');
       }
       emit("update:valueInput", value);
     };
@@ -143,7 +155,6 @@ export default defineComponent({
       };
     }
     const checkAllID = (options: any) => {
-      console.log(`output->options`, options,)
       if (!value.value) return true
       return validResidentId(value.value);
     }
@@ -153,7 +164,7 @@ export default defineComponent({
       if (!value.value) {
         return true
       }
-      const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
+      const fNumber = value.value ? parseInt(value.value?.charAt(6)) : 0;
       if (fNumber <= 4 || fNumber >= 9) {
         return validResidentId(value.value);
       } else {
@@ -166,6 +177,10 @@ export default defineComponent({
         input.selectionStart = input.selectionEnd = 0;
       }, 50);
     }
+    onMounted(() => {
+      let ele: any = document.getElementsByClassName('resident-ctn')[0];
+      ele.style.width = widthCustom.value;
+    })
     return {
       updateValue,
       value,
@@ -182,40 +197,54 @@ export default defineComponent({
       // requiredButton, formatButton,
       validatorRef,
       errorCurrentType,
+      widthCustom,
     };
   },
 });
 </script>
 <style lang="scss" scoped>
-:deep div.dx-overlay-content.dx-resizable {
-  visibility: hidden;
-}
+.resident-ctn {
+  position: relative;
 
-#resident-id.dx-invalid.dx-texteditor {
-  // background-color: red !important;
+  :deep div.dx-overlay-content.dx-resizable {
+    visibility: hidden;
+  }
 
-  :deep .dx-texteditor-input-container {
-    &::after {
-      // display: none;
+  #resident-id.dx-invalid.dx-texteditor {
+
+    :deep .dx-texteditor-input-container.error-other {
+      &::after {
+        display: none;
+      }
+
     }
 
-    // padding-right: 160px;
+  }
+  #resident-id .dx-datagrid-validator.dx-validator.dx-datagrid-invalid::after {
+    border-color: unset;
   }
 
-  :deep .dx-invalid-message.dx-overlay {
-    position: relative;
-    // display: none;
+  .custom-tooltip {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30px;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .error-1 {
+      font-size: 16px;
+      line-height: 16px;
+      height: 19px;
+      border-radius: 100%;
+      width: 18px;
+      font-weight: 700;
+      background: red;
+      color: white;
+    }
   }
-
-}
-
-#resident-id .dx-datagrid-validator.dx-validator.dx-datagrid-invalid::after {
-  border-color: unset;
-}
-
-.custom-tooltip {
-  position: absolute;
-  right: 18px;
-  top: 12px;
 }
 </style>
