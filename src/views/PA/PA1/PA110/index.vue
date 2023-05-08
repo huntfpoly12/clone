@@ -305,7 +305,8 @@
                                     value-format="#,###" />
                             </DxSummary> -->
                         </DxDataGrid>
-                        <div v-if="store.state.common.pa110.dataTaxPayInfo.length"
+                        <!-- <div v-if="store.state.common.pa110.dataTaxPayInfo.length" -->
+                        <div 
                             style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
                             class="fs-14">
                             <div style="margin-left: 70px;">

@@ -26,7 +26,9 @@
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
-            <div class="form-chat-timeline-content-text" v-html="items.text"></div>
+            <div class="form-chat-timeline-content-text">
+              <MarkdownCustom :options="{source: items.text, linkify: true, typographer: true, highlight: true}" />
+            </div>
             <div class="form-chat-timeline-content-files">
               <a-spin v-for="(file, indexFile) in items.files" :spinning="isLoadingUpload && !!file?.isUploading"
                 size="small" :key="file.url">
@@ -116,6 +118,7 @@ import EmojiPicker from 'vue3-emoji-picker'
 // import css
 import 'vue3-emoji-picker/css'
 import InputEditChat from './InputEditChat.vue'
+import MarkdownCustom from './MarkdownCustom.vue';
 export default defineComponent({
   props: {
     // Message only 2 people
@@ -141,7 +144,8 @@ export default defineComponent({
     ModalPreviewListImage,
     EmojiPicker,
     StatusChat,
-    InputEditChat
+    InputEditChat,
+    MarkdownCustom
   },
   setup(props, { emit }) {
     const token = ref(sessionStorage.getItem("token"))
@@ -466,7 +470,7 @@ export default defineComponent({
     padding-bottom: 10px;
     padding-top: 2px;
     overflow-y: auto;
-
+    
     &-line {
       margin: 10px 0;
       height: 1px;

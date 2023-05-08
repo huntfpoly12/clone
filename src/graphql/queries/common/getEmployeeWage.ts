@@ -1,10 +1,17 @@
 import gql from "graphql-tag";
 export default gql`
-  query getEmployeeWages($companyId: Int!, $imputedYear: Int!) {
-    getEmployeeWages(companyId: $companyId, imputedYear: $imputedYear) {
+  query getEmployeeWage(
+    $companyId: Int!,
+    $imputedYear: Int!,
+    $employeeId: Int!,
+  ) {
+    getEmployeeWage(
+      companyId: $companyId
+      imputedYear: $imputedYear
+      employeeId: $employeeId
+    ) {
       type
       employeeId
-      incomeTypeCode
       name
       foreigner
       nationality
@@ -22,9 +29,9 @@ export default gql`
       withholdingRuralSpecialTax
       createdAt
       createdBy
-      updatedAt
-      updatedBy
-      ip
+#      updatedAt
+#      updatedBy
+#      ip
       active
       residentId
       joinedAt
@@ -60,7 +67,6 @@ export default gql`
       }
       dependents {
         employeeId
-        incomeTypeCode
         index
         relation
         name

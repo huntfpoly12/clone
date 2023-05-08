@@ -1,6 +1,7 @@
 <template>
     <div>
       <DxSelectBox
+      :noDataText="Message.getMessage('COMMON', '901').message"
         :width="width"
         :data-source="basicDeductionData"
         placeholder="선택"
@@ -23,6 +24,7 @@
   <script lang="ts">
   import { defineComponent, ref, watch , computed,getCurrentInstance} from "vue";
   import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+  import { Message } from "@/configs/enum"
   import DxSelectBox from "devextreme-vue/select-box";
   import {
     BasicDeduction,
@@ -127,7 +129,8 @@
         updateValue,
         basicDeductionData,
         value,
-        messageRequired
+        messageRequired,
+        Message
       };
     },
   });

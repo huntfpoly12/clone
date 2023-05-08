@@ -1,7 +1,7 @@
 <template>
-	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueCountry"
+	<DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueCountry"
 		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width , height: $config_styles.HeightInput}"
-		:disabled="disabled" :required="required">
+		:disabled="disabled" :required="required" >
 		<template #field="{ data }">
 			<div v-if="data" class="select-content" style="padding: 1px 0px;">
 				<a-tag color="default">{{ data.key }}</a-tag>
@@ -41,6 +41,7 @@
 import { defineComponent, ref, getCurrentInstance, watch } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum"
 import {
 	DxValidator,
 	DxRequiredRule,
@@ -130,7 +131,7 @@ export default defineComponent({
 			emit('textCountry', getEnumValue(CountryCode, val.value))
 			emit('update:valueCountry', val.value)
 		}
-		return { dataSelect, onValueChanged, messageRequired };
+		return { dataSelect, onValueChanged, messageRequired, Message };
 	},
 });
 </script>

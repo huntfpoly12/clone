@@ -4,7 +4,7 @@ import getIncomeWageDailySalaryStatementViewUrl from "./getIncomeWageDailySalary
 import getIncomeWageDaily from "./getIncomeWageDaily";
 import getIncomeWageDailies from "./getIncomeWageDailies";
 import getWithholdingConfigDeductionItems from "./getWithholdingConfigDeductionItems";
-import getEmployeeWageDailies from "../PA520/getEmployeeWageDailies";
+import getEmployeeWageDailies from "@/graphql/queries/common/getEmployeeWageDailies";
 import calculateIncomeWageTax from "@/graphql/queries/common/calculateIncomeWageTax";
 import findIncomeProcessWageDailyStatViews from "./findIncomeProcessWageDailyStatViews"
 import getWithholdingConfig from "../../../CM/CM130/getWithholdingConfig";

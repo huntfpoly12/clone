@@ -1,6 +1,7 @@
 <template>
   <div>
     <DxSelectBox
+    :noDataText="Message.getMessage('COMMON', '901').message"
       :width="width"
       :data-source="bankTypeSelect"
       placeholder="은행 선택"
@@ -26,6 +27,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { BankType } from "@bankda/jangbuda-common";
 import type { SelectProps } from "ant-design-vue";
+import { Message } from "@/configs/enum"
 export default {
   props: {
     required: {
@@ -81,6 +83,7 @@ export default {
       bankTypeSelect,
       updateValue,
       value,
+      Message
     };
   },
 };

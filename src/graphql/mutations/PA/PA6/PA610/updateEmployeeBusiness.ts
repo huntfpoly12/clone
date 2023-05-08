@@ -4,14 +4,14 @@ mutation updateEmployeeBusiness(
     $companyId: Int!
     $imputedYear: Int!
     $employeeId: Int!
-    $incomeTypeCode: String!
+#    $incomeTypeCode: String!
     $input: EmployeeBusinessUpdateInput!
     ) {
         updateEmployeeBusiness( 
             companyId : $companyId,
             imputedYear: $imputedYear, 
             employeeId: $employeeId,
-            incomeTypeCode: $incomeTypeCode,
+#            incomeTypeCode: $incomeTypeCode,
             input:$input
         ){
             type

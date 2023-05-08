@@ -10,7 +10,6 @@ export default gql`
                 paymentDay
                 employeeType
                 employeeId
-                incomeTypeCode
                 createdAt
                 incomePayment
                 withholdingIncomeTax
