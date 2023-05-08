@@ -406,7 +406,7 @@ export default defineComponent({
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
     watch(actionFormErrorPA120, () => {
       compareType.value = 1;
-      focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
+      focusedRowKey.value = initFormStateTabPA120.value?.employeeId.toString();
       removeHoverRowKey();
       if (tabCurrent.value == 2) {
         store.commit('common/activeTabEditKeyPA120', '2');
@@ -414,7 +414,7 @@ export default defineComponent({
         store.commit('common/activeTabEditKeyPA120', '1');
       }
       if (dataSource.value[dataSource.value.length - 1].key != 0) {
-        focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
+        focusedRowKey.value = initFormStateTabPA120.value?.employeeId.toString();
       }
     });
     //edit row

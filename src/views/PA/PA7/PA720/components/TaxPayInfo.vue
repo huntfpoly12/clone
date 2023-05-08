@@ -5,7 +5,7 @@
       :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
       @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
       v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef"
-      id="tax-pay-720">
+      id="tax-pay-720" noDataText="내역이 없습니다">
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
