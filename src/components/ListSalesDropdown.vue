@@ -1,5 +1,5 @@
 <template>
-  <DxSelectBox :search-enabled="true" :width="width"
+  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="width"
     :data-source="result?.findSalesRepresentatives?.length > 0 ? result.findSalesRepresentatives : []"
     :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
     :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택"
@@ -39,6 +39,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import queries from "../graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 import DxTextBox from "devextreme-vue/text-box";
+import { Message } from "@/configs/enum"
 export default defineComponent({
   props: {
     required: {
@@ -100,7 +101,8 @@ export default defineComponent({
       result,
       value,
       updateValue,
-      messageRequired
+      messageRequired,
+      Message
     };
   },
 });

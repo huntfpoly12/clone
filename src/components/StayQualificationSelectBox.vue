@@ -1,5 +1,5 @@
 <template>
-	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged"
+	<DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged"
 		:value="valueStayQualifiction" value-expr="key" display-expr="value" field-template="field" item-template="item"
 		:style="{ width: width , height: $config_styles.HeightInput}" :disabled="disabled" :required="required">
 		<template #field="{ data }">
@@ -35,6 +35,7 @@
 import { defineComponent, reactive, ref, getCurrentInstance } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum"
 import { StayQualification } from "@bankda/jangbuda-common";
 import {
 	DxValidator,
@@ -92,7 +93,7 @@ export default defineComponent({
 			emit('update:valueStayQualifiction', val.value)
 		}
 
-		return { dataSelect, onValueChanged, messageRequired };
+		return { dataSelect, onValueChanged, messageRequired, Message };
 	},
 });
 </script>

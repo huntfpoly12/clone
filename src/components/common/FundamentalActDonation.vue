@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DxSelectBox :search-enabled="true" :width="width" :data-source="FundamentalActDonationStore"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="width" :data-source="FundamentalActDonationStore"
       :show-clear-button="clearButton" display-expr="label" value-expr="value" :disabled="disabled"
       @value-changed="updateValue" :height="$config_styles.HeightInput" placeholder="선택" field-template="field"
       item-template="item">
@@ -55,6 +55,7 @@ import { defineComponent, ref, getCurrentInstance, computed } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
+import { Message } from "@/configs/enum"
 import {
   FundamentalActDonation,
   enum2Entries,
@@ -102,6 +103,7 @@ export default defineComponent({
       updateValue,
       messageRequired,
       FundamentalActDonationStore,
+      Message
     };
   },
 });

@@ -1,6 +1,7 @@
 <template>
     <div>
       <DxSelectBox
+      :noDataText="Message.getMessage('COMMON', '901').message"
         :width="width"
         :data-source="dependantsRelation"
         placeholder="선택"
@@ -24,6 +25,7 @@
   import { defineComponent, ref, watch , computed,getCurrentInstance} from "vue";
   import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
   import DxSelectBox from "devextreme-vue/select-box";
+  import { Message } from "@/configs/enum"
   import {
     DependantsRelation,
     enum2Entries,
@@ -98,7 +100,8 @@
         updateValue,
         dependantsRelation,
         value,
-        messageRequired
+        messageRequired,
+        Message
       };
     },
   });
