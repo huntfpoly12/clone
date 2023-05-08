@@ -1,6 +1,7 @@
 <template>
   <div>
     <DxSelectBox
+    :noDataText="Message.getMessage('COMMON', '901').message"
       :width="width"
       :data-source="bizType"
       :show-clear-button="clearButton"
@@ -24,6 +25,7 @@ import { defineComponent, ref, watch,getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { BizType } from "@bankda/jangbuda-common";
+import { Message } from "@/configs/enum"
 const bizType = Object.keys(BizType.all()).map((k, index) => {
   let data: any = BizType.all();
   return {
@@ -83,6 +85,7 @@ export default defineComponent({
       value,
       bizType,
       BizType,
+      Message,
     };
   },
 });

@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
         value-expr="employeeId" display-expr="employeeId"
         :value="valueEmploy" :name="nameInput"
         field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
@@ -31,6 +31,7 @@
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
+import { Message } from "@/configs/enum"
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 export default defineComponent({
     props: {
@@ -102,7 +103,8 @@ export default defineComponent({
             valueEmploy,
             convertBirthDay,
             eventItemClick,
-            messageRequired
+            messageRequired,
+            Message,
         };
     },
 });

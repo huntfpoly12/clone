@@ -1,6 +1,7 @@
 <template>
   <div>
     <DxSelectBox
+    :noDataText="Message.getMessage('COMMON', '901').message"
       :search-enabled="true"
       :width="width"
       :data-source="result?.findParters?.length > 0 ? result?.findParters : []"
@@ -25,6 +26,7 @@ import { defineComponent, ref, watch ,getCurrentInstance} from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import queries from "../graphql/queries/common/index";
+import { Message } from "@/configs/enum"
 import { useQuery } from "@vue/apollo-composable";
 export default defineComponent({
   props: {
@@ -86,7 +88,8 @@ export default defineComponent({
       result,
       value,
       updateValue,
-      messageRequired
+      messageRequired,
+      Message
     };
   },
 });

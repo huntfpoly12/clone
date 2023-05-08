@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :search-enabled="true" :data-source="arrSelect" :value="valueInput" :read-only="readOnly" value-expr="key"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :data-source="arrSelect" :value="valueInput" :read-only="readOnly" value-expr="key"
         display-expr="value" field-template="field" item-template="item" :style="{ width: width }" :disabled="disabled"
         @value-changed="updateValue">
         <template #field="{ data }">
@@ -37,6 +37,7 @@ import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
+import { Message } from "@/configs/enum"
 import { IncomeTypeCode610, IncomeTypeCode710, enum2KeysByValueMap, getEnumKey } from "../configs/enum"
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
@@ -102,6 +103,7 @@ export default defineComponent({
             data,
             updateValue,
             arrSelect,
+            Message,
         };
     },
 });

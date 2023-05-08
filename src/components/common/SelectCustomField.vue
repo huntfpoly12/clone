@@ -41,7 +41,7 @@ const widthCustom = computed<string>(() => {
 const messageRequired = Message.getCommonMessage('102').message;
 </script>
 <template>
-  <DxSelectBox :search-enabled="false" :width="widthCustom" :data-source="props.dataSource"
+  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="false" :width="widthCustom" :data-source="props.dataSource"
     :height="$config_styles.HeightInput" :display-expr="props.displayeExpr" :value-expr="props.valueExpr"
     :disabled="props.disabled" v-model="selectedValue" :placeholder="props.placeholder" field-template="field"
     item-template="item" validation-message-position="bottom">

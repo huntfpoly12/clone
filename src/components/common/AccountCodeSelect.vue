@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :onOpened="onOpened" :width="width" :search-enabled="false" :searchExpr="['name', 'shortCode']"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :onOpened="onOpened" :width="width" :search-enabled="false" :searchExpr="['name', 'shortCode']"
         :data-source="accountSubjects" placeholder="선택" value-expr="code" display-expr="name"
         :show-clear-button="clearButton" v-model:value="value" field-template="field" item-template="item"
         :key="resetSelect" :disabled="disabled" :read-only="readOnly" @value-changed="updateValue(value)"
@@ -37,7 +37,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { useStore } from 'vuex';
-// import { accountSubject } from "@/helpers/commonFunction"
+import { Message } from "@/configs/enum"
 export default {
     props: {
         required: {
@@ -164,6 +164,7 @@ export default {
             accountSubjects,
             updateValue,
             value,
+            Message,
         };
     },
 };
