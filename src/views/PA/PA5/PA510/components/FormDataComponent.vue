@@ -4,7 +4,7 @@
             <StandardForm formName="pa-510-form" ref="pa510FormRef">
                 <a-row :key="countKey">
                     <a-col :span="14">
-                        <a-form-item label="일용직사원" class="red">
+                        <a-form-item label="일용직사원" :class="store.state.common.pa510.statusFormAdd ? 'red' : ''">
                             <EmploySelect :arrayValue="arrayEmploySelect"
                                 :disabled="!store.state.common.pa510.statusFormAdd || store.state.common.pa510.statusDisabledStatus"
                                 v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true"

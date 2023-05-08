@@ -113,13 +113,14 @@ export default defineComponent({
         watch(() => props.data, (val) => {
             month.value = val
             let paymentMonth = month.value
-            month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
+            
             // if (value) {
-                paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(paymentDayCallApi.value)}`)
-                sampleDataIncomeWage.paymentDay = paymentDayCallApi.value
-                if (paymentTypeCallApi.value == 2) {
-                    paymentMonth = month.value + 1
-                }
+
+            if (paymentTypeCallApi.value == 2) {
+                paymentMonth = month.value + 1
+            }
+            paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(paymentDayCallApi.value)}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
             // }
             startDate.value = dayjs(`${month2.value}`).startOf('month').toDate();
             finishDate.value = dayjs(`${month2.value}`).endOf('month').toDate();
@@ -145,6 +146,7 @@ export default defineComponent({
         })
         watch(resultConfig, (value) => {
             trigger.value = false;
+            sampleDataIncomeWage.paymentDay = value.getWithholdingConfig.paymentDay
             paymentDayCallApi.value = value.getWithholdingConfig.paymentDay
             paymentTypeCallApi.value = value.getWithholdingConfig.paymentType
             // let paymentMonth = month.value

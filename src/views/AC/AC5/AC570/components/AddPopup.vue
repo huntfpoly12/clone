@@ -1,20 +1,20 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        :width="562">
-        <standard-form action="" name="add-ac570">
+        :width="562" :key="resetFormNum">
+        <standard-form action="" name="add-ac570" ref="ac570FormRef">
             <div class="custom-modal mt-20">
                 <div class="custom-center">
                     <a-form-item label="전용일자" class="red">
-                        <date-time-box width="230px" dateFormat="YYYY-MM-DD" :required="true" />
+                        <date-time-box width="230px" dateFormat="YYYY-MM-DD" v-model:valueDate="formState.transitionDate" ref="requiredTransitionDate" />
                     </a-form-item>
                     <a-form-item label="원천계정과목" class="red">
-                        <account-code-select width="230px" :required="true" />
+                        <account-code-select width="230px" v-model:valueInput="formState.sourceCode" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용계정과목" class="red">
-                        <account-code-select width="230px" :required="true" />
+                        <account-code-select width="230px" v-model:valueInput="formState.transitionCode" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용액" class="red">
-                        <number-box-money width="230px" :required="true" placeholder="음수가능"/>
+                        <number-box-money width="230px" v-model:valueInput="formState.transitionAmount" :required="true" :spinButtons="false" placeholder="음수가능"/>
                     </a-form-item>
                     <div class="text-align-center mt-20"><span>과목전용조서를 등록하시겠습니까?</span></div>
                 </div>
@@ -27,16 +27,16 @@
             </div>
         </standard-form>
     </a-modal>
-    <detail-popup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false"/>
+    <detail-popup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :dataAddPopup="formState"/>
 </template>
 
 <script lang="ts">
 import { defineComponent, watch, ref } from 'vue'
-import notification from "@/utils/notification";
-import { useMutation } from "@vue/apollo-composable";
-import { Message } from "@/configs/enum";
-import mutations from "@/graphql/mutations/AC/AC5/AC570";
 import DetailPopup from './DetailPopup.vue';
+import dayjs from "dayjs";
+import filters from "@/helpers/filters";
+
+import { initialState } from '../utils/index'
 export default defineComponent({
     props: {
         modalStatus: {
@@ -53,35 +53,33 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const modalStatusDetail = ref<boolean>(false)
-
-        // mutation createBudgetSubjectTransition
-        const {
-            mutate: createBudgetSubjectTransition, onDone: doneCreateBudgetSubjectTransition, onError: errorCreateBudgetSubjectTransition,
-        } = useMutation(mutations.createBudgetSubjectTransition);
-        // createBudgetSubjectTransition
-        doneCreateBudgetSubjectTransition((e) => {
-            notification('success', Message.getMessage('COMMON', '101').message)
-        })
-        errorCreateBudgetSubjectTransition(e => {
-            notification('error', e.message)
-        })
+        const ac570FormRef = ref()
+        let resetFormNum = ref(1);
+        let requiredTransitionDate = ref()
+        const formState = ref<any>()
 
         const setModalVisible = () => {
             emit("closePopup", false)
         };
 
         const onSubmit = (e: any) => {
-            var res = e.validationGroup.validate();
+            var res = ac570FormRef.value.validate();
+            if (!formState.value.transitionDate) {
+                requiredTransitionDate.value.validate(true)
+            }
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                
+                modalStatusDetail.value = true;
             }
-            modalStatusDetail.value = true;
+            
         };
 
         watch(() => props.modalStatus, (value) => {
-
+            if (value) {
+                formState.value = { ...initialState }
+                resetFormNum.value++
+            }
         })
 
         return {
@@ -89,6 +87,8 @@ export default defineComponent({
             onSubmit,
             labelCol: { style: { width: "150px" } },
             modalStatusDetail,
+            requiredTransitionDate,
+            ac570FormRef, resetFormNum, formState,
         }
     },
 })

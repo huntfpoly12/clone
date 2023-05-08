@@ -4,13 +4,13 @@ export default gql`
     $companyId: Int!
     $imputedYear: Int!
     $employeeId: Int!
-    $incomeTypeCode: String!
+#    $incomeTypeCode: String!
   ) {
     getEmployeeBusiness(
       companyId: $companyId
       imputedYear: $imputedYear
       employeeId: $employeeId
-      incomeTypeCode: $incomeTypeCode
+#      incomeTypeCode: $incomeTypeCode
     ) {
       employeeId
       name

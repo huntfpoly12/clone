@@ -33,7 +33,6 @@ export type EmployeeWageDependent = {
   employeeId: Scalars['Int'];
   foreigner: Scalars['Boolean'];
   householder?: Maybe<Scalars['Boolean']>;
-  incomeTypeCode: Scalars['String'];
   index: Scalars['Int'];
   maternityAdoption?: Maybe<Scalars['Int']>;
   name: Scalars['String'];
@@ -57,7 +56,7 @@ export type EmployeeWage = {
   __typename?: 'EmployeeWage';
   employeeId: Scalars['Int'];
   foreigner: Scalars['Boolean'];
-  incomeTypeCode: Scalars['String'];
+  // incomeTypeCode: Scalars['String'];
   joinedAt: Scalars['Int'];
   leavedAt?: Maybe<Scalars['Int']>;
   name: Scalars['String'];
@@ -90,7 +89,7 @@ export type EmployeeWageDaily = {
   employeementInsuranceSupportPercent?: Maybe<Scalars['Int']>;
   foreigner: Scalars['Boolean'];
   healthInsuranceDeduction: Scalars['Boolean'];
-  incomeTypeCode: Scalars['String'];
+  // incomeTypeCode: Scalars['String'];
   insuranceSupport: Scalars['Boolean'];
   ip: Scalars['String'];
   joinedAt: Scalars['Int'];
@@ -256,7 +255,7 @@ export type IncomeRetirement = {
   imputedMonth: Scalars['Int'];
   incomeId: Scalars['Int'];
   incomePayment: Scalars['Int'];
-  incomeTypeCode: Scalars['String'];
+  // incomeTypeCode: Scalars['String'];
   nonTaxableRetirementBenefits: Scalars['Int'];
   paymentDay: Scalars['Int'];
   paymentMonth: Scalars['Int'];
