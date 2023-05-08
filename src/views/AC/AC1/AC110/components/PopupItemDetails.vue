@@ -59,14 +59,6 @@
           <template #action="{ data }">
             <DeleteOutlined style="font-size: 12px" @click="openPopupDeleteItem(data.data)" />
           </template>
-
-          <!-- <DxSummary>
-            <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalValue" column="단위" :customize-text="totalValue" />
-            <DxTotalItem cssClass="custom-sumary" column="단가" :customize-text="totalExpenditure" />
-            <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalDifference" column="비고"
-              :customize-text="totalDifference" />
-          </DxSummary> -->
         </DxDataGrid>
         <div class="popup-detail-ac-110-sumary">
           <div v-html="`전체: <span style='font-size: 16px !important'>[${dataSource?.statementOfGoodsItems.length || 0}]</span>`"></div>
@@ -385,14 +377,8 @@ export default defineComponent({
       }
     }
     const changeInput = (key: string, index: number) => {
-      const elTotalValue: any = document.querySelector('.refPopupDetail110TotalValue')
-      const elTotalDifference = document.querySelector('.refPopupDetail110TotalDifference')
-      if (elTotalValue) {
-        elTotalValue.textContent = totalValue(key, index)
-      }
-      if (elTotalDifference) {
-        elTotalDifference.textContent = totalDifference(key, index)
-      }
+      totalValue(key, index)
+      totalDifference(key, index)
     }
 
     return {
