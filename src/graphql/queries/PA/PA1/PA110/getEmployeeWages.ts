@@ -4,7 +4,6 @@ export default gql`
     getEmployeeWages(companyId: $companyId, imputedYear: $imputedYear) {
       type
       employeeId
-      incomeTypeCode
       name
       foreigner
       nationality
@@ -53,7 +52,6 @@ export default gql`
       # }
       dependents {
         employeeId
-        incomeTypeCode
         index
         relation
         name

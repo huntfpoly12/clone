@@ -15,7 +15,7 @@
             <a-row  class="item-row ac-settings">
               <a-col  :span="24" >
                 <div style="display: flex;">
-                  <DxSelectBox  width="195px" :data-source="listFacilityBizTypeForUser" 
+                  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" width="195px" :data-source="listFacilityBizTypeForUser" 
                     v-model:value="facilityBiz"  :display-expr="'name'" :value-expr="'facilityBusinessId'" 
                   :height="$config_styles.HeightInput"  placeholder="사업유형 선택" :disabled="!infos" style="margin-right: 2px;">
                   <DxValidator>
@@ -23,7 +23,7 @@
                     </DxValidator>
                   </DxSelectBox>
       
-                  <DxSelectBox v-model:value="acYear" :items="acArrYear"  width="70px" :disabled="!infos" placeholder="년" :height="$config_styles.HeightInput">
+                  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" v-model:value="acYear" :items="acArrYear"  width="70px" :disabled="!infos" placeholder="년" :height="$config_styles.HeightInput">
                     <DxValidator>
                         <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
                     </DxValidator>
@@ -36,7 +36,7 @@
               <a-col :span="24">
                 <div style="display: flex;">
                   <span style="width: 195px;" :class="!info ? 'opacity': ''" > 원천업무 귀속연도 선택 </span>
-                  <DxSelectBox v-model:value="paYear" :items="paArrYear" width="70px" :disabled="!info" placeholder="년" :height="$config_styles.HeightInput">              
+                  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" v-model:value="paYear" :items="paArrYear" width="70px" :disabled="!info" placeholder="년" :height="$config_styles.HeightInput">              
                     <DxValidator>
                         <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
                     </DxValidator>

@@ -1,5 +1,6 @@
 <template>
     <DxSelectBox 
+        :noDataText="Message.getMessage('COMMON', '901').message"
       :height="$config_styles.HeightInput" 
       :name="nameInput" 
       placeholder="선택 또는 직접입력"
@@ -28,6 +29,7 @@ import { defineComponent, ref, watch, getCurrentInstance, nextTick  } from "vue"
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import DataSource from "devextreme/data/data_source";
+import { Message } from "@/configs/enum"
 export default defineComponent({
     props: {
         required: {
@@ -149,6 +151,7 @@ export default defineComponent({
             customItemCreating,
             selectBoxData,
             onContentReady,
+            Message,
         
         };
     },

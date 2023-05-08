@@ -8,7 +8,7 @@ export default gql`
         getIncomeExtra(companyId: $companyId,processKey: $processKey,incomeId: $incomeId){
             incomeId
             paymentDay
-            employeeType
+            # employeeType
             employeeId
             incomeTypeCode
             incomePayment

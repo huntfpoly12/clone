@@ -4,7 +4,6 @@ export default gql`
     getEmployeeWageDailies(companyId: $companyId, imputedYear: $imputedYear) {
       type
       employeeId
-      incomeTypeCode
       name
       foreigner
       nationality
@@ -38,5 +37,5 @@ export default gql`
       }  
     }
   }
-  `; 
+  `;
   // supportAmount

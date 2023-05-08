@@ -1,10 +1,17 @@
 import gql from "graphql-tag";
 export default gql`
-  query getEmployeeWageDailies($companyId: Int!, $imputedYear: Int!) {
-    getEmployeeWageDailies(companyId: $companyId, imputedYear: $imputedYear) {
+  query getEmployeeWageDaily(
+    $companyId: Int!
+    $imputedYear: Int!
+    $employeeId: Int!
+  ) {
+    getEmployeeWageDaily(
+      companyId: $companyId
+      imputedYear: $imputedYear
+      employeeId: $employeeId
+    ) {
       type
       employeeId
-      incomeTypeCode
       name
       foreigner
       nationality
@@ -20,14 +27,22 @@ export default gql`
       withholdingIncomeTax
       withholdingLocalIncomeTax
       withholdingRuralSpecialTax
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      ip
+      active
       residentId
+      joinedAt
+      leavedAt
       retirementIncome
       nationalPensionDeduction
       healthInsuranceDeduction
       longTermCareInsuranceDeduction
       employeementInsuranceDeduction
       insuranceSupport
-      nationalPensionDeduction
+      nationalPensionSupportPercent
       employeementInsuranceSupportPercent
       weeklyWorkingHours
       monthlyPaycheck
@@ -36,10 +51,13 @@ export default gql`
       monthlyWage
       totalDeduction
       deletable
+<<<<<<<< HEAD:src/graphql/queries/common/getEmployeeWageDailies.ts
+========
       nationalPensionSupportPercent
       joinedAt
       leavedAt
-      deductionItems {
+>>>>>>>> 79803ef8 (fix pa 610):src/graphql/queries/common/getEmployeeWageDaily.ts
+      deductionItems{
         itemCode
         amount
       }

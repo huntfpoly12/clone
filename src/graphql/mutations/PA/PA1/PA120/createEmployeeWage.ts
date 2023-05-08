@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation createEmployeeWage($companyId:Int!,$imputedYear:Int!,$input:EmployeeWageCreateInput!) {
+  mutation createEmployeeWage($companyId:Int!,$imputedYear:Int!,$input:EmployeeWageInput!) {
     createEmployeeWage(companyId:$companyId,imputedYear:$imputedYear,input:$input){
     type
     employeeId
-    incomeTypeCode
+    # incomeTypeCode
     name
     foreigner
     nationality
@@ -57,7 +57,7 @@ export default gql`
     # }
     dependents{
       employeeId
-      incomeTypeCode
+      # incomeTypeCode
       index
       relation
       name

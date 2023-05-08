@@ -39,6 +39,8 @@
       </div>
     </div>
   </div>
+  {{ dataAction }}dataAction<br/>
+  {{ dataActionEdit }}dataActionEdit<br/>
   <a-row style="flex-flow: row nowrap">
     <a-col :span="14" class="col-tax" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="(loadingIncomeBusinesses)" size="large">
@@ -47,7 +49,7 @@
           :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
           @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
           v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging"
-          id="tax-pay-620">
+          id="tax-pay-620" noDataText="내역이 없습니다">
           <DxSelection select-all-mode="allPages" mode="multiple" />
           <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
           <template #tag="{ data }">
@@ -57,9 +59,8 @@
               </button>
               {{ data.data?.employee?.name }}
               <a-tooltip placement="top" v-if="data.data?.employee?.incomeTypeName">
-                <template #title>
-                  {{ data.data.incomeTypeCode }}
-                  <span v-if="data.data?.employee?.incomeTypeName?.length > 10">{{ data.data?.employee?.incomeTypeName
+                <template #title v-if="data.data?.employee?.incomeTypeName?.length > 10">
+                  <span>{{ data.data?.employee?.incomeTypeName
                   }}</span>
                 </template>
                 {{ checkLen(data.data?.employee?.incomeTypeName) }}
@@ -89,14 +90,6 @@
           </template>
           <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string" :format="amountFormat"
             alignment="right" />
-          <!-- <DxSummary v-if="dataSourceDetail?.length > 0">
-            <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수:{0}" />
-            <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
-              value-format="#,###" />
-            <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
-            <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}"
-              value-format="#,###" />
-          </DxSummary> -->
         </DxDataGrid>
         <a-row style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 10px;" class="fs-14">
           <a-col span="6" class="sum-item">
@@ -123,7 +116,7 @@
               <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</span>
             </div>
           </a-col>
-        </a-row >
+        </a-row>
       </a-spin>
     </a-col>
     <a-col :span="10" class="form-tax form-action">
@@ -176,13 +169,13 @@
                 <div>
                   <a-form-item label="소득세(공제)" label-align="right">
                     <div class="d-flex-center">
-                      <number-box-money :min="0" width="150px" class="mr-5" :disabled="true"
+                      <number-box-money :min="0" width="150px" class="mr-5" :disabled="idDisableNoData"
                         v-model:valueInput="dataAction.input.withholdingIncomeTax" format="0,###" /> 원
                     </div>
                   </a-form-item>
                   <a-form-item label="지방소득세(공제)" label-align="right">
                     <div class="d-flex-center">
-                      <number-box-money :min="0" width="150px" class="mr-5" :disabled="true"
+                      <number-box-money :min="0" width="150px" class="mr-5" :disabled="idDisableNoData"
                         v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" format="0,###" /> 원
                     </div>
                   </a-form-item>
@@ -361,7 +354,7 @@ export default defineComponent({
     }));
     watch(resOption, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeBusinesses.map((item: any) => ({
-        ...item, key: item.incomeTypeCode.concat(item.employeeId)
+        ...item, key: item.employeeId,
       }));
       triggerOption.value = false;
     });
@@ -396,13 +389,12 @@ export default defineComponent({
         rowData.paymentDay = data.paymentDay
         rowData.employeeId = data.employeeId
         rowData.incomeId = data.incomeId
-        rowData.incomeTypeCode = data.incomeTypeCode
         rowData.paymentAmount = data.paymentAmount
         rowData.taxRate = data.taxRate
         rowData.withholdingIncomeTax = data.withholdingIncomeTax
         rowData.withholdingLocalIncomeTax = data.withholdingLocalIncomeTax;
         rowData.actualPayment = data.actualPayment;
-        rowData.employee = { key: data.incomeTypeCode.concat(data.employeeId) }
+        rowData.employee = { key: data.employeeId }
         dataAction.value.input = rowData;
         dataActionEdit.value.input = { ...JSON.parse(JSON.stringify(rowData)) };
         disabledInput.value = true;
@@ -441,7 +433,6 @@ export default defineComponent({
     const isNewRow = ref(false);
     const isClickMonthDiff = ref(false);
     const isClickYearDiff = ref(false);
-    const changeYearDataFake = ref();
     const isClickAddMonthDiff = ref(false);
     //compare Data
     const compareType = ref(2); //2 is row change. 1 is add button;
@@ -582,7 +573,6 @@ export default defineComponent({
     }, { deep: true })
     // click row
     const changeIncomeTypeCode = (emitVal: any) => {
-      dataAction.value.input.incomeTypeCode = emitVal.incomeTypeCode;
       dataAction.value.input.employee = emitVal;
     }
 
@@ -590,13 +580,12 @@ export default defineComponent({
     const selectionChanged = (event: any) => {
       changeDayData.value = {
         employeeId: event.selectedRowsData[0]?.employeeId,
-        incomeTypeCode: event.selectedRowsData[0]?.incomeTypeCode,
       }
       popupDataDelete.value = event.selectedRowKeys;
       editParam.value = event.selectedRowsData.map((item: any) => {
         return {
           param: { incomeId: item.incomeId },
-          errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name, incomeTypeCode: item.incomeTypeCode },
+          errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name},
         };
       });
     }
@@ -810,7 +799,6 @@ export default defineComponent({
         } else {
           delete params.input.paymentDay;
           delete params.input.employeeId;
-          delete params.input.incomeTypeCode;
           let inputEdit = {
             ...dataCallApiIncomeBusiness,
             incomeId: dataAction.value.input.incomeId,

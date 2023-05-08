@@ -1,6 +1,6 @@
 import searchIncomeWageWithholdingTaxByEmployees from "./searchIncomeWageWithholdingTaxByEmployees";
 import getIncomeWageWithholdingTaxByEmployeeReportViewUrl from "./getIncomeWageWithholdingTaxByEmployeeReportViewUrl";
-import getEmployeeWageDailies from "./getEmployeeWageDailies";
+import getEmployeeWageDailies from "@/graphql/queries/common/getEmployeeWageDailies";
 
 const queries = {
     searchIncomeWageWithholdingTaxByEmployees: searchIncomeWageWithholdingTaxByEmployees,
