@@ -1,4 +1,4 @@
-import getEmployeeWageDailies from "./getEmployeeWageDailies";
+import getEmployeeWageDailies from "@/graphql/queries/common/getEmployeeWageDailies";
 import getDepartments from "../../../common/getDepartments";
 import getResponsibilities from "../../../common/getResponsibilities";
 import getEmployeeWageDaily from "./getEmployeeWageDaily";

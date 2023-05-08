@@ -4,7 +4,7 @@ import getIncomeRetirement from "./getIncomeRetirement";
 import getIncomeBusiness from "./getIncomeBusiness";
 import getEmployeeBusinesses from "../../PA6/PA610/getEmployeeBusinesses";
 import getEmployeeWages from "@/graphql/queries/PA/PA1/PA120/getEmployeeWages";
-import getEmployeeWageDailies from "@/graphql/queries/PA/PA5/PA520/getEmployeeWageDailies";
+import getEmployeeWageDailies from "@/graphql/queries/common/getEmployeeWageDailies";
 import calculateIncomeRetirement from "../../PA4/PA410/calculateIncomeRetirement";
 import calculateIncomeRetirementTax from "./calculateIncomeRetirementTax"
 import findEmployeesForIncomeRetirement from "./findEmployeesForIncomeRetirement";
