@@ -4,7 +4,6 @@ export default gql`
     getEmployeeWageDailies(companyId: $companyId, imputedYear: $imputedYear) {
       type
       employeeId
-      incomeTypeCode
       name
       foreigner
       nationality
@@ -19,24 +18,35 @@ export default gql`
       status
       withholdingIncomeTax
       withholdingLocalIncomeTax
-      withholdingRuralSpecialTax  
+      withholdingRuralSpecialTax
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      ip
+      active
       residentId
       joinedAt
-      leavedAt  
-      weeklyWorkingHours    
-      totalDeduction 
-      deletable 
+      leavedAt
+      retirementIncome
       nationalPensionDeduction
       healthInsuranceDeduction
+      longTermCareInsuranceDeduction
       employeementInsuranceDeduction
+      insuranceSupport
       nationalPensionSupportPercent
-      employeementInsuranceSupportPercent 
-      retirementIncome
-      deductionItems {
+      employeementInsuranceSupportPercent
+      weeklyWorkingHours
+      monthlyPaycheck
+      workingDays
+      dailyWage
+      monthlyWage
+      totalDeduction
+      deletable
+      deductionItems{
         itemCode
         amount
-      }  
+      }
     }
   }
-  `; 
-  // supportAmount
+`;
