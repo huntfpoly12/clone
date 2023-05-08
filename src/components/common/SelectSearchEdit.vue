@@ -14,6 +14,7 @@
     :disabled="disabled"
     :read-only="readOnly"
     :width="width"
+    :height="$config_styles.HeightInput"
     @input="inputChange" 
     @enter-key="eventEnter"
     @focus-in="focusInput"
@@ -91,7 +92,7 @@ export default {
       }
     })
     const focusInput = (e: any) => {
-      e.element.querySelector('.dx-texteditor-input').select()
+      e.event.target.select()
       keywordSlect.value = e.event.target.value
     }
 

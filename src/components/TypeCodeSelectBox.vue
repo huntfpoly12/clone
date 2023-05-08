@@ -7,7 +7,10 @@
                 <a-tag color="default">{{ data.key }}</a-tag>
                 <div class="custom-text">
                     <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
-                    {{ data.value }}
+                    <a-tooltip placement="top" color="black" zIndex="9999999">
+                        <template #title>{{ data.value }}</template>
+                        <span>{{ data.value }}</span>
+                    </a-tooltip>
                 </div>
             </div>
             <div v-else style="padding: 3px 0px 3px 5px;">
@@ -20,7 +23,10 @@
                 <a-tag color="default">{{ data.key }}</a-tag>
                 <div class="custom-text">
                     <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
-                    {{ data.value }}
+                    <a-tooltip placement="top" color="black" zIndex="9999999">
+                        <template #title>{{ data.value }}</template>
+                        <span>{{ data.value }}</span>
+                    </a-tooltip>
                 </div>
             </div>
         </template>
@@ -115,6 +121,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     margin-left: 5px;
+
     .custom-text {
         width: 120px;
     }
