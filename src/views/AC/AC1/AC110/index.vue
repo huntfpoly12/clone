@@ -9,29 +9,6 @@
             :year="globalYear" :month="month" />
         </div>
       </div>
-      <div class="ac-110__top-flex">
-        <div class="ac-110__top-flex-action">
-          <ProcessStatus v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
-            :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
-            :disabled="true" />
-          <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
-          </button-basic>
-          <a-tooltip>
-            <template #title>마감상태 변경이력</template>
-            <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
-          </a-tooltip>
-        </div>
-        <div class="ac-110__top-flex-action">
-          <button-basic :text="'통장내역 불러오기'" :type="'default'" :mode="'contained'"
-            @onClick="openPopupRetrieveStatements" />
-          <button-basic :text="'☑전표등록'" :type="'default'" :mode="'contained'" style="margin-left: 5px;"
-            @onClick="openPopupSlipRegistrationSelected" :disabled="!selectedRowKeys.length" />
-          <a-tooltip placement="topRight">
-            <template #title>통장내역 변경이력</template>
-            <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistory" />
-          </a-tooltip>
-        </div>
-      </div>
     </div>
     <div class="ac-110__main">
       <div class="ac-110__main-main">
@@ -45,7 +22,47 @@
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="always" :deferred="false" />
-            <DxColumn caption="통장" cell-template="nickName" />
+            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+            <DxExport :enabled="true" />
+            <DxToolbar>
+              <DxItem template="status-grid-main" location="before" />
+              <DxItem name="searchPanel" />
+              <DxItem name="exportButton" css-class="cell-button-export" />
+              <DxItem location="after" template="retrieve-statements" />
+              <DxItem location="after" template="slip-registration-selected" />
+            </DxToolbar>
+            <template #status-grid-main>
+              <div class="ac-110__top-buttons">
+                <ProcessStatus
+                  v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+                  :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+                  :disabled="true" />
+                <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
+                </button-basic>
+                <a-tooltip>
+                  <template #title>마감상태 변경이력</template>
+                  <HistoryOutlined style="font-size: 18px; margin-left: 5px;"
+                    @click="modalHistoryAccountingProcessLogs" />
+                </a-tooltip>
+              </div>
+            </template>
+            <template #retrieve-statements>
+              <div class="ac-110__top-buttons">
+                <button-basic :text="'통장내역 불러오기'" :type="'default'" :mode="'contained'"
+                  @onClick="openPopupRetrieveStatements" />
+              </div>
+            </template>
+            <template #slip-registration-selected>
+              <div class="ac-110__top-buttons">
+                <button-basic :text="'☑전표등록'" :type="'default'" :mode="'contained'" style="margin-left: 5px;"
+                  @onClick="openPopupSlipRegistrationSelected" :disabled="!selectedRowKeys.length" />
+                <a-tooltip placement="topRight">
+                  <template #title>통장내역 변경이력</template>
+                  <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistory" />
+                </a-tooltip>
+              </div>
+            </template>
+            <DxColumn caption="통장" cell-template="nickName" data-field="bankbook.bankbookNickname" />
             <template #nickName="{ data }">
               <a-tooltip placement="left"
                 :title="`${getNameBankType(data.data.bankbook.type)} ${data.data.bankbook.bankbookNumber}`">
@@ -63,14 +80,14 @@
               <div>
                 {{ data.data.bankbookDetailDate.toString().slice(0, 4) }}-{{
                   data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{
-    data.data.bankbookDetailDate.toString().slice(6) }}
+            data.data.bankbookDetailDate.toString().slice(6) }}
               </div>
             </template>
             <DxColumn caption="통장적요" data-field="summary" />
-            <DxColumn caption="내용|비고" cell-template="content" />
-            <template #content="{ data }">
+            <DxColumn caption="내용|비고" cell-template="content-bankbook" />
+            <template #content-bankbook="{ data }">
               <div>
-                {{ data.data.content }} {{ data.data.note }}
+                {{ data.data?.content }} {{ data.data?.note }}
               </div>
             </template>
             <DxColumn caption="입금액" data-field="deposit" format="fixedPoint" />
@@ -102,10 +119,10 @@
             </template>
           </DxDataGrid>
           <div class="DxDataGridMain-ac-110-sumary">
-              <div v-html="`통장내역수: <span style='font-size: 16px !important'>[${dataSource.length}]</span>`"></div>
-              <div v-html="totalDeposits()"></div>
-              <div v-html="totalWithdrawal()"></div>
-              <div v-html="countSlipRegistration()"></div>
+            <div v-html="`통장내역수: <span style='font-size: 16px !important'>[${dataSource.length}]</span>`"></div>
+            <div v-html="totalDeposits()"></div>
+            <div v-html="totalWithdrawal()"></div>
+            <div v-html="countSlipRegistration()"></div>
           </div>
         </a-spin>
       </div>
@@ -132,14 +149,12 @@
                   noDataText="내역이 없습니다">
                   <DxPaging :enabled="false" />
                   <DxScrolling mode="standard" show-scrollbar="always" />
-                  <DxExport :enabled="true" />
                   <DxToolbar>
                     <DxItem template="summary-transaction-detail" css-class="cell-button-export" location="before" />
                     <DxItem template="button-reset" css-class="cell-button-export" />
                     <DxItem location="after" template="button-add" css-class="cell-button-add" />
                     <DxItem template="button-save" css-class="cell-button-export" />
                   </DxToolbar>
-
                   <template #summary-transaction-detail>
                     <div class="ac-110__main-detail-detail1-summary">
                       <div class="ac-110__main-detail-detail1-summary-quantity">
@@ -188,24 +203,26 @@
                   <template #income="{ data }">
                     <div :id="`ac110income${data.rowIndex}${data.columnIndex}`"
                       :class="{ 'disable-input-column': !!data.data.spending }">
-                      <number-box-money v-if="data.rowIndex === 0" v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
-                        :disabled="!!data.data.spending" height="26" :readOnly="isRegistered || data.rowIndex === 0"
+                      <number-box-money v-if="data.rowIndex === 0" v-model:valueInput="data.data.income" :required="true"
+                        :spinButtons="false" :disabled="!!data.data.spending" height="26"
+                        :readOnly="isRegistered || data.rowIndex === 0"
                         @focusInput="focusInputIncomeSpending(data, 'income')" />
                       <number-box-money v-else v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
                         :disabled="!!data.data.spending" height="26" :readOnly="isRegistered"
-                        @focusInput="focusInputIncomeSpending(data, 'income')" @changeInput="changeInput()"/>
+                        @focusInput="focusInputIncomeSpending(data, 'income')" @changeInput="changeInput()" />
                     </div>
                   </template>
                   <DxColumn caption="지출액" cell-template="spending" width="110" />
                   <template #spending="{ data }">
                     <div :id="`ac110spending${data.rowIndex}${data.columnIndex}`"
                       :class="{ 'disable-input-column': !!data.data.income }">
-                      <number-box-money v-if="data.rowIndex === 0" v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
-                        :disabled="!!data.data.income" height="26" :readOnly="isRegistered || data.rowIndex === 0"
+                      <number-box-money v-if="data.rowIndex === 0" v-model:valueInput="data.data.spending"
+                        :required="true" :spinButtons="false" :disabled="!!data.data.income" height="26"
+                        :readOnly="isRegistered || data.rowIndex === 0"
                         @focusInput="focusInputIncomeSpending(data, 'spending')" />
-                      <number-box-money v-else v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
-                        :disabled="!!data.data.income" height="26" :readOnly="isRegistered"
-                        @focusInput="focusInputIncomeSpending(data, 'spending')" @changeInput="changeInput()"/>
+                      <number-box-money v-else v-model:valueInput="data.data.spending" :required="true"
+                        :spinButtons="false" :disabled="!!data.data.income" height="26" :readOnly="isRegistered"
+                        @focusInput="focusInputIncomeSpending(data, 'spending')" @changeInput="changeInput()" />
                     </div>
                   </template>
                   <DxColumn caption="적요" cell-template="summary" width="150" />
@@ -213,7 +230,8 @@
                     <a-tooltip placement="top" color="black">
                       <template #title>{{ data.data.summary }}</template>
                       <div>
-                        <default-text-box v-model:valueInput="data.data.summary" :required="true" :readOnly="isRegistered" />
+                        <default-text-box v-model:valueInput="data.data.summary" :required="true"
+                          :readOnly="isRegistered" />
                       </div>
                     </a-tooltip>
                   </template>
@@ -340,7 +358,7 @@ import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging, DxSearchPanel } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
 import { Message } from "@/configs/enum"
@@ -384,7 +402,8 @@ export default defineComponent({
     DxLookup,
     HistoryPopup,
     SaveOutlined,
-    DxPaging
+    DxPaging,
+    DxSearchPanel
   },
   setup() {
     const store = useStore();
@@ -628,14 +647,14 @@ export default defineComponent({
         }
         itemChange.value = null
       }
-      if(rowElementFocus.value) {
+      if (rowElementFocus.value) {
         rowElementFocus.value.classList.remove("dx-state-hover-custom");
       }
       triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveTransactionDetails(e => {
-      if(rowElementFocus.value) {
+      if (rowElementFocus.value) {
         rowElementFocus.value.classList.remove("dx-state-hover-custom");
       }
       notification('error', e.message)
@@ -722,15 +741,15 @@ export default defineComponent({
       }
     }
     const onFocusedRowChanging = (event: any) => {
-      if(isRegisterTransaction.value) {
+      if (isRegisterTransaction.value) {
         isRegisterTransaction.value = false
         selectedRowKeys.value = []
       }
-      if(rowElementFocus.value) {
+      if (rowElementFocus.value) {
         rowElementFocus.value.classList.remove("dx-state-hover-custom");
       }
       if (rowKeyfocused.value !== event.rows[event.newRowIndex].data.bankbookDetailId) {
-        if (!isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value)){
+        if (!isEqual(dataSourceTransactionDetails.value.transactionDetails, listTransactionDetailsOrigin.value)) {
           rowElementFocus.value = event.rowElement[0]
           rowElementFocus.value?.classList.add("dx-state-hover-custom")
         }
@@ -931,14 +950,14 @@ export default defineComponent({
     }
     const submitTransactionDetails = async () => {
       if (rowKeyfocused.value === null || isRegistered.value) {
-        if(rowElementFocus.value){
+        if (rowElementFocus.value) {
           rowElementFocus.value.classList.remove("dx-state-hover-custom");
         }
         return
       }
       const res = refFormDetailAc110.value.validate()
       if (!res.isValid) {
-        if(rowElementFocus.value){
+        if (rowElementFocus.value) {
           rowElementFocus.value.classList.remove("dx-state-hover-custom");
         }
         return
@@ -1036,18 +1055,18 @@ export default defineComponent({
       let totalInComeInput = 0
       let totalSpendingInput = 0
       dataSourceTransactionDetails.value.transactionDetails.forEach((item: any, i: number) => {
-        if(i > 0) {
-          if(!!item.income){
+        if (i > 0) {
+          if (!!item.income) {
             totalInComeInput += item.income
           }
-          if(!!item.spending){
+          if (!!item.spending) {
             totalSpendingInput += item.spending
           }
         }
       })
-      if(dataSourceTransactionDetails.value.deposit > 0) {
+      if (dataSourceTransactionDetails.value.deposit > 0) {
         dataSourceTransactionDetails.value.transactionDetails[0].income = dataSourceTransactionDetails.value.deposit - totalInComeInput + totalSpendingInput
-      }else {
+      } else {
         dataSourceTransactionDetails.value.transactionDetails[0].spending = dataSourceTransactionDetails.value.withdraw - totalSpendingInput + totalInComeInput
       }
     }
@@ -1180,4 +1199,5 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-}</style>
+}
+</style>
