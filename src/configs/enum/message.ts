@@ -41,6 +41,8 @@ export class Message extends BaseType {
         '701': { "message" : "주민등록번호가 유효하지 않습니다"}, // Social security number is invalid
       // Email 
         '801': { "message" : "이메일을 발송했습니다"}, // Email has been sent
+      // Select
+        '901': { "message" : "선택할 내용이 없습니다."}, // No data to select
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
