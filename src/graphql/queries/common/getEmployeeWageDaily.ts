@@ -51,12 +51,9 @@ export default gql`
       monthlyWage
       totalDeduction
       deletable
-<<<<<<<< HEAD:src/graphql/queries/common/getEmployeeWageDailies.ts
-========
       nationalPensionSupportPercent
       joinedAt
       leavedAt
->>>>>>>> 79803ef8 (fix pa 610):src/graphql/queries/common/getEmployeeWageDaily.ts
       deductionItems{
         itemCode
         amount
