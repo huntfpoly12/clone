@@ -26,7 +26,7 @@
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
-            <div v-if="itemEditComment?.key !== items.key">
+            <div v-if="itemEditComment?.key !== items.key" class="form-chat-timeline-content-background">
               <div class="form-chat-timeline-content-text">
                 <MarkdownCustom :options="{ source: items.text, linkify: true, typographer: true, highlight: true }" />
               </div>
@@ -517,11 +517,12 @@ export default defineComponent({
       display: flex;
       align-items: flex-start;
       margin-top: 1px;
-
+      position: relative;
       &-menu {
-        margin: 0 5px;
+        position: absolute;
+        top: 0;
+        right: 5px;
         display: none;
-
         &:hover {
           display: block;
         }
@@ -535,7 +536,7 @@ export default defineComponent({
     }
 
     &-content {
-      width: 80%;
+      width: 100%;
       // background-color: #DCE6F2;
       padding: 5px 12px 8px 12px;
 
@@ -561,7 +562,6 @@ export default defineComponent({
       &-info {
         display: flex;
         align-items: center;
-        justify-content: space-between;
 
         &-user {
           display: flex;
@@ -596,7 +596,11 @@ export default defineComponent({
           font-size: 11px;
         }
       }
-
+      &-background {
+        &:hover {
+          background-color: #fafafa;
+        }
+      }
       &-text {
         word-wrap: break-word;
         white-space: pre-wrap;

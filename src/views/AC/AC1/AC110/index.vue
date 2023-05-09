@@ -77,7 +77,7 @@
                 {{ bankbookUseType.find((item: any) => item.value === data.data.bankbook.useType).label }}
               </div>
             </template>
-            <DxColumn caption="일자" data-field="bankbookDetailDateCustomField"  alignment="center" />
+            <DxColumn caption="일자" data-field="bankbookDetailDateCustomField" alignment="center" />
             <DxColumn caption="통장적요" data-field="summary" />
             <DxColumn caption="내용|비고" data-field="contentNoteCustomField" />
             <DxColumn caption="입금액" data-field="deposit" format="fixedPoint" />
@@ -249,7 +249,10 @@
                   </template>
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">
-                    <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered" />
+                    <div :class="{ 'disable-input-column': data.data.resolutionClassification === 1 }">
+                      <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered"
+                        :disabled="data.data.resolutionClassification === 1" />
+                    </div>
                   </template>
                   <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
                   <template #letterOfApprovalType="{ data }">
@@ -563,9 +566,10 @@ export default defineComponent({
     doneSyncBankbookDetails((e) => {
       if (e.data.syncBankbookDetails.length) {
         dataSource.value = [
-          ...dataSource.value, 
+          ...dataSource.value,
           e.data.syncBankbookDetails.map((items: any) => (
-            {...items, 
+            {
+              ...items,
               contentNoteCustomField: `${items?.content || ''}${items?.note || ''}`,
               bankbookDetailDateCustomField: formatDate(items.bankbookDetailDate)
             }
@@ -668,11 +672,11 @@ export default defineComponent({
       if (!!value.getBankbookDetails && value.getBankbookDetails.length) {
         dataSource.value = value.getBankbookDetails.map((items: any) => (
           {
-            ...items, 
+            ...items,
             contentNoteCustomField: `${items?.content || ''}${items?.note || ''}`,
             bankbookDetailDateCustomField: formatDate(items.bankbookDetailDate)
           }
-          ))
+        ))
         if (firstLoad.value) {
           rowKeyfocused.value = value.getBankbookDetails[0].bankbookDetailId
           payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
@@ -694,7 +698,8 @@ export default defineComponent({
     watch(resTransactionDetails, (value) => {
       if (!!value.getTransactionDetails && value.getTransactionDetails) {
         dataSourceTransactionDetails.value = value.getTransactionDetails
-        listTransactionDetailsOrigin.value = cloneDeep(value.getTransactionDetails.transactionDetails)
+        dataSourceTransactionDetails.value.transactionDetails = value.getTransactionDetails.transactionDetails.map((item: any) => ({ ...item, summary: `${item.summary} 중` }))
+        listTransactionDetailsOrigin.value = cloneDeep(dataSourceTransactionDetails.value.transactionDetails)
       }
       triggerTransactionDetails.value = false
     })
@@ -1107,8 +1112,8 @@ export default defineComponent({
     }
 
     const formatDate = (date: any) => {
-        date = date.toString()
-        return dayjs(date).format('YYYY-MM-DD')
+      date = date.toString()
+      return dayjs(date).format('YYYY-MM-DD')
     }
     return {
       statusEntering,
