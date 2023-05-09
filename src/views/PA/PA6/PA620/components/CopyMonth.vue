@@ -12,7 +12,6 @@
       </div>
     </a-form-item>
     <a-form-item label="지급일" label-align="right">
-      {{ startDate }}
       <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
         v-model:valueDate="paymentDayPA620" />
       <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" :isFormat="true" /> -->
@@ -106,11 +105,13 @@ export default defineComponent({
       get() {
         let day = store.getters['common/paymentDayPA620'];
         const daysInMonth = dayjs(`${month2.value}`).daysInMonth();
-        let date = `${month2.value}${day > daysInMonth || day == 0 ? daysInMonth : day}`;
-        return date;
+        let newDay = day > daysInMonth || day == 0 ? daysInMonth : day;
+        let date = `${month2.value}${newDay}`;
+        store.commit('common/paymentDayPA720', newDay);
+        return dayjs(date);
       },
       set(value) {
-        let day = value.toString().slice(-2);
+        let day = +value.toString().slice(-2);
         store.commit('common/paymentDayPA620', day);
       },
     });
@@ -129,12 +130,13 @@ export default defineComponent({
       month1.value = val;
       let yearMonth = `${processKeyPA620.value.paymentYear}${processKeyPA620.value.imputedMonth}`;
       if (props.dateType == 2 && val) {
-        yearMonth = val == 12 ? `${globalYear.value + 1}1` : `${globalYear.value}${val + 1}`;
+        yearMonth = val == 12 ? `${globalYear.value + 1}01` : `${globalYear.value}${filters.formatMonth(val + 1)}`;
       }
       if (props.dateType == 1) {
         yearMonth = `${globalYear.value}${filters.formatMonth(val)}`;
       }
       month2.value = yearMonth;
+      console.log(`output->filters.formatMonth(val)`,filters.formatMonth(val))
     });
     //-------------------------action copy data--------------------------------
     const {
