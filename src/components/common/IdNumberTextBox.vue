@@ -10,21 +10,17 @@
           :validation-callback="checkAllResidentId ? checkAllID : (foreigner ? checkID : checkIdNotForeigner)" />
       </DxValidator>
     </DxTextBox>
-    <div class="custom-tooltip">
+    <div class="resident-tooltip">
       <span v-if="errorCurrentType == 1" class="error-1">x</span>
       <a-tooltip placement="top" v-if="errorCurrentType == 2">
         <template #title>
-          <b>잘못된 주민등록번호</b><br/>
+          <b>잘못된 주민등록번호</b><br />
           입력하신 번호는 주민등록번호 생성규칙에 맞지 않습니다.
         </template>
-        <WarningOutlined :style="{ fontSize: '19px', color: 'orange' }"/>
+        <WarningOutlined :style="{ fontSize: '17px', color: 'orange' }" />
       </a-tooltip>
     </div>
   </div>
-
-  <!-- <DxTextBox value="password" styling-mode="filled" placeholder="password">
-    <DxButton :options="passwordButton" name="password" location="after" />
-  </DxTextBox> -->
 </template>
 
 <script lang="ts">
@@ -104,12 +100,13 @@ export default defineComponent({
     const errorCurrentType = ref(0);
     const validatorRef = ref();
     const widthCustom = computed(() => {
-      if (typeof +props.width == 'string') {
-        return props.width
-      } else if (typeof +props.width == 'number') {
+      if (props.width == '100%') {
+        return props.width;
+      }
+      if (typeof +props.width == 'number' && +props.width > 0) {
         return props.width + 'px';
       }
-      return '200px';
+      return props.width;
     })
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
@@ -122,17 +119,20 @@ export default defineComponent({
 
     const updateValue = (value: any) => {
       let isValid = validatorRef.value?.instance._validationInfo.result;
-      if (isValid.brokenRule?.type == 'custom') {
+      let msgDefault = residentRef.value.instance._$validationMessage;
+      if (isValid?.brokenRule?.type == 'custom') {
         errorCurrentType.value = 2;
-        residentRef.value.instance._$validationMessage[0].style.display = 'none';
+        msgDefault[0].style.display = 'none';
         residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
-      } else if (isValid.brokenRule?.editorSpecific) {
+      } else if (isValid?.brokenRule?.editorSpecific) {
         errorCurrentType.value = 1;
-        residentRef.value.instance._$validationMessage[0].style.display = 'none';
+        if (msgDefault) {
+          msgDefault[0].style.display = 'none';
+        }
         residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
       } else {
         errorCurrentType.value = 0;
-        residentRef.value.instance._$validationMessage[0].style.display = 'block';
+        msgDefault[0].style.display = 'block';
         residentRef.value.instance._$textEditorInputContainer[0].classList.remove('error-other');
       }
       emit("update:valueInput", value);
@@ -178,7 +178,7 @@ export default defineComponent({
       }, 50);
     }
     onMounted(() => {
-      let ele: any = document.getElementsByClassName('resident-ctn')[0];
+      let ele = document.getElementsByClassName('resident-ctn')[0] as HTMLElement;
       ele.style.width = widthCustom.value;
     })
     return {
@@ -220,15 +220,16 @@ export default defineComponent({
     }
 
   }
+
   #resident-id .dx-datagrid-validator.dx-validator.dx-datagrid-invalid::after {
     border-color: unset;
   }
 
-  .custom-tooltip {
+  .resident-tooltip {
     position: absolute;
     right: 0;
     top: 0;
-    width: 30px;
+    width: 28px;
     height: 100%;
     text-align: center;
     display: flex;
@@ -237,10 +238,10 @@ export default defineComponent({
 
     .error-1 {
       font-size: 16px;
-      line-height: 16px;
-      height: 19px;
+      line-height: 14px;
+      height: 17px;
       border-radius: 100%;
-      width: 18px;
+      width: 17px;
       font-weight: 700;
       background: red;
       color: white;

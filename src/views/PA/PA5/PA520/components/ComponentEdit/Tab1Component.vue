@@ -1,9 +1,9 @@
 <template>
     <a-spin :spinning="loading" size="large">
         <standard-form  formName="update-page-PA520" ref="formRefPa520Update"> 
-            <a-form-item label="사번(코드)" class="label-red" label-align="right">
+            <a-form-item label="사번(코드)" label-align="right">
                 <div class="d-flex-center">
-                    <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
+                    <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId"
                         placeholder="숫자만 입력 가능" :disabled="true" />
                         <info-tool-tip>
                             최초 저장된 이후 수정 불가
