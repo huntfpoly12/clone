@@ -13,7 +13,7 @@
     <div class="ac-110__main">
       <div class="ac-110__main-main">
         <a-spin :spinning="loadingGetBankbookDetails || loadingSyncBankbookDetails" size="large">
-          <DxDataGrid id="DxDataGridMainAc110" key-expr="bankbookDetailId" :show-row-lines="true"
+          <DxDataGrid id="DxDataGridMainAc110" ref="refDxDataGridMainAc110" key-expr="bankbookDetailId" :show-row-lines="true"
             :hoverStateEnabled="true" :data-source="dataSource" v-model:selected-row-keys="selectedRowKeys"
             :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused"
             :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -170,8 +170,8 @@
                       <template #title>신규</template>
                       <div>
                         <DxButton :focusStateEnabled="false" @click="addNewRowTransactionDetails"
-                          :disabled="isRegistered || !rowKeyfocused" size="large">
-                          <PlusOutlined :style="{ fontSize: '17px', color: 'black' }" /> 신규
+                          :disabled="isRegistered || !rowKeyfocused" size="large" style="background: #337ab7; color: white">
+                          <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" /> 신규
                         </DxButton>
                       </div>
                     </a-tooltip>
@@ -180,8 +180,8 @@
                     <a-tooltip placement="top">
                       <template #title>신규</template>
                       <DxButton :focusStateEnabled="false" @click="submitTransactionDetails()" size="large"
-                        :disabled="isRegistered || !rowKeyfocused">
-                        <SaveOutlined :style="{ fontSize: '17px', color: 'black' }" /> 저장
+                        :disabled="isRegistered || !rowKeyfocused" style="background: #337ab7; color: white">
+                        <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" /> 저장
                       </DxButton>
                     </a-tooltip>
                   </template>
@@ -234,12 +234,10 @@
                   </template>
                   <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
                   <template #relationCode="{ data }">
-                    <div v-if="rowKeyfocused"
-                      :class="{ 'disable-input-column': data.data.resolutionClassification === 1 }"
-                      :key="`relationCode${keyRefreshGridDetailAc}`">
+                    <div v-if="rowKeyfocused" :key="`relationCode${keyRefreshGridDetailAc}`">
                       <account-code-select v-model:valueInput="data.data.relationCode"
-                        :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
-                        :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
+                        :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" 
+                        :readOnly="isRegistered || data.data.resolutionClassification === 1" :lengthText="10" />
                     </div>
                   </template>
                   <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
@@ -249,22 +247,21 @@
                   </template>
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">
-                    <div :class="{ 'disable-input-column': data.data.resolutionClassification === 1 }">
-                      <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered"
-                        :disabled="data.data.resolutionClassification === 1" />
+                    <div>
+                      <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered || data.data.resolutionClassification === 1" />
                     </div>
                   </template>
                   <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
                   <template #letterOfApprovalType="{ data }">
-                    <div :class="{ 'disable-input-column': data.data.resolutionClassification === 1 }">
+                    <div>
                       <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
-                        :disabled="data.data.resolutionClassification === 1" :readOnly="isRegistered"
+                        :readOnly="isRegistered || data.data.resolutionClassification === 1"
                         :required="data.data.resolutionClassification === 2" />
                     </div>
                   </template>
                   <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                   <template #causeUsage="{ data }">
-                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
+                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.causeUsage)}">
                       <a-tooltip v-if="!!data.data.causeUsage && data.data.causeUsage.length" placement="top">
                         <template #title>
                           <div class="ac-110-tooltip-memocauseUsage">{{ data.data.causeUsage }}</div>
@@ -278,7 +275,7 @@
                   </template>
                   <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                   <template #goodsCount="{ data }">
-                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
+                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.goodsCount) }">
                       <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1"
                         style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
                         {{ data.data.goodsCount || 0 }}
@@ -288,7 +285,7 @@
                   </template>
                   <DxColumn caption="메모" cell-template="memo" alignment="center" />
                   <template #memo="{ data }">
-                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
+                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.memo) }">
                       <a-tooltip v-if="!!data.data.memo && data.data.memo.length" placement="top">
                         <template #title>
                           <div class="ac-110-tooltip-memocauseUsage">{{ data.data.memo }}</div>
@@ -459,6 +456,7 @@ export default defineComponent({
     let triggerBankbookDetails = ref<boolean>(true)
     let triggerTransactionDetails = ref<boolean>(false)
 
+    const refDxDataGridMainAc110 = ref()
     let listAccountingProcesses = ref<any>([])
     let statusEntering = ref(10);
     let statusInput = ref(20);
@@ -736,6 +734,11 @@ export default defineComponent({
         isModalConfirmChangeData.value = true
       }
     }
+
+    watch(() => monthSelected.value, () => {
+      refDxDataGridMainAc110.value.instance.clearFilter()
+      refDxDataGridMainAc110.value.instance.clearSorting()
+    })
     // Grid Main
     const selectionChanged = (event: any) => {
       // normalTransactionDetails
@@ -1118,6 +1121,7 @@ export default defineComponent({
       return dayjs(date).format('YYYY-MM-DD')
     }
     return {
+      refDxDataGridMainAc110,
       statusEntering,
       statusInput,
       statusAdjusting,

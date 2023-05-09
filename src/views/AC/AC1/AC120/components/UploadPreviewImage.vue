@@ -17,13 +17,17 @@
                             </div>
                         </div>
                     </a-upload>
-                    <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+                    <!-- <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
                         <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
-                    </a-modal>
+                    </a-modal> -->
                 </div>
             </div>
         </a-spin>
     </a-config-provider>
+    <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
+    :title="Message.getMessage('COMMON', '401').message" content="" :okText="Message.getMessage('COMMON', '401').yes"
+    :cancelText="Message.getMessage('COMMON', '401').no" @checkConfirm="handleDelete" />
+    <a-image :preview="{ visible: previewVisible, onVisibleChange: setVisible }" style="width: 100%; display: none" :src="previewImage" />
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
@@ -88,6 +92,7 @@ export default defineComponent({
             transactionDetailDate: null,
             accountingDocumentId: null,
         })
+        let isModalDelete = ref(false)
         // =================== GRAPHQL ===================
         // queries getAccountingDocumentProofs
         const { result: resGetAccountingDocumentProofs, loading: loadingGetAccountingDocumentProofs
@@ -201,6 +206,10 @@ export default defineComponent({
             previewVisible.value = false;
         };
 
+        const setVisible = (value: boolean) => {
+            previewVisible.value = value;
+        };
+
         const beforeUpload = (file: any) => {
             const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
             if (!isImage) {
@@ -248,13 +257,23 @@ export default defineComponent({
         const remove = (e: any) => {
             indexImg.value = fileList.value.findIndex((item: any) => item.name === e.name);
             if (!fileList.value[indexImg.value].id) return false;
-            removeAccountingDocumentProof({
-                ...dataGetAccountingDocumentProofs.value,
-                fileStorageId: fileList.value[indexImg.value].id,
-            });
+            isModalDelete.value = true
             return false
-
         };
+
+        const handleDelete = (status: boolean) => {
+            if (status) {
+                if (!fileList.value[indexImg.value].id) {
+                    isModalDelete.value = false
+                    return
+                }
+                removeAccountingDocumentProof({
+                    ...dataGetAccountingDocumentProofs.value,
+                    fileStorageId: fileList.value[indexImg.value].id,
+                });
+            }
+            isModalDelete.value = false
+        }
         return {
             handlePreview,
             beforeUpload,
@@ -268,6 +287,10 @@ export default defineComponent({
             loadingGetAccountingDocumentProofs,
             store, statusDisabledImg,
             locale,
+            setVisible,
+            isModalDelete,
+            Message,
+            handleDelete
         };
     },
 });
