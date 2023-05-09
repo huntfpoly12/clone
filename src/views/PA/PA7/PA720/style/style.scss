@@ -283,4 +283,12 @@
   :deep .dx-datagrid-summary-item {
     line-height: 23px;
   }
+
+  .summary-ctn {
+    border: 1px solid #ddd;
+    border-top: none;
+    display: flex;
+    padding: 5px 10px;
+    min-height: 57px;
+  }
 }
