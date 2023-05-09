@@ -150,7 +150,7 @@
                         </a-collapse-panel>
                     </a-collapse>
                     <div class="custom-footer-modal">
-                        <button-basic text="저장하고 나가기" type="info" mode="contained" @onClick="setModalVisible"
+                        <button-basic text="취소" type="info" mode="contained" @onClick="setModalVisible"
                             style="margin-right: 10px;" />
                         <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="updateCompany" />
                     </div>
@@ -275,7 +275,7 @@ export default defineComponent({
                 formStateMomes.value = value.getCompanyManageMemos;
             }
         });
-        // mutation create memo 
+        // mutation create memo
         const {
             mutate: actionCreateMemo,
             onError: creactMemoErr,
@@ -289,7 +289,7 @@ export default defineComponent({
             notification('error', res.message)
             refetchMemo();
         });
-        // mutation update memo 
+        // mutation update memo
         const {
             mutate: actionUpdateMemo,
             onDone: onUpdatedMemo,
@@ -303,7 +303,7 @@ export default defineComponent({
             notification('error', e.message)
             refetchMemo();
         });
-        // mutation delete memo 
+        // mutation delete memo
         const {
             mutate: actionDeleteMemo,
             onDone: onDeleteMemo,
@@ -425,7 +425,7 @@ export default defineComponent({
             formState.extendInfoDetailAddressDetailSigunguCode = data.sigunguCode;
             formState.extendInfoDetailAddressDetailZonecode = data.zonecode;
         };
-        // Update Company 
+        // Update Company
         const {
             mutate: actionUpdate,
             loading: loadingUpdate,
@@ -513,8 +513,8 @@ export default defineComponent({
         };
     },
 });
-</script> 
- 
+</script>
+
 <style lang="scss" scoped src="../style/popup/index.scss">
 
-</style> 
+</style>
