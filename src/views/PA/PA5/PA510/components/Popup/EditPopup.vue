@@ -6,7 +6,7 @@
             <div class="custom-modal-edit">
                 <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
                 <span>선택된 내역 지급일을</span>
-                <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
+                <number-box :key="resetInput" width="70px" :required="true" :min="0" :max="maxDayMonth" v-model:valueInput="dayValue"
                     :spinButtons="true" />
                 <span>일로 변경하시겠습니까?</span>
             </div>
@@ -46,7 +46,7 @@ import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { useStore } from 'vuex'
 import { Message } from "@/configs/enum";
-
+import dayjs from "dayjs";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -70,6 +70,9 @@ export default defineComponent({
         let sumSuccessCallApi = ref<number>(0)
         let sumErrorCallApi = ref<number>(0)
         const loading = ref<boolean>(false)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
+        const maxDayMonth = ref<number>(dayjs(`${paYear}-${store.state.common.pa510.processKeyPA510.imputedMonth}`).daysInMonth())
+        const resetInput = ref(1)
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -127,13 +130,20 @@ export default defineComponent({
                 companyId: companyId,
                 processKey: processKey.value,
                 incomeId: arrData.value[0].incomeId,
-                day: dayValue.value
+                day: dayValue.value == 0 ? maxDayMonth.value : dayValue.value
             })
         }
         const closePupop = () => {
             statusOnCallApiChange.value = false
             emit("closePopup", false)
         }
+        watch(() => props.modalStatus, (value) => {
+            if (value) {
+                dayValue.value = 1
+                maxDayMonth.value = dayjs(`${paYear}-${store.state.common.pa510.processKeyPA510.imputedMonth}`).daysInMonth()
+                resetInput.value++
+            }
+        })
 
         return {
             setModalVisible,
@@ -141,7 +151,7 @@ export default defineComponent({
             dayValue,
             statusOnCallApiChange,
             arrDataError, sumSuccessCallApi, sumErrorCallApi,
-            closePupop, loading,
+            closePupop, loading, maxDayMonth, resetInput,
         }
     },
 })

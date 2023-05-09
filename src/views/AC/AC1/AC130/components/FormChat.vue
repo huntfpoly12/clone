@@ -26,16 +26,20 @@
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
-            <div class="form-chat-timeline-content-text">
-              <MarkdownCustom :options="{source: items.text, linkify: true, typographer: true, highlight: true}" />
+            <div v-if="itemEditComment?.key !== items.key">
+              <div class="form-chat-timeline-content-text">
+                <MarkdownCustom :options="{ source: items.text, linkify: true, typographer: true, highlight: true }" />
+              </div>
+              <div class="form-chat-timeline-content-files">
+                <a-spin v-for="(file, indexFile) in items.files" :spinning="isLoadingUpload && !!file?.isUploading"
+                  size="small" :key="file.url">
+                  <img class="form-chat-timeline-content-files-items" :src="file.url" alt=""
+                    @click="previewImage(items.files, indexFile)">
+                </a-spin>
+              </div>
             </div>
-            <div class="form-chat-timeline-content-files">
-              <a-spin v-for="(file, indexFile) in items.files" :spinning="isLoadingUpload && !!file?.isUploading"
-                size="small" :key="file.url">
-                <img class="form-chat-timeline-content-files-items" :src="file.url" alt=""
-                  @click="previewImage(items.files, indexFile)">
-              </a-spin>
-            </div>
+            <InputChat v-else ref="inputEditChat" v-model:textChatProp="itemEditComment.text" v-model:filesUploadProps="itemEditComment.files"
+              placeholder="댓글을 입력하세요…" @submitChat="submitChat" @cancel="cancelEdit"/>
           </div>
 
           <div v-if="items.userId === userId" class="form-chat-timeline-common-menu">
@@ -57,7 +61,7 @@
           </div>
         </div>
       </div>
-
+      <!-- itemEditComment -->
       <div v-if="!!objectChatUpFile" class="form-chat-timeline-common form-chat-timeline-right mt-1"
         :class="{ 'mt-10': objectChatUpFile.cssTop }">
         <div class="form-chat-timeline-content form-chat-timeline-content-right">
@@ -82,8 +86,15 @@
         </div>
       </div>
     </div>
-    <InputEditChat ref="inputEditChat" v-model:textChatProp="textChat" v-model:filesUploadProps="filesUpload"
-      placeholder="댓글을 입력하세요…" @submitChat="submitChat" />
+    <div class="form-chat-bottom">
+      <div class="form-chat-bottom-category">
+        <StatusChat with="150" />
+        <span style="margin: 0 10px;">분류:</span>
+        <span>회계-마감-({{ currentTime }})</span>
+      </div>
+      <InputChat ref="inputChat" v-model:textChatProp="textChat" v-model:filesUploadProps="filesUpload"
+        placeholder="댓글을 입력하세요…" @submitChat="submitChat" />
+    </div>
     <ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
       :listImage="listImagePreview" />
     <PopupMessage :modalStatus="isModalDeleteChat" @closePopup="isModalDeleteChat = false" :typeModal="'confirm'"
@@ -117,7 +128,7 @@ import StatusChat from './StatusChat.vue'
 import EmojiPicker from 'vue3-emoji-picker'
 // import css
 import 'vue3-emoji-picker/css'
-import InputEditChat from './InputEditChat.vue'
+import InputChat from './InputChat.vue'
 import MarkdownCustom from './MarkdownCustom.vue';
 export default defineComponent({
   props: {
@@ -144,7 +155,7 @@ export default defineComponent({
     ModalPreviewListImage,
     EmojiPicker,
     StatusChat,
-    InputEditChat,
+    InputChat,
     MarkdownCustom
   },
   setup(props, { emit }) {
@@ -158,7 +169,6 @@ export default defineComponent({
     let isModalPreview = ref(false)
     let isModalDeleteChat = ref(false)
     const formTimeline: any = ref()
-    const inputChat: any = ref()
     let itemEditComment = ref<any>(null)
     let filesUpload: any = ref([])
     let listFileUploadHandleLoading: any = ref([])
@@ -166,6 +176,7 @@ export default defineComponent({
     let isLoadingUpload = ref(false)
     let isProcessingDeleteUpdate = ref(false)
     let isVisibleEmojiForm = ref(false)
+    const inputChat: any = ref()
     const inputEditChat = ref()
     let payload: any = ref({
       name: userName.value,
@@ -289,7 +300,7 @@ export default defineComponent({
         }
         nextTick(() => {
           formTimeline.value.scrollTop = 10000000
-          inputEditChat.value.resetInputChat()
+          inputChat.value.resetInputChat()
         })
         uploadFileServer()
       } else {
@@ -314,7 +325,7 @@ export default defineComponent({
           .then(() => {
             nextTick(() => {
               formTimeline.value.scrollTop = 10000000
-              inputEditChat.value.resetInputChat()
+              inputChat.value.resetInputChat()
             })
           })
           .catch((err) => {
@@ -361,7 +372,11 @@ export default defineComponent({
     })
 
     const editComment = (item: any) => {
-
+      itemEditComment.value = { ...item }
+      nextTick(() => {
+        inputEditChat.value[0].resizeInput()
+        inputEditChat.value[0].focus()
+      })
     }
 
     const openComfirmDetele = (item: any) => {
@@ -401,13 +416,13 @@ export default defineComponent({
           const storageRef = refStorage(storage, file.file.name);
           uploadBytes(storageRef, file.file, file.metadata).then(async (res) => {
             const url = await getDownloadURL(res.ref)
-            listImageUpload.value = [...listImageUpload.value, { url: url }]
+            listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size }]
           }).catch((err) => {
             isLoadingUpload.value = false
             console.log('error', err);
           })
         } else {
-          listImageUpload.value = [...listImageUpload.value, { url: file.url }]
+          listImageUpload.value = [...listImageUpload.value, { url: file.url, name: file.name, size: file.size }]
         }
       })
     }
@@ -418,13 +433,18 @@ export default defineComponent({
       isModalPreview.value = true
     }
 
+    const cancelEdit = () => {
+      nextTick(() => {
+        itemEditComment.value = null
+      })
+    }
+
     return {
       userName,
       listChat,
       submitChat,
       textChat,
       formTimeline,
-      inputChat,
       editComment,
       handleConfirmDelete,
       itemEditComment,
@@ -441,7 +461,9 @@ export default defineComponent({
       openComfirmDetele,
       isVisibleEmojiForm,
       currentTime,
-      inputEditChat
+      inputChat,
+      inputEditChat,
+      cancelEdit
     }
   },
 })
@@ -470,7 +492,7 @@ export default defineComponent({
     padding-bottom: 10px;
     padding-top: 2px;
     overflow-y: auto;
-    
+
     &-line {
       margin: 10px 0;
       height: 1px;
@@ -513,7 +535,7 @@ export default defineComponent({
     }
 
     &-content {
-      max-width: 80%;
+      width: 80%;
       // background-color: #DCE6F2;
       padding: 5px 12px 8px 12px;
 
@@ -581,6 +603,14 @@ export default defineComponent({
         font-size: 15px;
         color: #333333;
       }
+    }
+  }
+
+  &-bottom {
+    &-category {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
     }
   }
 }

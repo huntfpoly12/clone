@@ -47,6 +47,7 @@ import getMajorInsuranceCompanyEmployeeLossLogs from "./getMajorInsuranceCompany
 import findUsername from "./findUsername";
 import getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs from "./getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs";
 import getMajorInsuranceCompanyEmployeeReturnToWorkLogs from "./getMajorInsuranceCompanyEmployeeReturnToWorkLogs";
+import getBudgetSubjectTransitionsLogs from './getBudgetSubjectTransitionsLogs';
 const queries = {
   getMe: getMe,
   getUser: getUser,
@@ -99,6 +100,7 @@ const queries = {
   getMajorInsuranceCompanyEmployeeLossLogs: getMajorInsuranceCompanyEmployeeLossLogs,
   getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs: getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs,
   getMajorInsuranceCompanyEmployeeReturnToWorkLogs: getMajorInsuranceCompanyEmployeeReturnToWorkLogs,
+  getBudgetSubjectTransitionsLogs: getBudgetSubjectTransitionsLogs,
 };
 
 export default queries;

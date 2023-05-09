@@ -1,13 +1,26 @@
 <template>
-  <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" v-model:value="value"
-    :disabled="disabled" :readOnly="readOnly" @input="updateValue(value)" :mask="mask" :mask-invalid-message="maskMess"
-    :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn">
-    <DxValidator :name="nameInput">
-      <DxRequiredRule v-if="required" :message="messageRequired" />
-      <!-- <DxCustomRule v-if="isResidentId" :validation-callback="checkAllResidentId ? checkAllID :(foreigner ? checkID : checkIdNotForeigner)"
-        :message="msgError" /> -->
-    </DxValidator>
-  </DxTextBox>
+  <div class="d-flex resident-ctn">
+    <DxTextBox id="resident-id" ref="residentRef" :width="widthCustom" value-change-event="input"
+      :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
+      @input="updateValue(value)" :mask="mask" :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn"
+      :style="{ width: widthCustom }">
+      <DxValidator ref="validatorRef" :name="nameInput">
+        <DxRequiredRule v-if="required" :message="messageRequired" />
+        <!-- <DxCustomRule v-if="isResidentId"
+          :validation-callback="checkAllResidentId ? checkAllID : (foreigner ? checkID : checkIdNotForeigner)" /> -->
+      </DxValidator>
+    </DxTextBox>
+    <!-- <div class="resident-tooltip">
+      <span v-if="errorCurrentType == 1" class="error-1">x</span>
+      <a-tooltip placement="top" v-if="errorCurrentType == 2">
+        <template #title>
+          <b>잘못된 주민등록번호</b><br />
+          입력하신 번호는 주민등록번호 생성규칙에 맞지 않습니다.
+        </template>
+        <WarningOutlined :style="{ fontSize: '17px', color: 'orange' }" />
+      </a-tooltip>
+    </div> -->
+  </div>
 </template>
 
 <script lang="ts">
@@ -16,10 +29,12 @@ import {
   DxRequiredRule,
   DxCustomRule,
 } from "devextreme-vue/validator";
-import { defineComponent, ref, watch, getCurrentInstance } from "vue";
-import DxTextBox from "devextreme-vue/text-box";
+import { defineComponent, ref, watch, getCurrentInstance, onMounted } from "vue";
+import { DxTextBox, DxButton } from 'devextreme-vue/text-box';
 import { validResidentId } from "@bankda/jangbuda-common";
 import { Message } from '@/configs/enum';
+import { WarningOutlined } from "@ant-design/icons-vue";
+import { computed } from "vue";
 export default defineComponent({
   props: {
     required: {
@@ -70,7 +85,9 @@ export default defineComponent({
     DxTextBox,
     DxValidator,
     DxRequiredRule,
-    DxCustomRule
+    DxCustomRule,
+    DxButton,
+    WarningOutlined,
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
@@ -79,6 +96,18 @@ export default defineComponent({
     const maskMess = ref(messages.getCommonMessage('105').message);
     const messageRequired = ref(messages.getCommonMessage('102').message);
     const msgError = Message.getMessage('COMMON', '701').message;
+    const residentRef = ref();
+    const errorCurrentType = ref(0);
+    const validatorRef = ref();
+    const widthCustom = computed(() => {
+      if (props.width == '100%') {
+        return props.width;
+      }
+      if (typeof +props.width == 'number' && +props.width > 0) {
+        return props.width + 'px';
+      }
+      return props.width;
+    })
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
@@ -89,6 +118,23 @@ export default defineComponent({
     const value = ref(props.valueInput);
 
     const updateValue = (value: any) => {
+      // let isValid = validatorRef.value?.instance._validationInfo.result;
+      // let msgDefault = residentRef.value.instance._$validationMessage;
+      // if (isValid?.brokenRule?.type == 'custom') {
+      //   errorCurrentType.value = 2;
+      //   msgDefault[0].style.display = 'none';
+      //   residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
+      // } else if (isValid?.brokenRule?.editorSpecific) {
+      //   errorCurrentType.value = 1;
+      //   if (msgDefault) {
+      //     msgDefault[0].style.display = 'none';
+      //   }
+      //   residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
+      // } else {
+      //   errorCurrentType.value = 0;
+      //   msgDefault[0].style.display = 'block';
+      //   residentRef.value.instance._$textEditorInputContainer[0].classList.remove('error-other');
+      // }
       emit("update:valueInput", value);
     };
     watch(
@@ -102,25 +148,24 @@ export default defineComponent({
         return true
       }
       const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
-      if (fNumber > 4 && fNumber < 9)
-      {
-          return validResidentId(value.value);
-      } else{
-          return false
+      if (fNumber > 4 && fNumber < 9) {
+        return validResidentId(value.value);
+      } else {
+        return false
       };
     }
-    const checkAllID = () => {
-      if (!value.value) return true  
+    const checkAllID = (options: any) => {
+      if (!value.value) return true
       return validResidentId(value.value);
     }
 
-    const checkIdNotForeigner = () => {
+    const checkIdNotForeigner = (options: any) => {
+      errorCurrentType.value = 2;
       if (!value.value) {
         return true
       }
-      const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
-      if ( fNumber <= 4 || fNumber >= 9)
-      {
+      const fNumber = value.value ? parseInt(value.value?.charAt(6)) : 0;
+      if (fNumber <= 4 || fNumber >= 9) {
         return validResidentId(value.value);
       } else {
         return false
@@ -132,7 +177,10 @@ export default defineComponent({
         input.selectionStart = input.selectionEnd = 0;
       }, 50);
     }
-    
+    onMounted(() => {
+      let ele = document.getElementsByClassName('resident-ctn')[0] as HTMLElement;
+      ele.style.width = widthCustom.value;
+    })
     return {
       updateValue,
       value,
@@ -144,8 +192,60 @@ export default defineComponent({
       checkID,
       checkIdNotForeigner,
       checkAllID,
-      onFocusIn, 
+      onFocusIn,
+      residentRef,
+      // requiredButton, formatButton,
+      validatorRef,
+      errorCurrentType,
+      widthCustom,
     };
   },
 });
 </script>
+<style lang="scss" scoped>
+.resident-ctn {
+  position: relative;
+
+  :deep div.dx-overlay-content.dx-resizable {
+    visibility: hidden;
+  }
+
+  #resident-id.dx-invalid.dx-texteditor {
+
+    :deep .dx-texteditor-input-container.error-other {
+      &::after {
+        display: none;
+      }
+
+    }
+
+  }
+
+  #resident-id .dx-datagrid-validator.dx-validator.dx-datagrid-invalid::after {
+    border-color: unset;
+  }
+
+  .resident-tooltip {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 28px;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .error-1 {
+      font-size: 16px;
+      line-height: 14px;
+      height: 17px;
+      border-radius: 100%;
+      width: 17px;
+      font-weight: 700;
+      background: red;
+      color: white;
+    }
+  }
+}
+</style>

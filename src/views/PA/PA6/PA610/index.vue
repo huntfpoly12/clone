@@ -81,7 +81,7 @@
           :style="(storeDataSourceCount === 0 && !isNewRow || isDataInvalidAttributionYear) && 'pointer-events: none;'">
           <a-spin :spinning="loadingUpdate || loadingCreated" size="large">
             <standard-form formName="pa-610" ref="formRef">
-              <a-form-item label="코드" label-align="right" class="red">
+              <a-form-item label="코드" label-align="right">
                 <div class="d-flex-center">
                   <text-number-box width="200px" v-model:valueInput="dataShow.employeeId" placeholder="숫자만 입력 가능" disabled />
                   <info-tool-tip class="ml-5">

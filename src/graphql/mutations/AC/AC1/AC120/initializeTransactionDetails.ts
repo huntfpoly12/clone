@@ -14,7 +14,7 @@ export default gql`
       bankbookDetailDate: $bankbookDetailDate
       bankbookDetailId: $bankbookDetailId
     ) {
-      scalar
+      transactionDetailDate
     }
   }
 `;

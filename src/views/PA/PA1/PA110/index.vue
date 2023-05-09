@@ -250,8 +250,8 @@
                                 <div class="custom-action">
                                     <employee-info :idEmployee="data.data.employee.employeeId"
                                         :idCardNumber="data.data.employee.residentId" :name="data.data.employee.name"
-                                        :status="data.data.employee.status" :foreigner="data.data.employee.foreigner"
-                                        :checkStatus="false" />
+                                        :status="data.data.employee.status" :midTermSettlement="data.data.midTermSettlement"
+                                        />
                                 </div>
                             </template>
                             <DxColumn css-class="money-column" width="75" caption="급여" data-field="totalPay"
@@ -468,6 +468,7 @@ export default defineComponent({
                         paymentYear: data.paymentYear,
                         paymentMonth: data.paymentMonth,
                     })
+                    arrDataPoint.value.reverse()
 
                     let dataAdd = {
                         imputedYear: data.imputedYear,
