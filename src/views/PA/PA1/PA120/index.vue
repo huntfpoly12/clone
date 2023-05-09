@@ -2,7 +2,7 @@
   <action-header title="기타소득자등록" :buttonDelete="false" :buttonSave="false" :buttonSearch="false" :buttonPrint="false" />
   <div id="pa-120" class="page-content">
     <a-row style="flex-flow: row nowrap" class="row-first">
-      <a-col :span="11" style="max-width: 46.84%" class="col-left">
+      <a-col :span="11" style="max-width: 45.34%" class="col-left">
         <a-spin :spinning="loading" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="key" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"

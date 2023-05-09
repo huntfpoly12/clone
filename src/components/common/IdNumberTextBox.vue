@@ -186,8 +186,9 @@ export default defineComponent({
       }, 50);
     }
     onMounted(() => {
-      let ele = document.getElementsByClassName('resident-ctn')[0] as HTMLElement;
-      ele.style.width = widthCustom.value;
+      let ele = document.getElementsByClassName('resident-ctn');
+      let eleReal = ele[ele.length-1] as HTMLElement;
+      eleReal.style.width = widthCustom.value;
     })
     return {
       updateValue,

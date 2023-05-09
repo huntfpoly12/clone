@@ -105,7 +105,6 @@ export default defineComponent({
         let day = store.getters['common/paymentDayPA720'];
         const daysInMonth = dayjs(`${month2.value}`).daysInMonth();
         let newDay = day > daysInMonth || day == 0 ? daysInMonth : day;
-        store.commit('common/paymentDayPA720', newDay);
         let date = `${month2.value}${newDay}`;
         return date;
       },
@@ -239,6 +238,8 @@ export default defineComponent({
       };
       emit('dataAddIncomeProcess', dateTarget);
       processKeyPA720.value.processKey = dateTarget;
+      let day = paymentDayPA720.value.toString().slice(-2);
+      store.commit('common/paymentDayPA720', +day);
     }
 
     //------------------fn submit add new------------------------
