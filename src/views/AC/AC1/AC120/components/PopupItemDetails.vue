@@ -64,13 +64,42 @@
                     <template #action="{ data }">
                         <DeleteOutlined style="font-size: 12px" @click="deleteItem(data.data)" />
                     </template>
-                    <DxSummary :recalculate-while-editing="true">
+                    <!-- <DxSummary :recalculate-while-editing="true">
                         <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}건" />
-                        <!-- <DxTotalItem column="금액" summary-type="sum" display-format="금액합계: {0}원" value-format="#,###"/> -->
                         <DxTotalItem column="금액" cssClass="refTotalValue" :customize-text="customSumAmount" />
                         <DxTotalItem cssClass="custom-sumary refTotalDifference" column="비고" :customize-text="checkAlone" />
-                    </DxSummary>
+                    </DxSummary> -->
                 </DxDataGrid>
+                <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+                    class="fs-14">
+                    <div style="margin-left: 10px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                            <div>전체<span>[{{ dataSource?.length }}]</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-left: 60px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customSumAmount()">
+                        </div>
+                    </div>
+                    <div style=" margin-left: 20px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                            지출액 <span>[{{ $filters.formatCurrency(store.state.common.ac120.formData?.spending) }}]</span>
+                        </div>
+                    </div>
+                    <div style=" margin-left: 20px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="checkAlone()">
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="popup-detail-ac-110-sumary">
+                    <div
+                        v-html="`전체: <span style='font-size: 16px !important'>[${dataSource?.statementOfGoodsItems.length || 0}]</span>`">
+                    </div>
+                    <div v-html="customSumAmount()"></div>
+                    <div>지출액 <span>[{{ store.state.common.ac120.formData?.spending }}]</span></div>
+                    <div v-html="checkAlone()"></div>
+
+                </div> -->
             </standard-form>
         </div>
         <div class="btn_submit text-align-center mt-20">
@@ -314,7 +343,7 @@ export default defineComponent({
             dataSource.value?.map((item: any) => {
                 total += item.amount
             })
-            return `금액합계: ${filters.formatCurrency(total)} 원`
+            return `금액합계 <span>[${filters.formatCurrency(total)}]</span>`
         }
         const checkAlone = () => {
             let total = 0
@@ -327,7 +356,7 @@ export default defineComponent({
             } else {
                 disabledSubmit.value = true
             }
-            return `차액: ` + filters.formatCurrency(totalShow)
+            return `차액 <span>[${filters.formatCurrency(totalShow)}]</span> `
         }
         return {
             move_column,
@@ -350,6 +379,7 @@ export default defineComponent({
             Message,
             handleDelete,
             disabledSubmit,
+            store,
         }
     },
 })
@@ -388,5 +418,9 @@ export default defineComponent({
 :deep .dx-datagrid-rowsview .dx-row>td,
 .dx-datagrid-rowsview .dx-row>tr>td {
     overflow: unset;
+}
+:deep .dx-datagrid-text-content span {
+    font-size: 15px;
+    font-weight: bold;
 }
 </style>

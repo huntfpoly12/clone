@@ -30,6 +30,9 @@
                 </div>
             </div>
         </template>
+        <DxValidator :name="nameInput">
+			<DxRequiredRule v-if="required" :message="messageRequired" />
+		</DxValidator>
     </DxSelectBox>
 </template>
 <script lang="ts">
@@ -65,7 +68,11 @@ export default defineComponent({
         screenCode: {
             type: Number,
             default: 610,
-        }
+        },
+        messRequired: {
+			type: String,
+			default: "",
+		},
     },
     components: {
         DxSelectBox,
@@ -75,6 +82,10 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         let arrSelect = ref(Array());
+        const messageRequired = ref(Message.getMessage('COMMON', '102').message);
+		if (props.messRequired != "") {
+			messageRequired.value = props.messRequired;
+		}
 
         if (props.screenCode == 610) {
             enum2KeysByValueMap(IncomeTypeCode610).forEach((name, id) => {
@@ -104,6 +115,7 @@ export default defineComponent({
             updateValue,
             arrSelect,
             Message,
+            messageRequired,
         };
     },
 });

@@ -5,8 +5,9 @@
                 <a-row class="text-align-center">
                     <a-col :span="8" @click="openShowFull">
                         <span style="float: left;">
-                            <fullscreen-exit-outlined :style="{ fontSize: '20px' }" v-if="store.state.common.ac120.statusShowFull"/>
-                            <fullscreen-outlined :style="{ fontSize: '20px' }" v-else/>
+                            <fullscreen-exit-outlined :style="{ fontSize: '20px' }"
+                                v-if="store.state.common.ac120.statusShowFull" />
+                            <fullscreen-outlined :style="{ fontSize: '20px' }" v-else />
                         </span>
                     </a-col>
                     <a-col :span="8">
@@ -68,13 +69,11 @@
                                         <default-text-box v-model:valueInput="bankbookNickname" width="150px"
                                             style="margin-right: 10px;" :required="true" disabled="true" />
                                     </a-form-item>
-
                                 </a-col>
                                 <a-col :span="6" class="col-3">
                                     <a-form-item label="금액" class="red">
-                                        <number-box-money :min="0"
-                                            v-model:valueInput="store.state.common.ac120.formData.amount" width="150px"
-                                            :required="true" :spinButtons="false" disabled="true" />
+                                        <number-box-money v-model:valueInput="store.state.common.ac120.formData.amount"
+                                            width="150px" :required="true" :spinButtons="false" disabled="true" />
                                     </a-form-item>
 
                                     <a-form-item label="적요" class="red">
@@ -84,7 +83,7 @@
                                 </a-col>
                                 <a-col :span="5" class="col-4">
                                     <a-form-item label="계정과목" class="red">
-                                        <account-code-select
+                                        <account-code-select :key="resetSelectAccount" :classification="classification"
                                             v-model:valueInput="store.state.common.ac120.formData.accountCode" width="190px"
                                             :required="true" />
                                     </a-form-item>
@@ -234,6 +233,9 @@
         @submit="statusPopupCopyData = false" />
     <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false"
         :dataRows='[store.state.common.ac120.formData]' />
+    <PopupMessage :modalStatus="isModalChange" @closePopup="isModalChange = false" :typeModal="'confirm'" :title="''"
+        :content="Message.getMessage('AC120', '001').message" :okText="Message.getMessage('AC120', '001').yes"
+        :cancelText="Message.getMessage('AC120', '001').no" @checkConfirm="handleConfirmChange" />
 </template>
 
 <script lang="ts">
@@ -260,7 +262,7 @@ export default defineComponent({
         UploadPreviewImage, ModalDelete,
         FullscreenOutlined, FullscreenExitOutlined
     },
-    setup() {
+    setup(props, { emit }) {
         const store = useStore();
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
@@ -276,11 +278,14 @@ export default defineComponent({
         let statusModalDelete = ref(false);
         let bankbookNickname = ref<string>('')
         let bankbookNumber = ref<string>('')
+        const resetSelectAccount = ref<number>(0)
+        const classification = ref<any>([4])
+        const isModalChange = ref<boolean>(false)
         // =================== GRAPHQL ===================
-        // mutation createAccountingDocument
-        const {
-            mutate: mutateCreateAccountingDocument, onDone: doneCreateAccountingDocument, onError: errorCreateAccountingDocument,
-        } = useMutation(mutations.createAccountingDocument);
+        // // mutation createAccountingDocument
+        // const {
+        //     mutate: mutateCreateAccountingDocument, onDone: doneCreateAccountingDocument, onError: errorCreateAccountingDocument,
+        // } = useMutation(mutations.createAccountingDocument);
 
         // mutation updateAccountingDocument
         const {
@@ -301,17 +306,17 @@ export default defineComponent({
 
         // ============== ON DONE MUTATION GRAPHQL ===============
         // createAccountingDocument
-        doneCreateAccountingDocument((e: any) => {
-            store.state.common.ac120.statusKeppRow = true
-            store.state.common.ac120.focusedRowKey = e.data?.createAccountingDocument?.accountingDocumentId
-            notification('success', Message.getMessage('COMMON', '101').message)
-            // store.state.common.ac120.onDoneAdd++
-            store.state.common.ac120.resetDataTable++
-            store.state.common.ac120.resetDataAccountingProcesses++
-        })
-        errorCreateAccountingDocument(e => {
-            notification('error', e.message)
-        })
+        // doneCreateAccountingDocument((e: any) => {
+        //     store.state.common.ac120.statusKeppRow = true
+        //     store.state.common.ac120.focusedRowKey = e.data?.createAccountingDocument?.accountingDocumentId
+        //     notification('success', Message.getMessage('COMMON', '101').message)
+        //     // store.state.common.ac120.onDoneAdd++
+        //     store.state.common.ac120.resetDataTable++
+        //     store.state.common.ac120.resetDataAccountingProcesses++
+        // })
+        // errorCreateAccountingDocument(e => {
+        //     notification('error', e.message)
+        // })
 
         // updateAccountingDocument
         doneUpdateAccountingDocument((e) => {
@@ -325,53 +330,35 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-        // unregisterAccountingDocument
-        // doneUnregisterAccountingDocument((e) => {
-        //     notification('success', Message.getMessage('COMMON', '302').message)
-        //     store.state.common.ac120.resetDataTable++
-        //     store.state.common.ac120.resetDataAccountingProcesses++
-        // })
-        // errorUnregisterAccountingDocument(e => {
-        //     notification('error', e.message)
-        // })
-
-        // initializeTransactionDetails
-        // doneInitializeTransactionDetails((e) => {
-        //     notification('success', Message.getMessage('COMMON', '302').message)
-        //     store.state.common.ac120.resetDataTable++
-        //     store.state.common.ac120.resetDataAccountingProcesses++
-        // })
-        // errorInitializeTransactionDetails(e => {
-        //     notification('error', e.message)
-        // })
-
         // ================== WATCH ================
         watch(resultCompany, (value) => {
-            let data = value.getMyCompany;
-            if (data) {
-                initialStateFormData.source = data.presidentName
+            if (value.getMyCompany) {
+                initialStateFormData.source = value.getMyCompany.presidentName
             }
         });
-
 
         watch(() => [store.state.common.ac120.formData.resolutionType, store.state.common.ac120.arrResolutionType], (newValue, oldValue) => {
             switch (store.state.common.ac120.formData.resolutionType) {
                 case 11:
+                    classification.value = [4]
                     store.state.common.ac120.formData.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 22)?.text
                     break;
                 case 22:
+                    classification.value = [5]
                     store.state.common.ac120.formData.resolutionClassification = 2
                     textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 11)?.text
                     break;
                 case 21:
+                    classification.value = [5]
                     store.state.common.ac120.formData.resolutionClassification = 2
                     textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 12)?.text
                     break;
                 case 12:
+                    classification.value = [4]
                     store.state.common.ac120.formData.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 21)?.text
@@ -379,6 +366,7 @@ export default defineComponent({
                 default:
                 // code block
             }
+            resetSelectAccount.value++
         })
 
         watch(() => store.state.common.ac120.formData.causeActionDate, (newValue, oldValue) => {
@@ -402,6 +390,8 @@ export default defineComponent({
         const actionOpenModalCopy = () => {
             if (store.state.common.ac120.formData.resolutionType == 11) {
                 statusPopupCopyData.value = true
+            } else {
+                isModalChange.value = true
             }
         }
 
@@ -426,97 +416,109 @@ export default defineComponent({
                     // store.state.common.ac120.formData.goodsCount = null;
 
                 }
-                if (store.state.common.ac120.statusFormAdd) {
+                // if (store.state.common.ac120.statusFormAdd) {
 
-                    let dataSubmit = {
-                        companyId: companyId,
-                        fiscalYear: acYear.value,
-                        facilityBusinessId: globalFacilityBizId.value,
-                        transactionDetailDate: store.state.common.ac120.transactionDetailDate,
-                        input: { ...store.state.common.ac120.formData }
-                    }
-                    if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {
-                        dataSubmit.input.amount = Math.abs(dataSubmit.input.amount)
-                    } else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
-                        dataSubmit.input.amount = -dataSubmit.input.amount
-                    }
-                    delete dataSubmit.input.resolutionClassification
-                    delete dataSubmit.input.resolutionDate
-                    delete dataSubmit.input.bankbook
-                    delete (dataSubmit.input.accountingDocumentId)
-                    delete (dataSubmit.input.transactionDetailDate)
-                    mutateCreateAccountingDocument(dataSubmit)
-                } else {
-                    let dataSubmit = {
-                        companyId: companyId,
-                        fiscalYear: acYear.value,
-                        facilityBusinessId: globalFacilityBizId.value,
-                        transactionDetailDate: store.state.common.ac120.transactionDetailDate,
-                        accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
-                        input: { ...store.state.common.ac120.formData }
-                    }
-                    if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {
-                        dataSubmit.input.amount = Math.abs(dataSubmit.input.amount)
-                    } else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
-                        dataSubmit.input.amount = -dataSubmit.input.amount
-                    }
-                    delete dataSubmit.input.resolutionClassification
-                    delete dataSubmit.input.resolutionDate
-                    delete dataSubmit.input.bankbook
-                    delete dataSubmit.input.bankbookId
-                    delete dataSubmit.input.accountingDocumentId
-                    delete dataSubmit.input.transactionDetailDate
-                    delete dataSubmit.input.documentOrderByDate
-                    delete dataSubmit.input.income
-                    delete dataSubmit.input.spending
-                    delete dataSubmit.input.clientId
-                    delete dataSubmit.input.goodsCount
-                    delete dataSubmit.input.proofCount
-                    delete dataSubmit.input.handwriting
-                    delete dataSubmit.input.resolutionNormalStatus
-                    delete dataSubmit.input.resolutionNumber
-                    delete dataSubmit.input.summaryOfBankbookDetail
-                    delete dataSubmit.input.bankbookDetailId
-                    delete dataSubmit.input.balance
-                    const cleanData = JSON.parse(
-                        JSON.stringify(dataSubmit, (name, val) => {
-                            if (
-                                name === "__typename"
-                            ) {
-                                delete val[name];
-                            } else {
-                                return val;
-                            }
-                        })
-                    );
-                    mutateUpdateAccountingDocument(cleanData)
-                }
-            }
-        }
-        const onCancelDeleteRow = () => {
-            if (store.state.common.ac120.statusFormAdd) { // xóa row chưa lưu
-                store.state.common.ac120.onDeleteRowAdd++
-            } else { // delete data
-                statusModalDelete.value = true
-                // if (store.state.common.ac120.formData.handwriting === true) {
-                //     mutateUnregisterAccountingDocument({
+                //     let dataSubmit = {
                 //         companyId: companyId,
                 //         fiscalYear: acYear.value,
                 //         facilityBusinessId: globalFacilityBizId.value,
                 //         transactionDetailDate: store.state.common.ac120.transactionDetailDate,
-                //         accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId
-                //     })
-                // } else if (store.state.common.ac120.formData.handwriting === false) {
-                //     mutateInitializeTransactionDetails({
-                //         companyId: companyId,
-                //         fiscalYear: acYear.value,
-                //         facilityBusinessId: globalFacilityBizId.value,
-                //         bankbookDetailDate: store.state.common.ac120.transactionDetailDate,
-                //         bankbookDetailId: store.state.common.ac120.formData.bankbookDetailId
-                //     })
+                //         input: { ...store.state.common.ac120.formData }
+                //     }
+                //     if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {
+                //         dataSubmit.input.amount = Math.abs(dataSubmit.input.amount)
+                //     } else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
+                //         dataSubmit.input.amount = -dataSubmit.input.amount
+                //     }
+                //     delete dataSubmit.input.resolutionClassification
+                //     delete dataSubmit.input.resolutionDate
+                //     delete dataSubmit.input.bankbook
+                //     delete (dataSubmit.input.accountingDocumentId)
+                //     delete (dataSubmit.input.transactionDetailDate)
+                //     mutateCreateAccountingDocument(dataSubmit)
+                // } else {
+                let dataSubmit = {
+                    companyId: companyId,
+                    fiscalYear: acYear.value,
+                    facilityBusinessId: globalFacilityBizId.value,
+                    transactionDetailDate: store.state.common.ac120.transactionDetailDate,
+                    accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
+                    input: { ...store.state.common.ac120.formData }
+                }
+                // if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {
+                //     dataSubmit.input.amount = Math.abs(dataSubmit.input.amount)
+                // } else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
+                //     dataSubmit.input.amount = -dataSubmit.input.amount
+                // }
+                delete dataSubmit.input.resolutionClassification
+                delete dataSubmit.input.resolutionDate
+                delete dataSubmit.input.bankbook
+                delete dataSubmit.input.bankbookId
+                delete dataSubmit.input.accountingDocumentId
+                delete dataSubmit.input.transactionDetailDate
+                delete dataSubmit.input.documentOrderByDate
+                delete dataSubmit.input.income
+                delete dataSubmit.input.spending
+                delete dataSubmit.input.clientId
+                delete dataSubmit.input.goodsCount
+                delete dataSubmit.input.proofCount
+                delete dataSubmit.input.handwriting
+                delete dataSubmit.input.resolutionNormalStatus
+                delete dataSubmit.input.resolutionNumber
+                delete dataSubmit.input.summaryOfBankbookDetail
+                delete dataSubmit.input.bankbookDetailId
+                delete dataSubmit.input.balance
+                const cleanData = JSON.parse(
+                    JSON.stringify(dataSubmit, (name, val) => {
+                        if (
+                            name === "__typename"
+                        ) {
+                            delete val[name];
+                        } else {
+                            return val;
+                        }
+                    })
+                );
+                mutateUpdateAccountingDocument(cleanData)
                 // }
             }
+        }
+        const onCancelDeleteRow = () => {
+            // if (store.state.common.ac120.statusFormAdd) { // xóa row chưa lưu
+            //     store.state.common.ac120.onDeleteRowAdd++
+            // } else { // delete data
+            statusModalDelete.value = true
+            // }
 
+        }
+        const handleConfirmChange = (status: boolean) => {
+            if (status) {
+                switch (store.state.common.ac120.formData.resolutionType) {
+                    case 11:
+                        store.state.common.ac120.formData.resolutionType = 22
+                        break;
+                    case 22:
+                        store.state.common.ac120.formData.resolutionType = 11
+                        break;
+                    case 21:
+                        store.state.common.ac120.formData.resolutionType = 12
+                        break;
+                    case 12:
+                        store.state.common.ac120.formData.resolutionType = 21
+                        break;
+                    default:
+                    // code block
+                }
+
+                // if (store.state.common.ac120.formData.resolutionType == 22) {
+                //     store.state.common.ac120.formData.resolutionType = 11
+                // } else if (store.state.common.ac120.formData.resolutionType == 11) {
+                //     store.state.common.ac120.formData.resolutionType = 22
+                // }
+                store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+                // store.state.common.ac120.changeAmountDataGrid++
+                emit('changeAmountDataGrid', true)
+            }
         }
         const openShowFull = () => {
             store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull;
@@ -541,6 +543,9 @@ export default defineComponent({
             bankbookNickname, bankbookNumber,
             statusModalDelete,
             openShowFull,
+            resetSelectAccount,
+            classification,
+            Message, isModalChange, handleConfirmChange,
         }
     }
 })

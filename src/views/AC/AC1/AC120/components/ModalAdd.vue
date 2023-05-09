@@ -9,12 +9,12 @@
                                 v-model:valueInput="formDataAdd.bankbookId" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
-                            <number-box-money :width="200" :required="true" :min="0"
-                                v-model:valueInput="formDataAdd.amount" placeholder="금액" />
+                            <number-box-money :width="200" :required="true" :min="0" v-model:valueInput="formDataAdd.amount"
+                                placeholder="금액" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
-                            <default-text-box :width="200" :required="true"
-                                v-model:valueInput="formDataAdd.summary" placeholder="적요" />
+                            <default-text-box :width="200" :required="true" v-model:valueInput="formDataAdd.summary"
+                                placeholder="적요" />
                         </a-form-item>
                         <a-form-item class="red" label="자금원천">
                             <FundingSourceSelect placeholder="선택" :width="200" :required="true"
@@ -25,10 +25,16 @@
                         <a-form-item class="red" label="결의일자">
                             <!-- <date-time-box width="150px" :required="true"
                                 v-model:valueDate="formDataAdd.resolutionDate" /> -->
-                            <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+                            <date-time-box-custom width="150px" :required="true" :startDate="startDate"
+                                ref="requiredTransactionDetailDate" :finishDate="finishDate"
                                 v-model:valueDate="formDataAdd.transactionDetailDate" />
                         </a-form-item>
+                        <a-form-item label="계정과목" class="red">
+                            <account-code-select :key="resetSelectAccount" :classification="classification"
+                                v-model:valueInput="formDataAdd.accountCode" width="190px" :required="true" />
+                        </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
+                            {{ formDataAdd.resolutionType }}
                             <radio-group :arrayValue="store.state.common.ac120.arrResolutionType"
                                 :layoutCustom="'horizontal'" :required="true"
                                 v-model:valueRadioCheck="formDataAdd.resolutionType"
@@ -56,20 +62,27 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue'
 import queries from "@/graphql/queries/CM/CM120";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+import mutations from "@/graphql/mutations/AC/AC1/AC120";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
 import dayjs from "dayjs";
+import notification from '@/utils/notification';
+import { Message } from "@/configs/enum"
 import filters from "@/helpers/filters";
 import { initialStateFormAdd } from '../utils/index'
 // import comfirmClosePopup from '@/utils/comfirmClosePopup';
-import { ResolutionType, LetterOfApprovalType, ResolutionClassification, FundingSource ,enum2Entries } from "@bankda/jangbuda-common";
+import { ResolutionType, LetterOfApprovalType, ResolutionClassification, FundingSource, enum2Entries } from "@bankda/jangbuda-common";
 import DateTimeBoxCustom from '@/components/common/DateTimeBoxCustom.vue';
 export default defineComponent({
     props: {
         modalStatus: {
             type: Boolean,
             default: false,
+        },
+        theOrder: {
+            type: Number,
+            default: 0,
         },
     },
     components: {
@@ -79,16 +92,19 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
+        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
         const countKey = ref<number>(0)
-
+        const resetSelectAccount = ref<number>(0)
+        const classification = ref<any>([4])
         const refFormAddAC120 = ref()
+        const requiredTransactionDetailDate = ref()
         // const dataBankBook = ref(null)
         // const statusRemoveRow = ref<boolean>(true)
         const dataQueryGetBankBooks = ref({
             companyId: companyId,
             fiscalYear: acYear.value,
         })
-        let formDataAdd: any = ref({...initialStateFormAdd});
+        let formDataAdd: any = ref({ ...initialStateFormAdd });
         const statusShowLetterOfApprovalType = ref(false)
         // const arraySelectBox = ref([]);
         const triggerBankbooks = ref<boolean>(true);
@@ -102,6 +118,23 @@ export default defineComponent({
             enabled: triggerBankbooks.value,
             fetchPolicy: "no-cache",
         }))
+        // mutation createAccountingDocument
+        const {
+            mutate: mutateCreateAccountingDocument, onDone: doneCreateAccountingDocument, onError: errorCreateAccountingDocument,
+        } = useMutation(mutations.createAccountingDocument);
+
+        doneCreateAccountingDocument((e: any) => {
+            emit("closePopup", false)
+            store.state.common.ac120.statusKeppRow = true
+            store.state.common.ac120.focusedRowKey = e.data?.createAccountingDocument?.accountingDocumentId
+            notification('success', Message.getMessage('COMMON', '101').message)
+            // store.state.common.ac120.onDoneAdd++
+            store.state.common.ac120.resetDataTable++
+            store.state.common.ac120.resetDataAccountingProcesses++
+        })
+        errorCreateAccountingDocument(e => {
+            notification('error', e.message)
+        })
 
         // ================== WATCH ================
         // 1. getBankbooks
@@ -123,7 +156,7 @@ export default defineComponent({
         watch(() => props.modalStatus, (newValue, old) => {
             if (newValue) {
                 statusShowLetterOfApprovalType.value = false;
-                formDataAdd.value = {...initialStateFormAdd}
+                formDataAdd.value = { ...initialStateFormAdd }
                 formDataAdd.value.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate())
                 // store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate())
                 // dataStateFormAdd = {
@@ -152,23 +185,58 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
         const submit = () => {
+            if (!formDataAdd.value.transactionDetailDate) {
+                requiredTransactionDetailDate.value.validate(true)
+            }
             const res = refFormAddAC120.value?.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                if (!formDataAdd.value.transactionDetailDate) {
+                    requiredTransactionDetailDate.value.validate(true)
+                }
             } else {
-                
+                if (!formDataAdd.value.transactionDetailDate) {
+                    requiredTransactionDetailDate.value.validate(true)
+                    return
+                }
                 // statusRemoveRow.value = false;
-                store.state.common.ac120.transactionDetailDate = formDataAdd.value.transactionDetailDate
-                let dataAdd = {
-                    ...formDataAdd.value,
-                     'causeActionDate': formDataAdd.value.transactionDetailDate,
-                     'paymentDate': formDataAdd.value.transactionDetailDate,
-                     'accountingDate': formDataAdd.value.transactionDetailDate,
-                     'proposedDate': formDataAdd.value.transactionDetailDate,
-                     'registrationDate': formDataAdd.value.transactionDetailDate,
+                // store.state.common.ac120.transactionDetailDate = formDataAdd.value.transactionDetailDate
+                // let dataAdd = {
+                //     ...formDataAdd.value,
+                //     'causeActionDate': formDataAdd.value.transactionDetailDate,
+                //     'paymentDate': formDataAdd.value.transactionDetailDate,
+                //     'accountingDate': formDataAdd.value.transactionDetailDate,
+                //     'proposedDate': formDataAdd.value.transactionDetailDate,
+                //     'registrationDate': formDataAdd.value.transactionDetailDate,
+                // }
+                // // delete dataAdd.transactionDetailDate
+                // emit('submit', dataAdd)
+                let dataSubmit = {
+                    companyId: companyId,
+                    fiscalYear: acYear.value,
+                    facilityBusinessId: globalFacilityBizId.value,
+                    transactionDetailDate: formDataAdd.value.transactionDetailDate,
+                    input: {
+                        ...formDataAdd.value,
+                        'causeActionDate': formDataAdd.value.transactionDetailDate,
+                        'paymentDate': formDataAdd.value.transactionDetailDate,
+                        'accountingDate': formDataAdd.value.transactionDetailDate,
+                        'proposedDate': formDataAdd.value.transactionDetailDate,
+                        'registrationDate': formDataAdd.value.transactionDetailDate,
+                        'theOrder': props.theOrder + 1,
                     }
-                // delete dataAdd.transactionDetailDate
-                emit('submit', dataAdd)
+                }
+                if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {
+                    dataSubmit.input.amount = Math.abs(dataSubmit.input.amount)
+                } else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
+                    dataSubmit.input.amount = - dataSubmit.input.amount
+                }
+                // delete dataSubmit.input.resolutionClassification
+                // delete dataSubmit.input.resolutionDate
+                // delete dataSubmit.input.bankbook
+                // delete (dataSubmit.input.accountingDocumentId)
+                delete (dataSubmit.input.transactionDetailDate)
+                mutateCreateAccountingDocument(dataSubmit)
             }
         }
         const cancel = () => {
@@ -194,10 +262,13 @@ export default defineComponent({
             // } else if (value == 12 || value == 22) {
             //     store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
             // }
+            resetSelectAccount.value++
             if (value == 21 || value == 22) {
+                classification.value = [5]
                 statusShowLetterOfApprovalType.value = true
                 formDataAdd.value.letterOfApprovalType = 1
             } else {
+                classification.value = [4]
                 statusShowLetterOfApprovalType.value = false
                 formDataAdd.value.letterOfApprovalType = null
             }
@@ -241,6 +312,9 @@ export default defineComponent({
             countKey,
             store,
             startDate, finishDate, formDataAdd,
+            classification,
+            resetSelectAccount,
+            requiredTransactionDetailDate,
         }
     },
 })

@@ -22,7 +22,7 @@ mutation updateWithholdingConfigPayItem( $companyId : Int!,$imputedYear: Int!, $
                 updatedBy
                 ip
                 active
-                editable
+                useChangable
             }
 }
 `

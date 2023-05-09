@@ -21,7 +21,7 @@ mutation createWithholdingConfigPayItem($companyId: Int!,$imputedYear: Int!,$inp
         updatedBy
         ip
         active
-        editable
+        useChangable
   }
 }
 `

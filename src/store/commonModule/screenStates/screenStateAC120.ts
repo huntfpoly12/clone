@@ -3,7 +3,7 @@ import filters from "@/helpers/filters";
 let statesAC120 = {
     ac120: {
         focusedRowKey: null,
-        statusShowFull: false,
+        statusShowFull: true,
         formData: null,
         onAddRow: 0,
         onDeleteRowAdd: 0,
