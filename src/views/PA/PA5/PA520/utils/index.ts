@@ -72,7 +72,7 @@ export const originDataInputUpdate = {
     insuranceSupport: false,
     nationalPensionSupportPercent: 0,
     employeementInsuranceSupportPercent: 0,
-    monthlyPaycheck: false,
+    monthlyPaycheck: true,
     workingDays: 0,
     dailyWage: 0,
     monthlyWage: 0,
