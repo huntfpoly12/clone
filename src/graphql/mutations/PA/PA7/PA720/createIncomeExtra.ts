@@ -36,7 +36,7 @@ mutation createIncomeExtra(
     employee {
       type
       employeeId
-      incomeTypeCode
+      # incomeTypeCode
       name
       foreigner
       nationality
