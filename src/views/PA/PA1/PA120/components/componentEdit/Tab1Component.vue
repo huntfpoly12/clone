@@ -338,7 +338,6 @@ export default defineComponent({
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
     });
     watch(() => props.idRowEdit, (value: any) => {
-      console.log(`output-1111`,1111)
       if (value != 0) {
         originDataDetail.value.employeeId = value;
         getEmployeeWageTrigger.value = true;

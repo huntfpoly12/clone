@@ -10,7 +10,7 @@
           :validation-callback="checkAllResidentId ? checkAllID : (foreigner ? checkID : checkIdNotForeigner)" /> -->
       </DxValidator>
     </DxTextBox>
-    <!-- <div class="resident-tooltip">
+    <div class="resident-tooltip">
       <span v-if="errorCurrentType == 1" class="error-1">x</span>
       <a-tooltip placement="top" v-if="errorCurrentType == 2">
         <template #title>
@@ -19,7 +19,7 @@
         </template>
         <WarningOutlined :style="{ fontSize: '17px', color: 'orange' }" />
       </a-tooltip>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -118,28 +118,37 @@ export default defineComponent({
     const value = ref(props.valueInput);
 
     const updateValue = (value: any) => {
-      // let isValid = validatorRef.value?.instance._validationInfo.result;
-      // let msgDefault = residentRef.value.instance._$validationMessage;
-      // if (isValid?.brokenRule?.type == 'custom') {
-      //   errorCurrentType.value = 2;
-      //   msgDefault[0].style.display = 'none';
-      //   residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
-      // } else if (isValid?.brokenRule?.editorSpecific) {
-      //   errorCurrentType.value = 1;
-      //   if (msgDefault) {
-      //     msgDefault[0].style.display = 'none';
-      //   }
-      //   residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
-      // } else {
-      //   errorCurrentType.value = 0;
-      //   msgDefault[0].style.display = 'block';
-      //   residentRef.value.instance._$textEditorInputContainer[0].classList.remove('error-other');
-      // }
+      let isValid = validatorRef.value?.instance._validationInfo.result;
+      let msgDefault = residentRef.value.instance._$validationMessage;
+      if (isValid?.brokenRule?.type == 'custom') {
+        errorCurrentType.value = 2;
+        msgDefault[0].style.display = 'none';
+        residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
+      } else if (isValid?.brokenRule?.editorSpecific) {
+        errorCurrentType.value = 1;
+        if (msgDefault) {
+          msgDefault[0].style.display = 'none';
+        }
+        residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
+      } else {
+        errorCurrentType.value = 0;
+        if (msgDefault) {
+          msgDefault[0].style.display = 'block';
+        }
+        residentRef.value.instance._$textEditorInputContainer[0].classList.remove('error-other');
+      }
       emit("update:valueInput", value);
     };
     watch(
       () => props.valueInput,
       (newValue) => {
+        let isValid = validatorRef.value?.instance._validationInfo.result;
+        let msgDefault = residentRef.value.instance._$validationMessage;
+        if (isValid?.brokenRule?.type == 'custom') {
+          errorCurrentType.value = 2;
+          msgDefault[0].style.display = 'none';
+          residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
+        }
         value.value = convertValue(newValue || "");
       }
     );
@@ -160,7 +169,6 @@ export default defineComponent({
     }
 
     const checkIdNotForeigner = (options: any) => {
-      errorCurrentType.value = 2;
       if (!value.value) {
         return true
       }

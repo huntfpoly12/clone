@@ -37,7 +37,7 @@
       <template #taxRateSlot="{ data }">
         {{ data.value }}%
       </template>
-      <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="right" />
+      <DxColumn caption="공제" cell-template="incomLocalTax" alignment="right" />
       <template #incomLocalTax="{ data }">
         <a-tooltip placement="top">
           <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -48,24 +48,12 @@
           </span>
         </a-tooltip>
       </template>
-      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px"
+      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney"
         alignment="right" />
-      <!-- <DxSummary v-if="dataSourceDetail?.length > 0">
-        <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
-        <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
-          value-format="#,###" />
-        <DxTotalItem class="custom-sumary" column="필요경비" summary-type="sum" value-format="#,###"
-          display-format="필요경비합계: {0}" />
-        <DxTotalItem class="custom-sumary" column="소득금액" summary-type="sum" value-format="#,###"
-          display-format="소득금액합계: {0}" />
-        <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
-        <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}"
-          value-format="#,###" />
-      </DxSummary> -->
     </DxDataGrid>
     <a-row style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 10px;" class="fs-14">
       <a-col span="8">
-        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 60%;">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 58s%;">
           사업소득자[소득구분]수
           <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
         </div>
