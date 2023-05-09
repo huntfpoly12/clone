@@ -69,16 +69,13 @@ export default defineComponent({
       prev,
       steps: [
         {
-          title: 'First',
-          content: 'First-content',
+          title: '',
         },
         {
-          title: 'Second',
-          content: 'Second-content',
+          title: '',
         },
         {
-          title: 'Last',
-          content: 'Last-content',
+          title: '',
         },
       ],
     };
@@ -90,6 +87,9 @@ export default defineComponent({
   margin: 10px 120px;
   .steps-action{
     text-align: center;
+  }
+  ::v-deep .ant-steps-item-title::after {
+    position: unset;
   }
 }
 </style>
