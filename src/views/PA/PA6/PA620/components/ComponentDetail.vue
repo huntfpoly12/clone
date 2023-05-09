@@ -121,6 +121,8 @@
       <a-spin :spinning="(loadingIncomeBusiness || loadingIncomeBusinesses)" size="large">
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
+            <!-- <SelectCustomField :dataSource="arrayEmploySelect" :disabled="disabledInput || idDisableNoData"
+              v-model:valueInput="dataAction.input.employeeId" width="350px" required/> -->
             <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
               width="350px" :required="true" :newLoadKey="dataAction.input.employee.key"
               @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || idDisableNoData" />
@@ -583,7 +585,7 @@ export default defineComponent({
       editParam.value = event.selectedRowsData.map((item: any) => {
         return {
           param: { incomeId: item.incomeId },
-          errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name},
+          errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name },
         };
       });
     }

@@ -415,7 +415,9 @@ export default defineComponent({
   &-title {
     text-align: center;
     margin: 0;
+    margin-top: 20px;
     font-size: 18px;
+    font-weight: bold;
   }
 
   &-btn {
@@ -426,8 +428,7 @@ export default defineComponent({
 }
 
 #DxDataGrid-ac-110-popup-detail {
-  height: 60vh;
-
+  max-height: 60vh;
   :deep .dx-freespace-row {
     display: none !important;
   }

@@ -273,7 +273,7 @@ export default defineComponent({
         withholdingLocalIncomeTax: data.withholdingLocalIncomeTax,
         incomeId: data.incomeId,
         employee: {
-          key:data.employeeId
+          key: data.employeeId
         }
       };
       store.commit('common/formPA720', editRowData)
@@ -298,7 +298,7 @@ export default defineComponent({
     }));
     watch(resultEmployeeExtras, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeExtras.map((item: any) => ({
-        ...item, key:item.employeeId
+        ...item, key: item.employeeId
       }));
     });
 
@@ -425,7 +425,7 @@ export default defineComponent({
       triggerIncomeExtra,
       idDisableInput,
       loadingEmployeeExtras,
-      isClickEditDiffPA720
+      isClickEditDiffPA720,
     };
   },
 });
