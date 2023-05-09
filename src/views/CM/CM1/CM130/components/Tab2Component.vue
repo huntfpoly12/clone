@@ -61,6 +61,7 @@
                     </a-row>
                     <a-row>
                         <a-col :span="24">
+                            {{  formState.taxPayCode }}
                             <a-form-item label="과세구분/유형" :label-col="labelCol" class="red">
                                 <TaxPay style="width: 320px" placeholder="선택" v-model:selectedValue="formState.taxPayCode"
                                     :required="true"></TaxPay>
