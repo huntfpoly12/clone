@@ -21,7 +21,6 @@
         {{ data?.name }}
         <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
           <template #title>
-            {{ data.incomeTypeCode }}
             <span v-if="data?.incomeTypeName?.length > 10">{{ data?.incomeTypeName
             }}</span>
           </template>
