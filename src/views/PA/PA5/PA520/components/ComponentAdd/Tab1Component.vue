@@ -1,10 +1,10 @@
 <template>
     <a-spin :spinning="loadingCreated">
         <standard-form action="" formName="add-page-PA520" ref="formRefPa520Add" :disabled="true">
-            <a-form-item label="사번(코드)" class="label-red" label-align="right">
+            <a-form-item label="사번(코드)"  label-align="right">
               <div class="d-flex-center">
-                <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
-                    placeholder="숫자만 입력 가능" />
+                <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId"
+                    placeholder="숫자만 입력 가능" disabled="true"/>
                     <info-tool-tip>
                         최초 저장된 이후 수정 불가
                     </info-tool-tip>

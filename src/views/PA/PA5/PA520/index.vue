@@ -54,6 +54,7 @@
                   ref="pa520Grid"
                   @focused-row-changing="onFocusedRowChanging"
                   @focused-row-changed="onFocusedRowChanged"
+                  noDataText="내역이 없습니다"
                   >
                       <DxScrolling mode="virtual" show-scrollbar="always"/>
                       <DxSearchPanel :visible="true" placeholder="검색"/>
