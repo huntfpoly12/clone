@@ -698,7 +698,9 @@ export default defineComponent({
     watch(resTransactionDetails, (value) => {
       if (!!value.getTransactionDetails && value.getTransactionDetails) {
         dataSourceTransactionDetails.value = value.getTransactionDetails
-        dataSourceTransactionDetails.value.transactionDetails = value.getTransactionDetails.transactionDetails.map((item: any) => ({ ...item, summary: `${item.summary} 중` }))
+        dataSourceTransactionDetails.value.transactionDetails = value.getTransactionDetails.transactionDetails.map((item: any) => (
+          { ...item, summary: item.summary[item.summary.length - 1] === '중' ? item.summary : `${item.summary} 중` }
+          ))
         listTransactionDetailsOrigin.value = cloneDeep(dataSourceTransactionDetails.value.transactionDetails)
       }
       triggerTransactionDetails.value = false
