@@ -107,7 +107,7 @@ export default defineComponent({
         const daysInMonth = dayjs(`${month2.value}`).daysInMonth();
         let newDay = day > daysInMonth || day == 0 ? daysInMonth : day;
         let date = `${month2.value}${newDay}`;
-        store.commit('common/paymentDayPA720', newDay);
+        store.commit('common/paymentDayPA620', newDay);
         return dayjs(date);
       },
       set(value) {
@@ -136,7 +136,6 @@ export default defineComponent({
         yearMonth = `${globalYear.value}${filters.formatMonth(val)}`;
       }
       month2.value = yearMonth;
-      console.log(`output->filters.formatMonth(val)`,filters.formatMonth(val))
     });
     //-------------------------action copy data--------------------------------
     const {
