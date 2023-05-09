@@ -3,7 +3,7 @@ export default gql`
 mutation createEmployeeWageDaily( 
     $companyId: Int!
     $imputedYear :Int!
-    $input :EmployeeWageDailyCreateInput!
+    $input :EmployeeWageDailyInput!
     ) {
         createEmployeeWageDaily( 
             companyId : $companyId

@@ -272,7 +272,8 @@ export default defineComponent({
                     residentId: dataCreated.residentId
                 };
 
-                delete newValDataCreat.zipcode;
+              delete newValDataCreat.zipcode;
+              delete newValDataCreat.employeeId;
                 let dataCallCreat = {
                     companyId: companyId,
                     imputedYear: globalYear.value,

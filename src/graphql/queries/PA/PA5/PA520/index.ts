@@ -1,7 +1,7 @@
 import getEmployeeWageDailies from "@/graphql/queries/common/getEmployeeWageDailies";
 import getDepartments from "../../../common/getDepartments";
 import getResponsibilities from "../../../common/getResponsibilities";
-import getEmployeeWageDaily from "./getEmployeeWageDaily";
+import getEmployeeWageDaily from "@/graphql/queries/common/getEmployeeWageDaily";
 import getWithholdingConfigPayItems from "./getWithholdingConfigPayItems";
 import getWithholdingConfigDeductionItems from "./getWithholdingConfigDeductionItems";
 
