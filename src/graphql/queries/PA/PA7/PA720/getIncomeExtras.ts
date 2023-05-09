@@ -10,9 +10,9 @@ export default gql`
     ) {
         incomeId
         paymentDay
-        # employeeType
+        employeeType
         employeeId
-        incomeTypeCode
+        # incomeTypeCode
         incomePayment
         withholdingIncomeTax
         withholdingLocalIncomeTax
