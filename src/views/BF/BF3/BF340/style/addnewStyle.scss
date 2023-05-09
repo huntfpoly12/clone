@@ -1,4 +1,24 @@
 
+#formEditBF340{
+  .input-left{
+    :deep .ant-form-item-label>label {
+      width: 100px;
+      padding-left: 10px;
+    }
+  }
+  .input-mid-left{
+    :deep .ant-form-item-label>label {
+      width: 150px;
+      padding-left: 10px;
+    }
+  }
+  .input-right{
+    :deep .ant-form-item-label>label {
+      width: 150px;
+      padding-left: 10px;
+    }
+  }
+}
 .confirm-button {
     margin-left: 100px;
 }
@@ -22,7 +42,7 @@
 }
 
 .result-address {
-    margin-left: 20%;
+    margin-left: 20.5%;
 }
 
 .warring-modal {
@@ -34,13 +54,13 @@
     white-space: normal;
 }
 
-.textarea_340 {
+// .textarea_340 {
    
-    margin-left: 21px;
-}
-.post-code {
-    margin-left: 25px;
-}
+//     margin-left: 21px;
+// }
+// .post-code {
+//     margin-left: 25px;
+// }
 ::v-deep .red {
     label {
       color: red;
