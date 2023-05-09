@@ -302,8 +302,8 @@ export default defineComponent({
       idAction.value = data
       modalStatusDelete.value = true
     }
-    const statusComfirm = (res: any) => {
-      if (res == true && formState.relation != 0)
+    const statusComfirm = () => {
+      if (formState.relation != 0)
         actionDelete({
           companyId: companyId,
           imputedYear: globalYear.value,
