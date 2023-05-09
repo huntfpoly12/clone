@@ -4,7 +4,7 @@
       <standard-form formName="tab1-pa120" :disabled="true">
         <a-form-item label="사번(코드)" label-align="right">
           <div class="input-text">
-            <number-box placeholder="숫자만 입력 가능" width="200px" :min="1" :max="9999999999" :disabled="true"
+            <number-box width="200px" :min="1" :max="9999999999" :disabled="true"
               v-model:valueInput="initFormStateTabPA120.employeeId"/>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>

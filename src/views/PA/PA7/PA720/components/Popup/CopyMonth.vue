@@ -104,7 +104,9 @@ export default defineComponent({
       get() {
         let day = store.getters['common/paymentDayPA720'];
         const daysInMonth = dayjs(`${month2.value}`).daysInMonth();
-        let date = `${month2.value}${day > daysInMonth || day == 0 ? daysInMonth : day}`;
+        let newDay = day > daysInMonth || day == 0 ? daysInMonth : day;
+        store.commit('common/paymentDayPA720', newDay);
+        let date = `${month2.value}${newDay}`;
         return date;
       },
       set(value) {
@@ -131,7 +133,7 @@ export default defineComponent({
         month1.value = val;
         let yearMonth = `${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.imputedMonth}`;
         if (props.dateType == 2 && val) {
-          yearMonth = val == 12 ? `${globalYear.value + 1}1` : `${globalYear.value}${val + 1}`;
+          yearMonth = val == 12 ? `${globalYear.value + 1}01` : `${globalYear.value}${filters.formatMonth(val + 1)}`;
         }
         if (props.dateType == 1) {
           yearMonth = `${globalYear.value}${filters.formatMonth(val)}`;

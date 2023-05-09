@@ -71,16 +71,6 @@
     }
   }
 
-  :deep .custom-layout {
-    // padding: 10px 10px 10px 0;
-
-    // >div {
-    //   border: 1px solid #d7d7d7;
-    //   padding: 10px;
-    //   max-height: 770px;
-    // }
-  }
-
   :deep .content-btm col:first-child {
     width: 40px !important;
   }
@@ -268,24 +258,29 @@
     margin-top: 10px;
     margin-right: 10px;
     padding-top: 10px;
+    flex: 1;
   }
 
   :deep .form-tax {
     border: 1px solid #d7d7d7;
     margin-top: 10px;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 10px 10px 10px 10px;
   }
 
   #tax-pay-720 {
-    height: calc(100vh - 368px)!important;
+    height: calc(100vh - 368px) !important;
+
     .dx-freespace-row {
       display: none !important;
     }
   }
-  .sum-item{
+
+  .sum-item {
     text-align: right;
     flex: 1;
+  }
+
+  :deep .dx-datagrid-summary-item {
+    line-height: 23px;
   }
 }

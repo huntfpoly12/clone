@@ -4,10 +4,7 @@
             <a-form-item label="사번(코드)"  label-align="right">
               <div class="d-flex-center">
                 <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId"
-                    placeholder="숫자만 입력 가능" disabled="true"/>
-                    <info-tool-tip>
-                        최초 저장된 이후 수정 불가
-                    </info-tool-tip>
+                    disabled="true"/>
               </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
@@ -272,7 +269,8 @@ export default defineComponent({
                     residentId: dataCreated.residentId
                 };
 
-                delete newValDataCreat.zipcode;
+              delete newValDataCreat.zipcode;
+              delete newValDataCreat.employeeId;
                 let dataCallCreat = {
                     companyId: companyId,
                     imputedYear: globalYear.value,

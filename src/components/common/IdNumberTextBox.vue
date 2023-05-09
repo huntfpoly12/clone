@@ -6,8 +6,8 @@
       :style="{ width: widthCustom }">
       <DxValidator ref="validatorRef" :name="nameInput">
         <DxRequiredRule v-if="required" :message="messageRequired" />
-        <DxCustomRule v-if="isResidentId"
-          :validation-callback="checkAllResidentId ? checkAllID : (foreigner ? checkID : checkIdNotForeigner)" />
+        <!-- <DxCustomRule v-if="isResidentId"
+          :validation-callback="checkAllResidentId ? checkAllID : (foreigner ? checkID : checkIdNotForeigner)" /> -->
       </DxValidator>
     </DxTextBox>
     <div class="resident-tooltip">
@@ -132,7 +132,9 @@ export default defineComponent({
         residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
       } else {
         errorCurrentType.value = 0;
-        msgDefault[0].style.display = 'block';
+        if (msgDefault) {
+          msgDefault[0].style.display = 'block';
+        }
         residentRef.value.instance._$textEditorInputContainer[0].classList.remove('error-other');
       }
       emit("update:valueInput", value);
@@ -140,6 +142,13 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
+        let isValid = validatorRef.value?.instance._validationInfo.result;
+        let msgDefault = residentRef.value.instance._$validationMessage;
+        if (isValid?.brokenRule?.type == 'custom') {
+          errorCurrentType.value = 2;
+          msgDefault[0].style.display = 'none';
+          residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
+        }
         value.value = convertValue(newValue || "");
       }
     );
@@ -160,7 +169,6 @@ export default defineComponent({
     }
 
     const checkIdNotForeigner = (options: any) => {
-      errorCurrentType.value = 2;
       if (!value.value) {
         return true
       }

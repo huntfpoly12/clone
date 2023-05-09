@@ -69,27 +69,17 @@
                 <div>{{ data.data.bankbook.bankbookNickname }}</div>
               </a-tooltip>
             </template>
-            <DxColumn caption="통장용도" cell-template="useType" alignment="center" />
+            <DxColumn caption="통장용도" data-field="bankbook.useType" cell-template="useType" alignment="center" width="120">
+              <DxLookup :data-source="bankbookUseType" display-expr="label" value-expr="value" />
+            </DxColumn>
             <template #useType="{ data }">
               <div class="ac-110__main-main-tabUserType">
                 {{ bankbookUseType.find((item: any) => item.value === data.data.bankbook.useType).label }}
               </div>
             </template>
-            <DxColumn caption="일자" cell-template="bankbookDetailDate" />
-            <template #bankbookDetailDate="{ data }">
-              <div>
-                {{ data.data.bankbookDetailDate.toString().slice(0, 4) }}-{{
-                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{
-            data.data.bankbookDetailDate.toString().slice(6) }}
-              </div>
-            </template>
+            <DxColumn caption="일자" data-field="bankbookDetailDateCustomField" alignment="center" />
             <DxColumn caption="통장적요" data-field="summary" />
-            <DxColumn caption="내용|비고" cell-template="content-bankbook" />
-            <template #content-bankbook="{ data }">
-              <div>
-                {{ data.data?.content }} {{ data.data?.note }}
-              </div>
-            </template>
+            <DxColumn caption="내용|비고" data-field="contentNoteCustomField" />
             <DxColumn caption="입금액" data-field="deposit" format="fixedPoint" />
             <DxColumn caption="출금액" data-field="withdraw" format="fixedPoint" />
             <DxColumn caption="통장잔액" data-field="balance" format="fixedPoint" />
@@ -259,7 +249,10 @@
                   </template>
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">
-                    <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered" />
+                    <div :class="{ 'disable-input-column': data.data.resolutionClassification === 1 }">
+                      <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered"
+                        :disabled="data.data.resolutionClassification === 1" />
+                    </div>
                   </template>
                   <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
                   <template #letterOfApprovalType="{ data }">
@@ -572,7 +565,15 @@ export default defineComponent({
     } = useMutation(mutations.syncBankbookDetails);
     doneSyncBankbookDetails((e) => {
       if (e.data.syncBankbookDetails.length) {
-        dataSource.value = [...dataSource.value, e.data.syncBankbookDetails]
+        dataSource.value = [
+          ...dataSource.value,
+          e.data.syncBankbookDetails.map((items: any) => (
+            {
+              ...items,
+              contentNoteCustomField: `${items?.content || ''}${items?.note || ''}`,
+              bankbookDetailDateCustomField: formatDate(items.bankbookDetailDate)
+            }
+          ))]
         rowKeyfocused.value = dataSource.value[0].bankbookDetailId
         payloadGetTransactionDetails.bankbookDetailDate = dataSource.value[0].bankbookDetailDate
         payloadGetTransactionDetails.bankbookDetailId = dataSource.value[0].bankbookDetailId
@@ -669,7 +670,13 @@ export default defineComponent({
 
     watch(resBankbookDetails, (value) => {
       if (!!value.getBankbookDetails && value.getBankbookDetails.length) {
-        dataSource.value = value.getBankbookDetails
+        dataSource.value = value.getBankbookDetails.map((items: any) => (
+          {
+            ...items,
+            contentNoteCustomField: `${items?.content || ''}${items?.note || ''}`,
+            bankbookDetailDateCustomField: formatDate(items.bankbookDetailDate)
+          }
+        ))
         if (firstLoad.value) {
           rowKeyfocused.value = value.getBankbookDetails[0].bankbookDetailId
           payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
@@ -691,7 +698,10 @@ export default defineComponent({
     watch(resTransactionDetails, (value) => {
       if (!!value.getTransactionDetails && value.getTransactionDetails) {
         dataSourceTransactionDetails.value = value.getTransactionDetails
-        listTransactionDetailsOrigin.value = cloneDeep(value.getTransactionDetails.transactionDetails)
+        dataSourceTransactionDetails.value.transactionDetails = value.getTransactionDetails.transactionDetails.map((item: any) => (
+          { ...item, summary: item.summary[item.summary.length - 1] === '중' ? item.summary : `${item.summary} 중` }
+          ))
+        listTransactionDetailsOrigin.value = cloneDeep(dataSourceTransactionDetails.value.transactionDetails)
       }
       triggerTransactionDetails.value = false
     })
@@ -1101,6 +1111,11 @@ export default defineComponent({
         itemChange.value = null
       }
       isModalConfirmChangeData.value = false
+    }
+
+    const formatDate = (date: any) => {
+      date = date.toString()
+      return dayjs(date).format('YYYY-MM-DD')
     }
     return {
       statusEntering,
