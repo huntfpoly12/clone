@@ -54,7 +54,7 @@
                         <a-col :span="14">
                             <a-form-item label="항목명" :label-col="labelCol" class="red">
                                 <default-text-box style="width: 150px; margin-right: 10px" :required="true"
-                                    v-model:valueInput="formState.name">
+                                    v-model:valueInput="formState.name" placeholder="기존항목과 중복불가">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>
@@ -376,7 +376,7 @@ export default defineComponent({
                 dataRowOld = { ...formState.value }
 
                 focusedRowKeyTab2.value = value.getWithholdingConfigPayItem.itemCode
-                editable.value = value.getWithholdingConfigPayItem.editable;
+                editable.value = !value.getWithholdingConfigPayItem.editable;
                 // objDataDefault.value = { ...formState.value };
             }
         });

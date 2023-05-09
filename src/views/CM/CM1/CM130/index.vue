@@ -397,7 +397,7 @@ export default defineComponent({
             if (value) {
                 formState.reportType = value.getWithholdingConfig.reportType;
                 formState.paymentType = value.getWithholdingConfig.paymentType;
-                formState.paymentDay = value.getWithholdingConfig.paymentDay;
+                formState.paymentDay = value.getWithholdingConfig.paymentDay == null ? 0 : value.getWithholdingConfig.paymentDay;
                 formState.insuranceSupport = value.getWithholdingConfig.insuranceSupport;
                 formState.competentTaxOfficeCode = value.getWithholdingConfig.competentTaxOfficeCode;
                 formState.localIncomeTaxArea = value.getWithholdingConfig.localIncomeTaxArea;
