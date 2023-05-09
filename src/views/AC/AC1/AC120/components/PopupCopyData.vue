@@ -210,7 +210,7 @@ export default defineComponent({
             // }
             store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
             emit("closePopup", false);
-            notification('success', Message.getMessage('AC120', '001').message)
+            // notification('success', Message.getMessage('AC120', '001').message)
         }
         const onSelectionChanged = (data: any) => {
             dataSelect.value = data.data

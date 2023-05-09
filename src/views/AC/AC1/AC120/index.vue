@@ -456,8 +456,8 @@ export default defineComponent({
                     keySelect.value = e.rows[e.newRowIndex]?.data.bankbookDetailId
                 }
             } else {
-                store.state.common.ac120.formData = e.rows[e.newRowIndex]?.data
-                // Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
+                // store.state.common.ac120.formData = e.rows[e.newRowIndex]?.data
+                Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
                 store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
                 // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
                 store.state.common.ac120.selectedRowKeys = [e.rows[e.newRowIndex]?.data.accountingDocumentId]

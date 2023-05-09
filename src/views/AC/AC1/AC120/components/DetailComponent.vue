@@ -61,7 +61,7 @@
                                 </a-col>
                                 <a-col :span="6" class="col-2">
                                     <a-form-item label="결의일자" class="red">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.transactionDetailDate"
+                                        <date-time-box :teleport="true" v-model:valueDate="store.state.common.ac120.transactionDetailDate"
                                             width="150px" :required="true" disabled="true" />
                                     </a-form-item>
 
@@ -95,15 +95,15 @@
                                 </a-col>
                                 <a-col :span="7" class="col-1">
                                     <a-form-item label="원인행위일자" class="red" :class="colorDate">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.formData.causeActionDate"
+                                        <date-time-box :teleport="true"  v-model:valueDate="store.state.common.ac120.formData.causeActionDate"
                                             width="150px" :required="true" ref="requiredCauseActionDate" />
                                     </a-form-item>
                                     <a-form-item label="결재일자">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.formData.paymentDate"
+                                        <date-time-box :teleport="true" v-model:valueDate="store.state.common.ac120.formData.paymentDate"
                                             width="150px" />
                                     </a-form-item>
                                     <a-form-item label="발의일자">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.formData.proposedDate"
+                                        <date-time-box :teleport="true" v-model:valueDate="store.state.common.ac120.formData.proposedDate"
                                             width="150px" />
                                     </a-form-item>
                                 </a-col>
@@ -114,11 +114,11 @@
                                     </a-form-item>
 
                                     <a-form-item label="출납일자" class="abc">
-                                        <date-time-box v-model:valueDate="store.state.common.ac120.formData.accountingDate"
+                                        <date-time-box :teleport="true" v-model:valueDate="store.state.common.ac120.formData.accountingDate"
                                             width="150px" />
                                     </a-form-item>
                                     <a-form-item label="등기일자">
-                                        <date-time-box
+                                        <date-time-box :teleport="true"
                                             v-model:valueDate="store.state.common.ac120.formData.registrationDate"
                                             width="150px" />
                                     </a-form-item>
@@ -414,29 +414,7 @@ export default defineComponent({
                     store.state.common.ac120.formData.letterOfApprovalType = null;
                     store.state.common.ac120.formData.causeUsage = null;
                     // store.state.common.ac120.formData.goodsCount = null;
-
                 }
-                // if (store.state.common.ac120.statusFormAdd) {
-
-                //     let dataSubmit = {
-                //         companyId: companyId,
-                //         fiscalYear: acYear.value,
-                //         facilityBusinessId: globalFacilityBizId.value,
-                //         transactionDetailDate: store.state.common.ac120.transactionDetailDate,
-                //         input: { ...store.state.common.ac120.formData }
-                //     }
-                //     if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {
-                //         dataSubmit.input.amount = Math.abs(dataSubmit.input.amount)
-                //     } else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
-                //         dataSubmit.input.amount = -dataSubmit.input.amount
-                //     }
-                //     delete dataSubmit.input.resolutionClassification
-                //     delete dataSubmit.input.resolutionDate
-                //     delete dataSubmit.input.bankbook
-                //     delete (dataSubmit.input.accountingDocumentId)
-                //     delete (dataSubmit.input.transactionDetailDate)
-                //     mutateCreateAccountingDocument(dataSubmit)
-                // } else {
                 let dataSubmit = {
                     companyId: companyId,
                     fiscalYear: acYear.value,
