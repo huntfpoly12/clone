@@ -4,8 +4,8 @@
       <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
           @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput }"
           :max-date="finishDate" :min-date="startDate" :placeholder="placeholder"
-          :teleport="teleport" :disabled="disabled" :enable-time-picker="false">
-      </Datepicker>
+          :teleport="teleport" :disabled="disabled" :enable-time-picker="false"
+          :clearable="false" />
       <div v-if="isValid" class="message-error">
         <span>{{ Message.getCommonMessage('102').message }}</span>
       </div>

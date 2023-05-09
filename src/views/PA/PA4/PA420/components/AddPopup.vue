@@ -134,7 +134,7 @@ interface Props {
   listEmployeeexist: Array<any>
 }
 const props = defineProps<Props>();
-const emit = defineEmits(["closePopup"]);
+const emit = defineEmits(["closePopup", "createdDone"]);
 
 const store = useStore();
 const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
@@ -200,6 +200,7 @@ onDoneCreateIncomeRetirement(() => {
   notification("success", Message.getCommonMessage('101').message);
   modalStatusAccept.value = false;
   emit("closePopup", true);
+  emit("createdDone", true);
   store.commit('common/resetForm')
 });
 onErrorCreateIncomeRetirement((e: any) => {

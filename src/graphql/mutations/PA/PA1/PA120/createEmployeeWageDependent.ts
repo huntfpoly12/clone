@@ -3,7 +3,7 @@ export default gql`
   mutation createEmployeeWageDependent($companyId:Int!,$imputedYear:Int!,$employeeId:Int!,$input:EmployeeWageDependentCreateInput!) {
     createEmployeeWageDependent(companyId:$companyId,imputedYear:$imputedYear,input:$input,employeeId: $employeeId){
       employeeId
-      incomeTypeCode
+      # incomeTypeCode
       index
       relation
       name

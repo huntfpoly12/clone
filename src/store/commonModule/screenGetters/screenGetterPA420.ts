@@ -1,8 +1,10 @@
 const screenGetterPA420 = {
+  getSelectMonthColumnOld: (state: any) => state.selectMonthColumnOld,
   hasIncomeProcessRetirements: (state: any) => state.hasIncomeProcessRetirements,
   getSelectMonthColumn: (state: any) => state.selectMonthColumn,
   getPaymentDay: (state: any) => state.inputTab1.paymentDay,
   getIsDisableBtnTab2: (state: any) => state.isDisableBtnTab2,
+  getIncomeCalculationInputOld: (state: any) => state.incomeCalculationInputOld,
   getIncomeCalculationInput: (state: any) => state.incomeCalculationInput,
   getInterimPaymentTab1: (state: any) => state.interimPaymentTab1,
   getTaxCalculationInput: (state: any) => state.taxCalculationInput,

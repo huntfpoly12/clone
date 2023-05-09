@@ -6,14 +6,14 @@
           <div class="input-text">
             <number-box width="200px" :min="1" :max="9999999999" :disabled="true"
               v-model:valueInput="initFormStateTabPA120.employeeId"/>
-            <a-tooltip placement="top" class="custom-tooltip">
+            <!-- <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 최초 저장된 이후 수정 불가.
               </template>
               <div style="text-align: center;">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
-            </a-tooltip>
+            </a-tooltip> -->
           </div>
         </a-form-item>
 

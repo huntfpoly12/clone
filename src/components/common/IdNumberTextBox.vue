@@ -180,14 +180,22 @@ export default defineComponent({
       }
     }
     const onFocusIn = (e: any) => {
+      let isValid = validatorRef.value?.instance._validationInfo.result;
+      let msgDefault = residentRef.value.instance._$validationMessage;
+      if (isValid?.brokenRule?.type == 'custom') {
+        errorCurrentType.value = 2;
+        msgDefault[0].style.display = 'none';
+        residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
+      }
       const input = e.event.target;
       setTimeout(() => {
         input.selectionStart = input.selectionEnd = 0;
       }, 50);
     }
     onMounted(() => {
-      let ele = document.getElementsByClassName('resident-ctn')[0] as HTMLElement;
-      ele.style.width = widthCustom.value;
+      let ele = document.getElementsByClassName('resident-ctn');
+      let eleReal = ele[ele.length - 1] as HTMLElement;
+      eleReal.style.width = widthCustom.value;
     })
     return {
       updateValue,

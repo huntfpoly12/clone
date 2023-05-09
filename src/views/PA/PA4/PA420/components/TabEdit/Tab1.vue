@@ -303,6 +303,8 @@ const prevRetiredYearsOfServicePaymentDate = ref()
 const store = useStore();
 const employee = computed(() => store.getters['common/getEmployeeEdit']);
 const ProcessKey = computed(() => store.getters['common/getSelectMonthColumn'])
+const incomeCalculationInputCur = computed(() => store.getters['common/getIncomeCalculationInput'])
+const incomeCalculationInputOld = computed(() => store.getters['common/getIncomeCalculationInputOld'])
 // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
 let attributionDate = ref(`${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}`)
 let paymentYearAndMonth = ref(`${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}`)
@@ -369,6 +371,12 @@ const isChangeForm = computed(() => {
     paymentYearAndMonth.value != `${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}` ||
     interimPaymentTab1.value !== interimPaymentTab1Old ||
     retirementReason.value !== props.dataDetail.specification?.retirementReason
+})
+watch(() => paymentYearAndMonth.value, (val) => {
+  store.commit('common/setSelectMonthColumn', {
+    paymentYear: parseInt(val.toString().slice(0, 4)),
+    paymentMonth: parseInt(val.toString().slice(4, 6))
+  })
 })
 watchEffect(() => {
   store.commit('common/setIsChangeForm', {tab1: isChangeForm.value})
@@ -480,6 +488,10 @@ const submitForm = (e: any) => {
   } else {
     const {inputFormTab1, incomeCalculationInput, ...taxCalculationInput} = formState
     store.commit('common/setIncomeCalculationInput', incomeCalculationInput)
+    if (!isEqual( {...incomeCalculationInputCur.value, ...incomeCalculationInput}, incomeCalculationInputOld.value)) {
+      store.commit('common/setIsDisableBtnTab2', true)
+      store.commit('common/setIncomeCalculationInputOld', {...incomeCalculationInputCur.value, ...incomeCalculationInput})
+    }
     store.commit('common/setTaxCalculationInput', {
       ...taxCalculationInput,
       prevRetirementBenefitStatus: {

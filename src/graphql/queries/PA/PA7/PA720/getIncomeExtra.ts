@@ -8,9 +8,9 @@ export default gql`
         getIncomeExtra(companyId: $companyId,processKey: $processKey,incomeId: $incomeId){
             incomeId
             paymentDay
-            # employeeType
+            employeeType
             employeeId
-            incomeTypeCode
+            # incomeTypeCode
             incomePayment
             withholdingIncomeTax
             withholdingLocalIncomeTax
@@ -29,7 +29,7 @@ export default gql`
             employee{
             type           
             employeeId
-            incomeTypeCode
+            # incomeTypeCode
             name
             foreigner
             nationality
