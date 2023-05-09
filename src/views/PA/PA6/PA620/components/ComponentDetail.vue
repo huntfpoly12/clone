@@ -122,7 +122,8 @@
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
             <!-- <SelectCustomField :dataSource="arrayEmploySelect" :disabled="disabledInput || idDisableNoData"
-              v-model:valueInput="dataAction.input.employeeId" width="350px" required/> -->
+              v-model:valueInput="dataAction.input.employeeId" width="350px" required displayeExpr="incomeTypeName"
+              valueExpr="key" /> -->
             <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
               width="350px" :required="true" :newLoadKey="dataAction.input.employee.key"
               @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || idDisableNoData" />

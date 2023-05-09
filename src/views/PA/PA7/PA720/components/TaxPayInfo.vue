@@ -51,7 +51,7 @@
       <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney"
         alignment="right" />
     </DxDataGrid>
-    <a-row style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 10px;" class="fs-14">
+    <a-row class="fs-14 summary-ctn">
       <a-col span="8">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 58s%;">
           사업소득자[소득구분]수
