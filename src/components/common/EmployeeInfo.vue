@@ -17,7 +17,6 @@
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner">외</span>
             <span class="tag-forDailyUse" v-if="forDailyUse">일용</span>
-            {{ midTermSettlement }}
             <span v-if="midTermSettlement != null">
                 <span class="tag-midTermSettlementTrue" v-if="midTermSettlement == true">중도정산O</span>
                 <span class="tag-midTermSettlementFalse" v-if="midTermSettlement == false">중도정산X</span>

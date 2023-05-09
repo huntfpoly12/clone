@@ -23,34 +23,37 @@
                         :layoutCustom="'horizontal'" :required="true" />
                 </a-form-item>
             </a-col>
-            <a-col :span="6">
-                <a-form-item label="결의번호">
+            <!-- <a-col :span="6">
+                <a-form-item label="검색">
                     <default-text-box width="150px"
                         v-model:valueInput="dataQuerySearchSpendingAccountingDocuments.resolutionNumber" />
                 </a-form-item>
-            </a-col>
+            </a-col> -->
         </a-row>
-        <div style="margin-top: 10px; display: flex; justify-content: center;">
+        <!-- <div style="margin-top: 10px; display: flex; justify-content: center;">
             <button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'"
                 @onClick="onSearch" />
-        </div>
+        </div> -->
         <a-spin tip="Loading..." :spinning="loadingSearchSpendingAccountingDocuments">
             <div style="margin: 48px 0">
-                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                    key-expr="accountingDocumentId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    v-model:focused-row-key="focusedRowKey" focused-row-enabled="true" :onRowClick="onSelectionChanged"
-                    :column-auto-width="true">
+                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :show-borders="true" key-expr="accountingDocumentId" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" v-model:focused-row-key="focusedRowKey"
+                    focused-row-enabled="true" :onRowClick="onSelectionChanged" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                     <DxColumn caption="선택" cell-template="radioCheck" />
-                        <template #radioCheck="{ data }">
-                            <div class="text-align-center pt-8">
-                                <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.accountingDocumentId ? true : false"/>
-                            </div>
-                        </template>
+                    <template #radioCheck="{ data }">
+                        <div class="text-align-center pt-8">
+                            <input type="radio" name="radioCheck"
+                                :checked="focusedRowKey == data.data.accountingDocumentId ? true : false" />
+                        </div>
+                    </template>
                     <DxColumn data-field="resolutionNumber" caption="결의번호" />
                     <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
                     <template #bankbook="{ data }">
-                        <a-tooltip placement="top" :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
+                        <a-tooltip placement="top"
+                            :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
                             <div>{{ data.data.bankbook?.bankbookNickname }}</div>
                         </a-tooltip>
                     </template>
@@ -58,7 +61,12 @@
                     <template #transactionDetailDate="{ data }">
                         {{ $filters.formatDate(data.value) }}
                     </template>
-                    <DxColumn data-field="resolutionClassification" caption="결의 구분" />
+                    <DxColumn caption="결의 구분" data-field="resolutionClassification" cell-template="resolutionClassification"
+                        width="75" />
+                    <template #resolutionClassification="{ data }">
+                        {{ store.state.common.ac120.arrResolutionClassification.find((item: any) =>
+                            data.data.resolutionClassification == item.id)?.text }}
+                    </template>
                     <DxColumn data-field="income" caption="수입액" />
                     <DxColumn data-field="spending" caption="지출액" format="fixedPoint" />
                     <DxColumn data-field="summaryOfBankbookDetail" caption="통장적요" />
@@ -78,8 +86,22 @@
             </div>
         </a-spin>
         <div class="btn_submit">
-            <button-basic class="button-form-modal" :text="'여입결의서 반영'" :type="'default'" :mode="'contained'"
-                @onClick="onSubmit" />
+            <a-tooltip placement="top" title="원본결의서 참조없이 여입결의서로 변경">
+                <span>
+                    <button-basic class="button-form-modal1" :text="'원본결의서 반영 안함'" :type="'default'" :mode="'contained'"
+                        @onClick="onChange" />
+                </span>
+            </a-tooltip>
+
+            <a-tooltip placement="top" title="선택한 원본결의서 반영하여 여입결의서로 변경">
+                <span>
+                    <button-basic class="button-form-modal2" :text="'원본결의서 반영'" :type="'default'" :mode="'contained'"
+                        @onClick="onCopy" />
+                </span>
+            </a-tooltip>
+
+            <button-basic class="button-form-modal3" :text="'반영 취소'" :type="'default'" :mode="'contained'"
+                @onClick="setModalVisible()" />
         </div>
     </a-modal>
 </template>
@@ -97,6 +119,7 @@ import { Message } from "@/configs/enum"
 import {
     DxDataGrid,
     DxColumn, DxScrolling,
+    DxSearchPanel,
 } from "devextreme-vue/data-grid";
 
 export default defineComponent({
@@ -105,7 +128,7 @@ export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn, DxScrolling,
-        DxSelectBox,
+        DxSelectBox, DxSearchPanel,
     },
     setup(props, { emit }) {
         const arrayRadioMonth = initialArrayRadioMonth
@@ -119,14 +142,13 @@ export default defineComponent({
         const dataSource = ref([]);
         // const search = ref<string>("");
         let dataSelect = ref()
-        const triggerQuerySearchSpendingAccountingDocuments = ref<boolean>(false)
+        const triggerQuerySearchSpendingAccountingDocuments = ref<boolean>(true)
         const dataQuerySearchSpendingAccountingDocuments = ref({
             companyId: companyId,
             fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
             year: acYear.value,
             month: 4,
-            resolutionNumber: null
         })
 
         const focusedRowKey = ref<Number>(1);
@@ -144,8 +166,10 @@ export default defineComponent({
         // 1. searchSpendingAccountingDocuments
         watch(resSearchSpendingAccountingDocuments, (value) => {
             triggerQuerySearchSpendingAccountingDocuments.value = false
-            console.log(value.searchSpendingAccountingDocuments);
             dataSource.value = value.searchSpendingAccountingDocuments
+        })
+        watch(() => dataQuerySearchSpendingAccountingDocuments.value.month, (value) => {
+            triggerQuerySearchSpendingAccountingDocuments.value = true;
         })
 
 
@@ -155,19 +179,11 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-        const onSearch = () => {
-            makeDataClean(dataQuerySearchSpendingAccountingDocuments.value)
-            triggerQuerySearchSpendingAccountingDocuments.value = true;
-        };
-
-
-
         const setModalVisible = () => {
             emit("closePopup", false);
         };
 
-
-        const onSubmit = () => {
+        const onCopy = () => {
             if (dataSelect.value) {
                 store.state.common.ac120.formData.accountCode = dataSelect.value.accountCode
                 store.state.common.ac120.formData.relationCode = dataSelect.value.relationCode
@@ -176,7 +192,7 @@ export default defineComponent({
                 store.state.common.ac120.formData.letterOfApprovalType = dataSelect.value.letterOfApprovalType
                 store.state.common.ac120.formData.causeUsage = dataSelect.value.causeUsage
                 store.state.common.ac120.formData.memo = `원본 지출결의서: ` + dataSelect.value.accountingDocumentId
-                
+
                 store.state.common.ac120.formData.resolutionType = 22
                 emit("closePopup", false);
                 notification('success', Message.getMessage('AC120', '002').message)
@@ -184,7 +200,17 @@ export default defineComponent({
                 notification('error', '항목을 하나만 선택하십시오')
             }
             // emit("dataEmit", dataEmit.value);
-            
+
+        }
+        const onChange = () => {
+            // if (store.state.common.ac120.formData.resolutionType == 22) {
+            //     store.state.common.ac120.formData.resolutionType = 11
+            // } else if (store.state.common.ac120.formData.resolutionType == 11) {
+                store.state.common.ac120.formData.resolutionType = 22
+            // }
+            store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+            emit("closePopup", false);
+            notification('success', Message.getMessage('AC120', '001').message)
         }
         const onSelectionChanged = (data: any) => {
             dataSelect.value = data.data
@@ -192,16 +218,18 @@ export default defineComponent({
 
 
         return {
+            store,
             move_column,
             colomn_resize,
             // search,
-            onSearch,
+            // onSearch,
             setModalVisible,
             focusedRowKey,
             onSelectionChanged,
             // showEmployeeInfo,
             dataSource,
-            onSubmit,
+            onCopy,
+            onChange,
             loadingSearchSpendingAccountingDocuments,
 
             arrayRadioMonth,
@@ -211,16 +239,29 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-#components-modal-demo-position {
-    position: relative;
-}
 
 .btn_submit {
-    position: absolute;
+    /* position: absolute;
     bottom: 0;
     margin-top: 48px;
     margin-bottom: 16px;
     left: 0;
-    right: 0;
+    right: 0; */
     text-align: center;
-}</style>
+}
+.button-form-modal1 {
+    background-color: orange;
+}
+.button-form-modal1:hover {
+    background-color: rgb(207, 135, 0);
+}
+.button-form-modal2 {
+    margin: 0 10px;
+}
+.button-form-modal3 {
+    background-color: gray;
+}
+.button-form-modal3:hover {
+    background-color: rgb(100, 100, 100);
+}
+</style>

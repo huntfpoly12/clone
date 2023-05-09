@@ -116,7 +116,6 @@
                             width="85" />
                         <template #transactionDetailDate="{ data }">
                             {{ $filters.formatDate(data.value) }}
-
                         </template>
 
                         <DxColumn caption="순번" data-field="documentOrderByDate" width="45" />
@@ -203,9 +202,8 @@
                     </DxDataGrid>
                 </a-spin>
             </div>
-            <DetailComponent />
+            <DetailComponent @changeAmountDataGrid="changeAmountDataGrid" />
         </div>
-
     </div>
     <PopupMessage :modalStatus="isModalRetrieveStatements" @closePopup="isModalRetrieveStatements = false"
         :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
@@ -213,7 +211,7 @@
 
     <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows='dataRows' />
 
-    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" @submit="onFillDataAdd" />
+    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" :theOrder="dataSource.length"/>
 
 
     <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false" />
@@ -282,7 +280,7 @@ export default defineComponent({
         let statusModalItemDetail = ref(false);
 
         const gridRefAC120 = ref(); // ref of grid
-        const gridRefAC120Detail = ref(); // ref of grid
+        // const gridRefAC120Detail = ref(); // ref of grid
 
         const popupData = ref({});
         const modalHistoryStatusAccountingProcess = ref<boolean>(false);
@@ -389,9 +387,9 @@ export default defineComponent({
             triggerGetAccountingProcesses.value = true
         })
 
-        watch(() => store.state.common.ac120.onDeleteRowAdd, (value) => {
-            deleteRowAdd()
-        })
+        // watch(() => store.state.common.ac120.onDeleteRowAdd, (value) => {
+        //     deleteRowAdd()
+        // })
 
         watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
 
@@ -411,7 +409,7 @@ export default defineComponent({
                     store.state.common.ac120.selectedRowKeys = [dataSource.value[0].accountingDocumentId]
                     Object.assign(store.state.common.ac120.formData, dataSource.value[0])
                 }
-                store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+                // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
             } else {
                 dataRows.value = []
                 store.state.common.ac120.focusedRowKey = null
@@ -458,24 +456,25 @@ export default defineComponent({
                     keySelect.value = e.rows[e.newRowIndex]?.data.bankbookDetailId
                 }
             } else {
-                Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
+                store.state.common.ac120.formData = e.rows[e.newRowIndex]?.data
+                // Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
                 store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
-                store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+                // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
                 store.state.common.ac120.selectedRowKeys = [e.rows[e.newRowIndex]?.data.accountingDocumentId]
                 store.state.common.ac120.keyRefreshForm++
                 store.state.common.ac120.resetDataAccountingDocumentProofs++
-                if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
-                    deleteRowAdd()
-                }
+                // if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
+                //     deleteRowAdd()
+                // }
             }
         };
 
         // remove row add
-        const deleteRowAdd = async () => {
-            await dataSource.value.pop()
-            await gridRefAC120.value?.instance.refresh()
-            await getOneRowData()
-        }
+        // const deleteRowAdd = async () => {
+        //     await dataSource.value.pop()
+        //     await gridRefAC120.value?.instance.refresh()
+        //     await getOneRowData()
+        // }
 
         const actionModalDelete = (value: any) => {
             if (dataRows.value?.length) {
@@ -535,26 +534,26 @@ export default defineComponent({
 
         const onDragChange = (e: any) => { }
 
-        const onFillDataAdd = (dataAdd: any) => {
-            addNewRow(dataAdd)
-            statusModalAdd.value = false; // close popup
-        }
+        // const onFillDataAdd = (dataAdd: any) => {
+        //     addNewRow(dataAdd)
+        //     statusModalAdd.value = false; // close popup
+        // }
 
         // handle add row
-        const addNewRow = async (dataAdd: any) => {
-            store.state.common.ac120.statusFormAdd = true
-            let dataInitial: any = { ...initialStateFormData }
+        // const addNewRow = async (dataAdd: any) => {
+        //     store.state.common.ac120.statusFormAdd = true
+        //     let dataInitial: any = { ...initialStateFormData }
 
-            Object.assign(dataInitial, dataAdd)
-            dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...dataInitial })
-            store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
-            store.state.common.ac120.focusedRowKey = 'AC120'
-            store.state.common.ac120.keyRefreshForm++
-            store.state.common.ac120.resetDataAccountingDocumentProofs++
-            setTimeout(() => {
-                store.state.common.ac120.statusShowFull = true
-            }, 300);
-        }
+        //     Object.assign(dataInitial, dataAdd)
+        //     dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...dataInitial })
+        //     store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
+        //     store.state.common.ac120.focusedRowKey = 'AC120'
+        //     store.state.common.ac120.keyRefreshForm++
+        //     store.state.common.ac120.resetDataAccountingDocumentProofs++
+        //     setTimeout(() => {
+        //         store.state.common.ac120.statusShowFull = true
+        //     }, 300);
+        // }
 
         const selectedMonth = (month: number) => {
             store.state.common.ac120.monthSelected = month
@@ -575,6 +574,13 @@ export default defineComponent({
         const actionEditTaxPay = async (e: any) => {
             // await (focusedRowKey.value = null)
             // await (focusedRowKey.value = e.data.accountingDocumentId)
+        }
+        const changeAmountDataGrid = () => {
+            // let index = dataSource.value.findIndex((item: any) => item.accountingDocumentId === store.state.common.ac120.formData.accountingDocumentId)
+            // if (index !== -1) {
+            //     dataSource.value[index] = store.state.common.ac120.formData;
+            // }
+            // gridRefAC120.value?.instance.refresh()
         }
 
 
@@ -623,13 +629,13 @@ export default defineComponent({
         return {
             dataGetAccountingProcesses,
             dataSource,
-            onFillDataAdd,
+            // onFillDataAdd,
             loadingGetAccountingProcesses,
             loadingGetAccountingDocuments,
             dataRows,
             onFocusedRowChanging,
             actionEditTaxPay,
-            gridRefAC120Detail,
+            // gridRefAC120Detail,
             lastBalance,
             customCountRow, sumOfIncome, sumOfExpenses, customBalance, countResolutionNormalStatus,
 
@@ -658,6 +664,7 @@ export default defineComponent({
             popupData,
             clients,
             gridRefAC120,
+            changeAmountDataGrid,
         };
     },
 });

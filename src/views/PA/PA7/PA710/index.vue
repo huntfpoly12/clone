@@ -76,15 +76,15 @@
                 <a-col span="8" class="custom-layout" :class="{ 'disabledBlock': disabledBlock }">
                     <a-spin :spinning="loadingDetail" size="large" :key="resetFormNum">
                         <StandardForm formName="pa-710-form" ref="pa710FormRef">
-                            <a-form-item label="코드" :label-col="labelCol" class="red">
+                            <a-form-item label="코드" :label-col="labelCol">
                                 <div class="d-flex-center">
                                     <number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
-                                        placeholder="숫자만 입력 가능" :disabled="statusFormUpdate">
+                                         :disabled="true">
                                     </number-box>
-                                    <a-tooltip color="black" placement="top">
+                                    <!-- <a-tooltip color="black" placement="top">
                                         <template #title>최초 저장된 이후 수정 불가</template>
                                         <img src="@/assets/images/iconInfo.png" class="img-info" />
-                                    </a-tooltip>
+                                    </a-tooltip> -->
                                 </div>
                             </a-form-item>
                             <a-form-item label="성명(상호) " :label-col="labelCol" class="red">
@@ -392,7 +392,7 @@ export default defineComponent({
                         companyId: companyId,
                         imputedYear: paYear.value,
                         input: {
-                            employeeId: parseInt(formState.value.employeeId),
+                            // employeeId: parseInt(formState.value.employeeId),
                             incomeTypeCode: formState.value.incomeTypeCode,
                             ...input,
                         },
