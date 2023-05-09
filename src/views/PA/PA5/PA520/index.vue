@@ -335,10 +335,12 @@ export default defineComponent({
     } = useMutation(mutations.deleteEmployeeWageDaily);
     errorDelete((e) => {
       notification("error", e.message);
+      modalComfirmDelete.value = false
     });
     successDelete((e) => {
       notification("success", Message.getCommonMessage('402').message);
       trigger.value = true;
+      modalComfirmDelete.value = false;
       refetchData();
     });
     // ======================= WATCH ==================================
@@ -634,8 +636,7 @@ export default defineComponent({
       modalComfirmDelete.value = true;
     };
     // A function that is called when the user clicks on the delete button.
-    const onConfirmDelete = (res: any) => {
-      if (res == true)
+    const onConfirmDelete = () => {
         actionDelete({
           companyId: companyId,
           imputedYear: globalYear.value,

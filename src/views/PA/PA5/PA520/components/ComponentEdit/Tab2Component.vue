@@ -58,7 +58,7 @@
             <a-col :span="24"><b>차인지급액</b> <b>{{
                 $filters.formatCurrency(originDataUpdate.input.monthlyWage -
                     totalDeduction)
-            }} </b> 원
+            }}  원</b>
             </a-col>
         </a-row>
         <a-row :gutter="16">
@@ -100,7 +100,7 @@
                         </div>
                     </a-form-item>
                     <div>
-                        일급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.dailyWage) }} </b>원
+                        일급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.dailyWage) }} 원</b>
                     </div>
                     <div>
                         월급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원</b>
@@ -160,7 +160,7 @@ export default defineComponent({
         const globalYear: any = computed(() => parseInt(sessionStorage.getItem("paYear")?? '0'));
         const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
         const idRowEdit = computed(() => store.getters['common/idRowCurrentEditPA520'])
-        const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
+        //const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
         const totalDeduction = ref(0)
         const arrDeduction: any = ref()
         const isBtnYellow = ref(false)
