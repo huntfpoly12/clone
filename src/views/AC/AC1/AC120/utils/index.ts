@@ -30,6 +30,7 @@ export const initialStateFormAdd = {
   summary: '',
   fundingSource: 3,
   letterOfApprovalType: null,
+  accountCode: null,
 };
 export const initialStateFormData = {
   bankbookId: null,
