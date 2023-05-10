@@ -15,7 +15,6 @@
                 }}</a-avatar>
             </a-badge>
           </div>
-
           <div class="form-chat-timeline-content">
             <div class="form-chat-timeline-content-info">
               <div class="form-chat-timeline-content-info-user">
@@ -31,15 +30,14 @@
                 <MarkdownCustom :options="{ source: items.text, linkify: true, typographer: true, highlight: true }" />
               </div>
               <div class="form-chat-timeline-content-files">
-                <a-spin v-for="(file, indexFile) in items.files" :spinning="isLoadingUpload && !!file?.isUploading"
-                  size="small" :key="file.url">
-                  <img class="form-chat-timeline-content-files-items" :src="file.url" alt=""
-                    @click="previewImage(items.files, indexFile)">
-                </a-spin>
+                <div class="form-chat-timeline-content-files-preview">
+                  <img v-for="(file, indexFile) in items.files" class="form-chat-timeline-content-files-preview-image" :src="file.url" alt=""
+                    @click="previewImage(items.files, indexFile)" :key="indexFile">
+                </div>
               </div>
             </div>
             <InputChat v-else ref="inputEditChat" v-model:textChatProp="itemEditComment.text" v-model:filesUploadProps="itemEditComment.files"
-              placeholder="댓글을 입력하세요…" @submitChat="submitChat" @cancel="cancelEdit"/>
+              placeholder="댓글을 입력하세요…" :disable="isLoadingUpload" @submitChat="submitChat" @cancel="cancelEdit"/>
           </div>
 
           <div v-if="items.userId === userId" class="form-chat-timeline-common-menu">
@@ -61,28 +59,32 @@
           </div>
         </div>
       </div>
-      <!-- itemEditComment -->
-      <div v-if="!!objectChatUpFile" class="form-chat-timeline-common form-chat-timeline-right mt-1"
+      <div v-if="!!objectChatUpFile && !itemEditComment.key" class="form-chat-timeline-line"></div>
+      <div v-if="!!objectChatUpFile && !itemEditComment.key" class="form-chat-timeline-common form-chat-timeline-uploading mt-1"
         :class="{ 'mt-10': objectChatUpFile.cssTop }">
-        <div class="form-chat-timeline-content form-chat-timeline-content-right">
+        <div class="form-chat-timeline-content">
           <div class="form-chat-timeline-content-info">
             <div class="form-chat-timeline-content-info-user">
-              <span class="form-chat-timeline-content-info-user-status" :class="{ 'hidden-avatar': true }">{{
+              <span class="form-chat-timeline-content-info-user-status">{{
                 objectChatUpFile.status
               }}</span>
-              <div class="form-chat-timeline-content-info-user-name" :class="{ 'hidden-avatar': true }">{{
+              <div class="form-chat-timeline-content-info-user-name form-chat-timeline-content-info-user-name-login">{{
                 objectChatUpFile.name }}
               </div>
             </div>
             <div class="form-chat-timeline-content-info-time">{{ formatDate(objectChatUpFile.createdAt) }}</div>
           </div>
-          <div class="form-chat-timeline-content-files">
-            <a-spin v-for="(file, indexFile) in objectChatUpFile.files" :spinning="isLoadingUpload && !!file?.isUploading"
-              size="small" :key="file.url">
-              <img class="form-chat-timeline-content-files-items" :src="file.url" alt="">
-            </a-spin>
-          </div>
           <div class="form-chat-timeline-content-text" v-html="objectChatUpFile.text"></div>
+          <div class="form-chat-timeline-content-files">
+            <div v-for="(file, index) in objectChatUpFile.files" class="form-chat-timeline-content-files-item" :key="index">
+              <FileOutlined style="margin-right: 10px;" />
+              <div class="form-chat-timeline-content-files-item-info">
+                <p class="form-chat-timeline-content-files-item-info-name">{{ file?.file ? file.file.name : file.name }}</p>
+                <p class="form-chat-timeline-content-files-item-info-size">({{ formatFileSize(file?.file ? file.file.size : file.size) }})
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -93,7 +95,7 @@
         <span>회계-마감-({{ currentTime }})</span>
       </div>
       <InputChat ref="inputChat" v-model:textChatProp="textChat" v-model:filesUploadProps="filesUpload"
-        placeholder="댓글을 입력하세요…" @submitChat="submitChat" />
+        placeholder="댓글을 입력하세요…" :disable="isLoadingUpload" @submitChat="submitChat" />
     </div>
     <ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
       :listImage="listImagePreview" />
@@ -169,7 +171,11 @@ export default defineComponent({
     let isModalPreview = ref(false)
     let isModalDeleteChat = ref(false)
     const formTimeline: any = ref()
-    let itemEditComment = ref<any>(null)
+    let itemEditComment = ref<any>({
+      key: null,
+      text: '',
+      files: [],
+    })
     let filesUpload: any = ref([])
     let listFileUploadHandleLoading: any = ref([])
     let listImageUpload: any = ref([])
@@ -274,19 +280,25 @@ export default defineComponent({
     const submitChat = () => {
       isVisibleEmojiForm.value = false
       if (isLoadingUpload.value || isProcessingDeleteUpdate.value) return
-      if (!textChat.value.trim() && !filesUpload.value.length) return
+      let textInputed = textChat.value
+      let fileUploaded = [...filesUpload.value]
+      if(itemEditComment.value.key) {
+        textInputed = itemEditComment.value.text
+        fileUploaded = [...itemEditComment.value.files]
+      }
+      if (!textInputed.trim() && !fileUploaded.length ) return
       payload.value = {
         ...payload.value,
-        text: textChat.value,
+        text: textInputed,
         files: []
       }
-      if (filesUpload.value.length) {
+      if (fileUploaded.length) {
         isLoadingUpload.value = true
-        listFileUploadHandleLoading.value = [...filesUpload.value]
-        if (itemEditComment.value === null) {
+        listFileUploadHandleLoading.value = [...fileUploaded]
+        if (itemEditComment.value.key === null) {
           objectChatUpFile.value = {
             ...payload.value,
-            text: textChat.value,
+            text: textInputed,
             files: listFileUploadHandleLoading.value.map((file: any) => ({ ...file, isUploading: true })),
             cssTop: listChat.value[listChat.value.length - 1]?.userId === userId ? false : true,
           }
@@ -294,7 +306,7 @@ export default defineComponent({
           const index = listChat.value.findIndex((item: any) => item.key === itemEditComment.value.key)
           listChat.value[index] = {
             ...payload.value,
-            text: textChat.value,
+            text: textInputed,
             files: listFileUploadHandleLoading.value.map((file: any) => ({ ...file, isUploading: true })),
           }
         }
@@ -318,7 +330,7 @@ export default defineComponent({
         listImageUpload.value = []
         listFileUploadHandleLoading.value = []
       }
-      if (itemEditComment.value === null) {
+      if (itemEditComment.value.key === null) {
         const postListRef = reffb(databaseFirebase, channelChatSubrights());
         const newPostRef = push(postListRef);
         set(newPostRef, payload.value)
@@ -340,9 +352,17 @@ export default defineComponent({
         const updates: any = {};
         updates[`/${itemEditComment.value.key}`] = { ...itemEditComment.value, ...payload.value }
         update(chatListRef.value, updates).then(() => {
+          console.log('okkkkkkkkkkkkkk');
         }).catch(() => {
           console.log('eeeeeeeee');
         }).finally(() => {
+          nextTick(() => {
+            itemEditComment.value = {
+              key: null,
+              text: '',
+              files: [],
+            }
+          })
           isLoadingUpload.value = false
           isProcessingDeleteUpdate.value = false
         })
@@ -372,7 +392,7 @@ export default defineComponent({
     })
 
     const editComment = (item: any) => {
-      itemEditComment.value = { ...item }
+      itemEditComment.value = {...itemEditComment.value, ...item }
       nextTick(() => {
         inputEditChat.value[0].resizeInput()
         inputEditChat.value[0].focus()
@@ -435,10 +455,22 @@ export default defineComponent({
 
     const cancelEdit = () => {
       nextTick(() => {
-        itemEditComment.value = null
+        itemEditComment.value = {
+          key: null,
+          text: '',
+          files: [],
+        }
       })
     }
 
+    const formatFileSize = (bytes: number) => {
+      if (bytes === 0) return '0 Bytes'
+      const k = 1000
+      const decimalPoint = 2
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i];
+    }
     return {
       userName,
       listChat,
@@ -463,7 +495,8 @@ export default defineComponent({
       currentTime,
       inputChat,
       inputEditChat,
-      cancelEdit
+      cancelEdit,
+      formatFileSize
     }
   },
 })
@@ -541,20 +574,38 @@ export default defineComponent({
       padding: 5px 12px 8px 12px;
 
       &-files {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 -5px;
+        width: 100%;
+        background-color: #fff;
+        &-preview {
+          display: flex;
+          flex-wrap: wrap;
+          margin: 0 -5px;
+          &-image {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            display: block;
+            padding: 5px;
+            cursor: pointer;
 
-        &-items {
-          width: 130px;
-          height: 130px;
-          object-fit: cover;
-          display: block;
-          padding: 5px;
-          cursor: pointer;
+            &:hover {
+              opacity: .8;
+            }
+          }
+        }
+        &-item {
+          display: flex;
+          align-items: center;
 
-          &:hover {
-            opacity: .8;
+          &-info {
+            p {
+              margin: 0;
+              line-height: 15px;
+            }
+
+            &-size {
+              color: #A6A6A6;
+            }
           }
         }
       }
@@ -597,9 +648,9 @@ export default defineComponent({
         }
       }
       &-background {
-        &:hover {
-          background-color: #fafafa;
-        }
+        // &:hover {
+        //   background-color: #fafafa;
+        // }
       }
       &-text {
         word-wrap: break-word;
@@ -607,6 +658,9 @@ export default defineComponent({
         font-size: 15px;
         color: #333333;
       }
+    }
+    &-uploading {
+      margin-left: 40px;
     }
   }
 

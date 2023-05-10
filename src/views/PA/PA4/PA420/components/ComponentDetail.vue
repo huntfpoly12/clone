@@ -16,11 +16,11 @@
                         :disabled="statusButton !== 10 && statusButton !== 20"/>
       </div>
       <div class="table-detail-right">
-        <DxButton @click="deleteItem" :disabled="checkActionValue">
+        <DxButton @click="deleteItem" :disabled="checkActionValue || !hasDataIncRetirements">
           <DeleteOutlined style="font-size: 18px;"/>
         </DxButton>
-        <DxButton icon="plus" @click="addRow" :disabled="checkActionValue"/>
-        <DxButton @click="onItemClick('history')" :disabled="statusButton !== 10 && statusButton !== 20">
+        <DxButton icon="plus" @click="addRow" :disabled="checkActionValue || !hasDataIncRetirements"/>
+        <DxButton @click="onItemClick('history')" :disabled="statusButton !== 10 && statusButton !== 20 || !hasDataIncRetirements">
           <a-tooltip placement="top">
             <template #title>근로소득자료 변경이력</template>
             <div class="text-center">
@@ -28,7 +28,7 @@
             </div>
           </a-tooltip>
         </DxButton>
-        <DxButton @click="onItemClick('historyEdit')" :disabled="statusButton !== 10 && statusButton !== 20">
+        <DxButton @click="onItemClick('historyEdit')" :disabled="statusButton !== 10 && statusButton !== 20 || !hasDataIncRetirements">
           <a-tooltip placement="left">
             <template #title>근로소득 마감상태 변경이력</template>
             <div class="text-center">
@@ -37,7 +37,7 @@
             </div>
           </a-tooltip>
         </DxButton>
-        <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue">
+        <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue || !hasDataIncRetirements">
           <div class="d-flex-center">
             <checkbox-basic :valueCheckbox="true" disabled="true"/>
             <span class="fz-12 pl-5">지급일변경</span>
@@ -160,7 +160,7 @@
   <EditPopup :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="dataSelected"
              :processKey="dataTableDetail.processKey"/>
   <AddPopup v-if="modalAdd" :modalStatus="modalAdd" @closePopup="handleClose" :data="popupDataDelete"
-            :key="resetFormNum"
+            :key="resetFormNum" @createdDone="emit('createdDone')"
             :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
   <UpdatePopup v-if="modalUpdate" :modalStatus="modalUpdate" @closePopup="actionClosePopup" :keyRowIndex="keyDetailRow"
                @updateSuccess="actionDeleteSuccess"/>
@@ -185,6 +185,7 @@ import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import {companyId} from '@/helpers/commonFunction';
 import {Message} from '@/configs/enum';
 import ViewDetail from "./ViewDetail.vue";
+import isEqual from "lodash/isEqual";
 
 
 const props = defineProps<{ statusButton: number, actionSave: number }>()
@@ -206,7 +207,6 @@ const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
 const hasDataIncRetirements = computed(() => store.getters['common/hasIncomeProcessRetirements']);
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
-
 const rowTable = ref(0);
 const modalHistory = ref<boolean>(false)
 const modalAdd = ref(false)
@@ -268,8 +268,8 @@ onDone(e => {
   notification('success', Message.getCommonMessage('106').message)
 })
 // ================WATCHING============================================
-watch(selectMonthColumn, (newValue) => {
-  if (newValue) {
+watch(selectMonthColumn, (newValue, oldValue) => {
+  if (!isEqual(newValue, oldValue)) {
     dataTableDetail.value.processKey = newValue
     triggerDetail.value = true
     refetchTableDetail()
