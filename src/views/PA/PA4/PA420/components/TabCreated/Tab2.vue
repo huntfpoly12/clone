@@ -137,6 +137,7 @@ const calculateIncomeRetirement = async () => {
     })
     if (data) {
       dataIncomeRetirement.value = data.calculateIncomeRetirement;
+      definedRetirementBenefits.value = data.calculateIncomeRetirement;
       store.commit('common/setIncomeCalculationInput', {...dataFormIncomeCalculation.value})
       store.commit('common/setIncomeCalculationInputOld', {...dataFormIncomeCalculation.value})
 

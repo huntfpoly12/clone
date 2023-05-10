@@ -118,7 +118,7 @@
         </a-col>
         <div class="mb-10 wf-100 text-center">
           <button-basic text="퇴직소득세 계산" type="default" mode="contained" @onClick="handleCalculateIncomeRetirementTax"
-            :disabled="taxableRetirementBenefitsRef <= 0" />
+            :disabled="taxableRetirementBenefitsRef <= 0 || disableBtn" />
         </div>
 
         <a-col :span="12">
@@ -338,6 +338,7 @@ import { useStore } from "vuex";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import { IncomeRetirement } from "@/views/PA/PA4/PA420/types";
+import {FORM_STATE_TAB_3} from "@/views/PA/PA4/PA420/utils";
 
 const props = defineProps<{ dataDetail: IncomeRetirement }>()
 const store = useStore()
@@ -353,6 +354,7 @@ const isReqStatements1 = ref<boolean>(false)
 const isReqStatements2 = ref<boolean>(false)
 const variables: any = ref({})
 const retirementBenefits = ref(retirementBenefitsStore.value)
+const disableBtn = ref(false)
 
 const FORM_STATE_OLD = {
   calculationOfDeferredRetirementIncomeTax: {
@@ -517,7 +519,18 @@ function compareObjects(obj1: any, obj2: any) {
 }
 
 watch(formState.calculationOfDeferredRetirementIncomeTax.statements, (value) => {
-  formState.calculationOfDeferredRetirementIncomeTax.totalAmount = +value[0].accountDepositAmount + +value[1].accountDepositAmount
+  if (value[0] && value[1]) {
+    const isNotEmpty1 = compareObjects(value[0], FORM_STATE_TAB_3.calculationOfDeferredRetirementIncomeTax.statements[0])
+    const isNotEmpty2 = compareObjects(value[1], FORM_STATE_TAB_3.calculationOfDeferredRetirementIncomeTax.statements[1])
+    // if (!isNotEmpty1 && !isNotEmpty2) {
+    //   disableBtn.value = true
+    //   return
+    // }
+    console.log('isNotEmpty1', isNotEmpty1)
+    console.log('isNotEmpty2', isNotEmpty2)
+    // disableBtn.value = !(isNotEmpty1 || isNotEmpty2);
+    formState.calculationOfDeferredRetirementIncomeTax.totalAmount = +value[0].accountDepositAmount + +value[1].accountDepositAmount
+  }
 }, { deep: true })
 
 </script>
