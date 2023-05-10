@@ -359,7 +359,9 @@ export default defineComponent({
           })
       } else {
         const updates: any = {};
-        updates[`/${itemEditComment.value.key}`] = { ...itemEditComment.value, ...payload.value }
+        const payloadEdit = { ...itemEditComment.value, ...payload.value }
+        delete payloadEdit.key
+        updates[`/${itemEditComment.value.key}`] = payloadEdit
         update(chatListRef.value, updates).then(() => {
         }).catch(() => {
           console.log('eeeeeeeee');
@@ -399,8 +401,8 @@ export default defineComponent({
     })
 
     const editComment = (item: any) => {
-      itemOriginEdit.value = cloneDeep(item)
-      itemEditComment.value = {...item}
+      itemEditComment.value = {...item, files: !!item.files ? item.files : []}
+      itemOriginEdit.value = cloneDeep(itemEditComment.value)
       nextTick(() => {
         inputEditChat.value[0].resizeInput()
         inputEditChat.value[0].focus()
