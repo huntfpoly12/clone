@@ -19,7 +19,7 @@
         <DxColumn caption="등록일" data-field="registeredAt" :format="dateFormat" alignment="center" />
         <DxColumn caption="접수일" data-field="acceptedAt" :format="dateFormat" alignment="center" />
         <DxColumn caption="완료일" data-field="completedAt" :format="dateFormat" alignment="center" />
-        <DxColumn caption="접수번호" data-field="accedpedNumber" alignment="center" />
+        <DxColumn caption="접수번호" data-field="acceptedNumber" alignment="center" />
         <DxColumn caption="메모" data-field="memo" alignment="center" />
         <DxColumn caption="사업장가입신고서다운로드" cell-template="fileStorageId" alignment="center" css-class="label-custom"
           width="180px" />
