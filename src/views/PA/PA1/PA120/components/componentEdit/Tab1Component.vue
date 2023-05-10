@@ -8,14 +8,6 @@
           <div class="input-text">
             <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능"
               :disabled="true" />
-            <!-- <a-tooltip placement="top" class="custom-tooltip">
-              <template #title>
-                최초 저장된 이후 수정 불가.
-              </template>
-              <div style="text-align: center;">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
-              </div>
-            </a-tooltip> -->
           </div>
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
@@ -126,12 +118,12 @@
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-          <custom-item-select-box width="200px" v-model:valueInput="initFormStateTabPA120.department"
-            :arrSelect="arrDepartments"></custom-item-select-box>
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.department" :data="arrDepartments"
+            @updateArrSelect="(value: any) => arrDepartments = [...value]" width="200px" />
         </a-form-item>
         <a-form-item label="직위" label-align="right">
-          <custom-item-select-box width="200px" v-model:valueInput="initFormStateTabPA120.responsibility"
-            :arrSelect="arrResponsibility"></custom-item-select-box>
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.responsibility" :data="arrResponsibility"
+            @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
         </a-form-item>
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center">
@@ -179,8 +171,8 @@ export default defineComponent({
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
-    const arrDepartments = ref([]);
-    const arrResponsibility = ref([]);
+    const arrDepartments = ref<any[]>([]);
+    const arrResponsibility = ref<any[]>([]);
     const labelResidebId = ref('주민(외국인)번호 ');
     let formStateTab1 = reactive<any>({
       ...initFormStateTab1,
@@ -239,9 +231,10 @@ export default defineComponent({
 
     watch(resDepartments, (value: any) => {
       if (value) {
-        arrDepartments.value = value.getDepartments.map((val: any, index: any) => {
-          return { id: index, value: val.department };
-        });
+        // arrDepartments.value = value.getDepartments.map((val: any, index: any) => {
+        //   return { id: index, value: val.department };
+        // });
+        arrDepartments.value = value.getDepartments.map((item: any) => ({ value: item.department }))
       }
     });
 
@@ -257,9 +250,10 @@ export default defineComponent({
 
     watch(resResponsibility, (value: any) => {
       if (value) {
-        arrResponsibility.value = value.getResponsibilities.map((val: any, index: any) => {
-          return { id: index, value: val.responsibility };
-        });
+        // arrResponsibility.value = value.getResponsibilities.map((val: any, index: any) => {
+        //   return { id: index, value: val.responsibility };
+        // });
+        arrResponsibility.value = value.getResponsibilities.map((item: any) => ({ value: item.responsibility }))
       }
     });
     // get employee Information

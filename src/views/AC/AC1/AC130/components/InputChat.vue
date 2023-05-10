@@ -28,8 +28,8 @@
         </a-dropdown>
       </div>
       <div class="input-edit-chat-input-action-btn">
-        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()" :disable="disable"/>
-        <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()" :disable="disable"/>
+        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()" :disabled="disabled"/>
+        <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()" :disabled="disabled"/>
       </div>
     </div>
     <div v-if="filesUpload.length" class="input-edit-chat-input-files">
@@ -46,7 +46,7 @@
       </div>
     </div>
   </div>
-  <input v-show="false" ref="inputFile" type="file" accept="image/png, image/jpeg, image/jpg image/gif"
+  <input v-show="false" ref="inputFile" type="file"
     @change="uploadPreviewFile" />
 </template>
   
@@ -74,7 +74,7 @@ export default defineComponent({
       type: String,
       default: ''
     },
-    disable: {
+    disabled: {
       type: Boolean,
       default: false
     }
@@ -147,16 +147,16 @@ export default defineComponent({
     }
 
     const openFile = () => {
-      if(props.disable) return
+      if(props.disabled) return
       inputFile.value.click()
     }
 
     const uploadPreviewFile = async (e: any) => {
       const file = e.target.files[0]
-      const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
-      if (!isImage) {
-        notification('error', 'You can only upload png, jpg, jpeg, gif file!')
-      }
+      // const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
+      // if (!isImage) {
+      //   notification('error', 'You can only upload png, jpg, jpeg, gif file!')
+      // }
       const isLt10M = file.size / 1024 / 1024 <= 10;
       if (!isLt10M) {
         notification('error', 'Image must smaller than 10MB!')
@@ -165,17 +165,18 @@ export default defineComponent({
       if (isDuplicaseName) {
         notification('error', 'Duplicate image are not allowed!')
       }
-      if (!isImage || !isLt10M || isDuplicaseName) {
+      // if (!isImage || !isLt10M || isDuplicaseName) {
+      //   e.target.value = null
+      //   return
+      // }
+      if (!isLt10M || isDuplicaseName) {
         e.target.value = null
         return
-      }
-      const metadata = {
-        contentType: file.type
       }
       const url = await getBase64(file)
       filesUpload.value.push({
         file: file,
-        metadata: metadata,
+        contentType: file.type,
         url: url
       })
       e.target.value = null
@@ -191,12 +192,12 @@ export default defineComponent({
     }
 
     const removeFile = (index: number) => {
-      if(props.disable) return
+      if(props.disabled) return
       filesUpload.value.splice(index, 1)
     }
 
     const onSelectEmoji = (emoji: any) => {
-      if(props.disable) return
+      if(props.disabled) return
       textChat.value += emoji.i
       changeInput(inputChat.value)
     }
