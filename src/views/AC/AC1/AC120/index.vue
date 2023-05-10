@@ -137,9 +137,15 @@
                                 data.data.resolutionClassification == item.id)?.text }}
                         </template>
 
-                        <DxColumn caption="수입액" data-field="income" format="fixedPoint" width="75" />
+                        <DxColumn caption="수입액" cell-template="amountCustom1" width="75" />
+                        <template #amountCustom1="{ data }">
+                            {{  data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
+                        </template>
 
-                        <DxColumn caption="지출액" data-field="spending" format="fixedPoint" width="75" />
+                        <DxColumn caption="지출액" cell-template="amountCustom2" width="75" />
+                        <template #amountCustom2="{ data }">
+                            {{  data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
+                        </template>
 
                         <DxColumn caption="잔액" data-field="balance" width="75" format="fixedPoint" />
 
@@ -149,12 +155,12 @@
 
                         <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
                         <template #accountCode="{ data }">
-                            <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
+                            <account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
                         </template>
 
                         <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="170" />
                         <template #relationCode="{ data }">
-                            <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
+                            <account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
                         </template>
 
                         <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left"
@@ -356,9 +362,17 @@ export default defineComponent({
             dataApi.value = value.getAccountingDocuments?.accountingDocuments
             await dataApi.value.map((item: any, index: number) => {
                 if (index == 0) {
-                    item.balance = lastBalance.value + item.income - item.spending
+                    if (item.resolutionClassification == 1) {
+                        item.balance = lastBalance.value + item.amount
+                    } else if (item.resolutionClassification == 2) {
+                        item.balance = lastBalance.value - item.amount
+                    }
                 } else {
-                    item.balance = item.income - item.spending
+                    if (item.resolutionClassification == 1) {
+                        item.balance = item.amount
+                    } else if (item.resolutionClassification == 2) {
+                        item.balance =  -item.amount
+                    }
                 }
 
                 const totalBefore: any = ref(0)
@@ -606,9 +620,19 @@ export default defineComponent({
             let total = 0;
             dataSource.value.forEach((item: any, index: number) => {
                 if (index == 0) {
-                    total += lastBalance.value + (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
+                    if (item.resolutionClassification == 1) {
+                        total += lastBalance.value + (item.amount ? item.amount : 0)
+                    } else if (item.resolutionClassification == 2) {
+                        total += lastBalance.value - (item.amount ? item.amount : 0)
+                    }
+                    // total += lastBalance.value + (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
                 } else {
-                    total += (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
+                    if (item.resolutionClassification == 1) {
+                        total += (item.amount ? item.amount : 0)
+                    } else if (item.resolutionClassification == 2) {
+                        total += -(item.amount ? item.amount : 0)
+                    }
+                    // total += (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
                 }
             });
             return ` 예상 잔액 <span>[${filters.formatCurrency(total)}]</span>`
