@@ -252,7 +252,7 @@ export default defineComponent({
     const totalDeduction = ref(0);
     const subPayment = computed(() => totalPayItemTaxAll.value - totalDeduction.value);
 
-    const rangeDate = ref<RangeValue>();
+    const rangeDate = ref<RangeValue>([null, null]);
     const store = useStore();
     const dataConfigPayItems = ref<any>([]);
     const dataConfigDeduction = ref<any>([]);
@@ -423,6 +423,8 @@ export default defineComponent({
           let ReductionStartDate = convertToDate(data.employeementReductionStartDate);
           let ReductionFinishDate = convertToDate(data.employeementReductionFinishDate);
           rangeDate.value = [ReductionStartDate, ReductionFinishDate];
+        }else {
+          rangeDate.value = [null, null];
         }
         if (data?.employeementReductionRatePercent) {
           editRowData.employeementReductionRatePercent = data.employeementReductionRatePercent;
@@ -607,7 +609,7 @@ export default defineComponent({
         delete initFormTab2PA120.value.employeementReductionInput;
         delete initFormTab2PA120.value.employeementReductionStartDate;
         delete initFormTab2PA120.value.employeementReductionFinishDate;
-        rangeDate.value = undefined;
+        rangeDate.value = [null, null];
       }
     };
 
@@ -627,7 +629,6 @@ export default defineComponent({
     watch(
       () => initFormTab2PA120.value.payItems,
       (newVal) => {
-        console.log(`output->countConfigPayItems.value111`, countConfigPayItems.value)
         if (countConfigPayItems.value < 1) {
           countConfigPayItems.value++;
           return;
@@ -647,7 +648,6 @@ export default defineComponent({
     }
     watchEffect(() => {
       const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
-      console.log(`output->countRestFirstRun.value`, countRestFirstRun.value)
       if (countRestFirstRun.value < 1) {
         countRestFirstRun.value++;
         return;
@@ -711,7 +711,8 @@ export default defineComponent({
       store.state.common.isAddFormErrorPA120 = false;
     });
     // change row data  globalYear.value
-    watch(() => props.idRowEdit, async () => {
+    watch(() => props.idRowEdit, async (value) => {
+      employeeId.value = value;
       configDeductionTrigger.value = true;
       await refetchConfigDeduction();
       configPayItemTrigger.value = true;

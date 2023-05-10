@@ -249,7 +249,7 @@ export default defineComponent({
     })
     onDone(() => {
       emit('closePopup', false)
-      notification('success', '업데이트 완료!')
+      notification('success', Message.getMessage('COMMON', '106').message)
       emit('upDateData');
     })
     const actionUpdated = (e: any) => {
@@ -302,8 +302,8 @@ export default defineComponent({
       idAction.value = data
       modalStatusDelete.value = true
     }
-    const statusComfirm = (res: any) => {
-      if (res == true && formState.relation != 0)
+    const statusComfirm = () => {
+      if (formState.relation != 0)
         actionDelete({
           companyId: companyId,
           imputedYear: globalYear.value,

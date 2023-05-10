@@ -7,7 +7,7 @@
         <a-spin :spinning="loading" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-            id="gridContainer">
+            id="gridContainer" noDataText="내역이 없습니다">
             <DxScrolling mode="infinite" />
             <DxToolbar>
               <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -16,7 +16,7 @@
               <DxButton icon="plus" @click="openAddDependent" />
             </template>
             <DxColumn alignment="left" caption="연말 관계" data-field="relation" cell-template="relationChange" />
-            <DxColumn alignment="left" caption="성명" data-field="name"/>
+            <DxColumn alignment="left" caption="성명" data-field="name" />
             <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
             <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
             <DxColumn alignment="left" cell-template="ageChange" header-cell-template="age-header" />
@@ -78,7 +78,7 @@
             <template #maternityAdoptionChange="{ data: cellData }">
               <div v-if="cellData.value">{{ maternityAndAdoption(cellData.value) }}</div>
             </template>
-          <!-- <template #consignmentRelationshipChange="{ data: cellData }">
+            <!-- <template #consignmentRelationshipChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
                       </template> -->
             <template #householderChange="{ data: cellData }">
@@ -290,11 +290,12 @@ export default defineComponent({
     const modalAddNewDependent = ref<boolean>(false);
     const modalEditStatus = ref<boolean>(false);
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
+    const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120)
 
     const originDataDetail = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
-      employeeId: ref(props.employeeId).value,
+      employeeId: initFormStateTabPA120.value.employeeId,
     });
     const { refetch, result, loading } = useQuery(
       queries.getEmployeeWage,
@@ -311,7 +312,7 @@ export default defineComponent({
     const singleParentSummary = ref();
     const maternityAdoptionSummary = ref();
     const editForm = ref();
-    const idRowEdit = ref(props.employeeId);
+    const idRowEdit = ref(initFormStateTabPA120.value.employeeId);
     const newForm = ref(0);
     const relationAll = ref();
     watch(result, (value) => {

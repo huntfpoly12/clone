@@ -1,11 +1,12 @@
 <template>
   <a-config-provider :locale="locale">
     <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
-      <div class="form-upload-ac110" >
+      <div class="form-upload-ac110">
         <div ref="elementUpload" class="upload-pewview-img-ac-110">
-          <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof || disabled" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
-            @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
-            accept="image/png, image/jpeg, image/jpg image/gif">
+          <a-upload list-type="picture-card"
+            :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof || disabled" :multiple="multiple"
+            v-model:file-list="fileList" @preview="handlePreview" @change="changeFile" :customRequest="customRequest"
+            :before-upload="beforeUpload" @remove="remove" accept="image/png, image/jpeg, image/jpg image/gif">
             <div v-if="fileList.length <= limit">
               <div class="ant-btn-upload">
                 <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
@@ -15,16 +16,14 @@
               </div>
             </div>
           </a-upload>
-          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-            <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
-          </a-modal>
         </div>
       </div>
     </a-spin>
   </a-config-provider>
   <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
-    :title="Message.getMessage('COMMON', '401').message" content="" :okText="Message.getMessage('COMMON', '401').yes" :cancelText="Message.getMessage('COMMON', '401').no"
-    @checkConfirm="handleDelete" />
+    :title="Message.getMessage('COMMON', '401').message" content="" :okText="Message.getMessage('COMMON', '401').yes"
+    :cancelText="Message.getMessage('COMMON', '401').no" @checkConfirm="handleDelete" />
+  <a-image :preview="{ visible: previewVisible, onVisibleChange: setVisible }" style="width: 100%; display: none" :src="previewImage" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from "vue";
@@ -122,7 +121,7 @@ export default defineComponent({
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorAddBankbookDetailProof(e => {
-      const index = listFileStorageId.value.length-1
+      const index = listFileStorageId.value.length - 1
       listFileStorageId.value[index].status = 'error'
       listFileStorageId.value[index].error = e.message
       listFileStorageId.value[index].response = undefined
@@ -176,7 +175,7 @@ export default defineComponent({
       if (!!value?.bankbookDetailId && !!value?.bankbookDetailDate) {
         triggerBankbookDetailProofs.value = true
       }
-    },{
+    }, {
       deep: true,
     })
 
@@ -195,6 +194,11 @@ export default defineComponent({
       previewImage.value = file.url || file.preview;
       previewVisible.value = true;
     };
+
+    const setVisible = (value: boolean) => {
+      previewVisible.value = value;
+    };
+
     const handleCancel = () => {
       previewVisible.value = false;
     };
@@ -246,18 +250,18 @@ export default defineComponent({
       })
     }
     const remove = (e: any) => {
-      if(e.status === 'error') return true
+      if (e.status === 'error') return true
       indexImgRemove.value = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
       isModalDelete.value = true
       return false
     }
 
     const handleDelete = (status: boolean) => {
-      if(status) {
+      if (status) {
         if (!listFileStorageId.value[indexImgRemove.value].fileStorageId) {
           isModalDelete.value = false
           return
-        } 
+        }
         removeBankbookDetailProof({
           ...props.payLoadProofs,
           fileStorageId: listFileStorageId.value[indexImgRemove.value].fileStorageId
@@ -271,6 +275,7 @@ export default defineComponent({
       handlePreview,
       beforeUpload,
       previewVisible,
+      setVisible,
       fileList,
       handleCancel,
       previewImage,
@@ -283,7 +288,7 @@ export default defineComponent({
       loadingRemoveBankbookDetailProof,
       isModalDelete,
       handleDelete,
-      Message
+      Message,
     }
   }
 })
@@ -292,14 +297,17 @@ export default defineComponent({
 <style lang="scss">
 .upload-pewview-img-ac-110 {
   padding: 14px;
-  .ant-upload-list  {
+
+  .ant-upload-list {
     display: grid !important;
     grid-template-columns: auto auto !important;
     gap: 8px;
+
     &::before {
       display: none;
     }
   }
+
   .ant-upload-list-picture-card-container {
     width: 120px;
     height: 120px;
@@ -316,9 +324,11 @@ export default defineComponent({
     border-radius: 15px;
     margin: 0;
   }
+
   .ant-upload.ant-upload-select-picture-card {
     grid-row-start: 1;
   }
+
   .ant-btn-upload {
     display: flex;
     flex-direction: column;

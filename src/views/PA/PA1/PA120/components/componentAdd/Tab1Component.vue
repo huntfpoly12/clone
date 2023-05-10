@@ -6,14 +6,14 @@
           <div class="input-text">
             <number-box width="200px" :min="1" :max="9999999999" :disabled="true"
               v-model:valueInput="initFormStateTabPA120.employeeId"/>
-            <a-tooltip placement="top" class="custom-tooltip">
+            <!-- <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 최초 저장된 이후 수정 불가.
               </template>
               <div style="text-align: center;">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
-            </a-tooltip>
+            </a-tooltip> -->
           </div>
         </a-form-item>
 
@@ -127,6 +127,15 @@
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.department" :data="arrDepartments"
+            @updateArrSelect="(value: any) => arrDepartments = [...value]" width="200px" />
+        </a-form-item>
+        <a-form-item label="직위" label-align="right">
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.responsibility" :data="arrResponsibility"
+            @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
+        </a-form-item>
+        <!-- <a-form-item label="부서" label-align="right">
+          iii{{ initFormStateTabPA120.department }}
           <custom-item-select-box width="200px" :disabled="notDatasourcePA120"
             v-model:valueInput="initFormStateTabPA120.department" :arrSelect="arrDepartments"></custom-item-select-box>
         </a-form-item>
@@ -134,7 +143,7 @@
           <custom-item-select-box width="200px" :disabled="notDatasourcePA120"
             v-model:valueInput="initFormStateTabPA120.responsibility" :id="'pa-120-2'"
             :arrSelect="arrResponsibility"></custom-item-select-box>
-        </a-form-item>
+        </a-form-item> -->
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center;">
             <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save"
@@ -172,8 +181,8 @@ export default defineComponent({
     const store = useStore();
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
-    const arrDepartments = ref([]);
-    const arrResponsibility = ref([]);
+    const arrDepartments = ref(<any[]>[]);
+    const arrResponsibility = ref(<any[]>[]);
     const labelResidebId = ref("주민(외국인)번호 ");
     const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120)
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
@@ -234,9 +243,7 @@ export default defineComponent({
 
     watch(resDepartments, (value) => {
       if (value) {
-        arrDepartments.value = value.getDepartments.map((val: any, index: any) => {
-          return { id: index, value: val.department }
-        });
+        arrDepartments.value = value.getDepartments.map((item: any) => ({ value: item.department }))
       }
     });
 
@@ -255,9 +262,7 @@ export default defineComponent({
 
     watch(resResponsibility, (value) => {
       if (value) {
-        arrResponsibility.value = value.getResponsibilities.map((val: any, index: any) => {
-          return { id: index, value: val.responsibility }
-        });
+        arrResponsibility.value = value.getResponsibilities.map((item: any) => ({ value: item.responsibility }))
       }
     });
     const { mutate: mutateEdit, onError: onErrEdit, onDone: onDoneEdit } = useMutation(mutations.updateEmployeeWage);

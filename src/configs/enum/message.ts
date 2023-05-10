@@ -143,6 +143,10 @@ export class Message extends BaseType {
     public static AC620 = new Message({
         '001': { "message" : "주민등록번호 중복체크를 먼저 하세요."}, //Please check the duplicate ID number first
         '002': { "message" : "사업자(고유)등록번호 중복체크 먼저 하세요."}, //Please check the duplicate Business number first
+        '003': { "message" : "사용할 수 있는 주민등록번호 입니다."}, // This is the resident registration number you can use
+        '004': { "message" : "사용할 수 없는 주민등록번호 입니다."}, // This is the resident registration number you can not use
+        '005': { "message" : "사용할 수 있는 사업자(고유)등록번호 입니다."}, // This is the business registration number you can use 
+        '006': { "message" : "사용할 수 없는 사업자(고유)등록번호 입니다."}, // This is the business registration number you can not use  
     });  
   
     private static _ = Message.closeEnum();

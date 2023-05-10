@@ -15,8 +15,7 @@
         </a-form-item>
         <a-form-item label="지급일" class="label-required">
           <div class="d-flex-center">
-            <number-box min="1" max="31" :required="true" width="150px"
-                        v-model:valueInput="dataDetail.paymentDay" disabled="true"/>
+            <date-time-box-custom width="150px" disabled v-model:valueDate="paymentDay"/>
             <info-tool-tip>지급일은 저장 후 수정불가</info-tool-tip>
           </div>
         </a-form-item>
@@ -142,9 +141,7 @@
           </div>
         </DxFieldCustom>
         <DxFieldCustom label="지급일" class="field-custom" required>
-          <date-time-box-custom :required="false" width="150px"
-                                v-model:valueDate="formState.lastRetiredYearsOfService.paymentDate"
-                                ref="lastRetiredYearsOfServicePaymentDate"/>
+          <date-time-box-custom disabled width="150px" v-model:valueDate="paymentDay"/>
         </DxFieldCustom>
         <DxFieldCustom label="제외일수" class="field-custom" required>
           <div class="d-flex-center">
@@ -237,6 +234,7 @@ import {useStore} from 'vuex';
 import {IncomeRetirement} from "@/views/PA/PA4/PA420/types";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
+import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
 
 const props = defineProps<{ actionNextStep: number, dataDetail: IncomeRetirement }>()
 const emit = defineEmits(['closePopup', 'nextPage'])
@@ -281,11 +279,11 @@ const FORM_STATE_OLD = cloneDeep({
     retirementReason: props.dataDetail.specification?.retirementReason,
   }
 })
+const store = useStore();
+
 const formState = reactive(cloneDeep(FORM_STATE_OLD))
 // watch FORM_STATE_OLD for changes to the formState
-watch(FORM_STATE_OLD, () => {
-  Object.assign(formState, cloneDeep(FORM_STATE_OLD))
-})
+store.commit('common/setIncomeCalculationInputOld', cloneDeep(FORM_STATE_OLD.incomeCalculationInput))
 
 const retirementReason = ref(props.dataDetail.specification?.retirementReason)
 const finishDateRetirement = computed(() => props.dataDetail.retirementType === 1 ? formState.lastRetiredYearsOfService.settlementFinishDate : null)
@@ -295,18 +293,19 @@ const prevSettlementStartDate = ref()
 const prevSettlementFinishDate = ref()
 const lastSettlementStartDate = ref()
 const lastSettlementFinishDate = ref()
-const lastRetiredYearsOfServicePaymentDate = ref()
+// const lastRetiredYearsOfServicePaymentDate = ref()
 const incomeCalculationInputSettlementStartDate = ref()
 const incomeCalculationInputSettlementFinishDate = ref()
 const prevRetiredYearsOfServicePaymentDate = ref()
 
-const store = useStore();
 const employee = computed(() => store.getters['common/getEmployeeEdit']);
 const ProcessKey = computed(() => store.getters['common/getSelectMonthColumn'])
+const incomeCalculationInputCur = computed(() => store.getters['common/getIncomeCalculationInput'])
+const incomeCalculationInputOld = computed(() => store.getters['common/getIncomeCalculationInputOld'])
 // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
 let attributionDate = ref(`${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}`)
 let paymentYearAndMonth = ref(`${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}`)
-
+const paymentDay = computed(() => `${paymentYearAndMonth.value}${props.dataDetail.paymentDay}`)
 const dataPrevRetiredYearsOfService = computed(() => {
   if (formState.prevRetiredYearsOfService.settlementStartDate && formState.prevRetiredYearsOfService.settlementFinishDate) {
       new Date((formState.prevRetiredYearsOfService.settlementFinishDate).toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
@@ -369,6 +368,12 @@ const isChangeForm = computed(() => {
     paymentYearAndMonth.value != `${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}` ||
     interimPaymentTab1.value !== interimPaymentTab1Old ||
     retirementReason.value !== props.dataDetail.specification?.retirementReason
+})
+watch(() => paymentYearAndMonth.value, (val) => {
+  store.commit('common/setSelectMonthColumn', {
+    paymentYear: parseInt(val.toString().slice(0, 4)),
+    paymentMonth: parseInt(val.toString().slice(4, 6))
+  })
 })
 watchEffect(() => {
   store.commit('common/setIsChangeForm', {tab1: isChangeForm.value})
@@ -459,10 +464,6 @@ const submitForm = (e: any) => {
   } else {
     prevRetiredYearsOfServicePaymentDate.value.validate(false)
   }
-  if (!formState.lastRetiredYearsOfService.paymentDate) {
-    lastRetiredYearsOfServicePaymentDate.value.validate(true)
-    dtValidate = false
-  }
   if (!formState.incomeCalculationInput.settlementStartDate) {
     incomeCalculationInputSettlementStartDate.value.validate(true)
     dtValidate = false
@@ -480,6 +481,12 @@ const submitForm = (e: any) => {
   } else {
     const {inputFormTab1, incomeCalculationInput, ...taxCalculationInput} = formState
     store.commit('common/setIncomeCalculationInput', incomeCalculationInput)
+    if (!isEqual( {...incomeCalculationInputCur.value, ...incomeCalculationInput}, incomeCalculationInputOld.value)) {
+      store.commit('common/setIsDisableBtnTab2', true)
+      store.commit('common/setIncomeCalculationInputOld', {...incomeCalculationInputCur.value, ...incomeCalculationInput})
+    } else {
+      store.commit('common/setIsDisableBtnTab2', false)
+    }
     store.commit('common/setTaxCalculationInput', {
       ...taxCalculationInput,
       prevRetirementBenefitStatus: {

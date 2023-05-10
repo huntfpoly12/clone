@@ -100,14 +100,13 @@ export default defineComponent({
     const month1: any = ref<number>()
     const processKeyPA620 = computed(() => store.state.common.processKeyPA620)
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
-    const modalCopy = ref(false)
+    let day = computed(() => store.getters['common/paymentDayPA620']);
+    const modalCopy = ref(false);
     const paymentDayPA620 = computed({
       get() {
-        let day = store.getters['common/paymentDayPA620'];
         const daysInMonth = dayjs(`${month2.value}`).daysInMonth();
-        let newDay = day > daysInMonth || day == 0 ? daysInMonth : day;
+        let newDay = day.value > daysInMonth || day.value == 0 ? daysInMonth : day.value;
         let date = `${month2.value}${newDay}`;
-        store.commit('common/paymentDayPA720', newDay);
         return dayjs(date);
       },
       set(value) {
@@ -136,7 +135,6 @@ export default defineComponent({
         yearMonth = `${globalYear.value}${filters.formatMonth(val)}`;
       }
       month2.value = yearMonth;
-      console.log(`output->filters.formatMonth(val)`,filters.formatMonth(val))
     });
     //-------------------------action copy data--------------------------------
     const {
@@ -219,7 +217,9 @@ export default defineComponent({
         paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
       }
       store.commit('common/processKeyPA620', dateCustom);
-      emit("dataAddIncomeProcess", dateCustom)
+      emit("dataAddIncomeProcess", dateCustom);
+      let day = paymentDayPA620.value.format('YYYYMMDD').toString().slice(-2);
+      store.commit('common/paymentDayPA620', +day);
     }
     //------------------fn submit add new------------------------
     const onSubmit = () => {

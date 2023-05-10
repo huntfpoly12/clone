@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex resident-ctn">
+  <div class="d-flex resident-ctn" :style="{width:widthCustom}">
     <DxTextBox id="resident-id" ref="residentRef" :width="widthCustom" value-change-event="input"
       :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
       @input="updateValue(value)" :mask="mask" :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn"
@@ -180,15 +180,23 @@ export default defineComponent({
       }
     }
     const onFocusIn = (e: any) => {
+      let isValid = validatorRef.value?.instance._validationInfo.result;
+      let msgDefault = residentRef.value.instance._$validationMessage;
+      if (isValid?.brokenRule?.type == 'custom') {
+        errorCurrentType.value = 2;
+        msgDefault[0].style.display = 'none';
+        residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
+      }
       const input = e.event.target;
       setTimeout(() => {
         input.selectionStart = input.selectionEnd = 0;
       }, 50);
     }
-    onMounted(() => {
-      let ele = document.getElementsByClassName('resident-ctn')[0] as HTMLElement;
-      ele.style.width = widthCustom.value;
-    })
+    // onMounted(() => {
+    //   let ele = validatorRef.value?.instance?._$element as HTMLElement;
+    //   console.log(`output->ele`,ele, validatorRef.value?.instance)
+    //   // ele.style.width = widthCustom.value;
+    // })
     return {
       updateValue,
       value,

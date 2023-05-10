@@ -155,6 +155,7 @@ export default defineComponent({
     const messageSave = Message.getMessage('COMMON', '106').message;
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
     const labelResidebId = ref(formState.foreigner ? '외국인번호 유효성' : '주민등록번호')
+    const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120)
 
     const setModalVisible = () => {
       if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
@@ -242,21 +243,19 @@ export default defineComponent({
 
     const createNewEmployeeWageDependent = (e: any) => {
       var res = e.validationGroup.validate();
-      if (props.employeeId) {
-        if (!res.isValid) {
-          res.brokenRules[0].validator.focus();
-        } else {
-          let dataNew = {
-            companyId: companyId,
-            employeeId: ref(props.employeeId).value,
-            imputedYear: globalYear.value,
-            input: {
-              ...formState,
-              index: ref(props.dataSourceLen).value + 1,
-            },
-          };
-          createEmployeeWageDependent(dataNew);
-        }
+      if (!res.isValid) {
+        res.brokenRules[0].validator.focus();
+      } else {
+        let dataNew = {
+          companyId: companyId,
+          employeeId: initFormStateTabPA120.value.employeeId,
+          imputedYear: globalYear.value,
+          input: {
+            ...formState,
+            index: ref(props.dataSourceLen).value + 1,
+          },
+        };
+        createEmployeeWageDependent(dataNew);
       }
     };
     watch(() => formState.residentId, (newVal) => {
@@ -304,6 +303,7 @@ export default defineComponent({
       itemSelected,
       consignDisabled,
       onChange,
+      initFormStateTabPA120,
     };
   },
 });

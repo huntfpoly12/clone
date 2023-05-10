@@ -30,6 +30,7 @@ export const initialStateFormAdd = {
   summary: '',
   fundingSource: 3,
   letterOfApprovalType: null,
+  accountCode: null,
 };
 export const initialStateFormData = {
   bankbookId: null,
@@ -40,7 +41,8 @@ export const initialStateFormData = {
   fundingSource: 3,
   letterOfApprovalType: null,
   theOrder: 1,
-  resolutionClassification: null,
+  resolutionClassification: 1,
+  transactionDetailDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
   // resolutionDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
   // transactionDetailDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
   causeActionDate: null,
@@ -62,7 +64,7 @@ export const initialStateFormData = {
   statementOfGoodsItems: null,
   // goodsCount: null,
 
-  accountingDocumentId: 'AC120',
+  // accountingDocumentId: 'AC120',
 }
 export const dataDemoMain = [
   {

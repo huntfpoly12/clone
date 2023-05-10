@@ -311,11 +311,10 @@ const trigger = ref<boolean>(true);
 const modalCopy = ref<boolean>(false);
 const dataModalCopy: any = ref()
 // const selectMonthColumn = computed(() => store.state.common.monthSelectedPA420);
-
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const paymentDate = computed(() => store.getters['common/getPaymentDay'])
 let dataCustomRes: any = ref([])
-const showMonth = (month: number) => (month > 3 && globalYear.value > 2022) || globalYear.value > 2023
+// const showMonth = (month: number) => (month > 3 && globalYear.value > 2022) || globalYear.value > 2023
 // ================GRAPQL==============================================
 
 // API QUERY TABLE BIG
@@ -434,7 +433,7 @@ const createdDone = () => {
   refetchData()
 }
 const addMonth = (month: number) => {
-  store.commit('common/setSelectMonthColumn', {
+  store.commit('common/setSelectMonthColumnOld', {
     imputedMonth: month,
     imputedYear: globalYear.value,
     paymentYear: globalYear.value,

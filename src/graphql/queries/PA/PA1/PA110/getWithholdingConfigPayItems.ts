@@ -29,7 +29,7 @@ export default gql`
       updatedBy
       ip
       active
-      editable
+      useChangable
     }
   }
 `;

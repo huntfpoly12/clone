@@ -10,15 +10,14 @@
         </a-form-item>
         <a-form-item label="귀속/지급연월">
           <div class="d-flex-center">
-            <month-picker-box-custom v-model:valueDate="attributionDate" text="귀"
-                                     bgColor="gray"></month-picker-box-custom>
-            <month-picker-box-custom v-model:valueDate="paymentYearAndMonth" text="지"></month-picker-box-custom>
+            <month-picker-box-custom v-model:valueDate="attributionDate" text="귀" bgColor="gray" disabled/>
+            <month-picker-box-custom v-model:valueDate="paymentYearAndMonth" text="지" disabled/>
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="label-required">
           <div class="d-flex-center">
-            <number-box min="1" max="31" :required="true" width="150px"
-                        v-model:valueInput="paymentDay" is-format/>
+            <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+                                  v-model:valueDate="paymentDay"/>
             <info-tool-tip class="ml-5">
               지급일은 저장 후 수정불가
             </info-tool-tip>
@@ -32,8 +31,8 @@
             <employ-select :arrayValue="employeeList" :required="true"
                            v-model:valueEmploy="formState.inputFormTab1.employeeId" width="300px"/>
             <info-tool-tip class="ml-5">
-                  <div>대상: 사원과 일용직사</div>
-                  <div>원 중 퇴직금 대상자.</div>
+              <div>대상: 사원과 일용직사</div>
+              <div>원 중 퇴직금 대상자.</div>
             </info-tool-tip>
           </div>
         </a-form-item>
@@ -170,9 +169,8 @@
           </div>
         </DxFieldCustom>
         <DxFieldCustom label="지급일" class="field-custom" required>
-          <date-time-box-custom :required="false" width="150px"
-                                v-model:valueDate="formState.lastRetiredYearsOfService.paymentDate"
-                                ref="lastRetiredYearsOfServicePaymentDate"/>
+          <date-time-box-custom :required="false" disabled width="150px"
+                                v-model:valueDate="paymentDay"/>
         </DxFieldCustom>
         <DxFieldCustom label="제외일수" class="field-custom" required>
           <div class="d-flex-center">
@@ -280,10 +278,13 @@ import isEqual from "lodash/isEqual";
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420";
 import {companyId} from "@/helpers/commonFunction";
+import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
+
 enum EmployeeWageType {
   WAGE = 10,
   WAGEDaily = 20,
 }
+
 interface Props {
   retirementIncome: EmployeeWageType,
   actionNextStep: number,
@@ -306,7 +307,7 @@ const prevSettlementStartDate = ref()
 const prevSettlementFinishDate = ref()
 const lastSettlementStartDate = ref()
 const lastSettlementFinishDate = ref()
-const lastRetiredYearsOfServicePaymentDate = ref()
+// const lastRetiredYearsOfServicePaymentDate = ref()
 const incomeCalculationInputSettlementStartDate = ref()
 const incomeCalculationInputSettlementFinishDate = ref()
 const prevRetiredYearsOfServicePaymentDate = ref()
@@ -317,7 +318,11 @@ const ProcessKey = computed(() => store.getters['common/getSelectMonthColumn'])
 let attributionDate = ref(`${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}`)
 let paymentYearAndMonth = ref(`${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}`)
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
+const incomeCalculationInputCur = computed(() => store.getters['common/getIncomeCalculationInput'])
+const incomeCalculationInputOld = computed(() => store.getters['common/getIncomeCalculationInputOld'])
 
+const startDate = computed(() => dayjs(`${paymentYearAndMonth.value}`).startOf('month').toDate());
+const finishDate = computed(() => dayjs(`${paymentYearAndMonth.value}`).endOf('month').toDate());
 // get employee list
 const {
   result: resultEmployee
@@ -330,7 +335,7 @@ const {
   fetchPolicy: "no-cache",
 }));
 const employeeList = computed(() => {
-  if (!resultEmployee.value)  return []
+  if (!resultEmployee.value) return []
   if (props.retirementIncome === EmployeeWageType.WAGE) return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWages
   return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWageDailies
 })
@@ -340,7 +345,7 @@ const validatePreRetirementBenefitStatus = computed(() => {
     +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits > 0 ||
     +formState.prevRetirementBenefitStatus.taxableRetirementBenefits > 0
 })
-const taxableRetirementBenefits = computed(() => +formState.prevRetirementBenefitStatus.retirementBenefits - +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits )
+const taxableRetirementBenefits = computed(() => +formState.prevRetirementBenefitStatus.retirementBenefits - +formState.prevRetirementBenefitStatus.nonTaxableRetirementBenefits)
 const retirementReasonOld = () => {
   if (props.retirementType === 1 && formState.inputFormTab1.executive) {
     return 4
@@ -397,9 +402,8 @@ const dataSettlement = computed(() => {
   }
 })
 const finishDateRetirement = computed(() => props.retirementType === 1 ? formState.lastRetiredYearsOfService.settlementFinishDate : null)
-const paymentDayOld = store.getters['common/getPaymentDay']
-const paymentDay = ref(store.getters['common/getPaymentDay'])
-
+const paymentDayOld = Number(`${paymentYearAndMonth.value}${store.getters['common/getPaymentDay']}`)
+const paymentDay = ref(Number(`${paymentYearAndMonth.value}${store.getters['common/getPaymentDay']}`))
 const formRef = ref()
 // =============== WATCH ==================================
 const isChangeForm = computed(() => {
@@ -412,6 +416,9 @@ const isChangeForm = computed(() => {
     paymentDay.value != paymentDayOld ||
     retirementReason.value !== retirementReasonOld()
 })
+// watchEffect(() => {
+//   formState.lastRetiredYearsOfService.paymentDate = paymentDay.value
+// })
 watchEffect(() => {
   store.commit('common/setIsChangeForm', {tab1: isChangeForm.value})
 })
@@ -438,16 +445,6 @@ watch(interimPaymentTab1, (value) => {
     formState.incomeCalculationInput.settlementStartDate = cloneDeep(joinedAt.value)
   }
 })
-
-watch(() => formState.prevRetiredYearsOfService.settlementStartDate, (value: any) => {
-  if (value) {
-
-    formState.incomeCalculationInput.settlementStartDate = value
-    if (+value >= +formState.prevRetiredYearsOfService.settlementFinishDate) {
-      formState.prevRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
-    }
-  }
-});
 watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: any) => {
   if (value && +value > +formState.lastRetiredYearsOfService.settlementStartDate) {
     formState.lastRetiredYearsOfService.settlementStartDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
@@ -482,6 +479,12 @@ watch(() => props.actionNextStep, () => {
   (document.getElementById("btn-next-step") as HTMLInputElement).click();
 });
 
+watch(() => paymentYearAndMonth.value, (val) => {
+  store.commit('common/setSelectMonthColumn', {
+    paymentYear: parseInt(val.toString().slice(0, 4)),
+    paymentMonth: parseInt(val.toString().slice(4, 6))
+  })
+})
 // =============== FUNCTION ================================
 const openNewTab = () => {
   window.open('pa-120')
@@ -520,10 +523,6 @@ const submitForm = (e: any) => {
   } else {
     prevRetiredYearsOfServicePaymentDate.value.validate(false)
   }
-  if (!formState.lastRetiredYearsOfService.paymentDate) {
-    lastRetiredYearsOfServicePaymentDate.value.validate(true)
-    dtValidate = false
-  }
   if (!formState.incomeCalculationInput.settlementStartDate) {
     incomeCalculationInputSettlementStartDate.value.validate(true)
     dtValidate = false
@@ -540,14 +539,21 @@ const submitForm = (e: any) => {
   } else if (!dtValidate) {
     dtValidate = true
   } else {
-    console.log('formState', formState)
     const {inputFormTab1, incomeCalculationInput, ...taxCalculationInput} = formState
     store.commit('common/setIncomeCalculationInput', incomeCalculationInput)
+    if (!isEqual({...incomeCalculationInputCur.value, ...incomeCalculationInput}, incomeCalculationInputOld.value)) {
+      store.commit('common/setIsDisableBtnTab2', true)
+      store.commit('common/setIncomeCalculationInputOld', {...incomeCalculationInputCur.value, ...incomeCalculationInput})
+    }
     store.commit('common/setTaxCalculationInput', {
       ...taxCalculationInput,
       prevRetirementBenefitStatus: {
         ...taxCalculationInput.prevRetirementBenefitStatus,
         taxableRetirementBenefits: taxableRetirementBenefits.value
+      },
+      lastRetiredYearsOfService: {
+        ...taxCalculationInput.lastRetiredYearsOfService,
+        paymentDate: paymentDay
       }
     })
     store.commit('common/setIsDisableBtnTab1', false)
@@ -555,10 +561,9 @@ const submitForm = (e: any) => {
       ...inputFormTab1,
       retirementType: props.retirementType,
       retirementReason: retirementReason.value,
-      paymentDay: paymentDay.value
+      paymentDay: Number(dayjs(String(paymentDay.value)).format('DD'))
     })
     store.commit('common/setInterimPaymentTab1', interimPaymentTab1.value)
-    // store.commit('common/setIsDisableBtnTab2', true)
     emit('nextPage', true)
   }
 }

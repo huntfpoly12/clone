@@ -69,7 +69,6 @@ import {computed, ref, watch} from 'vue'
 import {useApolloClient} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import {companyId} from "@/helpers/commonFunction"
-import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import {useStore} from "vuex";
 
@@ -93,10 +92,7 @@ const dataIncomeRetirement = ref()
 const store = useStore()
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
 
-const dataFormIncomeCalculation = ref<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
-const dataFormOld = ref<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
-const isChangeForm = computed(() => !isEqual(dataFormIncomeCalculation.value, dataFormOld.value))
-
+const dataFormIncomeCalculation = ref({...store.getters['common/getIncomeCalculationInput']})
 
 const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
 const emptyForm = computed(() => {
@@ -105,8 +101,14 @@ const emptyForm = computed(() => {
 store.commit('common/setIsDisableBtnTab2', emptyForm.value)
 
 // watch isChangeForm to set value to store
-watch(isChangeForm, (value) => {
-  store.commit('common/setIsChangeForm', {tab2: value})
+watch(() => dataFormIncomeCalculation.value, (value) => {
+  if (isEqual(value, incomeCalculationInput.value)){
+    store.commit('common/setIsChangeForm', {tab2: true})
+    store.commit('common/setIsDisableBtnTab2', false)
+  } else {
+    store.commit('common/setIsChangeForm', {tab2: false})
+    store.commit('common/setIsDisableBtnTab2', true)
+  }
 }, {deep: true})
 
 // watch definedRetirementBenefits to set value to store
@@ -135,7 +137,10 @@ const calculateIncomeRetirement = async () => {
     })
     if (data) {
       dataIncomeRetirement.value = data.calculateIncomeRetirement;
+      definedRetirementBenefits.value = data.calculateIncomeRetirement;
       store.commit('common/setIncomeCalculationInput', {...dataFormIncomeCalculation.value})
+      store.commit('common/setIncomeCalculationInputOld', {...dataFormIncomeCalculation.value})
+
       store.commit('common/setIsDisableBtnTab2', false)
       trigger.value = false;
     }

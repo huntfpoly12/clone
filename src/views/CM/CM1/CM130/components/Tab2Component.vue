@@ -42,7 +42,7 @@
             <DxColumn cell-template="pupop" css-class="cell-center" :width="50" />
             <template #pupop="{ data }">
                 <div class="custom-action">
-                    <deleteOutlined v-if="data.data.editable" @click="statusAddRow ? deleteConfig(data) : ''" />
+                    <deleteOutlined v-if="data.data.useChangable" @click="statusAddRow ? deleteConfig(data) : ''" />
                 </div>
             </template>
         </DxDataGrid>
@@ -61,6 +61,7 @@
                     </a-row>
                     <a-row>
                         <a-col :span="24">
+                            {{  formState.taxPayCode }}
                             <a-form-item label="과세구분/유형" :label-col="labelCol" class="red">
                                 <TaxPay style="width: 320px" placeholder="선택" v-model:selectedValue="formState.taxPayCode"
                                     :required="true"></TaxPay>
@@ -97,14 +98,14 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="6">
-                            <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :disabled="editable"
+                            <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :disabled="useChangable"
                                 :textCheck="'이용중'" :textUnCheck="'이용중지'" />
                         </a-col>
                     </a-row>
                     <a-row>
                         <a-col :span="14">
                             <a-form-item label="항목명" :label-col="labelCol" class="red">
-                                <default-text-box style="width: 150px; margin-right: 10px" :disabled="editable"
+                                <default-text-box style="width: 150px; margin-right: 10px" :disabled="useChangable"
                                     :required="true" v-model:valueInput="formState.name">
                                 </default-text-box>
                             </a-form-item>
@@ -125,7 +126,7 @@
                             <div style="display: -webkit-inline-box;">
                                 <a-form-item label="산출방법" :label-col="labelCol">
                                     <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
-                                        v-model:valueInput="formState.formula" :disabled="editable">
+                                        v-model:valueInput="formState.formula" :disabled="useChangable">
                                     </default-text-box>
                                 </a-form-item>
                             </div>
@@ -215,7 +216,7 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false);
         const triggerDetail = ref<boolean>(false);
 
-        const editable = ref<boolean>(false);
+        const useChangable = ref<boolean>(false);
 
         const dataSource = ref<any>([]);
         let itemCodeMax = ref(0);
@@ -376,7 +377,7 @@ export default defineComponent({
                 dataRowOld = { ...formState.value }
 
                 focusedRowKeyTab2.value = value.getWithholdingConfigPayItem.itemCode
-                editable.value = !value.getWithholdingConfigPayItem.editable;
+                useChangable.value = !value.getWithholdingConfigPayItem.useChangable;
                 // objDataDefault.value = { ...formState.value };
             }
         });
@@ -450,8 +451,6 @@ export default defineComponent({
                 notification('error', `선택해 주세요 과세구분/유형!`)
             } else {
                 if (statusFormUpdate.value) {
-                    console.log(formState);
-
                     let variables = {
                         companyId: companyId,
                         imputedYear: globalYear,
@@ -508,19 +507,13 @@ export default defineComponent({
 
         const openAddNewModal = () => {
             if (dataSource.value.length <= 20) {
-                console.log(JSON.stringify(dataRowOld));
-                console.log(JSON.stringify(dataRowOld));
-
                 let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
                 let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
                 if (statusChangeFormEdit) { // if status form add and form not null
-                    console.log(1);
-
                     modalStatusAdd.value = true
                     statusClickButtonAdd.value = true
                 } else {
                     if (statusChangeFormAdd) { // if status form add and form not null
-                        console.log(2);
                         modalStatusAdd.value = true
                         statusClickButtonAdd.value = true
                     } else if (statusAddRow.value) {
@@ -577,7 +570,7 @@ export default defineComponent({
             formState,
             actionSave, onFocusedRowChangingTab2,
             loadingDetail,
-            resetFormNum, statusFormUpdate, editable,
+            resetFormNum, statusFormUpdate, useChangable,
             statusAddRow, modalStatus, modalStatusAdd, Message,
             statusComfirm, statusComfirmAdd, formRefTab2,
         };

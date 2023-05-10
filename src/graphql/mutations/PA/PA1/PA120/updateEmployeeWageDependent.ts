@@ -15,7 +15,7 @@ export default gql`
       input: $input
     ) {
       employeeId
-      incomeTypeCode
+      # incomeTypeCode
       index
       relation
       name

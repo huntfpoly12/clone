@@ -6,12 +6,12 @@
         <div class="month-custom-1 d-flex-center">
           귀 {{ paYear }}-{{ $filters.formatMonth(attributionMonth) }}
         </div>
-        <month-picker-box-custom v-model:valueDate="paymentYearMonthChoose" text="지"/>
+        <month-picker-box-custom v-model:valueDate="paymentYearMonthChoose" text="지" disabled/>
       </div>
     </a-form-item>
     <a-form-item label="지급일" label-align="right" class="label-required">
-      <select-box-common width="85px" :arrSelect="daySelectArr" :required="true"
-                         v-model:valueInput="paymentDayConfig"/>
+      <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+                            v-model:valueDate="paymentDayConfig"/>
     </a-form-item>
     <div class="text-align-center mt-30">
       <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
@@ -27,7 +27,7 @@ import {companyId} from "@/helpers/commonFunction";
 import {useStore} from 'vuex';
 import filters from "@/helpers/filters";
 import dayjs from "dayjs";
-import SelectBox from "@/views/base/SelectBox.vue";
+import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
 
 function convertToDate({month, year}: { month: number, year: number }) {
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -43,30 +43,26 @@ const emit = defineEmits(['closePopup', 'dataAddIncomeProcess'])
 
 
 const store = useStore();
-const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
-const paymentDate = computed(() => store.getters['common/getPaymentDay'])
+const selectMonthColumn = computed(() => store.getters['common/getselectMonthColumn'])
+const selectMonthColumnOld = computed(() => store.getters['common/getSelectMonthColumnOld'])
 const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
+const startDate = ref(dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).startOf('month').toDate());
+const finishDate = ref(dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).endOf('month').toDate());
 
 const attributionMonth: any = ref(0)
 const paymentYearMonthChoose = ref(0)
-const daySelectArr = computed(() => {
-  const day = convertToDate({month: Number(paymentYearMonthChoose.value.toString().slice(-2)), year: paYear.value})
-  let result: any = [];
-  for (let i = 0; i < +day; i++) {
-    result.push({value: i+1, label: i + 1});
-  }
-  return result
-})
-
 const dataQuery = ref({companyId: companyId, imputedYear: paYear.value});
+const paymentDate = ref(0)
+const paymentDayConfig = ref()
 
 watchEffect(() => {
-  attributionMonth.value = selectMonthColumn.value.imputedMonth
-  paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
-
+  attributionMonth.value = selectMonthColumnOld.value.imputedMonth
+  paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumnOld.value.paymentMonth)}`)
 })
-const paymentDayConfig = ref()
-// const maxDay = computed(() => convertToDate({day: 31, month: paymentYearMonthChoose.value.toString().slice(-2), year: paYear.value}))
+watch(paymentYearMonthChoose, (val, oldValue) => {
+  if (val === oldValue) return;
+  paymentDayConfig.value = dayjs(`${val}${paymentDate.value}`).toDate()
+})
 const setModalVisible = () => {
   emit("closePopup", false)
 };
@@ -82,16 +78,21 @@ const {result: resultConfig, refetch} = useQuery(
 );
 watch(resultConfig, (value) => {
   if (value) {
-    paymentDayConfig.value = value.getWithholdingConfig.paymentDay
     if (value.getWithholdingConfig.paymentType === 1) {
-      paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
+      paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumnOld.value.paymentMonth)}`)
+      startDate.value = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).startOf('month').toDate()
+      finishDate.value = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).endOf('month').toDate()
     } else {
-      if (filters.formatMonth(selectMonthColumn.value.paymentMonth) !== 12) {
-        paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth + 1)}`)
+      startDate.value = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth + 1}`).startOf('month').toDate()
+      finishDate.value = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth + 1}`).endOf('month').toDate()
+      if (filters.formatMonth(selectMonthColumnOld.value.paymentMonth) !== 12) {
+        paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumnOld.value.paymentMonth + 1)}`)
+        paymentDate.value = value.getWithholdingConfig.paymentDay || Number(dayjs(`${paymentYearMonthChoose.value}`).endOf('month').format('DD'))
         return
       }
       paymentYearMonthChoose.value = Number(`${paYear.value + 1}01`)
     }
+    paymentDate.value = value.getWithholdingConfig.paymentDay || Number(dayjs(`${paymentYearMonthChoose.value}`).endOf('month').format('DD'))
     store.commit('common/setPaymentDay', value.getWithholdingConfig.paymentDay)
   }
   trigger.value = false;
@@ -116,8 +117,9 @@ const onSubmit = (e: any) => {
       paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),
     })
     emit("closePopup", false)
-    store.commit('common/setPaymentDay', paymentDayConfig.value)
+    store.commit('common/setPaymentDay', dayjs(paymentDayConfig.value).format('DD'))
     store.commit('common/setSelectMonthColumn', {
+      ...selectMonthColumnOld.value,
       paymentYear: parseInt(paymentYearMonthChoose.value.toString().slice(0, 4)),
       paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),
     })

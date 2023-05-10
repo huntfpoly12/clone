@@ -122,7 +122,8 @@
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
             <!-- <SelectCustomField :dataSource="arrayEmploySelect" :disabled="disabledInput || idDisableNoData"
-              v-model:valueInput="dataAction.input.employeeId" width="350px" required/> -->
+              v-model:valueInput="dataAction.input.employeeId" width="350px" required displayeExpr="incomeTypeName"
+              valueExpr="key" /> -->
             <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
               width="350px" :required="true" :newLoadKey="dataAction.input.employee.key"
               @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || idDisableNoData" />
@@ -422,7 +423,7 @@ export default defineComponent({
     })
     // ================FUNCTION============================================ 
     const caclInput = () => {
-      let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate);
+      let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate*100);
       dataAction.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
       dataAction.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
       dataAction.value.input.actualPayment = dataAction.value.input.paymentAmount - dataAction.value.input.withholdingIncomeTax - dataAction.value.input.withholdingLocalIncomeTax;
@@ -469,14 +470,6 @@ export default defineComponent({
       isNewRow.value = false;
       compareType.value = 2;
     };
-    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-      if (compareForm()) {
-        emit('noSave', 1, newVal);
-      } else {
-        compareType.value = 2;
-        rowChangeStatus.value = true;
-      }
-    });
     //on add row
     const rowChangeStatus = ref<Boolean>(false);
     const openAddNewModal = async () => {
