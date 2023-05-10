@@ -36,10 +36,11 @@
         </div> -->
         <a-spin tip="Loading..." :spinning="loadingSearchSpendingAccountingDocuments">
             <div style="margin: 48px 0">
-                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" key-expr="accountingDocumentId" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" v-model:focused-row-key="focusedRowKey"
-                    focused-row-enabled="true" :onRowClick="onSelectionChanged" :column-auto-width="true">
+                <DxDataGrid noDataText="내역이 없습니다" id="formItemAC120" :show-row-lines="true" :hoverStateEnabled="true"
+                    :data-source="dataSource" :show-borders="true" key-expr="accountingDocumentId"
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                    v-model:focused-row-key="focusedRowKey" focused-row-enabled="true" :onRowClick="onSelectionChanged"
+                    :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                     <DxColumn caption="선택" cell-template="radioCheck" />
@@ -79,8 +80,17 @@
                     <template #relationCode="{ data }">
                         <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
                     </template>
-                    <DxColumn data-field="fundingSource" caption="자금원천" />
-                    <DxColumn data-field="clientId" caption="거래처" />
+                    <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left" cell-template="fundingSource"
+                        width="75" />
+                    <template #fundingSource="{ data }">
+                        {{ store.state.common.ac120.arrFundingSource?.find((item: any) => data.data.fundingSource
+                            == item.id)?.text }}
+                    </template>
+
+                    <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" width="75" />
+                    <template #clientId="{ data }">
+                        {{ store.state.settings.clients?.find((item: any) => item.value == data.data.clientId)?.label }}
+                    </template>
 
                 </DxDataGrid>
             </div>
@@ -206,7 +216,7 @@ export default defineComponent({
             // if (store.state.common.ac120.formData.resolutionType == 22) {
             //     store.state.common.ac120.formData.resolutionType = 11
             // } else if (store.state.common.ac120.formData.resolutionType == 11) {
-                store.state.common.ac120.formData.resolutionType = 22
+            store.state.common.ac120.formData.resolutionType = 22
             // }
             store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
             emit("closePopup", false);
@@ -239,29 +249,37 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-
 .btn_submit {
-    /* position: absolute;
-    bottom: 0;
-    margin-top: 48px;
-    margin-bottom: 16px;
-    left: 0;
-    right: 0; */
     text-align: center;
 }
+
 .button-form-modal1 {
     background-color: orange;
 }
+
 .button-form-modal1:hover {
     background-color: rgb(207, 135, 0);
 }
+
 .button-form-modal2 {
     margin: 0 10px;
 }
+
 .button-form-modal3 {
     background-color: gray;
 }
+
 .button-form-modal3:hover {
     background-color: rgb(100, 100, 100);
 }
-</style>
+
+:deep .dx-datagrid-header-panel {
+    position: absolute;
+    top: -80px;
+    right: 0;
+}
+
+#formItemAC120 {
+    max-height: 450px;
+    overflow: inherit;
+}</style>

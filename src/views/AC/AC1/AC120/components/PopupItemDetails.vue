@@ -157,7 +157,7 @@ export default defineComponent({
         let dataDelete: any = ref({})
         const refFormItemAC120 = ref()
         let isModalDelete = ref(false)
-        const disabledSubmit = ref(false)
+        const disabledSubmit = ref(true)
 
         const triggerSearchStatementOfGoodsItems = ref(false)
         const triggerSearchStatementOfGoodsStandards = ref(false)
@@ -423,4 +423,5 @@ export default defineComponent({
     font-size: 15px;
     font-weight: bold;
 }
+
 </style>

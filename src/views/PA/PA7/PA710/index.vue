@@ -225,7 +225,7 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: paYear.value,
             employeeId: null,
-            incomeTypeCode: null,
+            // incomeTypeCode: null,
         });
         let confirmSave = ref(false)
         const optionsRadio = ref([...initialOptionsRadio]);
@@ -309,10 +309,10 @@ export default defineComponent({
             }
             if (statusClickButtonSave.value) { // if click submit
                 originDataDetail.value.employeeId = data.data.createEmployeeExtra?.employeeId
-                originDataDetail.value.incomeTypeCode = data.data.createEmployeeExtra?.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = data.data.createEmployeeExtra?.incomeTypeCode
             } else { // if click save modal
                 originDataDetail.value.employeeId = dataRow.employeeId
-                originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
             }
             await (triggerDetail.value = true);
             await (statusFormUpdate.value = true);
@@ -340,10 +340,10 @@ export default defineComponent({
             }
             if (statusClickButtonSave.value) { // if click submit
                 originDataDetail.value.employeeId = data.data.updateEmployeeExtra?.employeeId
-                originDataDetail.value.incomeTypeCode = data.data.updateEmployeeExtra?.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = data.data.updateEmployeeExtra?.incomeTypeCode
             } else { // if click save modal
                 originDataDetail.value.employeeId = dataRow.employeeId
-                originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
             }
             await (triggerDetail.value = true);
             store.state.common.savePA710++;
@@ -419,7 +419,7 @@ export default defineComponent({
             const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
             if (dataRow.residentId && (dataRow.residentId + '' + dataRow.incomeTypeCode != formState.value.residentId + '' + formState.value.incomeTypeCode)) {
                 originDataDetail.value.employeeId = e.rows[e.newRowIndex]?.data.employeeId
-                originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
                     modalStatus.value = true;
                     rowElement?.classList.add("dx-state-hover-custom")
@@ -462,7 +462,7 @@ export default defineComponent({
                 companyId: companyId,
                 imputedYear: paYear.value,
                 employeeId: formState.value.employeeId,
-                incomeTypeCode: formState.value.incomeTypeCode
+                // incomeTypeCode: formState.value.incomeTypeCode
             };
             actionDelete(variables);
         }
@@ -530,7 +530,7 @@ export default defineComponent({
                 if (runOne.value) {
                     if (listEmployeeExtra.value.length) {
                         originDataDetail.value.employeeId = listEmployeeExtra.value[0]?.employeeId
-                        originDataDetail.value.incomeTypeCode = listEmployeeExtra.value[0]?.incomeTypeCode
+                        // originDataDetail.value.incomeTypeCode = listEmployeeExtra.value[0]?.incomeTypeCode
                         triggerDetail.value = true;
                         statusFormUpdate.value = true;
                     } else {

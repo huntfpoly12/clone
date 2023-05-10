@@ -17,7 +17,6 @@ mutation copyIncomeWageDailies(
             paymentDay
             employeeType
             employeeId
-            incomeTypeCode
             incomePayment
             withholdingIncomeTax
             withholdingLocalIncomeTax

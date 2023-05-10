@@ -13,7 +13,6 @@ export default gql`
             paymentDay
             employeeType
             employeeId
-            incomeTypeCode
             incomePayment
             withholdingIncomeTax
             withholdingLocalIncomeTax
