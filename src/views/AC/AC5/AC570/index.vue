@@ -50,15 +50,60 @@
                             <template #transitionDate="{ data }">
                                 {{ $filters.formatDate(data.value) }}
                             </template>
-                            <!-- <DxColumn caption="관" data-field="sourceCode" />
-                            <DxColumn caption="항" data-field="transitionCode" />
-                            <DxColumn caption="목" data-field="sourceCode" />
-                            <DxColumn caption="세목" data-field="transitionCode" />
-                            <DxColumn caption="예산액" data-field="sourceCode" />
-                            <DxColumn caption="전용액" data-field="transitionCode" />
-                            <DxColumn caption="예산현액" data-field="sourceCode" />
-                            <DxColumn caption="지출액" data-field="transitionCode" />
-                            <DxColumn caption="불용액" data-field="sourceBudgetAmount" /> -->
+                            <DxColumn caption="관" cell-template="customDxColumn2" />
+                            <template #customDxColumn2="{ data }">
+                                <div>{{ data.data.sourceCode }}</div>
+                                <div>{{ data.data.transitionCode }}</div>
+                            </template>
+
+                            <DxColumn caption="항" cell-template="customDxColumn3" />
+                            <template #customDxColumn3="{ data }">
+                                <div>{{ data.data.sourceCode }}</div>
+                                <div>{{ data.data.transitionCode }}</div>
+                            </template>
+
+                            <DxColumn caption="목" cell-template="customDxColumn4" />
+                            <template #customDxColumn4="{ data }">
+                                <div>{{ data.data.sourceCode }}</div>
+                                <div>{{ data.data.transitionCode }}</div>
+                            </template>
+
+                            <DxColumn caption="세목" cell-template="customDxColumn5" />
+                            <template #customDxColumn5="{ data }">
+                                <div>{{ data.data.sourceCode }}</div>
+                                <div>{{ data.data.transitionCode }}</div>
+                            </template>
+
+                            <DxColumn caption="예산액" cell-template="customDxColumn6" />
+                            <template #customDxColumn6="{ data }">
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.transitionBudgetAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="전용액" data-field="transitionAmount" cell-template="customDxColumn7"/>
+                            <template #customDxColumn7="{ data }">
+                                <div>{{ $filters.formatCurrency(-data.data.transitionAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.transitionAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="예산현액" cell-template="customDxColumn8" />
+                            <template #customDxColumn8="{ data }">
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) + data.data.transitionAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="지출액" cell-template="customDxColumn9" />
+                            <template #customDxColumn9="{ data }">
+                                <div>{{ $filters.formatCurrency(data.data.sourceExpenditureAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.transitionExpenditureAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="불용액" cell-template="customDxColumn10" />
+                            <template #customDxColumn10="{ data }">
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) - data.data.sourceExpenditureAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) + data.data.transitionAmount - data.data.transitionExpenditureAmount) }}</div>
+                            </template>
+
                             <DxColumn caption="최종저장일시" data-field="savedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
                             <DxColumn caption="최종저장아이디" data-field="savedBy" />
                             <DxColumn :width="100" cell-template="pupop" css-class="cell-center" />
@@ -68,11 +113,9 @@
                                     <a-tooltip placement="topLeft">
                                         <template #title>과목전용조서 삭제</template>
                                         <DeleteOutlined class="ml-15"
-                                            @click="statusAddRow ? modalStatusDelete = true : ''" />
+                                            @click="actonDeleteBudgetSubjectTransition(data.data)" />
                                     </a-tooltip>
-
                                 </div>
-
                             </template>
                         </DxDataGrid>
                     </a-spin>
@@ -84,12 +127,12 @@
         </div>
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
             :idRowEdit="idRowEdit" typeHistory="ac-570" />
-        <AddPopup :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" />
-        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :data="popupData" @callApi="callApi"/>
+        <AddPopup :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false"  @callApi="trigger = true"/>
+        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :data="popupData" @callApi="trigger = true"/>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vue";
+import { defineComponent, ref, watch, reactive, computed, createVNode } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
@@ -103,6 +146,8 @@ import { companyId } from "@/helpers/commonFunction";
 import AddPopup from './components/AddPopup.vue'
 import { Message } from "@/configs/enum"
 import DetailPopup from './components/DetailPopup.vue';
+import { Modal } from 'ant-design-vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 export default defineComponent({
     components: {
         AddPopup, DxSelection, DetailPopup,
@@ -249,11 +294,31 @@ export default defineComponent({
 
         }
 
+        const actonDeleteBudgetSubjectTransition = (data: any) => {
+            Modal.confirm({
+                title: '삭제하겠습니까?',
+                icon: createVNode(ExclamationCircleOutlined),
+                okText: '네',
+                cancelText: '아니요',
+                onOk() {
+                    let variables = {
+                        companyId: companyId,
+                        fiscalYear: acYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        transitionId: data.transitionId
+                    };
+                    deleteBudgetSubjectTransition(variables);
+                },
+                class: 'confirm',
+            });
+        }
+
         // A function that is called when the user clicks on the delete button.
 
 
 
         return {
+            trigger,
             loadingGetBudgetSubjectTransitions,
             confirmSave, move_column, colomn_resize, idRowEdit, modalHistoryStatus, labelCol: { style: { width: "150px" } }, statusFormUpdate, popupData, dataSource, DeleteOutlined, modalStatus, focusedRowKey, modalStatusAdd,
             // confimSaveWhenChangeRow, 
@@ -261,6 +326,7 @@ export default defineComponent({
             onOpenPopupDetail, modalStatusDetail,
             actionCreate, modalHistory,
             contentDelete, modalStatusDelete, statusAddRow, Message, ac570FormRef, disabledBlock, gridRef,
+            actonDeleteBudgetSubjectTransition,
         };
     },
 });

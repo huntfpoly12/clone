@@ -1,6 +1,6 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer="" :width="562">
-        <standard-form action="" name="detail-ac570">
+        <standard-form action="" name="detail-ac570" :key="resetFormDetail">
             <a-spin :spinning="false" size="large">
                 <StandardForm class="ac-570-form" formName="ac-570-form" ref="ac570FormRef">
                     <h2 class="text-align-center">과목전용조서</h2>
@@ -111,7 +111,7 @@ export default defineComponent({
 
         const formState = ref<any>({ ...initialStateDetail })
         const ac570FormRef = ref()
-        let resetFormNum = ref(1);
+        let resetFormDetail = ref(1);
         const theOrder = ref();
 
         // query getAccoountSubjects
@@ -174,9 +174,11 @@ export default defineComponent({
         };
 
         watch(() => props.modalStatus, (value) => {
+            Object.assign(formState.value, {...initialStateDetail})
             if (value && props.dataAddPopup) {
                 Object.assign(formState.value, props.dataAddPopup)
             }
+            resetFormDetail.value++
         })
 
         watch(resGetAccoountSubjects, (value) => { 
@@ -189,7 +191,7 @@ export default defineComponent({
             labelCol: { style: { width: "150px" } },
             formState,
             ac570FormRef,
-            resetFormNum,
+            resetFormDetail,
         }
     },
 })
