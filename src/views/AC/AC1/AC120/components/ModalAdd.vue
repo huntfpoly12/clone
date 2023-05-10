@@ -2,7 +2,6 @@
     <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1600">
         <div class="mt-20" :key="countKey">
             <standard-form formName="ac-120-form-add" ref="refFormAddAC120" class="text-align-center mt-20">
-                <h2>전표 건별 등록</h2>
                 <!-- <a-row class="row-1">
                     <a-col :span="14" class="col-2">
 
@@ -20,7 +19,7 @@
                         <a-form-item class="red" label="결의일자">
                             <!-- <date-time-box width="150px" :required="true"
                                 v-model:valueDate="formDataAdd.resolutionDate" /> -->
-                            <date-time-box-custom @handleClosed="handleClosed" width="190px" :required="true" :startDate="startDate"
+                            <date-time-box-custom width="190px" :required="true" :startDate="startDate"
                                 ref="requiredTransactionDetailDate" :finishDate="finishDate"
                                 v-model:valueDate="formDataAdd.transactionDetailDate" />
                         </a-form-item>
@@ -131,7 +130,7 @@
                     </a-col>
                     <a-col :span="6" class="col-3">
                         <a-form-item label="거래처">
-                            <customer-select :disabled="formDataAdd.resolutionClassification == 1" v-model:valueInput="formDataAdd.clientId" width="150px" />
+                            <customer-select v-model:valueInput="formDataAdd.clientId" width="150px" />
                         </a-form-item>
                         <div class="input_info">
                             <a-form-item :label="textLabelInputSource">
@@ -166,7 +165,7 @@
                         </a-form-item>
                     </a-col>
                 </a-row>
-                <!-- <div> -->
+                <div v-if="!(formDataAdd.resolutionClassification == 1)">
                     <a-row>
                         <a-col :span="24">
                             <div class="top-content mb-10 mt-10">
@@ -181,8 +180,9 @@
                     </a-row>
                     <a-row>
                         <a-col :span="12">
-                            <a-form-item class="red" label="품의종류">
-                                <radio-group :disabled="formDataAdd.resolutionClassification == 1"
+                            <a-form-item class="red" label="품의종류"
+                                v-if="formDataAdd.letterOfApprovalType">
+                                <radio-group
                                     v-model:valueRadioCheck="formDataAdd.letterOfApprovalType"
                                     :arrayValue="store.state.common.ac120.arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true" />
                             </a-form-item>
@@ -197,12 +197,12 @@
                     <a-row>
                         <a-col :span="24">
                             <a-form-item label="품의 원인 및 용도">
-                                <text-area-box :disabled="formDataAdd.resolutionClassification == 1" v-model:valueInput="formDataAdd.causeUsage"
+                                <text-area-box v-model:valueInput="formDataAdd.causeUsage"
                                     :height="50" />
                             </a-form-item>
                         </a-col>
                     </a-row>
-                <!-- </div> -->
+                </div>
                 <div class="mt-10"><span>전표를 등록하시겠습니까?</span></div>
                 <div class="mt-20">
                     <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
@@ -265,6 +265,7 @@ export default defineComponent({
         })
         let formDataAdd: any = ref({ ...initialStateFormData });
         const statusShowLetterOfApprovalType = ref(false)
+        // const arraySelectBox = ref([]);
         const triggerBankbooks = ref<boolean>(true);
 
         const startDate = ref(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate());
@@ -334,22 +335,16 @@ export default defineComponent({
             colorDate.value = newValue == formDataAdd.value.transactionDetailDate ? 'greenColor' : 'redColor'
         })
 
-        // watch(() => formDataAdd.value.transactionDetailDate, (newValue, oldValue) => {
-            
-        //     }
-            
+        watch(() => formDataAdd.value.transactionDetailDate, (newValue, oldValue) => {
+            formDataAdd.value.causeActionDate = newValue
+            formDataAdd.value.paymentDate = newValue
+            formDataAdd.value.accountingDate = newValue
+            formDataAdd.value.proposedDate = newValue
+            formDataAdd.value.registrationDate = newValue
 
-        // })
+        })
 
         // ================ FUNCTION ============================================
-
-        const handleClosed = () => {
-            formDataAdd.value.causeActionDate = formDataAdd.value.transactionDetailDate
-            formDataAdd.value.paymentDate = formDataAdd.value.transactionDetailDate
-            formDataAdd.value.accountingDate = formDataAdd.value.transactionDetailDate
-            formDataAdd.value.proposedDate = formDataAdd.value.transactionDetailDate
-            formDataAdd.value.registrationDate = formDataAdd.value.transactionDetailDate
-        }
         const submit = () => {
 
             const res = refFormAddAC120.value?.validate();
@@ -404,8 +399,21 @@ export default defineComponent({
         }
         const cancel = () => {
             emit("closePopup", false)
-        };
+            // if (JSON.stringify(initialStateFormAdd) === JSON.stringify(dataStateFormAdd) == true) {
+            //     emit("closePopup", false)
+            //     if (statusRemoveRow.value) {
+            //         store.state.common.ac120.onDeleteRowAdd++
+            //     }
+            // } else {
+            //     comfirmClosePopup(() => {
+            //         emit("closePopup", false)
+            //         if (statusRemoveRow.value) {
+            //             store.state.common.ac120.onDeleteRowAdd++
+            //         }
+            //     })
+            // }
 
+        };
         const changeRadioResolutionType = (value: Number) => {
             resetSelectAccount.value++
             if (value == 21 || value == 22) {
@@ -418,7 +426,6 @@ export default defineComponent({
                 classification.value = [4]
                 statusShowLetterOfApprovalType.value = false
                 formDataAdd.value.letterOfApprovalType = null
-                formDataAdd.value.causeUsage = null
             }
 
         }
@@ -465,7 +472,6 @@ export default defineComponent({
             requiredTransactionDetailDate, requiredCauseActionDate,
             bankbookNickname, bankbookNumber,
             colorDate, textLabelInputSource,
-            handleClosed,
 
         }
     },

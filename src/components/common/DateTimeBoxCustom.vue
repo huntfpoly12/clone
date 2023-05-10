@@ -3,7 +3,6 @@
     <div :class="isValid ? 'validate-datepicker':''" :style="{ width: widthBoder }">
       <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
           @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput }"
-          @closed="handleClosed"
           :max-date="finishDate" :min-date="startDate" :placeholder="placeholder"
           :teleport="teleport" :disabled="disabled" :enable-time-picker="false"
           :clearable="false" />
@@ -94,19 +93,11 @@ export default defineComponent({
         const validate = (status : boolean) => {
           isValid.value = status
         }
-        const handleClosed = () => {
-          if (date.value)
-            emit("handleClosed", filters.formatDateToInterger(date.value));
-          else
-            emit("handleClosed", date.value);
-          
-        }
         return {
             updateValue,
             date,isValid,validate,
             ko,
-            dayjs,Message,widthBoder,
-            handleClosed,
+            dayjs,Message,widthBoder
         };
     },
 });

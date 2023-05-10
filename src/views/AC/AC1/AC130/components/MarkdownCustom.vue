@@ -91,8 +91,4 @@ export default defineComponent({
     margin-left: 0;
   }
 
-  :deep a:hover {
-    text-decoration: underline;
-  }
-
 }</style>

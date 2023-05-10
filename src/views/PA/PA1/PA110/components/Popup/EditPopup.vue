@@ -6,8 +6,6 @@
             <div class="custom-modal-edit">
                 <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
                 <span>선택된 내역 지급일을</span>
-                {{ maxDayMonth }}
-                {{ store.state.common.pa110.processKeyPA110.paymentMonth }}
                 <number-box :key="resetInput" width="70px" :required="true" :min="0" :max="maxDayMonth" v-model:valueInput="dayValue"
                     :spinButtons="true" />
                 <span>일로 변경하시겠습니까?</span>
@@ -73,7 +71,7 @@ export default defineComponent({
         let sumErrorCallApi = ref<number>(0)
         const loading = ref<boolean>(false)
         const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
-        const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())
+        const maxDayMonth = ref<number>(dayjs(`${paYear}-${store.state.common.pa110.processKeyPA110.imputedMonth}`).daysInMonth())
         const resetInput = ref(1)
         const setModalVisible = () => {
             emit("closePopup", false)
@@ -139,13 +137,13 @@ export default defineComponent({
         watch(() => props.modalStatus, (value) => {
             if (value) {
                 dayValue.value = 1
-                maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth()
+                maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.imputedMonth}`).daysInMonth()
                 resetInput.value++
             }
         })
 
         return {
-            setModalVisible, store,
+            setModalVisible,
             onSubmit,
             dayValue,
             statusOnCallApiChange,

@@ -250,7 +250,7 @@
                                 <div class="custom-action">
                                     <employee-info :idEmployee="data.data.employee.employeeId"
                                         :idCardNumber="data.data.employee.residentId" :name="data.data.employee.name"
-                                        :status="checkShowTagStatus(data.data.employee)" :midTermSettlement="data.data.midTermSettlement"
+                                        :status="data.data.employee.status" :midTermSettlement="data.data.midTermSettlement"
                                         />
                                 </div>
                             </template>
@@ -468,10 +468,7 @@ export default defineComponent({
                         paymentYear: data.paymentYear,
                         paymentMonth: data.paymentMonth,
                     })
-                    arrDataPoint.value.sort(function(a: any, b: any) {
-                        return b.imputedMonth - a.imputedMonth;
-                    });
-                    
+                    arrDataPoint.value.reverse()
 
                     let dataAdd = {
                         imputedYear: data.imputedYear,
@@ -882,17 +879,6 @@ export default defineComponent({
             checkStartYearMonth(month) ? string += ' disabledBlock' : ''
             return string
         }
-        const checkShowTagStatus = (data: any) => {
-            if (data.status == 0) {
-                if (data.leavedAt?.toString().slice(0, 6) == `${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.imputedMonth)}`) {
-                    return 0
-                }
-                return 50
-            } else {
-                return data.status
-            }
-            
-        }
 
         const customTotalPay = () => {
             let sum = 0
@@ -945,7 +931,7 @@ export default defineComponent({
             statusDisabledBlock, onFocusedRowChanging,
             hoverColClick,
             checkStartYearMonth,
-            classObject, classObjectDetail, checkShowTagStatus,
+            classObject, classObjectDetail,
         }
 
     },

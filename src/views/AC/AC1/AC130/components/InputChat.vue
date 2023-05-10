@@ -1,13 +1,15 @@
 <template>
   <div class="input-edit-chat">
     <div class="input-edit-chat-input">
-      <textarea :class="{ 'input-edit-chat-input-reply': Object.keys(!!dataReply ? dataReply : {}).length }" rows="1"
-        ref="inputChat" :placeholder="placeholder" v-model="textChat" @input="changeInput"
+      <textarea rows="1" ref="inputChat" :placeholder="placeholder" v-model="textChat" @input="changeInput"
         @keypress.enter.exact.prevent="submitChat"></textarea>
-      <div v-if="Object.keys(!!dataReply ? dataReply : {}).length" class="input-edit-chat-input-contentReply">
-        <MarkdownCustom :options="{ source: dataReply.text, linkify: true, typographer: true, highlight: true }" />
-        <CloseOutlined class="input-edit-chat-input-contentReply-iconclose" @click="removeReply" />
-      </div>
+
+      <!-- <div v-if="filesUpload.length" class="input-edit-chat-input-files">
+            <div v-for="(file, index) in filesUpload" class="input-edit-chat-input-files-item">
+              <img :src="file.url" alt="" :key="index">
+              <CloseOutlined class="input-edit-chat-input-files-item-close" @click="removeFile(index)"/>
+            </div>
+          </div> -->
     </div>
 
     <div class="input-edit-chat-input-action">
@@ -26,10 +28,8 @@
         </a-dropdown>
       </div>
       <div class="input-edit-chat-input-action-btn">
-        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
-          :disabled="disabled || (!textChat.trim() && !filesUpload.length)" />
-        <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()"
-          :disabled="disabled || (!textChat.trim() && !filesUpload.length)" />
+        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()" :disable="disable"/>
+        <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()" :disable="disable"/>
       </div>
     </div>
     <div v-if="filesUpload.length" class="input-edit-chat-input-files">
@@ -38,8 +38,7 @@
           <FileOutlined style="margin-right: 10px;" />
           <div class="input-edit-chat-input-files-item-file-info">
             <p class="input-edit-chat-input-files-item-file-info-name">{{ file?.file ? file.file.name : file.name }}</p>
-            <p class="input-edit-chat-input-files-item-file-info-size">({{ formatFileSize(file?.file ? file.file.size :
-              file.size) }})
+            <p class="input-edit-chat-input-files-item-file-info-size">({{ formatFileSize(file?.file ? file.file.size : file.size) }})
             </p>
           </div>
         </div>
@@ -47,12 +46,13 @@
       </div>
     </div>
   </div>
-  <input v-show="false" ref="inputFile" type="file" @change="uploadPreviewFile" />
+  <input v-show="false" ref="inputFile" type="file"
+    @change="uploadPreviewFile" />
 </template>
   
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
-import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, FileTextOutlined } from '@ant-design/icons-vue';
+import { defineComponent, ref, nextTick, watch, computed } from 'vue'
+import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
 import StatusChat from './StatusChat.vue'
@@ -60,7 +60,6 @@ import StatusChat from './StatusChat.vue'
 import EmojiPicker from 'vue3-emoji-picker'
 // import css
 import 'vue3-emoji-picker/css'
-import MarkdownCustom from './MarkdownCustom.vue';
 export default defineComponent({
   props: {
     textChatProp: {
@@ -75,13 +74,9 @@ export default defineComponent({
       type: String,
       default: ''
     },
-    disabled: {
+    disable: {
       type: Boolean,
       default: false
-    },
-    dataReply: {
-      type: Object,
-      default: () => { }
     }
   },
   components: {
@@ -92,11 +87,9 @@ export default defineComponent({
     SmileOutlined,
     FileOutlined,
     FileAddOutlined,
-    FileTextOutlined,
     ModalPreviewListImage,
     EmojiPicker,
-    StatusChat,
-    MarkdownCustom
+    StatusChat
   },
   setup(props, { emit }) {
     const inputFile = ref<any>()
@@ -129,7 +122,7 @@ export default defineComponent({
       const elment = event?.target ? event.target : event
       const style = getComputedStyle(elment, null);
       const verticalBorders = Math.round(parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth));
-      const maxHeight = parseFloat(style.maxHeight) || 200;
+      const maxHeight = parseFloat(style.maxHeight) || 100;
       elment.style.height = "auto";
       const newHeight = elment.scrollHeight + verticalBorders;
       elment.style.overflowY = newHeight > maxHeight ? "auto" : "hidden";
@@ -154,7 +147,7 @@ export default defineComponent({
     }
 
     const openFile = () => {
-      if (props.disabled) return
+      if(props.disable) return
       inputFile.value.click()
     }
 
@@ -180,10 +173,14 @@ export default defineComponent({
         e.target.value = null
         return
       }
+      const metadata = {
+        contentType: file.type
+      }
       const url = await getBase64(file)
       filesUpload.value.push({
         file: file,
-        contentType: file.type,
+        metadata: metadata,
+        contentType: metadata.contentType,
         url: url
       })
       e.target.value = null
@@ -199,13 +196,12 @@ export default defineComponent({
     }
 
     const removeFile = (index: number) => {
-      if (props.disabled) return
+      if(props.disable) return
       filesUpload.value.splice(index, 1)
     }
 
     const onSelectEmoji = (emoji: any) => {
-      console.log('emoji', emoji);
-      if (props.disabled) return
+      if(props.disable) return
       textChat.value += emoji.i
       changeInput(inputChat.value)
     }
@@ -231,10 +227,6 @@ export default defineComponent({
       inputChat.value.focus()
     }
 
-    const removeReply = () => {
-      emit('removeReply')
-    }
-
     return {
       listChat,
       changeInput,
@@ -256,8 +248,7 @@ export default defineComponent({
       formatFileSize,
       resetInputChat,
       resizeInput,
-      focus,
-      removeReply
+      focus
     }
   },
 })
@@ -271,55 +262,22 @@ export default defineComponent({
     flex-grow: 1;
 
     textarea {
-      display: block;
       scrollbar-width: thin;
       outline: none;
       resize: none;
       width: 100%;
       min-height: 40px;
-      max-height: 200px;
+      max-height: 100px;
       // border-radius: 20px;
       padding: 7px 75px 7px 10px;
       font-size: 15px;
       border: 1px solid #385D8A;
     }
 
-    &-reply {
-      border-bottom: 0 !important;
-    }
-
-    &-contentReply {
-      max-height: 100px;
-      padding: 5px 20px 0 40px;
-      margin-bottom: 10px;
-      overflow: hidden;
-      border: 1px solid #385D8A;
-      border-top: 0;
-      position: relative;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(2, 2, 2, 0.027)
-      }
-
-      &-iconclose {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        cursor: pointer;
-      }
-    }
-
     &-action {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 5px;
 
       &-icon {
         display: flex;
@@ -363,22 +321,14 @@ export default defineComponent({
         align-items: center;
         padding: 4px;
 
-        &:hover {
-          background-color: #fafafa;
-        }
-
         &-file {
-          flex-grow: 1;
           display: flex;
           align-items: center;
-          padding-right: 20px;
-          overflow: hidden;
 
           &-info {
             p {
               margin: 0;
               line-height: 15px;
-              white-space: nowrap;
             }
 
             &-size {
