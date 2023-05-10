@@ -27,7 +27,7 @@
             </div>
         </standard-form>
     </a-modal>
-    <detail-popup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :dataAddPopup="formState"/>
+    <detail-popup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :dataAddPopup="formState" @callApi="callApi"/>
 </template>
 
 <script lang="ts">
@@ -57,7 +57,7 @@ export default defineComponent({
         let resetFormNum = ref(1);
         let requiredTransitionDate = ref()
         const formState = ref<any>()
-
+        
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -70,10 +70,14 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+                emit("closePopup", false)
                 modalStatusDetail.value = true;
             }
             
         };
+        const callApi = () => {
+            emit("callApi", true)
+        }
 
         watch(() => props.modalStatus, (value) => {
             if (value) {
@@ -89,6 +93,7 @@ export default defineComponent({
             modalStatusDetail,
             requiredTransitionDate,
             ac570FormRef, resetFormNum, formState,
+            callApi,
         }
     },
 })

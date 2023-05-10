@@ -4,12 +4,11 @@
         <div class="page-content">
             <a-row>
                 <a-col span="24" class="data-table">
-                    <a-spin :spinning="false" size="large">
+                    <a-spin :spinning="loadingGetBudgetSubjectTransitions" size="large">
                         <DxDataGrid noDataText="내역이 없습니다" id="gridContainer" :show-row-lines="true"
-                            :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                            key-expr="residentIdHide" :allow-column-reordering="move_column"
-                            :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                            @focused-row-changing="onFocusedRowChanging" ref="gridRef"
+                            :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="transitionId"
+                            :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                            :column-auto-width="true" @focused-row-changing="onFocusedRowChanging" ref="gridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                             <DxScrolling mode="standard" show-scrollbar="always" />
@@ -47,29 +46,76 @@
                                     </div>
                                 </a-tooltip>
                             </template>
-                            <DxColumn caption="전용일자" data-field="name1" />
-                            <DxColumn caption="관" data-field="name2" />
-                            <DxColumn caption="항" data-field="name3" />
-                            <DxColumn caption="목" data-field="name4" />
-                            <DxColumn caption="세목" data-field="name5" />
-                            <DxColumn caption="예산액" data-field="name6" />
-                            <DxColumn caption="전용액" data-field="name7" />
-                            <DxColumn caption="예산현액" data-field="name8" />
-                            <DxColumn caption="지출액" data-field="name9" />
-                            <DxColumn caption="불용액" data-field="name10" />
-                            <DxColumn caption="최종저장일시" data-field="name11" />
-                            <DxColumn caption="최종저장아이디" data-field="name12" />
-                            <DxColumn :width="50" cell-template="pupop" css-class="cell-center" />
+                            <DxColumn caption="전용일자" data-field="transitionDate" cell-template="transitionDate" />
+                            <template #transitionDate="{ data }">
+                                {{ $filters.formatDate(data.value) }}
+                            </template>
+                            <DxColumn caption="관" cell-template="customDxColumn2" />
+                            <template #customDxColumn2="{ data }">
+                                <div>{{ data.data.sourceCode }}</div>
+                                <div>{{ data.data.transitionCode }}</div>
+                            </template>
+
+                            <DxColumn caption="항" cell-template="customDxColumn3" />
+                            <template #customDxColumn3="{ data }">
+                                <div>{{ data.data.sourceCode }}</div>
+                                <div>{{ data.data.transitionCode }}</div>
+                            </template>
+
+                            <DxColumn caption="목" cell-template="customDxColumn4" />
+                            <template #customDxColumn4="{ data }">
+                                <div>{{ data.data.sourceCode }}</div>
+                                <div>{{ data.data.transitionCode }}</div>
+                            </template>
+
+                            <DxColumn caption="세목" cell-template="customDxColumn5" />
+                            <template #customDxColumn5="{ data }">
+                                <div>{{ data.data.sourceCode }}</div>
+                                <div>{{ data.data.transitionCode }}</div>
+                            </template>
+
+                            <DxColumn caption="예산액" cell-template="customDxColumn6" />
+                            <template #customDxColumn6="{ data }">
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.transitionBudgetAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="전용액" data-field="transitionAmount" cell-template="customDxColumn7"/>
+                            <template #customDxColumn7="{ data }">
+                                <div>{{ $filters.formatCurrency(-data.data.transitionAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.transitionAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="예산현액" cell-template="customDxColumn8" />
+                            <template #customDxColumn8="{ data }">
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) + data.data.transitionAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="지출액" cell-template="customDxColumn9" />
+                            <template #customDxColumn9="{ data }">
+                                <div>{{ $filters.formatCurrency(data.data.sourceExpenditureAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.transitionExpenditureAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="불용액" cell-template="customDxColumn10" />
+                            <template #customDxColumn10="{ data }">
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) - data.data.sourceExpenditureAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) + data.data.transitionAmount - data.data.transitionExpenditureAmount) }}</div>
+                            </template>
+
+                            <DxColumn caption="최종저장일시" data-field="savedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
+                            <DxColumn caption="최종저장아이디" data-field="savedBy" />
+                            <DxColumn :width="100" cell-template="pupop" css-class="cell-center" />
                             <template #pupop="{ data }">
-                                <EditOutlined @click="onOpenPopupDetail(data.data)" />
-                                <a-tooltip placement="top">
-                                    <template #title>과목전용조서 삭제</template>
-                                    <div>
-                                        <DeleteOutlined v-if="data.data.deletable"
-                                            style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
-                                            @click="statusAddRow ? modalStatusDelete = true : ''" />
-                                    </div>
-                                </a-tooltip>
+                                <div class="custom-action" style="font-size: 16px;">
+                                    <EditOutlined @click="onOpenPopupDetail(data.data)" />
+                                    <a-tooltip placement="topLeft">
+                                        <template #title>과목전용조서 삭제</template>
+                                        <DeleteOutlined class="ml-15"
+                                            @click="actonDeleteBudgetSubjectTransition(data.data)" />
+                                    </a-tooltip>
+                                </div>
                             </template>
                         </DxDataGrid>
                     </a-spin>
@@ -79,14 +125,14 @@
                 </a-col> -->
             </a-row>
         </div>
-        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-            title="변경이력" :idRowEdit="idRowEdit" typeHistory="ac-570" />
-        <AddPopup :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :data="popupData" />
-        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" />
+        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+            :idRowEdit="idRowEdit" typeHistory="ac-570" />
+        <AddPopup :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false"  @callApi="trigger = true"/>
+        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :data="popupData" @callApi="trigger = true"/>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vue";
+import { defineComponent, ref, watch, reactive, computed, createVNode } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
@@ -99,9 +145,12 @@ import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import AddPopup from './components/AddPopup.vue'
 import { Message } from "@/configs/enum"
+import DetailPopup from './components/DetailPopup.vue';
+import { Modal } from 'ant-design-vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 export default defineComponent({
     components: {
-        AddPopup, DxSelection,
+        AddPopup, DxSelection, DetailPopup,
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxPaging, DxSearchPanel
     },
     setup() {
@@ -189,7 +238,7 @@ export default defineComponent({
         errorGetBudgetSubjectTransitionReportViewUrl(e => {
             notification('error', e.message)
         })
-        
+
         // deleteBudgetSubjectTransition
         doneDeleteBudgetSubjectTransition((e) => {
             trigger.value = true
@@ -217,8 +266,6 @@ export default defineComponent({
 
         // 2. GetBudgetSubjectTransitionReportViewUrl
         watch(resGetBudgetSubjectTransitionReportViewUrl, (value) => {
-            console.log(value);
-            
             triggerGetBudgetSubjectTransitionReportViewUrl.value = false
         })
 
@@ -242,6 +289,28 @@ export default defineComponent({
 
         const onOpenPopupDetail = (data: any) => {
 
+            popupData.value = data
+            modalStatusDetail.value = true
+
+        }
+
+        const actonDeleteBudgetSubjectTransition = (data: any) => {
+            Modal.confirm({
+                title: '삭제하겠습니까?',
+                icon: createVNode(ExclamationCircleOutlined),
+                okText: '네',
+                cancelText: '아니요',
+                onOk() {
+                    let variables = {
+                        companyId: companyId,
+                        fiscalYear: acYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        transitionId: data.transitionId
+                    };
+                    deleteBudgetSubjectTransition(variables);
+                },
+                class: 'confirm',
+            });
         }
 
         // A function that is called when the user clicks on the delete button.
@@ -249,12 +318,15 @@ export default defineComponent({
 
 
         return {
+            trigger,
+            loadingGetBudgetSubjectTransitions,
             confirmSave, move_column, colomn_resize, idRowEdit, modalHistoryStatus, labelCol: { style: { width: "150px" } }, statusFormUpdate, popupData, dataSource, DeleteOutlined, modalStatus, focusedRowKey, modalStatusAdd,
             // confimSaveWhenChangeRow, 
             onFocusedRowChanging,
             onOpenPopupDetail, modalStatusDetail,
             actionCreate, modalHistory,
             contentDelete, modalStatusDelete, statusAddRow, Message, ac570FormRef, disabledBlock, gridRef,
+            actonDeleteBudgetSubjectTransition,
         };
     },
 });

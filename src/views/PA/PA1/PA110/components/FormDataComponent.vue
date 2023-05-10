@@ -11,7 +11,7 @@
                 </a-col>
                 <a-col :span="12">
                     <a-form-item label="지급일" class="red">
-                        <number-box width="100px" :min="1" v-model:valueInput="dataIW.paymentDay" :max="31" :isFormat="true"
+                        <number-box width="100px" :min="0" v-model:valueInput="dataIW.paymentDay" :max="dayjs(`${paYear}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth()" :isFormat="true"
                             :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :required="true" />
                     </a-form-item>
                 </a-col>
@@ -223,7 +223,7 @@ import DeletePopupMidTerm from "./Popup/DeletePopupMidTerm.vue"
 import queries120 from '@/graphql/queries/PA/PA1/PA120/index';
 import { sampleDataIncomeWage } from "../utils/index"
 import { Message } from "@/configs/enum";
-
+import dayjs from "dayjs";
 export default defineComponent({
     components: {
         DxButton, DeductionPopup, InsurancePopup, DeletePopupTaxPay, DeletePopupMidTerm
@@ -854,7 +854,7 @@ export default defineComponent({
         
 
         return {
-            pa110FormRef,
+            pa110FormRef, dayjs,
             loadingConfigPayItems, loadingConfigDeductions, loading,
             modalDeductions, paYear,
             modalInsurance, modalDeteleTaxpay, modalDeteleMidTerm,
