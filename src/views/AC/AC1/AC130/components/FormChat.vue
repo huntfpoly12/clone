@@ -5,7 +5,9 @@
     </p>
     <div ref="formTimeline" class="form-chat-timeline">
       <div v-for="(items, index) in listChat" :key="index">
-        <div class="form-chat-timeline-line mb-10" :class="{'form-chat-timeline-line-short mb-0':  index > 0 && listChat[index - 1].userId === items.userId}"></div>
+        <div class="form-chat-timeline-line mb-10"
+          :class="{ 'form-chat-timeline-line-short mb-0': index > 0 && listChat[index - 1].userId === items.userId }">
+        </div>
         <div class="form-chat-timeline-common">
           <div class="form-chat-timeline-avatar">
             <a-badge :dot="true" :offset="[-5, 33]" :status="items.userId === userId ? 'success' : 'error'"
@@ -32,23 +34,83 @@
               <div v-if="items?.files && items?.files.length" class="form-chat-timeline-content-files">
                 <div class="form-chat-timeline-content-files-preview">
                   <div class="form-chat-timeline-content-files-preview-images">
-                    <img v-for="(file, indexFile) in items.files.filter((item: any) => item?.contentType.includes('image/'))" 
-                    :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url" alt=""
-                    @click="previewImage(items.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)">
+                    <img
+                      v-for="(file, indexFile) in items.files.filter((item: any) => item?.contentType.includes('image/'))"
+                      :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
+                      alt=""
+                      @click="previewImage(items.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)">
                   </div>
-                  <div v-for="(file, indexFile) in items.files.filter((item: any) => !item?.contentType.includes('image/'))" 
-                    :key="indexFile" class="form-chat-timeline-content-files-preview-filetext" @click="openLinkDownFile(file.url)">
-                    <FileOutlined style="margin-right: 10px; font-size:30px" />
+                  <div
+                    v-for="(file, indexFile) in items.files.filter((item: any) => !item?.contentType.includes('image/'))"
+                    :key="indexFile" class="form-chat-timeline-content-files-preview-filetext"
+                    @click="openLinkDownFile(file.url)">
+                    <FileTextOutlined style="margin-right: 10px; font-size:30px" />
                     <div class="form-chat-timeline-content-files-preview-filetext-info">
                       <p class="form-chat-timeline-content-files-preview-filetext-info-name">{{ file.name }}</p>
-                      <p class="form-chat-timeline-content-files-preview-filetext-info-size">({{ formatFileSize(file.size) }})</p>
+                      <p class="form-chat-timeline-content-files-preview-filetext-info-size">({{ formatFileSize(file.size)
+                      }})</p>
                     </div>
                   </div>
                 </div>
               </div>
+
+              <!-- pewview reply -->
+              <div v-if="items?.reply" class="form-chat-timeline-common form-chat-timeline-common-replyPreview">
+                <div class="form-chat-timeline-avatar">
+                  <a-avatar shape="circle" size="large"
+                    :style="`background-color: ${items.userId === userId ? '#1890ff' : '#f56a00'}`">{{ items.name
+                    }}</a-avatar>
+                </div>
+                <div class="form-chat-timeline-content">
+                  <div class="form-chat-timeline-content-info">
+                    <div class="form-chat-timeline-content-info-user">
+                      <span class="form-chat-timeline-content-info-user-status">{{ items.reply.status }}</span>
+                      <div class="form-chat-timeline-content-info-user-name"
+                        :class="{ 'form-chat-timeline-content-info-user-name-login': items.reply.userId === userId }">{{
+                          items.reply.name }}
+                      </div>
+                    </div>
+                    <div class="form-chat-timeline-content-info-time">{{ formatDate(items.reply.createdAt) }}</div>
+                  </div>
+                  <div class="form-chat-timeline-content-background">
+                    <div class="form-chat-timeline-content-text">
+                      <MarkdownCustom
+                        :options="{ source: items.reply.text, linkify: true, typographer: true, highlight: true }" />
+                    </div>
+                    <div v-if="items.reply?.files && items.reply?.files.length" class="form-chat-timeline-content-files">
+                      <div class="form-chat-timeline-content-files-preview">
+                        <div class="form-chat-timeline-content-files-preview-images">
+                          <img
+                            v-for="(file, indexFile) in items.reply.files.filter((item: any) => item?.contentType.includes('image/'))"
+                            :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
+                            alt=""
+                            @click="previewImage(items.reply.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)">
+                        </div>
+                        <div
+                          v-for="(file, indexFile) in items.reply.files.filter((item: any) => !item?.contentType.includes('image/'))"
+                          :key="indexFile" class="form-chat-timeline-content-files-preview-filetext"
+                          @click="openLinkDownFile(file.url)">
+                          <FileTextOutlined style="margin-right: 10px; font-size:30px" />
+                          <div class="form-chat-timeline-content-files-preview-filetext-info">
+                            <p class="form-chat-timeline-content-files-preview-filetext-info-name">{{ file.name }}</p>
+                            <p class="form-chat-timeline-content-files-preview-filetext-info-size">({{
+                              formatFileSize(file.size) }})</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- pewview reply -->
             </div>
-            <InputChat v-else ref="inputEditChat" v-model:textChatProp="itemEditComment.text" v-model:filesUploadProps="itemEditComment.files"
-              placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload" @submitChat="submitChat" @cancel="cancelEdit(index)"/>
+
+            <InputChat v-else ref="inputEditChat" v-model:textChatProp="itemEditComment.text"
+              v-model:filesUploadProps="itemEditComment.files" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
+              @submitChat="submitChat" @cancel="cancelEdit(index)" />
+            <div class="form-chat-timeline-content-feedback">
+
+            </div>
           </div>
 
           <div v-if="items.userId === userId" class="form-chat-timeline-common-menu">
@@ -56,8 +118,12 @@
               <EllipsisOutlined :style="{ fontSize: '16px' }" />
               <template #overlay>
                 <a-menu>
+                  <a-menu-item @click="replyComment(items)" :disabled="itemEditComment?.key || true">
+                    <RollbackOutlined />
+                    회신하다
+                  </a-menu-item>
                   <a-menu-item @click="editComment(items)" :disabled="itemEditComment?.key">
-                    <EditOutlined/>
+                    <EditOutlined />
                     수정
                   </a-menu-item>
                   <a-menu-item @click="openComfirmDetele(items)">
@@ -71,7 +137,8 @@
         </div>
       </div>
       <div v-if="!!objectChatUploadUpFile && !itemEditComment.key" class="form-chat-timeline-line"></div>
-      <div v-if="!!objectChatUploadUpFile && !itemEditComment.key" class="form-chat-timeline-common form-chat-timeline-uploading mt-1">
+      <div v-if="!!objectChatUploadUpFile && !itemEditComment.key"
+        class="form-chat-timeline-common form-chat-timeline-uploading mt-1">
         <div class="form-chat-timeline-content">
           <div class="form-chat-timeline-content-info">
             <div class="form-chat-timeline-content-info-user">
@@ -86,11 +153,14 @@
           </div>
           <div class="form-chat-timeline-content-text" v-html="objectChatUploadUpFile.text"></div>
           <div class="form-chat-timeline-content-files">
-            <div v-for="(file, index) in objectChatUploadUpFile.files" class="form-chat-timeline-content-files-item" :key="index">
+            <div v-for="(file, index) in objectChatUploadUpFile.files" class="form-chat-timeline-content-files-item"
+              :key="index">
               <FileOutlined style="margin-right: 10px;" />
               <div class="form-chat-timeline-content-files-item-info">
-                <p class="form-chat-timeline-content-files-item-info-name">{{ file?.file ? file.file.name : file.name }}</p>
-                <p class="form-chat-timeline-content-files-item-info-size">({{ formatFileSize(file?.file ? file.file.size : file.size) }})
+                <p class="form-chat-timeline-content-files-item-info-name">{{ file?.file ? file.file.name : file.name }}
+                </p>
+                <p class="form-chat-timeline-content-files-item-info-size">({{ formatFileSize(file?.file ? file.file.size
+                  : file.size) }})
                 </p>
               </div>
             </div>
@@ -105,7 +175,8 @@
         <span>회계-마감-({{ currentTime }})</span>
       </div>
       <InputChat ref="inputChat" v-model:textChatProp="textChat" v-model:filesUploadProps="filesUpload"
-        placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload" @submitChat="submitChat" />
+        :dataReply="itemCommentReply" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
+        @removeReply="itemCommentReply = {}" @submitChat="submitChat" />
     </div>
     <ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
       :listImage="listImagePreview" />
@@ -116,7 +187,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, nextTick, watch, computed } from 'vue'
-import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, SendOutlined } from '@ant-design/icons-vue';
+import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, SendOutlined, FileTextOutlined, RollbackOutlined } from '@ant-design/icons-vue';
 import { databaseFirebase, storage } from "@/firebaseConfig";
 import {
   ref as reffb,
@@ -164,6 +235,8 @@ export default defineComponent({
     SmileOutlined,
     FileOutlined,
     FileAddOutlined,
+    FileTextOutlined,
+    RollbackOutlined,
     SendOutlined,
     ModalPreviewListImage,
     EmojiPicker,
@@ -187,6 +260,7 @@ export default defineComponent({
       text: '',
       files: [],
     })
+    let itemCommentReply = ref<any>({})
     let filesUpload: any = ref([])
     let listFileUploadHandleLoading: any = ref([])
     let listImageUpload: any = ref([])
@@ -201,7 +275,8 @@ export default defineComponent({
       files: [],
       createdAt: new Date().getTime(),
       status: '일반',
-      userId: jwtObject.userId
+      userId: jwtObject.userId,
+      reply: {}
     })
     const objectChatUploadUpFile: any = ref(null)
     const listChat = ref<any>([])
@@ -293,16 +368,19 @@ export default defineComponent({
       if (isLoadingUpload.value || isProcessingDeleteUpdate.value) return
       let textInputed = textChat.value
       let fileUploaded = [...filesUpload.value]
-      if(itemEditComment.value.key) {
+      if (itemEditComment.value.key) {
         textInputed = itemEditComment.value.text
         fileUploaded = [...itemEditComment.value.files]
       }
-      if (!textInputed.trim() && !fileUploaded.length ) return
+      if (!textInputed.trim() && !fileUploaded.length) return
       isLoadingUpload.value = true
       payload.value = {
         ...payload.value,
         text: textInputed,
         files: []
+      }
+      if (Object.keys(itemCommentReply.value).length) {
+        payload.value.reply = { ...itemCommentReply.value }
       }
       if (fileUploaded.length) {
         listFileUploadHandleLoading.value = [...fileUploaded]
@@ -353,6 +431,7 @@ export default defineComponent({
           .catch((err) => {
             console.log(err);
           }).finally(() => {
+            itemCommentReply.value = {}
             objectChatUploadUpFile.value = null
             isLoadingUpload.value = false
             formTimeline.value.scrollTop = 10000000
@@ -401,12 +480,16 @@ export default defineComponent({
     })
 
     const editComment = (item: any) => {
-      itemEditComment.value = {...item, files: !!item.files ? item.files : []}
+      itemEditComment.value = { ...item, files: !!item.files ? item.files : [] }
       itemOriginEdit.value = cloneDeep(itemEditComment.value)
       nextTick(() => {
         inputEditChat.value[0].resizeInput()
         inputEditChat.value[0].focus()
       })
+    }
+
+    const replyComment = (item: any) => {
+      itemCommentReply.value = { ...item }
     }
 
     const openComfirmDetele = (item: any) => {
@@ -444,7 +527,7 @@ export default defineComponent({
       listFileUploadHandleLoading.value.forEach((file: any) => {
         if (!!file?.file) {
           const storageRef = refStorage(storage, file.file.name);
-          uploadBytes(storageRef, file.file, {contentType: file.contentType}).then(async (res) => {
+          uploadBytes(storageRef, file.file, { contentType: file.contentType }).then(async (res) => {
             const url = await getDownloadURL(res.ref)
             listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size, contentType: file.contentType }]
           }).catch((err) => {
@@ -464,7 +547,7 @@ export default defineComponent({
     }
 
     const cancelEdit = (indexEdit: number) => {
-      listChat.value[indexEdit] = {...itemOriginEdit.value}
+      listChat.value[indexEdit] = { ...itemOriginEdit.value }
       nextTick(() => {
         itemEditComment.value = {
           key: null,
@@ -511,7 +594,9 @@ export default defineComponent({
       inputEditChat,
       cancelEdit,
       formatFileSize,
-      openLinkDownFile
+      openLinkDownFile,
+      replyComment,
+      itemCommentReply
     }
   },
 })
@@ -545,6 +630,7 @@ export default defineComponent({
       margin-top: 8px;
       height: 1px;
       background-color: #e7e6e6;
+
       &-short {
         margin-left: 52px;
       }
@@ -569,11 +655,13 @@ export default defineComponent({
       align-items: flex-start;
       margin-top: 1px;
       position: relative;
+
       &-menu {
         position: absolute;
         top: 0;
         right: 5px;
         display: none;
+
         &:hover {
           display: block;
         }
@@ -584,24 +672,40 @@ export default defineComponent({
           display: block;
         }
       }
+
+      &-replyPreview {
+        border-left: 3px solid #e7e6e6;
+        padding-left: 5px;
+        max-height: 200px;
+        overflow: hidden;
+        pointer-events: none;
+        background-color: rgba(2, 2, 2, 0.027);
+
+        .form-chat-timeline-content {
+          width: 100%;
+          margin-right: 0 !important;
+        }
+      }
     }
 
     &-content {
-      width: 100%;
+      width: calc(100% - 40px);
       // background-color: #DCE6F2;
       padding: 5px 12px 8px 12px;
 
       &-files {
         width: 100%;
         background-color: #fff;
+
         &-preview {
           &-images {
             display: flex;
             flex-wrap: wrap;
             margin: 0 -3px;
+
             &-image {
-              width: 200px;
-              height: 200px;
+              width: 250px;
+              height: 250px;
               object-fit: cover;
               display: block;
               padding: 3px;
@@ -612,6 +716,7 @@ export default defineComponent({
               }
             }
           }
+
           &-filetext {
             display: flex;
             align-items: center;
@@ -621,12 +726,15 @@ export default defineComponent({
             overflow: hidden;
             padding: 10px;
             margin-top: 10px;
-            & + & {
+
+            &+& {
               margin-top: 3px;
             }
+
             &:hover {
               background-color: #fafafa;
             }
+
             &-info {
               &-name {
                 white-space: nowrap;
@@ -634,6 +742,7 @@ export default defineComponent({
                 line-height: 15px;
                 font-size: 15px;
               }
+
               &-size {
                 margin: 0;
                 color: #A6A6A6;
@@ -641,6 +750,7 @@ export default defineComponent({
             }
           }
         }
+
         &-item {
           display: flex;
           align-items: center;
@@ -695,11 +805,13 @@ export default defineComponent({
           font-size: 11px;
         }
       }
+
       &-background {
         // &:hover {
         //   background-color: #fafafa;
         // }
       }
+
       &-text {
         word-wrap: break-word;
         white-space: pre-wrap;
@@ -707,6 +819,7 @@ export default defineComponent({
         color: #333333;
       }
     }
+
     &-uploading {
       margin-left: 40px;
     }
