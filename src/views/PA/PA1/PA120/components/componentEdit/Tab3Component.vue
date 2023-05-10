@@ -7,7 +7,7 @@
         <a-spin :spinning="loading" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-            id="gridContainer">
+            id="gridContainer" noDataText="내역이 없습니다">
             <DxScrolling mode="infinite" />
             <DxToolbar>
               <DxItem location="after" template="button-template" css-class="cell-button-add" />
