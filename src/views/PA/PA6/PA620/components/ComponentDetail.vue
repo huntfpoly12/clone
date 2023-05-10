@@ -423,7 +423,7 @@ export default defineComponent({
     })
     // ================FUNCTION============================================ 
     const caclInput = () => {
-      let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate);
+      let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate*100);
       dataAction.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
       dataAction.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
       dataAction.value.input.actualPayment = dataAction.value.input.paymentAmount - dataAction.value.input.withholdingIncomeTax - dataAction.value.input.withholdingLocalIncomeTax;

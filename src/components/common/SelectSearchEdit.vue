@@ -86,6 +86,11 @@ export default {
       deep: true,
       immediate: true,
     })
+    watch(() => props.valueInput, (value) => {
+        valueBinding.value = value;
+    }, {
+      immediate: true,
+    })
 
     watch(() => valueBinding.value, (value) => {
       if(value !== null && value.toString().length){

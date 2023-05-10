@@ -211,8 +211,7 @@
             <a-form-item label="주민등록번호" :label-col="labelCol" v-if="formState.type === 1">
               <div class="d-flex gap-6" >
                 <id-number-text-box
-                  :required="formState.type === 1"
-                  :width="200"
+                  width="200"
                   v-model:valueInput="formState.residentId"
                   :disabled="formState.type !== 1"
                 />
@@ -230,9 +229,8 @@
             <a-form-item label="사업자(고유)등록번호" :label-col="labelCol" v-else>
               <div class="d-flex gap-6">
                 <biz-number-text-box
-                  :required="formState.type !== 1"
                   v-model:valueInput="formState.bizNumber"
-                  :width="200"
+                  width="200"
                   :disabled="formState.type === 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
@@ -739,11 +737,29 @@ export default defineComponent({
     onResultCheckResidentId(e => {
       triggerResidentId.value = false
       if (e.data?.isBackerRegistableResidentId) {
+        message.success({
+          content: () =>  Message.getMessage('AC620', '003').message,
+          class: 'ant-message',
+          style: {
+            marginTop: '20vh',
+            display: "flex",
+            justifyContent: "end",
+            paddingRight: "100px",
+          },
+        }, 2);
         isCheckedResidentId.value = true
-        notification('success', `사용 가능한 아이디입니다!`)
       } else {
         isCheckedResidentId.value = false
-        notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+        message.error({
+          content: () =>  '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요',
+          class: 'ant-message',
+          style: {
+            marginTop: '20vh',
+            display: "flex",
+            justifyContent: "end",
+            paddingRight: "100px",
+          },
+        }, 2);
       }
     })
 
@@ -794,7 +810,7 @@ export default defineComponent({
       triggerBizNumber.value = false
         if (e.data?.isBackerRegistableBizNumber) {
           message.success({
-            content: () =>  '사용 가능한 아이디입니다!',
+            content: () =>  Message.getMessage('AC620', '006').message,
             class: 'ant-message',
             style: {
               marginTop: '20vh',

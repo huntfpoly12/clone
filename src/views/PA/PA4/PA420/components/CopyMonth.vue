@@ -43,7 +43,7 @@ const emit = defineEmits(['closePopup', 'dataAddIncomeProcess'])
 
 
 const store = useStore();
-const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
+const selectMonthColumn = computed(() => store.getters['common/getselectMonthColumn'])
 const selectMonthColumnOld = computed(() => store.getters['common/getSelectMonthColumnOld'])
 const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
 const startDate = ref(dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).startOf('month').toDate());
