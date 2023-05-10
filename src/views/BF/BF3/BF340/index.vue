@@ -73,7 +73,7 @@
                     <DxColumn caption="주소" data-field="address" />
                     <DxColumn caption="연락처" data-field="phone" />
                     <DxColumn caption="휴대폰" data-field="mobilePhone" />
-                    <DxColumn caption="가입일자" cell-template="registerDate" />
+                    <DxColumn caption="가입일자" cell-template="registerDate" data-field="registerDate"/>
                     <template #registerDate="{ data }">
                         {{ $filters.formatDate(data.data.registerDate) }}
                     </template>
