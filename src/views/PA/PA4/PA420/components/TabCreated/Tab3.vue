@@ -458,16 +458,11 @@ watch(formState.calculationOfDeferredRetirementIncomeTax.statements, (value) => 
   if (value[0] && value[1]) {
     const isNotEmpty1 = compareObjects(value[0], FORM_STATE_TAB_3.calculationOfDeferredRetirementIncomeTax.statements[0])
     const isNotEmpty2 = compareObjects(value[1], FORM_STATE_TAB_3.calculationOfDeferredRetirementIncomeTax.statements[1])
-    if (!isNotEmpty1 && !isNotEmpty2) {
-      disableBtn.value = true
-      return
-    }
-    if (isNotEmpty1) {
-      disableBtn.value = false
-    }
-    if (isNotEmpty2) {
-      disableBtn.value = false
-    }
+    // if (!isNotEmpty1 && !isNotEmpty2) {
+    //   disableBtn.value = true
+    //   return
+    // }
+    disableBtn.value = !(isNotEmpty1 || isNotEmpty2);
     formState.calculationOfDeferredRetirementIncomeTax.totalAmount = +value[0].accountDepositAmount + +value[1].accountDepositAmount
   }
 })

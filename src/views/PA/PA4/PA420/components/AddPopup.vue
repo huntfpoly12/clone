@@ -125,6 +125,7 @@ import Tab3 from "./TabCreated/Tab3.vue";
 import {useStore} from "vuex";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import {Message} from "@/configs/enum";
+import dayjs from "dayjs";
 enum EmployeeWageType {
   WAGE = 10,
   WAGEDaily = 20,
@@ -138,6 +139,8 @@ const emit = defineEmits(["closePopup", "createdDone"]);
 
 const store = useStore();
 const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
+const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
+
 const step = ref(0);
 const valueNextStep = ref(0);
 const modalStatusAccept = ref(false);
@@ -188,7 +191,7 @@ const {
 
 watch(resultConfig, (resConfig) => {
   if (resConfig) {
-    store.commit('common/setPaymentDay', resConfig.getWithholdingConfig.paymentDay)
+    store.commit('common/setPaymentDay', resConfig.getWithholdingConfig.paymentDay || Number(dayjs(`${selectMonthColumn.value.paymentYear}${selectMonthColumn.value.paymentMonth}`).endOf('month').format('DD')))
   }
 })
 const {
