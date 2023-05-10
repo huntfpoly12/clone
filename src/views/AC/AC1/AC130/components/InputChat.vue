@@ -28,8 +28,8 @@
         </a-dropdown>
       </div>
       <div class="input-edit-chat-input-action-btn">
-        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()" :disable="disable"/>
-        <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()" :disable="disable"/>
+        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()" :disabled="disabled"/>
+        <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()" :disabled="disabled"/>
       </div>
     </div>
     <div v-if="filesUpload.length" class="input-edit-chat-input-files">
@@ -74,7 +74,7 @@ export default defineComponent({
       type: String,
       default: ''
     },
-    disable: {
+    disabled: {
       type: Boolean,
       default: false
     }
@@ -147,7 +147,7 @@ export default defineComponent({
     }
 
     const openFile = () => {
-      if(props.disable) return
+      if(props.disabled) return
       inputFile.value.click()
     }
 
@@ -173,14 +173,10 @@ export default defineComponent({
         e.target.value = null
         return
       }
-      const metadata = {
-        contentType: file.type
-      }
       const url = await getBase64(file)
       filesUpload.value.push({
         file: file,
-        metadata: metadata,
-        contentType: metadata.contentType,
+        contentType: file.type,
         url: url
       })
       e.target.value = null
@@ -196,12 +192,12 @@ export default defineComponent({
     }
 
     const removeFile = (index: number) => {
-      if(props.disable) return
+      if(props.disabled) return
       filesUpload.value.splice(index, 1)
     }
 
     const onSelectEmoji = (emoji: any) => {
-      if(props.disable) return
+      if(props.disabled) return
       textChat.value += emoji.i
       changeInput(inputChat.value)
     }
