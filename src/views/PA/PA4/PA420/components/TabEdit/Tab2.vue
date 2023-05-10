@@ -110,6 +110,16 @@ watch(isChangeForm, (value) => {
   store.commit('common/setIsChangeForm', {tab2: value})
   store.commit('common/setIsDisableBtnTab2', value)
 })
+watch( dataFormIncomeCalculation, (value) => {
+  console.log('dataFormIncomeCalculation', value)
+  // if (isEqual(value, incomeCalculationInput.value)){
+  //   store.commit('common/setIsChangeForm', {tab2: true})
+  //   store.commit('common/setIsDisableBtnTab2', false)
+  // } else {
+  //   store.commit('common/setIsChangeForm', {tab2: false})
+  //   store.commit('common/setIsDisableBtnTab2', true)
+  // }
+}, {deep: true})
 
 watchEffect(() => {
   dataIncomeRetirement.value = props.dataDetail.specification?.expectedRetirementBenefits || 0

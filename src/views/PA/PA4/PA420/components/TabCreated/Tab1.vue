@@ -10,15 +10,15 @@
         </a-form-item>
         <a-form-item label="귀속/지급연월">
           <div class="d-flex-center">
-            <month-picker-box-custom v-model:valueDate="attributionDate" text="귀"
-                                     bgColor="gray"></month-picker-box-custom>
-            <month-picker-box-custom v-model:valueDate="paymentYearAndMonth" text="지"></month-picker-box-custom>
+{{paymentDay}} <br>
+            <month-picker-box-custom v-model:valueDate="attributionDate" text="귀" bgColor="gray" disabled/>
+            <month-picker-box-custom v-model:valueDate="paymentYearAndMonth" text="지" disabled/>
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="label-required">
           <div class="d-flex-center">
-            <number-box min="1" max="31" :required="true" width="150px"
-                        v-model:valueInput="paymentDay" is-format/>
+            <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+                                  v-model:valueDate="paymentDay"/>
             <info-tool-tip class="ml-5">
               지급일은 저장 후 수정불가
             </info-tool-tip>
@@ -280,6 +280,7 @@ import isEqual from "lodash/isEqual";
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420";
 import {companyId} from "@/helpers/commonFunction";
+import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
 enum EmployeeWageType {
   WAGE = 10,
   WAGEDaily = 20,
@@ -317,7 +318,11 @@ const ProcessKey = computed(() => store.getters['common/getSelectMonthColumn'])
 let attributionDate = ref(`${ProcessKey.value.imputedYear}${filters.formatMonth(ProcessKey.value.imputedMonth)}`)
 let paymentYearAndMonth = ref(`${ProcessKey.value.paymentYear}${filters.formatMonth(ProcessKey.value.paymentMonth)}`)
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
+const incomeCalculationInputCur = computed(() => store.getters['common/getIncomeCalculationInput'])
+const incomeCalculationInputOld = computed(() => store.getters['common/getIncomeCalculationInputOld'])
 
+const startDate = computed(()=> dayjs(`${paymentYearAndMonth.value}`).startOf('month').toDate());
+const finishDate = computed(() => dayjs(`${paymentYearAndMonth.value}`).endOf('month').toDate());
 // get employee list
 const {
   result: resultEmployee
@@ -398,7 +403,7 @@ const dataSettlement = computed(() => {
 })
 const finishDateRetirement = computed(() => props.retirementType === 1 ? formState.lastRetiredYearsOfService.settlementFinishDate : null)
 const paymentDayOld = store.getters['common/getPaymentDay']
-const paymentDay = ref(store.getters['common/getPaymentDay'])
+const paymentDay = ref(`${paymentYearAndMonth.value}${store.getters['common/getPaymentDay']}`)
 
 const formRef = ref()
 // =============== WATCH ==================================
@@ -482,6 +487,12 @@ watch(() => props.actionNextStep, () => {
   (document.getElementById("btn-next-step") as HTMLInputElement).click();
 });
 
+watch(() => paymentYearAndMonth.value, (val) => {
+  store.commit('common/setSelectMonthColumn', {
+    paymentYear: parseInt(val.toString().slice(0, 4)),
+    paymentMonth: parseInt(val.toString().slice(4, 6))
+  })
+})
 // =============== FUNCTION ================================
 const openNewTab = () => {
   window.open('pa-120')
@@ -540,9 +551,12 @@ const submitForm = (e: any) => {
   } else if (!dtValidate) {
     dtValidate = true
   } else {
-    console.log('formState', formState)
     const {inputFormTab1, incomeCalculationInput, ...taxCalculationInput} = formState
     store.commit('common/setIncomeCalculationInput', incomeCalculationInput)
+    if (!isEqual( {...incomeCalculationInputCur.value, ...incomeCalculationInput}, incomeCalculationInputOld.value)) {
+      store.commit('common/setIsDisableBtnTab2', true)
+      store.commit('common/setIncomeCalculationInputOld', {...incomeCalculationInputCur.value, ...incomeCalculationInput})
+    }
     store.commit('common/setTaxCalculationInput', {
       ...taxCalculationInput,
       prevRetirementBenefitStatus: {
@@ -555,10 +569,9 @@ const submitForm = (e: any) => {
       ...inputFormTab1,
       retirementType: props.retirementType,
       retirementReason: retirementReason.value,
-      paymentDay: paymentDay.value
+      paymentDay: Number(dayjs(String(paymentDay.value)).format('DD'))
     })
     store.commit('common/setInterimPaymentTab1', interimPaymentTab1.value)
-    // store.commit('common/setIsDisableBtnTab2', true)
     emit('nextPage', true)
   }
 }

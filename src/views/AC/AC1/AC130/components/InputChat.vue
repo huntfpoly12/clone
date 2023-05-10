@@ -28,12 +28,12 @@
         </a-dropdown>
       </div>
       <div class="input-edit-chat-input-action-btn">
-        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()" />
-        <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()" />
+        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()" :disable="disable"/>
+        <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()" :disable="disable"/>
       </div>
     </div>
     <div v-if="filesUpload.length" class="input-edit-chat-input-files">
-      <div v-for="(file, index) in filesUpload" class="input-edit-chat-input-files-item">
+      <div v-for="(file, index) in filesUpload" class="input-edit-chat-input-files-item" :key="index">
         <div class="input-edit-chat-input-files-item-file">
           <FileOutlined style="margin-right: 10px;" />
           <div class="input-edit-chat-input-files-item-file-info">
@@ -73,6 +73,10 @@ export default defineComponent({
     placeholder: {
       type: String,
       default: ''
+    },
+    disable: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -89,9 +93,9 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const inputFile = ref<any>()
-    let textChat = ref(props.textChatProp)
+    let textChat = ref(props.textChatProp || '')
+    let filesUpload: any = ref(props.filesUploadProps || [])
     const inputChat: any = ref()
-    let filesUpload: any = ref(props.filesUploadProps)
     let isVisibleEmojiForm = ref(false)
     const objectChatUpFile: any = ref(null)
     const listChat = ref<any>([])
@@ -143,6 +147,7 @@ export default defineComponent({
     }
 
     const openFile = () => {
+      if(props.disable) return
       inputFile.value.click()
     }
 
@@ -186,10 +191,12 @@ export default defineComponent({
     }
 
     const removeFile = (index: number) => {
+      if(props.disable) return
       filesUpload.value.splice(index, 1)
     }
 
     const onSelectEmoji = (emoji: any) => {
+      if(props.disable) return
       textChat.value += emoji.i
       changeInput(inputChat.value)
     }

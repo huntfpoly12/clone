@@ -2,6 +2,9 @@ import cloneDeep from "lodash/cloneDeep";
 import { INITIAL_STATE } from "./../screenStates/screenStatePA420";
 
 const screenMutatePA420 = {
+  setSelectMonthColumnOld: function (state: any, data: any) {
+    state.selectMonthColumnOld = { ...state.selectMonthColumnOld, ...data }
+  },
   setFormStateEditPA420(state: any, data: any) {
     state.formStateEditPA420 = data
   },
@@ -16,6 +19,9 @@ const screenMutatePA420 = {
   },
   setIsDisableBtnTab2(state: any, status: boolean) {
     state.isDisableBtnTab2 = status
+  },
+  setIncomeCalculationInputOld(state: any, data: any) {
+    state.incomeCalculationInputOld = { ...state.incomeCalculationInputOld, ...data }
   },
   setIncomeCalculationInput(state: any, data: any) {
     state.incomeCalculationInput = { ...state.incomeCalculationInput, ...data }

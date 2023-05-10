@@ -13,12 +13,12 @@
     <div class="ac-110__main">
       <div class="ac-110__main-main">
         <a-spin :spinning="loadingGetBankbookDetails || loadingSyncBankbookDetails" size="large">
-          <DxDataGrid id="DxDataGridMainAc110" ref="refDxDataGridMainAc110" key-expr="bankbookDetailId" :show-row-lines="true"
-            :hoverStateEnabled="true" :data-source="dataSource" v-model:selected-row-keys="selectedRowKeys"
-            :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused"
-            :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-            @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging" @row-click="onRowClick"
-            noDataText="내역이 없습니다">
+          <DxDataGrid id="DxDataGridMainAc110" ref="refDxDataGridMainAc110" key-expr="bankbookDetailId"
+            :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+            v-model:selected-row-keys="selectedRowKeys" :show-borders="true" :allow-column-reordering="move_column"
+            v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true" :allow-column-resizing="colomn_resize"
+            :column-auto-width="true" @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging"
+            @row-click="onRowClick" noDataText="내역이 없습니다">
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="always" :deferred="false" />
@@ -170,7 +170,8 @@
                       <template #title>신규</template>
                       <div>
                         <DxButton :focusStateEnabled="false" @click="addNewRowTransactionDetails"
-                          :disabled="isRegistered || !rowKeyfocused" size="large" style="background: #337ab7; color: white">
+                          :disabled="isRegistered || !rowKeyfocused" size="large"
+                          style="background: #337ab7; color: white">
                           <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" /> 신규
                         </DxButton>
                       </div>
@@ -236,7 +237,7 @@
                   <template #relationCode="{ data }">
                     <div v-if="rowKeyfocused" :key="`relationCode${keyRefreshGridDetailAc}`">
                       <account-code-select v-model:valueInput="data.data.relationCode"
-                        :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" 
+                        :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
                         :readOnly="isRegistered || data.data.resolutionClassification === 1" :lengthText="10" />
                     </div>
                   </template>
@@ -248,7 +249,8 @@
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">
                     <div>
-                      <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered || data.data.resolutionClassification === 1" />
+                      <customer-select v-model:valueInput="data.data.clientId" width="135px"
+                        :readOnly="isRegistered || data.data.resolutionClassification === 1" />
                     </div>
                   </template>
                   <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
@@ -261,7 +263,8 @@
                   </template>
                   <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                   <template #causeUsage="{ data }">
-                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.causeUsage)}">
+                    <div
+                      :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.causeUsage) }">
                       <a-tooltip v-if="!!data.data.causeUsage && data.data.causeUsage.length" placement="top">
                         <template #title>
                           <div class="ac-110-tooltip-memocauseUsage">{{ data.data.causeUsage }}</div>
@@ -275,7 +278,8 @@
                   </template>
                   <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                   <template #goodsCount="{ data }">
-                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.goodsCount) }">
+                    <div
+                      :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.goodsCount) }">
                       <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1"
                         style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
                         {{ data.data.goodsCount || 0 }}
@@ -285,7 +289,8 @@
                   </template>
                   <DxColumn caption="메모" cell-template="memo" alignment="center" />
                   <template #memo="{ data }">
-                    <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.memo) }">
+                    <div
+                      :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 || (isRegistered && !data.data.memo) }">
                       <a-tooltip v-if="!!data.data.memo && data.data.memo.length" placement="top">
                         <template #title>
                           <div class="ac-110-tooltip-memocauseUsage">{{ data.data.memo }}</div>
@@ -698,7 +703,7 @@ export default defineComponent({
         dataSourceTransactionDetails.value = value.getTransactionDetails
         dataSourceTransactionDetails.value.transactionDetails = value.getTransactionDetails.transactionDetails.map((item: any) => (
           { ...item, summary: item.summary[item.summary.length - 1] === '중' ? item.summary : `${item.summary} 중` }
-          ))
+        ))
         listTransactionDetailsOrigin.value = cloneDeep(dataSourceTransactionDetails.value.transactionDetails)
       }
       triggerTransactionDetails.value = false
@@ -1218,5 +1223,4 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-}
-</style>
+}</style>
