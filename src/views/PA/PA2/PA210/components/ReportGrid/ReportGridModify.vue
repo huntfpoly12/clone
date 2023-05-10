@@ -215,7 +215,7 @@ export default defineComponent({
             paymentMonth: dataSource.value[0].paymentMonth,
             reportType: dataSource.value[0].reportType,
             index: dataSource.value[0].index,
-            paymentType: 1,
+            paymentType: dataSource.value[0].paymentType,
             yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
           },
       }
