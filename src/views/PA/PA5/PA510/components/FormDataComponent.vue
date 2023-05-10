@@ -171,7 +171,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import query520 from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
-import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
+import { companyId, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"

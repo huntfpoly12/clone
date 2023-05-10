@@ -8,9 +8,11 @@
                         <DxDataGrid noDataText="내역이 없습니다" id="gridContainer" :show-row-lines="true"
                             :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="transitionId"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" @focused-row-changing="onFocusedRowChanging" ref="gridRef"
+                            @selection-changed="selectionChanged"
+                            v-model:selected-row-keys="selectedRowKeys"
+                            :column-auto-width="true" @focused-row-changing="onFocusedRowChanging" ref="dataGridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
-                            <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
+                            <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                             <DxPaging :enabled="false" />
@@ -26,11 +28,11 @@
                             <template #print>
                                 <a-tooltip>
                                     <template #title>출력 / 저장</template>
-                                    <img src="@/assets/images/print.svg" alt="" style="width: 25px;" />
+                                    <img @click="actionPrint" src="@/assets/images/print.svg" alt="" style="width: 25px;" />
                                 </a-tooltip>
                             </template>
                             <template #group_email>
-                                <img src="@/assets/images/group_email.png" alt=""
+                                <img @click="actionSendEmailGroup" src="@/assets/images/group_email.png" alt=""
                                     style="width: auto; height: 25px; margin-left: 6px;" />
                             </template>
                             <template #button-history>
@@ -120,19 +122,15 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <!-- <a-col span="7" class="custom-layout">
-                    
-                </a-col> -->
             </a-row>
         </div>
-        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-            :idRowEdit="idRowEdit" typeHistory="ac-570" />
+        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력" typeHistory="ac-570" />
         <AddPopup :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false"  @callApi="trigger = true"/>
-        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :data="popupData" @callApi="trigger = true"/>
+        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :dataDetail="popupData" @callApi="trigger = true"/>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, computed, createVNode } from "vue";
+import { defineComponent, ref, watch, computed, createVNode } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
@@ -155,16 +153,17 @@ export default defineComponent({
     },
     setup() {
         // const contentDelete = Message.getMessage('PA120', '002').message
-        const contentDelete = ref('선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?')
+        // const contentDelete = ref('선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?')
         // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
-        let statusFormUpdate = ref(false)
+        const userInfor = computed(() => store.state.auth.userInfor);
+        // let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
-        var idRowEdit = ref<number>(0);
+        // var idRowEdit = ref<number>(0);
         let popupData = ref();
         const focusedRowKey = ref()
         const modalStatus = ref(false)
@@ -173,29 +172,31 @@ export default defineComponent({
         let trigger = ref<boolean>(true);
         let triggerGetBudgetSubjectTransitionReportViewUrl = ref<boolean>(false);
         const dataSource: any = ref([])
-        let formState: any = ref({});
-        const resetFormNum = ref(1);
-        const statusAddRow = ref(true);
+        // let formState: any = ref({});
+        // const resetFormNum = ref(1);
+        // const statusAddRow = ref(true);
         const modalStatusDetail = ref<boolean>(false)
-        const statusClickButtonSave = ref<boolean>(true);
-        const statusClickButtonAdd = ref<boolean>(false);
-        const gridRef = ref(); // ref of grid
-        const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
+        // const statusClickButtonSave = ref<boolean>(true);
+        // const statusClickButtonAdd = ref<boolean>(false);
+        const dataGridRef = ref(); // ref of grid
+        // const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
         const originData = {
             companyId: companyId,
             fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
         }
-        const originDataGetBudgetSubjectTransitionReportViewUrl: any = ref({
+        const originDataGetBudgetSubjectTransitionReportViewUrl = {
             companyId: companyId,
             fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
-            transitionId: null,
-        });
-        let confirmSave = ref(false)
-        // const optionsRadio = ref([...initialOptionsRadio]);
-        let runOne = ref(true);
-        var disabledBlock = ref<boolean>(false);
+            transitionIds: [],
+        };
+        // let confirmSave = ref(false)
+        const dataRows = ref([])
+        const selectedRowKeys = ref([])
+        // const ac570FormRef = ref()
+
+        // var disabledBlock = ref<boolean>(false);
 
 
 
@@ -262,19 +263,20 @@ export default defineComponent({
         watch(resGetBudgetSubjectTransitions, (value) => {
             trigger.value = false
             dataSource.value = value.getBudgetSubjectTransitions
+            selectedRowKeys.value = value.getBudgetSubjectTransitions?.map((item: any) => {
+                return item.transitionId
+            })
         })
 
         // 2. GetBudgetSubjectTransitionReportViewUrl
         watch(resGetBudgetSubjectTransitionReportViewUrl, (value) => {
             triggerGetBudgetSubjectTransitionReportViewUrl.value = false
+            if (value) {
+                window.open(value.getBudgetSubjectTransitionReportViewUrl)
+            }
         })
 
-
-
-
         // ================FUNCTION============================================
-        const ac570FormRef = ref()
-
 
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = true
@@ -288,10 +290,12 @@ export default defineComponent({
         }
 
         const onOpenPopupDetail = (data: any) => {
-
             popupData.value = data
             modalStatusDetail.value = true
 
+        }
+        const selectionChanged = (data: any) => {
+            dataRows.value = data.selectedRowsData
         }
 
         const actonDeleteBudgetSubjectTransition = (data: any) => {
@@ -313,20 +317,62 @@ export default defineComponent({
             });
         }
 
-        // A function that is called when the user clicks on the delete button.
+        const actionPrint = () => {
+            if (dataRows.value.length) {
+                originDataGetBudgetSubjectTransitionReportViewUrl.transitionIds = selectedRowKeys.value
+                triggerGetBudgetSubjectTransitionReportViewUrl.value = true;
+            } else {
+                notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+            }
+        }
+
+        const actionSendEmailGroup = () => {
+            if (dataRows.value.length) {
+                console.log(userInfor.value);
+                
+                sendBudgetSubjectTransitionReportEmail({
+                    companyId: companyId,
+                    fiscalYear: acYear.value,
+                    facilityBusinessId: globalFacilityBizId.value,
+                    transitionIds: selectedRowKeys.value,
+                    emailInput: {
+                        senderName: sessionStorage.getItem("username"),
+                        receiverName: userInfor.value?.name,
+                        receiverAddress: userInfor.value?.email,
+                    }
+                })
+            } else {
+                notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+            }
+        }
 
 
 
         return {
-            trigger,
+            trigger, selectionChanged, selectedRowKeys,
             loadingGetBudgetSubjectTransitions,
-            confirmSave, move_column, colomn_resize, idRowEdit, modalHistoryStatus, labelCol: { style: { width: "150px" } }, statusFormUpdate, popupData, dataSource, DeleteOutlined, modalStatus, focusedRowKey, modalStatusAdd,
+            // confirmSave,
+             move_column, colomn_resize, 
+            // idRowEdit, 
+            modalHistoryStatus, 
+            // labelCol: { style: { width: "150px" } },
+            //  statusFormUpdate,
+              popupData, dataSource,
+            //    DeleteOutlined, 
+               modalStatus, focusedRowKey, modalStatusAdd,
             // confimSaveWhenChangeRow, 
             onFocusedRowChanging,
             onOpenPopupDetail, modalStatusDetail,
             actionCreate, modalHistory,
-            contentDelete, modalStatusDelete, statusAddRow, Message, ac570FormRef, disabledBlock, gridRef,
+            // contentDelete,
+             modalStatusDelete, 
+            //  statusAddRow,
+              Message, 
+            // ac570FormRef, 
+            // disabledBlock, 
+            dataGridRef,
             actonDeleteBudgetSubjectTransition,
+            actionPrint, actionSendEmailGroup,
         };
     },
 });

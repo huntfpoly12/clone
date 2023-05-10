@@ -5,13 +5,13 @@ export default gql`
         $companyId: Int!,
         $fiscalYear: Int!,
         $facilityBusinessId: Int!,
-        $transitionId: Int!,
+        $transitionIds: [Int!]!,
     ) {
         getBudgetSubjectTransitionReportViewUrl(
             companyId: $companyId,
             fiscalYear: $fiscalYear,
             facilityBusinessId: $facilityBusinessId,
-            transitionId: $transitionId,
+            transitionIds: $transitionIds,
         ) 
     }
 `
