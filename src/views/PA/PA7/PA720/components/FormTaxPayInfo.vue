@@ -370,7 +370,7 @@ export default defineComponent({
 
     const caclInput = () => {
       let objIncomeAmount: any = Formula.getExtraEmployeeIncomeAmount(formPA720.value.input.paymentAmount, formPA720.value.input.requiredExpenses);
-      let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, formPA720.value.input.taxRate);
+      let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, formPA720.value.input.taxRate*100);
       formPA720.value.input.withholdingIncomeTax = incomeAmount.value * formPA720.value.input.taxRate / 100;
       formPA720.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
       formPA720.value.input.incomePayment = formPA720.value.input.paymentAmount - formPA720.value.input.requiredExpenses;

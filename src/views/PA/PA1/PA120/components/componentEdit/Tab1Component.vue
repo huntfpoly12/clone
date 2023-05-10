@@ -8,14 +8,6 @@
           <div class="input-text">
             <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능"
               :disabled="true" />
-            <!-- <a-tooltip placement="top" class="custom-tooltip">
-              <template #title>
-                최초 저장된 이후 수정 불가.
-              </template>
-              <div style="text-align: center;">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
-              </div>
-            </a-tooltip> -->
           </div>
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
