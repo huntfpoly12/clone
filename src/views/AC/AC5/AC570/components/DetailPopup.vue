@@ -179,9 +179,7 @@ export default defineComponent({
             }
         })
 
-        watch(resGetAccoountSubjects, (value) => {
-            console.log(value);
-            
+        watch(resGetAccoountSubjects, (value) => { 
             theOrder.value = value.getAccoountSubjects[0].theOrder
         })
 

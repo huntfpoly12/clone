@@ -221,8 +221,6 @@ export default defineComponent({
 
         // 2. GetBudgetSubjectTransitionReportViewUrl
         watch(resGetBudgetSubjectTransitionReportViewUrl, (value) => {
-            console.log(value);
-
             triggerGetBudgetSubjectTransitionReportViewUrl.value = false
         })
 
@@ -245,7 +243,6 @@ export default defineComponent({
         }
 
         const onOpenPopupDetail = (data: any) => {
-            console.log(data);
 
             popupData.value = data
             modalStatusDetail.value = true

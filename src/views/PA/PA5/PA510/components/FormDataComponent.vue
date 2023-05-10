@@ -11,8 +11,8 @@
                                 @onChange="onChange" :activeType20="false" width="270px" />
                         </a-form-item>
                         <a-form-item label="지급일" class="red">
-                            <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay"
-                                :max="31" :spinButtons="true"
+                            <number-box :required="true" :min="0" v-model:valueInput="dataIncomeWageDaily.paymentDay"
+                            :max="dayjs(`${paYear}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth()" :spinButtons="true"
                                 :disabled="!store.state.common.pa510.statusFormAdd || store.state.common.pa510.statusDisabledStatus"
                                 :isFormat="true" width="270px" />
                         </a-form-item>
@@ -180,6 +180,7 @@ import filters from "@/helpers/filters";
 import { Message } from "@/configs/enum"
 import { Formula } from "@bankda/jangbuda-common";
 import ButtonTooltipError from "@/components/common/ButtonTooltipError.vue";
+import dayjs from 'dayjs';
 export default defineComponent({
     components: {
         DxButton,
@@ -780,6 +781,7 @@ export default defineComponent({
             return filters.formatCurrency(dataIncomeWageDaily.value.monthlyWage)
         }
         return {
+            paYear, dayjs,
             pa510FormRef,
             dataIncomeWageDaily,
             arrDeduction,
