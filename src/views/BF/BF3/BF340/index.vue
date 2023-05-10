@@ -129,7 +129,7 @@ import AddNew340Poup from "./components/AddNew340Poup.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF340/index";
 import { origindata } from "./utils";
-import { onExportingCommon } from "@/helpers/commonFunction"
+import { onExportingCommon,makeDataClean } from "@/helpers/commonFunction"
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, EditOutlined, HistoryOutlined, DxToolbar, DxEditing, DxGrouping, DxItem, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
@@ -203,6 +203,7 @@ export default defineComponent({
             originData.grade = saleGrade.value == 0 ? null : saleGrade.value;
             originData.statuses = [saleStatus.value];
             trigger.value = true;
+            makeDataClean(originData);
             refetchData();
         };
         const createSuccess = () => {

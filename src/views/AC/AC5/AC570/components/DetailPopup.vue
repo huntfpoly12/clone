@@ -100,7 +100,11 @@ export default defineComponent({
         },
         dataAddPopup: {
             type: Object,
-            default: {}
+            default: null
+        },
+        dataDetail: {
+            type: Object,
+            default: null
         }
     },
     components: {
@@ -131,6 +135,8 @@ export default defineComponent({
         } = useMutation(mutations.updateBudgetSubjectTransition);
         // updateBudgetSubjectTransition
         doneUpdateBudgetSubjectTransition((e) => {
+            emit("closePopup", false)
+            emit("callApi", true)
             notification('success', Message.getMessage('COMMON', '106').message)
         })
         errorUpdateBudgetSubjectTransition(e => {
@@ -161,27 +167,50 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                createBudgetSubjectTransition({
-                    companyId: companyId,
-                    fiscalYear: acYear.value,
-                    facilityBusinessId: globalFacilityBizId.value,
-                    input: {
-                        accounSubjectOrder: theOrder.value,
-                        ...formState.value
-                    }
-                })
+                if (props.dataAddPopup) {
+                    createBudgetSubjectTransition({
+                        companyId: companyId,
+                        fiscalYear: acYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        input: {
+                            accounSubjectOrder: theOrder.value,
+                            ...formState.value
+                        }
+                    })
+                } else if (props.dataDetail) {
+                    updateBudgetSubjectTransition({
+                        companyId: companyId,
+                        fiscalYear: acYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        transitionId: props.dataDetail.transitionId,
+                        input: {
+                            sourceBudgetAmount: formState.value.sourceBudgetAmount ,
+                            sourceExpenditureAmount: formState.value.sourceExpenditureAmount ,
+                            transitionBudgetAmount: formState.value.transitionBudgetAmount ,
+                            transitionExpenditureAmount: formState.value.transitionExpenditureAmount ,
+                            transitionCause: formState.value.transitionCause
+                        }
+                    })
+                }
             }
         };
 
         watch(() => props.modalStatus, (value) => {
-            Object.assign(formState.value, {...initialStateDetail})
-            if (value && props.dataAddPopup) {
-                Object.assign(formState.value, props.dataAddPopup)
+            Object.assign(formState.value, { ...initialStateDetail })
+            if (value) {
+                if (props.dataAddPopup) {
+                    console.log(1);
+                    Object.assign(formState.value, props.dataAddPopup)
+                } else if (props.dataDetail) {
+                    console.log(2);
+
+                    Object.assign(formState.value, props.dataDetail)
+                }
             }
             resetFormDetail.value++
         })
 
-        watch(resGetAccoountSubjects, (value) => { 
+        watch(resGetAccoountSubjects, (value) => {
             theOrder.value = value.getAccoountSubjects[0].theOrder
         })
 
