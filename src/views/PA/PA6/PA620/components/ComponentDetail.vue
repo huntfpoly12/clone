@@ -470,14 +470,6 @@ export default defineComponent({
       isNewRow.value = false;
       compareType.value = 2;
     };
-    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-      if (compareForm()) {
-        emit('noSave', 1, newVal);
-      } else {
-        compareType.value = 2;
-        rowChangeStatus.value = true;
-      }
-    });
     //on add row
     const rowChangeStatus = ref<Boolean>(false);
     const openAddNewModal = async () => {
