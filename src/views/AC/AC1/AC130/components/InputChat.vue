@@ -46,7 +46,7 @@
       </div>
     </div>
   </div>
-  <input v-show="false" ref="inputFile" type="file" accept="image/png, image/jpeg, image/jpg image/gif"
+  <input v-show="false" ref="inputFile" type="file"
     @change="uploadPreviewFile" />
 </template>
   
@@ -153,10 +153,10 @@ export default defineComponent({
 
     const uploadPreviewFile = async (e: any) => {
       const file = e.target.files[0]
-      const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
-      if (!isImage) {
-        notification('error', 'You can only upload png, jpg, jpeg, gif file!')
-      }
+      // const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
+      // if (!isImage) {
+      //   notification('error', 'You can only upload png, jpg, jpeg, gif file!')
+      // }
       const isLt10M = file.size / 1024 / 1024 <= 10;
       if (!isLt10M) {
         notification('error', 'Image must smaller than 10MB!')
@@ -165,7 +165,11 @@ export default defineComponent({
       if (isDuplicaseName) {
         notification('error', 'Duplicate image are not allowed!')
       }
-      if (!isImage || !isLt10M || isDuplicaseName) {
+      // if (!isImage || !isLt10M || isDuplicaseName) {
+      //   e.target.value = null
+      //   return
+      // }
+      if (!isLt10M || isDuplicaseName) {
         e.target.value = null
         return
       }
@@ -176,6 +180,7 @@ export default defineComponent({
       filesUpload.value.push({
         file: file,
         metadata: metadata,
+        contentType: metadata.contentType,
         url: url
       })
       e.target.value = null
