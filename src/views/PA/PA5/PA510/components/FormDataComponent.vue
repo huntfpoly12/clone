@@ -149,7 +149,7 @@
             <a-tooltip placement="top">
                 <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
                 <div>
-                    <button-basic :disabled="store.state.common.pa510.statusDisabledStatus" style="margin: 0px 5px"
+                    <button-basic :disabled="store.state.common.pa510.statusDisabledStatus || true" style="margin: 0px 5px"
                         @onClick="actionInsurance" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
                 </div>
             </a-tooltip>
