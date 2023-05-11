@@ -61,7 +61,6 @@
                     </a-row>
                     <a-row>
                         <a-col :span="24">
-                            {{  formState.taxPayCode }}
                             <a-form-item label="과세구분/유형" :label-col="labelCol" class="red">
                                 <TaxPay style="width: 320px" placeholder="선택" v-model:selectedValue="formState.taxPayCode"
                                     :required="true"></TaxPay>
@@ -475,9 +474,9 @@ export default defineComponent({
                             formula: formState.value.formula,
                             tax: formState.value.taxPayCode[0] === "비과세" ? false : true,
                             taxfreePayItemCode:
-                                formState.value.taxPayCode[0] === "비과세" ? formState.value.taxPayCode[1] : null,
+                                formState.value.taxPayCode[0] === "비과세" ? formState.value.taxPayCode[1] + 1 : null,
                             taxPayItemCode:
-                                formState.value.taxPayCode[0] === "과세" ? formState.value.taxPayCode[1] : null,
+                                formState.value.taxPayCode[0] === "과세" ? formState.value.taxPayCode[1] + 1 : null,
                         },
                     };
                     makeDataClean(variables)

@@ -274,13 +274,13 @@ export default defineComponent({
                 formState.value.residentId = data.residentId
                 formState.value.email = data.email
                 formState.value.employeeId = data.employeeId
-                formState.value.residentIdHide = data.residentId + '' + data.incomeTypeCode
+                formState.value.residentIdHide = data.residentId
                 formState.value.incomeTypeCode = data.incomeTypeCode
                 formState.value.incomeTypeName = data.incomeTypeName
                 formState.value.deletable = data.deletable
                 dataRowOld = { ...formState.value }
                 dataRow = { ...formState.value }
-                focusedRowKey.value = data.residentId + '' + data.incomeTypeCode
+                focusedRowKey.value = data.residentId
             }
             triggerDetail.value = false;
         })
@@ -524,7 +524,7 @@ export default defineComponent({
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
                         ...value,
-                        residentIdHide: value.residentId + '' + value.incomeTypeCode
+                        residentIdHide: value.residentId
                     }
                 })
                 if (runOne.value) {
