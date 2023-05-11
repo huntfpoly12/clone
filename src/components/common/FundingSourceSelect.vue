@@ -1,8 +1,8 @@
 <template>
-    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="fundingSource" placeholder="선택" :show-clear-button="clearButton"
-        v-model:value="value" :read-only="readOnly" display-expr="label"
-        value-expr="value" :disabled="disabled"
-        @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="fundingSource"
+        placeholder="선택" :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="label"
+        value-expr="value" :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput"
+        :name="nameInput">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
@@ -12,7 +12,7 @@
 import { ref, watch, getCurrentInstance, computed } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import { FundingSource, enum2Entries  } from "@bankda/jangbuda-common";
+import { FundingSource, enum2Entries } from "@bankda/jangbuda-common";
 import { Message } from "@/configs/enum"
 export default {
     props: {
@@ -78,9 +78,4 @@ export default {
 };
 </script>
   
-<style scoped>
-.form-group {
-    margin-top: 30px;
-}
-</style>
-  
+<style lang="scss"></style>

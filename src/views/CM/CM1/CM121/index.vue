@@ -120,6 +120,7 @@
                     <div class="custom-note d-flex-center">
                       <DxSelectBox :search-enabled="true" width="150" display-expr="label" value-expr="value"
                         :data-source="bankbookUseType" v-model:value="dataDetailBankbook.bankbookInput.useType"
+                        :noDataText="Message.getMessage('COMMON', '901').message"
                         placeholder="통장용도" />
                       <a-tooltip color="black" placement="top">
                         <template #title>관련 계정과목 적용 또는 관련 서식에 기재됩니다.</template>
