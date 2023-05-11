@@ -6,7 +6,7 @@
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ $filters.formatMonth(month) }}
                 </div>
-                <month-picker-box-custom text="지" v-model:valueDate="month2" class="ml-5" />
+                <month-picker-box-custom :disabled="true" text="지" v-model:valueDate="month2" class="ml-5" />
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
@@ -118,9 +118,10 @@ export default defineComponent({
             if (paymentTypeCallApi.value == 2) {
                 paymentMonth = month.value + 1
             }
-            paymentDayCallApi.value = paymentDayCallApi.value == 0 ? dayjs(`${paYear.value}-${paymentMonth}`).daysInMonth() : paymentDayCallApi.value
-            paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(paymentDayCallApi.value)}`)
+            let daySetting = paymentDayCallApi.value == 0 ? dayjs(`${paYear.value}-${paymentMonth}`).daysInMonth() : paymentDayCallApi.value
             month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
+            paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(daySetting)}`)
+            
             // }
             startDate.value = dayjs(`${month2.value}`).startOf('month').toDate();
             finishDate.value = dayjs(`${month2.value}`).endOf('month').toDate();
@@ -136,18 +137,24 @@ export default defineComponent({
             })
         );
 
-        watch(() => month2.value, (newVal) => {
-            paymentDayCopy.value = parseInt(`${newVal}${filters.formatMonth(parseInt(paymentDayCopy.value?.toString().slice(6, 8)))}`)
-            startDate.value = dayjs(`${newVal}`).startOf('month').toDate();
-            finishDate.value = dayjs(`${newVal}`).endOf('month').toDate();
-        })
+        // watch(() => month2.value, (newVal) => {
+            
+        //     if (paymentDayCallApi.value == 0) {
+        //         paymentDayCopy.value = parseInt(`${newVal}${dayjs(`${newVal}`).daysInMonth()}`)
+        //     } else {
+        //         paymentDayCopy.value = parseInt(`${newVal}01}`)
+        //     }
+            
+        //     startDate.value = dayjs(`${newVal}`).startOf('month').toDate();
+        //     finishDate.value = dayjs(`${newVal}`).endOf('month').toDate();
+        // })
         watch(() => store.state.common.pa110.actionCallGetMonthDetail, (newVal) => {
             trigger.value = true;
         })
         watch(resultConfig, (value) => {
             trigger.value = false;
-            sampleDataIncomeWage.paymentDay = value.getWithholdingConfig.paymentDay
-            paymentDayCallApi.value = value.getWithholdingConfig.paymentDay
+            sampleDataIncomeWage.paymentDay = value.getWithholdingConfig.paymentDay == null ? 0 : value.getWithholdingConfig.paymentDay
+            paymentDayCallApi.value = value.getWithholdingConfig.paymentDay == null ? 0 : value.getWithholdingConfig.paymentDay
             paymentTypeCallApi.value = value.getWithholdingConfig.paymentType
             // let paymentMonth = month.value
             // month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
