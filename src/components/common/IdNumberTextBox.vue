@@ -1,10 +1,10 @@
 <template>
-  <div class="d-flex resident-ctn">
+  <div class="d-flex resident-ctn" :style="{ width: widthCustom }">
     <DxTextBox id="resident-id" ref="residentRef" :width="widthCustom" value-change-event="input"
-      :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
-      @input="updateValue(value)" :mask="mask" :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn"
-      :style="{ width: widthCustom }">
-      <DxValidator ref="validatorRef" :name="nameInput">
+               :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
+               @input="updateValue(value)" :mask="mask" :mask-invalid-message="maskMess" :height="$config_styles.HeightInput"
+               :name="nameInput" @focusIn="onFocusIn" :style="{ width: widthCustom }">
+      <DxValidator ref="validatorRef" :name="nameInput" :validation-summary="true">
         <DxRequiredRule v-if="required" :message="messageRequired" />
         <!-- <DxCustomRule v-if="isResidentId"
           :validation-callback="checkAllResidentId ? checkAllID : (foreigner ? checkID : checkIdNotForeigner)" /> -->
@@ -111,32 +111,45 @@ export default defineComponent({
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
+    const alert = ref<boolean>(true);
     const convertValue = (val: string) => {
       if (val.length === 14 && val.includes("-")) return val.split("-").join("")
       return val;
     };
     const value = ref(props.valueInput);
-
-    const updateValue = (value: any) => {
+    const validateId = () => {
       let isValid = validatorRef.value?.instance._validationInfo.result;
       let msgDefault = residentRef.value.instance._$validationMessage;
-      if (isValid?.brokenRule?.type == 'custom') {
+      if (props.isResidentId) {
+        alert.value = props.checkAllResidentId ? checkAllID() : (props.foreigner ? checkID() : checkIdNotForeigner());
+      }else{
+        alert.value = true;
+      }
+      if (!alert.value) {
         errorCurrentType.value = 2;
-        msgDefault[0].style.display = 'none';
         residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
-      } else if (isValid?.brokenRule?.editorSpecific) {
+      }
+      if (isValid?.brokenRule?.editorSpecific) {
         errorCurrentType.value = 1;
         if (msgDefault) {
           msgDefault[0].style.display = 'none';
         }
         residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
-      } else {
+      }
+      console.log(`output->alert`, alert.value, props.isResidentId)
+      if (alert.value && !isValid?.brokenRule?.editorSpecific) {
         errorCurrentType.value = 0;
         if (msgDefault) {
           msgDefault[0].style.display = 'block';
         }
         residentRef.value.instance._$textEditorInputContainer[0].classList.remove('error-other');
       }
+    }
+    watch(() => props.isResidentId, (newVal: any) => {
+      validateId();
+    }, { deep: true });
+    const updateValue = (value: any) => {
+      validateId();
       emit("update:valueInput", value);
     };
     watch(
@@ -163,12 +176,12 @@ export default defineComponent({
         return false
       };
     }
-    const checkAllID = (options: any) => {
+    const checkAllID = () => {
       if (!value.value) return true
       return validResidentId(value.value);
     }
 
-    const checkIdNotForeigner = (options: any) => {
+    const checkIdNotForeigner = () => {
       if (!value.value) {
         return true
       }
@@ -257,10 +270,11 @@ export default defineComponent({
       line-height: 14px;
       height: 17px;
       border-radius: 100%;
-      width: 17px;
+      width: 18px;
       font-weight: 700;
       background: red;
       color: white;
+      text-align: center;
     }
   }
 }

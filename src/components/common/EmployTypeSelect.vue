@@ -1,10 +1,21 @@
 <template>
-  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="arrayValue" item-template="item-data" value-expr="key"
-    display-expr="employeeId" :value="valueEmployRes" field-template="field-data" @value-changed="updateValue"
-    :height="$config_styles.HeightInput" :disabled="disabled" :dropDownOptions="{ height: '250px' }">
+  <!-- {{ arrayValue }} -->
+  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="arrayValue"
+    item-template="item-data" value-expr="key" display-expr="employeeId" :value="valueEmployRes"
+    field-template="field-data" @value-changed="updateValue" :height="$config_styles.HeightInput" :disabled="disabled"
+    :dropDownOptions="{ height: '250px' }">
     <template #field-data="{ data }">
-      <div v-if="data" style="padding: 2px">
-        <income-type :typeCode="data?.employeeId" :typeName="(data?.name)" :incomeTypeName="data?.incomeTypeName" />
+      <div v-if="data" style="padding: 1px">
+        <span class="btn-container">
+          {{ data.employeeId }}
+        </span>
+        {{ data?.name }}
+        <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
+          <template #title>
+            <span>{{ data?.incomeTypeCode }}</span>
+          </template>
+          <a-tag class="ml-5 py-1"> {{ checkLen(data?.incomeTypeName) }}</a-tag>
+        </a-tooltip>
         <DxTextBox style="display: none;" />
       </div>
       <div v-else class="pt-5 pl-5">
@@ -21,10 +32,9 @@
         {{ data?.name }}
         <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
           <template #title>
-            <span v-if="data?.incomeTypeName?.length > 10">{{ data?.incomeTypeName
-            }}</span>
+            <span>{{ data?.incomeTypeCode }}</span>
           </template>
-          {{ checkLen(data?.incomeTypeName) }}
+          <a-tag class="ml-5 py-2"> {{ checkLen(data?.incomeTypeName) }}</a-tag>
         </a-tooltip>
       </div>
     </template>
@@ -91,8 +101,8 @@ export default defineComponent({
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
     const checkLen = (text: String) => {
-      if (text.length > 10) {
-        return text.substring(0, 7) + '...';
+      if (text.length > 20) {
+        return text.substring(0, 17) + '...';
       }
       return text;
     };
@@ -160,9 +170,9 @@ export default defineComponent({
   text-align: center;
   border: 1px solid rgb(164, 164, 164);
   border-radius: 5px;
-  padding: 3px 4px;
-  height: 25px;
-  /* background: #ffffff; */
+  padding: 2.2px;
+  min-width: 30px;
+  display: inline-block;
 }
 
 :deep .dx-list-item.dx-state-active {
@@ -178,7 +188,6 @@ export default defineComponent({
     border: 1px solid #304967;
     margin-right: 10px;
     border-radius: 5px;
-    min-width: 50px;
     text-align: center;
   }
 }

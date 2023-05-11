@@ -6,9 +6,12 @@
         <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
           :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
           class="btn-date mr-2" />
-        <div class="d-flex-center">
+        <DxButton :text="'지 '+ month2.slice(0, 4) + '-' + month2.slice(4)"
+          :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }"
+          class="btn-date mr-2" />
+        <!-- <div class="d-flex-center">
           <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
-        </div>
+        </div> -->
       </div>
     </a-form-item>
     <a-form-item label="지급일" label-align="right">
@@ -193,7 +196,7 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }));
     onResult((value: any) => {
-      arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews
+      arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews.reverse();
     })
     watch(modalCopy, (newVal, oldVal) => {
       if (newVal) {

@@ -17,7 +17,6 @@ export default gql`
             transitionId
             transitionDate
             transitionAmount
-            bugetIndex
             accounSubjectOrder
             sourceCode
             sourceBudgetAmount
