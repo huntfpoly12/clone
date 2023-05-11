@@ -73,7 +73,7 @@
     </a-spin>
   </a-modal>
   <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource[0].imputedYear" :reportId="dataSource[0].reportId"></confirm-delete>
-  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew" />
+  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew(false)" />
 </template>
 
 <script lang="ts">
@@ -84,11 +84,12 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useMutation} from "@vue/apollo-composable";
+import { useMutation, useQuery} from "@vue/apollo-composable";
 import { mergeCells, cellsSetting, dataInit, calculateWithholdingStatusReport, inputPosition, clearAllCellValue } from "./Gridsetting"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
+import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
@@ -162,6 +163,8 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref<any>(props.dataReport);
+    const trigger = ref<boolean>(false)
+    const originData = ref()
     const setModalVisible = () => {
       emit('closePopup', false)
     }
@@ -170,17 +173,60 @@ export default defineComponent({
       dataSource.value = newValue
     })
     onMounted(() => {
-        loadNew()
+        loadNew(true)
     })
 
+    // Get IncomesForTaxWithholdingStatusReport
+    const {
+          refetch: refetchData,
+          result,
+          loading,
+          onError
+      } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
+          enabled: trigger.value,
+          fetchPolicy: "no-cache",
+    }));
     const actionConfirmLoadNew = ()=>{
       confirmLoadNewStatus.value = true
     }
-
-
+    onError((error) => {
+      notification('error', error.message)
+    })
+    watch(result, (data) => {
+      if (data) {
+        // make new format for data
+        const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
+          return {
+            code: item.code,
+            numberOfPeople: item.numberOfPeople,
+            totalPayment: item.totalPayment,
+            collectedIncomeTax: item.collectedIncomeTax,
+          }
+        });
+        calculateWithholdingStatusReport(wrapper,newData)
+      }
+    })
   // The above code is used to fill the data into the table.
-    const loadNew = () => {
+    const loadNew = (firstLoad: boolean) => {
       clearAllCellValue(wrapper)
+      // call api to set modified value
+      originData.value = {
+          companyId: companyId,
+          input:{
+            imputedYear: dataSource.value[0].imputedYear,
+            imputedMonth: dataSource.value[0].imputedMonth,
+            paymentYear: dataSource.value[0].paymentYear,
+            paymentMonth: dataSource.value[0].paymentMonth,
+            reportType: dataSource.value[0].reportType,
+            index: dataSource.value[0].index,
+            paymentType: dataSource.value[0].paymentType,
+            yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+          },
+      }
+      if (!firstLoad) {
+        trigger.value = true;
+        refetchData()
+      }
       let hot = wrapper.value?.hotInstance; 
       // fill value to table report 
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data : any)=>{
@@ -407,7 +453,7 @@ export default defineComponent({
   // }
   :deep .wtHolder {
     width: 100% !important;
-    height: 730px !important;
+    // height: 730px !important;
    }
 
   :deep .ht_clone_left .wtHolder {
