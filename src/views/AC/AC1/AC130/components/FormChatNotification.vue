@@ -9,7 +9,7 @@
         </div>
         <div ref="refTimelineNoti" class="form-notification-wrapper-list">
           <a v-for="(noti, index) in listNotification" :key="index" :href="`#${noti.key}`"
-          class="form-notification-wrapper-list-items" :class="{'form-notification-wrapper-list-items-notseen': noti?.watched ? !noti.watched.includes(userId) : true }"
+          class="form-notification-wrapper-list-items" :class="{'form-notification-wrapper-list-items-notseen': noti?.seen ? !noti.seen.includes(userId) : true }"
             @click="goToChatByNoti(noti)">
             <a-badge :dot="true" :offset="[-5, 33]" :status="noti?.online ? 'success' : 'error'" class="mr-5">
               <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff">{{ noti.name }}</a-avatar>
@@ -119,7 +119,7 @@ export default defineComponent({
                 text: data.val().text,
                 files: data.val().files,
                 reply: data.val()?.reply ? data.val().reply : {},
-                watched: data.val()?.watched ? data.val().watched : [],
+                seen: data.val()?.seen ? data.val().seen : [],
               }
             }
           });
@@ -133,9 +133,9 @@ export default defineComponent({
     
     const goToChatByNoti = (noti: any) => {
       visible.value = false
-      if(noti?.watched && noti.watched.includes(userId)) return
+      if(noti?.seen && noti.seen.includes(userId)) return
       const updates: any = {};
-      const payloadEdit = { ...noti, watched: noti?.watched ? [...noti.watched, userId] : [userId] }
+      const payloadEdit = { ...noti, seen: noti?.seen ? [...noti.seen, userId] : [userId] }
       delete payloadEdit.key
       updates[`/${noti.key}`] = payloadEdit
       update(chatListRef, updates).then(() => {
