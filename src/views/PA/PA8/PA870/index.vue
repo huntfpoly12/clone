@@ -40,7 +40,7 @@
         <template #fileStorageId=" { data }: any " class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
-              <DownloadOutlined :style="{fontSize: 12}"/>
+              <DownloadOutlined :style=" { fontSize: 12 } " />
             </DxButton>
           </div>
         </template>
@@ -79,6 +79,14 @@
     <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
       :content=" contentDelete.message " :okText=" contentDelete.yes " :cancelText=" contentDelete.no "
       @checkConfirm=" handleDelete " />
+    <!-- <DxTextBox v-model="text">
+      <DxValidator :validation-summary=" true ">
+        <DxRequiredRule message="Vui lòng nhập giá trị." />
+        <DxNumericRule message="Giá trị phải là số." />
+      </DxValidator>
+    </DxTextBox>
+
+    <DxButton @click=" submitForm ">Submit</DxButton> -->
   </div>
 </template>
 
@@ -99,6 +107,8 @@ import {
 import notification from '@/utils/notification';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import { Message } from '@/configs/enum';
+import { DxTextBox, DxValidator } from 'devextreme-vue';
+import { DxNumericRule, DxRequiredRule } from 'devextreme-vue/validator';
 
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
@@ -235,6 +245,13 @@ const onGetAcquistionRp = (workId: any) => {
   companyJoinViewUrlParam.workId = workId;
   companyJoinViewUrlTrigger.value = true;
 };
+// const submitForm = (e: any) => {
+//   var res = e.validationGroup.validate();
+//   if (!res.isValid) {
+//     res.brokenRules[0].validator.focus();
+//   }
+// }
+// const text = ref('hi')
 </script>
 
 <style scoped lang="scss">

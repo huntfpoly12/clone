@@ -45,7 +45,7 @@
         <DxColumn caption="등록일" data-field="registeredAt" width="100" :format="dateFormat" alignment="center"/>
         <DxColumn caption="접수일" data-field="acceptedAt" width="100" :format="dateFormat" alignment="center"/>
         <DxColumn caption="완료일" data-field="completedAt" width="100" :format="dateFormat" alignment="center"/>
-        <DxColumn caption="접수번호" data-field="accedpedNumber" width="70" alignment="center"/>
+        <DxColumn caption="접수번호" data-field="acceptedNumber" width="70" alignment="center"/>
 <!--         <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/>-->
         <DxColumn caption="메모" data-field="memo" alignment="center"/>
         <DxScrolling column-rendering-mode="virtual"/>
@@ -110,7 +110,7 @@ enum MajorInsuranceWorkingStatus {
   취소 = 0
 }
 const data = [
-  {"companyId": 2, "type": 1, "imputedYear": 2023, "workId": 58, "employeeType": 10, "employeeId": 99831231, "name": "ABESHINZO", "nationalPensionReport": true, "healthInsuranceReport": true, "employeementInsuranceReport": true, "industrialAccidentInsuranceReport": true, "workingStatus": 1, "registeredAt": 1679043291582, "acceptedAt": null, "completedAt": null, "accedpedNumber": null, "memo": null, "createdAt": 1679043291589, "createdBy": "C23010402", "updatedAt": 1679043291589, "updatedBy": "C23010402", "ip": "1.54.101.150", "active": true, "includeDependents": true, "fileStorageId": 256, "residentId": "123123-2132131", "dependentsEvidenceFile": {"url": "https://jangbuda-frs.bankda.com/B93xLAjFmhN9lq3JxaA3hyrOjXAoBP.png", "__typename": "FileStorage"}, "__typename": "MajorInsuranceCompanyEmployeeAcquisition"}
+  {"companyId": 2, "type": 1, "imputedYear": 2023, "workId": 58, "employeeType": 10, "employeeId": 99831231, "name": "ABESHINZO", "nationalPensionReport": true, "healthInsuranceReport": true, "employeementInsuranceReport": true, "industrialAccidentInsuranceReport": true, "workingStatus": 1, "registeredAt": 1679043291582, "acceptedAt": null, "completedAt": null, "acceptedNumber": null, "memo": null, "createdAt": 1679043291589, "createdBy": "C23010402", "updatedAt": 1679043291589, "updatedBy": "C23010402", "ip": "1.54.101.150", "active": true, "includeDependents": true, "fileStorageId": 256, "residentId": "123123-2132131", "dependentsEvidenceFile": {"url": "https://jangbuda-frs.bankda.com/B93xLAjFmhN9lq3JxaA3hyrOjXAoBP.png", "__typename": "FileStorage"}, "__typename": "MajorInsuranceCompanyEmployeeAcquisition"}
 ]
 const store = useStore();
 const {per_page, move_column, colomn_resize} = store.state.settings;

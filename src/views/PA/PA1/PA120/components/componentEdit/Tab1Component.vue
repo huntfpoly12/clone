@@ -7,7 +7,7 @@
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
             <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능"
-              :disabled="true" />
+                             :disabled="true" />
             <!-- <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 최초 저장된 이후 수정 불가.
@@ -21,7 +21,7 @@
         <a-form-item label="대표자 여부" label-align="right">
           <div class="input-text">
             <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
-              @onChange="onChangePresident" style="width: 80px"></switch-basic>
+                          @onChange="onChangePresident" style="width: 80px"></switch-basic>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 대표자인 경우 고용보험 제외됩니다.
@@ -35,7 +35,7 @@
 
         <a-form-item label="성명" label-align="right" class="red">
           <default-text-box width="200px" v-model:valueInput="initFormStateTabPA120.name" :required="true"
-            placeholder="한글,영문(대문자) 입력 가능" />
+                            placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
           <date-time-box width="150px" v-model:valueDate="initFormStateTabPA120.joinedAt"> </date-time-box>
@@ -56,32 +56,32 @@
         </a-form-item>
         <a-form-item label="내/외국인" label-align="right">
           <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal"
-            :disabled="!initFormStateTabPA120.deletable">
+                       :disabled="!initFormStateTabPA120.deletable">
           </radio-group>
         </a-form-item>
 
         <a-row>
           <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
             <country-code-select-box style="width: 200px" v-model:valueCountry="initFormStateTabPA120.nationalityCode"
-              @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
-              :disabled="!initFormStateTabPA120.foreigner" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
+                                     @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
+                                     :disabled="!initFormStateTabPA120.foreigner" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
           </a-form-item>
           <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
             <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification"
-              :disabled="foreigner == 0" :required="initFormStateTabPA120.foreigner" />
+                                           :disabled="foreigner == 0" :required="initFormStateTabPA120.foreigner" />
           </a-form-item>
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
           <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px"
-            :foreigner="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.deletable">
+                              :foreigner="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.deletable">
           </id-number-text-box>
         </a-form-item>
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
           <div class="input-text">
             <number-box :required="true" :spinButtons="true" v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours"
-              width="150px" :min="1" :max="52"></number-box>
+                        width="150px" :min="1" :max="52"></number-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 급여명세서 및 4대보험 취득신고시 이용됩니다.
@@ -95,20 +95,20 @@
 
         <a-form-item label="세대주여부" label-align="right">
           <switch-basic v-model:valueSwitch="initFormStateTabPA120.householder" textCheck="O" textUnCheck="X"
-            style="width: 80px"></switch-basic>
+                        style="width: 80px"></switch-basic>
         </a-form-item>
 
         <a-form-item label="주소" class="clr" label-align="left">
           <div class="zip-code">
             <default-text-box v-model:valueInput="initFormStateTabPA120.roadAddress" width="300px" :disabled="true"
-              class="roadAddress" placeholder="도로명주소" />
+                              class="roadAddress" placeholder="도로명주소" />
             <div style="margin-left: 5px">
               <post-code-button @dataAddress="funcAddress" text="주소검색" />
             </div>
           </div>
 
           <default-text-box v-model:valueInput="initFormStateTabPA120.addressExtend" width="300px"
-            placeholder="상세 주소 입력" />
+                            placeholder="상세 주소 입력" />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
           <div class="input-text">
@@ -126,24 +126,24 @@
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-          <custom-item-select-box width="200px" v-model:valueInput="initFormStateTabPA120.department"
-            :arrSelect="arrDepartments"></custom-item-select-box>
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.department" :data="arrDepartments"
+                            @updateArrSelect="(value: any) => arrDepartments = [...value]" width="200px" />
         </a-form-item>
         <a-form-item label="직위" label-align="right">
-          <custom-item-select-box width="200px" v-model:valueInput="initFormStateTabPA120.responsibility"
-            :arrSelect="arrResponsibility"></custom-item-select-box>
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.responsibility" :data="arrResponsibility"
+                            @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
         </a-form-item>
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center">
             <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit"
-              @onClick="actionUpdated" />
+                          @onClick="actionUpdated" />
           </a-col>
         </a-row>
       </standard-form>
     </a-spin>
     <PopupMessage :modalStatus="presidenStatus" @closePopup="presidenStatus = false" :typeModal="'info'"
-      :title="presidentWaring" :content="''" :okText="'확인'" :isConfirmIcon="false"
-      @checkConfirm="presidenStatus = false" />
+                  :title="presidentWaring" :content="''" :okText="'확인'" :isConfirmIcon="false"
+                  @checkConfirm="presidenStatus = false" />
   </div>
 </template>
 
@@ -179,8 +179,8 @@ export default defineComponent({
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
-    const arrDepartments = ref([]);
-    const arrResponsibility = ref([]);
+    const arrDepartments = ref<any[]>([]);
+    const arrResponsibility = ref<any[]>([]);
     const labelResidebId = ref('주민(외국인)번호 ');
     let formStateTab1 = reactive<any>({
       ...initFormStateTab1,
@@ -239,9 +239,10 @@ export default defineComponent({
 
     watch(resDepartments, (value: any) => {
       if (value) {
-        arrDepartments.value = value.getDepartments.map((val: any, index: any) => {
-          return { id: index, value: val.department };
-        });
+        // arrDepartments.value = value.getDepartments.map((val: any, index: any) => {
+        //   return { id: index, value: val.department };
+        // });
+        arrDepartments.value = value.getDepartments.map((item: any) => ({ value: item.department }))
       }
     });
 
@@ -257,9 +258,10 @@ export default defineComponent({
 
     watch(resResponsibility, (value: any) => {
       if (value) {
-        arrResponsibility.value = value.getResponsibilities.map((val: any, index: any) => {
-          return { id: index, value: val.responsibility };
-        });
+        // arrResponsibility.value = value.getResponsibilities.map((val: any, index: any) => {
+        //   return { id: index, value: val.responsibility };
+        // });
+        arrResponsibility.value = value.getResponsibilities.map((item: any) => ({ value: item.responsibility }))
       }
     });
     // get employee Information

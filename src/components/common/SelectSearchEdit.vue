@@ -1,22 +1,22 @@
 <template>
-  <DxSelectBox 
+  <DxSelectBox
   :noDataText="Message.getMessage('COMMON', '901').message"
-    v-model:value="valueBinding" 
-    :data-source="arrData" 
-    :search-enabled="searchEnabled" 
+    v-model:value="valueBinding"
+    :data-source="arrData"
+    :search-enabled="searchEnabled"
     :placeholder="placeholder"
-    search-mode="contains" 
-    search-expr="value" 
-    :search-timeout="100" 
+    search-mode="contains"
+    search-expr="value"
+    :search-timeout="100"
     :min-search-length="0"
-    :show-data-before-search="false" 
-    :display-expr="displayExpr" 
-    :value-expr="valueExpr" 
+    :show-data-before-search="false"
+    :display-expr="displayExpr"
+    :value-expr="valueExpr"
     :disabled="disabled"
     :read-only="readOnly"
     :width="width"
     :height="$config_styles.HeightInput"
-    @input="inputChange" 
+    @input="inputChange"
     @enter-key="eventEnter"
     @focus-in="focusInput"
     >
@@ -86,7 +86,11 @@ export default {
       deep: true,
       immediate: true,
     })
-
+    watch(() => props.valueInput, (value) => {
+      valueBinding.value = value;
+    }, {
+      immediate: true,
+    })
     watch(() => valueBinding.value, (value) => {
       if(value !== null && value.toString().length){
         emit("update:valueInput", value);
@@ -126,6 +130,5 @@ export default {
   },
 };
 </script>
-  
+
 <style scoped></style>
-  
