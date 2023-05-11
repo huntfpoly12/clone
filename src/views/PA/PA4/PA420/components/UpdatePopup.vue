@@ -191,6 +191,8 @@ const updated = () => {
     }
     if (!dataForm.taxCalculationInput?.prevRetirementBenefitStatus?.retirementBenefits)
       delete dataForm.taxCalculationInput.prevRetirementBenefitStatus
+    if (!dataForm.taxCalculationInput?.calculationOfDeferredRetirementIncomeTax.statements.length)
+      delete dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax
     const variables: any = reactive({
       companyId: companyId,
       incomeId: props.keyRowIndex,

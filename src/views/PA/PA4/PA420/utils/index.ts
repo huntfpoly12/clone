@@ -160,14 +160,14 @@ export const FORM_STATE_TAB_3 = {
         bizNumber: '',
         bankAccountNumber: '',
         depositDate: null,
-        accountDepositAmount: 0,
+        accountDepositAmount: '',
       },
       {
         pensionAccountHolder: '',
         bizNumber: '',
         bankAccountNumber: '',
         depositDate: null,
-        accountDepositAmount: 0,
+        accountDepositAmount: '',
       }
     ]
   },
