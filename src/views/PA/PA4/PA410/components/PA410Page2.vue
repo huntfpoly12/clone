@@ -16,29 +16,31 @@
                     <a-col :span="12">
                         <div class="header-text-2">근속기간</div> 
                             <div class="input-employee">
-                                <a-form-item label="정산시작(가산)일" label-align="right" class="red">
-                                    <date-time-box  width="150px"  v-model:valueDate="formState.settlementStartDate" ref="payStart"></date-time-box>
+                                <a-form-item label="정산시작(입사)일" label-align="right" class="red">
+                                    <date-time-box  width="150px"  v-model:valueDate="formState.settlementStartDate"></date-time-box>
                                 </a-form-item>
                                 <info-tool-tip placement="right">퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.</info-tool-tip>
                             </div> 
                             <div class="input-employee">
                                 <a-form-item label="정산종료(퇴사)일" label-align="right" class="red">
-                                    <date-time-box-custom  width="150px" v-model:valueDate="formState.settlementFinishDate" :startDate="dayjs(String(formState.settlementStartDate)).add(1, 'day')" ref="payEnd"></date-time-box-custom>
+                                    <date-time-box-custom  width="150px" v-model:valueDate="formState.settlementFinishDate" :startDate="dayjs(String(formState.settlementStartDate)).add(1, 'day')"></date-time-box-custom>
                                 </a-form-item>  
                                 <info-tool-tip placement="right">퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</info-tool-tip>
                             </div>  
                             <div class="input-employee">
-                                <a-form-item label="제외일수(일)" label-align="right">
+                                <a-form-item label="제외일수" label-align="right">
                                   <div class="d-flex-center">
-                                    <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  format="0,###"> </number-box>  
+                                    <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  format="0,###"> </number-box>
+                                    <span class="pl-5 pr-5">일</span>      
                                   </div>
                                 </a-form-item> 
                                 <info-tool-tip placement="right">정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</info-tool-tip>
                             </div>
                             <div class="input-employee">
-                                <a-form-item label="가산일수(일)" label-align="right">
+                                <a-form-item label="가산일수" label-align="right">
                                   <div class="d-flex-center">
                                     <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays"  format="0,###"> </number-box>
+                                    <span class="pl-5 pr-5">일</span>
                                   </div>
                                 </a-form-item> 
                                 <info-tool-tip placement="right">정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</info-tool-tip>
@@ -107,7 +109,7 @@ export default defineComponent({
         } else {
           let employeeInfor = store.state.common.arrayEmployeePA410.find((item: any) => item.employeeId == store.state.common.employeeIdPA410)
           formState.settlementStartDate = employeeInfor && employeeInfor.joinedAt ? employeeInfor.joinedAt : filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
-          formState.settlementFinishDate = employeeInfor && employeeInfor.leavedAt ? employeeInfor.leavedAt : null
+          formState.settlementFinishDate = employeeInfor && employeeInfor.leavedAt ? employeeInfor.leavedAt : filters.formatDateToInterger(dayjs().add(1, 'day').format("YYYY-MM-DD"))
           dataLastRetiredYearsOfService.value = Formula.getDateOfService(
               new Date(filters.formatDate(formState.settlementStartDate)),
               new Date(filters.formatDate(formState.settlementFinishDate)),
@@ -117,9 +119,7 @@ export default defineComponent({
         }
 
         })
-        const formPA410 = ref()
-        const payStart = ref()
-        const payEnd =  ref()
+        const formPA410 =  ref()
         const store = useStore();
         const formStateStep2 = computed(() => store.getters['common/stateStep2PA410'])
         const trigger = ref<boolean>(false)
@@ -171,24 +171,9 @@ export default defineComponent({
 
         const calculateIncomeRetirement = () => {
           var res = formPA410.value.validate();
-          console.log(res);
-          
-          let dtValidate = true
-          if (!formState.settlementStartDate) {
-            payStart.value.validate(true)
-            dtValidate = false
-          }
-          if (!formState.settlementFinishDate) {
-            payEnd.value.validate(true)
-            dtValidate = false
-          }
-
           if (!res.isValid) {
             res.brokenRules[0].validator.focus();
-          } else if (!dtValidate) { 
-            dtValidate = true
-          }
-          else {
+          } else {
             trigger.value = true;
             refetch()
           }
@@ -197,8 +182,6 @@ export default defineComponent({
           return {
             formPA410,
             dayjs,
-            payStart,
-            payEnd,
             loading,
             formState,
             calculateIncomeRetirement,
