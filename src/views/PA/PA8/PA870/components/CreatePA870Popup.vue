@@ -26,13 +26,15 @@
                 <checkbox-basic v-model:value-checkbox="formState.employeementInsuranceValidReport" label="고용보험가입" />
               </a-col>
               <a-col span="6">
-                <div class="d-flex">
-                  <checkbox-basic v-model:value-checkbox="formState.industrialAccidentInsuranceValidReport"
-                    label="산재보험가입" />
+                <checkbox-basic v-model:value-checkbox="formState.industrialAccidentInsuranceValidReport"
+                  label="산재보험가입" />
+              </a-col>
+              <a-col span="12">
+                <a-space :size="4">
                   <info-tool-tip>
                     해당사항이 있는 경우만 신청해 주세요.
                   </info-tool-tip>
-                </div>
+                </a-space>
               </a-col>
             </a-row>
           </box-title>
@@ -214,12 +216,12 @@
                 <checkbox-basic label="고용보험" v-model:value-checkbox="formState.electronicNotificationEdoc" />
               </a-col>
               <a-col span="4">
-                <div class="d-flex">
-                  <checkbox-basic label="산재보험" v-model:value-checkbox="formState.electronicNotificationWeb" />
-                  <info-tool-tip>
-                    신청하는 경우 아래 항목을 반드시 입력해 주세요.
-                  </info-tool-tip>
-                </div>
+                <checkbox-basic label="산재보험" v-model:value-checkbox="formState.electronicNotificationWeb" />
+              </a-col>
+              <a-col span="8">
+                <info-tool-tip>
+                  신청하는 경우 아래 항목을 반드시 입력해 주세요.
+                </info-tool-tip>
               </a-col>
             </a-row>
 
@@ -318,8 +320,8 @@
               </a-col>
               <a-col span="8">
                 <DxField label="적용연월일" :required="formState.healthInsuranceReport" class="field-custom-auto">
-                  <date-time-box :clearable="false" v-model:valueDate="formState.healthInsuranceApplyDate"
-                    placeholder="성명" :required="formState.healthInsuranceReport" />
+                  <date-time-box :clearable="false" v-model:valueDate="formState.healthInsuranceApplyDate" placeholder="성명"
+                    :required="formState.healthInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
@@ -411,14 +413,14 @@
             <a-row>
               <a-col span="12">
                 <DxField label="상시근로자수" :required="formState.industrialAccidentInsuranceReport">
-                  <number-box v-model:valueInput='formState.industrialAccidentInsuranceFulltimeWokerCount' placeholder=""
-                    :required="formState.industrialAccidentInsuranceReport" />
+                  <number-box v-model:valueInput='formState.industrialAccidentInsuranceFulltimeWokerCount'
+                    placeholder="" :required="formState.industrialAccidentInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="12">
                 <DxField label="성립일" :required="formState.industrialAccidentInsuranceReport">
-                  <date-time-box :clearable="false" v-model:valueDate="formState.industrialAccidentInsuranceApplyDate"
-                    placeholder="" :required="formState.industrialAccidentInsuranceReport" />
+                  <date-time-box :clearable="false" v-model:valueDate="formState.industrialAccidentInsuranceApplyDate" placeholder=""
+                    :required="formState.industrialAccidentInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="12">
@@ -556,7 +558,7 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        let { adding, ...sendData } = formState.value;
+        let {adding,...sendData} = formState.value;
         makeDataClean(sendData, ['presidentResidentNumber']);
         createCompanyJoinMutate({ companyId: companyId, imputedYear: globalYear.value, input: sendData });
       }

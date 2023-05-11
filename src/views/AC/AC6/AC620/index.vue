@@ -751,7 +751,7 @@ export default defineComponent({
       } else {
         isCheckedResidentId.value = false
         message.error({
-          content: () =>  '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요',
+          content: () =>  Message.getMessage('AC620', '004').message,
           class: 'ant-message',
           style: {
             marginTop: '20vh',
@@ -810,7 +810,7 @@ export default defineComponent({
       triggerBizNumber.value = false
         if (e.data?.isBackerRegistableBizNumber) {
           message.success({
-            content: () =>  Message.getMessage('AC620', '006').message,
+            content: () =>  Message.getMessage('AC620', '005').message,
             class: 'ant-message',
             style: {
               marginTop: '20vh',
@@ -822,7 +822,7 @@ export default defineComponent({
           isCheckedBizNumber.value = true
         } else {
           message.error({
-            content: () =>  '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요',
+            content: () =>  Message.getMessage('AC620', '006').message,
             class: 'ant-message',
             style: {
               marginTop: '20vh',

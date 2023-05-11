@@ -249,7 +249,7 @@ export default defineComponent({
     })
     onDone(() => {
       emit('closePopup', false)
-      notification('success', Message.getMessage('COMMON', '106').message)
+      notification('success', '업데이트 완료!')
       emit('upDateData');
     })
     const actionUpdated = (e: any) => {

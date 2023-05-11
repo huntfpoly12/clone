@@ -127,15 +127,6 @@
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.department" :data="arrDepartments"
-            @updateArrSelect="(value: any) => arrDepartments = [...value]" width="200px" />
-        </a-form-item>
-        <a-form-item label="직위" label-align="right">
-          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.responsibility" :data="arrResponsibility"
-            @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
-        </a-form-item>
-        <!-- <a-form-item label="부서" label-align="right">
-          iii{{ initFormStateTabPA120.department }}
           <custom-item-select-box width="200px" :disabled="notDatasourcePA120"
             v-model:valueInput="initFormStateTabPA120.department" :arrSelect="arrDepartments"></custom-item-select-box>
         </a-form-item>
@@ -143,7 +134,7 @@
           <custom-item-select-box width="200px" :disabled="notDatasourcePA120"
             v-model:valueInput="initFormStateTabPA120.responsibility" :id="'pa-120-2'"
             :arrSelect="arrResponsibility"></custom-item-select-box>
-        </a-form-item> -->
+        </a-form-item>
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center;">
             <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save"
@@ -181,8 +172,8 @@ export default defineComponent({
     const store = useStore();
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
-    const arrDepartments = ref(<any[]>[]);
-    const arrResponsibility = ref(<any[]>[]);
+    const arrDepartments = ref([]);
+    const arrResponsibility = ref([]);
     const labelResidebId = ref("주민(외국인)번호 ");
     const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120)
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
@@ -243,7 +234,9 @@ export default defineComponent({
 
     watch(resDepartments, (value) => {
       if (value) {
-        arrDepartments.value = value.getDepartments.map((item: any) => ({ value: item.department }))
+        arrDepartments.value = value.getDepartments.map((val: any, index: any) => {
+          return { id: index, value: val.department }
+        });
       }
     });
 
@@ -262,7 +255,9 @@ export default defineComponent({
 
     watch(resResponsibility, (value) => {
       if (value) {
-        arrResponsibility.value = value.getResponsibilities.map((item: any) => ({ value: item.responsibility }))
+        arrResponsibility.value = value.getResponsibilities.map((val: any, index: any) => {
+          return { id: index, value: val.responsibility }
+        });
       }
     });
     const { mutate: mutateEdit, onError: onErrEdit, onDone: onDoneEdit } = useMutation(mutations.updateEmployeeWage);

@@ -4,7 +4,7 @@
       회계마감 관리사항
     </p>
     <div ref="formTimeline" class="form-chat-timeline">
-      <div v-for="(items, index) in listChat" :key="index">
+      <div v-for="(items, index) in listChat" :key="index" :id="items.key">
         <div class="form-chat-timeline-line mb-10"
           :class="{ 'form-chat-timeline-line-short mb-0': index > 0 && listChat[index - 1].userId === items.userId }">
         </div>
@@ -55,7 +55,8 @@
               </div>
 
               <!-- pewview reply -->
-              <div v-if="items?.reply" class="form-chat-timeline-common form-chat-timeline-common-replyPreview">
+              <a v-if="items?.reply && Object.keys(items.reply).length"
+                class="form-chat-timeline-common form-chat-timeline-common-replyPreview" :href="`#${items.reply.key}`">
                 <div class="form-chat-timeline-avatar">
                   <a-avatar shape="circle" size="large"
                     :style="`background-color: ${items.userId === userId ? '#1890ff' : '#f56a00'}`">{{ items.name
@@ -101,11 +102,12 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </a>
               <!-- pewview reply -->
             </div>
 
             <InputChat v-else ref="inputEditChat" v-model:textChatProp="itemEditComment.text"
+              :dataReply="itemEditComment?.reply" @removeReply="itemEditComment.reply = {}"
               v-model:filesUploadProps="itemEditComment.files" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
               @submitChat="submitChat" @cancel="cancelEdit(index)" />
             <div class="form-chat-timeline-content-feedback">
@@ -113,20 +115,21 @@
             </div>
           </div>
 
-          <div v-if="items.userId === userId" class="form-chat-timeline-common-menu">
+          <div class="form-chat-timeline-common-menu">
             <a-dropdown :placement="items.userId === userId ? 'bottomRight' : 'bottomLeft'" :trigger="['click']">
               <EllipsisOutlined :style="{ fontSize: '16px' }" />
               <template #overlay>
                 <a-menu>
-                  <a-menu-item @click="replyComment(items)" :disabled="itemEditComment?.key || true">
+                  <a-menu-item @click="replyComment(items)" :disabled="itemEditComment?.key">
                     <RollbackOutlined />
                     회신하다
                   </a-menu-item>
-                  <a-menu-item @click="editComment(items)" :disabled="itemEditComment?.key">
+                  <a-menu-item v-if="items.userId === userId" @click="editComment(items)"
+                    :disabled="itemEditComment?.key">
                     <EditOutlined />
                     수정
                   </a-menu-item>
-                  <a-menu-item @click="openComfirmDetele(items)">
+                  <a-menu-item v-if="items.userId === userId" @click="openComfirmDetele(items)">
                     <DeleteOutlined />
                     삭제
                   </a-menu-item>
@@ -351,6 +354,7 @@ export default defineComponent({
                 ...listChat.value[indexUpdate],
                 text: data.val().text,
                 files: data.val().files,
+                reply: data.val()?.reply ? data.val().reply : {},
               }
             }
           });
@@ -438,6 +442,9 @@ export default defineComponent({
           })
       } else {
         const updates: any = {};
+        if (!Object.keys(itemEditComment.value?.reply || {}).length) {
+          delete itemEditComment.value.reply
+        }
         const payloadEdit = { ...itemEditComment.value, ...payload.value }
         delete payloadEdit.key
         updates[`/${itemEditComment.value.key}`] = payloadEdit
@@ -624,6 +631,7 @@ export default defineComponent({
     // height: calc(100% - 40px);
     padding-bottom: 10px;
     padding-top: 2px;
+    scroll-behavior: smooth;
     overflow-y: auto;
 
     &-line {
@@ -674,16 +682,26 @@ export default defineComponent({
       }
 
       &-replyPreview {
+        // display: block;
+        margin-top: 5px;
         border-left: 3px solid #e7e6e6;
-        padding-left: 5px;
-        max-height: 200px;
+        padding: 5px;
+        height: 100px;
         overflow: hidden;
-        pointer-events: none;
         background-color: rgba(2, 2, 2, 0.027);
 
+        .form-chat-timeline-avatar {
+          pointer-events: none;
+        }
+
         .form-chat-timeline-content {
+          pointer-events: none;
           width: 100%;
           margin-right: 0 !important;
+        }
+
+        .form-chat-timeline-content-files {
+          background-color: transparent;
         }
       }
     }
@@ -701,7 +719,7 @@ export default defineComponent({
           &-images {
             display: flex;
             flex-wrap: wrap;
-            margin: 0 -3px;
+            margin: 0 -3px 5px -3px;
 
             &-image {
               width: 250px;
@@ -725,7 +743,6 @@ export default defineComponent({
             cursor: pointer;
             overflow: hidden;
             padding: 10px;
-            margin-top: 10px;
 
             &+& {
               margin-top: 3px;
@@ -868,5 +885,4 @@ export default defineComponent({
 
 .borderEdit {
   border: 1px solid red;
-}
-</style>
+}</style>

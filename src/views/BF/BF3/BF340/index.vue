@@ -73,7 +73,7 @@
                     <DxColumn caption="주소" data-field="address" />
                     <DxColumn caption="연락처" data-field="phone" />
                     <DxColumn caption="휴대폰" data-field="mobilePhone" />
-                    <DxColumn caption="가입일자" cell-template="registerDate" data-field="registerDate"/>
+                    <DxColumn caption="가입일자" cell-template="registerDate" />
                     <template #registerDate="{ data }">
                         {{ $filters.formatDate(data.data.registerDate) }}
                     </template>
@@ -129,7 +129,7 @@ import AddNew340Poup from "./components/AddNew340Poup.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF340/index";
 import { origindata } from "./utils";
-import { onExportingCommon,makeDataClean } from "@/helpers/commonFunction"
+import { makeDataClean, onExportingCommon } from "@/helpers/commonFunction"
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, EditOutlined, HistoryOutlined, DxToolbar, DxEditing, DxGrouping, DxItem, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
@@ -203,7 +203,7 @@ export default defineComponent({
             originData.grade = saleGrade.value == 0 ? null : saleGrade.value;
             originData.statuses = [saleStatus.value];
             trigger.value = true;
-            makeDataClean(originData);
+            makeDataClean(originData)
             refetchData();
         };
         const createSuccess = () => {

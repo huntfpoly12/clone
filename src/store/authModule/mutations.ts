@@ -1,10 +1,8 @@
 import {MutationTree} from "vuex";
 import {AuthState} from "./types";
-import dayjs from 'dayjs';
 
 const mutations: MutationTree<AuthState> = {
   setAuthData: (state, authData) => {
-    sessionStorage.setItem("loginExpr", dayjs().valueOf().toString());
     sessionStorage.setItem("token", authData.accessToken);
     sessionStorage.setItem("refreshToken", authData.refreshToken);
   },
