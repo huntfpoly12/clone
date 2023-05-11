@@ -151,7 +151,7 @@ export default defineComponent({
         })
    
         const {
-            result, loading, refetch, onError
+            result, loading, refetch, onError,onResult
         } = useQuery(queries.calculateIncomeRetirement, variables, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
@@ -159,20 +159,19 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-      
-        watch(result, (value) => {
-            if (value && value.calculateIncomeRetirement) {
-              store.commit('common/setCaculateValuePA410', value.calculateIncomeRetirement);
+        onResult((value) => {
+          if (value.data) {
+              store.commit('common/setCaculateValuePA410', value.data.calculateIncomeRetirement);
               trigger.value = false;
-              store.commit('common/setStateStep2PA410',formState)
+              store.commit('common/setStateStep2PA410', formState)
+              console.log('sdfsdfsdfsdfsdf');
+              
               store.dispatch('common/setNextStep')
             }
         })
-
+ 
         const calculateIncomeRetirement = () => {
           var res = formPA410.value.validate();
-          console.log(res);
-          
           let dtValidate = true
           if (!formState.settlementStartDate) {
             payStart.value.validate(true)
