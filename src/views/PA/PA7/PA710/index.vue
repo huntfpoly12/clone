@@ -382,7 +382,7 @@
                         companyId: companyId,
                         imputedYear: paYear.value,
                         employeeId: parseInt(formState.value.employeeId),
-                        incomeTypeCode: formState.value.incomeTypeCode,
+                        // incomeTypeCode: formState.value.incomeTypeCode,
                         input: { ...input }
                     };
                     makeDataClean(dataUpdate)
