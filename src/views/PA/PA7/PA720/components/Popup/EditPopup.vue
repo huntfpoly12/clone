@@ -64,9 +64,9 @@ export default defineComponent({
     const updateStatus = ref(false);
     const processKeyPA720 = computed(() => store.getters['common/processKeyPA720']);
     const daysInMonth = ref(+dayjs(`${processKeyPA720.value.processKey?.paymentMonth}`).daysInMonth());
-    // watch(() => props.processKey, (newVal: any) => {
-    //   daysInMonth.value = +dayjs(`${newVal?.paymentMonth}`).daysInMonth()
-    // }, { deep: true })
+    watch(() => props.data, (newVal: any) => {
+      daysInMonth.value = +dayjs(`${processKeyPA720.value.processKey?.paymentMonth}`).daysInMonth();
+    }, { deep: true })
     const setModalVisible = () => {
       emit("closePopup", '')
     };
@@ -168,6 +168,7 @@ export default defineComponent({
       updateStatus, incomeIdRender, errorState,
       dataUpdateLen, succesState,
       daysInMonth,
+      processKeyPA720,
     }
   },
 })

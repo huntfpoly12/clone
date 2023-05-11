@@ -50,8 +50,8 @@
       <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" alignment="right" />
     </DxDataGrid>
     <a-row class="fs-14 summary-ctn">
-      <a-col span="8">
-        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 58s%;">
+      <a-col span="7">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 60.2%;">
           사업소득자[소득구분]수
           <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
         </div>
@@ -80,7 +80,7 @@
           <span style="font-size: 16px;">[{{ customTextSummary() }}]</span>
         </div>
       </a-col>
-      <a-col span="4" class="sum-item">
+      <a-col span="5" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           차인지급액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</span>
