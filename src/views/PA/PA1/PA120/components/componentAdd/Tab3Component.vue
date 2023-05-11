@@ -6,8 +6,8 @@
       <a-col :span="24">
         <a-spin :spinning="loading" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-            :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-            id="gridContainer">
+                      :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                      id="gridContainer" noDataText="내역이 없습니다">
             <DxScrolling mode="infinite" />
             <DxToolbar>
               <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -21,18 +21,18 @@
             <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
             <DxColumn alignment="left" cell-template="ageChange" header-cell-template="age-header" />
             <DxColumn alignment="left" header-cell-template="basicDeduction-header" data-field="basicDeduction"
-              cell-template="basicDeductionChange" />
+                      cell-template="basicDeductionChange" />
             <DxColumn alignment="left" header-cell-template="women-header" data-field="women"
-              cell-template="womenChange" />
+                      cell-template="womenChange" />
             <DxColumn alignment="left" header-cell-template="singleParent-header" data-field="singleParent"
-              cell-template="singleParentChange" />
+                      cell-template="singleParentChange" />
             <DxColumn alignment="left" header-cell-template="senior-header" data-field="senior"
-              cell-template="SeniorChange" />
+                      cell-template="SeniorChange" />
             <DxColumn alignment="left" caption="장애인 " data-field="disabled" cell-template="disabledChange" />
             <DxColumn alignment="left" header-cell-template="descendant-header" data-field="descendant"
-              cell-template="DescendantChange" />
+                      cell-template="DescendantChange" />
             <DxColumn alignment="left" caption="출산 입양" data-field="maternityAdoption"
-              cell-template="maternityAdoptionChange" />
+                      cell-template="maternityAdoptionChange" />
             <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship" />
             <DxColumn alignment="left" caption="세대주여부 " data-field="householder" cell-template="householderChange" />
             <DxColumnFixing :enabled="true" />
@@ -40,7 +40,7 @@
 
             <template #pupop="{ data }">
               <DxButton class="custom-action" @click="actionEdit(data.data)"
-                style="border: none; margin-top: -2px; width: 35px; height: 35px;">
+                        style="border: none; margin-top: -2px; width: 35px; height: 35px;">
                 <div v-if="!loading">
                   <zoom-in-outlined v-if="data.data.relation == 0" :style="{ fontSize: '20px', color: 'black' }" />
                   <edit-outlined v-else :style="{ fontSize: '20px', color: 'black' }" />
@@ -169,20 +169,20 @@
               <a-form-item label="20세이하" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="basicDeductionSummary == 0 ? '' : basicDeductionSummary"
-                    :disabled="true" />
+                                   :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="60세이하" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="basicDeductionSummary2 == 0 ? '' : basicDeductionSummary2"
-                    :disabled="true" />
+                                   :disabled="true" />
                 </div>
               </a-form-item>
               <div class="header-text-2">자녀세액공제</div>
               <a-form-item label="자녀세액공제" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="descendantSummary == 0 ? '' : descendantSummary"
-                    :disabled="true" />
+                                   :disabled="true" />
                 </div>
               </a-form-item>
             </a-col>
@@ -207,13 +207,13 @@
               <a-form-item label="한부모" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="singleParentSummary == 0 ? '' : singleParentSummary"
-                    :disabled="true" />
+                                   :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="출산입양" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="maternityAdoptionSummary == 0 ? '' : maternityAdoptionSummary"
-                    :disabled="true" />
+                                   :disabled="true" />
                 </div>
               </a-form-item>
             </a-col>
@@ -222,10 +222,10 @@
       </a-col>
     </a-row>
     <popup-add-new-dependent v-if="modalAddNewDependent" :modalStatus="modalAddNewDependent"
-      @closePopup="modalAddNewDependent = false;" :employeeId="employeeId" :dataSourceLen="dataSource.length"
-      @upDateData="updateData" :key="newForm" :relationAll="relationAll" />
+                             @closePopup="modalAddNewDependent = false;" :employeeId="employeeId" :dataSourceLen="dataSource.length"
+                             @upDateData="updateData" :key="newForm" :relationAll="relationAll" />
     <PopupUpdateDependent v-if="modalEditStatus" :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
-      :idRowEdit="idRowEdit" :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll">
+                          :idRowEdit="idRowEdit" :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll">
     </PopupUpdateDependent>
   </div>
 </template>
