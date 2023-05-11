@@ -129,7 +129,7 @@
                 :height="$config_styles.HeightInput" width="40" style="color:white; width: 42px" />
             </div>
             <a-spin
-              :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails"
+              :spinning="loadingInitializeTransactionDetails || loadingGetBankbookDetails"
               size="large">
               <standard-form ref="refFormDetailAc110">
                 <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
@@ -459,7 +459,7 @@ export default defineComponent({
     // trigger
     let triggerAccountingProcesses = ref<boolean>(true)
     let triggerBankbookDetails = ref<boolean>(true)
-    let triggerTransactionDetails = ref<boolean>(false)
+    // let triggerTransactionDetails = ref<boolean>(false)
 
     const refDxDataGridMainAc110 = ref()
     let listAccountingProcesses = ref<any>([])
@@ -545,20 +545,20 @@ export default defineComponent({
       notification('error', e.message)
       triggerBankbookDetails.value = false
     })
-    const {
-      result: resTransactionDetails,
-      // onResult: onResTransactionDetails,
-      loading: loadingGetTransactionDetails,
-      // refetch,
-      onError: errorTransactionDetails
-    } = useQuery(queries.getTransactionDetails, payloadGetTransactionDetails,
-      () => ({
-        enabled: triggerTransactionDetails.value,
-        fetchPolicy: "no-cache",
-      }))
-    errorTransactionDetails(e => {
-      notification('error', e.message)
-    })
+    // const {
+    //   result: resTransactionDetails,
+    //   // onResult: onResTransactionDetails,
+    //   loading: loadingGetTransactionDetails,
+    //   // refetch,
+    //   onError: errorTransactionDetails
+    // } = useQuery(queries.getTransactionDetails, payloadGetTransactionDetails,
+    //   () => ({
+    //     enabled: triggerTransactionDetails.value,
+    //     fetchPolicy: "no-cache",
+    //   }))
+    // errorTransactionDetails(e => {
+    //   notification('error', e.message)
+    // })
     // mutations
     const {
       mutate: syncBankbookDetails,
@@ -624,7 +624,8 @@ export default defineComponent({
     doneInitializeTransactionDetails((e) => {
       triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
-      triggerTransactionDetails.value = true
+      /////////////////////////////////////////////////////////111111111111
+      // triggerTransactionDetails.value = true
     })
     errorInitializeTransactionDetails(e => {
       notification('error', e.message)
@@ -684,8 +685,12 @@ export default defineComponent({
           rowKeyfocused.value = value.getBankbookDetails[0].bankbookDetailId
           payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
           payloadGetTransactionDetails.bankbookDetailId = value.getBankbookDetails[0].bankbookDetailId
+          getTransactionDetails(value.getBankbookDetails[0])
+        }else {
+          getTransactionDetails(value.getBankbookDetails.find((item: any) => item.bankbookDetailId === rowKeyfocused.value))
         }
-        triggerTransactionDetails.value = true
+        /////////////////////////222222222222222222
+        // triggerTransactionDetails.value = true
       } else {
         dataSource.value = []
         dataSourceTransactionDetails.value = {}
@@ -698,16 +703,26 @@ export default defineComponent({
       triggerBankbookDetails.value = false
     })
 
-    watch(resTransactionDetails, (value) => {
-      if (!!value.getTransactionDetails && value.getTransactionDetails) {
-        dataSourceTransactionDetails.value = value.getTransactionDetails
-        dataSourceTransactionDetails.value.transactionDetails = value.getTransactionDetails.transactionDetails.map((item: any) => (
+    // watch(resTransactionDetails, (value) => {
+    //   if (!!value.getTransactionDetails && value.getTransactionDetails) {
+    //     dataSourceTransactionDetails.value = value.getTransactionDetails
+    //     dataSourceTransactionDetails.value.transactionDetails = value.getTransactionDetails.transactionDetails.map((item: any) => (
+    //       { ...item, summary: item.summary[item.summary.length - 1] === '중' ? item.summary : `${item.summary} 중` }
+    //     ))
+    //     listTransactionDetailsOrigin.value = cloneDeep(dataSourceTransactionDetails.value.transactionDetails)
+    //   }
+    //   triggerTransactionDetails.value = false
+    // })
+
+    const getTransactionDetails = (value: any) => {
+      if (!!value && value) {
+        dataSourceTransactionDetails.value = value
+        dataSourceTransactionDetails.value.transactionDetails = value.transactionDetails.map((item: any) => (
           { ...item, summary: item.summary[item.summary.length - 1] === '중' ? item.summary : `${item.summary} 중` }
         ))
         listTransactionDetailsOrigin.value = cloneDeep(dataSourceTransactionDetails.value.transactionDetails)
       }
-      triggerTransactionDetails.value = false
-    })
+    }
     // MOUNTED
     // METHODS
     const getNameBankType = (value: any) => {
@@ -782,7 +797,9 @@ export default defineComponent({
         rowKeyfocused.value = item.bankbookDetailId
         payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
         payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
-        triggerTransactionDetails.value = true
+        /////////////////////33333333333333333
+        // triggerTransactionDetails.value = true
+        getTransactionDetails(dataSource.value.find((item: any) => item.bankbookDetailId === rowKeyfocused.value))
       } else {
         itemChange.value = { ...item }
         isModalConfirmChangeData.value = true
@@ -1114,7 +1131,9 @@ export default defineComponent({
           rowKeyfocused.value = itemChange.value.bankbookDetailId
           payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
           payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
-          triggerTransactionDetails.value = true
+          /////////////////////4444444444444444444
+          // triggerTransactionDetails.value = true
+          getTransactionDetails(dataSource.value.find((item: any) => item.bankbookDetailId === rowKeyfocused.value))
         }
         itemChange.value = null
       }
@@ -1173,7 +1192,7 @@ export default defineComponent({
       transactionDetailsCountSelected,
       rowKeyfocused,
       //loading
-      loadingGetTransactionDetails,
+      // loadingGetTransactionDetails,
       loadingGetBankbookDetails,
       loadingInitializeTransactionDetails,
       loadingSyncBankbookDetails,

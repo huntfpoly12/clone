@@ -23,7 +23,7 @@
         <DxColumn caption="등록일" data-field="registeredAt" width="100" :format="dateFormat" alignment="center" />
         <DxColumn caption="접수일" data-field="acceptedAt" width="100" :format="dateFormat" alignment="center" />
         <DxColumn caption="완료일" data-field="completedAt" width="100" :format="dateFormat" alignment="center" />
-        <DxColumn caption="접수번호" data-field="accedpedNumber" width="70" alignment="center" />
+        <DxColumn caption="접수번호" data-field="acceptedNumber" width="70" alignment="center" />
         <!--        <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/>-->
         <DxColumn caption="메모" data-field="memo" alignment="center" />
         <!--        <DxScrolling column-rendering-mode="virtual"/>-->

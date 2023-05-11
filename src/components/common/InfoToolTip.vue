@@ -7,11 +7,11 @@
       <img src="@/assets/images/iconInfo.png" style="width: 16px" />
     </div>
   </a-tooltip> -->
-  <Popper hover arrow :placement="placement">
+  <Popper :placement="placement">
     <div :style="{ 'cursor': 'pointer', 'margin-left': '10px' }" class="d-flex-center">
       <img src="@/assets/images/iconInfo.png" style="width: 16px" />
     </div>
-    <template #content>
+  <template #content>
       <slot />
     </template>
   </Popper>

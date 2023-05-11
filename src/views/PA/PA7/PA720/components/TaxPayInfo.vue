@@ -1,38 +1,37 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
-      key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
-      :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
-      @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
-      v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef"
-      id="tax-pay-720" noDataText="내역이 없습니다">
+                key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
+                @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
+                v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef"
+                id="tax-pay-720" noDataText="내역이 없습니다">
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
+      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="235" />
       <template #tag="{ data }">
-        <div>
-          <button class="btn-container">
-            {{ data.data.employeeId }}
-          </button>
+        <span class="btn-container">
+          {{ data.data?.employeeId }}
+        </span>
+        <span class="name-mw">
           {{ data.data?.employee?.name }}
-          <a-tooltip placement="top" v-if="data.data?.employee?.incomeTypeName">
-            <template #title>
-              <span v-if="data.data?.employee?.incomeTypeName?.length > 10">{{ data.data?.employee?.incomeTypeName
-              }}</span>
-            </template>
-            {{ checkLen(data.data?.employee?.incomeTypeName) }}
-          </a-tooltip>
-        </div>
+        </span>
+        <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.incomeTypeName">
+          <template #title>
+            <span>{{ data.data?.employee?.incomeTypeCode }} {{ data.data?.employee?.incomeTypeName }}</span>
+          </template>
+          <a-tag class="ml-5 py-1"> {{ checkLen(data.data?.employee?.incomeTypeName) }}</a-tag>
+        </a-tooltip>
       </template>
-      <DxColumn caption="지급일" width="60" alignment="left" cell-template="paymentDay" />
+      <DxColumn caption="지급일" width="55" alignment="left" cell-template="paymentDay" />
       <template #paymentDay="{ data }">
         {{ formatMonth(data.data.paymentDay) }}
       </template>
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="right" />
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="90" alignment="right" />
       <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100"
-        alignment="right" />
-      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="right" />
+                alignment="right" />
+      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="90" alignment="right" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
       <template #taxRateSlot="{ data }">
         {{ data.value }}%
@@ -48,8 +47,7 @@
           </span>
         </a-tooltip>
       </template>
-      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney"
-        alignment="right" />
+      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" alignment="right" />
     </DxDataGrid>
     <a-row class="fs-14 summary-ctn">
       <a-col span="8">
@@ -58,13 +56,13 @@
           <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
         </div>
       </a-col>
-      <a-col  span="3" class="sum-item">
+      <a-col span="3" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           지급액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'paymentAmount') }}]</span>
         </div>
       </a-col>
-      <a-col span="4"  class="sum-item">
+      <a-col span="4" class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           필요경비합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'requiredExpenses') }}]</span>
@@ -239,7 +237,7 @@ export default defineComponent({
 
     const checkLen = (text: String) => {
       if (text.length > 10) {
-        return text.substring(0, 7) + '...';
+        return text.substring(0, 8) + '...';
       }
       return text;
     };

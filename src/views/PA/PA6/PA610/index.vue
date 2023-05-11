@@ -206,6 +206,7 @@ import DxTextBox from "devextreme-vue/text-box";
 import dayjs from "dayjs";
 import deletePopup from "@/utils/deletePopup";
 import { h } from "vue";
+import cloneDeep from "lodash/cloneDeep";
 
 export default defineComponent({
   name: 'MyForm',
@@ -333,7 +334,7 @@ export default defineComponent({
     const resetForm = () => {
       formRef.value.resetValidate();
       previousRowData.value = { ...valueDefaultAction };
-      dataShow.value = valueDefaultAction;
+      dataShow.value = cloneDeep(valueDefaultAction);
     }
     const {
       refetch: refetchData,
@@ -409,7 +410,6 @@ export default defineComponent({
         if (e.rows[e.newRowIndex].key === 0) return;
         // when isNewRow and click row other then check data input
         if (isEqual(dataShow.value, valueDefaultAction)) {
-
           storeDataSource.value.remove(0).then(() => {
             storeDataSource.value
               .byKey(e.rows[e.newRowIndex].key)
@@ -508,15 +508,14 @@ export default defineComponent({
       onDone: updateDone,
     } = useMutation(mutations.updateEmployeeBusiness);
     updateDone((res) => {
-      valueCallApiGetEmployeeBusiness.incomeTypeCode =
-        dataShow.value.incomeTypeCode;
+      valueCallApiGetEmployeeBusiness.incomeTypeCode = dataShow.value.incomeTypeCode;
       valueCallApiGetEmployeeBusiness.employeeId = dataShow.value.employeeId;
       previousRowData.value = { ...dataShow.value };
       // update when click discard
       if (!isNewRow.value) {
         focusedRowKey.value = selectRowKeyAction.value;
       } else {
-        storeDataSource.value.insert(valueDefaultAction).then((result) => {
+        storeDataSource.value.insert(cloneDeep(valueDefaultAction)).then((result) => {
           formRef.value.resetValidate()
           focusedRowKey.value = 0;
           dataShow.value = result;
@@ -653,15 +652,15 @@ export default defineComponent({
       };
     });
     const addNewRow = () => {
-      storeDataSource.value.insert(valueDefaultAction).then((result) => {
-        formRef.value.resetValidate()
-        selectRowKeyAction.value = 0;
+      storeDataSource.value.insert(cloneDeep(valueDefaultAction)).then((result) => {
         focusedRowKey.value = 0;
-        dataShow.value = result;
-        previousRowData.value = { ...result };
+        dataShow.value = cloneDeep(valueDefaultAction);;
+        previousRowData.value = cloneDeep(valueDefaultAction);
         dataGridRef.value?.refresh();
         isClickAddRow.value = false;
         isNewRow.value = true;
+        formRef.value.resetValidate()
+        selectRowKeyAction.value = 0;
       });
     }
     const handleSubmit = async () => {
@@ -714,7 +713,7 @@ export default defineComponent({
       }
     };
     const actionDelete = (employeeId: any, incomeTypeCode: any) => {
-      // valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode;
+      delete valueCallApiGetEmployeeBusiness.incomeTypeCode
       valueCallApiGetEmployeeBusiness.employeeId = employeeId;
       deletePopup({
         callback: () => {

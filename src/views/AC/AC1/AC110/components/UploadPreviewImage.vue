@@ -141,7 +141,7 @@ export default defineComponent({
       fileList.value.splice(indexImgRemove.value, 1)
       listFileStorageId.value.splice(indexImgRemove.value, 1)
       emit("updateremoveBankbookDetailProof")
-      notification('success', Message.getMessage('COMMON', '106').message)
+      notification('success', Message.getMessage('COMMON', '402').message)
     })
     errorRemoveBankbookDetailProof(e => {
       notification('error', e.message)

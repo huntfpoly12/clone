@@ -7,6 +7,7 @@ query getEmployeeWageDailiesLogs(
     getEmployeeWageDailiesLogs(companyId : $companyId, imputedYear : $imputedYear ) {
         ts
         employeeId
+        incomeTypeCode
         name
         foreigner
         nationality
