@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex resident-ctn" :style="{width:widthCustom}">
+  <div class="d-flex resident-ctn">
     <DxTextBox id="resident-id" ref="residentRef" :width="widthCustom" value-change-event="input"
       :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
       @input="updateValue(value)" :mask="mask" :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn"
@@ -192,11 +192,11 @@ export default defineComponent({
         input.selectionStart = input.selectionEnd = 0;
       }, 50);
     }
-    // onMounted(() => {
-    //   let ele = validatorRef.value?.instance?._$element as HTMLElement;
-    //   console.log(`output->ele`,ele, validatorRef.value?.instance)
-    //   // ele.style.width = widthCustom.value;
-    // })
+    onMounted(() => {
+      let ele = document.getElementsByClassName('resident-ctn');
+      let eleReal = ele[ele.length - 1] as HTMLElement;
+      eleReal.style.width = widthCustom.value;
+    })
     return {
       updateValue,
       value,

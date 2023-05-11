@@ -14,7 +14,7 @@ export default gql`
       registeredAt
       acceptedAt
       completedAt
-      acceptedNumber
+      accedpedNumber
       memo
       createdAt
       createdBy
