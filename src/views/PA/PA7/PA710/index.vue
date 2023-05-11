@@ -169,22 +169,22 @@
         <!-- <PopupMessage :modalStatus="confirmSave" @closePopup="confirmSave = false" :typeModal="'confirm'"
             title="입력한 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="confimSaveWhenChangeRow" /> -->
     </div>
-</template>
-<script lang="ts">
-import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vue";
-import HistoryPopup from "@/components/HistoryPopup.vue";
-import { useQuery, useMutation } from "@vue/apollo-composable";
-import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxPaging } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
-import notification from "@/utils/notification";
-import { initialState, initialOptionsRadio } from "./utils/index"
-import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
-import queries from "@/graphql/queries/PA/PA7/PA710/index";
-import DxButton from "devextreme-vue/button";
-import { companyId, makeDataClean } from "@/helpers/commonFunction";
-import { Message } from "@/configs/enum"
-export default defineComponent({
+  </template>
+  <script lang="ts">
+  import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vue";
+  import HistoryPopup from "@/components/HistoryPopup.vue";
+  import { useQuery, useMutation } from "@vue/apollo-composable";
+  import { useStore } from 'vuex';
+  import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxPaging } from "devextreme-vue/data-grid";
+  import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+  import notification from "@/utils/notification";
+  import { initialState, initialOptionsRadio } from "./utils/index"
+  import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
+  import queries from "@/graphql/queries/PA/PA7/PA710/index";
+  import DxButton from "devextreme-vue/button";
+  import { companyId, makeDataClean } from "@/helpers/commonFunction";
+  import { Message } from "@/configs/enum"
+  export default defineComponent({
     components: {
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxPaging
     },
@@ -196,7 +196,7 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
-
+  
         let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
@@ -225,7 +225,7 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: paYear.value,
             employeeId: null,
-            incomeTypeCode: null,
+            // incomeTypeCode: null,
         });
         let confirmSave = ref(false)
         const optionsRadio = ref([...initialOptionsRadio]);
@@ -309,16 +309,16 @@ export default defineComponent({
             }
             if (statusClickButtonSave.value) { // if click submit
                 originDataDetail.value.employeeId = data.data.createEmployeeExtra?.employeeId
-                originDataDetail.value.incomeTypeCode = data.data.createEmployeeExtra?.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = data.data.createEmployeeExtra?.incomeTypeCode
             } else { // if click save modal
                 originDataDetail.value.employeeId = dataRow.employeeId
-                originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
             }
             await (triggerDetail.value = true);
             await (statusFormUpdate.value = true);
             await (statusAddRow.value = true);
             store.state.common.savePA710++;
-
+  
         });
         onErrorAdd((e) => {
             focusedRowKey.value = 'PA710'
@@ -340,10 +340,10 @@ export default defineComponent({
             }
             if (statusClickButtonSave.value) { // if click submit
                 originDataDetail.value.employeeId = data.data.updateEmployeeExtra?.employeeId
-                originDataDetail.value.incomeTypeCode = data.data.updateEmployeeExtra?.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = data.data.updateEmployeeExtra?.incomeTypeCode
             } else { // if click save modal
                 originDataDetail.value.employeeId = dataRow.employeeId
-                originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
             }
             await (triggerDetail.value = true);
             store.state.common.savePA710++;
@@ -353,7 +353,7 @@ export default defineComponent({
             triggerDetail.value = true;
             notification('error', e.message)
         });
-
+  
         // ================FUNCTION============================================
         const pa710FormRef = ref()
         const actionSave = () => {
@@ -402,7 +402,7 @@ export default defineComponent({
                 }
             }
         };
-
+  
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = true
         }
@@ -412,14 +412,14 @@ export default defineComponent({
         const textTypeCode = (e: any) => {
             formState.value.incomeTypeName = e
         }
-
+  
         const onFocusedRowChanging = (e: any) => {
             statusClickButtonAdd.value = false
             dataRow = e.rows[e.newRowIndex]?.data
             const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
             if (dataRow.residentId && (dataRow.residentId + '' + dataRow.incomeTypeCode != formState.value.residentId + '' + formState.value.incomeTypeCode)) {
                 originDataDetail.value.employeeId = e.rows[e.newRowIndex]?.data.employeeId
-                originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
+                // originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
                     modalStatus.value = true;
                     rowElement?.classList.add("dx-state-hover-custom")
@@ -455,18 +455,18 @@ export default defineComponent({
                 }
             }
         }
-
+  
         // A function that is called when the user clicks on the delete button.
         const onSubmitDelete = () => {
             let variables = {
                 companyId: companyId,
                 imputedYear: paYear.value,
                 employeeId: formState.value.employeeId,
-                incomeTypeCode: formState.value.incomeTypeCode
+                // incomeTypeCode: formState.value.incomeTypeCode
             };
             actionDelete(variables);
         }
-
+  
         const statusComfirm = (val: any) => {
             if (val) {
                 statusClickButtonSave.value = false;
@@ -505,7 +505,7 @@ export default defineComponent({
             focusedRowKey.value = 'PA710';
             statusFormUpdate.value = false;
         }
-
+  
         const changeRadioForeigner = (value: Boolean) => {
             if (!value) {
                 formState.value.nationalityCode = 'KR'
@@ -514,7 +514,7 @@ export default defineComponent({
                 formState.value.nationalityCode = formState.value.nationalityCode == 'KR' ? null : formState.value.nationalityCode
             }
         }
-
+  
         // ================WATCHING============================================
         watch(result, (value) => {
             trigger.value = false;
@@ -530,7 +530,7 @@ export default defineComponent({
                 if (runOne.value) {
                     if (listEmployeeExtra.value.length) {
                         originDataDetail.value.employeeId = listEmployeeExtra.value[0]?.employeeId
-                        originDataDetail.value.incomeTypeCode = listEmployeeExtra.value[0]?.incomeTypeCode
+                        // originDataDetail.value.incomeTypeCode = listEmployeeExtra.value[0]?.incomeTypeCode
                         triggerDetail.value = true;
                         statusFormUpdate.value = true;
                     } else {
@@ -545,7 +545,7 @@ export default defineComponent({
                 } else {
                     disabledBlock.value = true;
                 }
-
+  
             }
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 addRow()
@@ -563,7 +563,7 @@ export default defineComponent({
         watchEffect(() => {
             formState.value.name = formState.value.name?.toUpperCase() ?? '';
         });
-
+  
         // watch(paYear, (newVal, oldVal) => {
         //     let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
         //     let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
@@ -582,7 +582,7 @@ export default defineComponent({
         //         trigger.value = true;
         //     }
         // });
-
+  
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
             // confimSaveWhenChangeRow, 
@@ -593,12 +593,12 @@ export default defineComponent({
             contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef, disabledBlock, gridRef,
         };
     },
-});
-</script> 
-<style scoped lang="scss" src="./style/style.scss" ></style>
-
-<style>
-.confirmDelete .anticon {
+  });
+  </script> 
+  <style scoped lang="scss" src="./style/style.scss" ></style>
+  
+  <style>
+  .confirmDelete .anticon {
     color: black !important;
-}
-</style>
+  }
+  </style>

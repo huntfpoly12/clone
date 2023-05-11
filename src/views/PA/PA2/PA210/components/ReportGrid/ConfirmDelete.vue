@@ -9,14 +9,14 @@
                 <p>본 원천징수이행상황신고서(원천징수세액환급신청서, 기납부세액명세서 포함)를 삭제하시겠습니까? 원천징수세액환급신청서와 기납부세액명세서가 있는 경우 함께 삭제됩니다. 그래도 삭제를 원하는 경우 아래에 “삭제”라고 입력하신 후 [삭제] 버튼을 누르세요.</p>
             </div>
             <div class="input-confirm">
-                 <default-text-box width="100px" :required="true" placeholder="삭제" v-model:valueInput="textComfirm" />
+                 <default-text-box width="100px" placeholder="삭제" v-model:valueInput="textComfirm" />
             </div>
            <a-row style="margin-top: 20px;">
                 <a-col :span="24" :offset="6">
                     <button-basic text="아니오" type="default" mode="outlined" @onClick="setModalVisible()"
                         :width="120" style="margin-right: 10px;" />
                     <button-basic text="네. 삭제합니다" type="default" mode="contained"
-                        @onClick="deleteReport()" :width="150" />
+                        @onClick="deleteReport()" :width="150" :disabled="disabledBtn"/>
                 </a-col>
             </a-row>
         </div>
@@ -24,7 +24,7 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
@@ -39,11 +39,15 @@ export default defineComponent({
       reportId: Number
     },
     setup(props, { emit }) {
-      const textComfirm =  ref('')
+      const textComfirm = ref('')
+      const disabledBtn = ref<boolean>(true)
       const setModalVisible = () => {
           emit("closePopup", true)
       }
 
+      watch(textComfirm ,(newVal) => {
+        newVal ? disabledBtn.value = false : disabledBtn.value = true
+      })
       const {
               mutate: actionDeleteReport,
               onDone: doneUpdate,
@@ -70,7 +74,8 @@ export default defineComponent({
       return {
         textComfirm,
         setModalVisible, 
-        deleteReport
+        deleteReport,
+        disabledBtn
       }
     }
 })
