@@ -20,7 +20,7 @@
                         <a-form-item class="red" label="결의일자">
                             <!-- <date-time-box width="150px" :required="true"
                                 v-model:valueDate="formDataAdd.resolutionDate" /> -->
-                            <date-time-box-custom @handleClosed="handleClosed" width="190px" :required="true" :startDate="startDate"
+                            <date-time-box-custom @handleClosed="handleClosed" width="150px" :required="true" :startDate="startDate"
                                 ref="requiredTransactionDetailDate" :finishDate="finishDate"
                                 v-model:valueDate="formDataAdd.transactionDetailDate" />
                         </a-form-item>
@@ -95,7 +95,7 @@
                         <a-form-item label="결의구분">
                             <default-text-box
                                 :valueInput="store.state.common.ac120.arrResolutionClassification.find((item: any) => formDataAdd.resolutionClassification == item.id)?.text"
-                                width="150px" placeholder="지출" disabled="true" />
+                                width="190px" placeholder="지출" disabled="true" />
                         </a-form-item>
                         <a-form-item label="계정과목" class="red">
                             <account-code-select :key="resetSelectAccount" :classification="classification"
