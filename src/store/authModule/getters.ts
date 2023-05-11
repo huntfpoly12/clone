@@ -4,6 +4,7 @@ import {JwtObject} from "@bankda/jangbuda-common";
 
 const getters: GetterTree<AuthState, any> = {
   getAuthData: (state) => state.authData,
+  getUserInfo: (state) => state.userInfor,
   getTokenInfo: (state): JwtObject => state.tokenInfo as JwtObject,
 };
 
