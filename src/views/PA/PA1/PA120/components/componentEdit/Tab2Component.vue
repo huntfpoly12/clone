@@ -713,6 +713,7 @@ export default defineComponent({
     // change row data  globalYear.value
     watch(() => props.idRowEdit, async (value) => {
       employeeId.value = value;
+      configDeductionTrigger.value = true
       await refetchConfigDeduction();
       configPayItemTrigger.value = true;
       await refetchConfigPayItems();
