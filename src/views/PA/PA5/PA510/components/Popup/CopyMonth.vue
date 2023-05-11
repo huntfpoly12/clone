@@ -6,7 +6,7 @@
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ $filters.formatMonth(month) }}
                 </div>
-                <month-picker-box-custom text="지" v-model:valueDate="month2" class="ml-5" />
+                <month-picker-box-custom :disabled="true" text="지" v-model:valueDate="month2" class="ml-5" />
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
@@ -171,16 +171,16 @@ export default defineComponent({
         watch(() => store.state.common.pa510.actionCallGetMonthDetail, (newVal) => {
             trigger.value = true;
         })
-        watch(() => month2.value, (newVal) => {
-            if (paymentDayCallApi.value == 0) {
-                paymentDayCopy.value = parseInt(`${newVal}${dayjs(`${newVal}`).daysInMonth()}`)
-            } else {
-                paymentDayCopy.value = parseInt(`${newVal}01}`)
-            }
+        // watch(() => month2.value, (newVal) => {
+        //     if (paymentDayCallApi.value == 0) {
+        //         paymentDayCopy.value = parseInt(`${newVal}${dayjs(`${newVal}`).daysInMonth()}`)
+        //     } else {
+        //         paymentDayCopy.value = parseInt(`${newVal}01}`)
+        //     }
             
-            startDate.value = dayjs(`${newVal}`).startOf('month').toDate();
-            finishDate.value = dayjs(`${newVal}`).endOf('month').toDate();
-        })
+        //     startDate.value = dayjs(`${newVal}`).startOf('month').toDate();
+        //     finishDate.value = dayjs(`${newVal}`).endOf('month').toDate();
+        // })
         watch(resultConfig, (value) => {
             trigger.value = false;
             sampleDataIncomeWageDaily.paymentDay = value.getWithholdingConfig.paymentDay == null ? 0 : value.getWithholdingConfig.paymentDay
