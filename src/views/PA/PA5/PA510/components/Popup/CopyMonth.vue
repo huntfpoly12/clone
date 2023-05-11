@@ -109,8 +109,7 @@ export default defineComponent({
         const originData: any = ref({
             companyId: companyId,
             filter: {
-                startImputedYearMonth: parseInt(`${paYear.
-                    value}01`),
+                startImputedYearMonth: parseInt(`${paYear.value}01`),
                 finishImputedYearMonth: parseInt(`${paYear.value}12`),
             }
         })
@@ -124,10 +123,7 @@ export default defineComponent({
 
         onResult((value: any) => {
             triggerFindIncome.value = false;
-            arrDataPoint.value = value.data.findIncomeProcessWageDailyStatViews
-            arrDataPoint.value.sort(function(a: any, b: any) {
-                return b.imputedMonth - a.imputedMonth;
-            });
+            arrDataPoint.value = value.data.findIncomeProcessWageDailyStatViews.reverse()
         })
 
         const {
@@ -172,32 +168,29 @@ export default defineComponent({
             trigger.value = true;
         })
         watch(() => month2.value, (newVal) => {
-            if (paymentDayCallApi.value == 0) {
-                paymentDayCopy.value = parseInt(`${newVal}${dayjs(`${newVal}`).daysInMonth()}`)
-            } else {
-                paymentDayCopy.value = parseInt(`${newVal}01}`)
-            }
-            
+            paymentDayCopy.value = parseInt(`${newVal}${filters.formatMonth(parseInt(paymentDayCopy.value?.toString().slice(6, 8)))}`)
             startDate.value = dayjs(`${newVal}`).startOf('month').toDate();
             finishDate.value = dayjs(`${newVal}`).endOf('month').toDate();
         })
         watch(resultConfig, (value) => {
             trigger.value = false;
-            sampleDataIncomeWageDaily.paymentDay = value.getWithholdingConfig.paymentDay == null ? 0 : value.getWithholdingConfig.paymentDay
-            paymentDayCallApi.value = value.getWithholdingConfig.paymentDay == null ? 0 : value.getWithholdingConfig.paymentDay
+            sampleDataIncomeWageDaily.paymentDay = value.getWithholdingConfig.paymentDay
+            paymentDayCallApi.value = value.getWithholdingConfig.paymentDay
             paymentTypeCallApi.value = value.getWithholdingConfig.paymentType
         });
         // ======================= FUNCTION ================================
         const calculate = () => {
             let paymentMonth = month.value
-
-            if (paymentTypeCallApi.value == 2) {
-                paymentMonth = month.value + 1
-            }
-            let daySetting = paymentDayCallApi.value == 0 ? dayjs(`${paYear.value}-${paymentMonth}`).daysInMonth() : paymentDayCallApi.value
+            // if (value) {
+                // paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                if (paymentTypeCallApi.value == 2) {
+                    paymentMonth = month.value + 1
+                }
+            paymentDayCallApi.value = paymentDayCallApi.value == 0 ? dayjs(`${paYear.value}-${paymentMonth}`).daysInMonth() : paymentDayCallApi.value
+            paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(paymentDayCallApi.value)}`)
             month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
-            paymentDayCopy.value = parseInt(`${month2.value}${filters.formatMonth(daySetting)}`)
 
+            // }
             startDate.value = dayjs(`${month2.value}`).startOf('month').toDate();
             finishDate.value = dayjs(`${month2.value}`).endOf('month').toDate();
         }

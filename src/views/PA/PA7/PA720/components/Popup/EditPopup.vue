@@ -5,7 +5,7 @@
       <div class="custom-modal-edit" v-if="data.length">
         <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
         <span>선택된 내역 지급일을</span>
-        <number-box width="70px" :required="true" :min="1" :max="daysInMonth" v-model:valueInput="dayValue" :spinButtons="true"
+        <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue" :spinButtons="true"
           :isFormat="true" />
         <span>일로 변경하시겠습니까?</span>
       </div>
@@ -42,7 +42,6 @@ import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA7/PA720/index"
 import { Message } from '@/configs/enum';
 import { useStore } from 'vuex';
-import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -62,11 +61,6 @@ export default defineComponent({
     const store = useStore();
     const changeDayDataPA720 = computed(() => store.state.common.changeDayDataPA720);;
     const updateStatus = ref(false);
-    const processKeyPA720 = computed(() => store.getters['common/processKeyPA720']);
-    const daysInMonth = ref(+dayjs(`${processKeyPA720.value.processKey?.paymentMonth}`).daysInMonth());
-    // watch(() => props.processKey, (newVal: any) => {
-    //   daysInMonth.value = +dayjs(`${newVal?.paymentMonth}`).daysInMonth()
-    // }, { deep: true })
     const setModalVisible = () => {
       emit("closePopup", '')
     };
@@ -167,7 +161,6 @@ export default defineComponent({
       changeDayDataPA720,
       updateStatus, incomeIdRender, errorState,
       dataUpdateLen, succesState,
-      daysInMonth,
     }
   },
 })

@@ -233,7 +233,7 @@ import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
 import Datepicker from "@vuepic/vue-datepicker";
-import { Message } from '@/configs/enum';
+import queryCM130 from "@/graphql/queries/CM/CM130/index";
 
 type RangeValue = [Dayjs | null, Dayjs | null];
 export default defineComponent({
@@ -628,7 +628,7 @@ export default defineComponent({
         }
       });
       emit('closePopup', false);
-      notification('success', Message.getMessage('COMMON', '106').message);
+      notification('success', '업데이트 완료!');
       store.commit('common/actionFormDonePA120');
       store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
