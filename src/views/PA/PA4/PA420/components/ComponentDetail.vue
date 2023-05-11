@@ -374,7 +374,7 @@ const customTextSummaryInfo = () => {
       total2++
   })
   return `
-    <div>사원수: <span style="font-size: 16px">[${dataSourceDetail.value.length}]</span> (퇴직: <span style="font-size: 16px">[${total1}]</span>, 중간 <span style="font-size: 16px">[${total2}]</span>)</div>
+    <div>사원수: <span style="font-size: 16px">[${dataSourceDetail.value.length}]</span> 퇴직: <span style="font-size: 16px">[${total1}]</span>, 중간 <span style="font-size: 16px">[${total2}]</span></div>
   `
 }
 const actionEditRow = (data: any) => {

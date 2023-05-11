@@ -236,7 +236,10 @@
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
                 <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || isCheckedBizNumber || formState.type === 1" />
                 <info-tool-tip>
-                  기부금영수증 발행시 반드시 필요합니다.
+                    <span>
+                    이용하지 않는 경우 삭제되지 않으며<br />
+                    거래처 리스트에서 조회되지 않습니다
+                  </span>
                 </info-tool-tip>
               </div>
             </a-form-item>
@@ -274,10 +277,7 @@
                   :textUnCheck="'X'"
                 />
                 <info-tool-tip>
-                  <span>
-                    이용하지 않는 경우 삭제되지 않으며<br />
-                    거래처 리스트에서 조회되지 않습니다
-                  </span>
+                  이용하지 않는 경우 삭제되지 않으며, 거래처 리스트에서 조회되지 않습니다.
                 </info-tool-tip>
               </div>
             </a-form-item>
