@@ -71,9 +71,9 @@
             <b>관리사항</b>
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChatNotification v-slot="slotProps">
-              <FormChat :keyChatChannel="slotProps.keyChatChannel" />
-            </FormChatNotification>
+            <FormNotification keyChatChannel="keyChatChannelCommon" >
+              <FormChat keyChatChannel="keyChatChannelCommon" />
+            </FormNotification>
           </div>
         </div>
       </a-col>
@@ -91,7 +91,7 @@ import TableBalanceOfCashRegister from "./components/TableBalanceOfCashRegister.
 import TablePersonnelExpenses from "./components/TablePersonnelExpenses.vue"
 import TableBudget from "./components/TableBudget.vue"
 import FormChat from "./components/FormChat.vue"
-import FormChatNotification from "./components/FormChatNotification.vue"
+import FormNotification from "./components/FormNotification.vue"
 import { Message } from "@/configs/enum"
 import DxButton from "devextreme-vue/button";
 import dayjs from "dayjs";
@@ -116,7 +116,7 @@ export default defineComponent({
     TablePersonnelExpenses,
     TableBudget,
     FormChat,
-    FormChatNotification
+    FormNotification
   },
   setup() {
     const store = useStore();
