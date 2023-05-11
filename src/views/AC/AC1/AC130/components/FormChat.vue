@@ -6,7 +6,7 @@
     <div ref="formTimeline" class="form-chat-timeline">
       <div v-for="(items, index) in listChat" :key="index" :id="items.key">
         <div class="form-chat-timeline-line mb-10"
-          :class="{ 'form-chat-timeline-line-short mb-0': index > 0 && listChat[index - 1].userId === items.userId }">
+          :class="{ 'form-chat-timeline-line-short': index > 0 && listChat[index - 1].userId === items.userId }">
         </div>
         <div class="form-chat-timeline-common">
           <div class="form-chat-timeline-avatar">
@@ -342,25 +342,31 @@ export default defineComponent({
               nextTick(() => {
                 formTimeline.value.scrollTop = 10000000
               })
+            } else {
+              nextTick(() => {
+                formTimeline.value.scrollTo({
+                  top: 10000000,
+                  behavior: "instant",
+                });
+              })
             }
             firstLoadChat.value = false
           });
           onChildChanged(chatListRef.value, (data) => {
             const indexUpdate = listChat.value.findIndex((chat: any) => chat.key === data.key)
-            if (!!data.val()?.isDelete) {
-              listChat.value.splice(indexUpdate, 1)
-            } else {
-              listChat.value[indexUpdate] = {
-                ...listChat.value[indexUpdate],
-                text: data.val().text,
-                files: data.val().files,
-                reply: data.val()?.reply ? data.val().reply : {},
+            if (indexUpdate >= 0) {
+              if (!!data.val()?.isDelete) {
+                listChat.value.splice(indexUpdate, 1)
+              } else {
+                listChat.value[indexUpdate] = {
+                  ...listChat.value[indexUpdate],
+                  text: data.val().text,
+                  files: data.val().files,
+                  reply: data.val()?.reply ? data.val().reply : {},
+                }
               }
             }
           });
-          nextTick(() => {
-            formTimeline.value.scrollTop = 10000000
-          })
         },
         {
           onlyOnce: true,
@@ -709,7 +715,7 @@ export default defineComponent({
     &-content {
       width: calc(100% - 40px);
       // background-color: #DCE6F2;
-      padding: 5px 12px 8px 12px;
+      padding: 0 12px 8px 12px;
 
       &-files {
         width: 100%;
@@ -885,4 +891,5 @@ export default defineComponent({
 
 .borderEdit {
   border: 1px solid red;
-}</style>
+}
+</style>
