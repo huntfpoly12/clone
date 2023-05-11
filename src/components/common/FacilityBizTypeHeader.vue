@@ -72,8 +72,6 @@ import { defineComponent, ref, computed, watch, onMounted,  } from "vue";
 import { useStore } from 'vuex';
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import queries from "@/graphql/queries/CM/CM110/index"
-import { useQuery } from "@vue/apollo-composable";
 import { companyId, setMenuTab } from "@/helpers/commonFunction";
 import { WarningOutlined } from "@ant-design/icons-vue";
 import { getJwtObject } from "@bankda/jangbuda-common";
@@ -100,15 +98,14 @@ export default defineComponent({
     let infos = jwtObject.accounting;
     let info = jwtObject.withholding;
     const store = useStore();
+    store.dispatch('auth/getUserInfor');
+    const userInfor = computed(() => store.getters['auth/getUserInfo'])
     const acYear = ref(dayjs().year())
     const paYear = ref(dayjs().year())
     let listFacilityBizTypeForUser:any = ref([])
-    onMounted(()=>{
+    onMounted(() => {
       if(jwtObject.userType != 'm' && !globalFacilityBizId.value && !acStateYear.value && !paStateYear.value){
         modalConfirm.value = true
-      }
-      if(jwtObject.userType != 'm'){
-        trigger.value = true
       }
     })
     const acArrYear = computed(()=>{
@@ -136,25 +133,13 @@ export default defineComponent({
           return yearArray
       }
     })
-    const { result } = useQuery(
-        queries.getMyCompanyFacilityBusinesses, {
-          companyId: companyId
-        },
-        () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-        })
-    );
 
-    watch(result, (value) => {
-      if(value && value.getMyCompanyFacilityBusinesses.length) {
-        listFacilityBizTypeForUser.value = value.getMyCompanyFacilityBusinesses
-        // if just login
-        if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = listFacilityBizTypeForUser.value[0].facilityBusinessId;
-        
-        store.commit('settings/setListFacilityBizTypeForUser', value.getMyCompanyFacilityBusinesses)
+    watch(userInfor, (value) => {
+      if(jwtObject.userType != 'm'){
+        listFacilityBizTypeForUser.value = userInfor.value.facilityBusinesses
+        store.commit('settings/setListFacilityBizTypeForUser', userInfor.value.facilityBusinesses)
+        if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = userInfor.value.facilityBusinesses[0].facilityBusinessId;
       }
-      trigger.value = false
     })
 
     const handleCancel = () => {
