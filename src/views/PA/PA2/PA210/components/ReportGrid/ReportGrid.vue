@@ -16,7 +16,6 @@
               :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
               :allow-column-resizing="colomn_resize" :column-auto-width="true" 
               :focused-row-enabled="true">
-              <DxScrolling mode="standard" show-scrollbar="always"/>
               <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
               <template #status="{ data }">
                 <process-status v-model:valueStatus="data.data.status" />
@@ -448,6 +447,7 @@ export default defineComponent({
   // }
   :deep .wtHolder {
     width: 100% !important;
+    height: 730px !important;
    }
 
   :deep .ht_clone_left .wtHolder {

@@ -5,7 +5,7 @@
           @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput }"
           :max-date="finishDate" :min-date="startDate" :placeholder="placeholder"
           :teleport="teleport" :disabled="disabled" :enable-time-picker="false"
-          :clearable="false" />
+          :clearable="clearable" />
       <div v-if="isValid" class="message-error">
         <span>{{ Message.getCommonMessage('102').message }}</span>
       </div>
@@ -53,6 +53,10 @@ export default defineComponent({
         disabled: {
             type: Boolean,
             default: false
+        },
+        clearable: {
+            type: Boolean,
+            default: true,
         },
     },
     components: {
