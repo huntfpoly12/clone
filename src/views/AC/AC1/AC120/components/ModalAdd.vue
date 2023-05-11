@@ -20,7 +20,7 @@
                         <a-form-item class="red" label="결의일자">
                             <!-- <date-time-box width="150px" :required="true"
                                 v-model:valueDate="formDataAdd.resolutionDate" /> -->
-                            <date-time-box-custom width="190px" :required="true" :startDate="startDate"
+                            <date-time-box-custom @handleClosed="handleClosed" width="190px" :required="true" :startDate="startDate"
                                 ref="requiredTransactionDetailDate" :finishDate="finishDate"
                                 v-model:valueDate="formDataAdd.transactionDetailDate" />
                         </a-form-item>

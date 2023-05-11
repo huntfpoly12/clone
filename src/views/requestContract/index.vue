@@ -80,7 +80,7 @@
                                     </div>
                                     <div class="form-item">
                                         <label class="red">{{ textIDNo }} :</label>
-                                        <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"  width="135px"/>
+                                        <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"  width="135px" required/>
                                     </div>
                                     <div class="form-item">
                                         <label class="red">주 소 :</label>
@@ -153,7 +153,7 @@
                         <div class="form-group">
                             <label class="d-flex-center">
                                 <span>1. 회계서비스 신청</span>
-                                <div class="list-checkbox ml-10">
+                                <div class="list-checkbox  ml-45">
                                     <radio-group :arrayValue="arrayRadioCheckStep3"
                                         v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
                                 </div>
@@ -167,7 +167,7 @@
                                 :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
                                 @selection-changed="onSelectionChanged" :onRowClick="onSelectionClick"
                                 :focused-row-enabled="true" key-expr="rowIndex" :focused-row-key="focusedRowKey"
-                                :auto-navigate-to-focused-row="true">
+                                :auto-navigate-to-focused-row="true" noDataText="내역이 없습니다">
                                 <DxScrolling mode="standard" show-scrollbar="always" />
                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="false"
                                     template="button-template" mode="cell" new-row-position="pageBottom">
@@ -245,25 +245,31 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>2. 원천서비스 신청</label>
-                            <div class="list-checkbox">
+                          <label class="d-flex-center">
+                                <span>2. 원천서비스 신청</span>
+                                <div class="list-checkbox ml-45">
+                                    <radio-group :arrayValue="arrayRadioCheckStep3"
+                                        v-model:valueRadioCheck="isWithholding" :layoutCustom="'horizontal'" />
+                                </div>
+                            </label>
+                            <!-- <div class="list-checkbox">
                                 <radio-group :arrayValue="plainOptions" v-model:valueRadioCheck="valueSourceService"
                                     layoutCustom="horizontal" />
-                            </div>
+                            </div> -->
                             <div class="form-item" style="margin-bottom: 10px">
                                 <label class="red">서비스 시작년월 :</label>
-                                <month-picker-box width="170px" :disabled="disableFormVal"
-                                    v-model:valueDate="contractCreacted.startYearMonthHolding" />
+                                <month-picker-box width="170px" :disabled="disableFormVal || isWithholding == 2"
+                                    v-model:valueDate="contractCreacted.startYearMonthHolding" required />
                             </div>
                             <div class="form-item">
                                 <label class="red">직 원 수:</label>
                                 <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding"
-                                    :disabled="disableFormVal" :min="0" :spinButtons="true" />
+                                    :disabled="disableFormVal || isWithholding == 2" :min="0" :spinButtons="true" required/>
                             </div>
                             <div class="form-item">
                                 <label>부가서비스 :</label>
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingServiceTypes"
-                                    label="4대보험신고서비스" :disabled="disableFormVal" :size="16" />
+                                    label="4대보험신고서비스" :disabled="disableFormVal || isWithholding == 2" :size="16" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -519,9 +525,9 @@ export default {
         };
         const nextStep = (e: any) => {
             var res = e.validationGroup.validate();
-            // if (!res.isValid) {
-            //     res.brokenRules[0].validator.focus();
-            // } else {
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
                 if (step.value == 0) {
                     if (
                         contractCreacted.terms == true &&
@@ -535,24 +541,24 @@ export default {
                         notification("error", "계속하려면 모든 조건을 수락하십시오!");
                     }
                 } else if (step.value == 1) {
-                    // if (
-                    //     contractCreacted.nameCompany != "" &&
-                    //     contractCreacted.ownerBizNumber != "" &&
-                    //     contractCreacted.zipcode != "" &&
-                    //     contractCreacted.namePresident != "" &&
-                    //     contractCreacted.birthday != "" &&
-                    //     contractCreacted.mobilePhone != "" &&
-                    //     contractCreacted.email != "" &&
-                    //     contractCreacted.phone != "" &&
-                    //     contractCreacted.addressExtend != "" &&
-                    //     contractCreacted.ownerBizNumber.length == 10 &&
-                    //     statusMailValidate.value == false
-                    // ) {
+                    if (
+                        contractCreacted.nameCompany != "" &&
+                        contractCreacted.ownerBizNumber != "" &&
+                        contractCreacted.zipcode != "" &&
+                        contractCreacted.namePresident != "" &&
+                        contractCreacted.birthday != "" &&
+                        contractCreacted.mobilePhone != "" &&
+                        contractCreacted.email != "" &&
+                        contractCreacted.phone != "" &&
+                        contractCreacted.addressExtend != "" &&
+                        contractCreacted.ownerBizNumber.length == 10 &&
+                        statusMailValidate.value == false
+                    ) {
                         step.value++;
                         window.scrollTo(0, 0);
-                    // } else {
-                    //     notification("error", "계속하려면 모든 조건을 수락하십시오!");
-                    // }
+                    } else {
+                        notification("error", "계속하려면 모든 조건을 수락하십시오!");
+                    }
                 } else if (step.value == 2) {
                     // if user not choose service
                     if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
@@ -581,7 +587,7 @@ export default {
                             window.scrollTo(0, 0);
                         }
                     }
-                // }
+                }
             }
         };
         const handleOk = () => {
@@ -629,6 +635,7 @@ export default {
             }
         };
         const gridRefName: any = ref("grid");
+        const isWithholding = ref(1);
         const Create = async () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
             dataFacility.map((val: any) => {
@@ -638,6 +645,11 @@ export default {
                 val.capacity = parseInt(val.capacity)
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
+            let withholdingCustom = isWithholding.value == 1 ? {
+                startYearMonth: contractCreacted.startYearMonthHolding,
+                capacity: parseInt(contractCreacted.capacityHolding),
+                withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
+            } : null;
             let dataCallCreated = {
                 content: {
                     agreements: {
@@ -681,11 +693,7 @@ export default {
                         facilityBusinesses: dataFacility,
                         accountingServiceTypes: contractCreacted.accountingServiceTypes,
                     },
-                    withholding: {
-                        startYearMonth: contractCreacted.startYearMonthHolding,
-                        capacity: parseInt(contractCreacted.capacityHolding),
-                        withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
-                    },
+                    withholding: withholdingCustom,
                     cmsBank: {
                         bankType: contractCreacted.bankType,
                         accountNumber: contractCreacted.accountNumber,
@@ -701,6 +709,7 @@ export default {
             }
           if (dataCallCreated) {
               await makeDataClean(dataCallCreated, ['buildingName']);
+              console.log(`output->dataCallCreated`,dataCallCreated)
               mutateCreated(dataCallCreated)
           }
                
@@ -786,7 +795,7 @@ export default {
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale
+            optionSale, isWithholding,
         };
     },
 };

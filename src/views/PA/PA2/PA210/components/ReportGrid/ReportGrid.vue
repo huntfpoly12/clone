@@ -296,7 +296,7 @@ export default defineComponent({
             paymentMonth: dataSource.value[0].paymentMonth,
             reportType: dataSource.value[0].reportType,
             index: dataSource.value[0].index,
-            paymentType: 1,
+            paymentType: dataSource.value[0].paymentType,
             yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
           },
         }
@@ -447,7 +447,7 @@ export default defineComponent({
   // }
   :deep .wtHolder {
     width: 100% !important;
-    height: 730px !important;
+    // height: 730px !important;
    }
 
   :deep .ht_clone_left .wtHolder {

@@ -169,7 +169,6 @@ export default defineComponent({
 
     watch(() => props.dataReport,(newValue : any) => {
       dataSource.value = newValue
-      dataSource
     })
     // load new data when first time open popup
     onMounted(() => {
@@ -219,7 +218,7 @@ export default defineComponent({
             paymentMonth: dataSource.value[0].paymentMonth,
             reportType: dataSource.value[0].reportType,
             index: dataSource.value[0].index,
-            paymentType: 1,
+            paymentType: dataSource.value[0].paymentType,
             yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
           },
       }
@@ -227,7 +226,6 @@ export default defineComponent({
         trigger.value = true;
         refetchData()
       }
-
 
       let hot = wrapper.value?.hotInstance; 
       //Put in a loop to set data into each cell
@@ -519,7 +517,7 @@ export default defineComponent({
   // }
   :deep .wtHolder {
     width: 100% !important;
-    height: 730px !important;
+    // height: 730px !important;
    }
 
   :deep .ht_clone_left .wtHolder {
