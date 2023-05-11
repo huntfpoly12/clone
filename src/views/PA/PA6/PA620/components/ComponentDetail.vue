@@ -423,7 +423,7 @@ export default defineComponent({
     })
     // ================FUNCTION============================================ 
     const caclInput = () => {
-      let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate*100);
+      let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate);
       dataAction.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
       dataAction.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
       dataAction.value.input.actualPayment = dataAction.value.input.paymentAmount - dataAction.value.input.withholdingIncomeTax - dataAction.value.input.withholdingLocalIncomeTax;
@@ -470,6 +470,14 @@ export default defineComponent({
       isNewRow.value = false;
       compareType.value = 2;
     };
+    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+      if (compareForm()) {
+        emit('noSave', 1, newVal);
+      } else {
+        compareType.value = 2;
+        rowChangeStatus.value = true;
+      }
+    });
     //on add row
     const rowChangeStatus = ref<Boolean>(false);
     const openAddNewModal = async () => {

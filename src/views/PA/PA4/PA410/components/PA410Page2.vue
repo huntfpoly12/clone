@@ -28,18 +28,18 @@
                                 <info-tool-tip placement="right">퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</info-tool-tip>
                             </div>  
                             <div class="input-employee">
-                                <a-form-item label="제외일수" label-align="right" class="red">
+                                <a-form-item label="제외일수" label-align="right">
                                   <div class="d-flex-center">
-                                    <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  :required="true" format="0,###"> </number-box>
+                                    <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  format="0,###"> </number-box>
                                     <span class="pl-5 pr-5">일</span>      
                                   </div>
                                 </a-form-item> 
                                 <info-tool-tip placement="right">정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</info-tool-tip>
                             </div>
                             <div class="input-employee">
-                                <a-form-item label="가산일수" label-align="right" class="red">
+                                <a-form-item label="가산일수" label-align="right">
                                   <div class="d-flex-center">
-                                    <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays" :required="true" format="0,###"> </number-box>
+                                    <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays"  format="0,###"> </number-box>
                                     <span class="pl-5 pr-5">일</span>
                                   </div>
                                 </a-form-item> 
@@ -71,8 +71,8 @@
                     </a-col>
                 </a-row>
                 <div class="time-service">
-                  <a-tag color="red" style="margin-left: 10px;margin-right: 48px;">근속연월일</a-tag>
-                  <a-tag>{{dataLastRetiredYearsOfService.yearsOfService}}년/{{dataLastRetiredYearsOfService.monthsOfService}}개월/{{dataLastRetiredYearsOfService.daysOfService}}일</a-tag>
+                  <a-tag color="red" style="margin-left: 10px;margin-right: 39px;font-size: 14px;">근속연월일</a-tag>
+                  <a-tag style="font-size: 14px;">{{dataLastRetiredYearsOfService.yearsOfService}}년/{{dataLastRetiredYearsOfService.monthsOfService}}개월/{{dataLastRetiredYearsOfService.daysOfService}}일</a-tag>
                   </div>
                 <!-- <div class="button-calculate">
                     <button-basic text="&#129155; 퇴직금 계산 &#129155;" type="default" @onClick="calculateIncomeRetirement"/> 

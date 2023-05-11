@@ -711,8 +711,7 @@ export default defineComponent({
       store.state.common.isAddFormErrorPA120 = false;
     });
     // change row data  globalYear.value
-    watch(() => props.idRowEdit, async (value) => {
-      employeeId.value = value;
+    watch(() => props.idRowEdit, async () => {
       configDeductionTrigger.value = true;
       await refetchConfigDeduction();
       configPayItemTrigger.value = true;

@@ -5,8 +5,9 @@ export default gql`
             $companyId: Int!
             $imputedYear: Int!
             $employeeId: Int!
+            $incomeTypeCode: String!
         ){
-            getEmployeeExtra(companyId: $companyId, imputedYear: $imputedYear, employeeId: $employeeId) {
+            getEmployeeExtra(companyId: $companyId, imputedYear: $imputedYear, employeeId: $employeeId, incomeTypeCode: $incomeTypeCode) {
                 type
                 employeeId
                 incomeTypeCode

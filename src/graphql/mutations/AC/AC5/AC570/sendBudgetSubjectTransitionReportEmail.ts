@@ -4,14 +4,14 @@ export default gql`
         $companyId: Int!,
         $fiscalYear: Int!,
         $facilityBusinessId: Int!,
-        $transitionIds: [Int!]!,
+        $transitionId: Int!,
         $emailInput: SendEmailRequestInput!
     ) {
         sendBudgetSubjectTransitionReportEmail(
             companyId: $companyId
             fiscalYear: $fiscalYear
             facilityBusinessId: $facilityBusinessId
-            transitionIds: $transitionIds
+            transitionId: $transitionId
             emailInput: $emailInput
         )
     }
