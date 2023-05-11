@@ -43,7 +43,7 @@
         <DxColumn caption="등록일" data-field="registeredAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
         <DxColumn caption="접수일" data-field="acceptedAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
         <DxColumn caption="완료일" data-field="completedAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
-        <DxColumn caption="접수번호" data-field="accedpedNumber" width="120px" alignment="left" />
+        <DxColumn caption="접수번호" data-field="acceptedNumber" width="120px" alignment="left" />
         <DxColumn caption="메모" data-field="memo" width="120px" alignment="left" />
         <DxColumn caption="상실신고서다운로드" cell-template="downA" width="140px" alignment="left" />
         <template #downA=" { data }: any " class="custom-action">

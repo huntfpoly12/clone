@@ -1,6 +1,6 @@
 <template>
   <div
-    
+
     @mouseleave="hover && closePopper()"
     ref="popperContainerNode"
   >
@@ -17,10 +17,10 @@
     </div>
     <Transition name="fade">
       <div
-        @click="closePopper()"
         v-show="shouldShowPopper"
         class="popper"
         ref="popperNode"
+        @mouseover="hover && openPopper()"
       >
         <slot name="content" :close="close" :isOpen="modifiedIsOpen">
           {{ content }}
@@ -56,7 +56,7 @@
      */
     placement: {
       type: String,
-      default: "bottom",
+      default: "top",
       validator: function(value) {
         return [
           "auto",
@@ -103,7 +103,7 @@
      */
     hover: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     /**
      * Manually open/close the Popper, other events are ignored if this prop is set
@@ -124,14 +124,14 @@
      */
     openDelay: {
       type: [Number],
-      default: 0,
+      default: 200,
     },
     /**
      * Close the Popper after a delay (ms).
      */
     closeDelay: {
       type: [Number],
-      default: 0,
+      default: 200,
     },
     /**
      * The z-index of the Popper.
@@ -145,7 +145,7 @@
      */
     arrow: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     /**
      * Stop arrow from reaching the edge of the popper

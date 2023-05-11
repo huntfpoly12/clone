@@ -265,15 +265,14 @@
     }
   }
 
-  :deep .btn-container {
+  .btn-container {
     margin-right: 5px;
     text-align: center;
     border: 1px solid rgb(164, 164, 164);
     border-radius: 5px;
-    padding: 3px 4px;
-    height: 25px;
-    background: white;
-    color: black !important;
+    padding: 2.2px;
+    min-width: 30px;
+    display: inline-block;
   }
 
   :deep .dx-command-expand.dx-datagrid-group-space {
@@ -295,8 +294,9 @@
     padding-left: 10px;
     padding-right: 10px;
   }
+
   #tax-pay-620 {
-    height: calc(100vh - 347px)!important;
+    height: calc(100vh - 347px) !important;
 
     :deep .dx-freespace-row {
       display: none !important;
@@ -308,7 +308,8 @@
   display: flex;
   align-items: center;
 }
-.sum-item{
+
+.sum-item {
   text-align: right;
   flex: 1;
 }

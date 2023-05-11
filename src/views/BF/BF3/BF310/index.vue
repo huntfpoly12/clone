@@ -53,7 +53,7 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
-                    <DxPaging :page-size="rowTable" />
+                    <!-- <DxPaging :page-size="rowTable" /> -->
                     <DxExport :enabled="true"/>
                     <DxToolbar>
                         <DxItem name="exportButton" css-class="cell-button-export"/>
@@ -178,7 +178,7 @@ export default defineComponent({
         const actionSearch: any = ref<boolean>(true)
         const originData = reactive({
             ...dataSearchIndex,
-            rows: per_page,
+            rows: 1000,
             startDate: rangeDate.value[0],
             finishDate: rangeDate.value[1]
         })
