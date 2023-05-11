@@ -1,20 +1,21 @@
 <template>
-  <DxSelectBox width="120" :search-enabled="false" :data-source="liststatus" placeholder="선택" value-expr="id" display-expr="value"
-    v-model:value="valueBinding" field-template="field" item-template="item"  :disabled="disabled"
-    :read-only="readOnly" @value-changed="updateValue()" :height="$config_styles.HeightInput">
+  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" width="120" :search-enabled="false"
+    :data-source="liststatus" placeholder="선택" value-expr="id" display-expr="value" v-model:value="valueBinding"
+    field-template="field" item-template="item" :disabled="disabled" :read-only="readOnly" @value-changed="updateValue()"
+    :height="$config_styles.HeightInput">
     <template #field="{ data }">
       <div class="category-select">
-          <div class="category-select-items"
-          :style="`background: ${data?.background}; color: ${data?.color}; border: 1px solid  ${data?.color};` "
-        >{{ data?.value || '' }}</div>
+        <div class="category-select-items"
+          :style="`background: ${data?.background}; color: ${data?.color}; border: 1px solid  ${data?.color};`">{{
+            data?.value || '' }}</div>
       </div>
       <DxTextBox style="display: none" />
     </template>
     <template #item="{ data }">
       <div class="category-select">
         <div class="category-select-items"
-        :style="`background: ${data?.background}; color: ${data?.color}; border: 1px solid  ${data?.color};` "
-      >{{ data?.value || '' }}</div>
+          :style="`background: ${data?.background}; color: ${data?.color}; border: 1px solid  ${data?.color};`">{{
+            data?.value || '' }}</div>
       </div>
       <DxTextBox style="display: none" />
     </template>
@@ -24,6 +25,7 @@
 import { ref, watch, getCurrentInstance, computed, onMounted } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
+import { Message } from "@/configs/enum"
 // import { accountSubject } from "@/helpers/commonFunction"
 export default {
   props: {
@@ -45,31 +47,31 @@ export default {
   },
   setup(props: any, { emit }: any) {
     const liststatus = [
-      { 
+      {
         id: 1,
         value: '일반',
         color: '#7f7f7fff',
         background: '#ffffffff'
       },
-      { 
+      {
         id: 2,
         value: '문의',
         color: '#ffffffff',
         background: '#dc5939ff'
       },
-      { 
+      {
         id: 3,
         value: '답글',
         color: '#ffffffff',
         background: '#92d050ff'
       },
-      { 
+      {
         id: 4,
         value: '알림',
         color: '#ffffffff',
         background: '#ffc000ff'
       },
-      { 
+      {
         id: 5,
         value: '공지',
         color: '#ffffffff',
@@ -88,7 +90,8 @@ export default {
     return {
       valueBinding,
       liststatus,
-      updateValue
+      updateValue,
+      Message
     };
   },
 };
@@ -101,9 +104,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+
   &-items {
     width: 60px;
-    text-align: center; 
+    text-align: center;
     border-radius: 5px;
   }
 }

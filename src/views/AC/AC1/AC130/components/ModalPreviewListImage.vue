@@ -1,5 +1,5 @@
 <template>
-  <a-modal :visible="isModalPreview" @cancel="cancel" :mask-closable="false" class="confirm-md preview-list-image"
+  <a-modal :visible="isModalPreview" @cancel="cancel" :mask-closable="true" class="confirm-md preview-list-image"
     footer="" :width="1000">
     <a-carousel ref="carouselPreviewImage" arrows dots-class="slick-dots slick-thumb">
       <template #customPaging="props">

@@ -71,7 +71,7 @@ export default defineComponent({
         let sumErrorCallApi = ref<number>(0)
         const loading = ref<boolean>(false)
         const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
-        const maxDayMonth = ref<number>(dayjs(`${paYear}-${store.state.common.pa110.processKeyPA110.imputedMonth}`).daysInMonth())
+        const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())
         const resetInput = ref(1)
         const setModalVisible = () => {
             emit("closePopup", false)
@@ -137,13 +137,13 @@ export default defineComponent({
         watch(() => props.modalStatus, (value) => {
             if (value) {
                 dayValue.value = 1
-                maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.imputedMonth}`).daysInMonth()
+                maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth()
                 resetInput.value++
             }
         })
 
         return {
-            setModalVisible,
+            setModalVisible, store,
             onSubmit,
             dayValue,
             statusOnCallApiChange,

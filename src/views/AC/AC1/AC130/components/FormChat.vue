@@ -111,7 +111,7 @@
               v-model:filesUploadProps="itemEditComment.files" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
               @submitChat="submitChat" @cancel="cancelEdit(index)" />
             <!-- <div class="form-chat-timeline-content-feedback">
-              <FeedbackEmoji />
+              <FeedbackEmoji @feedback="handleFeedback"/>
             </div> -->
           </div>
 
@@ -583,6 +583,10 @@ export default defineComponent({
     const openLinkDownFile = (link: string) => {
       window.open(link, '_blank')
     }
+
+    const handleFeedback = (emoji: any) => {
+      console.log('xxxxx', emoji);
+    }
     return {
       userName,
       listChat,
@@ -610,7 +614,8 @@ export default defineComponent({
       formatFileSize,
       openLinkDownFile,
       replyComment,
-      itemCommentReply
+      itemCommentReply,
+      handleFeedback
     }
   },
 })
@@ -696,7 +701,7 @@ export default defineComponent({
         height: 100px;
         overflow: hidden;
         background-color: rgba(2, 2, 2, 0.027);
-
+        opacity: .5;
         .form-chat-timeline-avatar {
           pointer-events: none;
         }
@@ -845,7 +850,7 @@ export default defineComponent({
       &-feedback {
           position: absolute;
           left: 8px;
-          bottom: -15px;
+          bottom: -23px;
         }
     }
 
