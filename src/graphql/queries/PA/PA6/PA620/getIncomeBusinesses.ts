@@ -22,6 +22,7 @@ export default gql`
                 employee{
                     name
                     incomeTypeName 
+                    incomeTypeCode
                 }
             }
         }`

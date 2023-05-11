@@ -691,7 +691,7 @@ export default defineComponent({
       const variables = {
         companyId: companyId,
         imputedYear: globalYear.value,
-        employeeId: employeeId.value,
+        employeeId: props.idRowEdit,
         input: {
           ...payLoadData,
         },
