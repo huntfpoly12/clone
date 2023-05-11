@@ -31,31 +31,31 @@ export default gql`
         employee{
             type           
             employeeId
-            # incomeTypeCode
+            incomeTypeCode
             name
-            foreigner
-            nationality
-            nationalityCode
-            stayQualification
-            residentIdValidity
-            roadAddress
-            addressExtend
-            email
-            department
-            responsibility
-            status
-            withholdingIncomeTax
-            withholdingLocalIncomeTax
-            withholdingRuralSpecialTax
-            createdAt
-            createdBy
-            updatedAt
-            updatedBy
-            ip
-            active
-            residentId
             incomeTypeName
-            deletable
+            # foreigner
+            # nationality
+            # nationalityCode
+            # stayQualification
+            # residentIdValidity
+            # roadAddress
+            # addressExtend
+            # email
+            # department
+            # responsibility
+            # status
+            # withholdingIncomeTax
+            # withholdingLocalIncomeTax
+            # withholdingRuralSpecialTax
+            # createdAt
+            # createdBy
+            # updatedAt
+            # updatedBy
+            # ip
+            # active
+            # residentId
+            # deletable
         }
     }
   }

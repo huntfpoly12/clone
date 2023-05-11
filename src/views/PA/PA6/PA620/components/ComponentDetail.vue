@@ -49,9 +49,9 @@
           v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging"
           id="tax-pay-620" noDataText="내역이 없습니다">
           <DxSelection select-all-mode="allPages" mode="multiple" />
-          <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
+          <DxColumn caption="사업소득자 [소득구분]" cell-template="tag" />
           <template #tag="{ data }">
-            <div>
+            <!-- <div>
               <button class="btn-container">
                 {{ data.data.employeeId }}
               </button>
@@ -63,7 +63,17 @@
                 </template>
                 {{ checkLen(data.data?.employee?.incomeTypeName) }}
               </a-tooltip>
-            </div>
+            </div> -->
+            <span class="btn-container">
+              {{ data.data?.employeeId }}
+            </span>
+            {{ data.data?.employee?.name }}
+            <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.incomeTypeName">
+              <template #title>
+                <span>{{ data.data?.employee?.incomeTypeCode }} {{ data.data?.employee?.incomeTypeName }}</span>
+              </template>
+              <a-tag class="ml-5 py-1"> {{ data.data?.employee?.incomeTypeName }}</a-tag>
+            </a-tooltip>
           </template>
           <DxColumn width="80px" caption="지급일" cell-template="paymentDay" :format="amountFormat" data-type="string" />
           <template #paymentDay="{ data }">
@@ -423,7 +433,7 @@ export default defineComponent({
     })
     // ================FUNCTION============================================ 
     const caclInput = () => {
-      let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate);
+      let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate * 100);
       dataAction.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
       dataAction.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
       dataAction.value.input.actualPayment = dataAction.value.input.paymentAmount - dataAction.value.input.withholdingIncomeTax - dataAction.value.input.withholdingLocalIncomeTax;
