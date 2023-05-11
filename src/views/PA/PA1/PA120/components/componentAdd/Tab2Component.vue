@@ -13,7 +13,7 @@
           </span>
           <span class="check-box-tab1">
             <checkbox-basic size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction"
-              :disabled="presidentPA120"></checkbox-basic>
+                            :disabled="presidentPA120"></checkbox-basic>
           </span>
           <a-tooltip placement="top" class="custom-tooltip">
             <template #title>
@@ -33,7 +33,7 @@
           <a-col :span="12" class="switch-bg">
             공제 여부:
             <switch-basic class="switch-insurance" switch-basic textCheck="Y" textUnCheck="N"
-              v-model:valueSwitch="formStateTab2.insuranceSupport" :disabled="!isDisableInsuranceSupport"></switch-basic>
+                          v-model:valueSwitch="formStateTab2.insuranceSupport" :disabled="!isDisableInsuranceSupport"></switch-basic>
           </a-col>
         </div>
 
@@ -43,21 +43,21 @@
           </a-col>
           <a-col span="12">
             <radio-group :arrayValue="radioCheckPersenPension"
-              v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal"
-              :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport || !formStateTab2.nationalPensionDeduction"></radio-group>
+                         v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal"
+                         :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport || !formStateTab2.nationalPensionDeduction"></radio-group>
           </a-col>
           <a-col span="7">
             고용보험 적용율:{{ formStateTab2.employeementInsuranceSupportPercent }}
           </a-col>
           <a-col span="12">
             <radio-group :arrayValue="radioCheckPersenPension"
-              v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal"
-              :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport || !formStateTab2.employeementInsuranceDeduction"></radio-group>
+                         v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal"
+                         :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport || !formStateTab2.employeementInsuranceDeduction"></radio-group>
           </a-col>
           <a-col span="7"><span class="header-text-4"> 소득세 적용율: </span></a-col>
           <a-col span="17" class="income-tax-app-rate">
             <radio-group :arrayValue="IncomeTaxAppRate" v-model:valueRadioCheck="formStateTab2.incomeTaxMagnification"
-              layoutCustom="horizontal"></radio-group>
+                         layoutCustom="horizontal"></radio-group>
           </a-col>
         </a-row>
       </a-col>
@@ -78,7 +78,7 @@
           <a-col :span="10" class="switch-bg">
             감면 여부:
             <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance"
-              v-model:valueSwitch="formStateTab2.employeementReduction"></switch-basic>
+                          v-model:valueSwitch="formStateTab2.employeementReduction"></switch-basic>
 
           </a-col>
         </div>
@@ -88,23 +88,23 @@
           </a-col>
           <a-col span="15">
             <date-time-box width="250px" :range="true" :multi-calendars="true" v-model:valueDate="rangeDate"
-              :disabled="!formStateTab2.employeementReduction"> </date-time-box>
+                           :disabled="!formStateTab2.employeementReduction"> </date-time-box>
           </a-col>
           <a-col span="7">
             감면율:
           </a-col>
           <a-col span="15">
             <radio-group :arrayValue="radioCheckReductioRate"
-              v-model:valueRadioCheck="formStateTab2.employeementReductionRatePercent" layoutCustom="horizontal"
-              :disabled="!formStateTab2.employeementReduction"></radio-group>
+                         v-model:valueRadioCheck="formStateTab2.employeementReductionRatePercent" layoutCustom="horizontal"
+                         :disabled="!formStateTab2.employeementReduction"></radio-group>
           </a-col>
           <a-col span="7">
             감면입력:
           </a-col>
           <a-col span="15">
             <radio-group :arrayValue="radioCheckReductionInput"
-              v-model:valueRadioCheck="formStateTab2.employeementReductionInput" layoutCustom="horizontal"
-              :disabled="!formStateTab2.employeementReduction"></radio-group>
+                         v-model:valueRadioCheck="formStateTab2.employeementReductionInput" layoutCustom="horizontal"
+                         :disabled="!formStateTab2.employeementReduction"></radio-group>
           </a-col>
         </a-row>
       </a-col>
@@ -135,16 +135,16 @@
             </a-tooltip> :
           </a-col>
           <a-col style="display: inline-flex; justify-content: flex-end;"><span>{{ $filters.formatCurrency(totalPayItem)
-          }}</span> 원</a-col>
+            }}</span> 원</a-col>
           <a-col class="ml-15" :span="12">수당 과세 합계:</a-col>
           <a-col style="display: inline-flex; justify-content: flex-end;"><span>{{
-            $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col>
+              $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col>
           <a-col class="ml-15" :span="12">수당 비과세 합계:</a-col>
           <a-col style="display: inline-flex; justify-content: flex-end;"><span>{{
-            $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col>
+              $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col>
           <a-col :span="13">공제 합계:</a-col>
           <a-col style="display: inline-flex; justify-content: flex-end;"><span>{{ $filters.formatCurrency(totalDeduction)
-          }}</span> 원</a-col>
+            }}</span> 원</a-col>
           <a-col :span="13" style="font-weight: 600;">차인지급액
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
@@ -156,7 +156,7 @@
             </a-tooltip> :
           </a-col>
           <a-col style="display: inline-flex; justify-content: flex-end; font-weight: 600"><span>{{
-            $filters.formatCurrency(subPayment) }}</span> 원</a-col>
+              $filters.formatCurrency(subPayment) }}</span> 원</a-col>
         </div>
       </a-col>
       <a-col class="col-2">
@@ -170,17 +170,17 @@
             <div v-for="item in dataConfigPayItems" :key="item.name" class="custom-deduction">
               <span>
                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1"
-                  subName="과세" />
+                                 subName="과세" />
                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2"
-                  subName="상여(과세)" />
+                                 subName="상여(과세)" />
                 <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode" :name="item.name" :type="3"
-                  :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                 :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name"
-                  :type="4" subName="과세" />
+                                 :type="4" subName="과세" />
               </span>
               <div>
                 <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                  :min="0" @changeInput="onCalcSum"> </number-box-money>
+                                  :min="0" @changeInput="onCalcSum"> </number-box-money>
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -195,17 +195,17 @@
             <div v-for="item in dataConfigDeduction" :key="item.name" class="custom-deduction">
               <span>
                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1"
-                  subName="공제" />
+                                 subName="공제" />
                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2"
-                  subName="공제" />
+                                 subName="공제" />
                 <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode" :name="item.name" :type="3"
-                  :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                 :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name"
-                  :type="4" subName="공제" />
+                                 :type="4" subName="공제" />
               </span>
               <div>
                 <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                  :min="0" @changeInput="onCalcSum" :disabled="disabledDeduction(item.itemCode)" />
+                                  :min="0" @changeInput="onCalcSum" :disabled="disabledDeduction(item.itemCode)" />
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -215,9 +215,9 @@
     </a-row>
     <a-row style="margin-top: 20px" justify="center">
       <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax"
-        text="공제계산" />
+                            text="공제계산" />
       <button-basic id="btn-save-add-tab2" text="저장" type="default" mode="contained" :width="90"
-        @onClick="createDeduction" />
+                    @onClick="createDeduction" />
     </a-row>
   </div>
 </template>
@@ -233,7 +233,7 @@ import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
 import Datepicker from "@vuepic/vue-datepicker";
-import queryCM130 from "@/graphql/queries/CM/CM130/index";
+import { Message } from '@/configs/enum';
 
 type RangeValue = [Dayjs | null, Dayjs | null];
 export default defineComponent({
@@ -628,7 +628,7 @@ export default defineComponent({
         }
       });
       emit('closePopup', false);
-      notification('success', '업데이트 완료!');
+      notification('success', Message.getMessage('COMMON', '106').message);
       store.commit('common/actionFormDonePA120');
       store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;

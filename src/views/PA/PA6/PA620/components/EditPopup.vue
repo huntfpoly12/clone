@@ -1,45 +1,46 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-    :width="500">
+           :width="500">
     <standard-form action="" name="edit-510">
       <div class="custom-modal-edit">
         <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
         <span>선택된 내역 지급일을</span>
-        <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue" :spinButtons="true"
-          :isFormat="true" />
+        <number-box width="70px" :required="true" :min="1" :max="daysInMonth" v-model:valueInput="dayValue" :spinButtons="true"
+                    :isFormat="true" />
         <span>일로 변경하시겠습니까?</span>
       </div>
       <div class="text-align-center mt-30">
         <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
-          @onClick="setModalVisible" />
+                      @onClick="setModalVisible" />
         <button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'" :mode="'contained'"
-          @onClick="onSubmit" />
+                      @onClick="onSubmit" />
       </div>
     </standard-form>
   </a-modal>
   <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" width="350px">
-    <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ incomeIdRender.length + errorState.length }}건</p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{
+        incomeIdRender.length + errorState.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
-      incomeIdRender.length }}건</p>
+        incomeIdRender.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{
-      errorState.length }} 건 </p>
+        errorState.length }} 건 </p>
     <ul>
-      <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{ item.errorInfo.incomeTypeName }}</li>
+      <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{
+          item.errorInfo.incomeTypeName }}</li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
-        @onClick="updateStatus = false" />
+                    @onClick="updateStatus = false" />
     </a-row>
   </a-modal>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue'
-import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
-import { Message } from '@/configs/enum';
+import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -52,6 +53,7 @@ export default defineComponent({
     },
     processKey: {
       type: Object,
+      default: {},
     },
     dataUpdate: {
       type: Object,
@@ -65,7 +67,10 @@ export default defineComponent({
     const setModalVisible = () => {
       emit("closePopup", [])
     };
-    const messageUpdate = Message.getMessage('COMMON', '106').message;
+    const daysInMonth = ref(+dayjs(`${props.processKey?.paymentMonth}`).daysInMonth());
+    watch(() => props.processKey, (newVal: any) => {
+      daysInMonth.value = +dayjs(`${newVal?.paymentMonth}`).daysInMonth()
+    }, { deep: true })
     const dataUpdateLen = ref(props?.data?.length);
     const incomeIdRender = ref<any>([]);
     const succesState = ref<any>([]);
@@ -98,10 +103,10 @@ export default defineComponent({
         });
         let arr = allData.filter((item1: any) => {
           return !succesState.value.some((item2: any) => {
-            return (
-              item2.employeeId === item1.errorInfo.employeeId
-            )
-          }
+              return (
+                item2.employeeId === item1.errorInfo.employeeId
+              )
+            }
           );
         });
         errorState.value = [...errorState.value, ...arr];
@@ -126,10 +131,10 @@ export default defineComponent({
         });
         let arr = allData.filter((item1: any) => {
           return !succesState.value.some((item2: any) => {
-            return (
-              item2.employeeId === item1.errorInfo.employeeId
-            )
-          }
+              return (
+                item2.employeeId === item1.errorInfo.employeeId
+              )
+            }
           );
         });
         errorState.value = [...errorState.value, ...arr];
@@ -163,7 +168,7 @@ export default defineComponent({
       onSubmit,
       dayValue,
       updateStatus, incomeIdRender, errorState,
-      dataUpdateLen, succesState,
+      dataUpdateLen, succesState, daysInMonth,
     }
   },
 })

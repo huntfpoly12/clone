@@ -1,11 +1,11 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
-      key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
-      :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
-      @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
-      v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef"
-      id="tax-pay-720" noDataText="내역이 없습니다">
+                key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
+                @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
+                v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef"
+                id="tax-pay-720" noDataText="내역이 없습니다">
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
@@ -30,7 +30,7 @@
       </template>
       <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="90" alignment="right" />
       <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100"
-        alignment="right" />
+                alignment="right" />
       <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="90" alignment="right" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
       <template #taxRateSlot="{ data }">
