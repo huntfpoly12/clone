@@ -2,11 +2,11 @@
   <div class="d-flex-center mt-10 title-action" :class="{ 'ele-opacity': !compareForm() }">
     <div>
       <DxButton :text="'귀 ' + inputDateTax" :disabled="isDisabledForm"
-        :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
+                :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
       <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm"
-        :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
+                :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
       <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm"
-        :disabled="statusButton == 30 || statusButton == 40 || !compareForm()" />
+                      :disabled="statusButton == 30 || statusButton == 40 || !compareForm()" />
     </div>
     <div class="d-flex">
       <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || isExpiredStatus" />
@@ -28,7 +28,7 @@
         </a-tooltip>
       </DxButton>
       <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox"
-        :disabled="isDisabledForm || isExpiredStatus || isNewRow">
+                :disabled="isDisabledForm || isExpiredStatus || isNewRow">
         <div class="d-flex-center">
           <checkbox-basic :valueCheckbox="true" :disabled="true" />
           <span class="fz-12 pl-5">지급일변경</span>
@@ -43,11 +43,11 @@
     <a-col :span="14" class="col-tax" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="(loadingIncomeBusinesses)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
-          key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
-          @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
-          v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging"
-          id="tax-pay-620" noDataText="내역이 없습니다">
+                    key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
+                    @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
+                    v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging"
+                    id="tax-pay-620" noDataText="내역이 없습니다">
           <DxSelection select-all-mode="allPages" mode="multiple" />
           <DxColumn caption="사업소득자 [소득구분]" cell-template="tag" />
           <template #tag="{ data }">
@@ -80,7 +80,7 @@
             {{ formatMonth(data.data.paymentDay) }}
           </template>
           <DxColumn caption="지급액" width="100px" data-field="paymentAmount" :format="amountFormat" data-type="string"
-            alignment="right" />
+                    alignment="right" />
           <DxColumn caption="세율" width="60px" data-field="taxRate" cell-template="taxRateSlot" alignment="left" />
           <template #taxRateSlot="{ data }">
             {{ data.value }}%
@@ -97,7 +97,7 @@
             </a-tooltip>
           </template>
           <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string" :format="amountFormat"
-            alignment="right" />
+                    alignment="right" />
         </DxDataGrid>
         <a-row style="border: 1px solid #ddd; border-top: none; display: flex; padding: 5px 10px;" class="fs-14">
           <a-col span="6" class="sum-item">
@@ -135,8 +135,8 @@
               v-model:valueInput="dataAction.input.employeeId" width="350px" required displayeExpr="incomeTypeName"
               valueExpr="key" /> -->
             <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
-              width="350px" :required="true" :newLoadKey="dataAction.input.employee.key"
-              @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || idDisableNoData" />
+                                width="350px" :required="true" :newLoadKey="dataAction.input.employee.key"
+                                @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || idDisableNoData" />
           </a-form-item>
           <div class="header-text-1 mb-10">소득내역</div>
           <div class="income-details">
@@ -145,23 +145,23 @@
                 <a-form-item label="귀속/지급연월" label-align="right">
                   <div class="d-flex-center">
                     <DxButton :text="'귀 ' + inputDateTax" :disabled="isDisabledForm"
-                      :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
-                      class="btn-date" />
+                              :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
+                              class="btn-date" />
                     <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm"
-                      :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }"
-                      class="btn-date" />
+                              :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }"
+                              class="btn-date" />
                   </div>
                 </a-form-item>
                 <a-form-item label="지급일" label-align="right" class="red">
                   <number-box :max="31" :min="1" width="150px" class="mr-5"
-                    v-model:valueInput="dataAction.input.paymentDay" :isFormat="true"
-                    :disabled="disabledInput || idDisableNoData" :required="true" />
+                              v-model:valueInput="dataAction.input.paymentDay" :isFormat="true"
+                              :disabled="disabledInput || idDisableNoData" :required="true" />
                 </a-form-item>
                 <a-form-item label="지급액" label-align="right" class="red">
                   <div class="d-flex-center">
                     <number-box-money :min="0" width="150px" class="mr-5" :max="2147483647" :disabled="idDisableNoData"
-                      v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true"
-                      format="0,###" /> 원
+                                      v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true"
+                                      format="0,###" /> 원
                   </div>
                 </a-form-item>
                 <a-form-item label="세율" label-align="right">
@@ -181,13 +181,13 @@
                   <a-form-item label="소득세(공제)" label-align="right">
                     <div class="d-flex-center">
                       <number-box-money :min="0" width="150px" class="mr-5" :disabled="idDisableNoData"
-                        v-model:valueInput="dataAction.input.withholdingIncomeTax" format="0,###" /> 원
+                                        v-model:valueInput="dataAction.input.withholdingIncomeTax" format="0,###" /> 원
                     </div>
                   </a-form-item>
                   <a-form-item label="지방소득세(공제)" label-align="right">
                     <div class="d-flex-center">
                       <number-box-money :min="0" width="150px" class="mr-5" :disabled="idDisableNoData"
-                        v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" format="0,###" /> 원
+                                        v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" format="0,###" /> 원
                     </div>
                   </a-form-item>
                 </div>
@@ -209,7 +209,7 @@
           </div>
           <a-row justify="center" class="my-10 mt-20">
             <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="onSave($event)" id="save-js-620"
-              size="large" class="ml-4" :disabled="idDisableNoData">
+                          size="large" class="ml-4" :disabled="idDisableNoData">
             </button-basic>
           </a-row>
         </StandardForm>
@@ -217,16 +217,16 @@
     </a-col>
   </a-row>
   <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
-    :processKey="paramIncomeBusinesses.processKey" />
+               :processKey="paramIncomeBusinesses.processKey" />
   <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="paramIncomeBusinesses.processKey"
-    title="변경이력" typeHistory="pa-620" />
+                title="변경이력" typeHistory="pa-620" />
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-    :data="paramIncomeBusinesses.processKey" title="변경이력" typeHistory="pa-620-status" />
+                :data="paramIncomeBusinesses.processKey" title="변경이력" typeHistory="pa-620-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditSuccess" :data="editParam"
-    :processKey="paramIncomeBusinesses.processKey" :dataUpdate="changeDayData" />
+             :processKey="paramIncomeBusinesses.processKey" :dataUpdate="changeDayData" />
   <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" typeModal="confirm"
-    :title="titleModalConfirm" content="" cancelText="아니요" okText="네" @checkConfirm="onRowChangeComfirm"
-    :isConfirmIcon="false" />
+                :title="titleModalConfirm" content="" cancelText="아니요" okText="네" @checkConfirm="onRowChangeComfirm"
+                :isConfirmIcon="false" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -431,7 +431,7 @@ export default defineComponent({
       triggerIncomeBusinesses.value = true;
       dataCallApiIncomeBusiness.processKey = newVal;
     })
-    // ================FUNCTION============================================ 
+    // ================FUNCTION============================================
     const caclInput = () => {
       let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate * 100);
       dataAction.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
@@ -753,7 +753,7 @@ export default defineComponent({
       notification('error', res.message);
       onChangeFormError();
     })
-    // API EDIT 
+    // API EDIT
     const {
       mutate: actionEdit,
       onError: errorEdit,
