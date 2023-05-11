@@ -110,9 +110,9 @@
               :dataReply="itemEditComment?.reply" @removeReply="itemEditComment.reply = {}"
               v-model:filesUploadProps="itemEditComment.files" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
               @submitChat="submitChat" @cancel="cancelEdit(index)" />
-            <div class="form-chat-timeline-content-feedback">
-
-            </div>
+            <!-- <div class="form-chat-timeline-content-feedback">
+              <FeedbackEmoji />
+            </div> -->
           </div>
 
           <div class="form-chat-timeline-common-menu">
@@ -190,7 +190,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, nextTick, watch, computed } from 'vue'
-import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, SendOutlined, FileTextOutlined, RollbackOutlined } from '@ant-design/icons-vue';
+import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, FileAddOutlined, FileOutlined, SendOutlined, FileTextOutlined, RollbackOutlined } from '@ant-design/icons-vue';
 import { databaseFirebase, storage } from "@/firebaseConfig";
 import {
   ref as reffb,
@@ -210,6 +210,7 @@ import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage
 import { getJwtObject } from "@bankda/jangbuda-common";
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
 import StatusChat from './StatusChat.vue'
+import FeedbackEmoji from './FeedbackEmoji.vue'
 // import picker compopnent
 import EmojiPicker from 'vue3-emoji-picker'
 // import css
@@ -235,7 +236,6 @@ export default defineComponent({
     EditOutlined,
     DeleteOutlined,
     CloseOutlined,
-    SmileOutlined,
     FileOutlined,
     FileAddOutlined,
     FileTextOutlined,
@@ -244,6 +244,7 @@ export default defineComponent({
     ModalPreviewListImage,
     EmojiPicker,
     StatusChat,
+    FeedbackEmoji,
     InputChat,
     MarkdownCustom
   },
@@ -641,7 +642,7 @@ export default defineComponent({
     overflow-y: auto;
 
     &-line {
-      margin-top: 8px;
+      margin-top: 20px;
       height: 1px;
       background-color: #e7e6e6;
 
@@ -716,7 +717,7 @@ export default defineComponent({
       width: calc(100% - 40px);
       // background-color: #DCE6F2;
       padding: 0 12px 8px 12px;
-
+      position: relative;
       &-files {
         width: 100%;
         background-color: #fff;
@@ -841,6 +842,11 @@ export default defineComponent({
         font-size: 15px;
         color: #333333;
       }
+      &-feedback {
+          position: absolute;
+          left: 8px;
+          bottom: -15px;
+        }
     }
 
     &-uploading {
