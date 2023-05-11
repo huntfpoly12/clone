@@ -1,44 +1,44 @@
 import gql from "graphql-tag";
 export default gql`
-mutation copyIncomeWageDailies( 
+  mutation copyIncomeWageDailies(
     $companyId: Int!
     $source: IncomeProcessKeyInput!
     $target: IncomeProcessKeyInput!
+  ) {
+    copyIncomeWageDailies(
+      companyId: $companyId
+      source: $source
+      target: $target
     ) {
-        copyIncomeWageDailies( 
-            companyId: $companyId
-            source: $source
-            target: $target
-        ) {
-            incomeId
-            imputedMonth
-            paymentYear
-            paymentMonth
-            paymentDay
-            employeeType
-            employeeId
-            incomePayment
-            withholdingIncomeTax
-            withholdingLocalIncomeTax
-            withholdingRuralSpecialTax
-            prevPaymentDay
-            createdAt
-            createdBy
-            updatedAt
-            updatedBy
-            ip
-            active
-            dailyWage
-            monthlyWage
-            totalDeduction
-            workingDays
-            actualPayment
-            employee {
-                type
-            }
-            deductionItems {
-                itemCode
-                amount
-            }
-        }
-    }`
+      incomeId
+      imputedMonth
+      paymentYear
+      paymentMonth
+      paymentDay
+      employeeType
+      employeeId
+      incomePayment
+      withholdingIncomeTax
+      withholdingLocalIncomeTax
+      withholdingRuralSpecialTax
+      prevPaymentDay
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      ip
+      active
+      dailyWage
+      monthlyWage
+      totalDeduction
+      workingDays
+      actualPayment
+      employee {
+        type
+      }
+      deductionItems {
+        itemCode
+        amount
+      }
+    }
+  }`

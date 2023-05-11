@@ -9,7 +9,7 @@
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="165" />
+      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
       <template #tag="{ data }">
         <div>
           <button class="btn-container">
@@ -53,7 +53,7 @@
     </DxDataGrid>
     <a-row class="fs-14 summary-ctn">
       <a-col span="8">
-        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 58%;">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 58s%;">
           사업소득자[소득구분]수
           <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
         </div>
