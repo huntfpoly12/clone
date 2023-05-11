@@ -11,8 +11,8 @@
                                 @onChange="onChange" :activeType20="false" width="270px" />
                         </a-form-item>
                         <a-form-item label="지급일" class="red">
-                            <number-box :required="true" :min="0" v-model:valueInput="dataIncomeWageDaily.paymentDay"
-                            :max="dayjs(`${paYear}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth()" :spinButtons="true"
+                            <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay"
+                                :max="31" :spinButtons="true"
                                 :disabled="!store.state.common.pa510.statusFormAdd || store.state.common.pa510.statusDisabledStatus"
                                 :isFormat="true" width="270px" />
                         </a-form-item>
@@ -171,7 +171,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import query520 from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
-import { companyId, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
+import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
@@ -180,7 +180,6 @@ import filters from "@/helpers/filters";
 import { Message } from "@/configs/enum"
 import { Formula } from "@bankda/jangbuda-common";
 import ButtonTooltipError from "@/components/common/ButtonTooltipError.vue";
-import dayjs from 'dayjs';
 export default defineComponent({
     components: {
         DxButton,
@@ -781,7 +780,6 @@ export default defineComponent({
             return filters.formatCurrency(dataIncomeWageDaily.value.monthlyWage)
         }
         return {
-            paYear, dayjs,
             pa510FormRef,
             dataIncomeWageDaily,
             arrDeduction,
