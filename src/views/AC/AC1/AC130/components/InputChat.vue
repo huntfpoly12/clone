@@ -5,7 +5,7 @@
         ref="inputChat" :placeholder="placeholder" v-model="textChat" @input="changeInput"
         @keypress.enter.exact.prevent="submitChat"></textarea>
       <div v-if="Object.keys(!!dataReply ? dataReply : {}).length" class="input-edit-chat-input-contentReply">
-        <MarkdownCustom :options="{ source: dataReply.text, linkify: true, typographer: true, highlight: true }" />
+        <PreviewReply :dataReply="dataReply" />
         <CloseOutlined class="input-edit-chat-input-contentReply-iconclose" @click="removeReply" />
       </div>
     </div>
@@ -61,6 +61,8 @@ import EmojiPicker from 'vue3-emoji-picker'
 // import css
 import 'vue3-emoji-picker/css'
 import MarkdownCustom from './MarkdownCustom.vue';
+import { getJwtObject } from "@bankda/jangbuda-common";
+import PreviewReply from './PreviewReply.vue';
 export default defineComponent({
   props: {
     textChatProp: {
@@ -96,7 +98,8 @@ export default defineComponent({
     ModalPreviewListImage,
     EmojiPicker,
     StatusChat,
-    MarkdownCustom
+    MarkdownCustom,
+    PreviewReply
   },
   setup(props, { emit }) {
     const inputFile = ref<any>()
@@ -289,27 +292,16 @@ export default defineComponent({
     }
 
     &-contentReply {
-      max-height: 100px;
-      padding: 5px 20px 0 40px;
+      padding: 0 0 0 40px;
       margin-bottom: 10px;
       overflow: hidden;
       border: 1px solid #385D8A;
       border-top: 0;
       position: relative;
 
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(2, 2, 2, 0.027)
-      }
-
       &-iconclose {
         position: absolute;
-        top: 5px;
+        top: 10px;
         right: 5px;
         cursor: pointer;
       }

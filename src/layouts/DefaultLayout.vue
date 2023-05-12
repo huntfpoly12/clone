@@ -1,4 +1,19 @@
 <template>
+    <!-- modal show when login more than 8 hours -->
+  <div>
+    <a-modal :visible="statusLogin" :closable="false"  footer="" :width="400"  class="logout-confirm">
+      <div style="text-align: center;margin: 15px;">
+        <span >장시간 활동이 없어 접속을 종료합니다. 다시 로그인하십시요</span>
+      </div>
+      <a-row>
+          <a-col :span="9" :offset="9">
+            <div style="display: flex;">
+              <button-basic class="button-form-modal" text="로그아웃" :width="90" :type="'default'" :mode="'contained'"  @onClick="logout"/>
+            </div>         
+          </a-col>
+        </a-row>
+    </a-modal>
+  </div>
   <a-layout>
     <a-layout-header class="header">
       <div class="nav-logo" style="display: flex;">
@@ -211,6 +226,7 @@ import useCheckPermission from "@/helpers/useCheckPermission";
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
 import notification from '@/utils/notification';
+import dayjs from "dayjs";
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -501,6 +517,22 @@ export default defineComponent({
     let tabRemove = ref();
     let isClickArrowTab = ref(false)
     const token = sessionStorage.getItem("token");
+    // this code process if refresh token expr then open popup
+    const now = ref(dayjs().valueOf())
+    const loginExprTime = ref(parseInt(sessionStorage.getItem("loginExpr")));
+    const statusLogin = ref(false);
+    const intervalId = setInterval(() => {
+      now.value = dayjs().valueOf();
+      loginExprTime.value = parseInt(sessionStorage.getItem("loginExpr"))
+      const remainingLogout = now.value - loginExprTime.value;
+      const diffInHours = remainingLogout / 3600000;
+      if(diffInHours >= 8) statusLogin.value = true
+    }, 1000);
+    const logout = ()=>{
+      router.push("/login");
+      location.reload();
+      store.commit("auth/logout");
+    }
     const jwtObject = getJwtObject(token);
     const isCheckfirstLoadTabsCached = ref(false)
 
@@ -799,6 +831,7 @@ export default defineComponent({
       removeItemTab,
       changeActiveTab,
       onOpenChange,
+      statusLogin,
       menuItems,
       menuData,
       activeTab,
@@ -814,6 +847,7 @@ export default defineComponent({
       onTabDrop,
       MAX_TAB,
       count,
+      logout,
       ENVIRONMENT
     }
   },

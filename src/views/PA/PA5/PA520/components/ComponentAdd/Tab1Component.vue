@@ -89,12 +89,10 @@
                 </div>
             </a-form-item>
             <a-form-item label="부서" label-align="right">
-                <custom-item-select-box v-model:valueInput="dataCreated.department" :arrSelect="selectBoxData1"
-                    width="200" />
+              <select-search-edit v-model:valueInput="dataCreated.department" v-model:data="selectBoxData1" width="200px" />
             </a-form-item>
             <a-form-item label="직위" label-align="right">
-                <custom-item-select-box v-model:valueInput="dataCreated.responsibility" :arrSelect="selectBoxData2"
-                    width="200px" />
+              <select-search-edit v-model:valueInput="dataCreated.responsibility" v-model:data="selectBoxData2" width="200px" />
             </a-form-item>
             <div class="wf-100 text-center mt-10">
                 <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated(true)"
