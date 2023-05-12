@@ -244,7 +244,7 @@
                   <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                   <template #fundingSource="{ data }">
                     <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true"
-                      :readOnly="isRegistered" />
+                      :readOnly="isRegistered" :dropdownTop="true" :idSelect="`FundingSourceSelect${data.rowIndex}`"/>
                   </template>
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">

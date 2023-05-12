@@ -821,7 +821,7 @@ export default defineComponent({
           &-name {
             font-size: 16px;
             font-weight: bold;
-
+            color: #333333;
             &-login {
               color: #1a73e8;
             }
