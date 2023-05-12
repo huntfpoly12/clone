@@ -70,7 +70,13 @@
                    </a-row>
                    <div class="time-service">
                      <a-tag color="red" style="margin-left: 10px;margin-right: 39px;" ><span style="color: black;font-size: 14px;">근속연월일</span> </a-tag>
-                     <a-tag><span style="color: #C55A11;font-size: 14px;">{{dataLastRetiredYearsOfService.yearsOfService}}년 {{dataLastRetiredYearsOfService.monthsOfService}}개월 {{dataLastRetiredYearsOfService.daysOfService}}일</span></a-tag>
+                     <a-tag style="min-width: 150px;text-align: center;">
+                      <span style="color: #C55A11;font-size: 14px;text-align: center;">
+                        {{!Number.isNaN(dataLastRetiredYearsOfService.yearsOfService) ? dataLastRetiredYearsOfService.yearsOfService : 0}}년  
+                        {{!Number.isNaN(dataLastRetiredYearsOfService.monthsOfService) ? dataLastRetiredYearsOfService.monthsOfService : 0}}개월  
+                        {{!Number.isNaN(dataLastRetiredYearsOfService.daysOfService) ?dataLastRetiredYearsOfService.daysOfService : 0 }}일 
+                      </span>
+                    </a-tag>
                      </div>
                    <!-- <div class="button-calculate">
                        <button-basic text="&#129155; 퇴직금 계산 &#129155;" type="default" @onClick="calculateIncomeRetirement"/> 
@@ -164,8 +170,6 @@
                  store.commit('common/setCaculateValuePA410', value.data.calculateIncomeRetirement);
                  trigger.value = false;
                  store.commit('common/setStateStep2PA410', formState)
-                 console.log('sdfsdfsdfsdfsdf');
-                 
                  store.dispatch('common/setNextStep')
                }
            })

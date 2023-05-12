@@ -22,18 +22,18 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <SelectSearchEdit v-model:valueInput="data.data.item" :data="arrSelectItem"
-              @updateArrSelect="(value: any) => arrSelectItem = [...value]" :required="true" />
+            <SelectSearchEdit v-model:valueInput="data.data.item" v-model:data="arrSelectItem"
+               :required="true" />
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
-            <SelectSearchEdit v-model:valueInput="data.data.standard" :data="arrSelectStandard"
-              @updateArrSelect="(value: any) => arrSelectStandard = [...value]" :required="true" />
+            <SelectSearchEdit v-model:valueInput="data.data.standard" v-model:data="arrSelectStandard"
+               :required="true" />
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <SelectSearchEdit v-model:valueInput="data.data.unit" :data="arrSelectUnit"
-              @updateArrSelect="(value: any) => arrSelectUnit = [...value]" :required="true" />
+            <SelectSearchEdit v-model:valueInput="data.data.unit" v-model:data="arrSelectUnit"
+               :required="true" />
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">

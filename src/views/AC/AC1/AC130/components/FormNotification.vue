@@ -3,33 +3,38 @@
     <CloseOutlined v-if="!visible" class="form-notification-btnOpen" @click="openNoti" />
     <a-drawer placement="left" :closable="false" :visible="visible" :get-container="false" width="100%"
       :style="{ position: 'absolute' }">
-      <div class="form-notification-wrapper">
-        <div class="form-notification-wrapper-title">
-          알림
-        </div>
-        <div v-if="listNotification.length" ref="refTimelineNoti" class="form-notification-wrapper-list">
-          <a v-for="(noti, index) in listNotification" :key="index" :href="`#${noti.key}`"
-          class="form-notification-wrapper-list-items" :class="{'form-notification-wrapper-list-items-notseen': noti?.seen ? !noti.seen.includes(userId) : true }"
-            @click="goToChatByNoti(noti)">
-            <a-badge :dot="true" :offset="[-5, 33]" :status="noti?.online ? 'success' : 'error'" class="mr-5">
-              <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff">{{ noti.name }}</a-avatar>
-            </a-badge>
-            <div class="form-notification-wrapper-list-items-item">
-              <div class="form-notification-wrapper-list-items-item-infor">
-                <span class="form-notification-wrapper-list-items-item-infor-status"> {{ noti.status }}</span>
-                <span class="form-notification-wrapper-list-items-item-infor-username"> {{ noti.name }}</span>
-                <span class="form-notification-wrapper-list-items-item-infor-textConcat">댓글을 남겼습니다: </span>
-                <span class="form-notification-wrapper-list-items-item-infor-content">"{{ noti.text }}</span>"
+      <a-spin :spinning="firstLoadChat">
+        <div class="form-notification-wrapper">
+          <div class="form-notification-wrapper-title">
+            알림
+          </div>
+          <div v-if="listNotification.length" ref="refTimelineNoti" class="form-notification-wrapper-list">
+            <a v-for="(noti, index) in listNotification" :key="index" :href="`#${noti.key}`"
+              class="form-notification-wrapper-list-items"
+              :class="{ 'form-notification-wrapper-list-items-notseen': noti?.seen ? !noti.seen.includes(userId) : true }"
+              @click="goToChatByNoti(noti)">
+              <a-badge :dot="true" :offset="[-5, 33]" :status="noti?.online ? 'success' : 'error'" class="mr-5">
+                <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff">{{ noti.name }}</a-avatar>
+              </a-badge>
+              <div class="form-notification-wrapper-list-items-item">
+                <div class="form-notification-wrapper-list-items-item-infor">
+                  <div class="form-notification-wrapper-list-items-item-infor-status">
+                    <StatusChat :valueSelect="index" :isSelect="false" />
+                  </div>
+                  <span class="form-notification-wrapper-list-items-item-infor-username"> {{ noti.name }}</span>
+                  <span class="form-notification-wrapper-list-items-item-infor-textConcat">댓글을 남겼습니다: </span>
+                  <span class="form-notification-wrapper-list-items-item-infor-content">"{{ noti.text }}</span>"
+                </div>
+                <div class="form-notification-wrapper-list-items-item-time">{{ formatDate(noti.createdAt) }}</div>
               </div>
-              <div class="form-notification-wrapper-list-items-item-time">{{ formatDate(noti.createdAt) }}</div>
-            </div>
-          </a>
+            </a>
+          </div>
+          <div v-else class="form-notification-wrapper-noData">
+            통지 없음
+          </div>
+          <CloseOutlined class="form-notification-wrapper-btnClose" @click="closeNoti" />
         </div>
-        <div v-else class="form-notification-wrapper-noData">
-          통지 없음
-        </div>
-        <CloseOutlined class="form-notification-wrapper-btnClose" @click="closeNoti" />
-      </div>
+      </a-spin>
     </a-drawer>
     <slot />
   </div>
@@ -70,7 +75,6 @@ export default defineComponent({
     const firstLoadChat = ref(true)
 
     const chatListRef = reffb(databaseFirebase, keyChatChannel)
-
     onMounted(() => {
       getListContentChat()
     })
@@ -116,7 +120,7 @@ export default defineComponent({
           });
           onChildChanged(chatListRef, (data) => {
             const indexUpdate = listNotification.value.findIndex((chat: any) => chat.key === data.key)
-            if (indexUpdate >= 0 ) {
+            if (indexUpdate >= 0) {
               listNotification.value[indexUpdate] = {
                 ...listNotification.value[indexUpdate],
                 text: data.val().text,
@@ -133,19 +137,19 @@ export default defineComponent({
       );
     };
 
-    
+
     const goToChatByNoti = (noti: any) => {
       visible.value = false
-      if(noti?.seen && noti.seen.includes(userId)) return
+      if (noti?.seen && noti.seen.includes(userId)) return
       const updates: any = {};
       const payloadEdit = { ...noti, seen: noti?.seen ? [...noti.seen, userId] : [userId] }
       delete payloadEdit.key
       updates[`/${noti.key}`] = payloadEdit
       update(chatListRef, updates).then(() => {
-        }).catch(() => {
-          console.log('eeeeeeeee');
-        }).finally(() => {
-        })
+      }).catch(() => {
+        console.log('eeeeeeeee');
+      }).finally(() => {
+      })
     }
 
     const closeNoti = () => {
@@ -171,7 +175,8 @@ export default defineComponent({
       formatDate,
       closeNoti,
       openNoti,
-      goToChatByNoti
+      goToChatByNoti,
+      firstLoadChat
     }
   },
 })
@@ -213,27 +218,24 @@ export default defineComponent({
         margin: 2px 0;
         color: #333;
         cursor: pointer;
+
         &:hover {
           background-color: #6988af1a;
         }
+
         &-notseen {
           background-color: #6988af48;
         }
+
         &-item {
           margin-left: 5px;
+
           &-infor {
             display: flex;
             align-items: center;
 
             &-status {
-              white-space: nowrap;
-              display: inline;
-              padding: 0 10px;
-              border-radius: 5px;
-              font-size: 10px;
               margin-right: 5px;
-              border: 1px solid rgba(17, 17, 26, 0.1);
-              
             }
 
             &-username {
@@ -244,10 +246,12 @@ export default defineComponent({
               color: #6989AF;
               margin-right: 10px;
             }
+
             &-textConcat {
               white-space: nowrap;
               margin-right: 10px;
             }
+
             &-content {
               flex-grow: 1;
               -webkit-box-orient: vertical;
