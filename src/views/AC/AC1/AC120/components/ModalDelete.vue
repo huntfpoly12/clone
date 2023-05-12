@@ -7,31 +7,30 @@
                     <a-col :span="10">
                         <div class="input_info">
                             <a-form-item label="전체 전표취소 건수">
-                                <number-box :width="60" :valueInput="sumHandwritingTrueFalse" disabled="true"/>
+                                <number-box :width="60" :valueInput="sumHandwritingTrueFalse" disabled="true" />
                             </a-form-item>
                             <span class="pl-5 mb-5">건</span>
                         </div>
                         <div class="input_info">
                             <a-form-item label="동일 통장내역의 전표">
-                                <number-box :width="60" :valueInput="sumHandwritingFalse" disabled="true"/>
+                                <number-box :width="60" :valueInput="sumHandwritingFalse" disabled="true" />
                             </a-form-item>
                             <span class="pl-5 mb-5">건</span>
                         </div>
                         <div class="input_info">
                             <a-form-item label="수기입력 전표">
-                                <number-box :width="60" :valueInput="sumHandwritingTrue" disabled="true"/>
+                                <number-box :width="60" :valueInput="sumHandwritingTrue" disabled="true" />
                             </a-form-item>
                             <span class="pl-5 mb-5">건</span>
                         </div>
-                        
                     </a-col>
                 </a-row>
                 <div class="mt-10"><span>상기의 전표들을 취소하시겠습니까?</span></div>
                 <div class="mt-20">
                     <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                         @onClick="cancel" />
-                    <button-basic class="button-form-modal" :text="'네. 취소합니다'" :type="'default'"
-                        :mode="'contained'" @onClick="submit" />
+                    <button-basic class="button-form-modal" :text="'네. 취소합니다'" :type="'default'" :mode="'contained'"
+                        @onClick="submit" />
                 </div>
             </standard-form>
         </div>
@@ -68,7 +67,7 @@ export default defineComponent({
         const sumHandwritingTrue = ref(0)
         const sumHandwritingFalse = ref(0)
         const sumHandwritingTrueFalse = ref(0)
-        
+
         // =================== GRAPHQL ===================
         // mutation unregisterAccountingDocument    ----- handwriting = true
         const {
@@ -93,7 +92,7 @@ export default defineComponent({
         })
 
         // initializeTransactionDetails
-         doneInitializeTransactionDetails((e) => {
+        doneInitializeTransactionDetails((e) => {
             emit("closePopup", false)
             notification('success', Message.getMessage('COMMON', '302').message)
             store.state.common.ac120.resetDataTable++
@@ -110,9 +109,9 @@ export default defineComponent({
                 sumHandwritingFalse.value = 0
                 props.dataRows.map((row: any) => {
                     if (row.handwriting === true) {
-                        sumHandwritingTrue.value++ 
+                        sumHandwritingTrue.value++
                     } else if (row.handwriting === false) {
-                        sumHandwritingFalse.value++ 
+                        sumHandwritingFalse.value++
                     }
                 })
                 sumHandwritingTrueFalse.value = sumHandwritingTrue.value + sumHandwritingFalse.value
@@ -124,6 +123,7 @@ export default defineComponent({
             emit("closePopup", false)
         };
         const submit = () => {
+            let arrData: any = []
             props.dataRows.map((row: any) => {
                 if (row.handwriting === true) {
                     mutateUnregisterAccountingDocument({
@@ -134,13 +134,17 @@ export default defineComponent({
                         accountingDocumentId: row.accountingDocumentId
                     })
                 } else if (row.handwriting === false) {
-                    mutateInitializeTransactionDetails({
-                        companyId: companyId,
-                        fiscalYear: acYear.value,
-                        facilityBusinessId: globalFacilityBizId.value,
-                        bankbookDetailDate: row.transactionDetailDate,
-                        bankbookDetailId: row.bankbookDetailId
-                    })
+                    if (arrData.filter((item: any) => item.bankbookDetailId == row.bankbookDetailId).length == 0) {
+                        mutateInitializeTransactionDetails({
+                            companyId: companyId,
+                            fiscalYear: acYear.value,
+                            facilityBusinessId: globalFacilityBizId.value,
+                            bankbookDetailDate: row.transactionDetailDate,
+                            bankbookDetailId: row.bankbookDetailId
+                        })
+                    }
+                    arrData.push(row)
+
                 }
             })
         }
@@ -154,7 +158,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
 .text-align-center {
     text-align: center;
 }
@@ -166,6 +169,7 @@ export default defineComponent({
 .mt-10 {
     margin-top: 10px;
 }
+
 .mt-20 {
     margin-top: 20px;
 }

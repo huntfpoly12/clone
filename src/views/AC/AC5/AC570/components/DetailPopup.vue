@@ -22,7 +22,7 @@
                                 disabled="true" />
                         </a-form-item>
                         <a-form-item label="예산액" :label-col="labelCol">
-                            <number-box-money width="150px" min="0" v-model:valueInput="formState.sourceBudgetAmount" />
+                            <number-box-money width="150px" :min="0" v-model:valueInput="formState.sourceBudgetAmount" />
                         </a-form-item>
                         <a-form-item label="전용액" :label-col="labelCol" class="red">
                             <number-box-money width="150px" v-model:valueInput="formState.transitionAmount" disabled="true"
@@ -33,7 +33,7 @@
                                 :valueInput="formState.sourceBudgetAmount + formState.transitionAmount" />
                         </a-form-item>
                         <a-form-item label="지출액" :label-col="labelCol">
-                            <number-box-money width="150px" placeholder="" min="0"
+                            <number-box-money width="150px" placeholder="" :min="0"
                                 v-model:valueInput="formState.sourceExpenditureAmount" />
                         </a-form-item>
                         <a-form-item label="불용액" :label-col="labelCol">
@@ -51,7 +51,7 @@
                                 v-model:valueInput="formState.transitionCode" />
                         </a-form-item>
                         <a-form-item label="예산액" :label-col="labelCol">
-                            <number-box-money width="150px" min="0" v-model:valueInput="formState.transitionBudgetAmount" />
+                            <number-box-money width="150px" :min="0" v-model:valueInput="formState.transitionBudgetAmount" />
                         </a-form-item>
                         <a-form-item label="전용액" :label-col="labelCol" class="red">
                             <number-box-money width="150px" :required="true" placeholder="" disabled="true"
@@ -62,7 +62,7 @@
                                 :valueInput="formState.transitionBudgetAmount + formState.transitionAmount" />
                         </a-form-item>
                         <a-form-item label="지출액" :label-col="labelCol">
-                            <number-box-money width="150px" placeholder="" min="0"
+                            <number-box-money width="150px" placeholder="" :min="0"
                                 v-model:valueInput="formState.transitionExpenditureAmount" />
                         </a-form-item>
                         <a-form-item label="불용액" :label-col="labelCol">
@@ -157,7 +157,6 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -174,7 +173,15 @@ export default defineComponent({
                         facilityBusinessId: globalFacilityBizId.value,
                         input: {
                             accounSubjectOrder: theOrder.value,
-                            ...formState.value
+                            transitionDate: formState.value.transitionDate,
+                            transitionAmount: formState.value.transitionAmount ? formState.value.transitionAmount : 0,
+                            sourceCode: formState.value.sourceCode,
+                            sourceBudgetAmount: formState.value.sourceBudgetAmount ? formState.value.sourceBudgetAmount : 0,
+                            sourceExpenditureAmount: formState.value.sourceExpenditureAmount ? formState.value.sourceExpenditureAmount : 0,
+                            transitionCode: formState.value.transitionCode,
+                            transitionBudgetAmount: formState.value.transitionBudgetAmount ? formState.value.transitionBudgetAmount : 0,
+                            transitionExpenditureAmount: formState.value.transitionExpenditureAmount ? formState.value.transitionExpenditureAmount : 0,
+                            // ...formState.value
                         }
                     })
                 } else if (props.dataDetail) {
@@ -184,10 +191,10 @@ export default defineComponent({
                         facilityBusinessId: globalFacilityBizId.value,
                         transitionId: props.dataDetail.transitionId,
                         input: {
-                            sourceBudgetAmount: formState.value.sourceBudgetAmount ,
-                            sourceExpenditureAmount: formState.value.sourceExpenditureAmount ,
-                            transitionBudgetAmount: formState.value.transitionBudgetAmount ,
-                            transitionExpenditureAmount: formState.value.transitionExpenditureAmount ,
+                            sourceBudgetAmount: formState.value.sourceBudgetAmount ? formState.value.sourceBudgetAmount : 0,
+                            sourceExpenditureAmount: formState.value.sourceExpenditureAmount ? formState.value.sourceExpenditureAmount : 0,
+                            transitionBudgetAmount: formState.value.transitionBudgetAmount ? formState.value.transitionBudgetAmount : 0,
+                            transitionExpenditureAmount: formState.value.transitionExpenditureAmount ? formState.value.transitionExpenditureAmount : 0,
                             transitionCause: formState.value.transitionCause
                         }
                     })

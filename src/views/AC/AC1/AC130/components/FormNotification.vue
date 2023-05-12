@@ -7,7 +7,7 @@
         <div class="form-notification-wrapper-title">
           알림
         </div>
-        <div ref="refTimelineNoti" class="form-notification-wrapper-list">
+        <div v-if="listNotification.length" ref="refTimelineNoti" class="form-notification-wrapper-list">
           <a v-for="(noti, index) in listNotification" :key="index" :href="`#${noti.key}`"
           class="form-notification-wrapper-list-items" :class="{'form-notification-wrapper-list-items-notseen': noti?.seen ? !noti.seen.includes(userId) : true }"
             @click="goToChatByNoti(noti)">
@@ -25,10 +25,13 @@
             </div>
           </a>
         </div>
+        <div v-else class="form-notification-wrapper-noData">
+          통지 없음
+        </div>
         <CloseOutlined class="form-notification-wrapper-btnClose" @click="closeNoti" />
       </div>
     </a-drawer>
-    <slot :keyChatChannel="keyChatChannel" />
+    <slot />
   </div>
 </template>
 
@@ -211,7 +214,7 @@ export default defineComponent({
         color: #333;
         cursor: pointer;
         &:hover {
-          background-color: #7e90a74f;
+          background-color: #6988af1a;
         }
         &-notseen {
           background-color: #6988af48;
@@ -269,6 +272,12 @@ export default defineComponent({
       top: 6px;
       left: 10px;
       cursor: pointer;
+    }
+
+    &-noData {
+      text-align: center;
+      margin-top: 100px;
+      color: #B7B7B7;
     }
   }
 
