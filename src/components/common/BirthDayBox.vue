@@ -1,6 +1,6 @@
 <template>
     <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" v-model:value="value"
-        :disabled="disabled" :readOnly="readOnly" @input="updateValue(value)" :mask="mask"
+        :disabled="disabled" :readOnly="readOnly" @input="updateValue(value)" :mask="mask" @focusIn="onFocusIn"
         :mask-invalid-message="maskMess" :height="$config_styles.HeightInput" :name="nameInput">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -41,6 +41,10 @@ export default defineComponent({
             type: String,
             default: '',
         },
+        select: {
+            type: Boolean,
+            default: true,
+        }
     },
     components: {
         DxTextBox,
@@ -77,6 +81,11 @@ export default defineComponent({
             return dayjs(dtFormat, 'YYYY-MM-DD', true).isValid();
         }
 
+        const onFocusIn = (e: any) => {
+            if(props.select && !props.readOnly){
+                e.event.target.select()
+            }
+        }
         return {
             updateValue,
             value,
@@ -84,7 +93,8 @@ export default defineComponent({
             maskMess,
             messageRequired,
             dateInput,
-            validateDate
+            validateDate,
+            onFocusIn
         };
     },
 });

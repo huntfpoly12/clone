@@ -8,6 +8,7 @@
           :teleport="teleport" :disabled="disabled"
           :clearable="clearable"
           :enable-time-picker="timePicker"
+          @input="input"
           >
       </Datepicker>
       <div v-if="isValid" class="message-error">
@@ -171,11 +172,24 @@ export default defineComponent({
                 }
             }
         }
+
+        const input = (e: any) => {
+            if(e.target.value.length === 10 && (e.target.selectionStart === 4 || e.target.selectionStart === 7)){
+                if(dayjs(e.target.value, 'YYYY-MM-DD', true).isValid()) {
+                    if(e.target.selectionStart === 4) {
+                        e.target.setSelectionRange(5, 7)
+                    }else {
+                        e.target.setSelectionRange(8, 10)
+                    }
+                }
+            }
+        }
+
         return {
             updateValue,
             date,
             ko,widthBoder,
-            dayjs,Message,isValid,validate, inputDate,
+            dayjs,Message,isValid,validate, inputDate, input
         };
     },
 });

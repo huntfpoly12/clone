@@ -67,7 +67,6 @@ export default defineComponent({
     let jwtObject = getJwtObject(token.value!);
     const userId = jwtObject.userId
 
-
     const keyChatChannel = 'keyChatChannelCommon';
     const visible = ref(true)
     const listNotification = ref<any>([])
@@ -136,7 +135,6 @@ export default defineComponent({
         }
       );
     };
-
 
     const goToChatByNoti = (noti: any) => {
       visible.value = false
@@ -218,6 +216,7 @@ export default defineComponent({
         margin: 2px 0;
         color: #333;
         cursor: pointer;
+        overflow-x: hidden;
 
         &:hover {
           background-color: #6988af1a;
@@ -290,5 +289,6 @@ export default defineComponent({
     right: 15px;
     top: 15px;
   }
-}</style>
+}
+</style>
 
