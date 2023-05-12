@@ -740,7 +740,7 @@
                     <pre class="mycode">
                 &lt;select-search-edit 
                 v-model:valueInput="vualueSelectSearchEdit" 
-                :data="arrSelectSearchEdit"  /&gt;
+                v-model:data="arrSelectSearchEdit"  /&gt;
         </pre>
                 </td>
             </tr>
