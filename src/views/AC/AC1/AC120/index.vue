@@ -34,10 +34,10 @@
                             </div>
                         </div>
                         <div style="width: 200px; margin-left: 30px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfIncome()"></div>
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfResolutionClassification1()"></div>
                         </div>
                         <div style="width: 200px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfExpenses()">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfResolutionClassification2()">
                             </div>
                         </div>
                         <div style="width: 300px;">
@@ -107,8 +107,7 @@
                         @selection-changed="selectionChanged">
                         <DxRowDragging
                             v-if="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status == 10"
-                            :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
-                            :on-drag-change="onDragChange" />
+                            :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"/>
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxPaging :enabled="false" />
@@ -137,9 +136,15 @@
                                 data.data.resolutionClassification == item.id)?.text }}
                         </template>
 
-                        <DxColumn caption="수입액" data-field="income" format="fixedPoint" width="75" />
+                        <DxColumn caption="수입액" cell-template="amountCustom1" width="75" />
+                        <template #amountCustom1="{ data }">
+                            {{  data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
+                        </template>
 
-                        <DxColumn caption="지출액" data-field="spending" format="fixedPoint" width="75" />
+                        <DxColumn caption="지출액" cell-template="amountCustom2" width="75" />
+                        <template #amountCustom2="{ data }">
+                            {{  data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
+                        </template>
 
                         <DxColumn caption="잔액" data-field="balance" width="75" format="fixedPoint" />
 
@@ -149,12 +154,12 @@
 
                         <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
                         <template #accountCode="{ data }">
-                            <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
+                            <account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
                         </template>
 
                         <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="170" />
                         <template #relationCode="{ data }">
-                            <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
+                            <account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
                         </template>
 
                         <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left"
@@ -205,13 +210,15 @@
             <DetailComponent @changeAmountDataGrid="changeAmountDataGrid" />
         </div>
     </div>
-    <PopupMessage :modalStatus="isModalRetrieveStatements" @closePopup="isModalRetrieveStatements = false"
+    <!-- <PopupMessage :modalStatus="isModalRetrieveStatements" @closePopup="isModalRetrieveStatements = false"
         :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
-        :cancelText="'아니요'" @checkConfirm="handleConfirmChange" />
-
+        :cancelText="'아니요'" @checkConfirm="handleConfirmChange" /> -->
+    <PopupMessage :modalStatus="isModalConfirmChangeData" @closePopup="isModalConfirmChangeData = false"
+      :typeModal="'confirm'" title="" content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니요"
+      @checkConfirm="handleConfirmChange" />
     <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows='dataRows' />
 
-    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" :theOrder="dataSource.length"/>
+    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" :theOrder="totalCount" />
 
 
     <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false" />
@@ -243,6 +250,9 @@ import mutations from "@/graphql/mutations/AC/AC1/AC120";
 import { companyId } from "@/helpers/commonFunction"
 import dayjs from "dayjs";
 import notification from '@/utils/notification';
+import DataSource from "devextreme/data/data_source";
+import { Store } from "devextreme/data";
+import { cloneDeep, isEqual } from "lodash"
 export default defineComponent({
     components: {
         ProcessStatus,
@@ -273,7 +283,7 @@ export default defineComponent({
         const clients = computed(() => store.state.settings.clients)
         const dataApi = ref<any[]>([])
 
-        let isModalRetrieveStatements = ref(false);
+        let isModalConfirmChangeData = ref(false);
         let statusModalDelete = ref(false);
         let statusModalAdd = ref(false);
 
@@ -291,7 +301,9 @@ export default defineComponent({
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const lastBalance = ref<number>(0)
         const dataGetAccountingProcesses = ref<any>([])
-        const dataSource = ref<any>([])
+        const dataSource: any = ref<DataSource>();
+        // get store data
+        const storeDataSource: any = computed(() => dataSource.value?.store() as Store);
         const triggerGetAccountingProcesses = ref<boolean>(true)
         const triggerGetAccountingDocuments = ref<boolean>(true)
         const dataQueryGetAccountingProcesses = ref({
@@ -306,6 +318,8 @@ export default defineComponent({
             year: acYear.value,
             month: dayjs().month() + 1
         })
+        let formDataOld = reactive({ ...initialStateFormData })
+        let formDataClickRow = reactive({ ...initialStateFormData })
 
         // =================== GRAPHQL ===================
         // query getAccountingProcesses
@@ -344,6 +358,10 @@ export default defineComponent({
             notification('error', e.message)
         })
 
+        // const dataSourceItems = ref([])
+
+        
+
         // ================== WATCH ================
         // 1. getAccountingProcesses
         watch(resGetAccountingProcesses, (value) => {
@@ -354,28 +372,17 @@ export default defineComponent({
         watch(resGetAccountingDocuments, async (value) => {
             triggerGetAccountingDocuments.value = false
             dataApi.value = value.getAccountingDocuments?.accountingDocuments
-            await dataApi.value.map((item: any, index: number) => {
-                if (index == 0) {
-                    item.balance = lastBalance.value + item.income - item.spending
-                } else {
-                    item.balance = item.income - item.spending
-                }
-
-                const totalBefore: any = ref(0)
-                const maxOrder: any = ref(1)
-                dataApi.value.slice(0, index).forEach((data) => {
-                    totalBefore.value = data.balance
-                    if (item.transactionDetailDate == data.transactionDetailDate) {
-                        maxOrder.value = data.documentOrderByDate + 1
-                    }
-                });
-                item.documentOrderByDate = maxOrder.value
-                item.balance = totalBefore.value + item.balance
-            })
-
-            await (dataSource.value = dataApi.value)
+            await calculateAmount()
+            dataSource.value = new DataSource({
+                store: {
+                    type: "array",
+                    key: "accountingDocumentId",
+                    data: dataApi.value,
+                },
+                requireTotalCount: true,
+            });
             lastBalance.value = value.getAccountingDocuments?.lastBalance
-            getOneRowData()
+            await getOneRowData()
         })
 
         // call api GetAccountingDocuments
@@ -397,17 +404,19 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
         const getOneRowData = () => {
-            if (dataSource.value.length) { // if table has data source
+            if (dataApi.value.length > 0) { // if table has data source
                 gridRefAC120.value?.instance.deselectAll()
                 if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
                     store.state.common.ac120.statusKeppRow = false;
                     store.state.common.ac120.selectedRowKeys = [store.state.common.ac120.focusedRowKey]
-                    Object.assign(store.state.common.ac120.formData, dataSource.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey))
+                    // Object.assign(store.state.common.ac120.formData, dataApi.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey))
+                    store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey)
                     // Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
                 } else { // lấy row đầu tiên
-                    store.state.common.ac120.focusedRowKey = dataSource.value[0].accountingDocumentId
-                    store.state.common.ac120.selectedRowKeys = [dataSource.value[0].accountingDocumentId]
-                    Object.assign(store.state.common.ac120.formData, dataSource.value[0])
+                    store.state.common.ac120.focusedRowKey = dataApi.value[0]?.accountingDocumentId
+                    store.state.common.ac120.selectedRowKeys = [dataApi.value[0]?.accountingDocumentId]
+                    // Object.assign(store.state.common.ac120.formData, dataApi.value[0])
+                    store.state.common.ac120.formData = dataApi.value[0]
                 }
                 // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
             } else {
@@ -417,11 +426,12 @@ export default defineComponent({
                 Object.assign(store.state.common.ac120.formData, initialStateFormData)
                 store.state.common.ac120.keyRefreshForm++
             }
+            formDataOld = { ...store.state.common.ac120.formData }
             store.state.common.ac120.statusFormAdd = false
             store.state.common.ac120.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
             store.state.common.ac120.resetDataAccountingDocumentProofs++
         }
-        
+
         // check box selection row data source
         const selectionChanged = (data: any) => {
             if (dataRows.value.length > data.selectedRowsData.length && keySelect.value) {
@@ -435,7 +445,7 @@ export default defineComponent({
                 data.selectedRowsData.map((data: any) => {
                     if (data.bankbookDetailId) {
                         if (!dataRows.value.find((item: any) => item.bankbookDetailId == data.bankbookDetailId)) {
-                            let dataSameBankbookDetailId = dataSource.value.filter((item: any) => item.bankbookDetailId == data.bankbookDetailId)
+                            let dataSameBankbookDetailId = dataSource.value?.items().filter((item: any) => item.bankbookDetailId == data.bankbookDetailId)
                             dataRows.value = dataRows.value.concat(dataSameBankbookDetailId)
                         }
                     } else {
@@ -456,16 +466,28 @@ export default defineComponent({
                     keySelect.value = e.rows[e.newRowIndex]?.data.bankbookDetailId
                 }
             } else {
-                // store.state.common.ac120.formData = e.rows[e.newRowIndex]?.data
-                Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
-                store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
-                // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
-                store.state.common.ac120.selectedRowKeys = [e.rows[e.newRowIndex]?.data.accountingDocumentId]
-                store.state.common.ac120.keyRefreshForm++
-                store.state.common.ac120.resetDataAccountingDocumentProofs++
-                // if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
-                //     deleteRowAdd()
-                // }
+                if (e.rows[e.newRowIndex]?.data.accountingDocumentId == store.state.common.ac120.focusedRowKey) { // nếu click row đang active
+                    return
+                }
+                
+                if (!isEqual(store.state.common.ac120.formData, formDataOld)) {
+                    isModalConfirmChangeData.value = true;
+                    e.cancel = true;
+                    // formDataClickRow = 
+                } else {
+                    formDataOld = { ...e.rows[e.newRowIndex]?.data }
+                    store.state.common.ac120.formData = e.rows[e.newRowIndex]?.data
+                    // Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
+                    store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
+                    // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+                    store.state.common.ac120.selectedRowKeys = [e.rows[e.newRowIndex]?.data.accountingDocumentId]
+                    store.state.common.ac120.keyRefreshForm++
+                    store.state.common.ac120.resetDataAccountingDocumentProofs++
+                    // if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
+                    //     deleteRowAdd()
+                    // }
+                }
+                
             }
         };
 
@@ -492,17 +514,23 @@ export default defineComponent({
             statusModalItemDetail.value = true
         }
 
-        const handleConfirmChange = () => { }
+        const handleConfirmChange = (status: boolean) => { 
+            if (status) {
+                store.state.common.ac120.onSubmitFormUpdate++
+            } else {
+                store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey)
+            }
+        }
 
         const onReorder = (e: any) => {
             const visibleRows = e.component.getVisibleRows();
-            const dataToIndex = dataSource.value.find((item: any) => item.accountingDocumentId === visibleRows[e.toIndex].data.accountingDocumentId);
-            const dataFromIndex = dataSource.value.find((item: any) => item.accountingDocumentId === e.itemData.accountingDocumentId);
+            const dataToIndex = storeDataSource.value?._array.find((item: any) => item.accountingDocumentId === visibleRows[e.toIndex].data.accountingDocumentId);
+            const dataFromIndex = storeDataSource.value?._array.find((item: any) => item.accountingDocumentId === e.itemData.accountingDocumentId);
             if (dataToIndex.transactionDetailDate === dataFromIndex.transactionDetailDate) { // cùng date mới cho đổi
                 const visibleRows = e.component.getVisibleRows();
-                const toIndex = dataSource.value.findIndex((item: any) => item.accountingDocumentId === visibleRows[e.toIndex].data.accountingDocumentId);
-                const fromIndex = dataSource.value.findIndex((item: any) => item.accountingDocumentId === e.itemData.accountingDocumentId);
-                const newTasks = [...dataSource.value];
+                const toIndex = storeDataSource.value?._array.findIndex((item: any) => item.accountingDocumentId === visibleRows[e.toIndex].data.accountingDocumentId);
+                const fromIndex = storeDataSource.value?._array.findIndex((item: any) => item.accountingDocumentId === e.itemData.accountingDocumentId);
+                const newTasks = [...storeDataSource.value?._array];
                 newTasks.splice(fromIndex, 1);
                 newTasks.splice(toIndex, 0, e.itemData);
                 let indexDocumentOrderByDate = 1
@@ -532,29 +560,6 @@ export default defineComponent({
             }
         }
 
-        const onDragChange = (e: any) => { }
-
-        // const onFillDataAdd = (dataAdd: any) => {
-        //     addNewRow(dataAdd)
-        //     statusModalAdd.value = false; // close popup
-        // }
-
-        // handle add row
-        // const addNewRow = async (dataAdd: any) => {
-        //     store.state.common.ac120.statusFormAdd = true
-        //     let dataInitial: any = { ...initialStateFormData }
-
-        //     Object.assign(dataInitial, dataAdd)
-        //     dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...dataInitial })
-        //     store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
-        //     store.state.common.ac120.focusedRowKey = 'AC120'
-        //     store.state.common.ac120.keyRefreshForm++
-        //     store.state.common.ac120.resetDataAccountingDocumentProofs++
-        //     setTimeout(() => {
-        //         store.state.common.ac120.statusShowFull = true
-        //     }, 300);
-        // }
-
         const selectedMonth = (month: number) => {
             store.state.common.ac120.monthSelected = month
             dataQueryGetAccountingDocuments.value.month = month
@@ -576,39 +581,76 @@ export default defineComponent({
             // await (focusedRowKey.value = e.data.accountingDocumentId)
         }
         const changeAmountDataGrid = () => {
-            // let index = dataSource.value.findIndex((item: any) => item.accountingDocumentId === store.state.common.ac120.formData.accountingDocumentId)
-            // if (index !== -1) {
-            //     dataSource.value[index] = store.state.common.ac120.formData;
-            // }
-            // gridRefAC120.value?.instance.refresh()
+            calculateAmount()
+        }
+        const calculateAmount = () => {
+            dataApi.value.map((item: any, index: number) => {
+                item.balance = 0
+                if (index == 0) {
+                    if (item.resolutionClassification == 1) {
+                        item.balance = lastBalance.value + item.amount
+                    } else if (item.resolutionClassification == 2) {
+                        item.balance = lastBalance.value - item.amount
+                    }
+                } else {
+                    if (item.resolutionClassification == 1) {
+                        item.balance = item.amount
+                    } else if (item.resolutionClassification == 2) {
+                        item.balance =  -item.amount
+                    }
+                }
+                
+                const totalBefore: any = ref(0)
+                const maxOrder: any = ref(1)
+                dataApi.value.slice(0, index).forEach((data) => {
+                    totalBefore.value = data.balance
+                    if (item.transactionDetailDate == data.transactionDetailDate) {
+                        maxOrder.value = data.documentOrderByDate + 1
+                    }
+                });
+                item.documentOrderByDate = maxOrder.value
+                item.balance = totalBefore.value + item.balance
+            })
         }
 
 
         // ================ CUSTOM SUMMARY TABLE ============================================
         const customCountRow = () => {
-            return `전표 건수 <span>[${dataSource.value.length}]</span>`
+            return `전표 건수 <span>[${dataSource.value?.totalCount()}]</span>`
         }
-        const sumOfIncome = () => {
+        const sumOfResolutionClassification1 = () => {
             let total = 0;
-            dataSource.value.forEach((item: any) => {
-                total += item.income ? item.income : 0;
+            storeDataSource.value?._array.forEach((item: any) => {
+                if (item.resolutionClassification == 1) {
+                    total += item.amount ? item.amount : 0;
+                }
             });
             return `수입액 합계 <span>[${filters.formatCurrency(total)}]</span>`
         }
-        const sumOfExpenses = () => {
+        const sumOfResolutionClassification2 = () => {
             let total = 0;
-            dataSource.value.forEach((item: any) => {
-                total += item.spending ? item.spending : 0;
+            storeDataSource.value?._array.forEach((item: any) => {
+                if (item.resolutionClassification == 2) {
+                    total += item.amount ? item.amount : 0;
+                }
             });
             return `지출액 합계 <span>[${filters.formatCurrency(total)}]</span>`
         }
         const customBalance = () => {
             let total = 0;
-            dataSource.value.forEach((item: any, index: number) => {
+            storeDataSource.value?._array.forEach((item: any, index: number) => {
                 if (index == 0) {
-                    total += lastBalance.value + (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
+                    if (item.resolutionClassification == 1) {
+                        total += lastBalance.value + (item.amount ? item.amount : 0)
+                    } else if (item.resolutionClassification == 2) {
+                        total += lastBalance.value - (item.amount ? item.amount : 0)
+                    }
                 } else {
-                    total += (item.income ? item.income : 0) - (item.spending ? item.spending : 0)
+                    if (item.resolutionClassification == 1) {
+                        total += (item.amount ? item.amount : 0)
+                    } else if (item.resolutionClassification == 2) {
+                        total += -(item.amount ? item.amount : 0)
+                    }
                 }
             });
             return ` 예상 잔액 <span>[${filters.formatCurrency(total)}]</span>`
@@ -616,7 +658,7 @@ export default defineComponent({
         const countResolutionNormalStatus = () => {
             let totalResolutionNormalStatuTrue = 0;
             let totalResolutionNormalStatuFalse = 0;
-            dataSource.value.forEach((item: any) => {
+            storeDataSource.value?._array.forEach((item: any) => {
                 if (item.resolutionNormalStatus) {
                     totalResolutionNormalStatuTrue++
                 } else {
@@ -626,9 +668,11 @@ export default defineComponent({
             return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span> 비정상 내역 건 <span>[${filters.formatCurrency(totalResolutionNormalStatuFalse)}]</span>`
         };
 
+        const totalCount = computed(() => dataSource.value?.totalCount())
+
         return {
             dataGetAccountingProcesses,
-            dataSource,
+            dataSource, totalCount,
             // onFillDataAdd,
             loadingGetAccountingProcesses,
             loadingGetAccountingDocuments,
@@ -637,7 +681,7 @@ export default defineComponent({
             actionEditTaxPay,
             // gridRefAC120Detail,
             lastBalance,
-            customCountRow, sumOfIncome, sumOfExpenses, customBalance, countResolutionNormalStatus,
+            customCountRow, sumOfResolutionClassification1, sumOfResolutionClassification2, customBalance, countResolutionNormalStatus,
 
             store,
             move_column,
@@ -645,7 +689,7 @@ export default defineComponent({
             acYear,
             selectionChanged,
 
-            isModalRetrieveStatements,
+            isModalConfirmChangeData,
             handleConfirmChange,
             contentPopupRetrieveStatements,
             statusModalDelete,
@@ -656,7 +700,7 @@ export default defineComponent({
             actionModalDelete,
             actionOpenModalAdd,
 
-            onReorder, onDragChange,
+            onReorder,
             selectedMonth,
             modalHistoryAccountingProcess, modalHistoryAccountingDocuments,
             modalHistoryStatusAccountingProcess,

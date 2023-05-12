@@ -22,10 +22,10 @@ export default gql`
         bankbookId
         bankbookDetailId
         resolutionClassification
-        income
-        spending
+        # income
+        # spending
         summary
-        
+        theOrder
         accountCode
         relationCode
         fundingSource
@@ -34,29 +34,21 @@ export default gql`
         causeUsage
         goodsCount
         memo
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        statementOfGoodsItems {
-          item
-          standard
-          unit
-          quantity
-          unitPrice
-          amount
-          remark
-        }
+
+        # statementOfGoodsItems {
+          #  item
+          #  standard
+          #  unit
+          #  quantity
+          #  unitPrice
+          #  amount
+          #  remark
+          #}
         proofCount
         handwriting
         resolutionNormalStatus
         resolutionNumber
-        resolutionDate
+        # resolutionDate
         resolutionType
         causeActionDate
         amount
@@ -66,12 +58,12 @@ export default gql`
         paymentDate
         source
         writer
-        bankbook{
-          bankbookNickname
-          type
-          bankbookNumber
-          bankbookId
-        }
+        # bankbook{
+          #  bankbookNickname
+          #  type
+          #  bankbookNumber
+          #  bankbookId
+          #}
         summaryOfBankbookDetail
       }
     }

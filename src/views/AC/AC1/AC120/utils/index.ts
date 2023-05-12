@@ -49,10 +49,10 @@ export const initialStateFormData = {
   proposedDate: null,
   accountingDate: null,
   registrationDate: null,
-  bankbook: {
-    bankbookNickname: null,
-    bankbookNumber: null,
-  },
+  // bankbook: {
+  //   bankbookNickname: null,
+  //   bankbookNumber: null,
+  // },
   
   accountCode: null,
   relationCode: null,
