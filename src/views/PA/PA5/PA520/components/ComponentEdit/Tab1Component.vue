@@ -37,18 +37,18 @@
             </a-form-item>
             <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
                 <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataEdited.foreigner"
-                    layoutCustom="horizontal" />
+                    layoutCustom="horizontal" :disabled="!isDeletable"/>
             </a-form-item>
             <div class="d-flex">
                 <a-form-item label="외국인 국적" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
                     <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
-                        :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox" :required="!disabledSelectBox"/>
+                        :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox || !isDeletable" :required="!disabledSelectBox"/>
                 </a-form-item>
                 <a-form-item label="외국인 체류자격" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">
                     <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
-                        :disabled="disabledSelectBox" width="180px"  :required="!disabledSelectBox"/>
+                        :disabled="disabledSelectBox || !isDeletable" width="180px"  :required="!disabledSelectBox"/>
                 </a-form-item>
             </div>
             <a-form-item :label="labelResident" label-align="right" class="label-red">
@@ -94,7 +94,7 @@
               <select-search-edit v-model:valueInput="dataEdited.department" v-model:data="selectBoxData1" width="200px" />
             </a-form-item>
             <a-form-item label="직위" label-align="right">
-              <select-search-edit v-model:valueInput="dataEdited.responsibility" v-model:data="selectBoxData1" width="200px" />
+              <select-search-edit v-model:valueInput="dataEdited.responsibility" v-model:data="selectBoxData2" width="200px" />
             </a-form-item>
             <div class="wf-100 text-center mt-10">
                 <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated()"
@@ -124,6 +124,7 @@ export default defineComponent({
     const labelResident = ref('주민등록번호')
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
     const activeLabel = ref(false)
+    const isDeletable = ref(false)
     const disabledSelectBox = ref(true)
     const selectBoxData1 = ref()
     const selectBoxData2 = ref()
@@ -207,6 +208,7 @@ export default defineComponent({
         dataEdited.department = res.data.getEmployeeWageDaily.department
         dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
         dataDefault.value = { ...dataEdited }
+        isDeletable.value = res.data.getEmployeeWageDaily.deletable
         trigger.value = false
       }
     })
@@ -306,7 +308,7 @@ export default defineComponent({
 
         return {
             activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionUpdated, funcAddress,Message,formRefPa520Update,dataDefault,globalYear
+            actionUpdated, funcAddress,Message,formRefPa520Update,dataDefault,globalYear,isDeletable
         };
     },
 });

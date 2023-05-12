@@ -1,3 +1,4 @@
+import { companyId } from "@/helpers/commonFunction";
 interface Origindata {
   page: number;
   rows: number;
@@ -33,7 +34,6 @@ export const valueDefaultAction = {
   email: "",
 };
 
-import { companyId } from "@/helpers/commonFunction";
 export const dataActionUtils = {
   input: {
     employeeId: null,
@@ -43,9 +43,9 @@ export const dataActionUtils = {
     withholdingLocalIncomeTax: 0,
     paymentDay: 0,
     incomeId: 0,
-    employee:{
-      key:0
-    }
+    employee: {
+      key: 0,
+    },
   },
 };
 export const dataGetDetailEdit = {
@@ -94,3 +94,4 @@ export const DataAddNew = {
     incomeTypeName: "",
   },
 };
+
