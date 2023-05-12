@@ -11,8 +11,10 @@
                 </a-col>
                 <a-col :span="12">
                     <a-form-item label="지급일" class="red">
-                        <number-box width="100px" :min="1" v-model:valueInput="dataIW.paymentDay" :max="31" :isFormat="true"
-                            :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :required="true" />
+                        <date-time-box-custom ref="requiredPaymentDay" width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+                v-model:valueDate="dataIW.paymentDay" :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus"/>
+                        <!-- <number-box width="100px" :min="1" v-model:valueInput="dataIW.paymentDay" :max="31" :isFormat="true"
+                            :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :required="true" /> -->
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -223,7 +225,8 @@ import DeletePopupMidTerm from "./Popup/DeletePopupMidTerm.vue"
 import queries120 from '@/graphql/queries/PA/PA1/PA120/index';
 import { sampleDataIncomeWage } from "../utils/index"
 import { Message } from "@/configs/enum";
-
+import dayjs from "dayjs";
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         DxButton, DeductionPopup, InsurancePopup, DeletePopupTaxPay, DeletePopupMidTerm
@@ -248,7 +251,6 @@ export default defineComponent({
         const triggerConfigPayItems = ref<boolean>(true);
         const triggerConfigDeductions = ref<boolean>(true);
         const dataIW: any = ref(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
-
         const dataConfigPayItems: any = ref([]);
         const dataConfigDeductions: any = ref([]);
         const dataEmployeeWageDailies: any = ref([])
@@ -287,7 +289,9 @@ export default defineComponent({
         const subPayment = ref<number>(0)
 
         let statusMidTermSettlement = ref<boolean>(true);
-
+        let requiredPaymentDay = ref()
+        const startDate = computed(() =>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).startOf('month').toDate()));
+        const finishDate = computed(() =>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).endOf('month').toDate()));
         // ============ GRAPQL ===============================
         // get employeewage
         const { loading: loadingEmployeeWage, onResult: resEmployeeWage } = useQuery(queries.getEmployeeWages, originData, () => ({
@@ -492,6 +496,10 @@ export default defineComponent({
             store.state.common.pa110.statusClickButtonAdd = false;
             store.state.common.pa110.dataTaxPayInfo = store.state.common.pa110.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
             dataIW.value = store.state.common.pa110.dataTaxPayInfo[store.state.common.pa110.dataTaxPayInfo.length - 1]
+            dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ? 
+            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`) : 
+            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())}`)
+
             store.state.common.pa110.focusedRowKey = 'PA110'
             onResetForm()
         })
@@ -581,7 +589,8 @@ export default defineComponent({
                 }));
                 statusMidTermSettlement.value = data.midTermSettlement 
                 dataIW.value.employee.employeeId = data.employee.employeeId
-                dataIW.value.paymentDay = data.paymentDay
+                dataIW.value.paymentDay = parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(data.paymentDay)}`)
+                
                 dataIW.value.workingDays = data.workingDays
                 dataIW.value.incomeId = data.incomeId
 
@@ -715,6 +724,9 @@ export default defineComponent({
             var res = pa110FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                if (!dataIW.value.paymentDay) {
+                    requiredPaymentDay.value.validate(true)
+                }
                 store.state.common.pa110.refreshDataGridRef++
                 store.state.common.pa110.checkClickYear ? store.state.common.pa110.checkClickYear = false : '';
                 store.state.common.pa110.statusClickEditItem ? store.state.common.pa110.statusClickEditItem = false : '';
@@ -722,6 +734,10 @@ export default defineComponent({
                 store.state.common.pa110.checkClickMonth ? store.state.common.pa110.checkClickMonth = false : '';
                 store.state.common.pa110.dataRowOnActive = dataIW.value
             } else {
+                if (!dataIW.value.paymentDay) {
+                    requiredPaymentDay.value.validate(true)
+                    return
+                }
                 if (store.state.common.pa110.statusChangeFormPrice) {
                     store.state.common.pa110.refreshDataGridRef++
                     store.state.common.pa110.checkClickYear ? store.state.common.pa110.checkClickYear = false : '';
@@ -759,7 +775,7 @@ export default defineComponent({
                     };
                     if (store.state.common.pa110.statusFormAdd) {
                         variables.input.employeeId = dataIW.value.employee.employeeId,
-                        variables.input.paymentDay = dataIW.value.paymentDay,
+                        variables.input.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1,
                         actionCreated(variables)
                     } else {
                         actionUpdate(variables)
@@ -838,6 +854,10 @@ export default defineComponent({
         const onResetForm = async () => {
             countKey.value++;
             await Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
+            // dataIW.value.paymentDay = dayjs()
+            dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ? 
+            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`) : 
+            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())}`)
             // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
             // dataIW.value.employee.employeeId = null
             await dataConfigDeductions.value.map((data: any) => {
@@ -878,6 +898,7 @@ export default defineComponent({
             subPayment,
             onChangeInputDeduction, onChangeInputPayItem,
             statusMidTermSettlement,
+            startDate, finishDate, requiredPaymentDay,
         };
     },
 });

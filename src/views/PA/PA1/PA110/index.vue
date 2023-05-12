@@ -250,7 +250,7 @@
                                 <div class="custom-action">
                                     <employee-info :idEmployee="data.data.employee.employeeId"
                                         :idCardNumber="data.data.employee.residentId" :name="data.data.employee.name"
-                                        :status="data.data.employee.status" :midTermSettlement="data.data.midTermSettlement"
+                                        :status="checkShowTagStatus(data.data.employee)" :midTermSettlement="data.data.midTermSettlement"
                                         />
                                 </div>
                             </template>
@@ -293,7 +293,7 @@
                             <DxColumn alignment="left" width="30" caption="지급일" data-field="paymentDay"
                                 cell-template="paymentDay" />
                             <template #paymentDay="{ data }">
-                                <div class="text-center">{{ $filters.formatMonth(data.data.paymentDay) }}</div>
+                                <div class="text-center">{{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}</div>
                             </template>
                             <!-- <DxSummary v-if="store.state.common.pa110.dataTaxPayInfo.length">
                                 <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
@@ -468,7 +468,9 @@ export default defineComponent({
                         paymentYear: data.paymentYear,
                         paymentMonth: data.paymentMonth,
                     })
-                    arrDataPoint.value.reverse()
+                    arrDataPoint.value.sort(function(a: any, b: any) {
+                        return b.imputedMonth - a.imputedMonth;
+                    });
 
                     let dataAdd = {
                         imputedYear: data.imputedYear,
@@ -879,6 +881,17 @@ export default defineComponent({
             checkStartYearMonth(month) ? string += ' disabledBlock' : ''
             return string
         }
+        const checkShowTagStatus = (data: any) => {
+            if (data.status == 0) {
+                if (data.leavedAt?.toString().slice(0, 6) == `${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.imputedMonth)}`) {
+                    return 0
+                }
+                return 50
+            } else {
+                return data.status
+            }
+            
+        }
 
         const customTotalPay = () => {
             let sum = 0
@@ -931,6 +944,7 @@ export default defineComponent({
             statusDisabledBlock, onFocusedRowChanging,
             hoverColClick,
             checkStartYearMonth,
+            checkShowTagStatus,
             classObject, classObjectDetail,
         }
 
