@@ -136,7 +136,6 @@ export default defineComponent({
         }
         residentRef.value.instance._$textEditorInputContainer[0].classList.add('error-other');
       }
-      console.log(`output->alert`, alert.value, props.isResidentId)
       if (alert.value && !isValid?.brokenRule?.editorSpecific) {
         errorCurrentType.value = 0;
         if (msgDefault) {
@@ -205,11 +204,6 @@ export default defineComponent({
         input.selectionStart = input.selectionEnd = 0;
       }, 50);
     }
-    onMounted(() => {
-      let ele = document.getElementsByClassName('resident-ctn');
-      let eleReal = ele[ele.length - 1] as HTMLElement;
-      eleReal.style.width = widthCustom.value;
-    })
     return {
       updateValue,
       value,
