@@ -6,7 +6,7 @@
         <span >장시간 활동이 없어 접속을 종료합니다. 다시 로그인하십시요</span>
       </div>
       <a-row>
-          <a-col :span="9" :offset="paStateYear && acStateYear ? 8 : 9">
+          <a-col :span="9" :offset="9">
             <div style="display: flex;">
               <button-basic class="button-form-modal" text="로그아웃" :width="90" :type="'default'" :mode="'contained'"  @onClick="logout"/>
             </div>         
