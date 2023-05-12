@@ -1,13 +1,15 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-        :width="500">
+        :width="600">
         <a-spin :spinning="loading" size="large">
         <standard-form action="" name="edit-510">
             <div class="custom-modal-edit">
                 <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
                 <span>선택된 내역 지급일을</span>
-                <number-box :key="resetInput" width="70px" :required="true" :min="0" :max="maxDayMonth" v-model:valueInput="dayValue"
-                    :spinButtons="true" />
+                <!-- <number-box :key="resetInput" width="70px" :required="true" :min="0" :max="maxDayMonth" v-model:valueInput="dayValue"
+                    :spinButtons="true" /> -->
+                <date-time-box-custom ref="requiredDayValue" width="150px" :required="true" :startDate="startDate"
+                    :finishDate="finishDate" v-model:valueDate="dayValue" />
                 <span>일로 변경하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
@@ -47,6 +49,8 @@ import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { useStore } from 'vuex'
 import { Message } from "@/configs/enum";
 import dayjs from "dayjs";
+import { sampleDataIncomeWageDaily } from "../../utils/index"
+import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -71,8 +75,11 @@ export default defineComponent({
         let sumErrorCallApi = ref<number>(0)
         const loading = ref<boolean>(false)
         const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
-        const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).daysInMonth())
-        const resetInput = ref(1)
+        // const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).daysInMonth())
+        const startDate = computed(() => (dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).startOf('month').toDate()));
+        const finishDate = computed(() => (dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).endOf('month').toDate()));
+        const requiredDayValue = ref()
+        // const resetInput = ref(1)
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -113,6 +120,10 @@ export default defineComponent({
             // notification('error', e.message)
         })
         const onSubmit = (e: any) => {
+            if (!dayValue.value) {
+                requiredDayValue.value.validate(true)
+                return
+            }
             sumSuccessCallApi.value = 0
             sumErrorCallApi.value = 0
             arrDataError.value = []
@@ -130,7 +141,7 @@ export default defineComponent({
                 companyId: companyId,
                 processKey: processKey.value,
                 incomeId: arrData.value[0].incomeId,
-                day: dayValue.value == 0 ? maxDayMonth.value : dayValue.value
+                day: parseInt(dayValue.value?.toString().slice(6, 8)) ?? 1
             })
         }
         const closePupop = () => {
@@ -139,9 +150,12 @@ export default defineComponent({
         }
         watch(() => props.modalStatus, (value) => {
             if (value) {
-                dayValue.value = 1
-                maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).daysInMonth()
-                resetInput.value++
+                // dayValue.value = 1
+                // maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).daysInMonth()
+                // resetInput.value++
+                dayValue.value = sampleDataIncomeWageDaily.paymentDay ?
+                    parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa510.processKeyPA510.paymentMonth)}${filters.formatMonth(sampleDataIncomeWageDaily.paymentDay)}`) :
+                    parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa510.processKeyPA510.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).daysInMonth())}`)
             }
         })
 
@@ -151,7 +165,9 @@ export default defineComponent({
             dayValue,
             statusOnCallApiChange,
             arrDataError, sumSuccessCallApi, sumErrorCallApi,
-            closePupop, loading, maxDayMonth, resetInput,
+            closePupop, loading, 
+            // maxDayMonth, resetInput,
+            startDate, finishDate, requiredDayValue,
         }
     },
 })

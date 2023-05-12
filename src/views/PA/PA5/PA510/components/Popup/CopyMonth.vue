@@ -10,7 +10,7 @@
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
-            <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+            <date-time-box-custom ref="requiredPaymentDayCopy" width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
                 v-model:valueDate="paymentDayCopy" />
             <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" /> -->
         </a-form-item>
@@ -100,7 +100,7 @@ export default defineComponent({
 
         const startDate = ref(dayjs(`${paYear.value}-${month.value}`).startOf('month').toDate());
         const finishDate = ref(dayjs(`${paYear.value}-${month.value}`).endOf('month').toDate());
-
+        const requiredPaymentDayCopy = ref()
         const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
@@ -217,6 +217,10 @@ export default defineComponent({
         };
 
         const onSubmit = () => {
+            if (!paymentDayCopy.value) {
+                requiredPaymentDayCopy.value.validate(true)
+                return
+            }
             store.state.common.pa510.processKeyPA510.imputedMonth = month.value
             store.state.common.pa510.processKeyPA510.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
             store.state.common.pa510.processKeyPA510.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
@@ -266,7 +270,7 @@ export default defineComponent({
             onSubmit,
             updateValue,
             arrDataPoint,
-            startDate, finishDate,
+            startDate, finishDate, requiredPaymentDayCopy,
         }
     },
 })
