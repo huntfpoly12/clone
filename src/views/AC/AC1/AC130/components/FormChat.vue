@@ -53,66 +53,14 @@
                   </div>
                 </div>
               </div>
-
               <!-- pewview reply -->
-              <a v-if="items?.reply && Object.keys(items.reply).length"
-                class="form-chat-timeline-common form-chat-timeline-common-replyPreview" :href="`#${items.reply.key}`">
-                <div class="form-chat-timeline-avatar">
-                  <a-avatar shape="circle" size="large"
-                    :style="`background-color: ${items.userId === userId ? '#1890ff' : '#f56a00'}`">{{ items.name
-                    }}</a-avatar>
-                </div>
-                <div class="form-chat-timeline-content">
-                  <div class="form-chat-timeline-content-info">
-                    <div class="form-chat-timeline-content-info-user">
-                      <span class="form-chat-timeline-content-info-user-status">{{ items.reply.status }}</span>
-                      <div class="form-chat-timeline-content-info-user-name"
-                        :class="{ 'form-chat-timeline-content-info-user-name-login': items.reply.userId === userId }">{{
-                          items.reply.name }}
-                      </div>
-                    </div>
-                    <div class="form-chat-timeline-content-info-time">{{ formatDate(items.reply.createdAt) }}</div>
-                  </div>
-                  <div class="form-chat-timeline-content-background">
-                    <div class="form-chat-timeline-content-text">
-                      <MarkdownCustom
-                        :options="{ source: items.reply.text, linkify: true, typographer: true, highlight: true }" />
-                    </div>
-                    <div v-if="items.reply?.files && items.reply?.files.length" class="form-chat-timeline-content-files">
-                      <div class="form-chat-timeline-content-files-preview">
-                        <div class="form-chat-timeline-content-files-preview-images">
-                          <img
-                            v-for="(file, indexFile) in items.reply.files.filter((item: any) => item?.contentType.includes('image/'))"
-                            :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
-                            alt=""
-                            @click="previewImage(items.reply.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)">
-                        </div>
-                        <div
-                          v-for="(file, indexFile) in items.reply.files.filter((item: any) => !item?.contentType.includes('image/'))"
-                          :key="indexFile" class="form-chat-timeline-content-files-preview-filetext"
-                          @click="openLinkDownFile(file.url)">
-                          <FileTextOutlined style="margin-right: 10px; font-size:30px" />
-                          <div class="form-chat-timeline-content-files-preview-filetext-info">
-                            <p class="form-chat-timeline-content-files-preview-filetext-info-name">{{ file.name }}</p>
-                            <p class="form-chat-timeline-content-files-preview-filetext-info-size">({{
-                              formatFileSize(file.size) }})</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <!-- pewview reply -->
+              <PreviewReply v-if="Object.keys(!!items?.reply ? items.reply : {}).length" :dataReply="items?.reply || { }"  />
             </div>
 
             <InputChat v-else ref="inputEditChat" v-model:textChatProp="itemEditComment.text"
               :dataReply="itemEditComment?.reply" @removeReply="itemEditComment.reply = {}"
               v-model:filesUploadProps="itemEditComment.files" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
               @submitChat="submitChat" @cancel="cancelEdit(index)" />
-            <!-- <div class="form-chat-timeline-content-feedback">
-              <FeedbackEmoji @feedback="handleFeedback"/>
-            </div> -->
           </div>
 
           <div class="form-chat-timeline-common-menu">
@@ -210,13 +158,13 @@ import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage
 import { getJwtObject } from "@bankda/jangbuda-common";
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
 import StatusChat from './StatusChat.vue'
-import FeedbackEmoji from './FeedbackEmoji.vue'
 // import picker compopnent
 import EmojiPicker from 'vue3-emoji-picker'
 // import css
 import 'vue3-emoji-picker/css'
 import InputChat from './InputChat.vue'
 import MarkdownCustom from './MarkdownCustom.vue';
+import PreviewReply from './PreviewReply.vue';
 import { cloneDeep } from "lodash"
 export default defineComponent({
   props: {
@@ -244,9 +192,9 @@ export default defineComponent({
     ModalPreviewListImage,
     EmojiPicker,
     StatusChat,
-    FeedbackEmoji,
     InputChat,
-    MarkdownCustom
+    MarkdownCustom,
+    PreviewReply
   },
   setup(props, { emit }) {
     const token = ref(sessionStorage.getItem("token"))
@@ -583,10 +531,6 @@ export default defineComponent({
     const openLinkDownFile = (link: string) => {
       window.open(link, '_blank')
     }
-
-    const handleFeedback = (emoji: any) => {
-      console.log('xxxxx', emoji);
-    }
     return {
       userName,
       listChat,
@@ -614,8 +558,7 @@ export default defineComponent({
       formatFileSize,
       openLinkDownFile,
       replyComment,
-      itemCommentReply,
-      handleFeedback
+      itemCommentReply
     }
   },
 })
@@ -690,30 +633,6 @@ export default defineComponent({
       &:hover {
         .form-chat-timeline-common-menu {
           display: block;
-        }
-      }
-
-      &-replyPreview {
-        // display: block;
-        margin-top: 5px;
-        border-left: 3px solid #e7e6e6;
-        padding: 5px;
-        height: 100px;
-        overflow: hidden;
-        background-color: rgba(2, 2, 2, 0.027);
-        opacity: .5;
-        .form-chat-timeline-avatar {
-          pointer-events: none;
-        }
-
-        .form-chat-timeline-content {
-          pointer-events: none;
-          width: 100%;
-          margin-right: 0 !important;
-        }
-
-        .form-chat-timeline-content-files {
-          background-color: transparent;
         }
       }
     }
@@ -847,11 +766,6 @@ export default defineComponent({
         font-size: 15px;
         color: #333333;
       }
-      &-feedback {
-          position: absolute;
-          left: 8px;
-          bottom: -23px;
-        }
     }
 
     &-uploading {
