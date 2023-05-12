@@ -30,7 +30,7 @@
                                <div class="input-employee">
                                    <a-form-item label="제외일수(일)" label-align="right">
                                      <div class="d-flex-center">
-                                       <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  format="0,###"> </number-box>  
+                                       <number-box  width="151px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  format="0,###"> </number-box>  
                                      </div>
                                    </a-form-item> 
                                    <info-tool-tip placement="right">정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</info-tool-tip>
@@ -38,7 +38,7 @@
                                <div class="input-employee">
                                    <a-form-item label="가산일수(일)" label-align="right">
                                      <div class="d-flex-center">
-                                       <number-box  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays"  format="0,###"> </number-box>
+                                       <number-box  width="151px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays"  format="0,###"> </number-box>
                                      </div>
                                    </a-form-item> 
                                    <info-tool-tip placement="right">정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</info-tool-tip>
@@ -69,8 +69,8 @@
                        </a-col>
                    </a-row>
                    <div class="time-service">
-                     <a-tag color="red" style="margin-left: 10px;margin-right: 39px;font-size: 14px;">근속연월일</a-tag>
-                     <a-tag style="font-size: 14px;">{{dataLastRetiredYearsOfService.yearsOfService}}년/{{dataLastRetiredYearsOfService.monthsOfService}}개월/{{dataLastRetiredYearsOfService.daysOfService}}일</a-tag>
+                     <a-tag color="red" style="margin-left: 10px;margin-right: 39px;" ><span style="color: black;font-size: 14px;">근속연월일</span> </a-tag>
+                     <a-tag><span style="color: #C55A11;font-size: 14px;">{{dataLastRetiredYearsOfService.yearsOfService}}년 {{dataLastRetiredYearsOfService.monthsOfService}}개월 {{dataLastRetiredYearsOfService.daysOfService}}일</span></a-tag>
                      </div>
                    <!-- <div class="button-calculate">
                        <button-basic text="&#129155; 퇴직금 계산 &#129155;" type="default" @onClick="calculateIncomeRetirement"/> 
