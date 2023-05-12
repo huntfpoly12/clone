@@ -4,7 +4,7 @@ mutation updateEmployeeWageDaily(
     $companyId: Int!
     $imputedYear :Int!
     $employeeId :Int!
-    $input :EmployeeWageDailyUpdateInput!
+    $input :EmployeeWageDailyInput!
     ) {
         updateEmployeeWageDaily( 
             companyId : $companyId
