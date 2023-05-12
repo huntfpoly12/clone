@@ -75,7 +75,6 @@
                                         <number-box-money v-model:valueInput="store.state.common.ac120.formData.amount"
                                             width="150px" :required="true" :spinButtons="false" disabled="true" />
                                     </a-form-item>
-
                                     <a-form-item label="적요" class="red">
                                         <default-text-box v-model:valueInput="store.state.common.ac120.formData.summary"
                                             width="150px" :required="true" />
@@ -255,6 +254,7 @@ import { Message } from "@/configs/enum"
 import { companyId } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
 import UploadPreviewImage from './UploadPreviewImage.vue'
+import { async } from 'rxjs';
 export default defineComponent({
     components: {
         PopupCopyData,
@@ -282,42 +282,14 @@ export default defineComponent({
         const classification = ref<any>([4])
         const isModalChange = ref<boolean>(false)
         // =================== GRAPHQL ===================
-        // // mutation createAccountingDocument
-        // const {
-        //     mutate: mutateCreateAccountingDocument, onDone: doneCreateAccountingDocument, onError: errorCreateAccountingDocument,
-        // } = useMutation(mutations.createAccountingDocument);
-
         // mutation updateAccountingDocument
         const {
             mutate: mutateUpdateAccountingDocument, onDone: doneUpdateAccountingDocument, onError: errorUpdateAccountingDocument,
         } = useMutation(mutations.updateAccountingDocument);
 
-        // mutation unregisterAccountingDocument    ----- handwriting = true
-        // const {
-        //     mutate: mutateUnregisterAccountingDocument, onDone: doneUnregisterAccountingDocument, onError: errorUnregisterAccountingDocument,
-        // } = useMutation(mutations.unregisterAccountingDocument);
-
-        // mutation initializeTransactionDetails    ----- handwriting = false
-        // const {
-        //     mutate: mutateInitializeTransactionDetails, onDone: doneInitializeTransactionDetails, onError: errorInitializeTransactionDetails,
-        // } = useMutation(mutations.initializeTransactionDetails);
-
         const { result: resultCompany } = useQuery(queries.getMyCompany, { companyId: companyId }, () => ({ fetchPolicy: "no-cache" }));
 
         // ============== ON DONE MUTATION GRAPHQL ===============
-        // createAccountingDocument
-        // doneCreateAccountingDocument((e: any) => {
-        //     store.state.common.ac120.statusKeppRow = true
-        //     store.state.common.ac120.focusedRowKey = e.data?.createAccountingDocument?.accountingDocumentId
-        //     notification('success', Message.getMessage('COMMON', '101').message)
-        //     // store.state.common.ac120.onDoneAdd++
-        //     store.state.common.ac120.resetDataTable++
-        //     store.state.common.ac120.resetDataAccountingProcesses++
-        // })
-        // errorCreateAccountingDocument(e => {
-        //     notification('error', e.message)
-        // })
-
         // updateAccountingDocument
         doneUpdateAccountingDocument((e) => {
             store.state.common.ac120.statusKeppRow = true
@@ -429,14 +401,14 @@ export default defineComponent({
                 //     dataSubmit.input.amount = -dataSubmit.input.amount
                 // }
                 delete dataSubmit.input.resolutionClassification
-                delete dataSubmit.input.resolutionDate
+                // delete dataSubmit.input.resolutionDate
                 delete dataSubmit.input.bankbook
                 delete dataSubmit.input.bankbookId
                 delete dataSubmit.input.accountingDocumentId
                 delete dataSubmit.input.transactionDetailDate
                 delete dataSubmit.input.documentOrderByDate
-                delete dataSubmit.input.income
-                delete dataSubmit.input.spending
+                // delete dataSubmit.input.income
+                // delete dataSubmit.input.spending
                 delete dataSubmit.input.clientId
                 delete dataSubmit.input.goodsCount
                 delete dataSubmit.input.proofCount
@@ -487,14 +459,7 @@ export default defineComponent({
                     default:
                     // code block
                 }
-
-                // if (store.state.common.ac120.formData.resolutionType == 22) {
-                //     store.state.common.ac120.formData.resolutionType = 11
-                // } else if (store.state.common.ac120.formData.resolutionType == 11) {
-                //     store.state.common.ac120.formData.resolutionType = 22
-                // }
                 store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
-                // store.state.common.ac120.changeAmountDataGrid++
                 emit('changeAmountDataGrid', true)
             }
         }
@@ -505,14 +470,12 @@ export default defineComponent({
         return {
             store,
             toggleTransition,
-            // actionPopupCopyData,
             statusPopupCopyData,
             arrayRadioCheck,
             onSubmit,
             fileList,
             refFormAC120,
             actionOpenModalCopy,
-            // heightForm,
             textButton,
             textLabelInputSource,
             requiredCauseActionDate,
