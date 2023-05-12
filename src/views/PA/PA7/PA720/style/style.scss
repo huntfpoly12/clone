@@ -238,7 +238,6 @@
   }
 
   .btn-container {
-    margin-right: 5px;
     text-align: center;
     border: 1px solid rgb(164, 164, 164);
     border-radius: 5px;
@@ -247,7 +246,7 @@
     display: inline-block;
   }
   .name-mw {
-    max-width: 70px;
+    // max-width: 70px;
   }
 
   :deep .dx-command-expand.dx-datagrid-group-space {
@@ -292,5 +291,15 @@
     display: flex;
     padding: 5px 10px;
     min-height: 57px;
+  }
+  .name-w {
+    width: 70px;
+    display: inline-block;
+  }
+  
+  .name-w-1 {
+    display: inline-block;
+    text-align: center;
+    margin: 0 5px;
   }
 }
