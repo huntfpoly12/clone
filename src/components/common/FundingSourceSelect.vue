@@ -1,8 +1,8 @@
 <template>
-    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="fundingSource"
+    <DxSelectBox :id="idSelect" :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="fundingSource"
         placeholder="선택" :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="label"
         value-expr="value" :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput"
-        :name="nameInput">
+        :name="nameInput" :dropDownOptions="dropdownTop ? { position: { at: 'top', my:'bottom', of: `#${idSelect}` }} : {}">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
@@ -36,6 +36,14 @@ export default {
             type: String,
             default: '',
         },
+        dropdownTop: {
+            type: Boolean,
+            default: false,
+        },
+        idSelect : {
+            type: String,
+            default: 'FundingSourceSelect'
+        }
     },
     components: {
         DxSelectBox,
@@ -78,4 +86,8 @@ export default {
 };
 </script>
   
-<style lang="scss"></style>
+<style>
+/* .dx-popup-normal {
+    transform: translate(0, -129px) !important;
+} */
+</style>

@@ -347,9 +347,9 @@ export default defineComponent({
           () => originDataUpdate.value.input.monthlyWage,
           () => originDataUpdate.value.input.workingDays,
           () => originDataUpdate.value.input.nationalPensionSupportPercent,
-          () => originDataUpdate.value.input.employeementInsuranceSupportPercent
+          () => originDataUpdate.value.input.employeementInsuranceSupportPercent,
+          () => originDataUpdate.value.input.insuranceSupport
         ], () => {
-        
           // delete item  no need in object , Just compare item watching
           let defValue = cleanObject(JSON.parse(dataDefaultGet.value).input);
           let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
@@ -364,7 +364,7 @@ export default defineComponent({
         // clean but the field is not needed when comparing object
         const cleanObject = (object :  any) => {
           delete object.longTermCareInsuranceDeduction
-          delete object.insuranceSupport
+          //delete object.insuranceSupport
           delete object.monthlyPaycheck
           delete object.dailyWage
           delete object.deductionItems
@@ -393,8 +393,11 @@ export default defineComponent({
               let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
               let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
               let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
-              let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
-              let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
+              let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeTax
+          let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
+          console.log(Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage));
+          console.log(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage);
+              
               let arrCallApi: any = []
               arrDeduction.value?.map((val: any) => {
                   delete val.__typename
