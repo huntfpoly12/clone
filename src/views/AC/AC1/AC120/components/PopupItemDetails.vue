@@ -24,22 +24,19 @@
                     <template #item="{ data }">
                         <!-- <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem"
                             :required="true" /> -->
-                        <SelectSearchEdit v-model:valueInput="data.data.item" :data="arrSelectItem"
-                            @updateArrSelect="(value: any) => arrSelectItem = [...value]" :required="true" />
+                        <SelectSearchEdit v-model:valueInput="data.data.item" v-model:data="arrSelectItem" :required="true" />
                     </template>
                     <DxColumn caption="규격" cell-template="standard" width="140" />
                     <template #standard="{ data }">
                         <!-- <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
                             :required="true" /> -->
-                        <SelectSearchEdit v-model:valueInput="data.data.standard" :data="arrSelectStandard"
-                            @updateArrSelect="(value: any) => arrSelectStandard = [...value]" :required="true" />
+                        <SelectSearchEdit v-model:valueInput="data.data.standard" v-model:data="arrSelectStandard" :required="true" />
                     </template>
                     <DxColumn caption="단위" cell-template="unit" width="140" />
                     <template #unit="{ data }">
                         <!-- <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit"
                             :required="true" /> -->
-                        <SelectSearchEdit v-model:valueInput="data.data.unit" :data="arrSelectUnit"
-                            @updateArrSelect="(value: any) => arrSelectUnit = [...value]" :required="true" />
+                        <SelectSearchEdit v-model:valueInput="data.data.unit" v-model:data="arrSelectUnit" :required="true" />
                     </template>
                     <DxColumn caption="수량" cell-template="quantity" width="90" />
                     <template #quantity="{ data }">
