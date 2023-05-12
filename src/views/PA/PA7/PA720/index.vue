@@ -285,7 +285,7 @@ import CopyMonth from './components/Popup/CopyMonth.vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 import DxCheckBox from 'devextreme-vue/check-box';
 import { Message } from '@/configs/enum';
-import { formatMonth } from './utils/index';
+import { formatMonth, paymentDayPA720 } from './utils/index';
 import queriesHolding from '@/graphql/queries/CM/CM130/index';
 import dayjs from 'dayjs';
 export default defineComponent({

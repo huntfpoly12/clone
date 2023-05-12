@@ -1,46 +1,48 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-           :width="500">
+    >
     <standard-form action="" name="edit-510">
       <div class="custom-modal-edit">
         <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
         <span>선택된 내역 지급일을</span>
-        <number-box width="70px" :required="true" :min="1" :max="daysInMonth" v-model:valueInput="dayValue" :spinButtons="true"
-                    :isFormat="true" />
+        <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+          v-model:valueDate="paymentDayPA620" :clearable="false"/>
         <span>일로 변경하시겠습니까?</span>
       </div>
       <div class="text-align-center mt-30">
         <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
-                      @onClick="setModalVisible" />
+          @onClick="setModalVisible" />
         <button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'" :mode="'contained'"
-                      @onClick="onSubmit" />
+          @onClick="onSubmit" />
       </div>
     </standard-form>
   </a-modal>
   <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" width="350px">
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{
-        incomeIdRender.length + errorState.length }}건</p>
+      incomeIdRender.length + errorState.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
-        incomeIdRender.length }}건</p>
+      incomeIdRender.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{
-        errorState.length }} 건 </p>
+      errorState.length }} 건 </p>
     <ul>
       <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{
-          item.errorInfo.incomeTypeName }}</li>
+        item.errorInfo.incomeTypeName }}</li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
-                    @onClick="updateStatus = false" />
+        @onClick="updateStatus = false" />
     </a-row>
   </a-modal>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 import dayjs from 'dayjs';
+import { useStore } from 'vuex';
+import filters from '@/helpers/filters';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -63,14 +65,32 @@ export default defineComponent({
   components: {
   },
   setup(props, { emit }) {
-    const dayValue = ref(1)
     const setModalVisible = () => {
       emit("closePopup", [])
     };
+    const store = useStore()
+    let day = computed(() => store.getters['common/paymentDayPA620']);
+    const paymentDayPA620 = computed({
+      get() {
+        const daysInMonth = dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
+        let newDay = day.value > daysInMonth || day.value == 0 ? daysInMonth : day.value;
+        let date = `${props.processKey?.paymentYear}${filters.formatMonth(props.processKey?.paymentMonth)}${newDay}`;
+        return dayjs(date);
+      },
+      set(value) {
+        let day = +value.toString().slice(-2);
+        store.commit('common/paymentDayPA620', day);
+      },
+    });
+    const startDate = computed(() => {
+      let day = dayjs(`${props.processKey?.paymentYear}${props.processKey?.paymentMonth}`).startOf('month').toDate();
+      return day;
+    });
+    const finishDate = computed(() => {
+      let day = dayjs(`${props.processKey?.paymentYear}${props.processKey?.paymentMonth}`).endOf('month').toDate();
+      return day;
+    });
     const daysInMonth = ref(+dayjs(`${props.processKey?.paymentMonth}`).daysInMonth());
-    watch(() => props.processKey, (newVal: any) => {
-      daysInMonth.value = +dayjs(`${newVal?.paymentMonth}`).daysInMonth()
-    }, { deep: true })
     const dataUpdateLen = ref(props?.data?.length);
     const incomeIdRender = ref<any>([]);
     const succesState = ref<any>([]);
@@ -103,18 +123,18 @@ export default defineComponent({
         });
         let arr = allData.filter((item1: any) => {
           return !succesState.value.some((item2: any) => {
-              return (
-                item2.employeeId === item1.errorInfo.employeeId
-              )
-            }
+            return (
+              item2.employeeId === item1.errorInfo.employeeId
+            )
+          }
           );
         });
         errorState.value = [...errorState.value, ...arr];
         updateStatus.value = true;
-        emit("closePopup", incomeIdRender.value)
+        emit("closePopup", props.data.map((item: any) => item.errorInfo.incomeId));
       }
     })
-    onError((e: any) => {
+    onError(() => {
       dataUpdateLen.value--;
       if (dataUpdateLen.value == 0) {
         let allData = props.data;
@@ -131,26 +151,27 @@ export default defineComponent({
         });
         let arr = allData.filter((item1: any) => {
           return !succesState.value.some((item2: any) => {
-              return (
-                item2.employeeId === item1.errorInfo.employeeId
-              )
-            }
+            return (
+              item2.employeeId === item1.errorInfo.employeeId
+            )
+          }
           );
         });
         errorState.value = [...errorState.value, ...arr];
         updateStatus.value = true;
-        emit("closePopup", incomeIdRender.value)
+        emit("closePopup", props.data.map((item: any) => item.errorInfo.incomeId));
       }
     })
 
     const onSubmit = () => {
+      let day = +paymentDayPA620.value.format('YYYYMMDD').toString().slice(-2);
       const reversedArr = props.data.reverse();
       reversedArr.forEach(async (val: any) => {
         await mutate({
           companyId: companyId,
           processKey: props.processKey,
           incomeId: val.param.incomeId,
-          day: dayValue.value
+          day: day,
         })
       })
     };
@@ -160,15 +181,16 @@ export default defineComponent({
         incomeIdRender.value = [];
         succesState.value = [];
         errorState.value = [];
+        daysInMonth.value = +dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
       }
     }, { deep: true })
 
     return {
       setModalVisible,
       onSubmit,
-      dayValue,
       updateStatus, incomeIdRender, errorState,
       dataUpdateLen, succesState, daysInMonth,
+      startDate, finishDate,paymentDayPA620,
     }
   },
 })
