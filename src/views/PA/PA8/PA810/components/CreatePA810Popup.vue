@@ -82,9 +82,9 @@
           <a-col :span="col.item">
             <DxField label="사업장관리번호">
               <default-text-box
-                v-model:valueInput="infoCompany.adding"
+                v-model:valueInput="manageId"
                 :disabled="true"
-                placeholder="한글,영문(대문자) 입력 가능"
+                placeholder=""
               />
             </DxField>
           </a-col>
@@ -634,6 +634,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    manageId: {
+      type: String,
+      required: true
+    }
   },
   setup(props, {emit}) {
     const store = useStore();
