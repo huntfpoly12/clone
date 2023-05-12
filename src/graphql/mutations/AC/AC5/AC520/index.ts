@@ -1,8 +1,19 @@
-export * from './changeBudgetStatus';
-export * from './createBudget';
-export * from './deleteBudget';
-export * from './saveEmployeePayTable';
-export * from './sendBudgetReportEmail';
-export * from './sendBudgetSummaryTableReportEmail';
-export * from './sendEmployeePayTableReportEmail';
-export * from './updateBudget';
+import changeBudgetStatus from './changeBudgetStatus';
+import createBudget from './createBudget';
+import deleteBudget from './deleteBudget';
+import saveEmployeePayTable from './saveEmployeePayTable';
+import sendBudgetReportEmail from './sendBudgetReportEmail';
+import sendBudgetSummaryTableReportEmail from './sendBudgetSummaryTableReportEmail';
+import sendEmployeePayTableReportEmail from './sendEmployeePayTableReportEmail';
+import updateBudget from './updateBudget';
+
+export default  {
+  createBudget,
+  deleteBudget,
+  saveEmployeePayTable,
+  sendBudgetReportEmail,
+  sendBudgetSummaryTableReportEmail,
+  sendEmployeePayTableReportEmail,
+  changeBudgetStatus,
+  updateBudget
+}

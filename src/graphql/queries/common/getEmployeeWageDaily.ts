@@ -27,22 +27,13 @@ export default gql`
       withholdingIncomeTax
       withholdingLocalIncomeTax
       withholdingRuralSpecialTax
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
-      ip
-      active
       residentId
-      joinedAt
-      leavedAt
       retirementIncome
-      nationalPensionDeduction
       healthInsuranceDeduction
       longTermCareInsuranceDeduction
       employeementInsuranceDeduction
       insuranceSupport
-      nationalPensionSupportPercent
+      nationalPensionDeduction
       employeementInsuranceSupportPercent
       weeklyWorkingHours
       monthlyPaycheck
