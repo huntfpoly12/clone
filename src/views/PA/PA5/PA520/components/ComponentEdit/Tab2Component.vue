@@ -146,6 +146,7 @@ import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
 import { Formula } from "@bankda/jangbuda-common";
 import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -277,7 +278,7 @@ export default defineComponent({
             trigger.value = true
             refectchDetail()
             emit('closePopup', false)
-            notification('success', '업그레이드가 완료되었습니다!')
+            notification('success', Message.getCommonMessage('106').message)
             if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
         })
         // ================== WATCH ====================================
@@ -394,10 +395,7 @@ export default defineComponent({
               let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
               let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
               let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeTax
-          let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
-          console.log(Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage));
-          console.log(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage);
-              
+              let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
               let arrCallApi: any = []
               arrDeduction.value?.map((val: any) => {
                   delete val.__typename
