@@ -1,29 +1,34 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-        :width="500">
+        :width="600">
         <a-spin :spinning="loading" size="large">
-        <standard-form action="" name="edit-510">
-            <div class="custom-modal-edit">
-                <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
-                <span>선택된 내역 지급일을</span>
-                <number-box :key="resetInput" width="70px" :required="true" :min="0" :max="maxDayMonth" v-model:valueInput="dayValue"
-                    :spinButtons="true" />
-                <span>일로 변경하시겠습니까?</span>
-            </div>
-            <div class="text-align-center mt-30">
-                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
-                    @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'"
-                    :mode="'contained'" @onClick="onSubmit" />
-            </div>
-        </standard-form>
+            <standard-form action="" name="edit-510">
+                <div class="custom-modal-edit">
+                    <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
+                    <span>선택된 내역 지급일을</span>
+                    <!-- <number-box :key="resetInput" width="70px" :required="true" :min="0" :max="maxDayMonth" v-model:valueInput="dayValue"
+                    :spinButtons="true" /> -->
+                    <date-time-box-custom ref="requiredDayValue" width="150px" :required="true" :startDate="startDate"
+                        :finishDate="finishDate" v-model:valueDate="dayValue" />
+                    <span>일로 변경하시겠습니까?</span>
+                </div>
+                <div class="text-align-center mt-30">
+                    <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+                        @onClick="setModalVisible" />
+                    <button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'"
+                        :mode="'contained'" @onClick="onSubmit" />
+                </div>
+            </standard-form>
         </a-spin>
     </a-modal>
     <a-modal v-model:visible="statusOnCallApiChange" okText="확인" :closable="false" :footer="null">
         <h3 style="text-align: center;">지급일변경 결과</h3>
-        <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ data.length }}건</p>
-        <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{ sumSuccessCallApi }}건</p>
-        <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{ sumErrorCallApi }} 건 </p>
+        <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ data.length }}건
+        </p>
+        <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
+            sumSuccessCallApi }}건</p>
+        <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{
+            sumErrorCallApi }} 건 </p>
         <ul>
             <li v-for="(item) in arrDataError" :key="item.employeeId" style="margin: 5px 0;">
                 <employee-info :idEmployee="item.employee.employeeId" :name="item.employee.name"
@@ -46,7 +51,9 @@ import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import { useStore } from 'vuex'
 import { Message } from "@/configs/enum";
+import { sampleDataIncomeWage } from "../../utils/index"
 import dayjs from "dayjs";
+import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -70,9 +77,11 @@ export default defineComponent({
         let sumSuccessCallApi = ref<number>(0)
         let sumErrorCallApi = ref<number>(0)
         const loading = ref<boolean>(false)
+        const requiredDayValue = ref()
         const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
-        const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())
-        const resetInput = ref(1)
+        // const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())
+        const startDate = computed(() => (dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).startOf('month').toDate()));
+        const finishDate = computed(() => (dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).endOf('month').toDate()));
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -94,7 +103,7 @@ export default defineComponent({
             }
             // notification('success', Message.getMessage('COMMON', '106').message)
             // emit("closePopup", false)
-            
+
             // store.state.common.pa110.loadingFormData++
         })
         onError((e: any) => {
@@ -112,6 +121,10 @@ export default defineComponent({
             }
         })
         const onSubmit = (e: any) => {
+            if (!dayValue.value) {
+                requiredDayValue.value.validate(true)
+                return
+            }
             sumSuccessCallApi.value = 0
             sumErrorCallApi.value = 0
             arrDataError.value = []
@@ -127,7 +140,7 @@ export default defineComponent({
                 companyId: companyId,
                 processKey: processKey.value,
                 incomeId: arrData.value[0].incomeId,
-                day: dayValue.value == 0 ? maxDayMonth.value : dayValue.value
+                day: parseInt(dayValue.value?.toString().slice(6, 8)) ?? 1
             })
         }
         const closePupop = () => {
@@ -136,9 +149,13 @@ export default defineComponent({
         }
         watch(() => props.modalStatus, (value) => {
             if (value) {
-                dayValue.value = 1
-                maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth()
-                resetInput.value++
+                // dayValue.value = parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}01}`)
+                dayValue.value = sampleDataIncomeWage.paymentDay ?
+                    parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`) :
+                    parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())}`)
+                // dayValue.value = 1
+                // maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth()
+                // resetInput.value++
             }
         })
 
@@ -148,7 +165,9 @@ export default defineComponent({
             dayValue,
             statusOnCallApiChange,
             arrDataError, sumSuccessCallApi, sumErrorCallApi,
-            closePupop, loading, maxDayMonth, resetInput,
+            closePupop, loading,
+            // maxDayMonth, 
+            startDate, finishDate, requiredDayValue,
         }
     },
 })
@@ -182,5 +201,4 @@ export default defineComponent({
 
 .button-form-modal {
     margin: 0px 5px;
-}
-</style>
+}</style>

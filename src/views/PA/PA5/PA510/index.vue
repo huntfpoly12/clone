@@ -294,7 +294,7 @@
                         </template>
                         <DxColumn caption="지급일" width="60px" cell-template="paymentDay" />
                         <template #paymentDay="{ data }">
-                            {{ $filters.formatMonth(data.data.paymentDay) }}
+                            {{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
                         </template>
                         <!-- <DxSummary v-if="store.state.common.pa510.dataTaxPayInfo.length">
                             <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />

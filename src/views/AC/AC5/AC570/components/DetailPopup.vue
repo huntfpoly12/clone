@@ -181,6 +181,7 @@ export default defineComponent({
                             transitionCode: formState.value.transitionCode,
                             transitionBudgetAmount: formState.value.transitionBudgetAmount ? formState.value.transitionBudgetAmount : 0,
                             transitionExpenditureAmount: formState.value.transitionExpenditureAmount ? formState.value.transitionExpenditureAmount : 0,
+                            transitionCause: formState.value.transitionCause
                             // ...formState.value
                         }
                     })

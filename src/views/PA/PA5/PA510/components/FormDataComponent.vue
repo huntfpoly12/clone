@@ -11,10 +11,12 @@
                                 @onChange="onChange" :activeType20="false" width="270px" />
                         </a-form-item>
                         <a-form-item label="지급일" class="red">
-                            <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay"
+                            <!-- <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay"
                                 :max="31" :spinButtons="true"
                                 :disabled="!store.state.common.pa510.statusFormAdd || store.state.common.pa510.statusDisabledStatus"
-                                :isFormat="true" width="270px" />
+                                :isFormat="true" width="270px" /> -->
+                                <date-time-box-custom ref="requiredPaymentDay" width="270px" :required="true" :startDate="startDate" :finishDate="finishDate"
+                v-model:valueDate="dataIncomeWageDaily.paymentDay" :disabled="!store.state.common.pa510.statusFormAdd || store.state.common.pa510.statusDisabledStatus"/>
                         </a-form-item>
                     </a-col>
                     <a-col :span="10">
@@ -171,7 +173,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import query520 from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
-import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
+import { companyId, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
@@ -180,6 +182,7 @@ import filters from "@/helpers/filters";
 import { Message } from "@/configs/enum"
 import { Formula } from "@bankda/jangbuda-common";
 import ButtonTooltipError from "@/components/common/ButtonTooltipError.vue";
+import dayjs from "dayjs";
 export default defineComponent({
     components: {
         DxButton,
@@ -241,6 +244,10 @@ export default defineComponent({
             incomeId: store.state.common.pa510.incomeId,
             processKey: store.state.common.pa510.processKeyPA510
         }
+
+        let requiredPaymentDay = ref()
+        const startDate = computed(() =>(dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).startOf('month').toDate()));
+        const finishDate = computed(() =>(dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).endOf('month').toDate()));
 
         // ============ GRAPQL ===============================
         const {
@@ -411,6 +418,7 @@ export default defineComponent({
             employeementInsuranceSupportPercent.value = data.employee.employeementInsuranceSupportPercent
 
             await (dataIncomeWageDaily.value = data)
+            dataIncomeWageDaily.value.paymentDay = parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa510.processKeyPA510.paymentMonth)}${filters.formatMonth(data.paymentDay)}`)
             store.state.common.pa510.dataRowOld = { ...data }
 
             arrDeduction.value?.map((row: any) => {
@@ -591,6 +599,9 @@ export default defineComponent({
             store.state.common.pa510.statusClickButtonAdd = false;
             store.state.common.pa510.dataTaxPayInfo = store.state.common.pa510.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
             dataIncomeWageDaily.value = store.state.common.pa510.dataTaxPayInfo[store.state.common.pa510.dataTaxPayInfo?.length - 1]
+            dataIncomeWageDaily.value.paymentDay = sampleDataIncomeWageDaily.paymentDay ? 
+            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa510.processKeyPA510.paymentMonth)}${filters.formatMonth(sampleDataIncomeWageDaily.paymentDay)}`) : 
+            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa510.processKeyPA510.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).daysInMonth())}`)
             store.state.common.pa510.focusedRowKey = 'PA510'
             store.state.common.pa510.statusRowAdd = false;
             onResetForm()
@@ -702,6 +713,9 @@ export default defineComponent({
             var res = pa510FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                if (!dataIncomeWageDaily.value.paymentDay) {
+                    requiredPaymentDay.value.validate(true)
+                }
                 store.state.common.pa510.refreshDataGridRef++
                 store.state.common.pa510.checkClickYear ? store.state.common.pa510.checkClickYear = false : '';
                 store.state.common.pa510.statusClickEditItem ? store.state.common.pa510.statusClickEditItem = false : '';
@@ -709,6 +723,10 @@ export default defineComponent({
                 store.state.common.pa510.checkClickMonth ? store.state.common.pa510.checkClickMonth = false : '';
                 store.state.common.pa510.dataRowOnActive = dataIncomeWageDaily.value
             } else {
+                if (!dataIncomeWageDaily.value.paymentDay) {
+                    requiredPaymentDay.value.validate(true)
+                    return
+                }
                 if (store.state.common.pa510.statusChangeFormPrice) {
                     store.state.common.pa510.refreshDataGridRef++
                     store.state.common.pa510.dataRowOnActive = dataIncomeWageDaily.value
@@ -736,7 +754,7 @@ export default defineComponent({
                             companyId: companyId,
                             processKey: { ...processKey.value },
                             input: {
-                                paymentDay: dataIncomeWageDaily.value.paymentDay,
+                                paymentDay: parseInt(dataIncomeWageDaily.value.paymentDay?.toString().slice(6, 8)) ?? 1,
                                 employeeId: dataIncomeWageDaily.value.employee.employeeId,
                                 ...input
                             },
@@ -756,6 +774,9 @@ export default defineComponent({
         const onResetForm = async () => {
             countKey.value++;
             await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
+            dataIncomeWageDaily.value.paymentDay = sampleDataIncomeWageDaily.paymentDay ? 
+            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa510.processKeyPA510.paymentMonth)}${filters.formatMonth(sampleDataIncomeWageDaily.paymentDay)}`) : 
+            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa510.processKeyPA510.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`).daysInMonth())}`)
             // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
             await arrDeduction.value?.map((data: any) => {
                 data.price = 0
@@ -798,7 +819,8 @@ export default defineComponent({
             countKey,
             submitForm, onSubmitForm,
             showErrorButton,
-            showDailyWage, showMonthlyWage, onChangeInputDeduction, onChangePrice
+            showDailyWage, showMonthlyWage, onChangeInputDeduction, onChangePrice,
+            startDate, finishDate, requiredPaymentDay,
         };
     },
 });
