@@ -113,7 +113,7 @@ export default {
         el.reset()
         valueBinding.value = keywordSlect.value.trim()
         emit("update:valueInput", keywordSlect.value.trim());
-        emit("updateArrSelect", [...arrData.value]);
+        emit("update:data", [...arrData.value]);
       }
       nextTick(() => {
         el.focus()

@@ -715,7 +715,7 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Select Search Edit</div>
                         <div class="dx-field-value">
-                            <SelectSearchEdit v-model:valueInput="vualueSelectSearchEdit" :data="arrSelectSearchEdit" @updateArrSelect="(value) => arrSelectSearchEdit = [...value]"/>
+                            <SelectSearchEdit v-model:valueInput="vualueSelectSearchEdit" v-model:data="arrSelectSearchEdit" />
                         </div>
                     </div>
                 </td>
@@ -740,8 +740,7 @@
                     <pre class="mycode">
                 &lt;select-search-edit 
                 v-model:valueInput="vualueSelectSearchEdit" 
-                :data="arrSelectSearchEdit" 
-                @updateArrSelect="(value) => arrSelectSearchEdit = [...value]" /&gt;
+                v-model:data="arrSelectSearchEdit"  /&gt;
         </pre>
                 </td>
             </tr>
