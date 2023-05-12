@@ -74,7 +74,7 @@
                       <span style="color: #C55A11;font-size: 14px;text-align: center;">
                         {{!Number.isNaN(dataLastRetiredYearsOfService.yearsOfService) ? dataLastRetiredYearsOfService.yearsOfService : 0}}년  
                         {{!Number.isNaN(dataLastRetiredYearsOfService.monthsOfService) ? dataLastRetiredYearsOfService.monthsOfService : 0}}개월  
-                        {{ !Number.isNaN(dataLastRetiredYearsOfService.daysOfService) ?dataLastRetiredYearsOfService.daysOfService : 0 }}일 
+                        {{!Number.isNaN(dataLastRetiredYearsOfService.daysOfService) ?dataLastRetiredYearsOfService.daysOfService : 0 }}일 
                       </span>
                     </a-tag>
                      </div>
