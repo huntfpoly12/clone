@@ -459,7 +459,6 @@ export default defineComponent({
     // trigger
     let triggerAccountingProcesses = ref<boolean>(true)
     let triggerBankbookDetails = ref<boolean>(true)
-    // let triggerTransactionDetails = ref<boolean>(false)
 
     const refDxDataGridMainAc110 = ref()
     let listAccountingProcesses = ref<any>([])
@@ -624,8 +623,6 @@ export default defineComponent({
     doneInitializeTransactionDetails((e) => {
       triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
-      /////////////////////////////////////////////////////////111111111111
-      // triggerTransactionDetails.value = true
     })
     errorInitializeTransactionDetails(e => {
       notification('error', e.message)
@@ -689,8 +686,6 @@ export default defineComponent({
         }else {
           getTransactionDetails(value.getBankbookDetails.find((item: any) => item.bankbookDetailId === rowKeyfocused.value))
         }
-        /////////////////////////222222222222222222
-        // triggerTransactionDetails.value = true
       } else {
         dataSource.value = []
         dataSourceTransactionDetails.value = {}
@@ -703,21 +698,10 @@ export default defineComponent({
       triggerBankbookDetails.value = false
     })
 
-    // watch(resTransactionDetails, (value) => {
-    //   if (!!value.getTransactionDetails && value.getTransactionDetails) {
-    //     dataSourceTransactionDetails.value = value.getTransactionDetails
-    //     dataSourceTransactionDetails.value.transactionDetails = value.getTransactionDetails.transactionDetails.map((item: any) => (
-    //       { ...item, summary: item.summary[item.summary.length - 1] === '중' ? item.summary : `${item.summary} 중` }
-    //     ))
-    //     listTransactionDetailsOrigin.value = cloneDeep(dataSourceTransactionDetails.value.transactionDetails)
-    //   }
-    //   triggerTransactionDetails.value = false
-    // })
-
     const getTransactionDetails = (value: any) => {
       if (!!value && value) {
-        dataSourceTransactionDetails.value = value
-        dataSourceTransactionDetails.value.transactionDetails = value.transactionDetails.map((item: any) => (
+        dataSourceTransactionDetails.value = cloneDeep(value)
+        dataSourceTransactionDetails.value.transactionDetails = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => (
           { ...item, summary: item.summary[item.summary.length - 1] === '중' ? item.summary : `${item.summary} 중` }
         ))
         listTransactionDetailsOrigin.value = cloneDeep(dataSourceTransactionDetails.value.transactionDetails)
@@ -797,8 +781,6 @@ export default defineComponent({
         rowKeyfocused.value = item.bankbookDetailId
         payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
         payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
-        /////////////////////33333333333333333
-        // triggerTransactionDetails.value = true
         getTransactionDetails(dataSource.value.find((item: any) => item.bankbookDetailId === rowKeyfocused.value))
       } else {
         itemChange.value = { ...item }
@@ -1131,8 +1113,6 @@ export default defineComponent({
           rowKeyfocused.value = itemChange.value.bankbookDetailId
           payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
           payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
-          /////////////////////4444444444444444444
-          // triggerTransactionDetails.value = true
           getTransactionDetails(dataSource.value.find((item: any) => item.bankbookDetailId === rowKeyfocused.value))
         }
         itemChange.value = null

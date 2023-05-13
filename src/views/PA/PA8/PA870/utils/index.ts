@@ -6,8 +6,8 @@ const INITIAL_FORM_PA870 = {
   employeementInsuranceReport: true,
   industrialAccidentInsuranceReport: true,
 
-  employeementInsuranceValidReport: true,
-  industrialAccidentInsuranceValidReport: true,
+  employeementInsuranceValidReport: false,
+  industrialAccidentInsuranceValidReport: false,
 
   companyName: '',
   adding: '',
@@ -78,6 +78,7 @@ const INITIAL_FORM_PA870 = {
   industrialAccidentInsuranceMainWorkplace: true,
   industrialAccidentInsuranceMainWorkplaceBizNumber: '',
   industrialAccidentMainWorkplaceManageNumber: '',
+  industrialAccidentInsuranceBusinessTypeCode: '',
 
   reportDate:+dayjs().format('YYYYMMDD'),
 }
