@@ -2,8 +2,8 @@
   <div class="item-wrap">
     <div class="item-wrap-title">
       <span>{{ title }}</span> 
-      <info-tool-tip v-if="isTooltip">
-        {{ textTooltip }}
+      <info-tool-tip v-if="tooltip.length">
+        {{ tooltip }}
       </info-tool-tip>
     </div>
     <slot />
@@ -20,11 +20,7 @@ export default defineComponent({
       default: '',
       required: true
     },
-    isTooltip: {
-      type: Boolean,
-      default: false
-    },
-    textTooltip: {
+    tooltip: {
       type: String,
       default: '',
     }

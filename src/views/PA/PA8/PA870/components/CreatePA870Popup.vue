@@ -20,7 +20,7 @@
               </a-col>
             </a-row>
           </box-title>
-          <box-title title="고용, 산재보험 가입신청" isTooltip textTooltip="해당사항이 있는 경우만 신청해 주세요.">
+          <box-title title="고용, 산재보험 가입신청" tooltip="해당사항이 있는 경우만 신청해 주세요.">
             <a-row class="px-10">
               <a-col span="6">
                 <checkbox-basic v-model:value-checkbox="formState.employeementInsuranceValidReport" label="고용보험가입" />
