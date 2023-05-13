@@ -64,7 +64,7 @@ export const initialStateFormData = {
   statementOfGoodsItems: null,
   // goodsCount: null,
 
-  // accountingDocumentId: 'AC120',
+  accountingDocumentId: null,
 }
 export const dataDemoMain = [
   {

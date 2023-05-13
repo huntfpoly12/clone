@@ -138,7 +138,7 @@ export default defineComponent({
         watch(() => store.state.common.ac120.resetDataAccountingDocumentProofs, (value) => {
             if (store.state.common.ac120.formData.accountingDocumentId && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
                 statusDisabledImg.value = false;
-                dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.transactionDetailDate
+                dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
                 dataGetAccountingDocumentProofs.value.accountingDocumentId = store.state.common.ac120.formData.accountingDocumentId
                 triggerAccountingDocumentProofs.value = true;
             } else if (store.state.common.ac120.formData.accountingDocumentId == 'AC120') {

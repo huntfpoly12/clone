@@ -35,15 +35,15 @@ export default gql`
         goodsCount
         memo
 
-        # statementOfGoodsItems {
-          #  item
-          #  standard
-          #  unit
-          #  quantity
-          #  unitPrice
-          #  amount
-          #  remark
-          #}
+        statementOfGoodsItems {
+          item
+          standard
+          unit
+          quantity
+          unitPrice
+          amount
+          remark
+        }
         proofCount
         handwriting
         resolutionNormalStatus
@@ -59,11 +59,11 @@ export default gql`
         source
         writer
         # bankbook{
-          #  bankbookNickname
-          #  type
-          #  bankbookNumber
-          #  bankbookId
-          #}
+        #  bankbookNickname
+        #  type
+        #  bankbookNumber
+        #  bankbookId
+        #}
         summaryOfBankbookDetail
       }
     }
