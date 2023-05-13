@@ -5,8 +5,7 @@
             <a-spin tip="Loading..." :spinning="loadingGetAccountingProcesses">
                 <div class="grid">
                     <div v-for="(month, index) in 12" :key="index" class="items"
-                        :class="{ 'items-active': store.state.common.ac120.monthSelected === month }"
-                        @click="selectedMonth(month)">
+                        :class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
                         <colorful-badge
                             :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
                             :year="acYear" :month="month" />
@@ -16,8 +15,8 @@
             <div class="flex">
                 <div class="action">
                     <ProcessStatus
-                        v-if="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status || 0"
-                        :valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status || 0"
+                        v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+                        :valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
                         :disabled="true" />
                     <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
                     </button-basic>
@@ -34,10 +33,12 @@
                             </div>
                         </div>
                         <div style="width: 200px; margin-left: 30px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfResolutionClassification1()"></div>
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                                v-html="sumOfResolutionClassification1()"></div>
                         </div>
                         <div style="width: 200px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfResolutionClassification2()">
+                            <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                                v-html="sumOfResolutionClassification2()">
                             </div>
                         </div>
                         <div style="width: 300px;">
@@ -106,8 +107,8 @@
                         v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
                         @selection-changed="selectionChanged">
                         <DxRowDragging
-                            v-if="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status == 10"
-                            :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"/>
+                            v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10"
+                            :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder" />
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxPaging :enabled="false" />
@@ -138,12 +139,12 @@
 
                         <DxColumn caption="수입액" cell-template="amountCustom1" width="75" />
                         <template #amountCustom1="{ data }">
-                            {{  data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
+                            {{ data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
                         </template>
 
                         <DxColumn caption="지출액" cell-template="amountCustom2" width="75" />
                         <template #amountCustom2="{ data }">
-                            {{  data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
+                            {{ data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
                         </template>
 
                         <DxColumn caption="잔액" data-field="balance" width="75" format="fixedPoint" />
@@ -214,11 +215,12 @@
         :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
         :cancelText="'아니요'" @checkConfirm="handleConfirmChange" /> -->
     <PopupMessage :modalStatus="isModalConfirmChangeData" @closePopup="isModalConfirmChangeData = false"
-      :typeModal="'confirm'" title="" content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니요"
-      @checkConfirm="handleConfirmChange" />
+        :typeModal="'confirm'" title="" content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니요"
+        @checkConfirm="handleConfirmChange" />
     <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows='dataRows' />
 
-    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" :theOrder="totalCount" />
+    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" :theOrder="totalCount"
+        :monthSelected="monthSelected" />
 
 
     <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false" />
@@ -299,6 +301,7 @@ export default defineComponent({
         const dataRows: any = ref([])
         let keySelect = ref()
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
+        const monthSelected = ref(dayjs().month() + 1)
         const lastBalance = ref<number>(0)
         const dataGetAccountingProcesses = ref<any>([])
         const dataSource: any = ref<DataSource>();
@@ -318,8 +321,11 @@ export default defineComponent({
             year: acYear.value,
             month: dayjs().month() + 1
         })
-        let formDataOld = reactive({ ...initialStateFormData })
-        let formDataClickRow = reactive({ ...initialStateFormData })
+        let formDataOld: any = reactive({ ...initialStateFormData })
+        let idRowFocusedRowNew = ref()
+        let statusClickAdd = ref<boolean>(false)
+        // let statusClickMonth = ref<boolean>(false)
+        let monthNewClick = ref<number>(0)
 
         // =================== GRAPHQL ===================
         // query getAccountingProcesses
@@ -360,7 +366,7 @@ export default defineComponent({
 
         // const dataSourceItems = ref([])
 
-        
+
 
         // ================== WATCH ================
         // 1. getAccountingProcesses
@@ -394,26 +400,44 @@ export default defineComponent({
             triggerGetAccountingProcesses.value = true
         })
 
-        // watch(() => store.state.common.ac120.onDeleteRowAdd, (value) => {
-        //     deleteRowAdd()
-        // })
-
-        watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
-
+        watch(() => store.state.common.ac120.clearCheckCkick, (value) => {
+            monthNewClick.value = 0
+            idRowFocusedRowNew.value = null
+            statusClickAdd.value = false
         })
+
+        // watch(() => store.state.common.ac120.formData.resolutionClassification, (newValue, oldValue) => {
+
+        // })
 
         // ================ FUNCTION ============================================
         const getOneRowData = () => {
+            // if (monthNewClick.value) { // nếu trước đó ấn tháng mới
+            //     monthSelected.value = monthNewClick.value
+            //     dataQueryGetAccountingDocuments.value.month = monthNewClick.value
+            //     triggerGetAccountingDocuments.value = true;
+            //     store.state.common.ac120.statusKeppRow = false;
+            //     monthNewClick.value = 0
+            //     return
+            // }
             if (dataApi.value.length > 0) { // if table has data source
                 gridRefAC120.value?.instance.deselectAll()
-                if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
+                if (idRowFocusedRowNew.value) { // nếu trước đó click row mới
+                    store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == idRowFocusedRowNew.value)
+                    store.state.common.ac120.selectedRowKeys = [idRowFocusedRowNew.value]
+                    idRowFocusedRowNew.value = null
+                    store.state.common.ac120.statusKeppRow = false;
+                }
+                else if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
+                    console.log(111122323);
+
                     store.state.common.ac120.statusKeppRow = false;
                     store.state.common.ac120.selectedRowKeys = [store.state.common.ac120.focusedRowKey]
                     // Object.assign(store.state.common.ac120.formData, dataApi.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey))
                     store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey)
                     // Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
                 } else { // lấy row đầu tiên
-                    store.state.common.ac120.focusedRowKey = dataApi.value[0]?.accountingDocumentId
+                    // store.state.common.ac120.focusedRowKey = dataApi.value[0]?.accountingDocumentId
                     store.state.common.ac120.selectedRowKeys = [dataApi.value[0]?.accountingDocumentId]
                     // Object.assign(store.state.common.ac120.formData, dataApi.value[0])
                     store.state.common.ac120.formData = dataApi.value[0]
@@ -421,15 +445,21 @@ export default defineComponent({
                 // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
             } else {
                 dataRows.value = []
-                store.state.common.ac120.focusedRowKey = null
+                // store.state.common.ac120.focusedRowKey = null
                 // store.state.common.ac120.statusFormAdd = true
                 Object.assign(store.state.common.ac120.formData, initialStateFormData)
                 store.state.common.ac120.keyRefreshForm++
             }
+            store.state.common.ac120.focusedRowKey = store.state.common.ac120.formData.accountingDocumentId
             formDataOld = { ...store.state.common.ac120.formData }
             store.state.common.ac120.statusFormAdd = false
-            store.state.common.ac120.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
+            // store.state.common.ac120.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
             store.state.common.ac120.resetDataAccountingDocumentProofs++
+
+            if (statusClickAdd.value) { // nếu trước đó ấn nút add
+                statusClickAdd.value = false;
+                statusModalAdd.value = true; // mở moldal add
+            }
         }
 
         // check box selection row data source
@@ -469,16 +499,19 @@ export default defineComponent({
                 if (e.rows[e.newRowIndex]?.data.accountingDocumentId == store.state.common.ac120.focusedRowKey) { // nếu click row đang active
                     return
                 }
-                
-                if (!isEqual(store.state.common.ac120.formData, formDataOld)) {
+                let formData = { ...store.state.common.ac120.formData }
+                let formDataOldCheck: any = { ...formDataOld }
+                delete (formDataOldCheck.proofCount)
+                delete (formData.proofCount)
+                if (!isEqual(formDataOldCheck, formData)) {
                     isModalConfirmChangeData.value = true;
                     e.cancel = true;
-                    // formDataClickRow = 
+                    idRowFocusedRowNew.value = e.rows[e.newRowIndex]?.data.accountingDocumentId
                 } else {
                     formDataOld = { ...e.rows[e.newRowIndex]?.data }
                     store.state.common.ac120.formData = e.rows[e.newRowIndex]?.data
                     // Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
-                    store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
+                    // store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
                     // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
                     store.state.common.ac120.selectedRowKeys = [e.rows[e.newRowIndex]?.data.accountingDocumentId]
                     store.state.common.ac120.keyRefreshForm++
@@ -487,16 +520,8 @@ export default defineComponent({
                     //     deleteRowAdd()
                     // }
                 }
-                
             }
         };
-
-        // remove row add
-        // const deleteRowAdd = async () => {
-        //     await dataSource.value.pop()
-        //     await gridRefAC120.value?.instance.refresh()
-        //     await getOneRowData()
-        // }
 
         const actionModalDelete = (value: any) => {
             if (dataRows.value?.length) {
@@ -507,19 +532,61 @@ export default defineComponent({
         }
 
         const actionOpenModalAdd = async (value: any) => {
-            statusModalAdd.value = true
+            let formData = { ...store.state.common.ac120.formData }
+            let formDataOldCheck: any = { ...formDataOld }
+            delete (formDataOldCheck.proofCount)
+            delete (formData.proofCount)
+            if (!isEqual(formDataOldCheck, formData)) {
+                isModalConfirmChangeData.value = true;
+                statusClickAdd.value = true;
+            } else {
+                statusModalAdd.value = true
+            }
         }
 
         const actionPopupItemDetail = (data: any) => {
             statusModalItemDetail.value = true
         }
 
-        const handleConfirmChange = (status: boolean) => { 
+        const handleConfirmChange = (status: boolean) => {
             if (status) {
                 store.state.common.ac120.onSubmitFormUpdate++
+                if (monthNewClick.value) { // nếu trước đó ấn tháng mới
+                    monthSelected.value = monthNewClick.value
+                    dataQueryGetAccountingDocuments.value.month = monthNewClick.value
+                    triggerGetAccountingDocuments.value = true;
+                    store.state.common.ac120.statusKeppRow = false;
+                    monthNewClick.value = 0
+                }
             } else {
-                store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey)
+                // storeDataSource.value
+                //     .update(formDataOld.accountingDocumentId, formDataOld)
+                //     .then(() => {
+                //         store.state.common.ac120.focusedRowKey = idRowFocusedRow.value || 0;
+                //         storeDataSource.value.byKey(idRowFocusedRow.value).then((value: any) => {
+                //         Object.assign(store.state.common.ac120.formData, value);
+                //         });
+                //         gridRefAC120.value?.instance.refresh();
+                //     });
+                if (monthNewClick.value) { // nếu trước đó ấn tháng mới
+                    monthSelected.value = monthNewClick.value
+                    dataQueryGetAccountingDocuments.value.month = monthNewClick.value
+                    triggerGetAccountingDocuments.value = true;
+                    monthNewClick.value = 0
+                    return
+                }
+                if (statusClickAdd.value) { // nếu trước đó ấn nút add
+                    statusClickAdd.value = false;
+                    statusModalAdd.value = true; // mở moldal add
+                    return
+                }
+                store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == idRowFocusedRowNew.value)
+                formDataOld = { ...store.state.common.ac120.formData }
+                store.state.common.ac120.focusedRowKey = idRowFocusedRowNew.value
+                idRowFocusedRowNew.value = null
+                store.state.common.ac120.resetDataAccountingDocumentProofs++
             }
+
         }
 
         const onReorder = (e: any) => {
@@ -561,9 +628,20 @@ export default defineComponent({
         }
 
         const selectedMonth = (month: number) => {
-            store.state.common.ac120.monthSelected = month
-            dataQueryGetAccountingDocuments.value.month = month
-            triggerGetAccountingDocuments.value = true;
+
+            let formData = { ...store.state.common.ac120.formData }
+            let formDataOldCheck: any = { ...formDataOld }
+            delete (formDataOldCheck.proofCount)
+            delete (formData.proofCount)
+            if (!isEqual(formDataOldCheck, formData)) {
+                isModalConfirmChangeData.value = true;
+                // statusClickMonth.value = true;
+                monthNewClick.value = month
+            } else {
+                monthSelected.value = month
+                dataQueryGetAccountingDocuments.value.month = month
+                triggerGetAccountingDocuments.value = true;
+            }
         }
 
         const modalHistoryAccountingProcess = () => {
@@ -581,7 +659,7 @@ export default defineComponent({
             // await (focusedRowKey.value = e.data.accountingDocumentId)
         }
         const changeAmountDataGrid = () => {
-            calculateAmount()
+            // calculateAmount()
         }
         const calculateAmount = () => {
             dataApi.value.map((item: any, index: number) => {
@@ -596,10 +674,10 @@ export default defineComponent({
                     if (item.resolutionClassification == 1) {
                         item.balance = item.amount
                     } else if (item.resolutionClassification == 2) {
-                        item.balance =  -item.amount
+                        item.balance = -item.amount
                     }
                 }
-                
+
                 const totalBefore: any = ref(0)
                 const maxOrder: any = ref(1)
                 dataApi.value.slice(0, index).forEach((data) => {
@@ -673,7 +751,7 @@ export default defineComponent({
         return {
             dataGetAccountingProcesses,
             dataSource, totalCount,
-            // onFillDataAdd,
+            monthSelected,
             loadingGetAccountingProcesses,
             loadingGetAccountingDocuments,
             dataRows,
