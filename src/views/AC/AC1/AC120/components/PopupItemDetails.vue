@@ -100,7 +100,7 @@
             </standard-form>
         </div>
         <div class="btn_submit text-align-center mt-20">
-            <button-basic :disabled="disabledSubmit" @onClick="onSubmit" class="button-form-modal" :text="'저장'"
+            <button-basic :disabled="disabledSubmit || dataSource.length == 0" @onClick="onSubmit" class="button-form-modal" :text="'저장'"
                 :type="'default'" :mode="'contained'" />
         </div>
         <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"

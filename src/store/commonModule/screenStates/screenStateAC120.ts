@@ -7,6 +7,7 @@ let statesAC120 = {
         formData: null,
         onAddRow: 0,
         onDeleteRowAdd: 0,
+        onSubmitFormUpdate: 0,
         // statementOfGoodsItems: [],
         // onDoneAdd: 0,
         resetDataTable: 0,

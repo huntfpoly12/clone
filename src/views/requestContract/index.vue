@@ -636,6 +636,27 @@ export default {
         };
         const gridRefName: any = ref("grid");
         const isWithholding = ref(1);
+        var withholdingCustom = isWithholding.value == 1 ? {
+            startYearMonth: contractCreacted.startYearMonthHolding,
+            capacity: parseInt(contractCreacted.capacityHolding),
+            withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
+        } : null;
+        watch(isWithholding, (newVal: any) => {
+            console.log(`output->newVal`,newVal);
+            if(newVal == 1) {
+                withholdingCustom = {
+                    startYearMonth: contractCreacted.startYearMonthHolding,
+                    capacity: parseInt(contractCreacted.capacityHolding),
+                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
+                };
+            }else {
+                withholdingCustom = null;
+                contractCreacted.startYearMonthHolding = null;
+                contractCreacted.capacityHolding = null;
+                contractCreacted.withholdingServiceTypes = false;
+            }
+            withholdingCustom
+        })
         const Create = async () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
             dataFacility.map((val: any) => {
@@ -645,11 +666,6 @@ export default {
                 val.capacity = parseInt(val.capacity)
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
-            let withholdingCustom = isWithholding.value == 1 ? {
-                startYearMonth: contractCreacted.startYearMonthHolding,
-                capacity: parseInt(contractCreacted.capacityHolding),
-                withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
-            } : null;
             let dataCallCreated = {
                 content: {
                     agreements: {

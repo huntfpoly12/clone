@@ -131,7 +131,7 @@ export default defineComponent({
         });
         errorState.value = [...errorState.value, ...arr];
         updateStatus.value = true;
-        emit("closePopup", props.data.map((item: any) => item.errorInfo.incomeId));
+        emit("closePopup", props.data.map((item: any) => item.param.incomeId));
       }
     })
     onError(() => {
@@ -159,7 +159,7 @@ export default defineComponent({
         });
         errorState.value = [...errorState.value, ...arr];
         updateStatus.value = true;
-        emit("closePopup", props.data.map((item: any) => item.errorInfo.incomeId));
+        emit("closePopup", props.data.map((item: any) => item.param.incomeId));
       }
     })
 

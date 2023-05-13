@@ -187,12 +187,12 @@
                                     :arrayValue="store.state.common.ac120.arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true" />
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <!-- <a-col :span="12">
                             <a-form-item label="물품내역수">
                                 <default-text-box :disabled="true"
                                     v-model:valueInput="formDataAdd.goodsCount" width="150px" />
                             </a-form-item>
-                        </a-col>
+                        </a-col> -->
                     </a-row>
                     <a-row>
                         <a-col :span="24">
