@@ -1,6 +1,11 @@
 <template>
   <div class="item-wrap">
-    <span class="item-wrap-title">{{ title }}</span>
+    <div class="item-wrap-title">
+      <span>{{ title }}</span> 
+      <info-tool-tip v-if="isTooltip">
+        {{ textTooltip }}
+      </info-tool-tip>
+    </div>
     <slot />
   </div>
 </template>
@@ -14,6 +19,14 @@ export default defineComponent({
       type: String,
       default: '',
       required: true
+    },
+    isTooltip: {
+      type: Boolean,
+      default: false
+    },
+    textTooltip: {
+      type: String,
+      default: '',
     }
   },
   setup() {
@@ -35,9 +48,10 @@ export default defineComponent({
   &-title {
     position: absolute;
     top: -15px;
-    left: 23px;
+    left: 15px;
     background-color: #ffffff;
     z-index: 100;
+    display: flex;
     text-align: center;
     padding: 6px 10px;
   }

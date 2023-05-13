@@ -69,10 +69,10 @@ export default defineComponent({
   }
   &.field-custom {
     .dx-field-label {
-      width: 150px ;
+      width: 170px ;
     }
     .dx-field-value {
-      width: calc(100% - 150px) !important;
+      width: calc(100% - 170px) !important;
     }
   }
   &.field-custom-2 {
