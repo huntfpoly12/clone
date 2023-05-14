@@ -80,6 +80,7 @@ export class Message extends BaseType {
         '001': { "message" : "선택된 사원의 해당 원천년도에 급여등록 / 중간정산 / 퇴직소득 내역들이 있기에 삭제 불가합니다. 해당 내역들을 먼저 삭제하신 후 사원을 삭제하시기 바랍니다.", "icon": "iconError"}, // Cannot delete.
         '002': { "message" : "선택된 사원의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?", "icon": "iconWarning"}, //Do you really want to delele this data?
         '003': { "message" : "삭제되었습니다.", "icon": "iconInfo"}, // Deleted!
+        '004': { "message" : "입력된 수당으로 공제를 계산하여, 새로운 공제 금액이 입력됩니다. 그래도 계산하시겠습니까?", "icon": "iconWarning", "yes": "예. 계산합니다.","no":"아니요"}, // The new deduction amount is entered by calculating the deduction from the entered allowance. Would you still like to calculate?
     });
   
   //근로소득-일용직소득  계산   
