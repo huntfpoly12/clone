@@ -254,7 +254,7 @@ import { Message } from "@/configs/enum"
 import { companyId } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
 import UploadPreviewImage from './UploadPreviewImage.vue'
-import { async } from 'rxjs';
+import { cloneDeep, isEqual } from "lodash"
 export default defineComponent({
     components: {
         PopupCopyData,
@@ -343,11 +343,15 @@ export default defineComponent({
 
         watch(() => store.state.common.ac120.formData.causeActionDate, (newValue, oldValue) => {
             // if (store.state.common.ac120.statusFormAdd) {
-            colorDate.value = newValue == store.state.common.ac120.transactionDetailDate ? 'greenColor' : 'redColor'
+            colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
             // } else {
             //     colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
             // }
         })
+        watch(() => store.state.common.ac120.onSubmitFormUpdate, (newValue, oldValue) => {
+            onSubmit()
+        })
+        
 
         watch(() => [store.state.common.ac120.formData.bankbookId, store.state.common.ac120.arrayBankbooks], (newValue, oldValue) => {
             let data = store.state.common.ac120.arrayBankbooks?.find((item: any) => item.value == store.state.common.ac120.formData.bankbookId)
@@ -368,11 +372,9 @@ export default defineComponent({
         }
 
         const onSubmit = () => {
-            if (!store.state.common.ac120.formData.causeActionDate) {
-                requiredCauseActionDate.value.validate(true)
-            }
             const res = refFormAC120.value?.validate();
             if (!res.isValid) {
+                store.state.common.ac120.clearCheckCkick++
                 res.brokenRules[0].validator.focus();
                 if (!store.state.common.ac120.formData.causeActionDate) {
                     requiredCauseActionDate.value.validate(true)
@@ -380,6 +382,7 @@ export default defineComponent({
             } else {
                 if (!store.state.common.ac120.formData.causeActionDate) {
                     requiredCauseActionDate.value.validate(true)
+                    store.state.common.ac120.clearCheckCkick++
                     return;
                 }
                 if (store.state.common.ac120.formData.resolutionClassification == 1) {
@@ -391,7 +394,7 @@ export default defineComponent({
                     companyId: companyId,
                     fiscalYear: acYear.value,
                     facilityBusinessId: globalFacilityBizId.value,
-                    transactionDetailDate: store.state.common.ac120.transactionDetailDate,
+                    transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
                     accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
                     input: { ...store.state.common.ac120.formData }
                 }
@@ -409,7 +412,7 @@ export default defineComponent({
                 delete dataSubmit.input.documentOrderByDate
                 // delete dataSubmit.input.income
                 // delete dataSubmit.input.spending
-                delete dataSubmit.input.clientId
+                // delete dataSubmit.input.clientId
                 delete dataSubmit.input.goodsCount
                 delete dataSubmit.input.proofCount
                 delete dataSubmit.input.handwriting

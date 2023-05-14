@@ -23,7 +23,8 @@ let statesAC120 = {
         arrayBankbooks: [],
         transactionDetailDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
         keyRefreshForm: 0,
-        monthSelected: dayjs().month() + 1,
+        clearCheckCkick: 0,
+        // monthSelected: dayjs().month() + 1,
         selectedRowKeys: [],
         statusKeppRow: false
     }
