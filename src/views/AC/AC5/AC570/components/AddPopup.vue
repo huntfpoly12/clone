@@ -14,7 +14,7 @@
                         <account-code-select width="230px" v-model:valueInput="formState.transitionCode" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용액" class="red">
-                        <number-box-money width="230px" v-model:valueInput="formState.transitionAmount" :required="true" :spinButtons="false" placeholder="음수가능"/>
+                        <number-box-money width="230px" v-model:valueInput="formState.transitionAmount" :min="1" :required="true" :spinButtons="false" placeholder="양수만 가능"/>
                     </a-form-item>
                     <div class="text-align-center mt-20"><span>과목전용조서를 등록하시겠습니까?</span></div>
                 </div>

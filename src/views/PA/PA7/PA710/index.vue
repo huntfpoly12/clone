@@ -30,8 +30,8 @@
                                 </div>
                             </template>
                             <template #button-history>
-                                <DxButton icon="plus">
-                                    <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
+                                <DxButton icon="plus"  @click="modalHistory">
+                                    <HistoryOutlined style="font-size: 18px;" />
                                 </DxButton>
                             </template>
                             <template #button-template>

@@ -100,7 +100,6 @@
             </standard-form>
         </div>
         <div class="btn_submit text-align-center mt-20">
-            {{ disabledSubmit }}
             <button-basic :disabled="disabledSubmit || !(dataSource?.length)" @onClick="onSubmit" class="button-form-modal" :text="'저장'"
                 :type="'default'" :mode="'contained'" />
         </div>
@@ -243,8 +242,6 @@ export default defineComponent({
                         id: index
                     }
                 })
-                console.log(dataSource.value);
-                
                 // await setDataSelect()
             }
         })
@@ -362,9 +359,7 @@ export default defineComponent({
                 disabledSubmit.value = false
             } else {
                 disabledSubmit.value = true
-            }
-            console.log(totalShow);
-            
+            }            
             return `차액 <span>[${filters.formatCurrency(totalShow)}]</span> `
         }
         return {
