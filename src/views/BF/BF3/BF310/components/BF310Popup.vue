@@ -171,7 +171,7 @@
                             </a-collapse-panel>
                             <a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll key-4">
                                 <div style="height: 350px; overflow-y: scroll">
-                                    <checkbox-basic v-model:valueCheckbox="checkedService" :disabled="false" size="15"
+                                    <checkbox-basic v-model:valueCheckbox="formState.usedAccounting" :disabled="false" size="15"
                                         label="회계서비스 신청합니다." />
                                     <div>
                                         <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
@@ -217,10 +217,10 @@
                                                         css-class="cell-button-add" />
                                                 </DxToolbar>
                                                 <template #button-template>
-                                                    <button-basic icon="plus" @onClick="addRow" text="추가" />
+                                                    <button-basic icon="plus" @onClick="addRow" text="추가" :disabled="!formState.usedAccounting"/>
                                                 </template>
                                             </DxDataGrid>
-                                            <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
+                                            <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow || formState.usedAccounting"
                                                 :key="dataActiveRow.rowIndex ?? 99">
                                                 <a-col :span="9">
                                                     <a-form-item label="사업분류" :label-col="labelCol">
@@ -260,7 +260,7 @@
                                                 </a-col>
                                             </a-row>
                                         </div>
-                                        <div>
+                                        <div v-if="formState.usedAccounting">
                                             <a-row>
                                                 <a-col :span="3">
                                                     <p>부가서비스</p>
@@ -526,16 +526,32 @@ export default defineComponent({
                     dataActiveRow.value = dataSource.value[0]
                     focusedRowKey.value = 0
                 }
-                checkedService.value = value.getSubscriptionRequest.usedWithholding;
                 dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
+                formState.value.usedAccounting = value.getSubscriptionRequest.usedAccounting;
+                checkedSourceService.value = value.getSubscriptionRequest.usedWithholding ? 1 : 2
                 triggerCheckPer.value = true;
             }
         });
+        watch(() => formState.value.usedAccounting, (value) => {
+            if(value) {
+                dataSource.value = JSON.parse(JSON.stringify(dataSourceOld.value))
+                if (dataSource.value.length) {
+                    dataActiveRow.value = dataSource.value[0]
+                    focusedRowKey.value = 0
+                    formState.content.accounting.accountingServiceTypes[0] = true
+                }
+            }else {
+                dataSource.value = []
+                dataActiveRow.value = null
+                focusedRowKey.value = 0
+                formState.content.accounting.accountingServiceTypes[0] = false
+            }
+        })
         watch(() => checkedSourceService.value, (value) => {
             if(value === 2) {
                 formState.value.content.withholding.startYearMonth = null
                 formState.value.content.withholding.capacity = 0
-                formState.value.content.withholding.withholdingServiceTypes = []
+                formState.value.content.withholding.withholdingServiceTypes[0] = 0
             }
         })
         // A function that returns a string based on the value of bizType.
@@ -600,7 +616,7 @@ export default defineComponent({
                 })
             } else {
                 // process data befor handle update
-                let contentData: any = formState.value.content;
+                let contentData: any = JSON.parse(JSON.stringify(formState.value.content));
                 let newObj = JSON.parse(JSON.stringify(dataSource.value));
                 newObj.map((item: any) => {
                     delete item.rowIndex;
@@ -614,8 +630,13 @@ export default defineComponent({
                 })
                 contentData.accounting.facilityBusinesses = [...newObj];
                 contentData.accounting.accountingServiceTypes.map((item: any) => {
-                    item = item == true ? 1 : 0
+                    item = !!item == true ? 1 : 0
                 })
+                if(checkedSourceService.value === 2) {
+                    contentData.withholding = null
+                }else {
+                    contentData.withholding.withholdingServiceTypes = !!contentData.withholding.withholdingServiceTypes[0] ? [1] : [0]
+                }
                 const cleanData = JSON.parse(
                     JSON.stringify(contentData, (name, val) => {
                         if (val == null) {

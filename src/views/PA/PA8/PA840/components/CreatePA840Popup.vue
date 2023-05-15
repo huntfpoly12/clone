@@ -21,19 +21,24 @@
           </a-row>
         </div>
         <a-row :gutter="[0, 0]" class="item-group mb-10 row-bd">
-          <a-col span="8">
+          <a-col span="12">
             <DxField label="업체명">
               <default-text-box v-model:valueInput="infoCompany.name" placeholder="업체명" disabled />
             </DxField>
           </a-col>
-          <a-col span="8">
+          <a-col span="12">
             <DxField label="대표자명">
               <default-text-box v-model:valueInput="infoCompany.presidentName" placeholder="대표자명" disabled />
             </DxField>
           </a-col>
-          <a-col span="8">
+          <a-col span="12">
             <DxField label="사업장관리번호">
               <default-text-box v-model:valueInput="infoCompany.bizNumber" placeholder="사업장관리번호" disabled />
+            </DxField>
+          </a-col>
+          <a-col span="12">
+            <DxField label="사업장관리번호">
+              <default-text-box v-model:valueInput="majorInsuranceConsignStatus" placeholder="사업장관리번호" disabled />
             </DxField>
           </a-col>
         </a-row>
@@ -224,6 +229,7 @@ export default defineComponent({
       residentId: '',
       employmentStatus: 4,
     })
+    let majorInsuranceConsignStatus = ref('')
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
     const messageCreate = messages.getCommonMessage('101').message;
@@ -234,6 +240,24 @@ export default defineComponent({
       showData.name = '';
       showData.residentId = '';
     }
+
+    // ----------------get data getMajorInsuranceConsignStatus--------------
+
+    const { result: resultGetMajorInsuranceConsignStatus, onError: onErrorGetMajorInsuranceConsignStatus } =
+      useQuery(queries.getMajorInsuranceConsignStatus, {
+        companyId: companyId
+      }, () => ({
+        fetchPolicy: "no-cache",
+      }));
+    onErrorGetMajorInsuranceConsignStatus((e) => {
+      majorInsuranceConsignStatus.value = ''
+    })
+    watch(resultGetMajorInsuranceConsignStatus, (value) => {
+      console.log('valuevalue', value);
+      if (value) {
+        majorInsuranceConsignStatus.value = value.getMajorInsuranceConsignStatus.manageId
+      }
+    }, { deep: true });
 
     // ----------------get data employeeWages--------------
 
@@ -473,6 +497,7 @@ export default defineComponent({
       showData,
       globalYear,
       getEmployeeWageDailyLoading, getEmployeeWageLoading,
+      majorInsuranceConsignStatus
     }
   },
 })

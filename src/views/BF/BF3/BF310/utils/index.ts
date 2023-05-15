@@ -95,6 +95,8 @@ export const initialFormState = {
   updatedBy: "",
   ip: "",
   active: "",
+  usedAccounting: false,
+  usedWithholding: false
 };
 
 /** Application (신청) - 10 */

@@ -9,6 +9,7 @@ import getEmployeeWage from "@/graphql/queries/common/getEmployeeWage";
 import getEmployeeWageDaily from "@/graphql/queries/common/getEmployeeWageDaily";
 import getEmployeeWageDailies from "@/graphql/queries/common/getEmployeeWageDailies";
 import getMyCompany from "@/graphql/queries/common/getMycompany";
+import getMajorInsuranceConsignStatus from "./getMajorInsuranceConsignStatus";
 
 const queries = {
   getMajorInsuranceCompanyEmployeeReturnToWorks,
@@ -22,5 +23,6 @@ const queries = {
   getEmployeeWageDaily,
   getMyCompany,
   getEmployeeWageDailies,
+  getMajorInsuranceConsignStatus
 };
 export default queries;
