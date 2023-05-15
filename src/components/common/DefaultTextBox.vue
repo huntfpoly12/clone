@@ -1,5 +1,5 @@
 <template>
-  <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" :placeholder="placeholder"
+  <DxTextBox v-bind="$props" :width="width" value-change-event="input" :show-clear-button="clearButton" :placeholder="placeholder"
     v-model="value" :disabled="disabled" :maxLength="maxCharacter" :readOnly="readOnly" @input="updateValue(value)"
     :height="$config_styles.HeightInput" @value-changed="valueChanged" :name="nameInput" :rtlEnabled="rtlEnabled"  @focusIn="onFocusIn">
     <DxValidator :name="nameInput" :value="textBoxValue" v-bind="$props">

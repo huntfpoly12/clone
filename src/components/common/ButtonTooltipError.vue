@@ -1,10 +1,10 @@
 <template>
-    <a-tooltip placement="bottom" :title="textError" color='red' :visible="showError">
-      <div>
-        <button-basic :disabled="disabled" style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
-        :type="statusChange ? 'calculate' : 'default'" :text="text" />
-      </div>
-    </a-tooltip>
+    <!-- <a-tooltip placement="bottom" :title="textError" color='red' :visible="showError">
+    </a-tooltip> -->
+    <div>
+      <button-basic :disabled="disabled" style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
+      :type="statusChange ? 'calculate' : 'default'" :text="text" />
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
@@ -33,7 +33,7 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
-        const statusChange = ref(false)
+        // const statusChange = ref(false)
         const showError = ref(false)
         const setModalVisible = () => {
 
@@ -43,9 +43,9 @@ export default defineComponent({
             emit("onClick", e);
         }
 
-        watch(() => props.statusChange, (valueNew) => {
-            statusChange.value = valueNew;
-        });
+        // watch(() => props.statusChange, (valueNew) => {
+        //     statusChange.value = valueNew;
+        // }, {deep: true});
 
         watch(() => props.showError, (valueNew) => {
             showError.value = valueNew;
@@ -54,7 +54,7 @@ export default defineComponent({
         return {
             setModalVisible,
             clickButton,
-            showError, statusChange,
+            showError,
         }
     },
 });
