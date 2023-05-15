@@ -4,7 +4,7 @@ import {
   InMemoryCache,
 } from "@apollo/client/core";
 import mutations from "@/graphql/mutations/index";
-import { setContext } from  '@apollo/client/link/context';
+import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import store from '@/store'
 import { Observable } from 'rxjs';
@@ -29,47 +29,50 @@ const authLink = setContext(async (_, { headers }) => {
 const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }) => {
   if (graphQLErrors) {
     for (let err of graphQLErrors) {
-      switch (err.extensions?.code) {
-        case 'UNAUTHENTICATED':
-          // get the new token from your server
-          const accessToken = sessionStorage.getItem('token');
-          const refreshToken = sessionStorage.getItem('refreshToken');
-   
-          // call the mutation to refresh token
-          return new Observable((observer) => {
-            client.mutate({
-              mutation: mutations.refreshLogin,
-              variables: { 
-                accessToken : accessToken,
-                refreshToken:refreshToken 
-              },
-            })
-              .then(({ data }) => {
-                console.log(data)
-                // save the new tokens
-                sessionStorage.setItem('token', data.refreshLogin.accessToken);
-                sessionStorage.setItem('refreshToken', data.refreshLogin.refreshToken);
-                // update the headers with the new token
-                const oldHeaders = operation.getContext().headers;
-                operation.setContext({
-                  headers: {
-                    ...oldHeaders,
-                    authorization: `Bearer ${data.refreshLogin.accessToken}`,
-                  },
-                });
-                // retry the request, returning the new observable
-                const subscriber = {
-                  next: observer.next.bind(observer),
-                  error: observer.error.bind(observer),
-                  complete: observer.complete.bind(observer),
-                };
-                return forward(operation).subscribe(subscriber);
+      console.log(err.message);
+      if (err.message == "인증토큰이 만료되었습니다.") {
+        switch (err.extensions?.code) {
+          case 'UNAUTHENTICATED':
+            // get the new token from your server
+            const accessToken = sessionStorage.getItem('token');
+            const refreshToken = sessionStorage.getItem('refreshToken');
+
+            // call the mutation to refresh token
+            return new Observable((observer) => {
+              client.mutate({
+                mutation: mutations.refreshLogin,
+                variables: {
+                  accessToken: accessToken,
+                  refreshToken: refreshToken
+                },
               })
-              .catch((error) => {
-                // handle error
-                console.log(error);
-              });
-          });
+                .then(({ data }) => {
+                  console.log(data)
+                  // save the new tokens
+                  sessionStorage.setItem('token', data.refreshLogin.accessToken);
+                  sessionStorage.setItem('refreshToken', data.refreshLogin.refreshToken);
+                  // update the headers with the new token
+                  const oldHeaders = operation.getContext().headers;
+                  operation.setContext({
+                    headers: {
+                      ...oldHeaders,
+                      authorization: `Bearer ${data.refreshLogin.accessToken}`,
+                    },
+                  });
+                  // retry the request, returning the new observable
+                  const subscriber = {
+                    next: observer.next.bind(observer),
+                    error: observer.error.bind(observer),
+                    complete: observer.complete.bind(observer),
+                  };
+                  return forward(operation).subscribe(subscriber);
+                })
+                .catch((error) => {
+                  // handle error
+                  console.log(error);
+                });
+            });
+        }
       }
     }
   }

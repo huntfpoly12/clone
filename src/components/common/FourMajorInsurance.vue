@@ -18,7 +18,7 @@
     </a-tooltip>
 
     <a-tooltip placement="top" v-if="typeTag == 6" :title="'두루누리 국민연금 ' + ratio + '%'" color="black">
-        <span class="tag-status-4">두 {{ ratio }}%</span>
+        <span class="tag-status-4">두(국) {{ ratio }}%</span>
     </a-tooltip>
     <a-tooltip placement="top" v-if="typeTag == 7" :title="'두루누리 고용보험 ' + ratio + '%'" color="black">
         <span class="tag-status-4">두(고) {{ ratio }}%</span>

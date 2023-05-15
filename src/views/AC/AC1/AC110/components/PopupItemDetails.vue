@@ -57,7 +57,9 @@
           </template>
           <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
           <template #action="{ data }">
-            <DeleteOutlined style="font-size: 12px" @click="openPopupDeleteItem(data.data)" />
+            <div :class="{'disabledBtnDelete': disabled}">
+              <DeleteOutlined style="font-size: 12px" @click="openPopupDeleteItem(data.data)" />
+            </div>
           </template>
         </DxDataGrid>
         <div class="popup-detail-ac-110-sumary">
@@ -68,7 +70,7 @@
         </div>
         <div class="ac-110-popup-detail-btn">
           <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
-            :disabled="!dataSource.statementOfGoodsItems.length || isDisableBtnSave" />
+            :disabled="!dataSource.statementOfGoodsItems.length || isDisableBtnSave || disabled" />
         </div>
       </standard-form>
     </a-spin>
@@ -442,5 +444,9 @@ export default defineComponent({
   border-top: none;
   padding: 7px;
   color: rgba(51, 51, 51, .7);
+}
+.disabledBtnDelete {
+  pointer-events: none;
+  opacity: .5;
 }
 </style>
