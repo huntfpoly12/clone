@@ -382,14 +382,14 @@ export default defineComponent({
         }
         // ================== FUNCTION ==================================
       const actionUpdated = () => {
-          if (isBtnYellow.value) {
-            validateCalculate.value = true
-            store.commit('common/setTab2ValidateEditPA520', true)
-            store.commit('settings/setFormStatus',FormStatus.editing)
-          } else {
+          // if (isBtnYellow.value) {
+          //   validateCalculate.value = true
+          //   store.commit('common/setTab2ValidateEditPA520', true)
+          //   store.commit('settings/setFormStatus',FormStatus.editing)
+          // } else {
             mutate(originDataUpdate.value)
             store.commit('common/setCheckEditTab2PA520',false)
-          }
+          // }
 
       }
       const calculateTax = () => {
