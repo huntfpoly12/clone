@@ -167,25 +167,25 @@
   <ViewDetail v-if="modalView" :modalStatus="modalView" @closePopup="modalView = false" :keyRowIndex="keyDetailRow"/>
 </template>
 <script lang="ts" setup>
-import {computed, reactive, ref, watch} from "vue";
-import {useStore} from 'vuex';
-import {useMutation, useQuery} from "@vue/apollo-composable";
-import notification from "@/utils/notification";
-import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import {DxColumn, DxDataGrid, DxScrolling, DxSelection, DxSummary, DxTotalItem} from "devextreme-vue/data-grid";
-import {DeleteOutlined, EditOutlined, HistoryOutlined} from "@ant-design/icons-vue";
-import DxButton from "devextreme-vue/button";
-import {dataActionUtils} from "../utils/index";
-import DeletePopup from "./DeletePopup.vue"
-import EditPopup from "./EditPaymentDayPopup.vue"
-import AddPopup from "./AddPopup.vue"
-import UpdatePopup from "./UpdatePopup.vue"
-import filters from "@/helpers/filters";
+import { Message } from '@/configs/enum';
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
-import {companyId} from '@/helpers/commonFunction';
-import {Message} from '@/configs/enum';
-import ViewDetail from "./ViewDetail.vue";
+import queries from "@/graphql/queries/PA/PA4/PA420/index";
+import { companyId } from '@/helpers/commonFunction';
+import filters from "@/helpers/filters";
+import notification from "@/utils/notification";
+import { DeleteOutlined, EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import DxButton from "devextreme-vue/button";
+import { DxColumn, DxDataGrid, DxScrolling, DxSelection } from "devextreme-vue/data-grid";
 import isEqual from "lodash/isEqual";
+import { computed, reactive, ref, watch } from "vue";
+import { useStore } from 'vuex';
+import { dataActionUtils } from "../utils/index";
+import AddPopup from "./AddPopup.vue";
+import DeletePopup from "./DeletePopup.vue";
+import EditPopup from "./EditPaymentDayPopup.vue";
+import UpdatePopup from "./UpdatePopup.vue";
+import ViewDetail from "./ViewDetail.vue";
 
 
 const props = defineProps<{ statusButton: number, actionSave: number }>()
@@ -202,12 +202,9 @@ const dataSelected: any = ref([])
 const modalDelete = ref<boolean>(false)
 const triggerDetail = ref<boolean>(false);
 const store = useStore();
-const per_page = computed(() => store.state.settings.per_page);
-const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
 const hasDataIncRetirements = computed(() => store.getters['common/hasIncomeProcessRetirements']);
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
-const rowTable = ref(0);
 const modalHistory = ref<boolean>(false)
 const modalAdd = ref(false)
 const modalUpdate = ref(false)
@@ -222,6 +219,7 @@ let dataTableDetail = ref({
   companyId: companyId,
   processKey: {...selectMonthColumn.value}
 })
+
 const clearSelection = () => {
   const dataGridRef = dataGrid.value?.instance;
   dataGridRef?.clearSelection();
@@ -269,7 +267,7 @@ onDone(e => {
 })
 // ================WATCHING============================================
 watch(selectMonthColumn, (newValue, oldValue) => {
-  if (!isEqual(newValue, oldValue)) {
+  if (!isEqual(newValue, oldValue) || hasDataIncRetirements.value) {
     dataTableDetail.value.processKey = newValue
     triggerDetail.value = true
     refetchTableDetail()

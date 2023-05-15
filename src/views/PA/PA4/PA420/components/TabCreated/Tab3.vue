@@ -5,8 +5,7 @@
         <a-col :span="12">
           <a-form-item label="퇴직급여(확정)">
             <div class="d-flex-center">
-              <number-box-money :required="false" width="150px" v-model:valueInput="retirementBenefits" format="#0,###"
-                                :min="1"/>
+              <number-box-money :required="false" width="150px" v-model:valueInput="retirementBenefits" disabled format="#0,###"/>
               <span class="pl-5 mr-5">원</span>
               <info-tool-tip class="ml-5">
                 실제 지급된 퇴직급여를 입력합니다.

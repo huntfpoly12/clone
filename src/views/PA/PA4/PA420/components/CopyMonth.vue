@@ -29,10 +29,6 @@ import filters from "@/helpers/filters";
 import dayjs from "dayjs";
 import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
 
-function convertToDate({month, year}: { month: number, year: number }) {
-  const daysInMonth = new Date(year, month, 0).getDate();
-  return String(daysInMonth).padStart(2, '0');
-}
 
 interface Props {
   modalStatus: boolean
@@ -43,26 +39,21 @@ const emit = defineEmits(['closePopup', 'dataAddIncomeProcess'])
 
 
 const store = useStore();
-const selectMonthColumn = computed(() => store.getters['common/getselectMonthColumn'])
 const selectMonthColumnOld = computed(() => store.getters['common/getSelectMonthColumnOld'])
 const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
 const startDate = ref(dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).startOf('month').toDate());
 const finishDate = ref(dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).endOf('month').toDate());
 
 const attributionMonth: any = ref(0)
-const paymentYearMonthChoose = ref(0)
+const paymentYearMonthChoose: any = ref(null)
 const dataQuery = ref({companyId: companyId, imputedYear: paYear.value});
-const paymentDate = ref(0)
 const paymentDayConfig = ref()
 
 watchEffect(() => {
   attributionMonth.value = selectMonthColumnOld.value.imputedMonth
   paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumnOld.value.paymentMonth)}`)
 })
-watch(paymentYearMonthChoose, (val, oldValue) => {
-  if (val === oldValue) return;
-  paymentDayConfig.value = dayjs(`${val}${paymentDate.value}`).toDate()
-})
+
 const setModalVisible = () => {
   emit("closePopup", false)
 };
@@ -78,22 +69,29 @@ const {result: resultConfig, refetch} = useQuery(
 );
 watch(resultConfig, (value) => {
   if (value) {
-    if (value.getWithholdingConfig.paymentType === 1) {
-      paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumnOld.value.paymentMonth)}`)
-      startDate.value = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).startOf('month').toDate()
-      finishDate.value = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).endOf('month').toDate()
-    } else {
-      startDate.value = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth + 1}`).startOf('month').toDate()
-      finishDate.value = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth + 1}`).endOf('month').toDate()
-      if (filters.formatMonth(selectMonthColumnOld.value.paymentMonth) !== 12) {
-        paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumnOld.value.paymentMonth + 1)}`)
-        paymentDate.value = value.getWithholdingConfig.paymentDay || Number(dayjs(`${paymentYearMonthChoose.value}`).endOf('month').format('DD'))
-        return
-      }
-      paymentYearMonthChoose.value = Number(`${paYear.value + 1}01`)
+    const start_date = dayjs(`${paYear.value}-${selectMonthColumnOld.value.imputedMonth}`).startOf('month').toDate()
+    let month = selectMonthColumnOld.value.paymentMonth
+    let payment_day = 0;
+    let payment_month = month;
+    let payment_year = 0;
+    if(value.getWithholdingConfig.paymentType !== 1 && month < 12){
+      payment_month = month + 1
     }
-    paymentDate.value = value.getWithholdingConfig.paymentDay || Number(dayjs(`${paymentYearMonthChoose.value}`).endOf('month').format('DD'))
-    store.commit('common/setPaymentDay', value.getWithholdingConfig.paymentDay)
+    if (value.getWithholdingConfig.paymentType !== 1 && month === 12) {
+      payment_year = paYear.value + 1
+      payment_month = 1
+    }
+    payment_year = paYear.value
+    if(value.getWithholdingConfig.paymentDay === 0 || value.getWithholdingConfig.paymentDay && value.getWithholdingConfig.paymentDay > +dayjs(start_date).endOf('month').format('DD')) {
+      payment_day = +dayjs(`${payment_year}-${payment_month}`).endOf('month').format('DD')
+    } else {
+      payment_day = value.getWithholdingConfig.paymentDay
+    }
+    startDate.value = start_date
+    finishDate.value = dayjs(`${payment_year}-${payment_month.toString().padStart(2, '0')}`).endOf('month').toDate()
+    paymentYearMonthChoose.value = Number(`${payment_year}${payment_month.toString().padStart(2, '0')}`)
+    paymentDayConfig.value = dayjs(`${payment_year}-${payment_month.toString().padStart(2, '0')}-${payment_day.toString().padStart(2, '0')}`)
+    store.commit('common/setPaymentDay', payment_day)
   }
   trigger.value = false;
 });
@@ -117,7 +115,7 @@ const onSubmit = (e: any) => {
       paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),
     })
     emit("closePopup", false)
-    store.commit('common/setPaymentDay', dayjs(paymentDayConfig.value).format('DD'))
+    store.commit('common/setPaymentDay', +dayjs(paymentDayConfig.value.toString()).format('DD'))
     store.commit('common/setSelectMonthColumn', {
       ...selectMonthColumnOld.value,
       paymentYear: parseInt(paymentYearMonthChoose.value.toString().slice(0, 4)),
