@@ -132,6 +132,11 @@
           <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="actionUpdated"
                 id="action-update" />
         </div>
+        <div style="text-align: center;margin-top: 15px;">
+          <span>
+            ※ {입력값 수정} → [공제 계산] 클릭 → {결과 확인} → [저장] 클릭
+          </span>
+        </div>
       </a-spin>
       <PopupMessage :modalStatus="modalCalc" @closePopup=" modalCalc = false" :typeModal="'confirm'" title=""
         :content="msgCalc.message" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
