@@ -269,7 +269,7 @@ export default defineComponent({
         );
 
         // delete withholding config pay item
-        const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
+        const { mutate: actionDelete, onDone: onDoneDelete, onError: errorDelete } = useMutation(
             mutations.deleteWithholdingConfigPayItem
         );
 
@@ -278,6 +278,7 @@ export default defineComponent({
             notification('error', error.message)
         });
         onDoneAdd(async (res) => {
+            notification('success', Message.getMessage('COMMON', '101').message)
             await (triggerWithholdingConfigPayItems.value = true);
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 return
@@ -290,7 +291,6 @@ export default defineComponent({
             await (triggerDetail.value = true);
             await (statusFormUpdate.value = true);
             await (statusAddRow.value = true);
-            notification('success', `원천항목 새로 추가되었습니다!`)
         });
 
         errorUpdated((error) => {
@@ -312,8 +312,12 @@ export default defineComponent({
 
         onDoneDelete(() => {
             notification('success', Message.getMessage('COMMON', '402').message)
+            runOne.value = true;
             triggerWithholdingConfigPayItems.value = true;
         });
+        errorDelete((error) => {
+            notification('error', error.message)
+        })
 
         // ================== WATCH ================
         watch(resultWithholdingConfig, (value) => {
@@ -474,7 +478,7 @@ export default defineComponent({
                             formula: formState.value.formula,
                             tax: formState.value.taxPayCode[0] === "비과세" ? false : true,
                             taxfreePayItemCode:
-                                formState.value.taxPayCode[0] === "비과세" ? formState.value.taxPayCode[1] + 1 : null,
+                                formState.value.taxPayCode[0] === "비과세" ? formState.value.taxPayCode[1] : null,
                             taxPayItemCode:
                                 formState.value.taxPayCode[0] === "과세" ? formState.value.taxPayCode[1] + 1 : null,
                         },

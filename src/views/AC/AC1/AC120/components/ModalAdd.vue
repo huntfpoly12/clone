@@ -20,7 +20,7 @@
                         <a-form-item class="red" label="결의일자">
                             <!-- <date-time-box width="150px" :required="true"
                                 v-model:valueDate="formDataAdd.resolutionDate" /> -->
-                            <date-time-box-custom @handleClosed="handleClosed" width="190px" :required="true" :startDate="startDate"
+                            <date-time-box-custom @handleClosed="handleClosed" width="150px" :required="true" :startDate="startDate"
                                 ref="requiredTransactionDetailDate" :finishDate="finishDate"
                                 v-model:valueDate="formDataAdd.transactionDetailDate" />
                         </a-form-item>
@@ -95,7 +95,7 @@
                         <a-form-item label="결의구분">
                             <default-text-box
                                 :valueInput="store.state.common.ac120.arrResolutionClassification.find((item: any) => formDataAdd.resolutionClassification == item.id)?.text"
-                                width="150px" placeholder="지출" disabled="true" />
+                                width="190px" placeholder="지출" disabled="true" />
                         </a-form-item>
                         <a-form-item label="계정과목" class="red">
                             <account-code-select :key="resetSelectAccount" :classification="classification"
@@ -220,7 +220,7 @@ import { defineComponent, ref, watch, computed } from 'vue'
 import queries from "@/graphql/queries/CM/CM120";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, accountSubject } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
 import dayjs from "dayjs";
 import notification from '@/utils/notification';
@@ -236,10 +236,10 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
-        theOrder: {
-            type: Number,
-            default: 0,
-        },
+        // theOrder: {
+        //     type: Number,
+        //     default: 0,
+        // },
         monthSelected: {
             type: Number,
             default: dayjs().month() + 1,
@@ -320,6 +320,7 @@ export default defineComponent({
                 statusShowLetterOfApprovalType.value = false;
                 formDataAdd.value = { ...initialStateFormData }
                 formDataAdd.value.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${props.monthSelected}`).startOf('month').toDate())
+                handleClosed()
                 countKey.value++
             }
         })
@@ -377,6 +378,12 @@ export default defineComponent({
                     formDataAdd.value.letterOfApprovalType = null;
                     formDataAdd.value.causeUsage = null;
                 }
+                let theOrder = ref(0)
+                accountSubject.map((row: any) => {
+                    if (row.useStartDate <= formDataAdd.value.transactionDetailDate <= row.useFinishDate) {
+                        theOrder.value = row.theOrder
+                    }
+                })
                 let dataSubmit = {
                     companyId: companyId,
                     fiscalYear: acYear.value,
@@ -384,12 +391,7 @@ export default defineComponent({
                     transactionDetailDate: formDataAdd.value.transactionDetailDate,
                     input: {
                         ...formDataAdd.value,
-                        'causeActionDate': formDataAdd.value.transactionDetailDate,
-                        'paymentDate': formDataAdd.value.transactionDetailDate,
-                        'accountingDate': formDataAdd.value.transactionDetailDate,
-                        'proposedDate': formDataAdd.value.transactionDetailDate,
-                        'registrationDate': formDataAdd.value.transactionDetailDate,
-                        'theOrder': props.theOrder + 1,
+                        theOrder: theOrder.value,
                     }
                 }
                 if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {

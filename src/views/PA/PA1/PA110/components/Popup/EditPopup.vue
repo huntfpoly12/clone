@@ -1,6 +1,6 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-        :width="600">
+        :width="650">
         <a-spin :spinning="loading" size="large">
             <standard-form action="" name="edit-510">
                 <div class="custom-modal-edit">
@@ -30,10 +30,11 @@
         <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{
             sumErrorCallApi }} 건 </p>
         <ul>
-            <li v-for="(item) in arrDataError" :key="item.employeeId" style="margin: 5px 0;">
+            <li v-for="(item) in arrDataError" :key="item.employeeId" class="list-error">
                 <employee-info :idEmployee="item.employee.employeeId" :name="item.employee.name"
                     :idCardNumber="item.employee.residentId" :status="item.employee.status"
                     :foreigner="item.employee.foreigner" :checkStatus="false" />
+                <span style="margin-left: 10px;">{{ item.error }}</span>
             </li>
         </ul>
         <a-row justify="center">
@@ -107,9 +108,9 @@ export default defineComponent({
             // store.state.common.pa110.loadingFormData++
         })
         onError((e: any) => {
-            notification('error', e.message)
+            // notification('error', e.message)
             sumErrorCallApi.value++
-            arrDataError.value.push(arrData.value[0])
+            arrDataError.value.push({ ...arrData.value[0], error: e.message })
             arrData.value.shift()
             if (arrData.value?.length) {
                 callOneApiChange();
@@ -201,4 +202,10 @@ export default defineComponent({
 
 .button-form-modal {
     margin: 0px 5px;
-}</style>
+}
+.list-error {
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+}
+</style>
