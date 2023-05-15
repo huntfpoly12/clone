@@ -221,7 +221,7 @@ export default defineComponent({
       }
       isFailUpload.value = isImage && isLt10M && !isDuplicaseName
     };
-
+    
     const customRequest = (e: any) => {
       if (!isFailUpload.value) {
         fileList.value.splice(fileList.value.length - 1, 1)
@@ -250,7 +250,11 @@ export default defineComponent({
       })
     }
     const remove = (e: any) => {
-      if (e.status === 'error') return true
+      if (e.status === 'error') {
+        const index = listFileStorageId.value.findIndex((img: any) => img.uid === e.uid)
+        listFileStorageId.value.splice(index, 1)
+        return true
+      }
       indexImgRemove.value = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
       isModalDelete.value = true
       return false

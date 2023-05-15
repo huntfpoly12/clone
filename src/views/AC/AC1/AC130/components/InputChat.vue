@@ -61,7 +61,6 @@ import EmojiPicker from 'vue3-emoji-picker'
 // import css
 import 'vue3-emoji-picker/css'
 import MarkdownCustom from './MarkdownCustom.vue';
-import { getJwtObject } from "@bankda/jangbuda-common";
 import PreviewReply from './PreviewReply.vue';
 export default defineComponent({
   props: {
@@ -121,7 +120,7 @@ export default defineComponent({
     };
 
     watch(() => filesUpload.value, (value) => {
-      emit('update:filesUpload', value)
+      emit('update:filesUploadProps', value)
     })
 
     watch(() => textChat.value, (value) => {
