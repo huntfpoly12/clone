@@ -1,6 +1,6 @@
 <template>
   <div :class="computedClass" :style="style">
-    <div :class="dxFieldLabel" :title="showTitle ? label : ``">{{ label }}:</div>
+    <div :class="dxFieldLabel" :title="showTitle ? label : ``" :style="`text-align: ${alignment}`">{{ label }}:</div>
     <div class="dx-field-value">
       <slot />
     </div>
@@ -35,6 +35,10 @@ export default defineComponent({
     showTitle: {
       type: Boolean,
       default: false
+    },
+    alignment: {
+      type: String,
+      default: 'left'
     }
   },
   setup(props) {
