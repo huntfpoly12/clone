@@ -87,7 +87,7 @@
         <DxScrolling column-rendering-mode="virtual" />
       </DxDataGrid>
     </a-spin>
-    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
+    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam.workId" title="변경이력"
       typeHistory="pa-810" />
     <div v-if="isOpenModalCreate">
       <CreatePA810Popup :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false"

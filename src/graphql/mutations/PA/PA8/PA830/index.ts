@@ -1,8 +1,8 @@
-import cancelMajorInsuranceCompanyEmployeeLoss from "./cancelMajorInsuranceCompanyEmployeeLoss";
-import createMajorInsuranceCompanyEmployeeLoss from "./createMajorInsuranceCompanyEmployeeLoss";
+import cancelMajorInsuranceCompanyEmployeeSalaryChange from "./cancelMajorInsuranceCompanyEmployeeSalaryChange";
+import createMajorInsuranceCompanyEmployeeSalaryChange from "./createMajorInsuranceCompanyEmployeeSalaryChange";
 const mutations = {
-    cancelMajorInsuranceCompanyEmployeeLoss,
-    createMajorInsuranceCompanyEmployeeLoss,
+  cancelMajorInsuranceCompanyEmployeeSalaryChange,
+  createMajorInsuranceCompanyEmployeeSalaryChange,
 };
 
 export default mutations;
