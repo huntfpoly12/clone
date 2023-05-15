@@ -128,11 +128,14 @@
             </a-col>
         </a-row>
         <div class="button-action">      
-          <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
+          <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="modalCalc = true"  text="공제계산"/>
           <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="actionUpdated"
                 id="action-update" />
         </div>
       </a-spin>
+      <PopupMessage :modalStatus="modalCalc" @closePopup=" modalCalc = false" :typeModal="'confirm'" title=""
+        :content="msgCalc.message" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
+        @checkConfirm="calculateTax" />
     </div>
 </template>
 <script lang="ts">
@@ -165,9 +168,10 @@ export default defineComponent({
         const totalDeduction = ref(0)
         const arrDeduction: any = ref()
         const isBtnYellow = ref(false)
+        const modalCalc = ref(false)
         const validateCalculate = ref(false)
         const caculateDone = ref(false)
-        
+        const msgCalc = Message.getMessage('PA120', '004');
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
@@ -382,7 +386,10 @@ export default defineComponent({
             store.commit('common/setCheckEditTab2PA520',false)
           }
 
-        }
+      }
+      const calculateTax = () => {
+        callFuncCalculate();
+      };
       const callFuncCalculate = async () => { 
         let dataDefault = originDataUpdate.value.input
         var res = workingDayInput.value.validate();
@@ -480,7 +487,7 @@ export default defineComponent({
         }
         return {dataDefaultGet,
           originDataDetail,store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily, messageDaylySalary,
-            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput,isDisableDeduction
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput,isDisableDeduction,modalCalc,msgCalc,calculateTax
         };
     },
 });
