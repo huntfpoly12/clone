@@ -240,7 +240,7 @@
                             <div class="custom-checkbox-location">
                                 <a-form-item label="부가서비스">
                                     <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
-                                        label="회계입력대행서비스" :size="16" />
+                                        label="회계입력대행서비스" :size="16" :disabled="valueRadioBox === 2"/>
                                 </a-form-item>
                             </div>
                         </div>
@@ -290,9 +290,8 @@
                                     v-model:valueInput="contractCreacted.ownerName" />
                             </div>
                             <div class="form-item">
-                                <label class="red">사업자(주민)등록번호:</label>
-                                <default-text-box width="170px" :required="true"
-                                    v-model:valueInput="contractCreacted.ownerBizNumber" />
+                                <label class="red">사업자(주민)등록번호 :</label>
+                                <id-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" mask="00000-00000" width="170px" :required="true" />
                                 <p>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px" /> :
                                     예금주의 사업자등록번호 또는 주민등록번호입니다
@@ -560,33 +559,35 @@ export default {
                         notification("error", "계속하려면 모든 조건을 수락하십시오!");
                     }
                 } else if (step.value == 2) {
+                    step.value++;
+                    window.scrollTo(0, 0);
                     // if user not choose service
-                    if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                        notification("error", "서비스를 최소 하나 이상 선택해야합니다!");
-                    } else {
-                        let count = 0;
-                        if (dataInputCallApi.dossier == 1) {
-                            if (valueFacilityBusinesses.value.length == 0) {
-                                count++;
-                            }
-                        }
-                        if (dataInputCallApi.applicationService == 1) {
-                            if (
-                                contractCreacted.bankType == "" ||
-                                contractCreacted.accountNumber == "" ||
-                                contractCreacted.ownerName == "" ||
-                                contractCreacted.ownerBizNumber == ""
-                            ) {
-                                count++;
-                            }
-                        }
-                        if (count > 0) {
-                            notification("error", "계속하려면 모든 조건을 수락하십시오!");
-                        } else {
-                            step.value++;
-                            window.scrollTo(0, 0);
-                        }
-                    }
+                    // if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
+                        // notification("error", "서비스를 최소 하나 이상 선택해야합니다!");
+                    // } else {
+                        // let count = 0;
+                        // if (dataInputCallApi.dossier == 1) {
+                        //     if (valueFacilityBusinesses.value.length == 0) {
+                        //         count++;
+                        //     }
+                        // }
+                        // if (dataInputCallApi.applicationService == 1) {
+                        //     if (
+                        //         contractCreacted.bankType == "" ||
+                        //         contractCreacted.accountNumber == "" ||
+                        //         contractCreacted.ownerName == "" ||
+                        //         contractCreacted.ownerBizNumber == ""
+                        //     ) {
+                        //         count++;
+                        //     }
+                        // }
+                        // if (count > 0) {
+                        //     notification("error", "계속하려면 모든 조건을 수락하십시오!");
+                        // } else {
+                        //     step.value++;
+                        //     window.scrollTo(0, 0);
+                        // }
+                    // }
                 }
             }
         };
@@ -636,26 +637,14 @@ export default {
         };
         const gridRefName: any = ref("grid");
         const isWithholding = ref(1);
-        var withholdingCustom = isWithholding.value == 1 ? {
-            startYearMonth: contractCreacted.startYearMonthHolding,
-            capacity: parseInt(contractCreacted.capacityHolding),
-            withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
-        } : null;
+        let withholdingCustom: any = null
         watch(isWithholding, (newVal: any) => {
-            console.log(`output->newVal`,newVal);
-            if(newVal == 1) {
-                withholdingCustom = {
-                    startYearMonth: contractCreacted.startYearMonthHolding,
-                    capacity: parseInt(contractCreacted.capacityHolding),
-                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
-                };
-            }else {
+            if(newVal == 2) {
                 withholdingCustom = null;
                 contractCreacted.startYearMonthHolding = null;
                 contractCreacted.capacityHolding = null;
                 contractCreacted.withholdingServiceTypes = false;
             }
-            withholdingCustom
         })
         const Create = async () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
@@ -666,6 +655,13 @@ export default {
                 val.capacity = parseInt(val.capacity)
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
+            if(isWithholding.value == 1) {
+                withholdingCustom = {
+                    startYearMonth: contractCreacted.startYearMonthHolding,
+                    capacity: parseInt(contractCreacted.capacityHolding),
+                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
+                };
+            }
             let dataCallCreated = {
                 content: {
                     agreements: {
@@ -707,7 +703,7 @@ export default {
                     },
                     accounting: {
                         facilityBusinesses: dataFacility,
-                        accountingServiceTypes: contractCreacted.accountingServiceTypes,
+                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? [1] : [0],
                     },
                     withholding: withholdingCustom,
                     cmsBank: {
@@ -725,7 +721,6 @@ export default {
             }
           if (dataCallCreated) {
               await makeDataClean(dataCallCreated, ['buildingName']);
-              console.log(`output->dataCallCreated`,dataCallCreated)
               mutateCreated(dataCallCreated)
           }
                
@@ -775,6 +770,7 @@ export default {
                 if (newVal == 2) {
                   valueFacilityBusinesses.value = Array()
                   dataActiveRow.value = null
+                  contractCreacted.accountingServiceTypes = false
                 }
             }
         );
@@ -811,7 +807,7 @@ export default {
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale, isWithholding,
+            optionSale, isWithholding
         };
     },
 };
