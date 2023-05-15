@@ -23,8 +23,8 @@
             <template #button-history>
                 <a-tooltip color="black" placement="top">
                     <template #title>변경이력</template>
-                    <DxButton icon="plus">
-                        <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
+                    <DxButton icon="plus" @click="modalHistory">
+                        <HistoryOutlined style="font-size: 18px;" />
                     </DxButton>
                 </a-tooltip>
             </template>
@@ -450,8 +450,6 @@ export default defineComponent({
                 notification('error', `선택해 주세요 과세구분/유형!`)
             } else {
                 if (statusFormUpdate.value) {
-                    console.log(formState);
-
                     let variables = {
                         companyId: companyId,
                         imputedYear: globalYear,
@@ -508,19 +506,13 @@ export default defineComponent({
 
         const openAddNewModal = () => {
             if (dataSource.value.length <= 20) {
-                console.log(JSON.stringify(dataRowOld));
-                console.log(JSON.stringify(dataRowOld));
-
                 let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
                 let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
                 if (statusChangeFormEdit) { // if status form add and form not null
-                    console.log(1);
-
                     modalStatusAdd.value = true
                     statusClickButtonAdd.value = true
                 } else {
                     if (statusChangeFormAdd) { // if status form add and form not null
-                        console.log(2);
                         modalStatusAdd.value = true
                         statusClickButtonAdd.value = true
                     } else if (statusAddRow.value) {
