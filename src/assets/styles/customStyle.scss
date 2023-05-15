@@ -101,3 +101,7 @@ input.dp__input.dp__input_icon_pad {
 .dx-datagrid-nodata {
   font-size: 13px;
 }
+:deep(.dp__disabled) {
+  color: #A6A6A6;
+  background-color: #fff;
+}

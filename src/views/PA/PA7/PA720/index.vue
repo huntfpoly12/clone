@@ -813,6 +813,7 @@ export default defineComponent({
         const data = newVal.getWithholdingConfig;
         dateType.value = data.paymentType;
         store.commit('common/paymentDayPA720', data.paymentDay);
+        store.state.common.paymentDayDefaultPA720 = data.paymentDay;
         configTrigger.value = false;
       }
     });

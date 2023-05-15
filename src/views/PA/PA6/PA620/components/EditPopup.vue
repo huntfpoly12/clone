@@ -1,12 +1,11 @@
 <template>
-  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-    >
+  <a-modal v-if="modalStatus" :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="">
     <standard-form action="" name="edit-510">
       <div class="custom-modal-edit">
         <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
         <span>선택된 내역 지급일을</span>
         <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
-          v-model:valueDate="paymentDayPA620" :clearable="false"/>
+          v-model:valueDate="paymentDayPA620" :clearable="false" />
         <span>일로 변경하시겠습니까?</span>
       </div>
       <div class="text-align-center mt-30">
@@ -69,7 +68,8 @@ export default defineComponent({
       emit("closePopup", [])
     };
     const store = useStore()
-    let day = computed(() => store.getters['common/paymentDayPA620']);
+    let day = computed(() => store.state.common.paymentDayDefaultPA620);
+    let daySelected = computed(() => store.state.common.paymentDayPA620);
     const paymentDayPA620 = computed({
       get() {
         const daysInMonth = dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
@@ -164,14 +164,13 @@ export default defineComponent({
     })
 
     const onSubmit = () => {
-      let day = +paymentDayPA620.value.format('YYYYMMDD').toString().slice(-2);
       const reversedArr = props.data.reverse();
       reversedArr.forEach(async (val: any) => {
         await mutate({
           companyId: companyId,
           processKey: props.processKey,
           incomeId: val.param.incomeId,
-          day: day,
+          day: daySelected.value,
         })
       })
     };
@@ -190,7 +189,7 @@ export default defineComponent({
       onSubmit,
       updateStatus, incomeIdRender, errorState,
       dataUpdateLen, succesState, daysInMonth,
-      startDate, finishDate,paymentDayPA620,
+      startDate, finishDate, paymentDayPA620,
     }
   },
 })

@@ -1,7 +1,7 @@
 <template>
   <Datepicker v-model="date" autoApply monthPicker locale="ko" :format-locale="ko"
     :style="{ height: $config_styles.HeightInput, width: width }" format="yyyy-MM" :uid="id"
-    @update:modelValue="handleDate" :readonly="readonly" :clearable="!required" />
+    @update:modelValue="handleDate" :readonly="readonly" :clearable="!required" :disabled="disabled" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
@@ -33,6 +33,10 @@ export default defineComponent({
     required: {
       type: Boolean,
       default: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
@@ -79,3 +83,10 @@ export default defineComponent({
   },
 });
 </script> 
+<stype lang="scss" scoped>
+.dp__disabled {
+  background: #fff;
+  border: 1px solid #ddd;
+  opacity: .5
+}
+</stype>

@@ -554,6 +554,7 @@ export default defineComponent({
         const data = newVal.getWithholdingConfig;
         dateType.value = data.paymentType;
         store.state.common.paymentDayPA620 = data.paymentDay;
+        store.state.common.paymentDayDefaultPA620 = data.paymentDay;
         configTrigger.value = false;
       }
     });
