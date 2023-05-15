@@ -16,7 +16,7 @@
       </div>
     </standard-form>
   </a-modal>
-  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" width="350px">
+  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" >
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{
       incomeIdRender.length + errorState.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
@@ -25,7 +25,7 @@
       errorState.length }} 건 </p>
     <ul>
       <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{
-        item.errorInfo.incomeTypeName }}</li>
+        item.errorInfo.incomeTypeName }}  <span class="red ml-10">{{ errTitle }}</span></li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
@@ -96,6 +96,7 @@ export default defineComponent({
     const succesState = ref<any>([]);
     const errorState = ref<any>([]);
     const updateStatus = ref(false);
+    const errTitle = ref('');
     const {
       mutate,
       onDone,
@@ -134,8 +135,9 @@ export default defineComponent({
         emit("closePopup", props.data.map((item: any) => item.param.incomeId));
       }
     })
-    onError(() => {
+    onError((e) => {
       dataUpdateLen.value--;
+      errTitle.value = e.message;
       if (dataUpdateLen.value == 0) {
         let allData = props.data;
         allData = allData.filter((item: any, index) => {
@@ -187,7 +189,7 @@ export default defineComponent({
     return {
       setModalVisible,
       onSubmit,
-      updateStatus, incomeIdRender, errorState,
+      updateStatus, incomeIdRender, errorState,errTitle,
       dataUpdateLen, succesState, daysInMonth,
       startDate, finishDate, paymentDayPA620,
     }
@@ -223,5 +225,8 @@ export default defineComponent({
 
 .button-form-modal {
   margin: 0px 5px;
+}
+.red{
+  color: red;
 }
 </style>

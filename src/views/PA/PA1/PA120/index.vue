@@ -200,6 +200,8 @@ export default defineComponent({
     const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120);
     const editRowPA120 = computed(() => store.state.common.editRowPA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
+    const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120);
+    const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
     const idAction = ref();
     const modalAddNewStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
@@ -316,11 +318,13 @@ export default defineComponent({
     const compareForm = () => {
       const { stayQualification, employeeId, ...obj1 } = editRowPA120.value;
       const { stayQualification: stayQualification2, employeeId: employeeId2, ...obj2 } = initFormStateTabPA120.value;
+      const { ...tab2 } = initFormTab2PA120.value;
+      const { ...tabEdit2 } = editRowTab2PA120.value;
       if (!initFormStateTabPA120.value.foreigner) {
         delete obj1.nationality;
         delete obj2.nationality;
       }
-      if (JSON.stringify(obj1) == JSON.stringify(obj2) && isCalculateEditPA120.value) {
+      if (JSON.stringify(obj1) == JSON.stringify(obj2) && JSON.stringify(tab2) == JSON.stringify(tabEdit2)) {
         return true;
       }
       return false;
@@ -349,7 +353,7 @@ export default defineComponent({
       return;
     };
     const tabCurrent = computed(() => {
-      if (!isCalculateEditPA120.value) {
+      if (JSON.stringify(initFormTab2PA120.value) != JSON.stringify(editRowTab2PA120.value)) {
         return 2;
       }
       return 1;
@@ -577,7 +581,6 @@ export default defineComponent({
       tabCurrent,
       rowKeyTab2PA120,
       calculateIncomeTypeCodeAndName,
-      isCalculateEditPA120,
       onFocusedRowChanging,
       // disableAddMonth,
     };
