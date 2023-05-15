@@ -1,12 +1,14 @@
 import { companyId } from "@/helpers/commonFunction";
 import dayjs from 'dayjs';
+import { computed } from "vue";
+import { useStore } from "vuex";
 interface Origindata {
-    page: number,
-    rows: number,
-    statuses: number[],
-    grade: null | number,
-    name: string,
-    code: string,
+  page: number,
+  rows: number,
+  statuses: number[],
+  grade: null | number,
+  name: string,
+  code: string,
 }
 export const monthNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 /**
@@ -21,42 +23,42 @@ async function runFunctions() {
 
 // runFunctions();
 export const dataActionUtils = {
-    companyId: companyId,
-    processKey: {
-        imputedYear: null,
-        imputedMonth: null,
-        paymentYear: null,
-        paymentMonth: null,
-    },
-    input: {
-        paymentDay: 1,
-        employeeId: '',
-        incomeTypeCode: "",
-        paymentAmount: null,
-        requiredExpenses: null,
-        taxRate: null,
-        withholdingIncomeTax: null,
-        withholdingLocalIncomeTax: null,
-        incomeId: "99axbzkk",
-    }
+  companyId: companyId,
+  processKey: {
+    imputedYear: null,
+    imputedMonth: null,
+    paymentYear: null,
+    paymentMonth: null,
+  },
+  input: {
+    paymentDay: 1,
+    employeeId: '',
+    incomeTypeCode: "",
+    paymentAmount: null,
+    requiredExpenses: null,
+    taxRate: null,
+    withholdingIncomeTax: null,
+    withholdingLocalIncomeTax: null,
+    incomeId: "99axbzkk",
+  }
 }
 export const dataGetDetailEdit = {
-    companyId: companyId,
-    processKey: {
-        imputedYear: 2022,
-        imputedMonth: 1,
-        paymentYear: 2022,
-        paymentMonth: 1,
-    },
-    incomeId: 0
+  companyId: companyId,
+  processKey: {
+    imputedYear: 2022,
+    imputedMonth: 1,
+    paymentYear: 2022,
+    paymentMonth: 1,
+  },
+  incomeId: 0
 }
 export const taxDateIndex = {
-    processKey: {
-        imputedYear: dayjs().format('YYYY'),
-        imputedMonth: dayjs().format('MM'),
-        paymentYear: dayjs().format('YYYY'),
-        paymentMonth: dayjs().format('MM'),
-    },
+  processKey: {
+    imputedYear: dayjs().format('YYYY'),
+    imputedMonth: dayjs().format('MM'),
+    paymentYear: dayjs().format('YYYY'),
+    paymentMonth: dayjs().format('MM'),
+  },
 }
 
 export const formatMonth = (month: number) => {
@@ -65,3 +67,11 @@ export const formatMonth = (month: number) => {
   }
   return month < 10 ? '0' + month : month;
 };
+const store = useStore();
+let processKeyPA720: any = computed(() => store.getters['common/processKeyPA720']);
+export const paymentDayPA720 = computed(() => {
+  let day = store.state.common.paymentDayPA720;
+  const daysInMonth = +dayjs(`${processKeyPA720.value.processKey.paymentMonth}`).daysInMonth();
+  let newDay = day > daysInMonth || day == 0 ? daysInMonth : day;
+  return newDay;
+});

@@ -135,9 +135,13 @@
                       v-model:valueCheckbox=" showData.acquisitionMonthPayment "
                       :disabled=" !formState.nationalPensionReport " />
                   </span>
-                  <span class="ml-10 notice">
+                  <!-- <span class="ml-10 notice">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 1월취득은 만근퇴사의 경우 의무납부.
-                  </span>
+                  </span> -->
+                  <a-tooltip color="black" placement="top">
+                    <template #title>1일취득은 만근퇴사의 경우 의무납부.</template>
+                    <img src="@/assets/images/iconInfo.png" class="img-info" />
+                  </a-tooltip>
                 </div>
               </a-form-item>
             </a-row>

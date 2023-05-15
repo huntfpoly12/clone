@@ -277,24 +277,26 @@
                             </a-collapse-panel>
                             <a-collapse-panel key="5" header="원천서비스신청">
                                 <div>
-                                    <checkbox-basic label="원천서비스 신청합니다" v-model:valueCheckbox="checkedService"
-                                        :disabled="false" :size="'16'" />
+                                    <!-- <checkbox-basic label="원천서비스 신청합니다" v-model:valueCheckbox="checkedService"
+                                        :disabled="false" :size="'16'" /> -->
+                                    <radio-group :arrayValue="arrayRadioCheckSourceServices"
+                                        v-model:valueRadioCheck="checkedSourceService" :layoutCustom="'horizontal'" />
                                     <div style="margin-top: 20px">
                                         <a-form-item label="서비스 시작년월" class="clr" label-align="left" :label-col="labelCol">
                                             <div style="width: 200px">
-                                                <month-picker-box :required="true" width="120px"
+                                                <month-picker-box :required="true" width="120px" :disabled="checkedSourceService == 2"
                                                     v-model:valueDate="formState.content.withholding.startYearMonth" />
                                             </div>
                                         </a-form-item>
                                         <a-form-item label="직 원 수" class="clr" label-align="left" :label-col="labelCol">
                                             <number-box :required="true" width="100px" :min="0" :spinButtons="true"
-                                                v-model:valueInput="formState.content.withholding.capacity"
+                                                v-model:valueInput="formState.content.withholding.capacity" :disabled="checkedSourceService == 2"
                                                 messRequired="이항목은 필수 입력사항입니다!" nameInput="withholding-capacity" />
                                         </a-form-item>
                                         <a-form-item label="부가서비스" label-align="left" :label-col="labelCol">
                                             <checkbox-basic label="4대보험신고서비스"
                                                 v-model:valueCheckbox="formState.content.withholding.withholdingServiceTypes[0]"
-                                                :disabled="false" :size="'16'" />
+                                                :disabled="checkedSourceService == 2" :size="'16'" />
                                         </a-form-item>
                                     </div>
                                 </div>
@@ -316,9 +318,9 @@
                                 </a-form-item>
                                 <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr" label-align="left"
                                     :label-col="labelCol">
-                                    <text-number-box width="250px" :required="true"
+                                    <id-number-text-box width="250px" :required="true"
                                         v-model:valueInput="formState.content.cmsBank.ownerBizNumber"
-                                        nameInput="cmsBank-ownerBizNumber" />
+                                        nameInput="cmsBank-ownerBizNumber" mask="00000-00000"/>
                                     <div class="noteImage">
                                         <img src="@/assets/images/iconInfo.png"
                                             style="width: 14px; height: 14px; margin-top: 0px;" />
@@ -365,7 +367,7 @@ import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxLookup, DxToolbar, DxItem,
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import { bizTypeItems, inputInCollapse } from "../utils";
-import { initialFormState, initialDataStatus, initialArrayRadioWithdrawDay } from "../utils/index"
+import { initialFormState, initialDataStatus, initialArrayRadioWithdrawDay, arrayUtilRadioCheckSourceServices } from "../utils/index"
 import queries from "@/graphql/queries/BF/BF3/BF310/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF310/index";
 import imgUpload from "@/components/UploadImage.vue";
@@ -417,6 +419,7 @@ export default defineComponent({
         let triggerCheckPer = ref<boolean>(false);
         let canChangeableBizNumber = ref<boolean>(false);
         const checkedService = ref(true)
+        const checkedSourceService = ref(1)
         const selectedItemKeys = reactive([])
         const titleModal = ref("장기요양기관등록증")
         var dataStatus = initialDataStatus
@@ -428,6 +431,7 @@ export default defineComponent({
         const isResidentId = ref(false);
         const statusPupopInfo = ref<boolean>(false);
         const keyInfo = ref<number>(0)
+        const arrayRadioCheckSourceServices = ref([...arrayUtilRadioCheckSourceServices]);
         // event close popup
         const setModalVisible = () => {
             if (
@@ -527,6 +531,13 @@ export default defineComponent({
                 triggerCheckPer.value = true;
             }
         });
+        watch(() => checkedSourceService.value, (value) => {
+            if(value === 2) {
+                formState.value.content.withholding.startYearMonth = null
+                formState.value.content.withholding.capacity = 0
+                formState.value.content.withholding.withholdingServiceTypes = []
+            }
+        })
         // A function that returns a string based on the value of bizType.
         const changeTypeCompany = (bizType: number) => {
             if (bizType == 2) {
@@ -705,6 +716,7 @@ export default defineComponent({
             titleModal,
             selectedItemKeys,
             checkedService,
+            checkedSourceService,
             labelCol,
             bizTypeItems,
             visible,
@@ -738,6 +750,7 @@ export default defineComponent({
             onFocusedRowChanged,
             isResidentId,
             statusPupopInfo, onOpenPopupInfo, keyInfo,
+            arrayRadioCheckSourceServices
         };
     },
 });

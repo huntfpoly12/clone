@@ -1053,7 +1053,7 @@ export default defineComponent({
         watch(resultAC570, (value) => {
             triggerAC570.value = false;
             if (value) {
-                dataTableShow.value = value.getAccountingDocumentsLogs;
+                dataTableShow.value = value.getBudgetSubjectTransitionsLogs;
             }
         });
 

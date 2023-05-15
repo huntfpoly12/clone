@@ -17,10 +17,10 @@ export default gql`
             expenditureBudgetSum
             createdAt
             createdBy
-            updatedAt
-            updatedBy
-            ip
-            active
+#            updatedAt
+#            updatedBy
+#            active
+            __typename @skip(if: true)
         }
     }
 `

@@ -8,8 +8,7 @@
                         <DxDataGrid noDataText="내역이 없습니다" id="gridContainer" :show-row-lines="true"
                             :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="transitionId"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            @selection-changed="selectionChanged"
-                            v-model:selected-row-keys="selectedRowKeys"
+                            @selection-changed="selectionChanged" v-model:selected-row-keys="selectedRowKeys"
                             :column-auto-width="true" @focused-row-changing="onFocusedRowChanging" ref="dataGridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
@@ -36,8 +35,8 @@
                                     style="width: auto; height: 25px; margin-left: 6px;" />
                             </template>
                             <template #button-history>
-                                <DxButton icon="plus">
-                                    <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
+                                <DxButton icon="plus" @click="modalHistory">
+                                    <HistoryOutlined style="font-size: 18px;" />
                                 </DxButton>
                             </template>
                             <template #button-template>
@@ -82,7 +81,7 @@
                                 <div>{{ $filters.formatCurrency(data.data.transitionBudgetAmount) }}</div>
                             </template>
 
-                            <DxColumn caption="전용액" data-field="transitionAmount" cell-template="customDxColumn7"/>
+                            <DxColumn caption="전용액" data-field="transitionAmount" cell-template="customDxColumn7" />
                             <template #customDxColumn7="{ data }">
                                 <div>{{ $filters.formatCurrency(-data.data.transitionAmount) }}</div>
                                 <div>{{ $filters.formatCurrency(data.data.transitionAmount) }}</div>
@@ -90,8 +89,10 @@
 
                             <DxColumn caption="예산현액" cell-template="customDxColumn8" />
                             <template #customDxColumn8="{ data }">
-                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)) }}</div>
-                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) + data.data.transitionAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount +
+                                    (-data.data.transitionAmount)) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)
+                                    + data.data.transitionAmount) }}</div>
                             </template>
 
                             <DxColumn caption="지출액" cell-template="customDxColumn9" />
@@ -102,8 +103,10 @@
 
                             <DxColumn caption="불용액" cell-template="customDxColumn10" />
                             <template #customDxColumn10="{ data }">
-                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) - data.data.sourceExpenditureAmount) }}</div>
-                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount) + data.data.transitionAmount - data.data.transitionExpenditureAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)
+                                    - data.data.sourceExpenditureAmount) }}</div>
+                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)
+                                    + data.data.transitionAmount - data.data.transitionExpenditureAmount) }}</div>
                             </template>
 
                             <DxColumn caption="최종저장일시" data-field="savedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
@@ -124,9 +127,13 @@
                 </a-col>
             </a-row>
         </div>
-        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력" typeHistory="ac-570" />
-        <AddPopup :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false"  @callApi="trigger = true"/>
-        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :dataDetail="popupData" @callApi="trigger = true"/>
+        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+            typeHistory="ac-570" />
+        <AddPopup :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" @callApi="trigger = true" />
+        <DetailPopup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false" :dataDetail="popupData"
+            @callApi="trigger = true" />
+        <EmailGroupPopup :modalStatus="modalEmailGroupStatus" @closePopup="modalEmailGroupStatus = false"
+            :selectedRowKeys="selectedRowKeys" />
     </div>
 </template>
 <script lang="ts">
@@ -136,6 +143,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxSelection, DxItem, DxExport, DxScrolling, DxPaging, DxSearchPanel, } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import EmailGroupPopup from './components/EmailGroupPopup.vue'
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/AC/AC5/AC570";
 import mutations from "@/graphql/mutations/AC/AC5/AC570";
@@ -148,22 +156,17 @@ import { Modal } from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 export default defineComponent({
     components: {
-        AddPopup, DxSelection, DetailPopup,
+        AddPopup, DxSelection, DetailPopup, EmailGroupPopup,
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxPaging, DxSearchPanel
     },
     setup() {
-        // const contentDelete = Message.getMessage('PA120', '002').message
-        // const contentDelete = ref('선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?')
-        // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
-        const userInfor = computed(() => store.state.auth.userInfor);
-        // let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
-        // var idRowEdit = ref<number>(0);
+        const modalEmailGroupStatus = ref<boolean>(false);
         let popupData = ref();
         const focusedRowKey = ref()
         const modalStatus = ref(false)
@@ -172,14 +175,8 @@ export default defineComponent({
         let trigger = ref<boolean>(true);
         let triggerGetBudgetSubjectTransitionReportViewUrl = ref<boolean>(false);
         const dataSource: any = ref([])
-        // let formState: any = ref({});
-        // const resetFormNum = ref(1);
-        // const statusAddRow = ref(true);
         const modalStatusDetail = ref<boolean>(false)
-        // const statusClickButtonSave = ref<boolean>(true);
-        // const statusClickButtonAdd = ref<boolean>(false);
         const dataGridRef = ref(); // ref of grid
-        // const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
         const originData = {
             companyId: companyId,
             fiscalYear: acYear.value,
@@ -191,14 +188,8 @@ export default defineComponent({
             facilityBusinessId: globalFacilityBizId.value,
             transitionIds: [],
         };
-        // let confirmSave = ref(false)
         const dataRows = ref([])
         const selectedRowKeys = ref([])
-        // const ac570FormRef = ref()
-
-        // var disabledBlock = ref<boolean>(false);
-
-
 
         // ================GRAPQL==============================================
         // query getBudgetSubjectTransitions
@@ -222,13 +213,6 @@ export default defineComponent({
             mutate: deleteBudgetSubjectTransition, onDone: doneDeleteBudgetSubjectTransition, onError: errorDeleteBudgetSubjectTransition,
         } = useMutation(mutations.deleteBudgetSubjectTransition);
 
-        // mutation sendBudgetSubjectTransitionReportEmail
-        const {
-            mutate: sendBudgetSubjectTransitionReportEmail, onDone: doneSendBudgetSubjectTransitionReportEmail, onError: errorSendBudgetSubjectTransitionReportEmail,
-        } = useMutation(mutations.sendBudgetSubjectTransitionReportEmail);
-
-
-
         // ============== ON DONE MUTATION GRAPHQL ===============
         // getBudgetSubjectTransitions
         errorGetBudgetSubjectTransitions(e => {
@@ -246,14 +230,6 @@ export default defineComponent({
             notification('success', Message.getMessage('COMMON', '302').message)
         })
         errorDeleteBudgetSubjectTransition(e => {
-            notification('error', e.message)
-        })
-
-        // sendBudgetSubjectTransitionReportEmail
-        doneSendBudgetSubjectTransitionReportEmail((e) => {
-            notification('success', Message.getMessage('COMMON', '106').message)
-        })
-        errorSendBudgetSubjectTransitionReportEmail(e => {
             notification('error', e.message)
         })
 
@@ -300,7 +276,7 @@ export default defineComponent({
 
         const actonDeleteBudgetSubjectTransition = (data: any) => {
             Modal.confirm({
-                title: '삭제하겠습니까?',
+                title: Message.getMessage('AC570', '001').message,
                 icon: createVNode(ExclamationCircleOutlined),
                 okText: '네',
                 cancelText: '아니요',
@@ -328,48 +304,25 @@ export default defineComponent({
 
         const actionSendEmailGroup = () => {
             if (dataRows.value.length) {
-                console.log(userInfor.value);
-                
-                sendBudgetSubjectTransitionReportEmail({
-                    companyId: companyId,
-                    fiscalYear: acYear.value,
-                    facilityBusinessId: globalFacilityBizId.value,
-                    transitionIds: selectedRowKeys.value,
-                    emailInput: {
-                        senderName: sessionStorage.getItem("username"),
-                        receiverName: userInfor.value?.name,
-                        receiverAddress: userInfor.value?.email,
-                    }
-                })
+                modalEmailGroupStatus.value = true;
             } else {
                 notification('error', `항목을 최소 하나 이상 선택해야합니다`)
             }
         }
 
-
-
         return {
             trigger, selectionChanged, selectedRowKeys,
             loadingGetBudgetSubjectTransitions,
-            // confirmSave,
-             move_column, colomn_resize, 
-            // idRowEdit, 
-            modalHistoryStatus, 
-            // labelCol: { style: { width: "150px" } },
-            //  statusFormUpdate,
-              popupData, dataSource,
-            //    DeleteOutlined, 
-               modalStatus, focusedRowKey, modalStatusAdd,
-            // confimSaveWhenChangeRow, 
+            move_column, colomn_resize,
+            modalHistoryStatus,
+            modalEmailGroupStatus,
+            popupData, dataSource,
+            modalStatus, focusedRowKey, modalStatusAdd,
             onFocusedRowChanging,
             onOpenPopupDetail, modalStatusDetail,
             actionCreate, modalHistory,
-            // contentDelete,
-             modalStatusDelete, 
-            //  statusAddRow,
-              Message, 
-            // ac570FormRef, 
-            // disabledBlock, 
+            modalStatusDelete,
+            Message,
             dataGridRef,
             actonDeleteBudgetSubjectTransition,
             actionPrint, actionSendEmailGroup,
@@ -379,8 +332,6 @@ export default defineComponent({
 </script> 
 <style scoped lang="scss" src="./style/style.scss" ></style>
 
-<style>
-.confirmDelete .anticon {
+<style>.confirmDelete .anticon {
     color: black !important;
-}
-</style>
+}</style>

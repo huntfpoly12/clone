@@ -114,7 +114,8 @@ export default defineComponent({
         doneAddAccountingDocumentProof((e) => {
             // triggerAccountingDocumentProofs.value = true;
             store.state.common.ac120.statusKeppRow = true;
-            store.state.common.ac120.resetDataTable++
+            // store.state.common.ac120.resetDataTable++
+            store.state.common.ac120.formData.proofCount++
             notification("success", Message.getMessage("COMMON", "106").message);
         });
         errorAddAccountingDocumentProof((e) => {
@@ -124,7 +125,8 @@ export default defineComponent({
         // RemoveAccountingDocumentProof
         doneRemoveAccountingDocumentProof((e) => {
             store.state.common.ac120.statusKeppRow = true;
-            store.state.common.ac120.resetDataTable++
+            // store.state.common.ac120.resetDataTable++
+            store.state.common.ac120.formData.proofCount--
             fileList.value.splice(indexImg.value, 1);
             notification("success", Message.getMessage("COMMON", "106").message);
         });
@@ -134,9 +136,9 @@ export default defineComponent({
 
         // ================== WATCH ================
         watch(() => store.state.common.ac120.resetDataAccountingDocumentProofs, (value) => {
-            if (store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
+            if (store.state.common.ac120.formData.accountingDocumentId && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
                 statusDisabledImg.value = false;
-                dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.transactionDetailDate
+                dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
                 dataGetAccountingDocumentProofs.value.accountingDocumentId = store.state.common.ac120.formData.accountingDocumentId
                 triggerAccountingDocumentProofs.value = true;
             } else if (store.state.common.ac120.formData.accountingDocumentId == 'AC120') {
@@ -159,31 +161,6 @@ export default defineComponent({
                 });
             }
         });
-
-        // watch(() => fileList.value, (value) => {
-        //     nextTick(() => {
-        //         if (value.length) {
-        //             value.forEach((items) => {
-        //                 if (items.status === "error") {
-        //                     items.response = "업로드 오류";
-        //                 }
-        //             });
-        //             const elementsIconPreview = elementUpload.value.querySelectorAll(
-        //                 "a[title='Preview file']"
-        //             );
-        //             const elementsIconDelete = elementUpload.value.querySelectorAll(
-        //                 "button[title='Remove file']"
-        //             );
-        //             elementsIconPreview.forEach((el: any) => {
-        //                 el.setAttribute("title", "원본 보기");
-        //             });
-        //             elementsIconDelete.forEach((el: any) => {
-        //                 el.setAttribute("title", "삭제");
-        //             });
-        //         }
-        //     });
-        // }, { deep: true });
-
 
         // ================ FUNCTION ============================================
 

@@ -187,12 +187,12 @@
                                     :arrayValue="store.state.common.ac120.arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true" />
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <!-- <a-col :span="12">
                             <a-form-item label="물품내역수">
                                 <default-text-box :disabled="true"
                                     v-model:valueInput="formDataAdd.goodsCount" width="150px" />
                             </a-form-item>
-                        </a-col>
+                        </a-col> -->
                     </a-row>
                     <a-row>
                         <a-col :span="24">
@@ -240,6 +240,10 @@ export default defineComponent({
             type: Number,
             default: 0,
         },
+        monthSelected: {
+            type: Number,
+            default: dayjs().month() + 1,
+        }
     },
     components: {
         DateTimeBoxCustom
@@ -267,8 +271,8 @@ export default defineComponent({
         const statusShowLetterOfApprovalType = ref(false)
         const triggerBankbooks = ref<boolean>(true);
 
-        const startDate = ref(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate());
-        const finishDate = ref(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).endOf('month').toDate());
+        const startDate = ref(dayjs(`${acYear.value}-${props.monthSelected}`).startOf('month').toDate());
+        const finishDate = ref(dayjs(`${acYear.value}-${props.monthSelected}`).endOf('month').toDate());
 
         // =================== GRAPHQL ===================
         // query getBankbooks
@@ -315,14 +319,14 @@ export default defineComponent({
             if (newValue) {
                 statusShowLetterOfApprovalType.value = false;
                 formDataAdd.value = { ...initialStateFormData }
-                formDataAdd.value.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate())
+                formDataAdd.value.transactionDetailDate = filters.formatDateToInterger(dayjs(`${acYear.value}-${props.monthSelected}`).startOf('month').toDate())
                 countKey.value++
             }
         })
 
-        watch(() => store.state.common.ac120.monthSelected, (newValue, old) => {
-            startDate.value = dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).startOf('month').toDate();
-            finishDate.value = dayjs(`${acYear.value}-${store.state.common.ac120.monthSelected}`).endOf('month').toDate();
+        watch(() => props.monthSelected, (newValue, old) => {
+            startDate.value = dayjs(`${acYear.value}-${props.monthSelected}`).startOf('month').toDate();
+            finishDate.value = dayjs(`${acYear.value}-${props.monthSelected}`).endOf('month').toDate();
         })
 
         // watch(() => [formDataAdd.bankbookId, store.state.common.ac120.arrayBankbooks], (newValue, oldValue) => {
@@ -351,7 +355,6 @@ export default defineComponent({
             formDataAdd.value.registrationDate = formDataAdd.value.transactionDetailDate
         }
         const submit = () => {
-
             const res = refFormAddAC120.value?.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -396,8 +399,8 @@ export default defineComponent({
                 }
                 delete dataSubmit.input.resolutionClassification
                 // delete dataSubmit.input.resolutionDate
-                delete dataSubmit.input.bankbook
-                // delete (dataSubmit.input.accountingDocumentId)
+                // delete dataSubmit.input.bankbook
+                delete (dataSubmit.input.accountingDocumentId)
                 delete (dataSubmit.input.transactionDetailDate)
                 mutateCreateAccountingDocument(dataSubmit)
             }

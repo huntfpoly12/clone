@@ -53,66 +53,14 @@
                   </div>
                 </div>
               </div>
-
               <!-- pewview reply -->
-              <a v-if="items?.reply && Object.keys(items.reply).length"
-                class="form-chat-timeline-common form-chat-timeline-common-replyPreview" :href="`#${items.reply.key}`">
-                <div class="form-chat-timeline-avatar">
-                  <a-avatar shape="circle" size="large"
-                    :style="`background-color: ${items.userId === userId ? '#1890ff' : '#f56a00'}`">{{ items.name
-                    }}</a-avatar>
-                </div>
-                <div class="form-chat-timeline-content">
-                  <div class="form-chat-timeline-content-info">
-                    <div class="form-chat-timeline-content-info-user">
-                      <span class="form-chat-timeline-content-info-user-status">{{ items.reply.status }}</span>
-                      <div class="form-chat-timeline-content-info-user-name"
-                        :class="{ 'form-chat-timeline-content-info-user-name-login': items.reply.userId === userId }">{{
-                          items.reply.name }}
-                      </div>
-                    </div>
-                    <div class="form-chat-timeline-content-info-time">{{ formatDate(items.reply.createdAt) }}</div>
-                  </div>
-                  <div class="form-chat-timeline-content-background">
-                    <div class="form-chat-timeline-content-text">
-                      <MarkdownCustom
-                        :options="{ source: items.reply.text, linkify: true, typographer: true, highlight: true }" />
-                    </div>
-                    <div v-if="items.reply?.files && items.reply?.files.length" class="form-chat-timeline-content-files">
-                      <div class="form-chat-timeline-content-files-preview">
-                        <div class="form-chat-timeline-content-files-preview-images">
-                          <img
-                            v-for="(file, indexFile) in items.reply.files.filter((item: any) => item?.contentType.includes('image/'))"
-                            :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
-                            alt=""
-                            @click="previewImage(items.reply.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)">
-                        </div>
-                        <div
-                          v-for="(file, indexFile) in items.reply.files.filter((item: any) => !item?.contentType.includes('image/'))"
-                          :key="indexFile" class="form-chat-timeline-content-files-preview-filetext"
-                          @click="openLinkDownFile(file.url)">
-                          <FileTextOutlined style="margin-right: 10px; font-size:30px" />
-                          <div class="form-chat-timeline-content-files-preview-filetext-info">
-                            <p class="form-chat-timeline-content-files-preview-filetext-info-name">{{ file.name }}</p>
-                            <p class="form-chat-timeline-content-files-preview-filetext-info-size">({{
-                              formatFileSize(file.size) }})</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <!-- pewview reply -->
+              <PreviewReply v-if="Object.keys(!!items?.reply ? items.reply : {}).length" :dataReply="items?.reply || { }"  />
             </div>
 
             <InputChat v-else ref="inputEditChat" v-model:textChatProp="itemEditComment.text"
               :dataReply="itemEditComment?.reply" @removeReply="itemEditComment.reply = {}"
               v-model:filesUploadProps="itemEditComment.files" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
               @submitChat="submitChat" @cancel="cancelEdit(index)" />
-            <!-- <div class="form-chat-timeline-content-feedback">
-              <FeedbackEmoji @feedback="handleFeedback"/>
-            </div> -->
           </div>
 
           <div class="form-chat-timeline-common-menu">
@@ -189,35 +137,33 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, nextTick, watch, computed } from 'vue'
+import { defineComponent, ref, nextTick, watch, computed, onMounted } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, FileAddOutlined, FileOutlined, SendOutlined, FileTextOutlined, RollbackOutlined } from '@ant-design/icons-vue';
-import { databaseFirebase, storage } from "@/firebaseConfig";
-import {
-  ref as reffb,
-  push,
-  set,
-  query,
-  onChildAdded,
-  onChildChanged,
-  // onChildRemoved,
-  onValue,
-  // child,
-  // remove,
-  update,
-  limitToLast
-} from "firebase/database";
-import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
+// import { databaseFirebase, storage } from "@/firebaseConfig";
+// import {
+//   ref as reffb,
+//   push,
+//   set,
+//   query,
+//   onChildAdded,
+//   onChildChanged,
+//   onValue,
+//   update,
+//   limitToLast
+// } from "firebase/database";
+// import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getJwtObject } from "@bankda/jangbuda-common";
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
 import StatusChat from './StatusChat.vue'
-import FeedbackEmoji from './FeedbackEmoji.vue'
 // import picker compopnent
 import EmojiPicker from 'vue3-emoji-picker'
 // import css
 import 'vue3-emoji-picker/css'
 import InputChat from './InputChat.vue'
 import MarkdownCustom from './MarkdownCustom.vue';
+import PreviewReply from './PreviewReply.vue';
 import { cloneDeep } from "lodash"
+import { dataChat } from '../utils'
 export default defineComponent({
   props: {
     // Message only 2 people
@@ -244,9 +190,9 @@ export default defineComponent({
     ModalPreviewListImage,
     EmojiPicker,
     StatusChat,
-    FeedbackEmoji,
     InputChat,
-    MarkdownCustom
+    MarkdownCustom,
+    PreviewReply
   },
   setup(props, { emit }) {
     const token = ref(sessionStorage.getItem("token"))
@@ -283,103 +229,114 @@ export default defineComponent({
       reply: {}
     })
     const objectChatUploadUpFile: any = ref(null)
-    const listChat = ref<any>([])
+    const listChat = ref<any>([...dataChat])
     let listImagePreview: any = ref({
       index: 0,
       files: [],
     })
     let itemDetele: any = ref()
     let itemOriginEdit: any = ref()
-    const channelChatSubrights = () => {
-      if (!!props.idUserTo) {
-        const idUser = userName.value?.toString() || ''
-        if (props.idUserTo > idUser) {
-          return props.idUserTo + idUser;
-        } else {
-          return idUser + props.idUserTo;
-        }
-      } else {
-        return props.keyChatChannel.toString()
-      }
-    };
 
-    let chatListRef: any = computed(() => {
-      return !!channelChatSubrights() ? reffb(databaseFirebase, channelChatSubrights()) : null
-    });
+    watch(() => listChat.value, (value) => {
+      emit('updateNoti', value)
+    }, { 
+      deep: true,
+      immediate: true
+    })
+
+    // const channelChatSubrights = () => {
+    //   if (!!props.idUserTo) {
+    //     const idUser = userName.value?.toString() || ''
+    //     if (props.idUserTo > idUser) {
+    //       return props.idUserTo + idUser;
+    //     } else {
+    //       return idUser + props.idUserTo;
+    //     }
+    //   } else {
+    //     return props.keyChatChannel.toString()
+    //   }
+    // };
+
+    // let chatListRef: any = computed(() => {
+    //   return !!channelChatSubrights() ? reffb(databaseFirebase, channelChatSubrights()) : null
+    // });
     const date = new Date()
     const currentTime = date.getFullYear() + '-' + ((date.getMonth() + 1) < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
     const getListContentChat = () => {
-      onValue(
-        chatListRef.value,
-        (snapshot) => {
-          const objList = snapshot.val()
-          if (!objList) {
-            firstLoadChat.value = false
-          }
-          let arr = []
-          for (const key in objList) {
-            if (!objList[key]?.isDelete) {
-              arr.push({
-                key: key,
-                files: objList?.files || [],
-                ...objList[key]
-              })
-            }
-          }
-          listChat.value = arr
+      // onValue(
+      //   chatListRef.value,
+      //   (snapshot) => {
+      //     const objList = snapshot.val()
+      //     if (!objList) {
+      //       firstLoadChat.value = false
+      //     }
+      //     let arr = []
+      //     for (const key in objList) {
+      //       if (!objList[key]?.isDelete) {
+      //         arr.push({
+      //           key: key,
+      //           files: objList?.files || [],
+      //           ...objList[key]
+      //         })
+      //       }
+      //     }
+      //     listChat.value = arr
+      //     console.log('listChat.value', listChat.value)
 
-          onChildAdded(query(chatListRef.value, limitToLast(1)), (data) => {
-            if (!firstLoadChat.value) {
-              if (isLoadingUpload.value && objectChatUploadUpFile.value) {
-                if (data.val().userId === userId && data.val().createdAt === objectChatUploadUpFile.value.createdAt) {
-                  objectChatUploadUpFile.value = null
-                  isLoadingUpload.value = false
-                }
-              }
-              listChat.value.push({
-                ...data.val(),
-                key: data.key
-              })
-              nextTick(() => {
-                formTimeline.value.scrollTop = 10000000
-              })
-            } else {
-              nextTick(() => {
-                formTimeline.value.scrollTo({
-                  top: 10000000,
-                  behavior: "instant",
-                });
-              })
-            }
-            firstLoadChat.value = false
-          });
-          onChildChanged(chatListRef.value, (data) => {
-            const indexUpdate = listChat.value.findIndex((chat: any) => chat.key === data.key)
-            if (indexUpdate >= 0) {
-              if (!!data.val()?.isDelete) {
-                listChat.value.splice(indexUpdate, 1)
-              } else {
-                listChat.value[indexUpdate] = {
-                  ...listChat.value[indexUpdate],
-                  text: data.val().text,
-                  files: data.val().files,
-                  reply: data.val()?.reply ? data.val().reply : {},
-                }
-              }
-            }
-          });
-        },
-        {
-          onlyOnce: true,
-        }
-      );
+      //     onChildAdded(query(chatListRef.value, limitToLast(1)), (data) => {
+      //       if (!firstLoadChat.value) {
+      //         if (isLoadingUpload.value && objectChatUploadUpFile.value) {
+      //           if (data.val().userId === userId && data.val().createdAt === objectChatUploadUpFile.value.createdAt) {
+      //             objectChatUploadUpFile.value = null
+      //             isLoadingUpload.value = false
+      //           }
+      //         }
+      //         listChat.value.push({
+      //           ...data.val(),
+      //           key: data.key
+      //         })
+      //         nextTick(() => {
+      //           formTimeline.value.scrollTop = 10000000
+      //         })
+      //       } else {
+      //         nextTick(() => {
+      //           formTimeline.value.scrollTo({
+      //             top: 10000000,
+      //             behavior: "instant",
+      //           });
+      //         })
+      //       }
+      //       firstLoadChat.value = false
+      //     });
+      //     onChildChanged(chatListRef.value, (data) => {
+      //       const indexUpdate = listChat.value.findIndex((chat: any) => chat.key === data.key)
+      //       if (indexUpdate >= 0) {
+      //         if (!!data.val()?.isDelete) {
+      //           listChat.value.splice(indexUpdate, 1)
+      //         } else {
+      //           listChat.value[indexUpdate] = {
+      //             ...listChat.value[indexUpdate],
+      //             text: data.val().text,
+      //             files: data.val().files,
+      //             reply: data.val()?.reply ? data.val().reply : {},
+      //           }
+      //         }
+      //       }
+      //     });
+      //   },
+      //   {
+      //     onlyOnce: true,
+      //   }
+      // );
     };
 
     const submitChat = () => {
       if (isLoadingUpload.value || isProcessingDeleteUpdate.value) return
+      
       let textInputed = textChat.value
       let fileUploaded = [...filesUpload.value]
       if (itemEditComment.value.key) {
+        
         textInputed = itemEditComment.value.text
         fileUploaded = [...itemEditComment.value.files]
       }
@@ -430,56 +387,90 @@ export default defineComponent({
         listFileUploadHandleLoading.value = []
       }
       if (itemEditComment.value.key === null) {
-        const postListRef = reffb(databaseFirebase, channelChatSubrights());
-        const newPostRef = push(postListRef);
-        set(newPostRef, payload.value)
-          .then(() => {
-            nextTick(() => {
-              formTimeline.value.scrollTop = 10000000
-              inputChat.value.resetInputChat()
-            })
-          })
-          .catch((err) => {
-            console.log(err);
-          }).finally(() => {
+        listChat.value.push({...payload.value, key: payload.value.createdAt.toString()})
+
+        nextTick(() => {
             itemCommentReply.value = {}
             objectChatUploadUpFile.value = null
             isLoadingUpload.value = false
             formTimeline.value.scrollTop = 10000000
-          })
+            inputChat.value.resetInputChat()
+        })
+        // const postListRef = reffb(databaseFirebase, channelChatSubrights());
+        // const newPostRef = push(postListRef);
+        // set(newPostRef, payload.value)
+        //   .then(() => {
+        //     nextTick(() => {
+        //       formTimeline.value.scrollTop = 10000000
+        //       inputChat.value.resetInputChat()
+        //     })
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   }).finally(() => {
+        //     itemCommentReply.value = {}
+        //     objectChatUploadUpFile.value = null
+        //     isLoadingUpload.value = false
+        //     formTimeline.value.scrollTop = 10000000
+        //   })
       } else {
         const updates: any = {};
         if (!Object.keys(itemEditComment.value?.reply || {}).length) {
           delete itemEditComment.value.reply
         }
         const payloadEdit = { ...itemEditComment.value, ...payload.value }
-        delete payloadEdit.key
-        updates[`/${itemEditComment.value.key}`] = payloadEdit
-        update(chatListRef.value, updates).then(() => {
-        }).catch(() => {
-          console.log('eeeeeeeee');
-        }).finally(() => {
-          nextTick(() => {
-            itemEditComment.value = {
+        const index = listChat.value.findIndex((chat: any) => chat.key === payloadEdit.key)
+        listChat.value[index] = {...payloadEdit}
+        nextTick(() => {
+          itemEditComment.value = {
               key: null,
               text: '',
               files: [],
             }
             isLoadingUpload.value = false
-          })
         })
+
+
+
+
+        // const updates: any = {};
+        // if (!Object.keys(itemEditComment.value?.reply || {}).length) {
+        //   delete itemEditComment.value.reply
+        // }
+        // const payloadEdit = { ...itemEditComment.value, ...payload.value }
+        // delete payloadEdit.key
+        // updates[`/${itemEditComment.value.key}`] = payloadEdit
+        // update(chatListRef.value, updates).then(() => {
+        // }).catch(() => {
+        //   console.log('eeeeeeeee');
+        // }).finally(() => {
+        //   nextTick(() => {
+        //     itemEditComment.value = {
+        //       key: null,
+        //       text: '',
+        //       files: [],
+        //     }
+        //     isLoadingUpload.value = false
+        //   })
+        // })
       }
+      nextTick(() => {
+        filesUpload.value = []
+        objectChatUploadUpFile.value = null
+        listFileUploadHandleLoading.value = []
+        inputChat.value.resetInputChat()
+      })
     }
 
     watch(() => [props.idUserTo, props.keyChatChannel], (value) => {
-      if (!!value[0] || !!value[1]) {
-        firstLoadChat.value = true
-        chatListRef.value = reffb(databaseFirebase, channelChatSubrights());
-        getListContentChat();
-        nextTick(() => {
-          formTimeline.value.scrollTop = 10000000
-        })
-      }
+      // if (!!value[0] || !!value[1]) {
+      //   firstLoadChat.value = true
+        // chatListRef.value = reffb(databaseFirebase, channelChatSubrights());
+        // getListContentChat();
+        // nextTick(() => {
+        //   formTimeline.value.scrollTop = 10000000
+        // })
+      // }
     }, {
       deep: true,
       immediate: true,
@@ -513,16 +504,24 @@ export default defineComponent({
 
     const handleConfirmDelete = (status: boolean) => {
       if (status) {
-        isProcessingDeleteUpdate.value = true
-        const updates: any = {};
-        updates[`/${itemDetele.value.key}`] = { ...itemDetele.value, isDelete: true }
-        update(chatListRef.value, updates).then(() => {
-        }).catch(() => {
-          console.log('e');
-        }).finally(() => {
+        const index = listChat.value.findIndex((chat: any) => chat.key === itemDetele.value.key)
+        listChat.value.splice(index, 1)
+
+        nextTick(() => {
           itemDetele.value = null
           isProcessingDeleteUpdate.value = false
         })
+        // isProcessingDeleteUpdate.value = true
+        // const updates: any = {};
+        // updates[`/${itemDetele.value.key}`] = { ...itemDetele.value, isDelete: true }
+        // update(chatListRef.value, updates).then(() => {
+        // }).catch(() => {
+        //   console.log('e');
+        // }).finally(() => {
+        //   itemDetele.value = null
+        //   isProcessingDeleteUpdate.value = false
+        // })
+
       } else {
         isModalDeleteChat.value = false
       }
@@ -540,14 +539,25 @@ export default defineComponent({
       listImageUpload.value = []
       listFileUploadHandleLoading.value.forEach((file: any) => {
         if (!!file?.file) {
-          const storageRef = refStorage(storage, file.file.name);
-          uploadBytes(storageRef, file.file, { contentType: file.contentType }).then(async (res) => {
-            const url = await getDownloadURL(res.ref)
-            listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size, contentType: file.contentType }]
-          }).catch((err) => {
-            isLoadingUpload.value = false
-            console.log('error', err);
-          })
+          // const storageRef = refStorage(storage, file.file.name);
+          // uploadBytes(storageRef, file.file, { contentType: file.contentType }).then(async (res) => {
+          //   const url = await getDownloadURL(res.ref)
+          //   listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size, contentType: file.contentType }]
+          // }).catch((err) => {
+          //   isLoadingUpload.value = false
+          //   console.log('error', err);
+          // })video
+          let url = ''
+          if(file.contentType.includes('image/')) {
+            url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/cach-chup-anh-chan-dung-9.jpg?alt=media&token=246270e1-334f-4dce-b312-6642c7d1dc3c'
+          }else {
+            if(file.contentType.includes('video')){
+              url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/video-5-seconds.mp4?alt=media&token=f3a80d6f-d0a0-47aa-b6ac-bfff433b2109'
+            }else{
+              url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/ac130-notice.pptx?alt=media&token=0d759619-e4b7-4b67-95e8-5651c6d858a0'
+            }
+          }
+          listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size, contentType: file.contentType }]
         } else {
           listImageUpload.value = [...listImageUpload.value, { url: file.url, name: file.name, size: file.size, contentType: file.contentType }]
         }
@@ -583,10 +593,6 @@ export default defineComponent({
     const openLinkDownFile = (link: string) => {
       window.open(link, '_blank')
     }
-
-    const handleFeedback = (emoji: any) => {
-      console.log('xxxxx', emoji);
-    }
     return {
       userName,
       listChat,
@@ -614,8 +620,7 @@ export default defineComponent({
       formatFileSize,
       openLinkDownFile,
       replyComment,
-      itemCommentReply,
-      handleFeedback
+      itemCommentReply
     }
   },
 })
@@ -690,30 +695,6 @@ export default defineComponent({
       &:hover {
         .form-chat-timeline-common-menu {
           display: block;
-        }
-      }
-
-      &-replyPreview {
-        // display: block;
-        margin-top: 5px;
-        border-left: 3px solid #e7e6e6;
-        padding: 5px;
-        height: 100px;
-        overflow: hidden;
-        background-color: rgba(2, 2, 2, 0.027);
-        opacity: .5;
-        .form-chat-timeline-avatar {
-          pointer-events: none;
-        }
-
-        .form-chat-timeline-content {
-          pointer-events: none;
-          width: 100%;
-          margin-right: 0 !important;
-        }
-
-        .form-chat-timeline-content-files {
-          background-color: transparent;
         }
       }
     }
@@ -847,11 +828,6 @@ export default defineComponent({
         font-size: 15px;
         color: #333333;
       }
-      &-feedback {
-          position: absolute;
-          left: 8px;
-          bottom: -23px;
-        }
     }
 
     &-uploading {

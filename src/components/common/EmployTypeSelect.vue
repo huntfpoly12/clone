@@ -9,12 +9,22 @@
         <span class="btn-container">
           {{ data.employeeId }}
         </span>
-        {{ data?.name }}
+        <a-tooltip placement="top" zIndex="999999" v-if="data?.name.length > 15">
+          <template #title>
+            <span>{{ checkLenTooltip(data?.name, 15) }}</span>
+          </template>
+          <div class="name-w-1">
+            {{ checkLen(data?.name, 15) }}
+          </div>
+        </a-tooltip>
+        <div class="name-w-1" v-else>
+          {{ checkLen(data?.name, 15) }}
+        </div>
         <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
           <template #title>
-            <span>{{ data?.incomeTypeCode }}</span>
+            <span>{{ data?.incomeTypeCode }} {{ checkLenTooltip(data?.incomeTypeName, 0) }}</span>
           </template>
-          <a-tag class="ml-5 py-1"> {{ checkLen(data?.incomeTypeName) }}</a-tag>
+          <a-tag class="ml-5 py-1 mr-0"> {{ checkLen(data?.incomeTypeName, 21) }}</a-tag>
         </a-tooltip>
         <DxTextBox style="display: none;" />
       </div>
@@ -29,12 +39,22 @@
         <span class="btn-container">
           {{ data.employeeId }}
         </span>
-        {{ data?.name }}
+        <a-tooltip placement="top" zIndex="999999" v-if="data?.name.length > 15">
+          <template #title>
+            <span>{{ checkLenTooltip(data?.name, 15) }}</span>
+          </template>
+          <div class="name-w-1">
+            {{ checkLen(data?.name, 15) }}
+          </div>
+        </a-tooltip>
+        <div class="name-w-1" v-else>
+          {{ checkLen(data?.name, 15) }}
+        </div>
         <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
           <template #title>
-            <span>{{ data?.incomeTypeCode }}</span>
+            <span>{{ data?.incomeTypeCode }} {{ checkLenTooltip(data?.incomeTypeName, 0) }}</span>
           </template>
-          <a-tag class="ml-5 py-2"> {{ checkLen(data?.incomeTypeName) }}</a-tag>
+          <a-tag class="ml-5 py-2 mr-0"> {{ checkLen(data?.incomeTypeName, 21) }}</a-tag>
         </a-tooltip>
       </div>
     </template>
@@ -100,17 +120,20 @@ export default defineComponent({
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
-    const checkLen = (text: String) => {
-      if (text.length > 20) {
-        return text.substring(0, 17) + '...';
+    const checkLen = (text: String, num: number) => {
+      if (text.length > num) {
+        return text.substring(0, num - 3) + '...';
       }
       return text;
+    };
+    const checkLenTooltip = (text: String, num: number) => {
+      return text.length > num ? text : '';
     };
     return {
       updateValue,
       valueEmployRes,
       messageRequired,
-      checkLen,
+      checkLen, checkLenTooltip,
       Message,
     };
   },
@@ -189,6 +212,25 @@ export default defineComponent({
     margin-right: 10px;
     border-radius: 5px;
     text-align: center;
+  }
+}
+
+.name-w {
+  width: 70px;
+  display: inline-block;
+}
+
+.name-w-1 {
+  display: inline-block;
+}
+
+:deep .dx-button-content {
+  display: inline-flex;
+  align-items: center;
+  padding: 0px 7px 1px !important;
+
+  .dx-dropdowneditor-icon {
+    width: 24px;
   }
 }
 </style>

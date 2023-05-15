@@ -80,7 +80,7 @@
                     </div>
                     <div style=" margin-left: 20px;">
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-                            지출액 <span>[{{ $filters.formatCurrency(store.state.common.ac120.formData?.spending) }}]</span>
+                            지출액 <span>[{{ $filters.formatCurrency(amount) }}]</span>
                         </div>
                     </div>
                     <div style=" margin-left: 20px;">
@@ -100,7 +100,7 @@
             </standard-form>
         </div>
         <div class="btn_submit text-align-center mt-20">
-            <button-basic :disabled="disabledSubmit" @onClick="onSubmit" class="button-form-modal" :text="'저장'"
+            <button-basic :disabled="disabledSubmit || !(dataSource?.length)" @onClick="onSubmit" class="button-form-modal" :text="'저장'"
                 :type="'default'" :mode="'contained'" />
         </div>
         <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
@@ -159,6 +159,8 @@ export default defineComponent({
         const triggerSearchStatementOfGoodsItems = ref(false)
         const triggerSearchStatementOfGoodsStandards = ref(false)
         const triggerSearchStatementOfGoodsUnits = ref(false)
+
+        const amount = ref<number>(0)
 
         // =================== GRAPHQL ===================
         // mutation deleteStatementOfGoods    
@@ -283,7 +285,7 @@ export default defineComponent({
                         companyId: companyId,
                         fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
-                        transactionDetailDate: store.state.common.ac120.transactionDetailDate,
+                        transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
                         accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
                     })
                 }
@@ -309,7 +311,7 @@ export default defineComponent({
                             companyId: companyId,
                             fiscalYear: acYear.value,
                             facilityBusinessId: globalFacilityBizId.value,
-                            transactionDetailDate: store.state.common.ac120.transactionDetailDate,
+                            transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
                             accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
                             items: dataItem
                         }
@@ -327,11 +329,11 @@ export default defineComponent({
                 const dataTotalDifference = dataSource.value[index].unitPrice
                 dataSource.value[index].amount = dataTotalValue * dataTotalDifference
             }
-            const elTotalValue: any = document.querySelector('.refTotalValue')
-            const elTotalDifference: any = document.querySelector('.refTotalDifference')
+            // const elTotalValue: any = document.querySelector('.refTotalValue')
+            // const elTotalDifference: any = document.querySelector('.refTotalDifference')
 
-            elTotalValue.textContent = customSumAmount()
-            elTotalDifference.textContent = checkAlone()
+            // elTotalValue.textContent = customSumAmount()
+            // elTotalDifference.textContent = checkAlone()
 
         }
 
@@ -347,12 +349,17 @@ export default defineComponent({
             dataSource.value?.map((item: any) => {
                 total += item.amount
             })
-            let totalShow = store.state.common.ac120.formData?.spending - total
+            if (store.state.common.ac120.formData?.resolutionClassification == 1) {
+                amount.value = 0
+            } else if (store.state.common.ac120.formData.resolutionClassification == 2) {
+                amount.value = store.state.common.ac120.formData?.amount
+            }
+            let totalShow = amount.value - total
             if (totalShow === 0) {
                 disabledSubmit.value = false
             } else {
                 disabledSubmit.value = true
-            }
+            }            
             return `차액 <span>[${filters.formatCurrency(totalShow)}]</span> `
         }
         return {
@@ -365,7 +372,7 @@ export default defineComponent({
             changeInput,
             customSumAmount,
             addNewRow, dataGridRef,
-            // onInitRow,
+            amount,
             focusedRowKey,
             onSubmit,
             arrSelectItem,

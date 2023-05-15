@@ -41,23 +41,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, nextTick } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import { getJwtObject } from "@bankda/jangbuda-common";
 import { CloseOutlined } from "@ant-design/icons-vue";
-import { databaseFirebase, storage } from "@/firebaseConfig";
-import {
-  ref as reffb,
-  push,
-  set,
-  query,
-  update,
-  onChildAdded,
-  onChildChanged,
-  onValue,
-  limitToLast
-} from "firebase/database";
+// import { databaseFirebase, storage } from "@/firebaseConfig";
+// import {
+//   ref as reffb,
+//   push,
+//   set,
+//   query,
+//   update,
+//   onChildAdded,
+//   onChildChanged,
+//   onValue,
+//   limitToLast
+// } from "firebase/database";
 import StatusChat from './StatusChat.vue'
+import { dataChat } from '../utils'
 export default defineComponent({
+  props: {
+    listNoti: {
+      type: Array,
+      default: []
+    }
+  },
   components: {
     CloseOutlined,
     StatusChat
@@ -67,89 +74,91 @@ export default defineComponent({
     let jwtObject = getJwtObject(token.value!);
     const userId = jwtObject.userId
 
-
     const keyChatChannel = 'keyChatChannelCommon';
     const visible = ref(true)
     const listNotification = ref<any>([])
     const refTimelineNoti: any = ref()
     const firstLoadChat = ref(true)
 
-    const chatListRef = reffb(databaseFirebase, keyChatChannel)
+    // const chatListRef = reffb(databaseFirebase, keyChatChannel)
     onMounted(() => {
-      getListContentChat()
+      getListNoti()
     })
 
-    const getListContentChat = () => {
-      onValue(
-        chatListRef,
-        (snapshot) => {
-          const objList = snapshot.val()
-          if (!objList) {
-            firstLoadChat.value = false
-          }
-          let arr = []
-          for (const key in objList) {
-            if (!objList[key]?.isDelete && objList[key].userId !== userId) {
-              arr.push({
-                key: key,
-                files: objList?.files || [],
-                ...objList[key]
-              })
-            }
-          }
-          listNotification.value = arr
+    const getListNoti = () => {
+      listNotification.value = dataChat.filter((noti: any) => noti.userId !== userId)
+      setTimeout(() => {
+        firstLoadChat.value = false
+      }, 500);
+      // onValue(
+      //   chatListRef,
+      //   (snapshot) => {
+      //     const objList = snapshot.val()
+      //     if (!objList) {
+      //       firstLoadChat.value = false
+      //     }
+      //     let arr = []
+      //     for (const key in objList) {
+      //       if (!objList[key]?.isDelete && objList[key].userId !== userId) {
+      //         arr.push({
+      //           key: key,
+      //           files: objList?.files || [],
+      //           ...objList[key]
+      //         })
+      //       }
+      //     }
+      //     listNotification.value = arr
 
-          onChildAdded(query(chatListRef, limitToLast(1)), (data) => {
-            if (!firstLoadChat.value && data.val().userId !== userId) {
-              listNotification.value.push({
-                ...data.val(),
-                key: data.key
-              })
-              nextTick(() => {
-                refTimelineNoti.value.scrollTop = 10000000
-              })
-            } else {
-              nextTick(() => {
-                refTimelineNoti.value.scrollTo({
-                  top: 10000000,
-                  behavior: "instant",
-                });
-              })
-            }
-            firstLoadChat.value = false
-          });
-          onChildChanged(chatListRef, (data) => {
-            const indexUpdate = listNotification.value.findIndex((chat: any) => chat.key === data.key)
-            if (indexUpdate >= 0) {
-              listNotification.value[indexUpdate] = {
-                ...listNotification.value[indexUpdate],
-                text: data.val().text,
-                files: data.val().files,
-                reply: data.val()?.reply ? data.val().reply : {},
-                seen: data.val()?.seen ? data.val().seen : [],
-              }
-            }
-          });
-        },
-        {
-          onlyOnce: true,
-        }
-      );
+      //     onChildAdded(query(chatListRef, limitToLast(1)), (data) => {
+      //       if (!firstLoadChat.value && data.val().userId !== userId) {
+      //         listNotification.value.push({
+      //           ...data.val(),
+      //           key: data.key
+      //         })
+      //         nextTick(() => {
+      //           refTimelineNoti.value.scrollTop = 10000000
+      //         })
+      //       } else {
+      //         nextTick(() => {
+      //           refTimelineNoti.value.scrollTo({
+      //             top: 10000000,
+      //             behavior: "instant",
+      //           });
+      //         })
+      //       }
+      //       firstLoadChat.value = false
+      //     });
+      //     onChildChanged(chatListRef, (data) => {
+      //       const indexUpdate = listNotification.value.findIndex((chat: any) => chat.key === data.key)
+      //       if (indexUpdate >= 0) {
+      //         listNotification.value[indexUpdate] = {
+      //           ...listNotification.value[indexUpdate],
+      //           text: data.val().text,
+      //           files: data.val().files,
+      //           reply: data.val()?.reply ? data.val().reply : {},
+      //           seen: data.val()?.seen ? data.val().seen : [],
+      //         }
+      //       }
+      //     });
+      //   },
+      //   {
+      //     onlyOnce: true,
+      //   }
+      // );
     };
-
 
     const goToChatByNoti = (noti: any) => {
       visible.value = false
-      if (noti?.seen && noti.seen.includes(userId)) return
-      const updates: any = {};
-      const payloadEdit = { ...noti, seen: noti?.seen ? [...noti.seen, userId] : [userId] }
-      delete payloadEdit.key
-      updates[`/${noti.key}`] = payloadEdit
-      update(chatListRef, updates).then(() => {
-      }).catch(() => {
-        console.log('eeeeeeeee');
-      }).finally(() => {
-      })
+      // if (noti?.seen && noti.seen.includes(userId)) return
+      // const updates: any = {};
+      // const payloadEdit = { ...noti, seen: noti?.seen ? [...noti.seen, userId] : [userId] }
+      // delete payloadEdit.key
+      // updates[`/${noti.key}`] = payloadEdit
+      // update(chatListRef, updates).then(() => {
+      // }).catch(() => {
+      //   console.log('eeeeeeeee');
+      // }).finally(() => {
+      // })
     }
 
     const closeNoti = () => {
@@ -166,6 +175,10 @@ export default defineComponent({
       const day = date.getDate()
       return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${date.getMinutes()}`
     }
+
+    const updateNoti = (value: any) => {
+      console.log('2', value);
+    }
     return {
       userId,
       refTimelineNoti,
@@ -176,7 +189,8 @@ export default defineComponent({
       closeNoti,
       openNoti,
       goToChatByNoti,
-      firstLoadChat
+      firstLoadChat,
+      updateNoti
     }
   },
 })
@@ -218,6 +232,7 @@ export default defineComponent({
         margin: 2px 0;
         color: #333;
         cursor: pointer;
+        overflow-x: hidden;
 
         &:hover {
           background-color: #6988af1a;
@@ -290,5 +305,6 @@ export default defineComponent({
     right: 15px;
     top: 15px;
   }
-}</style>
+}
+</style>
 

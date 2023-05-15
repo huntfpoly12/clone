@@ -29,7 +29,6 @@
     "enumify": "^2.0.0",
     "exceljs": "^4.3.0",
     "file-saver-es": "^2.0.5",
-    "firebase": "^9.19.1",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
     "handsontable": "^12.3.0",

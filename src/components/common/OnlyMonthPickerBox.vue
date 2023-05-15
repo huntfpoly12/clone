@@ -3,9 +3,11 @@
     <Datepicker v-model="date" autoApply monthPicker locale="ko" :format-locale="ko" format="yyyy-MM" :uid="id"
       @update:modelValue="handleDate" :disabled="disabled" :min-date="monthMinMax.min" :max-date="monthMinMax.max">
       <template #trigger>
-        <img class="picker-only-month-icon" src="@/assets/images/icon_date_picker.svg" />
-        <span class="picker-only-month-text">{{ date.month !== null && date.month < 9 ? '0' + (date.month + 1) : date.month +
-          1 }}</span>
+        <div class="picker-only-month-box">
+          <img class="picker-only-month-box-icon" src="@/assets/images/icon_date_picker.svg" />
+          <span class="picker-only-month-box-text">{{ date.month !== null && date.month < 9 ? '0' + (date.month + 1) :
+            date.month + 1 }}</span>
+        </div>
       </template>
     </Datepicker>
   </div>
@@ -55,16 +57,16 @@ export default defineComponent({
       month: props.valueMonth ? parseInt(dayjs(props.valueMonth.toString()).format('MM')) - 1 : 0,
       year: new Date().getFullYear()
     }
-    
+
     const monthMinMax = computed(() => {
       const year = new Date().getFullYear()
       let resultMin: string | Date = ''
       let resultMax: string | Date = ''
-      if(!!props.min && parseInt(props.min.toString()) >= 1 && parseInt(props.min.toString()) <= 12){
-        resultMin = new Date(`${year}-${props.min.toString().length === 2 ? props.min.toString() : '0'+ props.min.toString()}-01`)
+      if (!!props.min && parseInt(props.min.toString()) >= 1 && parseInt(props.min.toString()) <= 12) {
+        resultMin = new Date(`${year}-${props.min.toString().length === 2 ? props.min.toString() : '0' + props.min.toString()}-15`)
       }
-      if(!!props.max && parseInt(props.max.toString()) >= 1 && parseInt(props.max.toString()) <= 12){
-        resultMax = new Date(`${year}-${props.max.toString().length === 2 ? props.max.toString() : '0'+ props.max.toString()}-01`)
+      if (!!props.max && parseInt(props.max.toString()) >= 1 && parseInt(props.max.toString()) <= 12) {
+        resultMax = new Date(`${year}-${props.max.toString().length === 2 ? props.max.toString() : '0' + props.max.toString()}-15`)
       }
       return {
         min: resultMin,
@@ -86,7 +88,7 @@ export default defineComponent({
         }
       }
     );
-    
+
     const handleDate = (modelData: any) => {
       if (modelData) {
         let month = modelData.month + 1;
@@ -108,17 +110,26 @@ export default defineComponent({
 <style lang="scss" scoped>
 .picker-only-month {
   width: 70px;
-  border: 1px solid #5F5F5F;
+  border: 1px solid #ddd;
+  height: 28px;
+  border-radius: 3px;
+  cursor: pointer;
 
-  &-icon {
-    height: 20px;
-    width: auto;
-    margin: 0px 5px 5px 5px;
-  }
+  &-box {
+    display: flex;
+    align-items: center;
 
-  &-text {
-    font-size: 16px;
-    color: #5F5F5F;
+    &-icon {
+      height: 15px;
+      margin: 0 6px;
+      width: auto;
+      opacity: .5;
+    }
+
+    &-text {
+      font-size: 16px;
+      color: #5F5F5F;
+    }
   }
 
   :deep(.dp__selection_grid_header) {

@@ -75,7 +75,6 @@
                                         <number-box-money v-model:valueInput="store.state.common.ac120.formData.amount"
                                             width="150px" :required="true" :spinButtons="false" disabled="true" />
                                     </a-form-item>
-
                                     <a-form-item label="적요" class="red">
                                         <default-text-box v-model:valueInput="store.state.common.ac120.formData.summary"
                                             width="150px" :required="true" />
@@ -255,6 +254,7 @@ import { Message } from "@/configs/enum"
 import { companyId } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
 import UploadPreviewImage from './UploadPreviewImage.vue'
+import { cloneDeep, isEqual } from "lodash"
 export default defineComponent({
     components: {
         PopupCopyData,
@@ -282,42 +282,14 @@ export default defineComponent({
         const classification = ref<any>([4])
         const isModalChange = ref<boolean>(false)
         // =================== GRAPHQL ===================
-        // // mutation createAccountingDocument
-        // const {
-        //     mutate: mutateCreateAccountingDocument, onDone: doneCreateAccountingDocument, onError: errorCreateAccountingDocument,
-        // } = useMutation(mutations.createAccountingDocument);
-
         // mutation updateAccountingDocument
         const {
             mutate: mutateUpdateAccountingDocument, onDone: doneUpdateAccountingDocument, onError: errorUpdateAccountingDocument,
         } = useMutation(mutations.updateAccountingDocument);
 
-        // mutation unregisterAccountingDocument    ----- handwriting = true
-        // const {
-        //     mutate: mutateUnregisterAccountingDocument, onDone: doneUnregisterAccountingDocument, onError: errorUnregisterAccountingDocument,
-        // } = useMutation(mutations.unregisterAccountingDocument);
-
-        // mutation initializeTransactionDetails    ----- handwriting = false
-        // const {
-        //     mutate: mutateInitializeTransactionDetails, onDone: doneInitializeTransactionDetails, onError: errorInitializeTransactionDetails,
-        // } = useMutation(mutations.initializeTransactionDetails);
-
         const { result: resultCompany } = useQuery(queries.getMyCompany, { companyId: companyId }, () => ({ fetchPolicy: "no-cache" }));
 
         // ============== ON DONE MUTATION GRAPHQL ===============
-        // createAccountingDocument
-        // doneCreateAccountingDocument((e: any) => {
-        //     store.state.common.ac120.statusKeppRow = true
-        //     store.state.common.ac120.focusedRowKey = e.data?.createAccountingDocument?.accountingDocumentId
-        //     notification('success', Message.getMessage('COMMON', '101').message)
-        //     // store.state.common.ac120.onDoneAdd++
-        //     store.state.common.ac120.resetDataTable++
-        //     store.state.common.ac120.resetDataAccountingProcesses++
-        // })
-        // errorCreateAccountingDocument(e => {
-        //     notification('error', e.message)
-        // })
-
         // updateAccountingDocument
         doneUpdateAccountingDocument((e) => {
             store.state.common.ac120.statusKeppRow = true
@@ -371,11 +343,15 @@ export default defineComponent({
 
         watch(() => store.state.common.ac120.formData.causeActionDate, (newValue, oldValue) => {
             // if (store.state.common.ac120.statusFormAdd) {
-            colorDate.value = newValue == store.state.common.ac120.transactionDetailDate ? 'greenColor' : 'redColor'
+            colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
             // } else {
             //     colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
             // }
         })
+        watch(() => store.state.common.ac120.onSubmitFormUpdate, (newValue, oldValue) => {
+            onSubmit()
+        })
+        
 
         watch(() => [store.state.common.ac120.formData.bankbookId, store.state.common.ac120.arrayBankbooks], (newValue, oldValue) => {
             let data = store.state.common.ac120.arrayBankbooks?.find((item: any) => item.value == store.state.common.ac120.formData.bankbookId)
@@ -396,11 +372,9 @@ export default defineComponent({
         }
 
         const onSubmit = () => {
-            if (!store.state.common.ac120.formData.causeActionDate) {
-                requiredCauseActionDate.value.validate(true)
-            }
             const res = refFormAC120.value?.validate();
             if (!res.isValid) {
+                store.state.common.ac120.clearCheckCkick++
                 res.brokenRules[0].validator.focus();
                 if (!store.state.common.ac120.formData.causeActionDate) {
                     requiredCauseActionDate.value.validate(true)
@@ -408,6 +382,7 @@ export default defineComponent({
             } else {
                 if (!store.state.common.ac120.formData.causeActionDate) {
                     requiredCauseActionDate.value.validate(true)
+                    store.state.common.ac120.clearCheckCkick++
                     return;
                 }
                 if (store.state.common.ac120.formData.resolutionClassification == 1) {
@@ -419,7 +394,7 @@ export default defineComponent({
                     companyId: companyId,
                     fiscalYear: acYear.value,
                     facilityBusinessId: globalFacilityBizId.value,
-                    transactionDetailDate: store.state.common.ac120.transactionDetailDate,
+                    transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
                     accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
                     input: { ...store.state.common.ac120.formData }
                 }
@@ -429,15 +404,15 @@ export default defineComponent({
                 //     dataSubmit.input.amount = -dataSubmit.input.amount
                 // }
                 delete dataSubmit.input.resolutionClassification
-                delete dataSubmit.input.resolutionDate
+                // delete dataSubmit.input.resolutionDate
                 delete dataSubmit.input.bankbook
                 delete dataSubmit.input.bankbookId
                 delete dataSubmit.input.accountingDocumentId
                 delete dataSubmit.input.transactionDetailDate
                 delete dataSubmit.input.documentOrderByDate
-                delete dataSubmit.input.income
-                delete dataSubmit.input.spending
-                delete dataSubmit.input.clientId
+                // delete dataSubmit.input.income
+                // delete dataSubmit.input.spending
+                // delete dataSubmit.input.clientId
                 delete dataSubmit.input.goodsCount
                 delete dataSubmit.input.proofCount
                 delete dataSubmit.input.handwriting
@@ -487,14 +462,7 @@ export default defineComponent({
                     default:
                     // code block
                 }
-
-                // if (store.state.common.ac120.formData.resolutionType == 22) {
-                //     store.state.common.ac120.formData.resolutionType = 11
-                // } else if (store.state.common.ac120.formData.resolutionType == 11) {
-                //     store.state.common.ac120.formData.resolutionType = 22
-                // }
                 store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
-                // store.state.common.ac120.changeAmountDataGrid++
                 emit('changeAmountDataGrid', true)
             }
         }
@@ -505,14 +473,12 @@ export default defineComponent({
         return {
             store,
             toggleTransition,
-            // actionPopupCopyData,
             statusPopupCopyData,
             arrayRadioCheck,
             onSubmit,
             fileList,
             refFormAC120,
             actionOpenModalCopy,
-            // heightForm,
             textButton,
             textLabelInputSource,
             requiredCauseActionDate,

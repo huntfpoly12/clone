@@ -24,9 +24,12 @@
             </div>
           </a-form-item>
           <a-form-item label="지급일" class="red mt-15">
-            <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput"
+            <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
+              :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
+              :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" />
+            <!-- <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput"
               width="150px" class="mr-5" v-model:valueInput="formPA720.input.paymentDay" :required="true"
-              :isFormat="true" />
+              :isFormat="true" /> -->
           </a-form-item>
           <div class="input-text">
             <a-form-item label="지급액" class="red mt-10">
@@ -138,6 +141,7 @@ import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
 import DxValidator, { DxRequiredRule } from 'devextreme-vue/validator';
 import { formatMonth } from '../utils/index';
+import filters from '@/helpers/filters';
 
 
 const taxRateOptions = [
@@ -195,6 +199,12 @@ export default defineComponent({
     let formPA720: any = computed(() => store.state.common.formPA720);
     let formEditPA720: any = computed(() => store.state.common.formEditPA720);
     let processKeyPA720: any = computed(() => store.getters['common/processKeyPA720']);
+    // let paymentDayPA720 = computed(() => {
+    //   let day = store.state.common.paymentDayPA720;
+    //   const daysInMonth = +dayjs(`${processKeyPA720.value.processKey.paymentMonth}`).daysInMonth();
+    //   let newDay = day > daysInMonth || day == 0 ? daysInMonth : day;
+    //   return newDay;
+    // });
     const isEdit = ref(false);
     const getEmployeeExtrasTrigger = ref<boolean>(true);
     const newDateLoading = ref<boolean>(false);
@@ -232,6 +242,26 @@ export default defineComponent({
       }
       return false;
     })
+    const dayDate = ref<any>(null);
+    watch(() => dayDate.value, (newVal1: any) => {
+      if (newVal1) {
+        formPA720.value.input.paymentDay = +newVal1.toString().slice(-2);
+        formEditPA720.value.input.paymentDay = +newVal1.toString().slice(-2);
+      }
+    }, { deep: true });
+    watch(() => formPA720.value.input.paymentDay, (newVal1: any) => {
+      dayDate.value = `${processKeyPA720.value.processKey.paymentYear}${filters.formatMonth(
+        processKeyPA720.value.processKey.paymentMonth
+      )}${newVal1}`;
+    }, { immediate: true });
+    const startDate = computed(() => {
+      let day = dayjs(`${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.paymentMonth}`).startOf('month').toDate();
+      return day;
+    });
+    const finishDate = computed(() => {
+      let day = dayjs(`${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.paymentMonth}`).endOf('month').toDate();
+      return day;
+    });
     //-------------------------get incom extra detail ------------------------
 
     watch(
@@ -276,6 +306,9 @@ export default defineComponent({
           key: data.employeeId
         }
       };
+      dayDate.value = `${processKeyPA720.value.processKey.paymentYear}${filters.formatMonth(
+        processKeyPA720.value.processKey.paymentMonth
+      )}${data.paymentDay}`;
       store.commit('common/formPA720', editRowData)
       store.commit('common/formEditPA720', editRowData);
       newDateLoading.value = loadingIncomeExtra.value;
@@ -324,6 +357,7 @@ export default defineComponent({
         delete params.input.employee;
         delete params.input.actualPayment;
         delete params.input.incomePayment;
+        params.input.paymentDay = +dayDate.value.toString().slice(-2);
         if (isEdit.value === true) {
           delete params.input.paymentDay;
           delete params.input.employeeId;
@@ -370,7 +404,7 @@ export default defineComponent({
 
     const caclInput = () => {
       let objIncomeAmount: any = Formula.getExtraEmployeeIncomeAmount(formPA720.value.input.paymentAmount, formPA720.value.input.requiredExpenses);
-      let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, formPA720.value.input.taxRate*100);
+      let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, formPA720.value.input.taxRate * 100);
       formPA720.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
       formPA720.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
       formPA720.value.input.incomePayment = formPA720.value.input.paymentAmount - formPA720.value.input.requiredExpenses;
@@ -426,6 +460,8 @@ export default defineComponent({
       idDisableInput,
       loadingEmployeeExtras,
       isClickEditDiffPA720,
+      startDate, finishDate, dayDate,
+      processKeyPA720
     };
   },
 });

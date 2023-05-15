@@ -153,3 +153,7 @@ export const initialArrayRadioWithdrawDay = [
     { id: '12일', text: '매월 12일' },
     { id: '19일', text: '매월 19일' },
 ];
+export const arrayUtilRadioCheckSourceServices = [
+  { id: 1, text: '신청합니다' },
+  { id: 2, text: '신청하지 않습니다' },
+]
