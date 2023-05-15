@@ -37,7 +37,6 @@ export default defineComponent({
         isDestoy: Boolean,
     },
     setup(props, { emit }) {
-        const store = useStore();
         const tabStatus = ref(true);
         const activeTabAddKeyPA120 = ref('1');
         const employeeId = ref();

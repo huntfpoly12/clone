@@ -48,10 +48,11 @@ import findUsername from "./findUsername";
 import getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs from "./getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs";
 import getMajorInsuranceCompanyEmployeeReturnToWorkLogs from "./getMajorInsuranceCompanyEmployeeReturnToWorkLogs";
 import getBudgetSubjectTransitionsLogs from './getBudgetSubjectTransitionsLogs';
+import getMajorInsuranceCompanyEmployeeSalaryChangeLogs from './getMajorInsuranceCompanyEmployeeSalaryChangeLogs';
 const queries = {
   getMe: getMe,
   getUser: getUser,
-  findUsername:findUsername,
+  findUsername: findUsername,
   getListSale: getListSale,
   getUserLogs: getUserLogs,
   getIncomeWagesLogs: getIncomeWagesLogs,
@@ -93,7 +94,7 @@ const queries = {
   getBankbooksLogs: getBankbooksLogs,
   getBackerLogs: getBackerLogs,
   getBankbookDetailLogs: getBankbookDetailLogs,
-  getAccoountSubjects:getAccoountSubjects,
+  getAccoountSubjects: getAccoountSubjects,
   getAccountingProcessLogs: getAccountingProcessLogs,
   getAccountingDocumentsLogs: getAccountingDocumentsLogs,
   getMajorInsuranceCompanyOutLogs: getMajorInsuranceCompanyOutLogs,
@@ -101,6 +102,7 @@ const queries = {
   getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs: getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs,
   getMajorInsuranceCompanyEmployeeReturnToWorkLogs: getMajorInsuranceCompanyEmployeeReturnToWorkLogs,
   getBudgetSubjectTransitionsLogs: getBudgetSubjectTransitionsLogs,
+  getMajorInsuranceCompanyEmployeeSalaryChangeLogs: getMajorInsuranceCompanyEmployeeSalaryChangeLogs,
 };
 
 export default queries;

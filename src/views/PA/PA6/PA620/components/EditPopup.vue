@@ -1,12 +1,11 @@
 <template>
-  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-    >
+  <a-modal v-if="modalStatus" :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="">
     <standard-form action="" name="edit-510">
       <div class="custom-modal-edit">
         <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
         <span>선택된 내역 지급일을</span>
         <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
-          v-model:valueDate="paymentDayPA620" :clearable="false"/>
+          v-model:valueDate="paymentDayPA620" :clearable="false" />
         <span>일로 변경하시겠습니까?</span>
       </div>
       <div class="text-align-center mt-30">
@@ -17,7 +16,7 @@
       </div>
     </standard-form>
   </a-modal>
-  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" width="350px">
+  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" >
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{
       incomeIdRender.length + errorState.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
@@ -26,7 +25,7 @@
       errorState.length }} 건 </p>
     <ul>
       <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{
-        item.errorInfo.incomeTypeName }}</li>
+        item.errorInfo.incomeTypeName }}  <span class="red ml-10">{{ errTitle }}</span></li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
@@ -69,7 +68,8 @@ export default defineComponent({
       emit("closePopup", [])
     };
     const store = useStore()
-    let day = computed(() => store.getters['common/paymentDayPA620']);
+    let day = computed(() => store.state.common.paymentDayDefaultPA620);
+    let daySelected = computed(() => store.state.common.paymentDayPA620);
     const paymentDayPA620 = computed({
       get() {
         const daysInMonth = dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
@@ -96,6 +96,7 @@ export default defineComponent({
     const succesState = ref<any>([]);
     const errorState = ref<any>([]);
     const updateStatus = ref(false);
+    const errTitle = ref('');
     const {
       mutate,
       onDone,
@@ -134,8 +135,9 @@ export default defineComponent({
         emit("closePopup", props.data.map((item: any) => item.param.incomeId));
       }
     })
-    onError(() => {
+    onError((e) => {
       dataUpdateLen.value--;
+      errTitle.value = e.message;
       if (dataUpdateLen.value == 0) {
         let allData = props.data;
         allData = allData.filter((item: any, index) => {
@@ -164,14 +166,13 @@ export default defineComponent({
     })
 
     const onSubmit = () => {
-      let day = +paymentDayPA620.value.format('YYYYMMDD').toString().slice(-2);
       const reversedArr = props.data.reverse();
       reversedArr.forEach(async (val: any) => {
         await mutate({
           companyId: companyId,
           processKey: props.processKey,
           incomeId: val.param.incomeId,
-          day: day,
+          day: daySelected.value,
         })
       })
     };
@@ -188,9 +189,9 @@ export default defineComponent({
     return {
       setModalVisible,
       onSubmit,
-      updateStatus, incomeIdRender, errorState,
+      updateStatus, incomeIdRender, errorState,errTitle,
       dataUpdateLen, succesState, daysInMonth,
-      startDate, finishDate,paymentDayPA620,
+      startDate, finishDate, paymentDayPA620,
     }
   },
 })
@@ -224,5 +225,8 @@ export default defineComponent({
 
 .button-form-modal {
   margin: 0px 5px;
+}
+.red{
+  color: red;
 }
 </style>

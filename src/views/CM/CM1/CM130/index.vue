@@ -207,8 +207,8 @@
                         <template #button-history>
                             <a-tooltip color="black" placement="top">
                                 <template #title>변경이력</template>
-                                <DxButton icon="plus">
-                                    <HistoryOutlined style="font-size: 18px;" @click="modalHistoryDeduction" />
+                                <DxButton icon="plus" @click="modalHistoryDeduction">
+                                    <HistoryOutlined style="font-size: 18px;" />
                                 </DxButton>
                             </a-tooltip>
                         </template>

@@ -20,9 +20,9 @@
                         :disabled="true" />
                     <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
                     </button-basic>
-                    <DxButton icon="plus" class="ml-4">
+                    <DxButton icon="plus" class="ml-4" @click="modalHistoryAccountingProcess">
                         <a-tooltip placement="top" title="마감상태 변경이력">
-                            <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingProcess" />
+                            <HistoryOutlined style="font-size: 18px" />
                         </a-tooltip>
                     </DxButton>
                 </div>
@@ -88,9 +88,9 @@
                             <span class="pl-5">전표취소</span>
                         </div>
                     </DxButton>
-                    <DxButton icon="plus">
+                    <DxButton icon="plus" @click="modalHistoryAccountingDocuments">
                         <a-tooltip placement="topLeft" title="전표 변경이력">
-                            <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingDocuments" />
+                            <HistoryOutlined style="font-size: 18px" />
                         </a-tooltip>
                     </DxButton>
                 </div>
@@ -137,28 +137,28 @@
                                 data.data.resolutionClassification == item.id)?.text }}
                         </template>
 
-                        <DxColumn caption="수입액" cell-template="amountCustom1" width="75" />
+                        <DxColumn caption="수입액" cell-template="amountCustom1" width="80" />
                         <template #amountCustom1="{ data }">
                             {{ data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
                         </template>
 
-                        <DxColumn caption="지출액" cell-template="amountCustom2" width="75" />
+                        <DxColumn caption="지출액" cell-template="amountCustom2" width="80" />
                         <template #amountCustom2="{ data }">
                             {{ data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
                         </template>
 
-                        <DxColumn caption="잔액" data-field="balance" width="75" format="fixedPoint" />
+                        <DxColumn caption="잔액" data-field="balance" width="90" format="fixedPoint" />
 
                         <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" width="75" />
 
-                        <DxColumn caption="적요" data-field="summary" width="75" />
+                        <DxColumn caption="적요" data-field="summary" />
 
-                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="150"/>
                         <template #accountCode="{ data }">
                             <account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
                         </template>
 
-                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="170" />
+                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150" />
                         <template #relationCode="{ data }">
                             <account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
                         </template>
@@ -307,6 +307,7 @@ export default defineComponent({
         const dataSource: any = ref<DataSource>();
         // get store data
         const storeDataSource: any = computed(() => dataSource.value?.store() as Store);
+        const totalCount = computed(() => dataSource.value?.totalCount())
         const triggerGetAccountingProcesses = ref<boolean>(true)
         const triggerGetAccountingDocuments = ref<boolean>(true)
         const dataQueryGetAccountingProcesses = ref({
@@ -429,8 +430,6 @@ export default defineComponent({
                     store.state.common.ac120.statusKeppRow = false;
                 }
                 else if (store.state.common.ac120.statusKeppRow) { // giữ nguyên row
-                    console.log(111122323);
-
                     store.state.common.ac120.statusKeppRow = false;
                     store.state.common.ac120.selectedRowKeys = [store.state.common.ac120.focusedRowKey]
                     // Object.assign(store.state.common.ac120.formData, dataApi.value.find((item: any) => item.accountingDocumentId == store.state.common.ac120.focusedRowKey))
@@ -559,30 +558,32 @@ export default defineComponent({
                     monthNewClick.value = 0
                 }
             } else {
-                // storeDataSource.value
-                //     .update(formDataOld.accountingDocumentId, formDataOld)
-                //     .then(() => {
-                //         store.state.common.ac120.focusedRowKey = idRowFocusedRow.value || 0;
-                //         storeDataSource.value.byKey(idRowFocusedRow.value).then((value: any) => {
-                //         Object.assign(store.state.common.ac120.formData, value);
-                //         });
-                //         gridRefAC120.value?.instance.refresh();
-                //     });
                 if (monthNewClick.value) { // nếu trước đó ấn tháng mới
                     monthSelected.value = monthNewClick.value
                     dataQueryGetAccountingDocuments.value.month = monthNewClick.value
                     triggerGetAccountingDocuments.value = true;
                     monthNewClick.value = 0
-                    return
+                    // return
                 }
                 if (statusClickAdd.value) { // nếu trước đó ấn nút add
                     statusClickAdd.value = false;
                     statusModalAdd.value = true; // mở moldal add
-                    return
+                    // return
                 }
-                store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == idRowFocusedRowNew.value)
-                formDataOld = { ...store.state.common.ac120.formData }
-                store.state.common.ac120.focusedRowKey = idRowFocusedRowNew.value
+                storeDataSource.value
+                    .update(formDataOld.accountingDocumentId, formDataOld)
+                    .then(() => {
+                        store.state.common.ac120.focusedRowKey = idRowFocusedRowNew.value || 0;
+                        storeDataSource.value.byKey(idRowFocusedRowNew.value).then((value: any) => {
+                            // Object.assign(store.state.common.ac120.formData, value);
+                            store.state.common.ac120.formData = value
+                            formDataOld = { ...value }
+                        });
+                        gridRefAC120.value?.instance.refresh();
+                    });
+                // store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == idRowFocusedRowNew.value)
+
+                // store.state.common.ac120.focusedRowKey = idRowFocusedRowNew.value
                 idRowFocusedRowNew.value = null
                 store.state.common.ac120.resetDataAccountingDocumentProofs++
             }
@@ -694,7 +695,7 @@ export default defineComponent({
 
         // ================ CUSTOM SUMMARY TABLE ============================================
         const customCountRow = () => {
-            return `전표 건수 <span>[${dataSource.value?.totalCount()}]</span>`
+            return `전표 건수 <span>[${totalCount.value ? totalCount.value : 0}]</span>`
         }
         const sumOfResolutionClassification1 = () => {
             let total = 0;
@@ -746,7 +747,7 @@ export default defineComponent({
             return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span> 비정상 내역 건 <span>[${filters.formatCurrency(totalResolutionNormalStatuFalse)}]</span>`
         };
 
-        const totalCount = computed(() => dataSource.value?.totalCount())
+        
 
         return {
             dataGetAccountingProcesses,

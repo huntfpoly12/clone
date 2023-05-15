@@ -1,19 +1,20 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation createMajorInsuranceCompanyEmployeeLoss(
+  query getMajorInsuranceCompanyEmployeeSalaryChangeLogs(
     $companyId: Int!
     $imputedYear: Int!
-    $input: MajorInsuranceCompanyEmployeeLossInput!
+    $workId: Int!
   ) {
-    createMajorInsuranceCompanyEmployeeLoss(
+    getMajorInsuranceCompanyEmployeeSalaryChangeLogs(
       companyId: $companyId
       imputedYear: $imputedYear
-      input: $input
+      workId: $workId
     ) {
       companyId
       type
       imputedYear
       workId
+      ts
       employeeType
       employeeId
       name
@@ -33,7 +34,8 @@ export default gql`
       updatedBy
       ip
       active
-      residentId
+      loggedAt
+      remark
     }
   }
 `;

@@ -94,6 +94,7 @@ export default defineComponent({
         let triggerPA210 = ref<boolean>(false);
         let triggerPA810 = ref<boolean>(false);
         let triggerPA820 = ref<boolean>(false);
+        let triggerPA830 = ref<boolean>(false);
         let triggerPA840_1 = ref<boolean>(false);
         let triggerPA840_2 = ref<boolean>(false);
         let triggerPA880 = ref<boolean>(false);
@@ -395,6 +396,15 @@ export default defineComponent({
                             triggerPA820.value = true;
                             // refetchPA820();
                             break;
+                        case 'pa-830':
+                          dataQuery.value = {
+                            companyId: companyId,
+                            imputedYear: globalYear,
+                            workId: props.data,
+                          };
+                            triggerPA830.value = true;
+                            // refetchPA830();
+                            break;
                         case 'pa-840-1':
                           dataQuery.value = {
                             companyId: companyId,
@@ -485,6 +495,7 @@ export default defineComponent({
                     triggerPA210.value = false;
                     triggerPA810.value = false;
                     triggerPA820.value = false;
+                    triggerPA830.value = false;
                     triggerPA840_1.value = false;
                     triggerPA840_2.value = false;
                     triggerPA880.value = false;
@@ -890,6 +901,21 @@ export default defineComponent({
             dataTableShow.value = value.getMajorInsuranceCompanyEmployeeAcquisitionLogs;
           }
         });
+        
+        // get getMajorInsuranceCompanyEmployeeSalaryChangeLogs pa-830
+        const { result: resultPA830, loading: loadingPA830, refetch: refetchPA830 } = useQuery(
+            queries.getMajorInsuranceCompanyEmployeeSalaryChangeLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerPA830.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA830, (value) => {
+          if (value) {
+            dataTableShow.value = value.getMajorInsuranceCompanyEmployeeSalaryChangeLogs;
+          }
+        });
         // get pa-820
         const { result: resultPA820, loading: loadingPA820 } = useQuery(
             queries.getMajorInsuranceCompanyEmployeeLossLogs,
@@ -1053,7 +1079,7 @@ export default defineComponent({
         watch(resultAC570, (value) => {
             triggerAC570.value = false;
             if (value) {
-                dataTableShow.value = value.getAccountingDocumentsLogs;
+                dataTableShow.value = value.getBudgetSubjectTransitionsLogs;
             }
         });
 
@@ -1098,6 +1124,7 @@ export default defineComponent({
             loadingPA210,
             loadingPA810,
             loadingPA820,
+            loadingPA830,
             loadingPA840_1,
             loadingPA840_2,
             loadingPA880,

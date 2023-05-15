@@ -1,5 +1,5 @@
 <template>
-  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
+  <a-modal v-if="modalStatus" :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
     >
     <standard-form action="" name="edit-510">
       <div class="custom-modal-edit" v-if="data.length">
@@ -26,7 +26,7 @@
       errorState.length }} 건 </p>
     <ul>
       <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{
-        item.errorInfo.incomeTypeName }}</li>
+        item.errorInfo.incomeTypeName }} <span class="red ml-10">{{ errTitle }}</span></li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
@@ -39,7 +39,6 @@
 import { defineComponent, ref, computed, watch } from 'vue'
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA7/PA720/index"
-import { Message } from '@/configs/enum';
 import dayjs from 'dayjs';
 import { useStore } from 'vuex';
 import filters from '@/helpers/filters';
@@ -58,7 +57,8 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore()
-    let day = computed(() => store.getters['common/paymentDayPA720']);
+    let day = computed(() => store.state.common.paymentDayDefaultPA720);
+    let daySelected = computed(() => store.getters['common/paymentDayPA720']);
     let processKeyPA720 = computed(() => store.getters['common/processKeyPA720']);
     const paymentDayPA720 = computed({
       get() {
@@ -95,6 +95,7 @@ export default defineComponent({
     const incomeIdRender = ref<any>([]);
     const succesState = ref<any>([]);
     const errorState = ref<any>([]);
+    const errTitle = ref('');
     watch(() => props.modalStatus, (newVal: any) => {
       if (newVal) {
         dataUpdateLen.value = props?.data?.length;
@@ -139,6 +140,7 @@ export default defineComponent({
     })
     onError((e: any) => {
       dataUpdateLen.value--;
+      errTitle.value = e.message;
       if (dataUpdateLen.value == 0) {
         let allData = props.data;
         allData = allData.filter((item: any, index) => {
@@ -167,13 +169,12 @@ export default defineComponent({
     })
     const onSubmit = (e: any) => {
       const reversedArr: any = props.data.reverse();
-      let day = +paymentDayPA720.value.format('YYYYMMDD').toString().slice(-2);
       reversedArr.forEach((item: any) => {
         mutate({
           processKey: item.param.processKey,
           incomeId: item.param.incomeId,
           companyId: item.param.companyId,
-          day: day,
+          day: +daySelected.value,
         })
       })
     };
@@ -182,7 +183,7 @@ export default defineComponent({
       setModalVisible,
       onSubmit,
       changeDayDataPA720,
-      updateStatus, incomeIdRender, errorState,
+      updateStatus, incomeIdRender, errorState,errTitle,
       dataUpdateLen, succesState,
       daysInMonth,
       processKeyPA720,
