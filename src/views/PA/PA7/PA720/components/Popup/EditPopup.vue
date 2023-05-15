@@ -26,7 +26,7 @@
       errorState.length }} 건 </p>
     <ul>
       <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{
-        item.errorInfo.incomeTypeName }}</li>
+        item.errorInfo.incomeTypeName }} <span class="red ml-10">{{ errTitle }}</span></li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
@@ -95,6 +95,7 @@ export default defineComponent({
     const incomeIdRender = ref<any>([]);
     const succesState = ref<any>([]);
     const errorState = ref<any>([]);
+    const errTitle = ref('');
     watch(() => props.modalStatus, (newVal: any) => {
       if (newVal) {
         dataUpdateLen.value = props?.data?.length;
@@ -139,6 +140,7 @@ export default defineComponent({
     })
     onError((e: any) => {
       dataUpdateLen.value--;
+      errTitle.value = e.message;
       if (dataUpdateLen.value == 0) {
         let allData = props.data;
         allData = allData.filter((item: any, index) => {
@@ -181,7 +183,7 @@ export default defineComponent({
       setModalVisible,
       onSubmit,
       changeDayDataPA720,
-      updateStatus, incomeIdRender, errorState,
+      updateStatus, incomeIdRender, errorState,errTitle,
       dataUpdateLen, succesState,
       daysInMonth,
       processKeyPA720,

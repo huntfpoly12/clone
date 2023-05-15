@@ -1,6 +1,6 @@
 import { reactive, watch } from 'vue'
 import { useQuery } from '@vue/apollo-composable'
-import {Company} from "@/views/PA/PA8/PA810/utils";
+import { Company } from "@/views/PA/PA8/PA810/utils";
 import getMyCompany from "@/graphql/queries/common/getMycompany";
 
 export function useCompanyInfo(companyId: number) {
@@ -8,7 +8,13 @@ export function useCompanyInfo(companyId: number) {
     name: '',
     bizNumber: '',
     presidentName: '',
-    address: ''
+    address: '',
+    phone: '',
+    extendInfo: {
+      detail: {
+        fax: ''
+      }
+    }
   })
 
   const {
@@ -17,7 +23,7 @@ export function useCompanyInfo(companyId: number) {
     refetch,
   } = useQuery(
     getMyCompany,
-    {companyId: companyId},
+    { companyId: companyId },
     () => ({
       fetchPolicy: "no-cache",
     })
@@ -29,6 +35,8 @@ export function useCompanyInfo(companyId: number) {
       infoCompany.bizNumber = value.getMyCompany.bizNumber
       infoCompany.presidentName = value.getMyCompany.presidentName
       infoCompany.address = value.getMyCompany.address
+      infoCompany.phone = value.getMyCompany.phone
+      infoCompany.extendInfo.detail.fax = value.getMyCompany.extendInfo.detail.fax
     }
   })
 
