@@ -140,7 +140,7 @@ const emit = defineEmits(["closePopup", "createdDone"]);
 const store = useStore();
 const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? '0'));
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
-
+const paymentDay = computed(() => store.getters['common/getPaymentDay'])
 const step = ref(0);
 const valueNextStep = ref(0);
 const modalStatusAccept = ref(false);
@@ -191,7 +191,8 @@ const {
 
 watch(resultConfig, (resConfig) => {
   if (resConfig) {
-    store.commit('common/setPaymentDay', resConfig.getWithholdingConfig.paymentDay || Number(dayjs(`${selectMonthColumn.value.paymentYear}${selectMonthColumn.value.paymentMonth}`).endOf('month').format('DD')))
+    if(paymentDay.value === null)
+      store.commit('common/setPaymentDay', resConfig.getWithholdingConfig.paymentDay || Number(dayjs(`${selectMonthColumn.value.paymentYear}${selectMonthColumn.value.paymentMonth}`).endOf('month').format('DD')))
   }
 })
 const {
