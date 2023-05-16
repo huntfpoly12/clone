@@ -245,7 +245,7 @@
                             <DxPaging :enabled="false" />
                             <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple"
                                 width="40" />
-                            <DxColumn width="200" caption="사원" cell-template="tag" />
+                            <DxColumn width="200" caption="사원" cell-template="tag" data-field="employee.employeeId" />
                             <template #tag="{ data }">
                                 <div class="custom-action">
                                     <employee-info :idEmployee="data.data.employee.employeeId"
