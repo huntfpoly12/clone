@@ -144,7 +144,7 @@
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <div>
                     <button-tooltip-error :disabled="store.state.common.pa510.statusDisabledStatus"
-                        :statusChange="store.state.common.pa510.statusChangeFormPrice" :showError="showErrorButton"
+                        :statusChange="store.state.common.pa510.statusChangeFormPrice"
                         @onClick="actionDedution" />
                 </div>
             </a-tooltip>
@@ -213,7 +213,7 @@ export default defineComponent({
         const triggerIncomeWageDaily = ref<boolean>(false)
         const countKey: any = ref(0)
         const employeeWageDailyTrigger = ref<boolean>(false);
-        const showErrorButton = ref(false)
+        // const showErrorButton = ref(false)
         const triggerWithholdingConfig = ref<boolean>(true)
         const dataQuery = ref({ companyId: companyId, imputedYear: paYear });
         const insuranceSupport = ref<boolean>(false);
@@ -433,7 +433,7 @@ export default defineComponent({
 
             store.state.common.pa510.statusChangeFormAdd = false;
             store.state.common.pa510.statusChangeFormEdit = false;
-            store.state.common.pa510.statusChangeFormPrice = false;
+            // store.state.common.pa510.statusChangeFormPrice = false;
             // Incrementing the value of onEditItem by 1.
             if (store.state.common.pa510.statusClickEditItem) {
                 store.state.common.pa510.onEditItem++
@@ -479,9 +479,9 @@ export default defineComponent({
                         arrayEmploySelect.value.push(dataEmployee)
                     }
                 })
-                setTimeout(() => {
+                // setTimeout(() => {
                     store.state.common.pa510.statusChangeFormPrice = false;
-                }, 500);
+                // }, 500);
             } else {
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
             }
@@ -509,16 +509,13 @@ export default defineComponent({
                     store.state.common.pa510.statusChangeFormPrice = false;
                 }
             }
-
-
-
         }, { deep: true })
 
-        watch(() => store.state.common.pa510.statusChangeFormPrice, (value) => {
-            if (!value) {
-                showErrorButton.value = false
-            }
-        })
+        // watch(() => store.state.common.pa510.statusChangeFormPrice, (value) => {
+        //     if (!value) {
+        //         showErrorButton.value = false
+        //     }
+        // })
 
 
         // Watching the store.state.common.pa510.incomeId and if it is not equal to 'PA510' then it will set
@@ -591,7 +588,7 @@ export default defineComponent({
                     })
                 }))
             }
-            await (store.state.common.pa510.statusChangeFormPrice = false)
+            // await (store.state.common.pa510.statusChangeFormPrice = false)
         }, { deep: true })
 
         // Watching the state of the store and when it changes, it is adding a new row to the table.
@@ -679,7 +676,7 @@ export default defineComponent({
             })
             dataIncomeWageDaily.value.totalDeduction = total
             store.state.common.pa510.statusChangeFormPrice = false;
-            showErrorButton.value = false;
+            // showErrorButton.value = false;
         }
 
         const actionInsurance = () => {
@@ -727,15 +724,15 @@ export default defineComponent({
                     requiredPaymentDay.value.validate(true)
                     return
                 }
-                if (store.state.common.pa510.statusChangeFormPrice) {
-                    store.state.common.pa510.refreshDataGridRef++
-                    store.state.common.pa510.dataRowOnActive = dataIncomeWageDaily.value
-                    store.state.common.pa510.checkClickYear ? store.state.common.pa510.checkClickYear = false : '';
-                    store.state.common.pa510.statusClickEditItem ? store.state.common.pa510.statusClickEditItem = false : '';
-                    store.state.common.pa510.checkClickCopyMonth ? store.state.common.pa510.checkClickCopyMonth = false : '';
-                    store.state.common.pa510.checkClickMonth ? store.state.common.pa510.checkClickMonth = false : '';
-                    showErrorButton.value = true;
-                } else {
+                // if (store.state.common.pa510.statusChangeFormPrice) {
+                //     store.state.common.pa510.refreshDataGridRef++
+                //     store.state.common.pa510.dataRowOnActive = dataIncomeWageDaily.value
+                //     store.state.common.pa510.checkClickYear ? store.state.common.pa510.checkClickYear = false : '';
+                //     store.state.common.pa510.statusClickEditItem ? store.state.common.pa510.statusClickEditItem = false : '';
+                //     store.state.common.pa510.checkClickCopyMonth ? store.state.common.pa510.checkClickCopyMonth = false : '';
+                //     store.state.common.pa510.checkClickMonth ? store.state.common.pa510.checkClickMonth = false : '';
+                //     showErrorButton.value = true;
+                // } else {
                     let arrDeductionItems: any = []
                     arrDeduction.value.forEach((value: any) => {
                         arrDeductionItems.push({
@@ -767,7 +764,7 @@ export default defineComponent({
                             input: input,
                         })
                     }
-                }
+                // }
             }
         }
         // Resetting the form.
@@ -818,7 +815,7 @@ export default defineComponent({
             store,
             countKey,
             submitForm, onSubmitForm,
-            showErrorButton,
+            // showErrorButton,
             showDailyWage, showMonthlyWage, onChangeInputDeduction, onChangePrice,
             startDate, finishDate, requiredPaymentDay,
         };

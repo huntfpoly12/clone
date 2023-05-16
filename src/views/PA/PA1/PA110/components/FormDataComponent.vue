@@ -169,7 +169,7 @@
                         <a-tooltip placement="top" :overlayStyle="{maxWidth: '500px'}">
                             <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                             <div>
-                                <button-tooltip-error :disabled="store.state.common.pa110.statusDisabledStatus" :statusChange="store.state.common.pa110.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
+                                <button-tooltip-error :disabled="store.state.common.pa110.statusDisabledStatus" :statusChange="store.state.common.pa110.statusChangeFormPrice" @onClick="actionDedution"/>  
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
@@ -181,13 +181,13 @@
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영</template>
                             <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement" style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 반영" />
+                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement1" style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 반영" />
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영분 삭제</template>
                             <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement" style="margin: 0px 5px" @onClick="!store.state.common.pa110.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
+                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement2" style="margin: 0px 5px" @onClick="!store.state.common.pa110.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
                             </div>
                         </a-tooltip>
                         <button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
@@ -247,7 +247,7 @@ export default defineComponent({
         const triggerEmployeeWages = ref<boolean>(true);
         const triggerCalcIncome = ref<boolean>(false);
         const employeeWageTrigger = ref<boolean>(false);
-        const showErrorButton = ref(false)
+        // const showErrorButton = ref(false)
         const triggerConfigPayItems = ref<boolean>(true);
         const triggerConfigDeductions = ref<boolean>(true);
         const dataIW: any = ref(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
@@ -288,7 +288,8 @@ export default defineComponent({
         const totalDeduction = ref<number>(0)
         const subPayment = ref<number>(0)
 
-        let statusMidTermSettlement = ref<boolean>(true);
+        let statusMidTermSettlement1 = ref<boolean>(true);
+        let statusMidTermSettlement2 = ref<boolean>(true);
         let requiredPaymentDay = ref()
         const startDate = computed(() =>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).startOf('month').toDate()));
         const finishDate = computed(() =>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).endOf('month').toDate()));
@@ -587,7 +588,14 @@ export default defineComponent({
                         }
                     })
                 }));
-                statusMidTermSettlement.value = data.midTermSettlement 
+                if (data.midTermSettlement != null) {
+                    statusMidTermSettlement1.value = data.midTermSettlement ? false : true;
+                    statusMidTermSettlement2.value = data.midTermSettlement ? true : false;
+                } else {
+                    statusMidTermSettlement1.value = false
+                    statusMidTermSettlement2.value = false
+                }
+                
                 dataIW.value.employee.employeeId = data.employee.employeeId
                 dataIW.value.paymentDay = parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(data.paymentDay)}`)
                 
@@ -611,7 +619,7 @@ export default defineComponent({
             }
             store.state.common.pa110.statusChangeFormAdd = false;
             store.state.common.pa110.statusChangeFormEdit = false;
-            store.state.common.pa110.statusChangeFormPrice = false;
+            // store.state.common.pa110.statusChangeFormPrice = false;
             if (store.state.common.pa110.statusClickEditItem) {
                 store.state.common.pa110.onEditItem++
             }
@@ -665,13 +673,13 @@ export default defineComponent({
                 await calculateTax();
             }
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
-            await (store.state.common.pa110.statusChangeFormPrice = false)
+            // await (store.state.common.pa110.statusChangeFormPrice = false)
         })
-        watch(() => store.state.common.pa110.statusChangeFormPrice, (value) => {
-            if (!value) {
-                showErrorButton.value = false
-            }
-        })
+        // watch(() => store.state.common.pa110.statusChangeFormPrice, (value) => {
+        //     if (!value) {
+        //         showErrorButton.value = false
+        //     }
+        // })
 
         // watch(paYear, (newVal) => {
         //     originData.imputedYear = newVal
@@ -738,15 +746,15 @@ export default defineComponent({
                     requiredPaymentDay.value.validate(true)
                     return
                 }
-                if (store.state.common.pa110.statusChangeFormPrice) {
-                    store.state.common.pa110.refreshDataGridRef++
-                    store.state.common.pa110.checkClickYear ? store.state.common.pa110.checkClickYear = false : '';
-                    store.state.common.pa110.statusClickEditItem ? store.state.common.pa110.statusClickEditItem = false : '';
-                    store.state.common.pa110.checkClickCopyMonth ? store.state.common.pa110.checkClickCopyMonth = false : '';
-                    store.state.common.pa110.checkClickMonth ? store.state.common.pa110.checkClickMonth = false : '';
-                    showErrorButton.value = true;
-                    store.state.common.pa110.dataRowOnActive = dataIW.value
-                } else {
+                // if (store.state.common.pa110.statusChangeFormPrice) {
+                //     store.state.common.pa110.refreshDataGridRef++
+                //     store.state.common.pa110.checkClickYear ? store.state.common.pa110.checkClickYear = false : '';
+                //     store.state.common.pa110.statusClickEditItem ? store.state.common.pa110.statusClickEditItem = false : '';
+                //     store.state.common.pa110.checkClickCopyMonth ? store.state.common.pa110.checkClickCopyMonth = false : '';
+                //     store.state.common.pa110.checkClickMonth ? store.state.common.pa110.checkClickMonth = false : '';
+                //     showErrorButton.value = true;
+                //     store.state.common.pa110.dataRowOnActive = dataIW.value
+                // } else {
                     let payItems = dataConfigPayItems.value?.map((item: any) => {
                         return {
                             itemCode: item.itemCode,
@@ -780,7 +788,7 @@ export default defineComponent({
                     } else {
                         actionUpdate(variables)
                     }
-                }
+                // }
             }
         }
         
@@ -836,15 +844,15 @@ export default defineComponent({
             })
             modalDeductions.value = true
         }
-        const updateDataDeduction = () => {
-            dataConfigDeductions.value.forEach((val: any, index: number) => {
+        const updateDataDeduction = async () => {
+            await dataConfigDeductions.value.forEach((val: any, index: number) => {
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
                     val.amount = val.amountNew
             })
-            setTimeout(() => {
+            // setTimeout(() => {
                 store.state.common.pa110.statusChangeFormPrice = false;
-                showErrorButton.value = false;
-            }, 500);
+                // showErrorButton.value = false;
+            // }, 500);
         }
 
         const onUpdateValue = (employeeId: any) => {
@@ -889,7 +897,7 @@ export default defineComponent({
             countKey,
             loadingGetEmployeeWage,
             updateDataDeduction,
-            showErrorButton,
+            // showErrorButton,
             submitForm, onSubmitForm,
             totalPayItem,
             totalPayItemTax,
@@ -897,7 +905,8 @@ export default defineComponent({
             totalDeduction,
             subPayment,
             onChangeInputDeduction, onChangeInputPayItem,
-            statusMidTermSettlement,
+            statusMidTermSettlement1,
+            statusMidTermSettlement2,
             startDate, finishDate, requiredPaymentDay,
         };
     },
