@@ -436,7 +436,7 @@ export default defineComponent({
       }
     );
 
-    watch(idRowSaveDone,
+    watch(()=>store.state.common.idRowSaveDonePA520,
       (value) => {
         trigger.value = true;
         refetchData();
