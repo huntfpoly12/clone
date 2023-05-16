@@ -153,9 +153,12 @@
                   </div>
                 </a-form-item>
                 <a-form-item label="지급일" label-align="right" class="red">
-                  <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
+                  <div>
+                    <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
                     :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
                     :disabled="disabledInput || idDisableNoData" />
+                    <div v-if="isLoopDay" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+                  </div>
                 </a-form-item>
                 <a-form-item label="지급액" label-align="right" class="red">
                   <div class="d-flex-center">
@@ -888,11 +891,37 @@ export default defineComponent({
       focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
       selectedRowKeys.value = compareType.value == 1 ? [dataAction.value.input.incomeId] : [idRowFake.value];
     }
+
+    const isLoopDay = ref(false);
+    function countOccurrences(arr: any[], number: number) {
+      return arr.reduce((count, element) => {
+        if (element === number) {
+          return count + 1;
+        }
+        return count;
+      }, 0);
+    }
+    const checkLoopDay = () => {
+      let employeeId = dataAction.value.input.employeeId;
+      if (dataSourceDetail.value.length) {
+        let idArr = dataSourceDetail.value.filter((item: any) => item.employeeId == employeeId).map((item1: any) => item1.paymentDay);
+        if (countOccurrences(idArr, dataAction.value.input.paymentDay) > 1) {
+          isLoopDay.value = true;
+        } else {
+          isLoopDay.value = false;
+        }
+      }
+    }
+    watch(() => [dataAction.value.input.employeeId, dataAction.value.input.paymentDay], ([newVal]) => {
+      if (newVal) {
+        checkLoopDay();
+      }
+    }, { deep: true });
     return {
       loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax,
       caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef, changeDayData, savePA610, popupAddStatus, titleModalConfirm, editParam, companyId,
       paymentDayPA620, rowChangeStatus, checkLen, compareForm, triggerOption, refetchOption, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff, triggerIncomeBusiness, isClickEditClick,
-      calcSummary, checkLenTooltip, startDate, finishDate, dayDate
+      calcSummary, checkLenTooltip, startDate, finishDate, dayDate, isLoopDay,
     }
   }
 });

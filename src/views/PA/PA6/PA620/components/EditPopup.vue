@@ -1,12 +1,16 @@
 <template>
-  <a-modal v-if="modalStatus" :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="">
+  <a-modal v-if="modalStatus" :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md"
+    footer="">
     <standard-form action="" name="edit-510">
       <div class="custom-modal-edit">
         <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
-        <span>선택된 내역 지급일을</span>
-        <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
-          v-model:valueDate="paymentDayPA620" :clearable="false" />
-        <span>일로 변경하시겠습니까?</span>
+        <span class="mt-5">선택된 내역 지급일을</span>
+        <div>
+          <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+            v-model:valueDate="paymentDayPA620" :clearable="false" />
+          <div v-if="checkDuplicate(data)" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+        </div>
+        <span class="mt-5">일로 변경하시겠습니까?</span>
       </div>
       <div class="text-align-center mt-30">
         <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
@@ -16,7 +20,7 @@
       </div>
     </standard-form>
   </a-modal>
-  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" >
+  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null">
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{
       incomeIdRender.length + errorState.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
@@ -25,7 +29,7 @@
       errorState.length }} 건 </p>
     <ul>
       <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{
-        item.errorInfo.incomeTypeName }}  <span class="red ml-10">{{ errTitle }}</span></li>
+        item.errorInfo.incomeTypeName }} <span class="red ml-10">{{ errTitle }}</span></li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
@@ -185,22 +189,36 @@ export default defineComponent({
         daysInMonth.value = +dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
       }
     }, { deep: true })
-
+    function checkDuplicate(arr: any) {
+      const count: any = {};
+      for (let i = 0; i < arr.length; i++) {
+        const element = arr[i].errorInfo.employeeId;
+        if (count[element]) {
+          return true;
+        } else {
+          count[element] = 1;
+        }
+      }
+      return false;
+    }
     return {
       setModalVisible,
       onSubmit,
-      updateStatus, incomeIdRender, errorState,errTitle,
+      updateStatus, incomeIdRender, errorState, errTitle,
       dataUpdateLen, succesState, daysInMonth,
       startDate, finishDate, paymentDayPA620,
+      checkDuplicate,
     }
   },
 })
 </script>
 
 <style lang="scss" scoped>
+@import './../style/style.scss';
+
 .custom-modal-edit {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   justify-content: center;
   margin-top: 20px;
@@ -226,7 +244,8 @@ export default defineComponent({
 .button-form-modal {
   margin: 0px 5px;
 }
-.red{
+
+.red {
   color: red;
 }
 </style>

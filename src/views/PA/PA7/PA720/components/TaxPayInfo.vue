@@ -9,7 +9,7 @@
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left"/>
+      <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left" />
       <template #tag="{ data }">
         <div v-if="data.data.employeeId">
           <span class="btn-container">
@@ -41,8 +41,7 @@
         {{ formatMonth(data.data.paymentDay) }}
       </template>
       <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" alignment="right" />
-      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney"
-        alignment="right" />
+      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" alignment="right" />
       <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" alignment="right" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
       <template #taxRateSlot="{ data }">
@@ -338,6 +337,30 @@ export default defineComponent({
     const checkLenTooltip = (text: String, num: number) => {
       return text.length > num ? text : '';
     };
+    function countOccurrences(arr: any[], number: number) {
+      return arr.reduce((count, element) => {
+        if (element === number) {
+          return count + 1;
+        }
+        return count;
+      }, 0);
+    }
+    const checkLoopDay = () => {
+      let employeeId = formPA720.value.input.employeeId;
+      if (dataSourceDetail.value.length) {
+        let idArr = dataSourceDetail.value.filter((item: any) => item.employeeId == employeeId).map((item1: any) => item1.paymentDay);
+        if (countOccurrences(idArr, formPA720.value.input.paymentDay) > 1) {
+          store.state.common.isLoopDayPA720 = true;
+        } else {
+          store.state.common.isLoopDayPA720 = false;
+        }
+      }
+    }
+    watch(() => [formPA720.value.input.employeeId, formPA720.value.input.paymentDay], ([newVal]) => {
+      if (newVal) {
+        checkLoopDay();
+      }
+    }, { deep: true });
     return {
       rowTable,
       per_page,

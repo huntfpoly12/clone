@@ -175,7 +175,7 @@
                 </span>
                 <div>
                   <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                    :min="0" @changeInput="onCalcSum" format="#0,###"> </number-box-money>
+                    :min="0" @changeInput="onCalcSumPayItem" format="#0,###"> </number-box-money>
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -200,8 +200,19 @@
                     :type="4" subName="공제" />
                 </span>
                 <div>
-                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                    :min="0" @changeInput="onCalcSum" :disabled="disabledDeduction(item.itemCode)" format="#0,###"/>
+                  <a-tooltip color="black" placement="top" v-if="item.itemCode == 1012 && localIncomeBoo" zIndex="9999">
+                    <template #title>
+                      소액징수부면제 적용 {{ localReal }}
+                    </template>
+                    <span>
+                      <number-box-money class="red" width="130px" :spinButtons="false" :rtlEnabled="true"
+                        v-model:valueInput="item.value" :min="1000" @changeInput="onCalcSumDeduction"
+                        :disabled="disabledDeduction(item.itemCode)" format="#0,###" />
+                    </span>
+                  </a-tooltip>
+                  <number-box-money v-else width="130px" :spinButtons="false" :rtlEnabled="true"
+                    v-model:valueInput="item.value" :min="0" @changeInput="onCalcSumDeduction"
+                    :disabled="disabledDeduction(item.itemCode)" format="#0,###" />
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -219,7 +230,7 @@
         ※ 현재 등록되어 있는 부양가족 기준으로 세액 적용됩니다.
       </a-row>
       <PopupMessage :modalStatus="modalCalc" @closePopup=" modalCalc = false" :typeModal="'confirm'" title=""
-        :content="()=> vnode" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
+        :content="() => vnode" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
         @checkConfirm="calculateTax" />
     </a-spin>
   </div>
@@ -330,7 +341,7 @@ export default defineComponent({
         configDeductionTrigger.value = false;
       }
     });
-    const onCalcSum = () => {
+    const onCalcSumPayItem = () => {
       totalPayItemTaxAll.value = initFormTab2PA120.value.payItems.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
@@ -346,6 +357,8 @@ export default defineComponent({
         }
         return accumulator;
       }, 0);
+    }
+    const onCalcSumDeduction = () => {
       totalDeduction.value = initFormTab2PA120.value.deductionItems.reduce((accumulator: any, object: any) => {
         if (!accumulator) {
           accumulator = 0;
@@ -471,7 +484,8 @@ export default defineComponent({
         }, 0);
         isBtnYellow.value = false;
         triggerDetail.value = false;
-        onCalcSum();
+        onCalcSumPayItem();
+        onCalcSumDeduction();
         let { payItems, deductionItems, ...obj } = editRowData;
         store.state.common.initFormTab2PA120 = { ...store.state.common.initFormTab2PA120, ...obj };
         store.state.common.editRowTab2PA120 = { ...store.state.common.editRowTab2PA120, ...obj };
@@ -481,7 +495,8 @@ export default defineComponent({
     /**
      * Calculate Income Wage Tax API
      */
-
+    const localIncomeBoo = ref(false);
+    const localReal = ref(0);
     const calculateVariables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -507,25 +522,20 @@ export default defineComponent({
       if (value) {
         let itemValue11 = Math.floor(value.calculateIncomeWageTax * initFormTab2PA120.value.incomeTaxMagnification / 100);
         let itemValue12 = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
+        localIncomeBoo.value = itemValue12 < 1000;
+        localReal.value = itemValue12;
         initFormTab2PA120.value.deductionItems.map((item: any) => {
           if (item.itemCode == 1011) {
             item.value = itemValue11;
-            return {
-              itemCode: 1011,
-              amount: itemValue11,
-            };
           }
           if (item.itemCode == 1012) {
-            item.value = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
-            return {
-              itemCode: 1012,
-              amount: itemValue12,
-            };
+            item.value = itemValue12 < 1000 ? 0 : itemValue12;
           }
         });
       }
       triggerCalcIncomeWageTax.value = false;
-      onCalcSum()
+      onCalcSumPayItem();
+      onCalcSumDeduction();
     });
 
     /**
@@ -706,6 +716,7 @@ export default defineComponent({
     watch(() => props.idRowEdit, async () => {
       countRestFirstRun.value = -1;
       countConfigPayItems.value = 0;
+      localIncomeBoo.value = false;
     }, { deep: true })
 
     //--------------------------------disabledDeduction---------------------------------------
@@ -758,7 +769,7 @@ export default defineComponent({
       isDisableInsuranceSupport,
       countRestFirstRun,
       compareForm,
-      onCalcSum,
+      onCalcSumPayItem, onCalcSumDeduction, localIncomeBoo,localReal,
       disabledDeduction,
       modalCalc, msgCalc, vnode,
     };

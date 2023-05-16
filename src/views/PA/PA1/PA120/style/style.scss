@@ -314,3 +314,8 @@
   padding-left: 5px;
   padding-right: 5px;
 }
+.red{
+  :deep .dx-texteditor-input{
+    color: red;
+  }
+}

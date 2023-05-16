@@ -4,7 +4,7 @@ export default gql`
     getEmployeeWagesLogs(companyId: $companyId, imputedYear: $imputedYear) {
       ts
       employeeId
-      incomeTypeCode
+      # incomeTypeCode
       name
       foreigner
       nationality
