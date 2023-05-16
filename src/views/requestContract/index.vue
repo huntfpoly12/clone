@@ -662,7 +662,8 @@ export default {
                     withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
                 };
             }
-            let dataCallCreated = {
+
+            let dataCallCreated: any = {
                 content: {
                     agreements: {
                         terms: contractCreacted.terms,
@@ -703,7 +704,7 @@ export default {
                     },
                     accounting: {
                         facilityBusinesses: dataFacility,
-                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? [1] : [0],
+                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? 1 : 0,
                     },
                     withholding: withholdingCustom,
                     cmsBank: {
@@ -720,6 +721,9 @@ export default {
                 }
             }
           if (dataCallCreated) {
+            if(!dataCallCreated.content.accounting.accountingServiceTypes){
+                dataCallCreated.content.accounting = null
+            }
               await makeDataClean(dataCallCreated, ['buildingName']);
               mutateCreated(dataCallCreated)
           }
@@ -770,7 +774,7 @@ export default {
                 if (newVal == 2) {
                   valueFacilityBusinesses.value = Array()
                   dataActiveRow.value = null
-                  contractCreacted.accountingServiceTypes = false
+                  contractCreacted.accountingServiceTypes = 0
                 }
             }
         );
