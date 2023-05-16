@@ -24,12 +24,9 @@ const authLink = setContext(async (_, { headers }) => {
     },
   };
 });
-
-
 const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }) => {
   if (graphQLErrors) {
     for (let err of graphQLErrors) {
-      console.log(err.message);
       if (err.message == "인증토큰이 만료되었습니다.") {
         switch (err.extensions?.code) {
           case 'UNAUTHENTICATED':
@@ -73,6 +70,10 @@ const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }
                 });
             });
         }
+      } else {
+        // set open popup if has error
+        store.commit('common/setApiErrorData', err)
+        store.commit('common/setApiErrorStatus', true)
       }
     }
   }
