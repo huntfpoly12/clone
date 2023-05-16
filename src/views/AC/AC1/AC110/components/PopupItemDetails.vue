@@ -2,7 +2,8 @@
   <a-modal :visible="isModalItemDetail" @cancel="cancel" :mask-closable="false" class="confirm-md ac-110-popup-detail"
     footer="" :width="1000">
     <p class="ac-110-popup-detail-title">물품내역</p>
-    <a-spin :spinning="loadingSaveStatementOfGoods || loadingDeleteStatementOfGoods" size="large">
+    <!-- <a-spin :spinning="loadingSaveStatementOfGoods || loadingDeleteStatementOfGoods" size="large"> -->
+    <a-spin :spinning="false" size="large">
       <standard-form>
         <DxDataGrid id="DxDataGrid-ac-110-popup-detail" key-expr="id" class="mt-20" :show-row-lines="true"
           v-model:focused-row-key="rowKeyfocused" :data-source="dataSource.statementOfGoodsItems" :show-borders="true"
@@ -69,7 +70,7 @@
           <div v-html="totalDifference()"></div>
         </div>
         <div class="ac-110-popup-detail-btn">
-          <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
+          <button-basic text="반영" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
             :disabled="!dataSource.statementOfGoodsItems.length || isDisableBtnSave || disabled" />
         </div>
       </standard-form>
@@ -139,36 +140,36 @@ export default defineComponent({
 
     const isDisableBtnSave = ref(true)
     // graphql
-    const {
-      mutate: deleteStatementOfGoods,
-      onDone: doneDeleteStatementOfGoods,
-      onError: errorDeleteStatementOfGoods,
-      loading: loadingDeleteStatementOfGoods,
-    } = useMutation(mutations.deleteStatementOfGoods);
-    doneDeleteStatementOfGoods((e) => {
-      dataSource.value.statementOfGoodsItems = []
-      emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
-      setData()
-      notification('success', Message.getMessage('COMMON', '106').message)
-    })
-    errorDeleteStatementOfGoods(e => {
-      notification('error', e.message)
-    })
-    const {
-      mutate: saveStatementOfGoods,
-      onDone: doneSaveStatementOfGoods,
-      onError: errorSaveStatementOfGoods,
-      loading: loadingSaveStatementOfGoods,
-    } = useMutation(mutations.saveStatementOfGoods);
-    doneSaveStatementOfGoods((e) => {
-      emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
-      emit("closePopup", false)
-      setData()
-      notification('success', Message.getMessage('COMMON', '106').message)
-    })
-    errorSaveStatementOfGoods(e => {
-      notification('error', e.message)
-    })
+    // const {
+    //   mutate: deleteStatementOfGoods,
+    //   onDone: doneDeleteStatementOfGoods,
+    //   onError: errorDeleteStatementOfGoods,
+    //   loading: loadingDeleteStatementOfGoods,
+    // } = useMutation(mutations.deleteStatementOfGoods);
+    // doneDeleteStatementOfGoods((e) => {
+    //   dataSource.value.statementOfGoodsItems = []
+    //   emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
+    //   setData()
+    //   notification('success', Message.getMessage('COMMON', '106').message)
+    // })
+    // errorDeleteStatementOfGoods(e => {
+    //   notification('error', e.message)
+    // })
+    // const {
+    //   mutate: saveStatementOfGoods,
+    //   onDone: doneSaveStatementOfGoods,
+    //   onError: errorSaveStatementOfGoods,
+    //   loading: loadingSaveStatementOfGoods,
+    // } = useMutation(mutations.saveStatementOfGoods);
+    // doneSaveStatementOfGoods((e) => {
+    //   emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
+    //   emit("closePopup", false)
+    //   setData()
+    //   notification('success', Message.getMessage('COMMON', '106').message)
+    // })
+    // errorSaveStatementOfGoods(e => {
+    //   notification('error', e.message)
+    // })
     const {
       onResult: onResultSearchStatementOfGoodsItems,
     } = useQuery(queries.searchStatementOfGoodsItems, {
@@ -217,6 +218,7 @@ export default defineComponent({
     })
 
     watch(() => props.data, (value) => {
+      if(!props.isModalItemDetail) return
       triggerSearchStatementOfGoodsItems.value = true
       triggerSearchStatementOfGoodsStandards.value = true
       triggerSearchStatementOfGoodsUnits.value = true
@@ -235,6 +237,7 @@ export default defineComponent({
         dataSource.value.statementOfGoodsItems = []
       }
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
+      console.log('setData', dataSource.value.statementOfGoodsItems);
     }
 
     const cancel = () => {
@@ -308,27 +311,25 @@ export default defineComponent({
     }
     const handleDelete = (status: Boolean) => {
       if (!status) return
-      if (
-        dataSource.value.statementOfGoodsItems.length === 1
-        && !dataSource.value.accountingDocumentId.toString().includes('create')
-        && !dataSource.value.statementOfGoodsItems[0].id.toString().includes('create')
-      ) {
-        const payloadRequest = { ...props.payload }
-        delete payloadRequest.bankbookDetailDate
-        delete payloadRequest.bankbookDetailId
-        deleteStatementOfGoods({
-          ...payloadRequest,
-          transactionDetailDate: dataSource.value.transactionDetailDate,
-          accountingDocumentId: dataSource.value.accountingDocumentId
-        })
-      } else {
-        dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.filter((item: any) => item.id.toString() !== itemDelete.value.id.toString())
-      }
-    }
-    const submitFormDetail = (event: any) => {
-      const res = event.validationGroup.validate();
-      if (!res.isValid) return
-      const payloadRequest = { ...props.payload }
+      // if (
+      //   dataSource.value.statementOfGoodsItems.length === 1
+      //   && !dataSource.value.accountingDocumentId.toString().includes('create')
+      //   && !dataSource.value.statementOfGoodsItems[0].id.toString().includes('create')
+      // ) {
+      //   const payloadRequest = { ...props.payload }
+      //   delete payloadRequest.bankbookDetailDate
+      //   delete payloadRequest.bankbookDetailId
+      //   deleteStatementOfGoods({
+      //     ...payloadRequest,
+      //     transactionDetailDate: dataSource.value.transactionDetailDate,
+      //     accountingDocumentId: dataSource.value.accountingDocumentId
+      //   })
+      // } else {
+      //   dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.filter((item: any) => item.id.toString() !== itemDelete.value.id.toString())
+      // }
+
+      dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.filter((item: any) => item.id.toString() !== itemDelete.value.id.toString())
+      dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
       const dataTable = dataSource.value.statementOfGoodsItems.map((item: any) => {
         return {
           amount: item.amount,
@@ -340,19 +341,44 @@ export default defineComponent({
           unitPrice: item.unitPrice
         }
       })
-      if (!dataSource.value.accountingDocumentId.toString().includes('create')) {
-        const payloadClear = makeDataClean({
-          ...payloadRequest,
-          transactionDetailDate: dataSource.value.transactionDetailDate,
-          accountingDocumentId: dataSource.value.accountingDocumentId,
-          items: dataTable
-        })
-        saveStatementOfGoods(payloadClear)
-      } else {
-        setData()
-        emit("updateGoodsCount", props.data.accountingDocumentId, dataTable)
-        notification('success', Message.getMessage('COMMON', '106').message)
-      }
+      emit("updateGoodsCount", props.data.accountingDocumentId, dataTable)
+    }
+    const submitFormDetail = (event: any) => {
+      const res = event.validationGroup.validate();
+      if (!res.isValid) return
+      // const payloadRequest = { ...props.payload }
+      const dataTable = dataSource.value.statementOfGoodsItems.map((item: any) => {
+        return {
+          amount: item.amount,
+          item: item.item,
+          quantity: item.quantity,
+          remark: item.remark,
+          standard: item.standard,
+          unit: item.unit,
+          unitPrice: item.unitPrice
+        }
+      })
+
+
+      ////
+      dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
+      emit("updateGoodsCount", props.data.accountingDocumentId, dataTable)
+      notification('success', Message.getMessage('COMMON', '106').message)
+
+
+      // if (!dataSource.value.accountingDocumentId.toString().includes('create')) {
+      //   const payloadClear = makeDataClean({
+      //     ...payloadRequest,
+      //     transactionDetailDate: dataSource.value.transactionDetailDate,
+      //     accountingDocumentId: dataSource.value.accountingDocumentId,
+      //     items: dataTable
+      //   })
+      //   saveStatementOfGoods(payloadClear)
+      // } else {
+      //   setData()
+      //   emit("updateGoodsCount", props.data.accountingDocumentId, dataTable)
+      //   notification('success', Message.getMessage('COMMON', '106').message)
+      // }
     }
     const addNewRow = () => {
       const lengthArr = dataSource.value.statementOfGoodsItems.length
@@ -369,6 +395,8 @@ export default defineComponent({
         newObj = { ...InitStatementOfGoods, id: 'create' }
         dataSource.value.statementOfGoodsItems = [{ ...newObj }]
       }
+
+      console.log('add', dataSource.value.statementOfGoodsItems);
     }
 
     const formatNumber = (value: number) => {
@@ -396,8 +424,8 @@ export default defineComponent({
       Message,
       handleDelete,
       submitFormDetail,
-      loadingSaveStatementOfGoods,
-      loadingDeleteStatementOfGoods,
+      // loadingSaveStatementOfGoods,
+      // loadingDeleteStatementOfGoods,
       addNewRow,
       dataSource,
       arrSelectItem,

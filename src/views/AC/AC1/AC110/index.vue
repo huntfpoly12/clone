@@ -12,7 +12,9 @@
     </div>
     <div class="ac-110__main">
       <div class="ac-110__main-main">
-        <a-spin :spinning="loadingGetBankbookDetails || loadingSyncBankbookDetails" size="large">
+        <a-spin
+          :spinning="loadingGetBankbookDetails || loadingSyncBankbookDetails || loadingDeleteStatementOfGoods || loadingSaveStatementOfGoods"
+          size="large">
           <DxDataGrid id="DxDataGridMainAc110" ref="refDxDataGridMainAc110" key-expr="bankbookDetailId"
             :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
             v-model:selected-row-keys="selectedRowKeys" :show-borders="true" :allow-column-reordering="move_column"
@@ -83,7 +85,7 @@
             <DxColumn caption="입금액" data-field="deposit" format="fixedPoint" />
             <DxColumn caption="출금액" data-field="withdraw" format="fixedPoint" />
             <DxColumn caption="통장잔액" data-field="balance" format="fixedPoint" />
-            <DxColumn caption="증빙" cell-template="proofCount" />
+            <DxColumn caption="증빙" data-field="proofCount" cell-template="proofCount" width="80"/>
             <template #proofCount="{ data }">
               <div style="text-align: end;">
                 {{ data.data.proofCount ? data.data.proofCount : '' }}
@@ -129,7 +131,7 @@
                 :height="$config_styles.HeightInput" width="40" style="color:white; width: 42px" />
             </div>
             <a-spin
-              :spinning="loadingInitializeTransactionDetails || loadingGetBankbookDetails"
+              :spinning="loadingInitializeTransactionDetails || loadingGetBankbookDetails || loadingDeleteStatementOfGoods || loadingSaveStatementOfGoods"
               size="large">
               <standard-form ref="refFormDetailAc110">
                 <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
@@ -244,13 +246,13 @@
                   <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                   <template #fundingSource="{ data }">
                     <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true"
-                      :readOnly="isRegistered" :dropdownTop="true" :idSelect="`FundingSourceSelect${data.rowIndex}`"/>
+                      :readOnly="isRegistered" :dropdownTop="true" :idSelect="`FundingSourceSelect${data.rowIndex}`" />
                   </template>
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">
                     <div>
                       <customer-select v-model:valueInput="data.data.clientId" width="135px"
-                        :readOnly="isRegistered || data.data.resolutionClassification === 1" />
+                        :readOnly="isRegistered || data.data.resolutionClassification === 1" :search-enabled="true"/>
                     </div>
                   </template>
                   <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
@@ -634,26 +636,32 @@ export default defineComponent({
       loading: loadingSaveTransactionDetails,
     } = useMutation(mutations.saveTransactionDetails);
     doneSaveTransactionDetails((e) => {
-      if (itemChange.value) {
-        if (Number.isInteger(itemChange.value)) {
-          dataSourceTransactionDetails.value.transactionDetails = []
-          listTransactionDetailsOrigin.value = []
-          rowKeyfocused.value = null
-          firstLoad.value = true
-          monthSelected.value = itemChange.value
-          payloadGetAccountingProcessLogs.month = itemChange.value
-        } else {
-          rowKeyfocused.value = itemChange.value.bankbookDetailId
-          payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
-          payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
+      ///new logic saveStatementOfGoods
+      if (liststatementOfGoodsItemsChange.length) {
+        newDatatransactionDetails = e.data.saveTransactionDetails.transactionDetails
+        handleStatementOfGoodsItems()
+      } else {
+        if (itemChange.value) {
+          if (Number.isInteger(itemChange.value)) {
+            dataSourceTransactionDetails.value.transactionDetails = []
+            listTransactionDetailsOrigin.value = []
+            rowKeyfocused.value = null
+            firstLoad.value = true
+            monthSelected.value = itemChange.value
+            payloadGetAccountingProcessLogs.month = itemChange.value
+          } else {
+            rowKeyfocused.value = itemChange.value.bankbookDetailId
+            payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
+            payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
+          }
+          itemChange.value = null
         }
-        itemChange.value = null
+        if (rowElementFocus.value) {
+          rowElementFocus.value.classList.remove("dx-state-hover-custom");
+        }
+        triggerBankbookDetails.value = true
+        notification('success', Message.getMessage('COMMON', '106').message)
       }
-      if (rowElementFocus.value) {
-        rowElementFocus.value.classList.remove("dx-state-hover-custom");
-      }
-      triggerBankbookDetails.value = true
-      notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveTransactionDetails(e => {
       if (rowElementFocus.value) {
@@ -661,6 +669,7 @@ export default defineComponent({
       }
       notification('error', e.message)
     })
+
     // WATCH
     watch(resAccountingProcesses, (value) => {
       if (!!value.getAccountingProcesses && value.getAccountingProcesses.length) {
@@ -683,7 +692,7 @@ export default defineComponent({
           payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
           payloadGetTransactionDetails.bankbookDetailId = value.getBankbookDetails[0].bankbookDetailId
           getTransactionDetails(value.getBankbookDetails[0])
-        }else {
+        } else {
           getTransactionDetails(value.getBankbookDetails.find((item: any) => item.bankbookDetailId === rowKeyfocused.value))
         }
       } else {
@@ -700,6 +709,14 @@ export default defineComponent({
 
     const getTransactionDetails = (value: any) => {
       if (!!value && value) {
+        
+        ///new logic saveStatementOfGoods
+        newDatatransactionDetails = []
+        countIndexCallApiHandleStatementOfGoodsItems = 0
+        liststatementOfGoodsItemsChange = []
+
+
+
         dataSourceTransactionDetails.value = cloneDeep(value)
         dataSourceTransactionDetails.value.transactionDetails = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => (
           { ...item, summary: item.summary[item.summary.length - 1] === '중' ? item.summary : `${item.summary} 중` }
@@ -1062,10 +1079,125 @@ export default defineComponent({
         }
       })
     }
+
+
+    ///new logic saveStatementOfGoods
+    /////////////////
+    const {
+      mutate: saveStatementOfGoods,
+      onDone: doneSaveStatementOfGoods,
+      onError: errorSaveStatementOfGoods,
+      loading: loadingSaveStatementOfGoods,
+    } = useMutation(mutations.saveStatementOfGoods);
+    doneSaveStatementOfGoods((e) => {
+      // emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
+      // emit("closePopup", false)
+      // setData()
+      // notification('success', Message.getMessage('COMMON', '106').message)
+      countIndexCallApiHandleStatementOfGoodsItems++
+      handleStatementOfGoodsItems()
+    })
+    errorSaveStatementOfGoods(e => {
+      notification('error', e.message)
+    })
+
+    const {
+      mutate: deleteStatementOfGoods,
+      onDone: doneDeleteStatementOfGoods,
+      onError: errorDeleteStatementOfGoods,
+      loading: loadingDeleteStatementOfGoods,
+    } = useMutation(mutations.deleteStatementOfGoods);
+    doneDeleteStatementOfGoods((e) => {
+      countIndexCallApiHandleStatementOfGoodsItems++
+      handleStatementOfGoodsItems()
+      // dataSource.value.statementOfGoodsItems = []
+      // emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
+      // setData()
+      // notification('success', Message.getMessage('COMMON', '106').message)
+    })
+    errorDeleteStatementOfGoods(e => {
+      notification('error', e.message)
+    })
+
+    let newDatatransactionDetails: any = []
+    let countIndexCallApiHandleStatementOfGoodsItems = 0
+    let liststatementOfGoodsItemsChange: any = []
+
+    const handleStatementOfGoodsItems = () => {
+      if (liststatementOfGoodsItemsChange.findIndex((item: any) => item.index === liststatementOfGoodsItemsChange[countIndexCallApiHandleStatementOfGoodsItems]?.index) < 0) {
+        if (itemChange.value) {
+          if (Number.isInteger(itemChange.value)) {
+            dataSourceTransactionDetails.value.transactionDetails = []
+            listTransactionDetailsOrigin.value = []
+            rowKeyfocused.value = null
+            firstLoad.value = true
+            monthSelected.value = itemChange.value
+            payloadGetAccountingProcessLogs.month = itemChange.value
+          } else {
+            rowKeyfocused.value = itemChange.value.bankbookDetailId
+            payloadGetTransactionDetails.bankbookDetailDate = itemChange.value.bankbookDetailDate
+            payloadGetTransactionDetails.bankbookDetailId = itemChange.value.bankbookDetailId
+          }
+          itemChange.value = null
+        }
+        if (rowElementFocus.value) {
+          rowElementFocus.value.classList.remove("dx-state-hover-custom");
+        }
+        newDatatransactionDetails = []
+        countIndexCallApiHandleStatementOfGoodsItems = 0
+        liststatementOfGoodsItemsChange = []
+        triggerBankbookDetails.value = true
+        notification('success', Message.getMessage('COMMON', '106').message)
+      } else {
+        const indexNewDatatransactionDetails = liststatementOfGoodsItemsChange[countIndexCallApiHandleStatementOfGoodsItems].index
+        if (liststatementOfGoodsItemsChange[countIndexCallApiHandleStatementOfGoodsItems].statementOfGoodsItems.length) {
+          saveStatementOfGoods({
+            companyId: companyId,
+            fiscalYear: globalYear.value,
+            facilityBusinessId: globalFacilityBizId.value,
+            transactionDetailDate: newDatatransactionDetails[indexNewDatatransactionDetails].transactionDetailDate,
+            accountingDocumentId: newDatatransactionDetails[indexNewDatatransactionDetails].accountingDocumentId,
+            items: liststatementOfGoodsItemsChange[countIndexCallApiHandleStatementOfGoodsItems].statementOfGoodsItems
+          })
+        } else {
+          deleteStatementOfGoods({
+            companyId: companyId,
+            fiscalYear: globalYear.value,
+            facilityBusinessId: globalFacilityBizId.value,
+            transactionDetailDate: newDatatransactionDetails[indexNewDatatransactionDetails].transactionDetailDate,
+            accountingDocumentId: newDatatransactionDetails[indexNewDatatransactionDetails].accountingDocumentId,
+          })
+        }
+      }
+    }
     const updateGoodsCount = (accountingDocumentId: any, value: any) => {
       const indexTransition = dataSourceTransactionDetails.value.transactionDetails.findIndex((item: any) => item.accountingDocumentId === accountingDocumentId)
       dataSourceTransactionDetails.value.transactionDetails[indexTransition].goodsCount = value.length
       dataSourceTransactionDetails.value.transactionDetails[indexTransition].statementOfGoodsItems = [...value]
+      liststatementOfGoodsItemsChange = []
+      dataSourceTransactionDetails.value.transactionDetails.forEach((item: any, index: number) => {
+        if (index <= bankbookSelected.value.transactionDetails.length - 1) {
+          if ((!bankbookSelected.value.transactionDetails[index]?.statementOfGoodsItems
+            || !bankbookSelected.value.transactionDetails[index]?.statementOfGoodsItems.length)
+            && (!item?.statementOfGoodsItems || !item?.statementOfGoodsItems.length)) {
+
+          } else {
+            if (!isEqual(item.statementOfGoodsItems || [], bankbookSelected.value.transactionDetails[index]?.statementOfGoodsItems || [])) {
+              liststatementOfGoodsItemsChange.push({
+                index: index,
+                statementOfGoodsItems: dataSourceTransactionDetails.value.transactionDetails[index].statementOfGoodsItems || []
+              })
+            }
+          }
+        } else {
+          if (item.statementOfGoodsItems.length) {
+            liststatementOfGoodsItemsChange.push({
+              index: index,
+              statementOfGoodsItems: dataSourceTransactionDetails.value.transactionDetails[index].statementOfGoodsItems || []
+            })
+          }
+        }
+      })
     }
 
     const changeInput = () => {
@@ -1100,7 +1232,7 @@ export default defineComponent({
       if (status) {
         submitTransactionDetails()
       } else {
-        if(rowElementFocus.value){
+        if (rowElementFocus.value) {
           rowElementFocus.value.classList.remove("dx-state-hover-custom");
         }
         if (Number.isInteger(itemChange.value)) {
@@ -1178,6 +1310,8 @@ export default defineComponent({
       loadingGetBankbookDetails,
       loadingInitializeTransactionDetails,
       loadingSyncBankbookDetails,
+      loadingDeleteStatementOfGoods,
+      loadingSaveStatementOfGoods,
       dataSourceTransactionDetails,
       bankbookSelected,
       isModalHistory,
