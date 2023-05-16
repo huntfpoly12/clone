@@ -24,12 +24,12 @@
             </div>
           </a-form-item>
           <a-form-item label="지급일" class="red mt-15">
-            <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
-              :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
-              :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" />
-            <!-- <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput"
-              width="150px" class="mr-5" v-model:valueInput="formPA720.input.paymentDay" :required="true"
-              :isFormat="true" /> -->
+            <div>
+              <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
+                :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
+                :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" />
+              <div v-if="isLoopDayPA720" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+            </div>
           </a-form-item>
           <div class="input-text">
             <a-form-item label="지급액" class="red mt-10">
@@ -220,6 +220,7 @@ export default defineComponent({
       }
       return '';
     });
+    const isLoopDayPA720 = computed(() => store.state.common.isLoopDayPA720);
     // common
     let incomeAmount = computed(() => formPA720.value.input.paymentAmount - formPA720.value.input.requiredExpenses);
     let incomeTax = ref(0);
@@ -419,8 +420,10 @@ export default defineComponent({
       }
       return text;
     };
+  
     const changeIncomeTypeCode = (emitVal: any) => {
       formPA720.value.input.employee = emitVal;
+      console.log(`output->63%`, emitVal)
     };
     watch(() => formPA720.value.input.taxRate, () => {
       caclInput();
@@ -461,10 +464,10 @@ export default defineComponent({
       loadingEmployeeExtras,
       isClickEditDiffPA720,
       startDate, finishDate, dayDate,
-      processKeyPA720
+      processKeyPA720,isLoopDayPA720,
     };
   },
 });
 </script>
 
-<style lang="scss" scoped src="../style/style.scss" ></style>
+<style></style>

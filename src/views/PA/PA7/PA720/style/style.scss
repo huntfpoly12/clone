@@ -129,6 +129,9 @@
   }
 
   :deep .input-group-4 {
+    .ant-form-item-control{
+      flex: 1
+    }
     .ant-form-item-control-input-content {
       display: flex;
       align-items: center;
@@ -245,6 +248,7 @@
     min-width: 30px;
     display: inline-block;
   }
+
   .name-mw {
     // max-width: 70px;
   }
@@ -292,14 +296,25 @@
     padding: 5px 10px;
     min-height: 57px;
   }
+
   .name-w {
     width: 70px;
     display: inline-block;
   }
-  
+
   .name-w-1 {
     display: inline-block;
     text-align: center;
     margin: 0 5px;
   }
+
+}
+.error-date {
+  background: #d9534f;
+  color: white;
+  padding: 5px;
+  margin-top: 2px;
+  width: 150px;
+  font-size: 11px;
+  border-radius: 5px;
 }

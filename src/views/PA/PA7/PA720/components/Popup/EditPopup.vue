@@ -1,13 +1,16 @@
 <template>
-  <a-modal v-if="modalStatus" :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-    >
+  <a-modal v-if="modalStatus" :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md"
+    footer="">
     <standard-form action="" name="edit-510">
       <div class="custom-modal-edit" v-if="data.length">
-        <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
-        <span>선택된 내역 지급일을</span>
-        <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
-          v-model:valueDate="paymentDayPA720" :clearable="false"/>
-        <span>일로 변경하시겠습니까?</span>
+        <img class="mt-1" src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
+        <span class="mt-5">선택된 내역 지급일을</span>
+        <div>
+          <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+            v-model:valueDate="paymentDayPA720" :clearable="false" />
+          <div v-if="checkDuplicate(data)" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+        </div>
+        <span class="mt-5">일로 변경하시겠습니까?</span>
       </div>
       <div v-else class="text-center">항목을 하나 선택해야합니다</div>
       <div class="text-align-center mt-30">
@@ -178,16 +181,28 @@ export default defineComponent({
         })
       })
     };
-
+    function checkDuplicate(arr: any) {
+      const count: any = {};
+      for (let i = 0; i < arr.length; i++) {
+        const element = arr[i].errorInfo.employeeId;
+        if (count[element]) {
+          return true;
+        } else {
+          count[element] = 1;
+        }
+      }
+      return false;
+    }
     return {
       setModalVisible,
       onSubmit,
       changeDayDataPA720,
-      updateStatus, incomeIdRender, errorState,errTitle,
+      updateStatus, incomeIdRender, errorState, errTitle,
       dataUpdateLen, succesState,
       daysInMonth,
       processKeyPA720,
-      startDate, finishDate,paymentDayPA720,
+      startDate, finishDate, paymentDayPA720,
+      checkDuplicate,
     }
   },
 })
@@ -196,7 +211,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .custom-modal-edit {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   justify-content: center;
   margin-top: 20px;
@@ -222,5 +237,10 @@ export default defineComponent({
 .button-form-modal {
   margin: 0px 5px;
 }
-.red{color: red};
+
+.red {
+  color: red
+}
+
+;
 </style>
