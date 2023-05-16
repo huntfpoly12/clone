@@ -9,8 +9,6 @@ export default gql`
       companyId: $companyId
       imputedYear: $imputedYear
       workId: $workId
-    ) {
-      scalar
-    }
+    )
   }
 `;

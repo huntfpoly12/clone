@@ -53,13 +53,13 @@
               <a-col :span="8">
                 <a-form-item label="우편번호" label-align="right">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyPostNumber"
-                    :required="true" />
+                    />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="법인등록번호" label-align="right">
                   <id-number-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyCorpRegNuber"
-                    :required="true" />
+                    />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -153,20 +153,20 @@
               </a-col>
             </a-row>
             <div class="mt-10">통폐합 시 흡수하는 사업장:</div>
-            <a-row class="mt-10 ml-40">
-              <a-col :span="15">
-                <a-form-item label="상호" label-align="right">
+            <a-row class="mt-10 ml-40" :justify="'space-between'">
+              <a-col >
+                <a-form-item label="명칭" label-align="right">
                   <default-text-box width="200px" v-model:valueInput="formState.nationalPensionIntegrasionCompanyName" />
                 </a-form-item>
               </a-col>
-              <a-col :span="9" class="pl-27">
+              <a-col  class="">
                 <a-form-item label="사업장관리번호" label-align="right">
-                  <default-text-box width="200px" />
+                  <ManageIdTextBox width="200px" v-model:valueInput="formState.manageId"/>
                 </a-form-item>
               </a-col>
-              <a-col :span="24" class="mt-10">
-                <a-form-item label="주소" label-align="right" class="pr-10">
-                  <default-text-box v-model:valueInput="formState.nationalPensionIntegrasionCompanyAddress" />
+              <a-col  class="">
+                <a-form-item label="소재지" label-align="right" class="pr-10">
+                  <default-text-box width="200px" v-model:valueInput="formState.nationalPensionIntegrasionCompanyAddress" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -336,6 +336,7 @@ export default defineComponent({
       employeementInsuranceReport: true,
       industrialAccidentInsuranceReport: true,
       reportDate: +dayjs().format('YYYYMMDD'),
+      manageId:'',
     })
     const formStateToCompare = ref({ ...formState });
 
@@ -367,6 +368,25 @@ export default defineComponent({
         formState.presidentResidentNumber = data.bizType === 2 ? data.residentId : '';
         formState.presidentTel = data.presidentMobilePhone;
         formState.presidentAddress = data.address;
+        formStateToCompare.value = { ...formState };
+      }
+    });
+
+    //-------------------------- get getMajorInsuranceConsignStatus-----------------------
+
+    const {
+      result: majorStatusResult,
+    } = useQuery(
+      queries.getMajorInsuranceConsignStatus,
+      myCompanyParam,
+      () => ({
+        fetchPolicy: "no-cache",
+      })
+    );
+    watch(majorStatusResult, (value) => {
+      if (value) {
+        let data = value.getMajorInsuranceConsignStatus;
+        formState.manageId = data.manageId;
         formStateToCompare.value = { ...formState };
       }
     });
@@ -404,8 +424,9 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        makeDataClean(formState, ['presidentResidentNumber']);
-        createCompanyOutMutate({ companyId: companyId, imputedYear: globalYear.value, input: formState });
+        let {manageId,...formatData} = formState
+        makeDataClean(formatData, ['presidentResidentNumber']);
+        createCompanyOutMutate({ companyId: companyId, imputedYear: globalYear.value, input: formatData });
       }
     }
 
