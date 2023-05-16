@@ -175,7 +175,7 @@
                 </span>
                 <div>
                   <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                    :min="0" @changeInput="onCalcSum"> </number-box-money>
+                    :min="0" @changeInput="onCalcSum" format="#0,###"> </number-box-money>
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -201,7 +201,7 @@
                 </span>
                 <div>
                   <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                    :min="0" @changeInput="onCalcSum" :disabled="disabledDeduction(item.itemCode)" />
+                    :min="0" @changeInput="onCalcSum" :disabled="disabledDeduction(item.itemCode)" format="#0,###"/>
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -219,13 +219,13 @@
         ※ 현재 등록되어 있는 부양가족 기준으로 세액 적용됩니다.
       </a-row>
       <PopupMessage :modalStatus="modalCalc" @closePopup=" modalCalc = false" :typeModal="'confirm'" title=""
-        :content="msgCalc.message" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
+        :content="()=> vnode" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
         @checkConfirm="calculateTax" />
     </a-spin>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed, watchEffect, onMounted } from 'vue';
+import { defineComponent, reactive, ref, watch, computed, watchEffect, onMounted, h } from 'vue';
 import { useMutation, useQuery, } from '@vue/apollo-composable';
 import { radioCheckPersenPension, radioCheckReductioRate, radioCheckReductionInput, IncomeTaxAppRate, initFormStateTab2 } from '../../utils/index';
 import { useStore } from 'vuex';
@@ -240,6 +240,7 @@ import DxButton from 'devextreme-vue/button';
 import { Message } from '@/configs/enum';
 
 type RangeValue = [Dayjs | null, Dayjs | null];
+const vnode = h('div', [h('div', '입력된 수당으로 공제를 계산하여, 새로운 공제 금액이 입력됩니다. '), h('div', ' 그래도 계산하시겠습니까?')])
 export default defineComponent({
   components: { Datepicker, DxButton },
   props: {
@@ -759,7 +760,7 @@ export default defineComponent({
       compareForm,
       onCalcSum,
       disabledDeduction,
-      modalCalc, msgCalc,
+      modalCalc, msgCalc, vnode,
     };
   },
 });
