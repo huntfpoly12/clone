@@ -1100,7 +1100,9 @@ export default defineComponent({
       if (status) {
         submitTransactionDetails()
       } else {
-        rowElementFocus.value.classList.remove("dx-state-hover-custom");
+        if(rowElementFocus.value){
+          rowElementFocus.value.classList.remove("dx-state-hover-custom");
+        }
         if (Number.isInteger(itemChange.value)) {
           dataSourceTransactionDetails.value.transactionDetails = []
           listTransactionDetailsOrigin.value = []

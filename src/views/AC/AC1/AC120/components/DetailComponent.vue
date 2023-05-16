@@ -124,7 +124,8 @@
                                 </a-col>
                                 <a-col :span="6" class="col-3">
                                     <a-form-item label="거래처">
-                                        <customer-select v-model:valueInput="store.state.common.ac120.formData.clientId"
+                                        <customer-select :disabled="store.state.common.ac120.formData.resolutionClassification == 1"
+                                        v-model:valueInput="store.state.common.ac120.formData.clientId"
                                             width="150px" />
                                     </a-form-item>
                                     <div class="input_info">
@@ -155,7 +156,7 @@
                                 </a-col>
                                 <a-col :span="5" class="col-4">
                                     <a-form-item label="상대계정">
-                                        <account-code-select
+                                        <account-code-select  :disabled="store.state.common.ac120.formData.resolutionClassification == 1"
                                             v-model:valueInput="store.state.common.ac120.formData.relationCode"
                                             width="190px" />
                                     </a-form-item>
@@ -168,7 +169,7 @@
                                 </a-col>
 
                             </a-row>
-                            <div v-if="!(store.state.common.ac120.formData.resolutionClassification == 1)">
+                            <!-- <div v-if="!(store.state.common.ac120.formData.resolutionClassification == 1)"> -->
                                 <a-row>
                                     <a-col :span="24">
                                         <div class="top-content">
@@ -183,9 +184,9 @@
                                 </a-row>
                                 <a-row>
                                     <a-col :span="12">
-                                        <a-form-item class="red" label="품의종류"
-                                            v-if="store.state.common.ac120.formData.letterOfApprovalType">
+                                        <a-form-item class="red" label="품의종류">
                                             <radio-group
+                                                :disabled="store.state.common.ac120.formData.resolutionClassification == 1"
                                                 v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType"
                                                 :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'"
                                                 :required="true" />
@@ -202,12 +203,14 @@
                                 <a-row>
                                     <a-col :span="24">
                                         <a-form-item label="품의 원인 및 용도">
-                                            <text-area-box v-model:valueInput="store.state.common.ac120.formData.causeUsage"
+                                            <text-area-box 
+                                            :disabled="store.state.common.ac120.formData.resolutionClassification == 1"
+                                            v-model:valueInput="store.state.common.ac120.formData.causeUsage"
                                                 :height="50" />
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
-                            </div>
+                            <!-- </div> -->
                         </div>
                     </StandardForm>
                     <div class="text-align-center mt-20">
@@ -251,7 +254,7 @@ import ModalDelete from "./ModalDelete.vue"
 import queries from "@/graphql/queries/AC/AC1/AC120";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
-import { companyId } from "@/helpers/commonFunction"
+import { companyId, accountSubject } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
 import UploadPreviewImage from './UploadPreviewImage.vue'
 import { cloneDeep, isEqual } from "lodash"
@@ -316,24 +319,28 @@ export default defineComponent({
                     store.state.common.ac120.formData.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 22)?.text
+                    // store.state.common.ac120.formData.letterOfApprovalType = null
                     break;
                 case 22:
                     classification.value = [5]
                     store.state.common.ac120.formData.resolutionClassification = 2
                     textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 11)?.text
+                    // store.state.common.ac120.formData.letterOfApprovalType = 1
                     break;
                 case 21:
                     classification.value = [5]
                     store.state.common.ac120.formData.resolutionClassification = 2
                     textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 12)?.text
+                    // store.state.common.ac120.formData.letterOfApprovalType = 1
                     break;
                 case 12:
                     classification.value = [4]
                     store.state.common.ac120.formData.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 21)?.text
+                    // store.state.common.ac120.formData.letterOfApprovalType = null
                     break;
                 default:
                 // code block
@@ -390,13 +397,22 @@ export default defineComponent({
                     store.state.common.ac120.formData.causeUsage = null;
                     // store.state.common.ac120.formData.goodsCount = null;
                 }
+                let theOrder = ref(0)
+                accountSubject.map((row: any) => {
+                    if (row.useStartDate <= store.state.common.ac120.formData.transactionDetailDate <= row.useFinishDate) {
+                        theOrder.value = row.theOrder
+                    }
+                })
                 let dataSubmit = {
                     companyId: companyId,
                     fiscalYear: acYear.value,
                     facilityBusinessId: globalFacilityBizId.value,
                     transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
                     accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
-                    input: { ...store.state.common.ac120.formData }
+                    input: { 
+                        ...store.state.common.ac120.formData,
+                        theOrder: theOrder.value,
+                    }
                 }
                 // if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {
                 //     dataSubmit.input.amount = Math.abs(dataSubmit.input.amount)

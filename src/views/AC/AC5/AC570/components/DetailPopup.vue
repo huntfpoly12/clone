@@ -91,7 +91,7 @@ import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/AC/AC5/AC570";
 import queries from "@/graphql/queries/AC/AC5/AC570";
 import { initialStateDetail } from '../utils/index'
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, accountSubject } from "@/helpers/commonFunction";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -116,18 +116,18 @@ export default defineComponent({
         const formState = ref<any>({ ...initialStateDetail })
         const ac570FormRef = ref()
         let resetFormDetail = ref(1);
-        const theOrder = ref();
+        // const theOrder = ref();
 
         // query getAccoountSubjects
-        const {
-            result: resGetAccoountSubjects, loading: loadingGetAccoountSubjects, onError: errorGetAccoountSubjects
-        } = useQuery(queries.getAccoountSubjects, {
-            companyId: companyId,
-            fiscalYear: acYear.value,
-            facilityBizType: parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0')
-        }, () => ({
-            fetchPolicy: "no-cache",
-        }))
+        // const {
+        //     result: resGetAccoountSubjects, loading: loadingGetAccoountSubjects, onError: errorGetAccoountSubjects
+        // } = useQuery(queries.getAccoountSubjects, {
+        //     companyId: companyId,
+        //     fiscalYear: acYear.value,
+        //     facilityBizType: parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0')
+        // }, () => ({
+        //     fetchPolicy: "no-cache",
+        // }))
 
         // mutation updateBudgetSubjectTransition
         const {
@@ -172,7 +172,7 @@ export default defineComponent({
                         fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
                         input: {
-                            accounSubjectOrder: theOrder.value,
+                            accounSubjectOrder: accountSubject[0].theOrder,
                             transitionDate: formState.value.transitionDate,
                             transitionAmount: formState.value.transitionAmount ? formState.value.transitionAmount : 0,
                             sourceCode: formState.value.sourceCode,
@@ -207,20 +207,17 @@ export default defineComponent({
             Object.assign(formState.value, { ...initialStateDetail })
             if (value) {
                 if (props.dataAddPopup) {
-                    console.log(1);
                     Object.assign(formState.value, props.dataAddPopup)
                 } else if (props.dataDetail) {
-                    console.log(2);
-
                     Object.assign(formState.value, props.dataDetail)
                 }
             }
             resetFormDetail.value++
         })
 
-        watch(resGetAccoountSubjects, (value) => {
-            theOrder.value = value.getAccoountSubjects[0].theOrder
-        })
+        // watch(resGetAccoountSubjects, (value) => {
+        //     theOrder.value = value.getAccoountSubjects[0].theOrder
+        // })
 
         return {
             setModalVisible,

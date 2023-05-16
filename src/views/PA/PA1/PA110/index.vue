@@ -890,7 +890,6 @@ export default defineComponent({
             } else {
                 return data.status
             }
-            
         }
 
         const customTotalPay = () => {

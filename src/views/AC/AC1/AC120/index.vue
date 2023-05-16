@@ -219,7 +219,7 @@
         @checkConfirm="handleConfirmChange" />
     <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows='dataRows' />
 
-    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" :theOrder="totalCount"
+    <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false"
         :monthSelected="monthSelected" />
 
 
@@ -751,7 +751,8 @@ export default defineComponent({
 
         return {
             dataGetAccountingProcesses,
-            dataSource, totalCount,
+            dataSource, 
+            // totalCount,
             monthSelected,
             loadingGetAccountingProcesses,
             loadingGetAccountingDocuments,

@@ -85,6 +85,15 @@ export default gql`
             updatedBy
             ip
             active
+            statementOfGoodsItems {
+              item
+              standard
+              unit
+              quantity
+              unitPrice
+              amount
+              remark
+            }
           }
           proofs{
             name

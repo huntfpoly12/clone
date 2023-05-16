@@ -27,6 +27,8 @@ export const INITIAL_FORM_PA840 = {
   dependentsEvidenceFileStorageId: 0,
   healthSalaryPaymentYearDuringLeaveOfAbsence: [
     { year: dayjs().year(), totalSalary: 0 },
+    { year: dayjs().year(), totalSalary: 0 },
+    { year: dayjs().year(), totalSalary: 0 },
   ],
   returnDate: +dayjs().format("YYYYMMDD"),
   salaryAfterReturn: 0,
