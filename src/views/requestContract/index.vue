@@ -703,7 +703,7 @@ export default {
                     },
                     accounting: {
                         facilityBusinesses: dataFacility,
-                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? [1] : [0],
+                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? 1 : null,
                     },
                     withholding: withholdingCustom,
                     cmsBank: {
@@ -720,6 +720,9 @@ export default {
                 }
             }
           if (dataCallCreated) {
+            if(!dataCallCreated.content.accounting.accountingServiceTypes){
+                dataCallCreated.content.accounting = null
+            }
               await makeDataClean(dataCallCreated, ['buildingName']);
               mutateCreated(dataCallCreated)
           }

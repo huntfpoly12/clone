@@ -237,7 +237,6 @@ export default defineComponent({
         dataSource.value.statementOfGoodsItems = []
       }
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
-      console.log('setData', dataSource.value.statementOfGoodsItems);
     }
 
     const cancel = () => {
@@ -329,19 +328,6 @@ export default defineComponent({
       // }
 
       dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.filter((item: any) => item.id.toString() !== itemDelete.value.id.toString())
-      dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
-      const dataTable = dataSource.value.statementOfGoodsItems.map((item: any) => {
-        return {
-          amount: item.amount,
-          item: item.item,
-          quantity: item.quantity,
-          remark: item.remark,
-          standard: item.standard,
-          unit: item.unit,
-          unitPrice: item.unitPrice
-        }
-      })
-      emit("updateGoodsCount", props.data.accountingDocumentId, dataTable)
     }
     const submitFormDetail = (event: any) => {
       const res = event.validationGroup.validate();
@@ -395,8 +381,6 @@ export default defineComponent({
         newObj = { ...InitStatementOfGoods, id: 'create' }
         dataSource.value.statementOfGoodsItems = [{ ...newObj }]
       }
-
-      console.log('add', dataSource.value.statementOfGoodsItems);
     }
 
     const formatNumber = (value: number) => {
