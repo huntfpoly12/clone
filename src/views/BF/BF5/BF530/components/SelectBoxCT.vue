@@ -1,6 +1,6 @@
 <template>
   <DxSelectBox :search-enabled="searchEnabled" :width="width" :data-source="arrSelect" :show-clear-button="clearButton"
-    v-model:value="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr" :disabled="disabled"
+    v-model="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr" :disabled="disabled"
     @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택" :name="nameInput"
     field-template="field" item-template="item">
     <template #field="{ data }: any">

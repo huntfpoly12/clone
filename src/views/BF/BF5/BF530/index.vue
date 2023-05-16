@@ -12,7 +12,7 @@
         <tab-3-component :search="search3" :onSearch="onSearch"></tab-3-component>
       </a-tab-pane>
       <a-tab-pane key="4" tab="보수총액신고 신청현황 관리">
-        <tab-4-component :search="search3" :onSearch="onSearch"></tab-4-component>
+        <tab-4-component :search="search4" :onSearch="onSearch"></tab-4-component>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -42,6 +42,7 @@ export default defineComponent({
     const search1 = ref<number>(1);
     const search2 = ref<number>(2);
     const search3 = ref<number>(3);
+    const search4 = ref<number>(4);
     const onSearch = () => {
       if (activeKey.value == 1) {
         search1.value++;
@@ -51,6 +52,9 @@ export default defineComponent({
       }
       if (activeKey.value == 3) {
         search3.value++;
+      }
+      if (activeKey.value == 4) {
+        search4.value++;
       }
     };
     onMounted(() => {
@@ -62,6 +66,7 @@ export default defineComponent({
       search1,
       search2,
       search3,
+      search4,
     };
   },
 });
