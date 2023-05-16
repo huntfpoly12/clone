@@ -290,7 +290,7 @@ export default defineComponent({
       bizNumber: '',
       presidentName: '',
       adding: 'ADDING',
-      leavedAt: '',
+      leavedAt: null,
       residentId: '',
       joinedAt: '',
       acquisitionMonthPayment: false,
@@ -313,6 +313,7 @@ export default defineComponent({
       totalSalaryLastYear: 100000,
       workMonthThisYear: 1300,
       workMonthLastYear: 100000,
+      retireDate: null
     })
     const formStateToCompare = ref({ ...formState });
 
@@ -322,7 +323,7 @@ export default defineComponent({
       showData.name1 = '';
       showData.joinedAt = '';
       showData.residentId = '';
-      showData.leavedAt = '';
+      showData.leavedAt = null;
     }
 
     //-------------------------- get Company-----------------------
@@ -403,7 +404,7 @@ export default defineComponent({
           showData.name1 = data.name || '';
           showData.joinedAt = data?.joinedAt || '';
           showData.residentId = data.residentId || '';
-          showData.leavedAt = data.leavedAt || '';
+          showData.leavedAt = data.leavedAt || null;
           formStateToCompare.value = { ...formState };
         }
         getEmployeeWageTrigger.value = false;
@@ -434,7 +435,7 @@ export default defineComponent({
             showData.name1 = data.name || '';
             showData.joinedAt = data.joinedAt || '';
             showData.residentId = data.residentId || '';
-            showData.leavedAt = data.leavedAt || '';
+            showData.leavedAt = data.leavedAt || null;
             formStateToCompare.value = { ...formState };
           }
           getEmployeeWageDailyTrigger.value = false;
@@ -533,6 +534,7 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
+        formState.retireDate = showData.leavedAt
         makeDataClean(formState, ['presidentResidentNumber']);
         createCompanyEmployeeLossMutate({ companyId: companyId, imputedYear: globalYear.value, input: formState });
       }
