@@ -270,12 +270,12 @@
       ※ 현재 등록되어 있는 부양가족 기준으로 세액 적용됩니다.
     </a-row>
     <PopupMessage :modalStatus="modalCalc" @closePopup=" modalCalc = false" :typeModal="'confirm'" title=""
-      :content="msgCalc.message" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
+      :content="()=>vnode" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
       @checkConfirm="calculateTax" />
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed, watchEffect } from 'vue';
+import { defineComponent, reactive, ref, watch, computed, watchEffect, h } from 'vue';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import { radioCheckPersenPension, radioCheckReductioRate, radioCheckReductionInput, IncomeTaxAppRate, initFormStateTab2 } from '../../utils/index';
 import { useStore } from 'vuex';
@@ -289,6 +289,7 @@ import Datepicker from "@vuepic/vue-datepicker";
 import { Message } from '@/configs/enum';
 
 type RangeValue = [Dayjs | null, Dayjs | null];
+const vnode = h('div', [h('div', '입력된 수당으로 공제를 계산하여, 새로운 공제 금액이 입력됩니다. '), h('div', ' 그래도 계산하시겠습니까?')])
 export default defineComponent({
   components: { Datepicker },
   props: {
@@ -724,7 +725,7 @@ export default defineComponent({
       isBtnYellow,
       isDisableInsuranceSupport,
       onCalcSum, disabledDeduction,
-      modalCalc, msgCalc,
+      modalCalc, msgCalc,vnode,
       initFormTab2PA120,
       editRowTab2PA120
     };

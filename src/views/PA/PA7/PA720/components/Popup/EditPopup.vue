@@ -18,7 +18,7 @@
       </div>
     </standard-form>
   </a-modal>
-  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" width="350px">
+  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null">
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ data.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
       incomeIdRender.length }}건</p>
@@ -222,4 +222,5 @@ export default defineComponent({
 .button-form-modal {
   margin: 0px 5px;
 }
+.red{color: red};
 </style>
