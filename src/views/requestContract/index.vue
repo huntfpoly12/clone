@@ -662,7 +662,8 @@ export default {
                     withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
                 };
             }
-            let dataCallCreated = {
+
+            let dataCallCreated: any = {
                 content: {
                     agreements: {
                         terms: contractCreacted.terms,
@@ -703,7 +704,7 @@ export default {
                     },
                     accounting: {
                         facilityBusinesses: dataFacility,
-                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? 1 : null,
+                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? 1 : 0,
                     },
                     withholding: withholdingCustom,
                     cmsBank: {
@@ -773,7 +774,7 @@ export default {
                 if (newVal == 2) {
                   valueFacilityBusinesses.value = Array()
                   dataActiveRow.value = null
-                  contractCreacted.accountingServiceTypes = false
+                  contractCreacted.accountingServiceTypes = 0
                 }
             }
         );
