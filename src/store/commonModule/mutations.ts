@@ -1,3 +1,4 @@
+import layoutMutate from "./screenMutates/layoutMutate.js";
 import screenMutatePA720 from "./screenMutates/screenMutatePA720.js";
 import screenMutatePA120 from "./screenMutates/screenMutatePA120.js";
 import screenMutatePA210 from "./screenMutates/screenMutatePA210.js";
@@ -13,7 +14,8 @@ import {TypeCommonState} from "@/store/commonModule/index";
 const mutations: MutationTree<TypeCommonState> = {
     loadDataEmployee(state: any,dataEmployee :  any) {
         state.arrayEmployeePA410 = dataEmployee
-    },
+  },
+    ...layoutMutate,
     ...screenMutatePA720,
     ...screenMutatePA120,
     ...screenMutatePA210,

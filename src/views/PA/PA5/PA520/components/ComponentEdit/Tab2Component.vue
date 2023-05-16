@@ -139,12 +139,12 @@
         </div>
       </a-spin>
       <PopupMessage :modalStatus="modalCalc" @closePopup=" modalCalc = false" :typeModal="'confirm'" title=""
-        :content="msgCalc.message" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
+        :content="()=> vnode" :keyAccept="'1234'" :okText="msgCalc.yes" :cancelText="msgCalc.no"
         @checkConfirm="calculateTax" />
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from "vue";
+import { defineComponent, ref, computed, watch, h } from "vue";
 import { radioCheckPersenPension, originDataInputUpdate } from "../../utils/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { useStore } from 'vuex';
@@ -155,6 +155,7 @@ import notification from "@/utils/notification";
 import { Formula } from "@bankda/jangbuda-common";
 import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
 import { Message } from "@/configs/enum";
+const vnode = h('div', [h('div', '입력된 수당으로 공제를 계산하여, 새로운 공제 금액이 입력됩니다. '), h('div', ' 그래도 계산하시겠습니까?')])
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -492,7 +493,7 @@ export default defineComponent({
         }
         return {dataDefaultGet,
           originDataDetail,store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily, messageDaylySalary,
-            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput,isDisableDeduction,modalCalc,msgCalc,calculateTax
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput,isDisableDeduction,modalCalc,msgCalc,calculateTax,vnode
         };
     },
 });

@@ -1,7 +1,7 @@
 <template>
     <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="dataSource" placeholder="선택"
         :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="label" value-expr="value"
-        :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
+        :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" :search-enabled="searchEnabled">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
@@ -41,7 +41,11 @@ export default {
         isExample: {
           type: Boolean,
           default: false,
-        }  
+        },
+        searchEnabled: {
+            type: Boolean,
+            default: false,
+        }
     },
     components: {
         DxSelectBox,
