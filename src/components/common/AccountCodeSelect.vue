@@ -141,6 +141,9 @@ export default {
                     code: val.code,
                 })
             })
+            if (!accountSubjects.value?.find((element: any) => element.code == props.valueInput)) {
+                emit("update:valueInput", null);
+            }
         }
         watch(() => [props.useStartDate, props.useFinishDate, props.classification], () => {
             fillData()
