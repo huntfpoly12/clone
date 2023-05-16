@@ -11,5 +11,6 @@ mutation createEmployeeWageDaily(
             input: $input
         ) {
             type
+            employeeId
           }
     }`

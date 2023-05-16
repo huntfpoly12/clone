@@ -178,11 +178,11 @@ export default defineComponent({
             store.dispatch('common/resetActionStatus')
             notification('error', e.message)
         })
-        onDone( async () => {
+        onDone( async (result) => {
             //store.state.common.addRowBtOnclickPA520 = false
             //store.state.common.activeAddRowPA520 = false
             //store.commit('common/setAddBtOnclickPA520',false) 
-            store.commit('common/setIdRowSaveDonePA520',dataCreated.employeeId) 
+            store.commit('common/setIdRowSaveDonePA520',result.data.createEmployeeWageDaily.employeeId) 
             store.commit('common/setCheckChangeValueAddPA520',false) 
             notification('success', Message.getCommonMessage('101').message);
             if (clickYearStatus.value !== ClickYearStatus.none) await store.commit('settings/setCurrentYear')
