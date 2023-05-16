@@ -27,7 +27,7 @@
         :width="600">
         <div class="mt-30 d-flex-center center modal-copy-api">
             <span>과거내역</span>
-            <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
+            <DxSelectBox :width="200" :key="resetSelect" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
@@ -109,6 +109,7 @@ export default defineComponent({
         const startDate = ref(dayjs(`${paYear.value}-${month.value}`).startOf('month').toDate());
         const finishDate = ref(dayjs(`${paYear.value}-${month.value}`).endOf('month').toDate());
         const requiredPaymentDayCopy = ref()
+        const resetSelect = ref<number>(0)
         watch(() => props.data, (val) => {
             month.value = val
             let paymentMonth = month.value
@@ -220,6 +221,8 @@ export default defineComponent({
         };
 
         const openModalCopy = () => {
+            resetSelect.value++
+            dataApiCopy.value = {}
             modalCopy.value = true
         }
         const actionCopy = () => {
@@ -244,6 +247,7 @@ export default defineComponent({
 
         }
         return {
+            resetSelect,
             processKey,
             month,
             modalCopy,
