@@ -150,6 +150,7 @@ export default defineComponent({
         const dataSource = ref([]);
         // const search = ref<string>("");
         let dataSelect = ref()
+        const formData = computed(() => store.state.common.ac120.formData)
         const triggerQuerySearchSpendingAccountingDocuments = ref<boolean>(true)
         const dataQuerySearchSpendingAccountingDocuments = ref({
             companyId: companyId,
@@ -193,16 +194,16 @@ export default defineComponent({
 
         const onCopy = () => {
             if (dataSelect.value) {
-                store.state.common.ac120.formData.accountCode = dataSelect.value.accountCode
-                store.state.common.ac120.formData.relationCode = dataSelect.value.relationCode
-                store.state.common.ac120.formData.fundingSource = dataSelect.value.fundingSource
-                store.state.common.ac120.formData.clientId = dataSelect.value.clientId
-                store.state.common.ac120.formData.letterOfApprovalType = dataSelect.value.letterOfApprovalType
-                store.state.common.ac120.formData.causeUsage = dataSelect.value.causeUsage
-                store.state.common.ac120.formData.memo = `원본 지출결의서: ` + dataSelect.value.accountingDocumentId
+                formData.value.accountCode = dataSelect.value.accountCode
+                formData.value.relationCode = dataSelect.value.relationCode
+                formData.value.fundingSource = dataSelect.value.fundingSource
+                formData.value.clientId = dataSelect.value.clientId
+                formData.value.letterOfApprovalType = dataSelect.value.letterOfApprovalType
+                formData.value.causeUsage = dataSelect.value.causeUsage
+                formData.value.memo = `원본 지출결의서: ` + dataSelect.value.accountingDocumentId
 
-                store.state.common.ac120.formData.resolutionType = 22
-                store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+                formData.value.resolutionType = 22
+                formData.value.amount = -formData.value.amount
                 emit("closePopup", false);
                 notification('success', Message.getMessage('AC120', '002').message)
             } else {
@@ -212,12 +213,12 @@ export default defineComponent({
 
         }
         const onChange = () => {
-            // if (store.state.common.ac120.formData.resolutionType == 22) {
-            //     store.state.common.ac120.formData.resolutionType = 11
-            // } else if (store.state.common.ac120.formData.resolutionType == 11) {
-                store.state.common.ac120.formData.resolutionType = 22
+            // if (formData.value.resolutionType == 22) {
+            //     formData.value.resolutionType = 11
+            // } else if (formData.value.resolutionType == 11) {
+                formData.value.resolutionType = 22
             // }
-            store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+            formData.value.amount = -formData.value.amount
             emit("closePopup", false);
             // notification('success', Message.getMessage('AC120', '001').message)
         }

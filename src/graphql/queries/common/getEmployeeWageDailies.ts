@@ -2,39 +2,40 @@ import gql from "graphql-tag";
 export default gql`
   query getEmployeeWageDailies($companyId: Int!, $imputedYear: Int!) {
     getEmployeeWageDailies(companyId: $companyId, imputedYear: $imputedYear) {
-      type
-      employeeId
-      name
-      foreigner
-      nationality
-      nationalityCode
-      stayQualification
-      residentIdValidity
-      roadAddress
       addressExtend
-      email
-      department
-      responsibility
-      status
-      withholdingIncomeTax
-      withholdingLocalIncomeTax
-      withholdingRuralSpecialTax  
-      residentId
-      joinedAt
-      leavedAt  
-      weeklyWorkingHours    
-      totalDeduction 
-      deletable 
-      nationalPensionDeduction
-      healthInsuranceDeduction
-      employeementInsuranceDeduction
-      nationalPensionSupportPercent
-      employeementInsuranceSupportPercent 
-      retirementIncome
       deductionItems {
         itemCode
         amount
-      }  
+      }
+      deletable 
+      department
+      email
+      employeeId
+      employeementInsuranceDeduction
+      employeementInsuranceSupportPercent 
+      foreigner
+      healthInsuranceDeduction
+      joinedAt
+      leavedAt  
+      monthlyWage
+      name
+      nationality
+      nationalityCode
+      nationalPensionDeduction
+      nationalPensionSupportPercent
+      residentId
+      residentIdValidity
+      responsibility
+      retirementIncome
+      roadAddress
+      status
+      stayQualification
+      totalDeduction 
+      type
+      weeklyWorkingHours    
+      withholdingIncomeTax
+      withholdingLocalIncomeTax
+      withholdingRuralSpecialTax  
     }
   }
   `;

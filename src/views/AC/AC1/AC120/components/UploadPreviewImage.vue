@@ -17,9 +17,6 @@
                             </div>
                         </div>
                     </a-upload>
-                    <!-- <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-                        <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
-                    </a-modal> -->
                 </div>
             </div>
         </a-spin>
@@ -92,6 +89,7 @@ export default defineComponent({
             transactionDetailDate: null,
             accountingDocumentId: null,
         })
+        const formData = computed(() => store.state.common.ac120.formData)
         let isModalDelete = ref(false)
         // =================== GRAPHQL ===================
         // queries getAccountingDocumentProofs
@@ -115,7 +113,7 @@ export default defineComponent({
             // triggerAccountingDocumentProofs.value = true;
             store.state.common.ac120.statusKeppRow = true;
             // store.state.common.ac120.resetDataTable++
-            store.state.common.ac120.formData.proofCount++
+            formData.value.proofCount++
             notification("success", Message.getMessage("COMMON", "106").message);
         });
         errorAddAccountingDocumentProof((e) => {
@@ -126,7 +124,7 @@ export default defineComponent({
         doneRemoveAccountingDocumentProof((e) => {
             store.state.common.ac120.statusKeppRow = true;
             // store.state.common.ac120.resetDataTable++
-            store.state.common.ac120.formData.proofCount--
+            formData.value.proofCount--
             fileList.value.splice(indexImg.value, 1);
             notification("success", Message.getMessage("COMMON", "106").message);
         });
@@ -136,12 +134,12 @@ export default defineComponent({
 
         // ================== WATCH ================
         watch(() => store.state.common.ac120.resetDataAccountingDocumentProofs, (value) => {
-            if (store.state.common.ac120.formData.accountingDocumentId && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
+            if (formData.value.accountingDocumentId && formData.value.accountingDocumentId != 'AC120') {
                 statusDisabledImg.value = false;
-                dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
-                dataGetAccountingDocumentProofs.value.accountingDocumentId = store.state.common.ac120.formData.accountingDocumentId
+                dataGetAccountingDocumentProofs.value.transactionDetailDate = formData.value.transactionDetailDate
+                dataGetAccountingDocumentProofs.value.accountingDocumentId = formData.value.accountingDocumentId
                 triggerAccountingDocumentProofs.value = true;
-            } else if (store.state.common.ac120.formData.accountingDocumentId == 'AC120') {
+            } else if (formData.value.accountingDocumentId == 'AC120') {
                 statusDisabledImg.value = true;
                 fileList.value = []
             }
@@ -273,12 +271,6 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" >
-.form-upload-ac120 {
-    overflow-x: hidden;
-    height: calc(100vh - 765px);
-    max-width: 387px; 
-    width: 100%;
-}
 .upload-pewview-img-ac-120 {
     padding: 14px;
     .ant-upload-list  {
@@ -311,8 +303,6 @@ export default defineComponent({
     }
 
     .ant-btn-upload {
-        // display: flex;
-        // flex-direction: column;
         align-items: center;
         justify-content: space-between;
 
