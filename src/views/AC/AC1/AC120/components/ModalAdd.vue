@@ -121,7 +121,7 @@
                                 disabled="true" />
                         </a-form-item> -->
 
-                        <a-form-item label="출납일자" class="abc">
+                        <a-form-item label="출납일자">
                             <date-time-box :teleport="true" v-model:valueDate="formDataAdd.accountingDate" width="150px" />
                         </a-form-item>
                         <a-form-item label="등기일자">
@@ -157,7 +157,7 @@
                     </a-col>
                     <a-col :span="5" class="col-4">
                         <a-form-item label="상대계정">
-                            <account-code-select v-model:valueInput="formDataAdd.relationCode" width="190px" />
+                            <account-code-select :key="resetSelectAccount" v-model:valueInput="formDataAdd.relationCode" :classification="classification" width="190px" />
                         </a-form-item>
                         <a-form-item label="메모">
                             <!-- <default-text-box v-model:valueInput="formDataAdd.memo"
@@ -412,7 +412,6 @@ export default defineComponent({
         };
 
         const changeRadioResolutionType = (value: Number) => {
-            resetSelectAccount.value++
             if (value == 21 || value == 22) {
                 formDataAdd.value.resolutionClassification = 2
                 classification.value = [5]
@@ -425,7 +424,7 @@ export default defineComponent({
                 formDataAdd.value.letterOfApprovalType = null
                 formDataAdd.value.causeUsage = null
             }
-
+            resetSelectAccount.value++
         }
 
         store.state.common.ac120.arrResolutionType = computed(() => {

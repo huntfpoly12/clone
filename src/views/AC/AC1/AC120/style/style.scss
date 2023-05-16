@@ -87,7 +87,7 @@
             position: fixed;
             margin-right: 10px;
             width: -webkit-fill-available;
-            bottom: -250px;
+            bottom: -380px;
             transition: bottom 0.3s ease-in-out;
 
             .detail-header {
@@ -106,19 +106,14 @@
 
                 .detail1 {
                     width: calc(100% - 307px);
-                    :deep .abc .ant-form-item-control-input-content {
-                        // position: fixed;
-                    }
                 }
-                // .ac120 {
-                //     height: 185px;
-                //     overflow: auto;
-                // }
 
                 .detail2 {
                     width: 307px;
                     padding-left: 15px;
-
+                    overflow-x: hidden;
+                    height: calc(100vh - 610px);
+                    max-width: 307px; 
                     .upload {
                         border: 1px solid #ddd;
                         height: 100%;

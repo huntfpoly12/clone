@@ -1,19 +1,4 @@
 <template>
-    <!-- modal show when login more than 8 hours -->
-  <div>
-    <a-modal :visible="statusLogin" :closable="false"  footer="" :width="400"  class="logout-confirm">
-      <div style="text-align: center;margin: 15px;">
-        <span >장시간 활동이 없어 접속을 종료합니다. 다시 로그인하십시요</span>
-      </div>
-      <a-row>
-          <a-col :span="9" :offset="9">
-            <div style="display: flex;">
-              <button-basic class="button-form-modal" text="로그아웃" :width="90" :type="'default'" :mode="'contained'"  @onClick="logout"/>
-            </div>         
-          </a-col>
-        </a-row>
-    </a-modal>
-  </div>
   <a-layout>
     <a-layout-header class="header">
       <div class="nav-logo" style="display: flex;">
@@ -142,6 +127,23 @@
       </a-layout>
     </a-layout-content>
   </a-layout>
+  <!-- modal show when login more than 8 hours -->
+  <div>
+    <a-modal :visible="statusLogin" :closable="false"  footer="" :width="400"  class="logout-confirm">
+      <div style="text-align: center;margin: 15px;">
+        <span >장시간 활동이 없어 접속을 종료합니다. 다시 로그인하십시요</span>
+      </div>
+      <a-row>
+          <a-col :span="9" :offset="9">
+            <div style="display: flex;">
+              <button-basic class="button-form-modal" text="로그아웃" :width="90" :type="'default'" :mode="'contained'"  @onClick="logout"/>
+            </div>         
+          </a-col>
+        </a-row>
+    </a-modal>
+  </div>
+  <!-- error popup when api error -->
+  <error-popup></error-popup>
 </template>
 <script>
 import { defineComponent, ref, watch, computed, onMounted, nextTick } from "vue";
@@ -305,7 +307,7 @@ export default defineComponent({
     CaretLeftOutlined,
     CaretRightOutlined,
     DxSortable,
-    DxTabs
+    DxTabs,
   },
   created() {
     const tabsCached = sessionStorage.getItem('tabsCached')
