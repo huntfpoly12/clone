@@ -5,25 +5,23 @@ export default gql`
     $imputedYear: Int!
     $workId: Int!
   ) {
-    getMajorInsuranceCompanyJoinLogs(companyId: $companyId,imputedYear: $imputedYear,workId: $workId,) {
+    getMajorInsuranceCompanyJoinLogs(
+      companyId: $companyId
+      imputedYear: $imputedYear
+      workId: $workId
+    ) {
       companyId
+      type
+      imputedYear
+      workId
       ts
-      manageId
-      partnerId
-      companyConsignStatus
-      nationalPensionEDIStatus
-      healthInsuranceEDIStatus
-      nationalPensionBranchName
-      nationalPensionFax
-      healthInsuranceBranchName
-      healthInsuranceFax
-      employeementInsuranceBranchName
-      employeementInsuranceFax
-      industrialAccidentInsuranceBranchName
-      industrialAccidentInsuranceFax
+      companyType
+      workingStatus
       registeredAt
       acceptedAt
       completedAt
+      acceptedNumber
+      memo
       createdAt
       createdBy
       updatedAt

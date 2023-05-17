@@ -95,8 +95,8 @@ export const directDebitDateTypeArr = [
   { id: 2, text: "납기전월말일" },
 ]
 export const constructionSiteWorkplaceArr = [
-  { id: 1, text: "해당" },
-  { id: 2, text: "미해당" },
+  { id: true, text: "해당" },
+  { id: false, text: "미해당" },
 ]
 export const nationalPensionSeparatelySiteStatusArr = [
   { id: true, text: "해당" },
