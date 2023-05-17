@@ -74,7 +74,7 @@
             </div>
           </template>
           <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
-          <DxColumn caption="성명 (상호)" cell-template="tag" width="200" />
+          <DxColumn caption="성명 (상호)" css-class="cell-left" cell-template="tag" width="200" data-field="employee.employeeId"/>
           <template #tag="{ data }">
             <div class="custom-action">
               <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -86,7 +86,7 @@
           <template #residentId="{ data }">
             <resident-id :residentId="data.data.employee?.residentId"></resident-id>
           </template>
-          <DxColumn caption="소득구분" cell-template="grade-cell" width="160" />
+          <DxColumn caption="소득구분" cell-template="grade-cell" width="160" data-field="employee.incomeTypeCode"/>
           <template #grade-cell="{ data }">
             <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
             </income-type>
@@ -100,9 +100,9 @@
           <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" format="fixedPoint" width="150" />
           <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" format="fixedPoint" width="150" />
           <DxColumn caption="원천징수세액 농어촌특별세" cell-template="show0" width="150" data-type="number" />
-          <DxColumn caption="원천징수세액계합계" cell-template="sumWithholding" width="150" data-type="number" />
+          <DxColumn caption="원천징수세액계합계" cell-template="sumWithholding" data-field="total" width="150" data-type="number" />
           <template #sumWithholding="{ data }">
-            {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
+            {{ $filters.formatCurrency(data.data.total) }}
           </template>
           <!-- <DxSummary v-if="dataSource.length">
             <DxTotalItem show-in-column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
@@ -268,7 +268,7 @@ export default defineComponent({
           receiverName: data.employee.name,
           receiverAddress: data.employee.email,
           employeeId: data.employee.employeeId,
-          incomeTypeCode: data.employee.incomeTypeCode,
+          // incomeTypeCode: data.employee.incomeTypeCode,
         },
       };
       modalEmailSingle.value = true;
@@ -300,7 +300,7 @@ export default defineComponent({
           receiverName: data.employee.name,
           receiverAddress: data.employee.email,
           employeeId: data.employee.employeeId,
-          incomeTypeCode: data.employee.incomeTypeCode,
+          // incomeTypeCode: data.employee.incomeTypeCode,
         })
       })
     };
@@ -309,7 +309,12 @@ export default defineComponent({
     };
     watch(result, (value) => {
       if (value) {
-        dataSource.value = value.searchIncomeExtraWithholdingReceipts;
+        dataSource.value = value.searchIncomeExtraWithholdingReceipts.map((value: any) => {
+          return {
+            ...value,
+            total: value.withholdingIncomeTax + value.withholdingLocalIncomeTax
+          }
+        });
         trigger.value = false;
       }
     });
@@ -334,10 +339,10 @@ export default defineComponent({
         type: valueDefaultIncomeExtra.value.input.type,
         receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
       },
-      employeeKeys: [{
-        employeeId: null,
-        incomeTypeCode: null,
-      }],
+      employeeIds: [null
+        // employeeId: null,
+        // incomeTypeCode: null,
+      ],
     });
     const {
       result: resultReceiptReportViewUrl,
@@ -349,7 +354,7 @@ export default defineComponent({
     }));
     const onPrint = (data: any) => {
       gridRef.value?.instance.deselectAll()
-      receiptReportViewUrlParam.employeeKeys = [{ employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode }];
+      receiptReportViewUrlParam.employeeIds = [data.employee.employeeId];
       receiptReportViewUrlParam.input = { imputedYear: paYear.value, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
       receiptReportViewUrlTrigger.value = true;
       // refetchReceiptViewUrl();
@@ -366,12 +371,9 @@ export default defineComponent({
       if (dataSelect.value.length > 1) {
         var array: any = [];
         dataSelect.value.map((val: any) => {
-          array.push({
-            employeeId: val.employeeId,
-            incomeTypeCode: val.incomeTypeCode
-          })
+          array.push(val.employeeId)
         })
-        receiptReportViewUrlParam.employeeKeys = array
+        receiptReportViewUrlParam.employeeIds = array
         receiptReportViewUrlParam.input = { imputedYear: paYear.value, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
         receiptReportViewUrlTrigger.value = true;
         // refetchReceiptViewUrl();

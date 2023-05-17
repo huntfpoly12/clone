@@ -153,7 +153,6 @@ import AddPopup from './components/AddPopup.vue'
 import { Message } from "@/configs/enum"
 import DetailPopup from './components/DetailPopup.vue';
 import { Modal } from 'ant-design-vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 export default defineComponent({
     components: {
         AddPopup, DxSelection, DetailPopup, EmailGroupPopup,
@@ -277,9 +276,9 @@ export default defineComponent({
         const actonDeleteBudgetSubjectTransition = (data: any) => {
             Modal.confirm({
                 title: Message.getMessage('AC570', '001').message,
-                icon: createVNode(ExclamationCircleOutlined),
-                okText: '네',
-                cancelText: '아니요',
+                icon: createVNode(DeleteOutlined),
+                okText: Message.getMessage('AC570', '001').yes,
+                cancelText: Message.getMessage('AC570', '001').no,
                 onOk() {
                     let variables = {
                         companyId: companyId,

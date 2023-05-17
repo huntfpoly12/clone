@@ -255,7 +255,7 @@ import ModalDelete from "./ModalDelete.vue"
 import queries from "@/graphql/queries/AC/AC1/AC120";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
-import { companyId, accountSubject } from "@/helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
 import UploadPreviewImage from './UploadPreviewImage.vue'
 import { cloneDeep, isEqual } from "lodash"
@@ -286,6 +286,7 @@ export default defineComponent({
         const classificationAccountCode = ref<any>([4])
         const classificationRelationCode = ref<any>([5])
         const isModalChange = ref<boolean>(false)
+        let dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]')
         // =================== GRAPHQL ===================
         // mutation updateAccountingDocument
         const {
@@ -414,7 +415,7 @@ export default defineComponent({
                 //     formData.value.goodsCount = null;
                 // }
                 let theOrder = ref(0)
-                accountSubject.map((row: any) => {
+                dataAccountSubject.map((row: any) => {
                     if (row.useStartDate <= formData.value.transactionDetailDate <= row.useFinishDate) {
                         theOrder.value = row.theOrder
                     }

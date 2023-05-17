@@ -153,19 +153,20 @@
                                         :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
                                 </span>
                                 <div>
-                                    <a-tooltip color="black" placement="top" v-if="item.itemCode == 1012 && localIncomeBoo" zIndex="9999">
-                                        <template #title>
-                                        소액징수부면제 적용 {{ localReal }}
-                                        </template>
+                                    <a-tooltip color="black" :class="item.itemCode == 1012 && localIncomeBoo ? 'red' : ''" placement="top" zIndex="9999"
+                                    :title="item.itemCode == 1012 && localIncomeBoo ? '소액징수부면제 적용' + localReal : ''">
+                                        <!-- <template #title>
+                                            소액징수부면제 적용 {{ localReal }}
+                                        </template> -->
                                         <span>
-                                        <number-box-money class="red" width="130px" :spinButtons="false" :rtlEnabled="true"
+                                        <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true"
                                             v-model:valueInput="item.amount" @changeInput="onChangeInputDeduction"
                                             :disabled="store.state.common.pa110.statusDisabledStatus" format="#0,###" />
                                         </span>
                                     </a-tooltip>
-                                    <number-box-money v-else :disabled="store.state.common.pa110.statusDisabledStatus" width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false" :rtlEnabled="true"
+                                    <!-- <number-box-money v-else :disabled="store.state.common.pa110.statusDisabledStatus" width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false" :rtlEnabled="true"
                                         v-model:valueInput="item.amount" :min="0">
-                                    </number-box-money>
+                                    </number-box-money> -->
                                     <span class="pl-5">원</span>
                                 </div>
                             </div>
@@ -486,6 +487,11 @@ export default defineComponent({
         watch(() => dataConfigDeductions.value, (value) => {
             // store.state.common.pa110.statusChangeFormEdit = true;
             calculateTax();
+            // console.log(value.find((item: any) => item.itemCode == 1012).amountNew);
+            // console.log(value.find((item: any) => item.itemCode == 1012).amount);
+            
+            localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
+            localReal.value = value.find((item: any) => item.itemCode == 1012).amount;
         }, { deep: true })
 
         watch(() => dataConfigPayItems.value, (value) => {
@@ -629,7 +635,7 @@ export default defineComponent({
                 store.state.common.pa110.focusedRowKey = data.incomeId
                 
             }
-            localIncomeBoo.value = false;
+            // localIncomeBoo.value = false;
             store.state.common.pa110.statusChangeFormAdd = false;
             store.state.common.pa110.statusChangeFormEdit = false;
             // store.state.common.pa110.statusChangeFormPrice = false;
@@ -648,8 +654,8 @@ export default defineComponent({
             if (value) {
                 dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = value.calculateIncomeWageTax
                 dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(value.calculateIncomeWageTax / 100) * 10
-                localIncomeBoo.value = dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew < 1000;
-                localReal.value = dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew;
+                // localIncomeBoo.value = dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew < 1000;
+                // localReal.value = dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew;
             }
         })
 
