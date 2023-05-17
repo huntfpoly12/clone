@@ -33,9 +33,12 @@ table {
 }
 
 .disable-cell {
-  background-color: gray;
+  background-color: #808080;
 }
-
+.gray-cell {
+  color: black;
+  background-color: #D9D9D9;
+}
 .header-detail-1 {
   display: flex;
   font-size: 14px;
