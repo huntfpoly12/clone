@@ -378,6 +378,10 @@ export default defineComponent({
 <style lang="scss" scoped>
   ::v-deep td.disable-cell {
     color: #fff;
-    background-color: #b3b4b3;
+    background-color: #808080;
+  }
+  ::v-deep td.gray-cell {
+    color: black;
+    background-color: #D9D9D9;
   }
 </style>
