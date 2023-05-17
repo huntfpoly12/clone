@@ -51,15 +51,20 @@
                       :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
-                <TableExpenditureBudgetSummary :data="dataSource.expenditureBudgetSummary" />
+                <TableExpenditureBudgetSummary 
+                :data="{
+                  expenditureBudgetSummary: dataSource.expenditureBudgetSummary,
+                  revenueBudgetSummary: dataSource.revenueBudgetSummary,
+                }" 
+                />
               </a-collapse-panel>
               <a-collapse-panel key="3">
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>인건비 -></span>
-                    <DxButton v-if="false" class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                    <DxButton v-if="getStatusRevenueBudgetSummary()" text="정상" style="background-color: #337614; color: white"
                       :height="$config_styles.HeightInput" width="90" />
-                    <DxButton v-else text="정상" style="background-color: #337614; color: white"
+                    <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
                       :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
@@ -180,6 +185,7 @@ export default defineComponent({
       }))
     onResAccountingClosingCheckItems((data) => {
       dataSource.value = data.data.getAccountingClosingCheckItems
+      console.log('dataSource.value', dataSource.value);
       triggerAccountingClosingCheckItems.value = false
     })
 
@@ -216,6 +222,16 @@ export default defineComponent({
       }
     }
 
+    const getStatusRevenueBudgetSummary = () => {
+      if(dataSource.value?.revenueBudgetSummary){
+        // const revenueBudgetSummary = dataSource.value.revenueBudgetSummary
+        // return (revenueBudgetSummary.bankbookBalance - revenueBudgetSummary.totalIncome - revenueBudgetSummary.totalSpending) === 0
+        return true
+      }else{
+        return false
+      }
+    }
+
     return {
       dataSource,
       move_column,
@@ -230,6 +246,7 @@ export default defineComponent({
       listAccountingProcesses,
       getStatusCashRegisterSummary,
       getStatusExpenditureBudgetSummary,
+      getStatusRevenueBudgetSummary
     };
   },
 });
