@@ -5,7 +5,7 @@
      {{ year }}-01 ~ {{ year }}-{{ parseInt(month.toString()) < 10 ? '0'+month : month }}</div>
   <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="[dataCalculated]"
     :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-    :column-auto-width="true">
+    :column-auto-width="true" noDataText="내역이 없습니다">
     <DxScrolling mode="standard" show-scrollbar="always" />
     <DxColumn caption="총수입(A)" data-field="totalIncome" format="fixedPoint"/>
     <DxColumn caption="총지출(B)" data-field="totalSpending" format="fixedPoint"/>
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { useStore } from 'vuex';
-import { defineComponent, ref, reactive, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import { DxItem, DxDataGrid, DxColumn, DxScrolling } from "devextreme-vue/data-grid";
 export default defineComponent({
   props: {
