@@ -18,6 +18,7 @@ export class Message extends BaseType {
         '105': { "message" : "올바른 형식이 아닙니다."}, // {object} : Incorrect format. example : email, BusinessID, PersonalID, Birthday, etc
         '106': { "message" : "정상처리되었습니다."}, // [Pop-message] Update successful!
         '109': { "message" : "저장이 실패하였습니다. Err : {errorCode}", "icon": "iconError"}, // [Pop-message] Save failure!
+        '110': { "message" : "반영되었습니다."}, // It was reflected
       // SEARCH Button Click
         '201': { "message" : "조회가 완료되었습니다. 결과를 확인하세요.", "icon": "iconInfo"}, // [Pop-message] Search successful! Please check results.
         '202': { "message" : "조회결과가 없습니다. 검색조건을 확인하세요.", "icon": " iconInfo"}, // [Pop-message] No result! Please check your search conditions.
@@ -43,6 +44,7 @@ export class Message extends BaseType {
         '801': { "message" : "이메일을 발송했습니다"}, // Email has been sent
       // Select
         '901': { "message" : "선택할 내용이 없습니다."}, // No data to select
+      
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
