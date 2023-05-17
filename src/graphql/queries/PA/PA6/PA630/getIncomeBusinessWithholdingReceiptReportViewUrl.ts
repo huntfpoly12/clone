@@ -3,11 +3,11 @@ export default gql`
     query getIncomeBusinessWithholdingReceiptReportViewUrl(
             $companyId: Int!
             $input: IncomeBusinessWithholdingReceiptInput!
-            $employeeKeys: [ReportEmployeeBusinessKeyInput!]!
+            $employeeIds: [Int!]!
         ){
             getIncomeBusinessWithholdingReceiptReportViewUrl(
                 companyId: $companyId, 
                 input: $input, 
-                employeeKeys: $employeeKeys
+                employeeIds: $employeeIds
                 ) 
         }`

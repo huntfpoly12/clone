@@ -3,12 +3,12 @@ export default gql`
   query getIncomeExtraWithholdingReceiptReportViewUrl(
     $companyId: Int!
     $input: IncomeExtraWithholdingReceiptInput!
-    $employeeKeys: [ReportEmployeeExtraKeyInput!]!
+    $employeeIds: [Int!]!
   ) {
     getIncomeExtraWithholdingReceiptReportViewUrl(
       companyId: $companyId
       input: $input
-      employeeKeys: $employeeKeys
+      employeeIds: $employeeIds
     )
   }
 `;

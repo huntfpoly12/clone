@@ -70,7 +70,7 @@
             <DxColumn caption="다운로드" cell-template="downA" width="80" />
             <template #downA="{ data }" class="custom-action">
               <div class="d-flex justify-content-center" v-if="dataState.registeredAt">
-                <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.ID)">
+                <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp()">
                   <DownloadOutlined :style="{ fontSize: 12 }" />
                 </DxButton>
               </div>
@@ -248,12 +248,12 @@ export default defineComponent({
     const getMajorInsuranceParam = ref<any>({
       companyId: companyId,
       imputedYear: globalYear.value,
-      workId: dataState.value.workId,
     });
     const getMajorInsuranceTrigger = ref<boolean>(false);
     const {
       onError: getMajorInsuranceError,
       result: getMajorInsuranceResult,
+      refetch: getMajorInsuranceRefetch,
     } = useQuery(queries.getMajorInsuranceConsignStatusFaxFilingReportViewUrl, getMajorInsuranceParam, () => ({
       enabled: getMajorInsuranceTrigger.value,
       fetchPolicy: 'no-cache',
@@ -268,9 +268,9 @@ export default defineComponent({
       getMajorInsuranceTrigger.value = false;
     });
 
-    const onGetAcquistionRp = (workId: any) => {
-      getMajorInsuranceParam.value.workId = +workId;
+    const onGetAcquistionRp = () => {
       getMajorInsuranceTrigger.value = true;
+      getMajorInsuranceRefetch();
     };
 
     //-----------------------------------CREATE MAJOR--------------------------------

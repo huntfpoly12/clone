@@ -87,7 +87,7 @@
                         </div>
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
-                    <DxColumn :width="230" caption="사원" cell-template="employee-info" />
+                    <DxColumn :width="230" caption="사원" css-class="cell-left" cell-template="employee-info" data-field="employee.employeeId"/>
                     <template #employee-info="{ data }">
                         <div class="custom-action">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -113,11 +113,11 @@
                     <template #settlementFinishDate="{ data }">
                         {{ $filters.formatDate(data.value) }}
                     </template>
-                    <DxColumn width="70" caption="귀속연월" css-class="cell-center" cell-template="inputedYearMonth" />
+                    <DxColumn width="70" caption="귀속연월" css-class="cell-center" data-field="imputedMonth" cell-template="inputedYearMonth" />
                     <template #inputedYearMonth="{ data }">
                         {{ paYear }}-{{ $filters.formatMonth(data.data.imputedMonth) }}
                     </template>
-                    <DxColumn width="70" caption="지급연월" css-class="cell-center" cell-template="paymentYearMonth" />
+                    <DxColumn width="70" caption="지급연월" css-class="cell-center" data-field="paymentMonth" cell-template="paymentYearMonth" />
                     <template #paymentYearMonth="{ data }">
                         {{ data.data.paymentYear }}-{{ $filters.formatMonth(data.data.paymentMonth) }}
                     </template>
@@ -136,7 +136,7 @@
                         </a-tooltip>
                     </template>
                     <DxColumn caption="차인지급액" data-field="actualPayment" width="70" format="#,###" alignment="right" />
-                    <DxColumn caption="비고" cell-template="note" />
+                    <DxColumn caption="비고" css-class="cell-left" cell-template="note" data-field="employee.nationalPensionDeduction"/>
                     <template #note="{ data }">
                         <div class="custom-action">
                             <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -347,7 +347,7 @@ export default defineComponent({
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
                     employeeId: data.employee.employeeId,
-                    incomeTypeCode: data.employee.incomeTypeCode
+                    // incomeTypeCode: data.employee.incomeTypeCode
                 }
             }
             modalEmailSingle.value = true
@@ -427,7 +427,7 @@ export default defineComponent({
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
                     employeeId: data.employee.employeeId,
-                    incomeTypeCode: data.employee.incomeTypeCode
+                    // incomeTypeCode: data.employee.incomeTypeCode
                 })
                 incomeIds.value.push(data.incomeId)
             })

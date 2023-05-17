@@ -250,10 +250,10 @@ export default defineComponent({
         formEditPA720.value.input.paymentDay = +newVal1.toString().slice(-2);
       }
     }, { deep: true });
-    watch(() => formPA720.value.input.paymentDay, (newVal1: any) => {
+    watch(() => formPA720.value.input.employeeId, (newVal1: any) => {
       dayDate.value = `${processKeyPA720.value.processKey.paymentYear}${filters.formatMonth(
         processKeyPA720.value.processKey.paymentMonth
-      )}${newVal1}`;
+      )}${formPA720.value.input.paymentDay}`;
     }, { immediate: true });
     const startDate = computed(() => {
       let day = dayjs(`${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.paymentMonth}`).startOf('month').toDate();

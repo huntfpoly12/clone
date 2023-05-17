@@ -1,86 +1,72 @@
 <template>
-  <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
-    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+  <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated"
+    :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+    :column-auto-width="true" noDataText="내역이 없습니다">
+    <DxPaging :enabled="false" />
     <DxScrolling mode="standard" show-scrollbar="always" />
-    <DxColumn caption="계정과목" cell-template="labelDivision" />
-    <template #labelDivision="{ data }">
-      <b style="color: #7F7F7F;">{{ labelDivision[data.rowIndex] }}</b>
-    </template>
-    <DxColumn caption="연예산(C)" data-field="key2" />
-    <DxColumn caption="월환산예산 (C /12)" data-field="key3" />
-    <DxColumn caption="당월집행" data-field="key4" />
-    <DxColumn caption="당월 인건비비율 (%)" data-field="key5" />
-    <DxColumn caption="집합누계(D)" data-field="key6" />
-    <DxColumn caption="잔액(C-D)" data-field="key7" />
-    <DxColumn caption="집행율(%)" data-field="key8" />
+    <DxColumn caption="계정과목" data-field="name" />
+    <DxColumn caption="연예산(C)" data-field="amount" />
+    <DxColumn caption="월환산예산 (C /12)" data-field="monthlyBudget" />
+    <DxColumn caption="당월집행" data-field="currentMonthExecution" />
+    <DxColumn caption="당월 인건비비율 (%)" data-field="currentMonthlyFeeRate" />
+    <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" />
+    <DxColumn caption="잔액(C-D)" data-field="balance" />
+    <DxColumn caption="집행율(%)" data-field="executionRate" />
+    <DxSummary>
+        <DxTotalItem column="계정과목" summary-type="count" display-format="합계: [{0}]" />
+    </DxSummary>
   </DxDataGrid>
 </template>
 
 <script lang="ts">
 import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, watch, computed } from 'vue'
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxMasterDetail } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxPaging, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 export default defineComponent({
   props: {
     data: {
       type: Array,
-      default: [{
-        key1: '12',
-        key2: '23',
-        key3: '34',
-        key4: '45',
-        key5: '56',
-        key6: '67',
-        key7: '78',
-        key8: 'xx'
-      }, {
-        key1: '89',
-        key2: '90',
-        key3: '01',
-        key4: '12',
-        key5: '23',
-        key6: '34',
-        key7: '45',
-        key8: 'xx'
-      }, {
-        key1: '56',
-        key2: '67',
-        key3: '78',
-        key4: '89',
-        key5: '90',
-        key6: '01',
-        key7: '12',
-        key8: 'xx'
-      }, {
-        key1: '56',
-        key2: '67',
-        key3: '78',
-        key4: '89',
-        key5: '90',
-        key6: '01',
-        key7: '12',
-        key8: 'xx'
-      }]
+      default: []
     }
   },
   components: {
-    DxItem, DxDataGrid, DxColumn, DxScrolling, DxMasterDetail
+    DxItem, DxDataGrid, DxColumn, DxScrolling, DxPaging, DxSummary, DxTotalItem
   },
 
   setup(props, { emit }) {
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const labelDivision = [
-      '급여(직접비)',
-      '{중간생략}',
-      '사회보험 부담금(간접비)',
-      '합계'
-    ]
+
+    const dataCalculated: any = ref([])
+
+    const checkNumber = (value: any) => {
+      if (Number.isInteger(value)) {
+        return value
+      } else {
+        return null
+      }
+    }
+
+    watch(() => props.data, (value) => {
+      if(value) {
+        dataCalculated.value = value.map((item: any) => ({
+          ...item,
+          monthlyBudget: checkNumber(item.amount / 12),
+          currentMonthlyFeeRate: checkNumber(item.currentMonthExecution / (item.amount / 12)),
+          balance: checkNumber(item.amount - item.cumulativeTotal),
+          executionRate: checkNumber(item.cumulativeTotal / item.amount) * 100
+        }))
+      }
+    },{
+      deep: true,
+      immediate: true
+    })
+
     return {
       move_column,
       colomn_resize,
-      labelDivision
+      dataCalculated
     }
   },
 })

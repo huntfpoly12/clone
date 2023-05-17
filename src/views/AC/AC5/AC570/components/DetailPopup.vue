@@ -91,7 +91,7 @@ import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/AC/AC5/AC570";
 import queries from "@/graphql/queries/AC/AC5/AC570";
 import { initialStateDetail } from '../utils/index'
-import { companyId, accountSubject } from "@/helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -112,7 +112,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
-
+        let dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]')
         const formState = ref<any>({ ...initialStateDetail })
         const ac570FormRef = ref()
         let resetFormDetail = ref(1);
@@ -172,7 +172,7 @@ export default defineComponent({
                         fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
                         input: {
-                            accounSubjectOrder: accountSubject[0].theOrder,
+                            accounSubjectOrder: dataAccountSubject[0].theOrder,
                             transitionDate: formState.value.transitionDate,
                             transitionAmount: formState.value.transitionAmount ? formState.value.transitionAmount : 0,
                             sourceCode: formState.value.sourceCode,

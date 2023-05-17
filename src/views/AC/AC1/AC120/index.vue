@@ -8,7 +8,7 @@
                         :class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
                         <colorful-badge
                             :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
-                            :year="acYear" :month="month" />
+                            :year="dataGetAccountingProcesses.find((item: any) => item.month === month)?.year || acYear" :month="dataGetAccountingProcesses.find((item: any) => item.month === month)?.month || month" />
                     </div>
                 </div>
             </a-spin>
