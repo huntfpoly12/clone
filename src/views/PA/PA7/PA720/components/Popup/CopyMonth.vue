@@ -30,28 +30,30 @@
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
     :width="600">
-    <div class="mt-45 d-flex-center">
-      <span class="mr-5">과거내역</span>
-      <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
-        field-template="field-data" @value-changed="updateValue" :disabled="false">
-        <template #field-data="{ data }">
-          <span v-if="data" style="padding: 4px">
-            귀 {{ data.imputedYear }}-{{ formatMonth(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{
-              formatMonth(data.paymentMonth) }}
-            <DxTextBox style="display: none" />
-          </span>
-          <span v-else style="padding: 4px">
-            <span>선택</span>
-            <DxTextBox style="display: none" />
-          </span>
-        </template>
-        <template #item-data="{ data }">
-          <span>귀 {{ data.imputedYear }}-{{ formatMonth(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{
-            formatMonth(data.paymentMonth) }}</span>
-        </template>
-      </DxSelectBox>
-      <span class="mr-5">로 부터 복사하여 새로 입력합니다.</span>
-    </div>
+    <a-spin :spinning="loading">
+      <div class="mt-45 d-flex-center">
+        <span class="mr-5">과거내역</span>
+        <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
+          field-template="field-data" @value-changed="updateValue" :disabled="false">
+          <template #field-data="{ data }">
+            <span v-if="data" style="padding: 4px">
+              귀 {{ data.imputedYear }}-{{ formatMonth(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{
+                formatMonth(data.paymentMonth) }}
+              <DxTextBox style="display: none" />
+            </span>
+            <span v-else style="padding: 4px">
+              <span>선택</span>
+              <DxTextBox style="display: none" />
+            </span>
+          </template>
+          <template #item-data="{ data }">
+            <span>귀 {{ data.imputedYear }}-{{ formatMonth(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{
+              formatMonth(data.paymentMonth) }}</span>
+          </template>
+        </DxSelectBox>
+        <span class="mr-5">로 부터 복사하여 새로 입력합니다.</span>
+      </div>
+    </a-spin>
 
     <div class="text-align-center mt-30">
       <button-basic class="button-form-modal" text="아니요" :width="140" type="default" mode="outlined"
@@ -113,7 +115,7 @@ export default defineComponent({
       },
       set(value) {
         let day = value.toString().slice(-2);
-        store.commit('common/paymentDayPA720', day);
+        store.state.common.paymentDayPA720 = day;
       },
     });
     const trigger = ref(false);
@@ -142,7 +144,6 @@ export default defineComponent({
         }
         month2.value = yearMonth;
         trigger.value = true;
-        findIncomeRefetch();
       }, { deep: true }
     );
 
@@ -156,7 +157,7 @@ export default defineComponent({
         finishImputedYearMonth: parseInt(`${globalYear.value}12`),
       }
     })
-    const { result: resultFindIncomeProcessExtraStatViews, refetch: findIncomeRefetch } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
+    const { result: resultFindIncomeProcessExtraStatViews, refetch: findIncomeRefetch, loading } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
       enabled: trigger.value,
       fetchPolicy: 'no-cache',
     }));
@@ -170,6 +171,7 @@ export default defineComponent({
         findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${globalYear.value}01`);
         findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${globalYear.value}12`);
         trigger.value = true;
+        findIncomeRefetch();
       }
     });
 
@@ -242,7 +244,7 @@ export default defineComponent({
       emit('dataAddIncomeProcess', dateTarget);
       processKeyPA720.value.processKey = dateTarget;
       let day = paymentDayPA720.value.toString().slice(-2);
-      store.commit('common/paymentDayPA720', +day);
+      store.state.common.paymentDayPA720 = +day;
     }
 
     //------------------fn submit add new------------------------
@@ -269,6 +271,7 @@ export default defineComponent({
       globalYear,
       paymentDayPA720,
       startDate, finishDate,
+      loading,
     };
   },
 });

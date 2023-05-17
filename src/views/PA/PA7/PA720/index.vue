@@ -805,16 +805,16 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     onErrorConfig(() => {
-      store.commit('common/paymentDayPA720', 1);
       configTrigger.value = false;
     })
     watch(resultConfig, (newVal) => {
       if (newVal) {
         const data = newVal.getWithholdingConfig;
         dateType.value = data.paymentType;
-        store.commit('common/paymentDayPA720', data.paymentDay);
+        store.state.common.paymentDayPA720 = data.paymentDay;
         store.state.common.paymentDayDefaultPA720 = data.paymentDay;
         configTrigger.value = false;
+        console.log(`output->newVal`,newVal)
       }
     });
     //-----------------------------hover column-----------------------------

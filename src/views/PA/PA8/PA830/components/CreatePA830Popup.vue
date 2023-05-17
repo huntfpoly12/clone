@@ -62,7 +62,7 @@
         <a-col span="4"></a-col>
         <a-col span="8">
           <DxField label="주민등록번호" class="field-custom">
-            <default-text-box :value="employee?.residentId" placeholder="주민등록번호" disabled />
+            <id-number-text-box :valueInput="employee?.residentId" placeholder="주민등록번호" disabled />
           </DxField>
         </a-col>
 
@@ -80,13 +80,13 @@
         </a-col>
         <a-col span="8">
           <DxField label="변경전급여" class="field-custom">
-            <number-box v-model:valueInput="formData.beforeSalary" :min="1" />
+            <number-box-money v-model:valueInput="formData.beforeSalary" :min="1" />
           </DxField>
         </a-col>
         <a-col span="4" />
         <a-col span="8">
           <DxField label="변경후급여" class="field-custom">
-            <number-box v-model:valueInput="formData.afterSalary" required :min="1" />
+            <number-box-money v-model:valueInput="formData.afterSalary" required :min="1" />
           </DxField>
         </a-col>
         <a-col span="4" />

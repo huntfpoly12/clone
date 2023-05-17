@@ -8,7 +8,7 @@
         <div>
           <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
             v-model:valueDate="paymentDayPA620" :clearable="false" />
-          <div v-if="checkDuplicate(data)" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+          <div v-if="checkDuplicateID(data) || checkDuplicateDay" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
         </div>
         <span class="mt-5">일로 변경하시겠습니까?</span>
       </div>
@@ -63,6 +63,10 @@ export default defineComponent({
     dataUpdate: {
       type: Object,
       required: true,
+    },
+    dayArr: {
+      type: Array,
+      default: []
     }
   },
   components: {
@@ -72,14 +76,14 @@ export default defineComponent({
       emit("closePopup", [])
     };
     const store = useStore()
-    let day = computed(() => store.state.common.paymentDayDefaultPA620);
-    let daySelected = computed(() => store.state.common.paymentDayPA620);
+    let day = computed(() => store.state.common.paymentDayPA620);
+    let dayDefaultPA620 = store.state.common.paymentDayDefaultPA620;
     const paymentDayPA620 = computed({
       get() {
         const daysInMonth = dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
         let newDay = day.value > daysInMonth || day.value == 0 ? daysInMonth : day.value;
         let date = `${props.processKey?.paymentYear}${filters.formatMonth(props.processKey?.paymentMonth)}${newDay}`;
-        return dayjs(date);
+        return date;
       },
       set(value) {
         let day = +value.toString().slice(-2);
@@ -176,7 +180,7 @@ export default defineComponent({
           companyId: companyId,
           processKey: props.processKey,
           incomeId: val.param.incomeId,
-          day: daySelected.value,
+          day: day.value,
         })
       })
     };
@@ -187,9 +191,11 @@ export default defineComponent({
         succesState.value = [];
         errorState.value = [];
         daysInMonth.value = +dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
+      }else{
+        store.commit('common/paymentDayPA620', dayDefaultPA620);
       }
     }, { deep: true })
-    function checkDuplicate(arr: any) {
+    function checkDuplicateID(arr: any) {
       const count: any = {};
       for (let i = 0; i < arr.length; i++) {
         const element = arr[i].errorInfo.employeeId;
@@ -201,13 +207,16 @@ export default defineComponent({
       }
       return false;
     }
+    const checkDuplicateDay = computed(() => {
+      return props.dayArr.indexOf(day.value) > -1;
+    });
     return {
       setModalVisible,
       onSubmit,
       updateStatus, incomeIdRender, errorState, errTitle,
       dataUpdateLen, succesState, daysInMonth,
       startDate, finishDate, paymentDayPA620,
-      checkDuplicate,
+      checkDuplicateID, checkDuplicateDay,
     }
   },
 })

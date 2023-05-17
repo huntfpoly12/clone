@@ -98,7 +98,7 @@
                                 width="190px" placeholder="지출" disabled="true" />
                         </a-form-item>
                         <a-form-item label="계정과목" class="red">
-                            <account-code-select :key="resetSelectAccount" :classification="classification"
+                            <account-code-select :key="resetSelectAccount" :classification="classificationAccountCode"
                                 v-model:valueInput="formDataAdd.accountCode" width="190px" :required="true" />
                         </a-form-item>
                     </a-col>
@@ -131,7 +131,7 @@
                     </a-col>
                     <a-col :span="6" class="col-3">
                         <a-form-item label="거래처">
-                            <customer-select :disabled="formDataAdd.resolutionClassification == 1" v-model:valueInput="formDataAdd.clientId" width="150px" />
+                            <customer-select :search-enabled="true" :disabled="formDataAdd.resolutionClassification == 1" v-model:valueInput="formDataAdd.clientId" width="150px" />
                         </a-form-item>
                         <div class="input_info">
                             <a-form-item :label="textLabelInputSource">
@@ -157,7 +157,8 @@
                     </a-col>
                     <a-col :span="5" class="col-4">
                         <a-form-item label="상대계정">
-                            <account-code-select :key="resetSelectAccount" v-model:valueInput="formDataAdd.relationCode" :classification="classification" width="190px" />
+                            <account-code-select :key="resetSelectAccount" :disabled="formDataAdd.resolutionClassification == 1" 
+                            v-model:valueInput="formDataAdd.relationCode" :classification="classificationRelationCode" width="190px" />
                         </a-form-item>
                         <a-form-item label="메모">
                             <!-- <default-text-box v-model:valueInput="formDataAdd.memo"
@@ -255,7 +256,8 @@ export default defineComponent({
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
         const countKey = ref<number>(0)
         const resetSelectAccount = ref<number>(0)
-        const classification = ref<any>([4])
+        const classificationAccountCode = ref<any>([4])
+        const classificationRelationCode = ref<any>([5])
         const refFormAddAC120 = ref()
         const requiredTransactionDetailDate = ref()
         const requiredCauseActionDate = ref()
@@ -303,13 +305,16 @@ export default defineComponent({
         watch(resBankbooks, (value) => {
             triggerBankbooks.value = false
             // arraySelectBox.value = []
+            store.state.common.ac120.arrayBankbooks = []
             if (value.getBankbooks) {
-                store.state.common.ac120.arrayBankbooks = value.getBankbooks.map((value: any) => {
-                    return {
-                        'label': value.bankbookNickname,
-                        'value': value.bankbookId,
-                        'bankbookNumber': value.bankbookNumber,
-                        'bankbookNickname': value.bankbookNickname
+                value.getBankbooks.map((value: any) => {
+                    if (value.facilityBusinessId == globalFacilityBizId.value) {
+                        store.state.common.ac120.arrayBankbooks.push({
+                            'label': value.bankbookNickname,
+                            'value': value.bankbookId,
+                            'bankbookNumber': value.bankbookNumber,
+                            'bankbookNickname': value.bankbookNickname,
+                        }) 
                     }
                 })
             }
@@ -414,12 +419,14 @@ export default defineComponent({
         const changeRadioResolutionType = (value: Number) => {
             if (value == 21 || value == 22) {
                 formDataAdd.value.resolutionClassification = 2
-                classification.value = [5]
+                classificationAccountCode.value = [5]
+                classificationRelationCode.value = [4]
                 statusShowLetterOfApprovalType.value = true
                 formDataAdd.value.letterOfApprovalType = 1
             } else {
                 formDataAdd.value.resolutionClassification = 1
-                classification.value = [4]
+                classificationAccountCode.value = [4]
+                classificationRelationCode.value = [5]
                 statusShowLetterOfApprovalType.value = false
                 formDataAdd.value.letterOfApprovalType = null
                 formDataAdd.value.causeUsage = null
@@ -464,7 +471,7 @@ export default defineComponent({
             countKey,
             store,
             startDate, finishDate, formDataAdd,
-            classification,
+            classificationAccountCode, classificationRelationCode,
             resetSelectAccount,
             requiredTransactionDetailDate, requiredCauseActionDate,
             bankbookNickname, bankbookNumber,

@@ -6,13 +6,9 @@
           <a-form-item label="퇴직급여(확정)">
             <div class="d-flex-center">
               <number-box-money :required="false" width="150px" v-model:valueInput="retirementBenefits" disabled format="#0,###" />
-              <span class="pl-5 mr-5">원</span>
-              <a-tooltip placement="top">
-                <template #title>실제 지급된 퇴직급여를 입력합니다.</template>
-                <div>
-                  <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                </div>
-              </a-tooltip>
+              <span class="pl-5">원</span>
+              <info-tool-tip>실제 지급된 퇴직급여를 입력합니다.</info-tool-tip>
+              
             </div>
           </a-form-item>
           <a-form-item label="비과세퇴직급여(확정)">
@@ -33,13 +29,8 @@
                     }}</span>
                 </div>
               </div>
-              <span class="pl-5 mr-5">원</span>
-              <a-tooltip placement="top">
-                <template #title>= 퇴직급여(확정) - 비과세퇴직급여(확정)</template>
-                <div>
-                  <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                </div>
-              </a-tooltip>
+              <span class="pl-5">원</span>
+              <info-tool-tip>= 퇴직급여(확정) - 비과세퇴직급여(확정)</info-tool-tip>
             </div>
           </a-form-item>
           <a-form-item label="세액공제">
@@ -48,16 +39,11 @@
                 <number-box-money :required="false" width="150px" v-model:valueInput="formState.taxCredit"
                                   format="0,###"
                                   :min="0"/>
-                <span class="pl-5 mr-5">원</span>
-                <a-tooltip placement="top">
-                  <template #title>거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할
-                    것이
-                    있을 때에는 해당 금액을 기재합니다.
-                  </template>
-                  <div>
-                    <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                  </div>
-                </a-tooltip>
+                <span class="pl-5">원</span>
+                <info-tool-tip>
+                  거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할 것이
+                  있을 때에는 해당 금액을 기재합니다.
+                </info-tool-tip>
               </div>
             </div>
           </a-form-item>
@@ -66,13 +52,8 @@
               <number-box-money :required="false" width="150px"
                                 v-model:valueInput="formState.prePaidDelayedTaxPaymentTaxAmount" format="0,###"
                                 :min="0"/>
-              <span class="pl-5 mr-5">원</span>
-              <a-tooltip placement="top">
-                <template #title>직전 중간정산시 소득세를 입력합니다.</template>
-                <div>
-                  <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                </div>
-              </a-tooltip>
+              <span class="pl-5">원</span>
+              <info-tool-tip>직전 중간정산시 소득세를 입력합니다.</info-tool-tip>
             </div>
           </a-form-item>
         </a-col>
@@ -160,13 +141,8 @@
             <div class="d-flex-center">
               <number-box-money :required="false" width="150px" disabled
                                 v-model:valueInput="dataIncomeRetirementTax.taxBaseCalculation.taxBaseForRetirementIncome"/>
-              <span class="pl-5 mr-5">원</span>
-              <a-tooltip placement="top">
-                <template #title>= [환산급여] - [환산급여별공제]</template>
-                <div>
-                  <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                </div>
-              </a-tooltip>
+              <span class="pl-5">원</span>
+              <info-tool-tip>= [환산급여] - [환산급여별공제]</info-tool-tip>
             </div>
           </a-form-item>
         </a-col>
@@ -204,13 +180,8 @@
             <div class="d-flex-center">
               <number-box-money :required="false" width="150px" disabled
                                 v-model:valueInput="dataIncomeRetirementTax.taxAmountCalculation.taxAmountSubjectToReporting"/>
-              <span class="pl-5 mr-5">원</span>
-              <a-tooltip placement="top">
-                <template #title>= [환산산출세액] - [세액공제] - [기납부(기과세이연)세액]</template>
-                <div>
-                  <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                </div>
-              </a-tooltip>
+              <span class="pl-5">원</span>
+              <info-tool-tip>= [환산산출세액] - [세액공제] - [기납부(기과세이연)세액]</info-tool-tip>
             </div>
           </a-form-item>
         </a-col>
@@ -262,13 +233,8 @@
             <div class="d-flex-center">
               <number-box-money :required="false" width="150px" disabled
                                 v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax"/>
-              <span class="pl-5 mr-5">원</span>
-              <a-tooltip placement="top">
-                <template #title>= [신고대상세액] * [계좌입금금액합계] / [과세대상 퇴직급여(확정)]</template>
-                <div>
-                  <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
-                </div>
-              </a-tooltip>
+              <span class="pl-5">원</span>
+              <info-tool-tip>= [신고대상세액] * [계좌입금금액합계] / [과세대상 퇴직급여(확정)]</info-tool-tip>
             </div>
           </a-form-item>
         </a-col>
