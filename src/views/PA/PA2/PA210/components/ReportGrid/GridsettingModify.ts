@@ -1260,7 +1260,7 @@ export const setValueDataTable = (wrapper: any,code: string, data: any) => {
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[9][0], rowPosition?.value.modifiedPosition[9][1], data.refundApplicationAmount,'setdata');
 }
 
-export const calculateWithholdingStatusReportModified = (wrapper: any,data: any = []) => {
+export const calculateWithholdingStatusReportModified = (wrapper: any, data: any = []) => {
   let cellData = Array()
   // to distinguish the case of data transmission or no data transmission
   if (data.length > 0) {
@@ -1272,10 +1272,24 @@ export const calculateWithholdingStatusReportModified = (wrapper: any,data: any 
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 61 && !arrData[index][4]) {
         cellData.push({
+          /** 코드 (code) */
           code: arrData[index-1][4],
+          /** 소득지급 인원 (numberOfPeople) */
           numberOfPeople: arrData[index][5],
+          /** 소득지급 총지급액 (totalPayment) */
           totalPayment: arrData[index][6],
+          /** 징수 소득세 (collectedIncomeTax) */
           collectedIncomeTax: arrData[index][7],
+          /** 징수 농어촌특별세 (collectedRuralSpecialTax) */
+          collectedRuralSpecialTax: arrData[index][8],
+          /** 징수 가산세 (collectedExtraTax) */
+          collectedExtraTax: arrData[index][9],
+          /** 당월조정환급세액 (thisMonthAdjustedRefundTaxAmount) */
+          thisMonthAdjustedRefundTaxAmount: arrData[index][10],
+          /** 납부 소득세 (incomeTaxPaid) */
+          incomeTaxPaid: arrData[index][11],
+          /** 납부 농어촌특별세 (ruralSpecialTaxPaid) */
+          ruralSpecialTaxPaid: arrData[index][12],
         });
       }
     }
