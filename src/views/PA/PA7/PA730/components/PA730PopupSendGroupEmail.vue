@@ -64,7 +64,6 @@ export default defineComponent({
       mutate: sendEmail,
       onDone: onDoneAdd,
       onError: errorSendEmail,
-      error,
     } = useMutation(mutations.sendIncomeExtraWithholdingReceiptReportEmail);
     const onSubmit = (e: any) => {
       var res = e.validationGroup.validate();

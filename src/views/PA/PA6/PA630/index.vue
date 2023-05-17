@@ -75,7 +75,7 @@
                         </div>
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
-                    <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
+                    <DxColumn :width="250" caption="성명 (상호)" css-class="cell-left" cell-template="tag" data-field="employee.employeeId"/>
                     <template #tag="{ data }">
                         <div class="custom-action">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -83,11 +83,11 @@
                                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                         </div>
                     </template>
-                    <DxColumn caption="주민등록번호" cell-template="residentId"  data-field="employee.residentId" />
+                    <DxColumn caption="주민등록번호" cell-template="residentId" data-field="employee.residentId" />
                     <template #residentId="{ data }">
                         <resident-id :residentId="data.data.employee?.residentId"></resident-id>
                     </template>
-                    <DxColumn caption="소득구분" cell-template="grade-cell" :width="200" />
+                    <DxColumn caption="소득구분" cell-template="grade-cell" :width="200" data-field="employee.incomeTypeCode"/>
                     <template #grade-cell="{ data }">
                         <income-type :typeCode="data.data.employee.incomeTypeCode"
                             :typeName="data.data.employee.incomeTypeName"></income-type>
@@ -95,9 +95,9 @@
                     <DxColumn caption="지급총액" data-field="paymentAmount" format="fixedPoint" />
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" format="fixedPoint" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" format="fixedPoint" />
-                    <DxColumn caption="원천징수세액 계" cell-template="sumWithholdingRuralSpecialTax" css-class="money-column"/>
+                    <DxColumn caption="원천징수세액 계" cell-template="sumWithholdingRuralSpecialTax" data-field="total" css-class="money-column"/>
                     <template #sumWithholdingRuralSpecialTax="{ data }" >
-                        {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax + data.data.withholdingIncomeTax) }}
+                        {{ $filters.formatCurrency(data.data.total) }}
                     </template>
                     <!-- <DxSummary v-if="dataSource.length">
                         <DxTotalItem column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
@@ -227,10 +227,7 @@ export default defineComponent({
                 type: 1,
                 receiptDate: parseInt(dayjs().format('YYYYMMDD')),
             },
-            employeeKeys: [{
-                employeeId: 0,
-                incomeTypeCode: ""
-            }]
+            employeeIds: [null]
         });
         const {
             refetch: refetchData,
@@ -270,7 +267,7 @@ export default defineComponent({
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
                     employeeId: data.employee.employeeId,
-                    incomeTypeCode: data.employee.incomeTypeCode
+                    // incomeTypeCode: data.employee.incomeTypeCode
                 }
             }
             modalEmailSingle.value = true
@@ -302,12 +299,9 @@ export default defineComponent({
             if (dataSelect.value.length > 1) {
                 var array: any = [];
                 dataSelect.value.map((val: any) => {
-                    array.push({
-                        employeeId: val.employeeId,
-                        incomeTypeCode: val.incomeTypeCode
-                    })
+                    array.push(val.employeeId)
                 })
-                valueDefaultIncomeBusiness.value.employeeKeys = array
+                valueDefaultIncomeBusiness.value.employeeIds = array
                 triggerPrint.value = true;
             } else {
                 notification('error', messages.getCommonMessage('601').message)
@@ -321,14 +315,19 @@ export default defineComponent({
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
                     employeeId: data.employee.employeeId,
-                    incomeTypeCode: data.employee.incomeTypeCode
+                    // incomeTypeCode: data.employee.incomeTypeCode
                 })
             })
         }
 
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.searchIncomeBusinessWithholdingReceipts;
+                dataSource.value = value.searchIncomeBusinessWithholdingReceipts.map((value: any) =>{
+                    return {
+                        ...value,
+                        total: value.withholdingIncomeTax + value.withholdingLocalIncomeTax
+                    }
+                });
                 trigger.value = false;
             }
         });
@@ -350,9 +349,7 @@ export default defineComponent({
 
         const actionPrint = (data: any) => {
             gridRef.value?.instance.deselectAll()
-            valueDefaultIncomeBusiness.value.employeeKeys = [
-                { employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode }
-            ]
+            valueDefaultIncomeBusiness.value.employeeIds = [data.employee.employeeId]
             triggerPrint.value = true;
         }
         const customPaymentAmount = () => {

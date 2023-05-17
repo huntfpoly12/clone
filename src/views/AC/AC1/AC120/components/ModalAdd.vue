@@ -221,7 +221,7 @@ import { defineComponent, ref, watch, computed } from 'vue'
 import queries from "@/graphql/queries/CM/CM120";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
-import { companyId, accountSubject } from "@/helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
 import dayjs from "dayjs";
 import notification from '@/utils/notification';
@@ -272,7 +272,7 @@ export default defineComponent({
         let formDataAdd: any = ref({ ...initialStateFormData });
         const statusShowLetterOfApprovalType = ref(false)
         const triggerBankbooks = ref<boolean>(true);
-
+        let dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]')
         const startDate = ref(dayjs(`${acYear.value}-${props.monthSelected}`).startOf('month').toDate());
         const finishDate = ref(dayjs(`${acYear.value}-${props.monthSelected}`).endOf('month').toDate());
 
@@ -384,7 +384,7 @@ export default defineComponent({
                     formDataAdd.value.causeUsage = null;
                 }
                 let theOrder = ref(0)
-                accountSubject.map((row: any) => {
+                dataAccountSubject.map((row: any) => {
                     if (row.useStartDate <= formDataAdd.value.transactionDetailDate <= row.useFinishDate) {
                         theOrder.value = row.theOrder
                     }
