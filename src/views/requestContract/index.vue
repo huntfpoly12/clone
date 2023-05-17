@@ -291,7 +291,7 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자(주민)등록번호 :</label>
-                                <id-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" mask="00000-00000" width="170px" :required="true" />
+                                <id-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" />
                                 <p>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px" /> :
                                     예금주의 사업자등록번호 또는 주민등록번호입니다

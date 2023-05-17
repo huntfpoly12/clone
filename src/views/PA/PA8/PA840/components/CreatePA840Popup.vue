@@ -155,10 +155,10 @@
               <DxField label="휴직종류" class="field-custom-2">
                 <div class="list-insurance-selection">
                   <div class="mr-30">
-                    <checkbox-basic v-model:valueCheckbox="formData.nationalPensionReport" label="국민연금" :disabled="!isStatusLeaveOfAbsence"/>
+                    <checkbox-basic v-model:valueCheckbox="formData.nationalPensionReport" label="국민연금" :disabled="isStatusLeaveOfAbsence"/>
                   </div>
                   <div class="mr-30">
-                    <checkbox-basic v-model:valueCheckbox="formData.healthInsuranceReport" label="건강보험" :disabled="!isStatusLeaveOfAbsence"/>
+                    <checkbox-basic v-model:valueCheckbox="formData.healthInsuranceReport" label="건강보험" :disabled="isStatusLeaveOfAbsence"/>
                   </div>
                 </div>
               </DxField>

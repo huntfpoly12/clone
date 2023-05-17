@@ -68,7 +68,7 @@
                       :height="$config_styles.HeightInput" width="90" />
                   </div>
                 </template>
-                <TableRevenueBudgetSummary :data="dataSource.revenueBudgetSummary" />
+                <TableRevenueBudgetSummary :data="dataSource.laborCostSubjectSummaries" />
               </a-collapse-panel>
             </a-collapse>
           </div>
@@ -213,20 +213,22 @@ export default defineComponent({
     }
 
     const getStatusExpenditureBudgetSummary = () => {
-      if(dataSource.value?.expenditureBudgetSummary){
-        // const expenditureBudgetSummary = dataSource.value.expenditureBudgetSummary
-        // return (expenditureBudgetSummary.bankbookBalance - expenditureBudgetSummary.totalIncome - expenditureBudgetSummary.totalSpending) === 0
-        return true
+      if(dataSource.value?.expenditureBudgetSummary && dataSource.value?.revenueBudgetSummary){
+        const revenueBudgetSummary = dataSource.value.revenueBudgetSummary
+        const expenditureBudgetSummary = dataSource.value.expenditureBudgetSummary
+        const revenue = (revenueBudgetSummary.cumulativeTotal / revenueBudgetSummary.amount) * 100
+        const annualExpenditure = (expenditureBudgetSummary.cumulativeTotal / expenditureBudgetSummary.amount) * 100
+        return revenue === 100 && annualExpenditure === 100
       }else{
         return false
       }
     }
 
     const getStatusRevenueBudgetSummary = () => {
-      if(dataSource.value?.revenueBudgetSummary){
-        // const revenueBudgetSummary = dataSource.value.revenueBudgetSummary
-        // return (revenueBudgetSummary.bankbookBalance - revenueBudgetSummary.totalIncome - revenueBudgetSummary.totalSpending) === 0
-        return true
+      if(dataSource.value?.laborCostSubjectSummaries){
+        const laborCostSubjectSummaries = dataSource.value.laborCostSubjectSummaries
+        const executionRate = (laborCostSubjectSummaries.cumulativeTotal / laborCostSubjectSummaries.amount) * 100
+        return executionRate === 100
       }else{
         return false
       }
