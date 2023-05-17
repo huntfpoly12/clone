@@ -6,7 +6,7 @@
         <div v-for="(month, index) in 12" :key="index" class="ac-110__top-grid-items"
           :class="{ 'ac-110__top-grid-items-active': monthSelected === month }" @click="selectedMonth(month)">
           <colorful-badge :value="listAccountingProcesses.find((item: any) => item.month === month)?.status || null"
-            :year="globalYear" :month="month" />
+            :year="acYear" :month="month" />
         </div>
       </div>
     </div>
@@ -128,7 +128,7 @@
               <DxButton v-if="!!bankbookSelected" :focusStateEnabled="false"
                 :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'"
                 :style="bankbookSelected.normalTransactionDetails ? 'background-color: #337614' : 'background-color: #BB3835'"
-                :height="$config_styles.HeightInput" width="40" style="color:white; width: 42px" />
+                :height="$config_styles.HeightInput" style="color:white; width: 42px" />
             </div>
             <a-spin
               :spinning="loadingInitializeTransactionDetails || loadingGetBankbookDetails || loadingDeleteStatementOfGoods || loadingSaveStatementOfGoods"
@@ -407,7 +407,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
-    const globalYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
+    const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
     const globalFacilityBizId = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
     const bankType = BankType.all();
     const bankbookUseType: any = computed(() => {
@@ -490,16 +490,16 @@ export default defineComponent({
     let itemChange: any = ref(null)
     const payloadGetTransactionDetails: any = reactive({
       companyId: companyId,
-      fiscalYear: globalYear.value,
+      fiscalYear: acYear.value,
       facilityBusinessId: globalFacilityBizId.value,
       bankbookDetailDate: null,
       bankbookDetailId: null,
     })
     const payloadGetAccountingProcessLogs: any = reactive({
       companyId: companyId,
-      fiscalYear: globalYear.value,
+      fiscalYear: acYear.value,
       facilityBusinessId: globalFacilityBizId.value,
-      year: globalYear.value,
+      year: acYear.value,
       month: monthSelected.value
     })
     const isModalHistory = ref<boolean>(false);
@@ -525,7 +525,7 @@ export default defineComponent({
       // onError
     } = useQuery(queries.getAccountingProcesses, {
       companyId: companyId,
-      fiscalYear: globalYear.value,
+      fiscalYear: acYear.value,
       facilityBusinessId: globalFacilityBizId.value
     },
       () => ({
@@ -877,9 +877,9 @@ export default defineComponent({
       isModalRetrieveStatements.value = false
       syncBankbookDetails({
         companyId: companyId,
-        fiscalYear: globalYear.value,
+        fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
-        year: globalYear.value,
+        year: acYear.value,
         month: monthSelected.value
       })
     }
@@ -897,7 +897,7 @@ export default defineComponent({
       isModalSlipRegistrationSelected.value = false
       registerTransactionDetailsToAccountingDocuments({
         companyId: companyId,
-        fiscalYear: globalYear.value,
+        fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         keys: keys
       })
@@ -915,7 +915,7 @@ export default defineComponent({
       isModalSlipRegistrantion.value = false
       registerTransactionDetailsToAccountingDocuments({
         companyId: companyId,
-        fiscalYear: globalYear.value,
+        fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         keys: keys
       })
@@ -932,7 +932,7 @@ export default defineComponent({
       isModalSlipCancellation.value = false
       unregisterTransactionDetailsToAccountingDocuments({
         companyId: companyId,
-        fiscalYear: globalYear.value,
+        fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         bankbookDetailDate,
         bankbookDetailId
@@ -1153,7 +1153,7 @@ export default defineComponent({
         if (liststatementOfGoodsItemsChange[countIndexCallApiHandleStatementOfGoodsItems].statementOfGoodsItems.length) {
           saveStatementOfGoods({
             companyId: companyId,
-            fiscalYear: globalYear.value,
+            fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
             transactionDetailDate: newDatatransactionDetails[indexNewDatatransactionDetails].transactionDetailDate,
             accountingDocumentId: newDatatransactionDetails[indexNewDatatransactionDetails].accountingDocumentId,
@@ -1162,7 +1162,7 @@ export default defineComponent({
         } else {
           deleteStatementOfGoods({
             companyId: companyId,
-            fiscalYear: globalYear.value,
+            fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
             transactionDetailDate: newDatatransactionDetails[indexNewDatatransactionDetails].transactionDetailDate,
             accountingDocumentId: newDatatransactionDetails[indexNewDatatransactionDetails].accountingDocumentId,
@@ -1266,7 +1266,7 @@ export default defineComponent({
       statusAdjusted,
       move_column,
       colomn_resize,
-      globalYear,
+      acYear,
       selectedRowKeys,
       selectionChanged,
       onFocusedRowChanging,
