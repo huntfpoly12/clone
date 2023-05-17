@@ -45,8 +45,7 @@
               </a-col>
               <a-col :span="12">
                 <a-form-item label="사업장관리번호" label-align="right">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.adding"
-                    :required="true" />
+                  <id-number-text-box disabled v-model:valueInput="infoMajorInsuranceConsignStatus.manageId" mask="000-00-00000-0" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -227,6 +226,8 @@
 import mutations from "@/graphql/mutations/PA/PA8/PA820/index";
 import queries from "@/graphql/queries/PA/PA8/PA820/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
+import useGetMajorInsuranceConsignStatus from "@/helpers/usegetMajorInsuranceConsignStatus";
+
 // import INITIAL_DATA, {Company, DependentsType} from "./../utils";
 import {
   DeleteOutlined,
@@ -237,9 +238,7 @@ import {
   employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox,
   includeDependentsSelectbox,
 } from "../utils/index";
-import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
@@ -251,20 +250,14 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { getCurrentInstance } from "vue";
 import { DxTextBox } from "devextreme-vue";
 
-const getValue = (val: any, arr: any[]) => {
-  let data = arr.filter((item: any) => {
-    if (item.value == val) {
-      return item;
-    }
-    return false;
-  });
-  return data.length == 0 ? '' : data[0].label;
+const getValue = (id: any, arr: any[]) => {
+  let data = arr.find((item: any) => item.id == id);
+  return !!data ? data.name : ''
 }
 export default defineComponent({
   components: {
@@ -279,7 +272,6 @@ export default defineComponent({
     DxTextBox
   },
   setup(props, { emit }) {
-    const store = useStore();
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
@@ -325,7 +317,8 @@ export default defineComponent({
       showData.residentId = '';
       showData.leavedAt = null;
     }
-
+    // getMajorInsuranceConsignStatus
+    const { infoMajorInsuranceConsignStatus } = useGetMajorInsuranceConsignStatus(companyId)
     //-------------------------- get Company-----------------------
 
     const myCompanyParam = reactive({
@@ -474,7 +467,7 @@ export default defineComponent({
 
     watch(() => showData.healthInsuranceAcquisitionCode2, (newVal: any) => {
       if (newVal) {
-        formState.employeementInsuranceLossDescription = getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox)
+        formState.employeementInsuranceLossDescription = getValue(newVal, includeDependentsSelectbox)
       }
     }, { deep: true })
 
@@ -555,7 +548,7 @@ export default defineComponent({
       formState, onSubmit, showData, formStateToCompare,
       isDisabled1, isDisabled2,
       onCanCelModal,
-      getEmployeeWageLoading, getEmployeeWageDailyLoading,
+      getEmployeeWageLoading, getEmployeeWageDailyLoading, infoMajorInsuranceConsignStatus
     };
   },
 });

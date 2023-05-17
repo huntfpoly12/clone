@@ -70,8 +70,10 @@
           <div v-html="totalDifference()"></div>
         </div>
         <div class="ac-110-popup-detail-btn">
+          <!-- <button-basic text="반영" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
+            :disabled="!dataSource.statementOfGoodsItems.length || isDisableBtnSave || disabled" /> -->
           <button-basic text="반영" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
-            :disabled="!dataSource.statementOfGoodsItems.length || isDisableBtnSave || disabled" />
+            :disabled="isDisableBtnSave || disabled" />
         </div>
       </standard-form>
     </a-spin>
@@ -300,7 +302,8 @@ export default defineComponent({
         }
       });
       const result = spending - total
-      isDisableBtnSave.value = result !== 0
+      // isDisableBtnSave.value = result !== 0
+      isDisableBtnSave.value = result !== 0 && dataSource.value.statementOfGoodsItems.length
       return `차액: <span style='font-size: 16px !important'>[${formatNumber(result)}]</span>`
     }
     const openPopupDeleteItem = (data: any) => {
@@ -349,8 +352,8 @@ export default defineComponent({
       ////
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
       emit("updateGoodsCount", props.data.accountingDocumentId, dataTable)
-      notification('success', Message.getMessage('COMMON', '106').message)
-
+      notification('success', '반영되었습니다.')
+      emit("closePopup", false)
 
       // if (!dataSource.value.accountingDocumentId.toString().includes('create')) {
       //   const payloadClear = makeDataClean({
