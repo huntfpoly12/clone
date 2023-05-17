@@ -6,7 +6,7 @@
         <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
           :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
           class="btn-date mr-2" />
-        <DxButton :text="'지 '+ month2.slice(0, 4) + '-' + month2.slice(4)"
+        <DxButton :text="'지 ' + month2.slice(0, 4) + '-' + month2.slice(4)"
           :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }"
           class="btn-date mr-2" />
         <!-- <div class="d-flex-center">
@@ -30,30 +30,32 @@
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
     :width="600">
-    <div class="mt-45 d-flex-center">
-      <span class="mr-5">과거내역</span>
-      <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
-        field-template="field-data" @value-changed="updateValue" :disabled="false">
-        <template #field-data="{ data }">
-          <span v-if="data" style="padding: 4px">
-            귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
-            지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
-            <DxTextBox style="display: none;" />
-          </span>
-          <span v-else style="padding: 4px">
-            <span>선택</span>
-            <DxTextBox style="display: none;" />
-          </span>
-        </template>
-        <template #item-data="{ data }">
-          <span>
-            귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
-            지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
-          </span>
-        </template>
-      </DxSelectBox>
-      <span class="ml-5">로 부터 복사하여 새로 입력합니다.</span>
-    </div>
+    <a-spin :spinning="loading">
+      <div class="mt-45 d-flex-center">
+        <span class="mr-5">과거내역</span>
+        <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
+          field-template="field-data" @value-changed="updateValue" :disabled="false">
+          <template #field-data="{ data }">
+            <span v-if="data" style="padding: 4px">
+              귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
+              지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
+              <DxTextBox style="display: none;" />
+            </span>
+            <span v-else style="padding: 4px">
+              <span>선택</span>
+              <DxTextBox style="display: none;" />
+            </span>
+          </template>
+          <template #item-data="{ data }">
+            <span>
+              귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
+              지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
+            </span>
+          </template>
+        </DxSelectBox>
+        <span class="ml-5">로 부터 복사하여 새로 입력합니다.</span>
+      </div>
+    </a-spin>
 
     <div class="text-align-center mt-30">
       <button-basic class="button-form-modal" text="아니요" :width="140" type="default" mode="outlined"
@@ -191,7 +193,8 @@ export default defineComponent({
     })
     const {
       onResult: onResult,
-      refetch
+      refetch,
+      loading
     } = useQuery(queries.findIncomeProcessBusinessStatViews, originData, () => ({
       fetchPolicy: "no-cache",
     }));
@@ -242,6 +245,7 @@ export default defineComponent({
       actionCopy,
       processKeyPA620,
       startDate, finishDate,
+      loading,
     }
   },
 })
