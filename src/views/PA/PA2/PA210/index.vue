@@ -28,11 +28,11 @@
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
                         @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40 || data.data.status == 30" />
                 </template>
-                <DxColumn caption="귀속 연월" cell-template="imputed" />
+                <DxColumn caption="귀속 연월" cell-template="imputed" sort-order="desc" data-field="imputedMonth" :sort-index="1"/>
                 <template #imputed="{ data }">
                     <a-tooltip color="blue">
                         <template #title>
-                            귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth,
+                            귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedMonth,
                                 data.data.imputedFinishYearMonth) }}
                         </template>
                         <div class="custom-grade-cell">
@@ -42,7 +42,7 @@
                         </div>
                     </a-tooltip>
                 </template>
-                <DxColumn caption="지급 연월" cell-template="payment" />
+                <DxColumn caption="지급 연월" cell-template="payment" sort-order="asc" data-field="paymentFinishYearMonth" :sort-index="0"/>
                 <template #payment="{ data }">
                     <a-tooltip color="blue">
                         <template #title >
@@ -62,7 +62,7 @@
                     <DxButton :text="getReportType(data.data.reportType)?.text"
                         :style="getReportType(data.data.reportType)?.style" :height="$config_styles.HeightInput" />
                 </template>
-                <DxColumn caption="신고 종류" cell-template="afterDeadline" />
+                <DxColumn caption="신고 종류" cell-template="afterDeadline" sort-order="desc"  data-field="index" :sort-index="2"/>
                 <template #afterDeadline="{ data }">
                     <DxButton :text="getAfterDeadline(data.data.index, data.data.afterDeadline)?.tag_name"
                         :style="getAfterDeadline(data.data.index, data.data.afterDeadline)?.style"
