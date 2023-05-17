@@ -39,7 +39,7 @@
           <div class="d-flex-center">
             <number-box-money v-model:valueInput="dataIncomeRetirement" :required="false" width="200px" :disabled="true"
                               format="#0,###"/>
-            <span class="pl-5 mr-5">원</span>
+            <span class="pl-5">원</span>
             <info-tool-tip>상기 급여(수당)으로 계산된 퇴직금으로 실제 지급된 퇴직금과는 상이할 수 있습니다.</info-tool-tip>
           </div>
 
@@ -49,7 +49,7 @@
                :class="definedRetirementBenefits != Number(dataIncomeRetirement) ? 'custom-input-number' : ''">
             <number-box-money :required="false" width="200px"
                               v-model:valueInput="definedRetirementBenefits" format="#0,###"/>
-            <span class="pl-5 mr-5">원</span>
+            <span class="pl-5">원</span>
             <info-tool-tip>실제 지급된 퇴직급여를 입력합니다.</info-tool-tip>
           </div>
         </a-form-item>

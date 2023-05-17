@@ -1,5 +1,5 @@
 <template>
-  <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
+  <!-- <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
     <DxScrolling mode="standard" show-scrollbar="always" />
     <DxColumn caption="구분" cell-template="labelDivision" />
@@ -11,7 +11,7 @@
     <DxColumn caption="집합누계(D)" data-field="key4" />
     <DxColumn caption="잔액(C-D)" data-field="key5" />
     <DxColumn caption="집행율(%)" data-field="key6" />
-  </DxDataGrid>
+  </DxDataGrid> -->
 </template>
 
 <script lang="ts">
@@ -21,32 +21,8 @@ import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxMasterDetail } from "devex
 export default defineComponent({
   props: {
     data: {
-      type: Array,
-      default: [{
-        key1: '12',
-        key2: '23',
-        key3: '34',
-        key4: '45',
-        key5: '56',
-        key6: '67',
-        key7: '78',
-      },{
-        key1: '89',
-        key2: '90',
-        key3: '01',
-        key4: '12',
-        key5: '23',
-        key6: '34',
-        key7: '45',
-      },{
-        key1: '56',
-        key2: '67',
-        key3: '78',
-        key4: '89',
-        key5: '90',
-        key6: '01',
-        key7: '12',
-      }]
+      type: Object,
+      default: () => {}
     }
   },
   components: {

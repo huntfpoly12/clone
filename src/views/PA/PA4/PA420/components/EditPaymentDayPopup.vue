@@ -5,7 +5,7 @@
       <div class="custom-modal-edit">
         <EditOutlined class="fz-18"/>
         <span>선택된 내역 지급일을</span>
-        <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue" :spinButtons="true"/>
+        <number-box width="70px" :required="true" :min="1" :max="dayjs().set('month', processKey.paymentMonth - 1).daysInMonth()" v-model:valueInput="dayValue" :spinButtons="true"/>
         <span>일로 변경하시겠습니까?</span>
       </div>
       <div class="text-align-center mt-30">
@@ -37,12 +37,13 @@ import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import {companyId} from '@/helpers/commonFunction';
 import {EditOutlined} from "@ant-design/icons-vue";
 import {useMutation} from "@vue/apollo-composable";
+import dayjs from "dayjs";
 import {ref, watch} from 'vue';
 
 interface Props {
   modalStatus: boolean,
   data: any,
-  processKey: Object
+  processKey: any
 }
 
 const props = defineProps<Props>()
@@ -116,8 +117,6 @@ const onSubmit = () => {
     })
   })
 };
-
-
 </script>
 
 <style lang="scss" scoped>

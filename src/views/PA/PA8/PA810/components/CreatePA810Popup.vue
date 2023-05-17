@@ -220,9 +220,9 @@
                 </a-col>
                 <a-col span="7">
                   <a-form-item label="" label-align="right" style="padding-left: 10px">
-                    <checkbox-basic label="일자리안정자금지원 신청                        " v-model:valueCheckbox="formData.jobSecurityFundSupportApplication
-                      " :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
-    " />
+                    <checkbox-basic label="일자리안정자금지원 신청"
+                      v-model:valueCheckbox="formData.jobSecurityFundSupportApplication" :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
+                        " />
                   </a-form-item>
                 </a-col>
                 <a-col span="7">
@@ -237,11 +237,12 @@
                 <a-col span="8" class="relative">
                   <DxField label="보험료부과구분부호 및 사유" :style="'align-items: start'" class="label-custom">
                     <div class="w-full flex flex-col gap-1">
-                      <text-number-box :spinButtons="true" v-model:valueInput="formData.insuranceReductionCode" :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
-                        " placeholder="부호" width="100%" />
-                      <text-number-box :spinButtons="true" v-model:valueInput="formData.insuranceReductionReasonCode
-                        " :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
-    " placeholder="사유코드" width="100%" />
+                      <text-number-box :spinButtons="true" v-model:valueInput="formData.insuranceReductionCode"
+                        :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance" placeholder="부호"
+                        width="100%" />
+                      <text-number-box :spinButtons="true" v-model:valueInput="formData.insuranceReductionReasonCode"
+                        :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance" placeholder="사유코드"
+                        width="100%" />
                     </div>
                     <div class="absolute" style="bottom: 0; right: 0; transform: translateX(80%)">
                       <SearchCodeButton :src="URL_CONST.URL_INSURANCE_REDUCTION_REASON_CODE" :widthModal="780" />
@@ -319,8 +320,8 @@
                       <text-number-box width="100%" v-model:valueInput="dependent.nationalityNumber" placeholder="" />
                     </td>
                     <td>
-                      <text-number-box width="100%" v-model:valueInput="dependent.stayQualification" placeholder="" />
-                    </td>
+                      <default-text-box width="100%" v-model:valueInput="dependent.stayQualification" textUppercase placeholder="" />
+                    </td> 
 
                     <td>
                       <range-date-time-box width="100%" v-model:valueDate="dependent.contractExpiredDate" :maxRange="365"
@@ -433,12 +434,7 @@ const employeeWageSelected = ref();
 const formRef = ref();
 const isFileList = ref(false);
 const formData = ref({ ...INITIAL_DATA.InitialFormCreate });
-const infoCompany = reactive({
-  name: "",
-  adding: "",
-  presidentName: "",
-  bizNumber: "",
-});
+
 const stateSelectQuery = reactive({
   selectedRadioValue: EmployeeWageType.WAGE,
   query: queries.getEmployeeWages,
@@ -470,7 +466,7 @@ const handleRadioChange = (event: Event) => {
 // Get DataSource getMajorInsuranceCompanyEmployeeAcquisitions
 const dataSource = ref([]);
 
-const { infoCompany: dataCompany } = useCompanyInfo(companyId)
+const { infoCompany } = useCompanyInfo(companyId)
 // get and refetch data when employeeWageType change
 const variables = reactive({
   companyId: companyId,

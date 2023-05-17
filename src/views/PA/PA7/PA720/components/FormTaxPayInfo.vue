@@ -423,7 +423,6 @@ export default defineComponent({
   
     const changeIncomeTypeCode = (emitVal: any) => {
       formPA720.value.input.employee = emitVal;
-      console.log(`output->63%`, emitVal)
     };
     watch(() => formPA720.value.input.taxRate, () => {
       caclInput();

@@ -26,7 +26,7 @@
             <span class="item-wrap-title">사업장</span>
             <a-row>
               <a-col :span="8">
-                <a-form-item label="상호" label-align="right" class="red">
+                <a-form-item label="명칭" label-align="right" class="red">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyName" />
                 </a-form-item>
               </a-col>
@@ -43,7 +43,7 @@
             </a-row>
             <a-row class="mt-10">
               <a-col :span="24">
-                <a-form-item label="주소" label-align="right" class="red">
+                <a-form-item label="소재지" label-align="right" class="red">
                   <default-text-box width="550px" :disabled="true" v-model:valueInput="formState.companyAddress"
                     :required="true" />
                 </a-form-item>
@@ -154,19 +154,19 @@
             </a-row>
             <div class="mt-10">통폐합 시 흡수하는 사업장:</div>
             <a-row class="mt-10 ml-40" :justify="'space-between'">
-              <a-col >
+              <a-col span="15" >
                 <a-form-item label="명칭" label-align="right">
                   <default-text-box width="200px" v-model:valueInput="formState.nationalPensionIntegrasionCompanyName" />
                 </a-form-item>
               </a-col>
-              <a-col  class="">
+              <a-col span="9"  class="">
                 <a-form-item label="사업장관리번호" label-align="right">
                   <ManageIdTextBox width="200px" v-model:valueInput="formState.manageId"/>
                 </a-form-item>
               </a-col>
-              <a-col  class="">
+              <a-col  span="23" class="mt-15">
                 <a-form-item label="소재지" label-align="right" class="pr-10">
-                  <default-text-box width="200px" v-model:valueInput="formState.nationalPensionIntegrasionCompanyAddress" />
+                  <default-text-box v-model:valueInput="formState.nationalPensionIntegrasionCompanyAddress" />
                 </a-form-item>
               </a-col>
             </a-row>

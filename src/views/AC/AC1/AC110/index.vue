@@ -231,14 +231,14 @@
                   <DxColumn caption="계정과목" cell-template="accountCode" width="175" />
                   <template #accountCode="{ data }">
                     <div v-if="rowKeyfocused" :key="`accountCode${keyRefreshGridDetailAc}`">
-                      <account-code-select v-model:valueInput="data.data.accountCode"
+                      <SelectAccountCode v-model:valueInput="data.data.accountCode"
                         :classification="!!data.data?.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
                     </div>
                   </template>
                   <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
                   <template #relationCode="{ data }">
                     <div v-if="rowKeyfocused" :key="`relationCode${keyRefreshGridDetailAc}`">
-                      <account-code-select v-model:valueInput="data.data.relationCode"
+                      <SelectAccountCode v-model:valueInput="data.data.relationCode"
                         :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
                         :readOnly="isRegistered || data.data.resolutionClassification === 1" :lengthText="10" />
                     </div>
@@ -368,6 +368,7 @@ import PopupItemDetails from "./components/PopupItemDetails.vue"
 import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
 import PopupRetrieveStatements from "./components/PopupRetrieveStatements.vue"
 import UploadPreviewImage from './components/UploadPreviewImage.vue'
+import SelectAccountCode from './components/SelectAccountCode.vue'
 import { BankType, enum2Entries, BankBookUseType, ResolutionClassification, FundingSource, LetterOfApprovalType } from "@bankda/jangbuda-common";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import dayjs from "dayjs";
@@ -400,7 +401,8 @@ export default defineComponent({
     HistoryPopup,
     SaveOutlined,
     DxPaging,
-    DxSearchPanel
+    DxSearchPanel,
+    SelectAccountCode
   },
   setup() {
     const store = useStore();
