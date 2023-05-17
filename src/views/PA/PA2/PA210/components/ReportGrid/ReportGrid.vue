@@ -422,7 +422,11 @@ export default defineComponent({
   height: 860px;
   :deep td.disable-cell {
     color: #fff;
-    background-color: #b3b4b3;
+    background-color: #808080;
+  }
+  :deep td.gray-cell {
+    color: black;
+    background-color: #D9D9D9;
   }
   .action-right{
     margin-bottom: 1px;
