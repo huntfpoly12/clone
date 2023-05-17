@@ -153,7 +153,17 @@
                                         :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
                                 </span>
                                 <div>
-                                    <number-box-money :disabled="store.state.common.pa110.statusDisabledStatus" width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false" :rtlEnabled="true"
+                                    <a-tooltip color="black" placement="top" v-if="item.itemCode == 1012 && localIncomeBoo" zIndex="9999">
+                                        <template #title>
+                                        소액징수부면제 적용 {{ localReal }}
+                                        </template>
+                                        <span>
+                                        <number-box-money class="red" width="130px" :spinButtons="false" :rtlEnabled="true"
+                                            v-model:valueInput="item.amount" @changeInput="onChangeInputDeduction"
+                                            :disabled="store.state.common.pa110.statusDisabledStatus" format="#0,###" />
+                                        </span>
+                                    </a-tooltip>
+                                    <number-box-money v-else :disabled="store.state.common.pa110.statusDisabledStatus" width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false" :rtlEnabled="true"
                                         v-model:valueInput="item.amount" :min="0">
                                     </number-box-money>
                                     <span class="pl-5">원</span>
@@ -256,6 +266,8 @@ export default defineComponent({
         const dataEmployeeWageDailies: any = ref([])
 
         const countKey: any = ref(0)
+        const localIncomeBoo = ref(false);
+        const localReal = ref(0);
         const originDataEmployeeWage = {
             companyId: companyId,
             imputedYear: paYear.value,
@@ -617,6 +629,7 @@ export default defineComponent({
                 store.state.common.pa110.focusedRowKey = data.incomeId
                 
             }
+            localIncomeBoo.value = false;
             store.state.common.pa110.statusChangeFormAdd = false;
             store.state.common.pa110.statusChangeFormEdit = false;
             // store.state.common.pa110.statusChangeFormPrice = false;
@@ -635,6 +648,8 @@ export default defineComponent({
             if (value) {
                 dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = value.calculateIncomeWageTax
                 dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(value.calculateIncomeWageTax / 100) * 10
+                localIncomeBoo.value = dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew < 1000;
+                localReal.value = dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew;
             }
         })
 
@@ -908,6 +923,7 @@ export default defineComponent({
             statusMidTermSettlement1,
             statusMidTermSettlement2,
             startDate, finishDate, requiredPaymentDay,
+            localIncomeBoo, localReal,
         };
     },
 });

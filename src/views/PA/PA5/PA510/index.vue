@@ -238,7 +238,7 @@
                         :auto-navigate-to-focused-row="true">
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                         <DxPaging :enabled="false" />
-                        <DxColumn caption="일용직사원" cell-template="tag" width="150" data-field="employee.employeeId"/>
+                        <DxColumn caption="일용직사원" css-class="cell-left" cell-template="tag" width="150" data-field="employee.employeeId"/>
                         <template #tag="{ data }">
                             <div class="custom-action">
                                 <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -292,7 +292,7 @@
                                     :ratio="data.data.employee.incomeTaxMagnification" />
                             </div>
                         </template>
-                        <DxColumn caption="지급일" width="60px" cell-template="paymentDay" data-field="paymentDay"/>
+                        <DxColumn css-class="cell-center" caption="지급일" width="55" cell-template="paymentDay" data-field="paymentDay"/>
                         <template #paymentDay="{ data }">
                             {{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
                         </template>
