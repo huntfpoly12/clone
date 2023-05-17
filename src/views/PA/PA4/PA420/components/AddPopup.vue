@@ -191,8 +191,7 @@ const {
 
 watch(resultConfig, (resConfig) => {
   if (resConfig) {
-    if(paymentDay.value === null)
-      store.commit('common/setPaymentDay', resConfig.getWithholdingConfig.paymentDay || Number(dayjs(`${selectMonthColumn.value.paymentYear}${selectMonthColumn.value.paymentMonth}`).endOf('month').format('DD')))
+    store.commit('common/setPaymentDay', resConfig.getWithholdingConfig.paymentDay || Number(dayjs(`${selectMonthColumn.value.paymentYear}${selectMonthColumn.value.paymentMonth}`).endOf('month').format('DD')))
   }
 })
 const {

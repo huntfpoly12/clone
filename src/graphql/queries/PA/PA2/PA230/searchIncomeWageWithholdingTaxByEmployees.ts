@@ -13,7 +13,6 @@ query SearchIncomeWageWithholdingTaxByEmployees(
       employee {
         type
         employeeId
-        incomeTypeCode
         name
         email
         foreigner
@@ -52,4 +51,5 @@ query SearchIncomeWageWithholdingTaxByEmployees(
       }
     }
   }
-  ` 
+  `
+

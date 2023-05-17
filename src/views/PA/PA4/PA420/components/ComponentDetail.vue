@@ -55,7 +55,7 @@
       >
         <DxScrolling mode="standard" show-scrollbar="always"/>
         <DxSelection mode="multiple" :fixed="true"/>
-        <DxColumn caption="사원" cell-template="tag" width="200" header-cell-template="title-header-사원"/>
+        <DxColumn caption="사원" data-field="employee.name" cell-template="tag" width="200" header-cell-template="title-header-사원"/>
         <template #tag="{ data }">
           <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
                          :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
@@ -70,12 +70,12 @@
             사원
           </a-tooltip>
         </template>
-        <DxColumn caption="구분" cell-template="retirementType" data-type="string"/>
+        <DxColumn caption="구분" data-field="retirementType" cell-template="retirementType" />
         <template #retirementType="{ data }">
           <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
           <div v-if="data.data.retirementType == 2" class="retirementType-2">중간</div>
         </template>
-        <DxColumn caption="입사일 (정산시작일)" cell-template="joinedAt"/>
+        <DxColumn caption="입사일 (정산시작일)" data-field="specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" cell-template="joinedAt"/>
         <template #joinedAt="{ data }">
           <div>{{
               data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate ?
@@ -83,7 +83,7 @@
             }}
           </div>
         </template>
-        <DxColumn caption="퇴사일 (정산종료일)" cell-template="leavedAt"/>
+        <DxColumn caption="퇴사일 (정산종료일)" data-field="specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate" cell-template="leavedAt"/>
         <template #leavedAt="{ data }">
           <div>{{
               data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate ?
