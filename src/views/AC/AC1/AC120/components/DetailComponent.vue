@@ -82,7 +82,7 @@
                                 </a-col>
                                 <a-col :span="5" class="col-4">
                                     <a-form-item label="계정과목" class="red">
-                                        <account-code-select :key="resetSelectAccount" :classification="classification"
+                                        <account-code-select :key="resetSelectAccount" :classification="classificationAccountCode"
                                             v-model:valueInput="formData.accountCode" width="190px"
                                             :required="true" />
                                     </a-form-item>
@@ -125,7 +125,7 @@
                                 <a-col :span="6" class="col-3">
                                     <a-form-item label="거래처">
                                         <customer-select :disabled="formData.resolutionClassification == 1"
-                                        v-model:valueInput="formData.clientId"
+                                        v-model:valueInput="formData.clientId" :search-enabled="true"
                                             width="150px" />
                                     </a-form-item>
                                     <div class="input_info">
@@ -157,7 +157,7 @@
                                 <a-col :span="5" class="col-4">
                                     <a-form-item label="상대계정">
                                         <account-code-select :key="resetSelectAccount" :disabled="formData.resolutionClassification == 1"
-                                            :classification="classification"
+                                            :classification="classificationRelationCode"
                                             v-model:valueInput="formData.relationCode"
                                             width="190px" />
                                     </a-form-item>
@@ -283,7 +283,8 @@ export default defineComponent({
         let bankbookNickname = ref<string>('')
         let bankbookNumber = ref<string>('')
         const resetSelectAccount = ref<number>(0)
-        const classification = ref<any>([4])
+        const classificationAccountCode = ref<any>([4])
+        const classificationRelationCode = ref<any>([5])
         const isModalChange = ref<boolean>(false)
         // =================== GRAPHQL ===================
         // mutation updateAccountingDocument
@@ -322,7 +323,8 @@ export default defineComponent({
         watch(() => [formData.value.resolutionType, store.state.common.ac120.arrResolutionType], (newValue, oldValue) => {
             switch (formData.value.resolutionType) {
                 case 11:
-                    classification.value = [4]
+                    classificationAccountCode.value = [4]
+                    classificationRelationCode.value = [5]
                     formData.value.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 22)?.text
@@ -330,7 +332,8 @@ export default defineComponent({
                     formData.value.causeUsage = null
                     break;
                 case 22:
-                    classification.value = [5]
+                    classificationAccountCode.value = [5]
+                    classificationRelationCode.value = [4]
                     formData.value.resolutionClassification = 2
                     textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 11)?.text
@@ -338,7 +341,8 @@ export default defineComponent({
                     formData.value.causeUsage = formData.value.causeUsage ?? null
                     break;
                 case 21:
-                    classification.value = [5]
+                    classificationAccountCode.value = [5]
+                    classificationRelationCode.value = [4]
                     formData.value.resolutionClassification = 2
                     textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 12)?.text
@@ -346,7 +350,8 @@ export default defineComponent({
                     formData.value.causeUsage = formData.value.causeUsage ?? null
                     break;
                 case 12:
-                    classification.value = [4]
+                    classificationAccountCode.value = [4]
+                    classificationRelationCode.value = [5]
                     formData.value.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 21)?.text
@@ -516,7 +521,7 @@ export default defineComponent({
             statusModalDelete,
             openShowFull,
             resetSelectAccount,
-            classification,
+            classificationAccountCode, classificationRelationCode,
             Message, isModalChange, handleConfirmChange,
             formData,
         }

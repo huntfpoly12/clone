@@ -355,6 +355,7 @@ export default defineComponent({
         // ============== ON DONE MUTATION GRAPHQL ===============
         // reorderAccountingDocuments
         doneReorderAccountingDocuments((e) => {
+            store.state.common.ac120.statusKeppRow = true
             triggerGetAccountingDocuments.value = true
             notification('success', Message.getMessage('COMMON', '106').message)
         })
@@ -391,6 +392,14 @@ export default defineComponent({
 
         // call api GetAccountingDocuments
         watch(() => store.state.common.ac120.resetDataTable, (value) => {
+            if (monthNewClick.value) { // nếu trước đó ấn tháng mới
+                monthSelected.value = monthNewClick.value
+                dataQueryGetAccountingDocuments.value.month = monthNewClick.value
+                triggerGetAccountingDocuments.value = true;
+                store.state.common.ac120.statusKeppRow = false;
+                monthNewClick.value = 0
+                return
+            }
             triggerGetAccountingDocuments.value = true
         })
         // call api GetAccountingProcesses
@@ -553,13 +562,13 @@ export default defineComponent({
         const handleConfirmChange = (status: boolean) => {
             if (status) {
                 store.state.common.ac120.onSubmitFormUpdate++
-                if (monthNewClick.value) { // nếu trước đó ấn tháng mới
-                    monthSelected.value = monthNewClick.value
-                    dataQueryGetAccountingDocuments.value.month = monthNewClick.value
-                    triggerGetAccountingDocuments.value = true;
-                    store.state.common.ac120.statusKeppRow = false;
-                    monthNewClick.value = 0
-                }
+                // if (monthNewClick.value) { // nếu trước đó ấn tháng mới
+                //     monthSelected.value = monthNewClick.value
+                //     dataQueryGetAccountingDocuments.value.month = monthNewClick.value
+                //     triggerGetAccountingDocuments.value = true;
+                //     store.state.common.ac120.statusKeppRow = false;
+                //     monthNewClick.value = 0
+                // }
             } else {
                 if (monthNewClick.value) { // nếu trước đó ấn tháng mới
                     monthSelected.value = monthNewClick.value

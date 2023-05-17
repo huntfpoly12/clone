@@ -245,7 +245,7 @@
                             <DxPaging :enabled="false" />
                             <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple"
                                 width="40" />
-                            <DxColumn width="200" caption="사원" cell-template="tag" data-field="employee.employeeId" />
+                            <DxColumn width="200" css-class="cell-left" caption="사원" cell-template="tag" data-field="employee.employeeId" />
                             <template #tag="{ data }">
                                 <div class="custom-action">
                                     <employee-info :idEmployee="data.data.employee.employeeId"
@@ -290,10 +290,10 @@
                                         :ratio="data.data.employee.incomeTaxMagnification" />
                                 </div>
                             </template>
-                            <DxColumn alignment="left" width="30" caption="지급일" data-field="paymentDay"
+                            <DxColumn css-class="cell-center" width="52" caption="지급일" data-field="paymentDay"
                                 cell-template="paymentDay" />
                             <template #paymentDay="{ data }">
-                                <div class="text-center">{{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}</div>
+                                {{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
                             </template>
                             <!-- <DxSummary v-if="store.state.common.pa110.dataTaxPayInfo.length">
                                 <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />

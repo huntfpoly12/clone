@@ -84,4 +84,9 @@
             font-weight: unset;
         }
     }
+    .red {
+        :deep .dx-texteditor-input {
+          color: red;
+        }
+      }
 }
