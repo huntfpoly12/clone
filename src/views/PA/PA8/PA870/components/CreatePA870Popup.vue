@@ -601,7 +601,7 @@ export default defineComponent({
 .mr-30 {
   margin-right: 30px;
 }
-.popper {
+:deep .popper {
   width: 245px;
 }
 </style>

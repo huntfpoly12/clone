@@ -3,9 +3,7 @@ export default gql`
   query getAccountingClosingMessages(
     $filter: AccountingClosingMessageSearchFilter!
   ) {
-    getAccountingClosingMessages(
-      filter: $filter
-    ) {
+    getAccountingClosingMessages(filter: $filter) {
       totalCount
       page
       rows
