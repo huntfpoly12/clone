@@ -126,7 +126,7 @@
                 <DxDataGrid id="DxDataGrid-pa530" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" v-model:selected-row-keys="vModalSelectedRowKeys"
-                    @selection-changed="selectionChanged">
+                    @selection-changed="selectionChanged" noDataText="내역이 없습니다">
                     <DxPaging :enabled="false" />
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxToolbar>

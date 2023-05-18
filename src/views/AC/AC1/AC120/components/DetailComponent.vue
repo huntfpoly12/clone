@@ -13,7 +13,7 @@
                     <a-col :span="8">
                         <div style="display: flex; justify-content: center; margin-left: 35px;">
                             <span style="font-weight: bold; font-size: 18px; margin-right: 5px;">결의서</span>
-                            <a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
+                            <a-tooltip v-if="formData.resolutionNormalStatus == true"
                                 placement="top" color="black" title="정상 여부">
                                 <DxButton :focusStateEnabled="false" text="O"
                                     :style="{ backgroundColor: '#337614', color: 'white' }"
@@ -27,9 +27,9 @@
                     <a-col :span="8">
                         <div style="display: flex; justify-content: flex-end;">
                             <a-form-item label="결의번호">
-                                {{ store.state.common.ac120.formData.resolutionNumber ?
-                                    store.state.common.ac120.formData.resolutionNumber : '_____' }}
-                                <DxButton v-if="store.state.common.ac120.formData.handwriting == true"
+                                {{ formData.resolutionNumber ?
+                                    formData.resolutionNumber : '_____' }}
+                                <DxButton v-if="formData.handwriting == true"
                                     :focusStateEnabled="false" text="수기"
                                     :style="{ backgroundColor: '#BB3835', color: 'white' }"
                                     :height="$config_styles.HeightInput" />
@@ -46,13 +46,13 @@
                                 <a-col :span="7" class="col-1">
                                     <a-form-item label="결의구분">
                                         <default-text-box
-                                            :valueInput="store.state.common.ac120.arrResolutionClassification.find((item: any) => store.state.common.ac120.formData.resolutionClassification == item.id)?.text"
+                                            :valueInput="store.state.common.ac120.arrResolutionClassification.find((item: any) => formData.resolutionClassification == item.id)?.text"
                                             width="100px" placeholder="지출" disabled="true" />
                                     </a-form-item>
                                     <div class="input_info">
                                         <a-form-item label="결의서 종류">
                                             <default-text-box
-                                                :valueInput="store.state.common.ac120.arrResolutionType.find((item: any) => store.state.common.ac120.formData.resolutionType == item.id)?.text"
+                                                :valueInput="store.state.common.ac120.arrResolutionType.find((item: any) => formData.resolutionType == item.id)?.text"
                                                 width="100px" placeholder="여입" disabled="true" />
                                         </a-form-item>
                                         <button-basic @onClick="actionOpenModalCopy" style="margin: -5px 0px 0px 5px"
@@ -72,37 +72,37 @@
                                 </a-col>
                                 <a-col :span="6" class="col-3">
                                     <a-form-item label="금액" class="red">
-                                        <number-box-money v-model:valueInput="store.state.common.ac120.formData.amount"
+                                        <number-box-money v-model:valueInput="formData.amount"
                                             width="150px" :required="true" :spinButtons="false" disabled="true" />
                                     </a-form-item>
                                     <a-form-item label="적요" class="red">
-                                        <default-text-box v-model:valueInput="store.state.common.ac120.formData.summary"
+                                        <default-text-box v-model:valueInput="formData.summary"
                                             width="150px" :required="true" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="5" class="col-4">
                                     <a-form-item label="계정과목" class="red">
-                                        <account-code-select :key="resetSelectAccount" :classification="classification"
-                                            v-model:valueInput="store.state.common.ac120.formData.accountCode" width="190px"
+                                        <account-code-select :key="resetSelectAccount" :classification="classificationAccountCode"
+                                            v-model:valueInput="formData.accountCode" width="190px"
                                             :required="true" />
                                     </a-form-item>
                                     <a-form-item label="자금원천" class="red">
                                         <FundingSourceSelect
-                                            v-model:valueInput="store.state.common.ac120.formData.fundingSource"
+                                            v-model:valueInput="formData.fundingSource"
                                             width="190px" :required="true" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="7" class="col-1">
                                     <a-form-item label="원인행위일자" class="red" :class="colorDate">
-                                        <date-time-box :teleport="true"  v-model:valueDate="store.state.common.ac120.formData.causeActionDate"
+                                        <date-time-box :teleport="true"  v-model:valueDate="formData.causeActionDate"
                                             width="150px" :required="true" ref="requiredCauseActionDate" />
                                     </a-form-item>
                                     <a-form-item label="결재일자">
-                                        <date-time-box :teleport="true" v-model:valueDate="store.state.common.ac120.formData.paymentDate"
+                                        <date-time-box :teleport="true" v-model:valueDate="formData.paymentDate"
                                             width="150px" />
                                     </a-form-item>
                                     <a-form-item label="발의일자">
-                                        <date-time-box :teleport="true" v-model:valueDate="store.state.common.ac120.formData.proposedDate"
+                                        <date-time-box :teleport="true" v-model:valueDate="formData.proposedDate"
                                             width="150px" />
                                     </a-form-item>
                                 </a-col>
@@ -112,25 +112,25 @@
                                             disabled="true" />
                                     </a-form-item>
 
-                                    <a-form-item label="출납일자" class="abc">
-                                        <date-time-box :teleport="true" v-model:valueDate="store.state.common.ac120.formData.accountingDate"
+                                    <a-form-item label="출납일자">
+                                        <date-time-box :teleport="true" v-model:valueDate="formData.accountingDate"
                                             width="150px" />
                                     </a-form-item>
                                     <a-form-item label="등기일자">
                                         <date-time-box :teleport="true"
-                                            v-model:valueDate="store.state.common.ac120.formData.registrationDate"
+                                            v-model:valueDate="formData.registrationDate"
                                             width="150px" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="6" class="col-3">
                                     <a-form-item label="거래처">
-                                        <customer-select :disabled="store.state.common.ac120.formData.resolutionClassification == 1"
-                                        v-model:valueInput="store.state.common.ac120.formData.clientId"
+                                        <customer-select :disabled="formData.resolutionClassification == 1"
+                                        v-model:valueInput="formData.clientId" :search-enabled="true"
                                             width="150px" />
                                     </a-form-item>
                                     <div class="input_info">
                                         <a-form-item :label="textLabelInputSource">
-                                            <default-text-box v-model:valueInput="store.state.common.ac120.formData.source"
+                                            <default-text-box v-model:valueInput="formData.source"
                                                 width="150px" />
                                         </a-form-item>
                                         <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
@@ -144,7 +144,7 @@
                                     </div>
                                     <div class="input_info">
                                         <a-form-item label="작성자">
-                                            <default-text-box v-model:valueInput="store.state.common.ac120.formData.writer"
+                                            <default-text-box v-model:valueInput="formData.writer"
                                                 width="150px" />
                                         </a-form-item>
                                         <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
@@ -156,20 +156,21 @@
                                 </a-col>
                                 <a-col :span="5" class="col-4">
                                     <a-form-item label="상대계정">
-                                        <account-code-select  :disabled="store.state.common.ac120.formData.resolutionClassification == 1"
-                                            v-model:valueInput="store.state.common.ac120.formData.relationCode"
+                                        <account-code-select :key="resetSelectAccount" :disabled="formData.resolutionClassification == 1"
+                                            :classification="classificationRelationCode"
+                                            v-model:valueInput="formData.relationCode"
                                             width="190px" />
                                     </a-form-item>
                                     <a-form-item label="메모">
-                                        <!-- <default-text-box v-model:valueInput="store.state.common.ac120.formData.memo"
+                                        <!-- <default-text-box v-model:valueInput="formData.memo"
                                             width="150px" height="60px" /> -->
                                         <text-area-box width="190px"
-                                            v-model:valueInput="store.state.common.ac120.formData.memo" :height="60" />
+                                            v-model:valueInput="formData.memo" :height="60" />
                                     </a-form-item>
                                 </a-col>
 
                             </a-row>
-                            <!-- <div v-if="!(store.state.common.ac120.formData.resolutionClassification == 1)"> -->
+                            <!-- <div v-if="!(formData.resolutionClassification == 1)"> -->
                                 <a-row>
                                     <a-col :span="24">
                                         <div class="top-content">
@@ -186,8 +187,8 @@
                                     <a-col :span="12">
                                         <a-form-item class="red" label="품의종류">
                                             <radio-group
-                                                :disabled="store.state.common.ac120.formData.resolutionClassification == 1"
-                                                v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType"
+                                                :disabled="formData.resolutionClassification == 1"
+                                                v-model:valueRadioCheck="formData.letterOfApprovalType"
                                                 :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'"
                                                 :required="true" />
                                         </a-form-item>
@@ -195,7 +196,7 @@
                                     <a-col :span="12">
                                         <a-form-item label="물품내역수">
                                             <default-text-box :disabled="true"
-                                                v-model:valueInput="store.state.common.ac120.formData.goodsCount"
+                                                v-model:valueInput="formData.goodsCount"
                                                 width="150px" />
                                         </a-form-item>
                                     </a-col>
@@ -204,8 +205,8 @@
                                     <a-col :span="24">
                                         <a-form-item label="품의 원인 및 용도">
                                             <text-area-box 
-                                            :disabled="store.state.common.ac120.formData.resolutionClassification == 1"
-                                            v-model:valueInput="store.state.common.ac120.formData.causeUsage"
+                                            :disabled="formData.resolutionClassification == 1"
+                                            v-model:valueInput="formData.causeUsage"
                                                 :height="50" />
                                         </a-form-item>
                                     </a-col>
@@ -234,7 +235,7 @@
     <PopupCopyData :modalStatus="statusPopupCopyData" @closePopup="statusPopupCopyData = false"
         @submit="statusPopupCopyData = false" />
     <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false"
-        :dataRows='[store.state.common.ac120.formData]' />
+        :dataRows='[formData]' />
     <PopupMessage :modalStatus="isModalChange" @closePopup="isModalChange = false" :typeModal="'confirm'" :title="''"
         :content="Message.getMessage('AC120', '001').message" :okText="Message.getMessage('AC120', '001').yes"
         :cancelText="Message.getMessage('AC120', '001').no" @checkConfirm="handleConfirmChange" />
@@ -254,7 +255,7 @@ import ModalDelete from "./ModalDelete.vue"
 import queries from "@/graphql/queries/AC/AC1/AC120";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
-import { companyId, accountSubject } from "@/helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
 import UploadPreviewImage from './UploadPreviewImage.vue'
 import { cloneDeep, isEqual } from "lodash"
@@ -269,7 +270,7 @@ export default defineComponent({
         const store = useStore();
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
-        store.state.common.ac120.formData = reactive({ ...initialStateFormData })
+        const formData = computed(() => store.state.common.ac120.formData)
         const refFormAC120 = ref()
         let statusPopupCopyData = ref<boolean>(false);
         let fileList = ref<any[]>([])
@@ -282,8 +283,10 @@ export default defineComponent({
         let bankbookNickname = ref<string>('')
         let bankbookNumber = ref<string>('')
         const resetSelectAccount = ref<number>(0)
-        const classification = ref<any>([4])
+        const classificationAccountCode = ref<any>([4])
+        const classificationRelationCode = ref<any>([5])
         const isModalChange = ref<boolean>(false)
+        let dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]')
         // =================== GRAPHQL ===================
         // mutation updateAccountingDocument
         const {
@@ -312,35 +315,49 @@ export default defineComponent({
             }
         });
 
-        watch(() => [store.state.common.ac120.formData.resolutionType, store.state.common.ac120.arrResolutionType], (newValue, oldValue) => {
-            switch (store.state.common.ac120.formData.resolutionType) {
+        // watch(() => classification.value, (newValue, oldValue) => {
+            
+        //     formData.value.accountCode = null
+        //     formData.value.relationCode = null
+        // })
+
+        watch(() => [formData.value.resolutionType, store.state.common.ac120.arrResolutionType], (newValue, oldValue) => {
+            switch (formData.value.resolutionType) {
                 case 11:
-                    classification.value = [4]
-                    store.state.common.ac120.formData.resolutionClassification = 1
+                    classificationAccountCode.value = [4]
+                    classificationRelationCode.value = [5]
+                    formData.value.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 22)?.text
-                    // store.state.common.ac120.formData.letterOfApprovalType = null
+                    formData.value.letterOfApprovalType = null
+                    formData.value.causeUsage = null
                     break;
                 case 22:
-                    classification.value = [5]
-                    store.state.common.ac120.formData.resolutionClassification = 2
+                    classificationAccountCode.value = [5]
+                    classificationRelationCode.value = [4]
+                    formData.value.resolutionClassification = 2
                     textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 11)?.text
-                    // store.state.common.ac120.formData.letterOfApprovalType = 1
+                    formData.value.letterOfApprovalType = formData.value.letterOfApprovalType ?? 1
+                    formData.value.causeUsage = formData.value.causeUsage ?? null
                     break;
                 case 21:
-                    classification.value = [5]
-                    store.state.common.ac120.formData.resolutionClassification = 2
+                    classificationAccountCode.value = [5]
+                    classificationRelationCode.value = [4]
+                    formData.value.resolutionClassification = 2
                     textLabelInputSource.value = '지출원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 12)?.text
-                    // store.state.common.ac120.formData.letterOfApprovalType = 1
+                    formData.value.letterOfApprovalType = formData.value.letterOfApprovalType ?? 1
+                    formData.value.causeUsage = formData.value.causeUsage ?? null
                     break;
                 case 12:
-                    classification.value = [4]
-                    store.state.common.ac120.formData.resolutionClassification = 1
+                    classificationAccountCode.value = [4]
+                    classificationRelationCode.value = [5]
+                    formData.value.resolutionClassification = 1
                     textLabelInputSource.value = '수입원'
                     textButton.value = store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 21)?.text
-                    // store.state.common.ac120.formData.letterOfApprovalType = null
+                    formData.value.letterOfApprovalType = null
+                    formData.value.causeUsage = null
                     break;
                 default:
                 // code block
@@ -348,11 +365,11 @@ export default defineComponent({
             resetSelectAccount.value++
         })
 
-        watch(() => store.state.common.ac120.formData.causeActionDate, (newValue, oldValue) => {
+        watch(() => formData.value.causeActionDate, (newValue, oldValue) => {
             // if (store.state.common.ac120.statusFormAdd) {
-            colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
+            colorDate.value = newValue == formData.value.transactionDetailDate ? 'greenColor' : 'redColor'
             // } else {
-            //     colorDate.value = newValue == store.state.common.ac120.formData.transactionDetailDate ? 'greenColor' : 'redColor'
+            //     colorDate.value = newValue == formData.value.transactionDetailDate ? 'greenColor' : 'redColor'
             // }
         })
         watch(() => store.state.common.ac120.onSubmitFormUpdate, (newValue, oldValue) => {
@@ -360,8 +377,8 @@ export default defineComponent({
         })
         
 
-        watch(() => [store.state.common.ac120.formData.bankbookId, store.state.common.ac120.arrayBankbooks], (newValue, oldValue) => {
-            let data = store.state.common.ac120.arrayBankbooks?.find((item: any) => item.value == store.state.common.ac120.formData.bankbookId)
+        watch(() => [formData.value.bankbookId, store.state.common.ac120.arrayBankbooks], (newValue, oldValue) => {
+            let data = store.state.common.ac120.arrayBankbooks?.find((item: any) => item.value == formData.value.bankbookId)
             bankbookNickname.value = data?.bankbookNickname
             bankbookNumber.value = data?.bankbookNumber
         }, { deep: true })
@@ -371,7 +388,7 @@ export default defineComponent({
             store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull
         }
         const actionOpenModalCopy = () => {
-            if (store.state.common.ac120.formData.resolutionType == 11) {
+            if (formData.value.resolutionType == 11) {
                 statusPopupCopyData.value = true
             } else {
                 isModalChange.value = true
@@ -383,34 +400,34 @@ export default defineComponent({
             if (!res.isValid) {
                 store.state.common.ac120.clearCheckCkick++
                 res.brokenRules[0].validator.focus();
-                if (!store.state.common.ac120.formData.causeActionDate) {
+                if (!formData.value.causeActionDate) {
                     requiredCauseActionDate.value.validate(true)
                 }
             } else {
-                if (!store.state.common.ac120.formData.causeActionDate) {
+                if (!formData.value.causeActionDate) {
                     requiredCauseActionDate.value.validate(true)
                     store.state.common.ac120.clearCheckCkick++
                     return;
                 }
-                if (store.state.common.ac120.formData.resolutionClassification == 1) {
-                    store.state.common.ac120.formData.letterOfApprovalType = null;
-                    store.state.common.ac120.formData.causeUsage = null;
-                    // store.state.common.ac120.formData.goodsCount = null;
-                }
+                // if (formData.value.resolutionClassification == 1) {
+                //     formData.value.letterOfApprovalType = null;
+                //     formData.value.causeUsage = null;
+                //     formData.value.goodsCount = null;
+                // }
                 let theOrder = ref(0)
-                accountSubject.map((row: any) => {
-                    if (row.useStartDate <= store.state.common.ac120.formData.transactionDetailDate <= row.useFinishDate) {
+                dataAccountSubject.map((row: any) => {
+                    if (row.useStartDate <= formData.value.transactionDetailDate <= row.useFinishDate) {
                         theOrder.value = row.theOrder
                     }
                 })
-                let dataSubmit = {
+                let dataSubmit: any = {
                     companyId: companyId,
                     fiscalYear: acYear.value,
                     facilityBusinessId: globalFacilityBizId.value,
-                    transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
-                    accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
-                    input: { 
-                        ...store.state.common.ac120.formData,
+                    transactionDetailDate: formData.value.transactionDetailDate,
+                    accountingDocumentId: formData.value.accountingDocumentId,
+                    input: {
+                        ...formData.value,
                         theOrder: theOrder.value,
                     }
                 }
@@ -419,6 +436,7 @@ export default defineComponent({
                 // } else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
                 //     dataSubmit.input.amount = -dataSubmit.input.amount
                 // }
+                dataSubmit.input.causeUsage = dataSubmit.input.causeUsage?.trim()?.length ? dataSubmit.input.causeUsage : null
                 delete dataSubmit.input.resolutionClassification
                 // delete dataSubmit.input.resolutionDate
                 delete dataSubmit.input.bankbook
@@ -462,23 +480,23 @@ export default defineComponent({
         }
         const handleConfirmChange = (status: boolean) => {
             if (status) {
-                switch (store.state.common.ac120.formData.resolutionType) {
+                switch (formData.value.resolutionType) {
                     case 11:
-                        store.state.common.ac120.formData.resolutionType = 22
+                        formData.value.resolutionType = 22
                         break;
                     case 22:
-                        store.state.common.ac120.formData.resolutionType = 11
+                        formData.value.resolutionType = 11
                         break;
                     case 21:
-                        store.state.common.ac120.formData.resolutionType = 12
+                        formData.value.resolutionType = 12
                         break;
                     case 12:
-                        store.state.common.ac120.formData.resolutionType = 21
+                        formData.value.resolutionType = 21
                         break;
                     default:
                     // code block
                 }
-                store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+                formData.value.amount = -formData.value.amount
                 emit('changeAmountDataGrid', true)
             }
         }
@@ -504,8 +522,9 @@ export default defineComponent({
             statusModalDelete,
             openShowFull,
             resetSelectAccount,
-            classification,
+            classificationAccountCode, classificationRelationCode,
             Message, isModalChange, handleConfirmChange,
+            formData,
         }
     }
 })

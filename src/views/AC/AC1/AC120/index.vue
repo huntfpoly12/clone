@@ -8,7 +8,7 @@
                         :class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
                         <colorful-badge
                             :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
-                            :year="acYear" :month="month" />
+                            :year="dataGetAccountingProcesses.find((item: any) => item.month === month)?.year || acYear" :month="dataGetAccountingProcesses.find((item: any) => item.month === month)?.month || month" />
                     </div>
                 </div>
             </a-spin>
@@ -112,17 +112,17 @@
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxPaging :enabled="false" />
-                        <DxColumn caption="일자" cell-template="transactionDetailDate" data-field="transactionDetailDate"
+                        <DxColumn caption="일자" :allow-sorting="false" cell-template="transactionDetailDate" data-field="transactionDetailDate"
                             width="85" />
                         <template #transactionDetailDate="{ data }">
                             {{ $filters.formatDate(data.value) }}
                         </template>
 
-                        <DxColumn caption="순번" data-field="documentOrderByDate" width="45" />
+                        <DxColumn caption="순번" :allow-sorting="false" data-field="documentOrderByDate" width="45" />
 
-                        <DxColumn caption="결의번호" data-field="resolutionNumber" width="68" />
+                        <DxColumn caption="결의번호" :allow-sorting="false" data-field="resolutionNumber" width="68" />
 
-                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="80" />
+                        <DxColumn caption="통장" :allow-sorting="false" cell-template="bankbook" data-field="bankbook" width="80" />
                         <template #bankbook="{ data }">
                             <a-tooltip placement="top"
                                 :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
@@ -130,54 +130,54 @@
                             </a-tooltip>
                         </template>
 
-                        <DxColumn caption="결의 구분" data-field="resolutionClassification"
+                        <DxColumn caption="결의 구분" :allow-sorting="false" data-field="resolutionClassification"
                             cell-template="resolutionClassification" width="75" />
                         <template #resolutionClassification="{ data }">
                             {{ store.state.common.ac120.arrResolutionClassification.find((item: any) =>
                                 data.data.resolutionClassification == item.id)?.text }}
                         </template>
 
-                        <DxColumn caption="수입액" cell-template="amountCustom1" width="80" />
+                        <DxColumn caption="수입액" :allow-sorting="false" cell-template="amountCustom1" width="80" />
                         <template #amountCustom1="{ data }">
                             {{ data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
                         </template>
 
-                        <DxColumn caption="지출액" cell-template="amountCustom2" width="80" />
+                        <DxColumn caption="지출액" :allow-sorting="false" cell-template="amountCustom2" width="80" />
                         <template #amountCustom2="{ data }">
                             {{ data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
                         </template>
 
-                        <DxColumn caption="잔액" data-field="balance" width="90" format="fixedPoint" />
+                        <DxColumn caption="잔액" :allow-sorting="false" data-field="balance" width="90" format="fixedPoint" />
 
-                        <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" width="75" />
+                        <DxColumn caption="통장적요" :allow-sorting="false" data-field="summaryOfBankbookDetail" width="75" />
 
-                        <DxColumn caption="적요" data-field="summary" />
+                        <DxColumn caption="적요" :allow-sorting="false" data-field="summary" />
 
-                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="150"/>
+                        <DxColumn caption="계정과목" :allow-sorting="false" data-field="accountCode" cell-template="accountCode" width="150"/>
                         <template #accountCode="{ data }">
                             <account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
                         </template>
 
-                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150" />
+                        <DxColumn caption="상대계정" :allow-sorting="false" data-field="relationCode" cell-template="relationCode" width="150" />
                         <template #relationCode="{ data }">
                             <account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
                         </template>
 
-                        <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left"
+                        <DxColumn caption="자금원천" :allow-sorting="false" data-field="fundingSource" css-class="cell-left"
                             cell-template="fundingSource" width="75" />
                         <template #fundingSource="{ data }">
                             {{ store.state.common.ac120.arrFundingSource.find((item: any) => data.data.fundingSource
                                 == item.id)?.text }}
                         </template>
 
-                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" width="75" />
+                        <DxColumn caption="거래처" :allow-sorting="false" data-field="clientId" cell-template="clientId" width="75" />
                         <template #clientId="{ data }">
                             {{ clients.find((item: any) => item.value == data.data.clientId)?.label }}
                         </template>
 
-                        <DxColumn caption="증빙" data-field="proofCount" width="50" />
+                        <DxColumn caption="증빙" :allow-sorting="false" data-field="proofCount" width="50" />
 
-                        <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" width="75" />
+                        <DxColumn caption="물품 내역" :allow-sorting="false" cell-template="normality" css-class="cell-center" width="75" />
                         <template #normality="{ data }">
                             <div v-if="data.data.resolutionClassification != 1">
                                 <PlusOutlined v-if="data.data.goodsCount == 0" class="icon-add"
@@ -188,7 +188,7 @@
                             </div>
                         </template>
 
-                        <DxColumn caption="수기 여부" cell-template="handwriting" width="75" />
+                        <DxColumn caption="수기 여부" :allow-sorting="false" cell-template="handwriting" width="75" />
                         <template #handwriting="{ data }">
                             <div class="slipRegistration">
                                 <DxButton v-if="data.data.handwriting == true" :focusStateEnabled="false" text="O"
@@ -197,7 +197,7 @@
                             </div>
                         </template>
 
-                        <DxColumn caption="정상 여부" cell-template="resolutionNormalStatus" width="75" />
+                        <DxColumn caption="정상 여부" :allow-sorting="false" cell-template="resolutionNormalStatus" width="75" />
                         <template #resolutionNormalStatus="{ data }">
                             <div class="slipRegistration">
                                 <DxButton :focusStateEnabled="false" :text="data.data.resolutionNormalStatus ? 'O' : 'X'"
@@ -211,9 +211,6 @@
             <DetailComponent @changeAmountDataGrid="changeAmountDataGrid" />
         </div>
     </div>
-    <!-- <PopupMessage :modalStatus="isModalRetrieveStatements" @closePopup="isModalRetrieveStatements = false"
-        :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
-        :cancelText="'아니요'" @checkConfirm="handleConfirmChange" /> -->
     <PopupMessage :modalStatus="isModalConfirmChangeData" @closePopup="isModalConfirmChangeData = false"
         :typeModal="'confirm'" title="" content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니요"
         @checkConfirm="handleConfirmChange" />
@@ -239,7 +236,7 @@ import { defineComponent, ref, reactive, computed, onMounted, watch } from "vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxRowDragging, DxPaging } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
-import { contentPopupRetrieveStatements, initialStateFormData } from "./utils/index"
+import { initialStateFormData } from "./utils/index"
 import { Message } from "@/configs/enum"
 import ModalDelete from "./components/ModalDelete.vue"
 import ModalAdd from "./components/ModalAdd.vue"
@@ -358,6 +355,7 @@ export default defineComponent({
         // ============== ON DONE MUTATION GRAPHQL ===============
         // reorderAccountingDocuments
         doneReorderAccountingDocuments((e) => {
+            store.state.common.ac120.statusKeppRow = true
             triggerGetAccountingDocuments.value = true
             notification('success', Message.getMessage('COMMON', '106').message)
         })
@@ -394,6 +392,14 @@ export default defineComponent({
 
         // call api GetAccountingDocuments
         watch(() => store.state.common.ac120.resetDataTable, (value) => {
+            if (monthNewClick.value) { // nếu trước đó ấn tháng mới
+                monthSelected.value = monthNewClick.value
+                dataQueryGetAccountingDocuments.value.month = monthNewClick.value
+                triggerGetAccountingDocuments.value = true;
+                store.state.common.ac120.statusKeppRow = false;
+                monthNewClick.value = 0
+                return
+            }
             triggerGetAccountingDocuments.value = true
         })
         // call api GetAccountingProcesses
@@ -421,6 +427,7 @@ export default defineComponent({
             //     monthNewClick.value = 0
             //     return
             // }
+            store.state.common.ac120.selectedRowKeys = null;
             if (dataApi.value.length > 0) { // if table has data source
                 gridRefAC120.value?.instance.deselectAll()
                 if (idRowFocusedRowNew.value) { // nếu trước đó click row mới
@@ -446,9 +453,12 @@ export default defineComponent({
                 dataRows.value = []
                 // store.state.common.ac120.focusedRowKey = null
                 // store.state.common.ac120.statusFormAdd = true
-                Object.assign(store.state.common.ac120.formData, initialStateFormData)
+                // Object.assign(store.state.common.ac120.formData, initialStateFormData)
+                store.state.common.ac120.formData = {...initialStateFormData}
                 store.state.common.ac120.keyRefreshForm++
             }
+            // console.log(store.state.common.ac120.selectedRowKeys);
+            
             store.state.common.ac120.focusedRowKey = store.state.common.ac120.formData.accountingDocumentId
             formDataOld = { ...store.state.common.ac120.formData }
             store.state.common.ac120.statusFormAdd = false
@@ -474,7 +484,7 @@ export default defineComponent({
                 data.selectedRowsData.map((data: any) => {
                     if (data.bankbookDetailId) {
                         if (!dataRows.value.find((item: any) => item.bankbookDetailId == data.bankbookDetailId)) {
-                            let dataSameBankbookDetailId = dataSource.value?.items().filter((item: any) => item.bankbookDetailId == data.bankbookDetailId)
+                            let dataSameBankbookDetailId = storeDataSource.value?._array.filter((item: any) => item.bankbookDetailId == data.bankbookDetailId)
                             dataRows.value = dataRows.value.concat(dataSameBankbookDetailId)
                         }
                     } else {
@@ -512,8 +522,10 @@ export default defineComponent({
                     // Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
                     // store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
                     // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
-                    store.state.common.ac120.selectedRowKeys = [e.rows[e.newRowIndex]?.data.accountingDocumentId]
-                    store.state.common.ac120.keyRefreshForm++
+                    store.state.common.ac120.selectedRowKeys = null
+                    // console.log(store.state.common.ac120.selectedRowKeys);
+                    
+                    // store.state.common.ac120.keyRefreshForm++
                     store.state.common.ac120.resetDataAccountingDocumentProofs++
                     // if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
                     //     deleteRowAdd()
@@ -550,13 +562,13 @@ export default defineComponent({
         const handleConfirmChange = (status: boolean) => {
             if (status) {
                 store.state.common.ac120.onSubmitFormUpdate++
-                if (monthNewClick.value) { // nếu trước đó ấn tháng mới
-                    monthSelected.value = monthNewClick.value
-                    dataQueryGetAccountingDocuments.value.month = monthNewClick.value
-                    triggerGetAccountingDocuments.value = true;
-                    store.state.common.ac120.statusKeppRow = false;
-                    monthNewClick.value = 0
-                }
+                // if (monthNewClick.value) { // nếu trước đó ấn tháng mới
+                //     monthSelected.value = monthNewClick.value
+                //     dataQueryGetAccountingDocuments.value.month = monthNewClick.value
+                //     triggerGetAccountingDocuments.value = true;
+                //     store.state.common.ac120.statusKeppRow = false;
+                //     monthNewClick.value = 0
+                // }
             } else {
                 if (monthNewClick.value) { // nếu trước đó ấn tháng mới
                     monthSelected.value = monthNewClick.value
@@ -581,6 +593,7 @@ export default defineComponent({
                         });
                         gridRefAC120.value?.instance.refresh();
                     });
+                store.state.common.ac120.selectedRowKeys = [idRowFocusedRowNew.value]
                 // store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == idRowFocusedRowNew.value)
 
                 // store.state.common.ac120.focusedRowKey = idRowFocusedRowNew.value
@@ -771,7 +784,6 @@ export default defineComponent({
 
             isModalConfirmChangeData,
             handleConfirmChange,
-            contentPopupRetrieveStatements,
             statusModalDelete,
             statusModalAdd,
             statusModalItemDetail,

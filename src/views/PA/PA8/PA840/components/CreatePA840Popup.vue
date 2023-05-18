@@ -32,13 +32,13 @@
             </DxField>
           </a-col>
           <a-col span="12">
-            <DxField label="사업장관리번호">
-              <default-text-box v-model:valueInput="infoCompany.bizNumber" placeholder="사업장관리번호" disabled />
+            <DxField label="사업자등록번호">
+              <biz-number-text-box v-model:valueInput="infoCompany.bizNumber" placeholder="사업장관리번호" disabled/>
             </DxField>
           </a-col>
           <a-col span="12">
             <DxField label="사업장관리번호">
-              <default-text-box v-model:valueInput="majorInsuranceConsignStatus" placeholder="사업장관리번호" disabled />
+              <id-number-text-box disabled v-model:valueInput="majorInsuranceConsignStatus" mask="000-00-00000-0" />
             </DxField>
           </a-col>
         </a-row>
@@ -70,16 +70,16 @@
               <DxField label="4대보험 선택" class="field-custom-2">
                 <div class="list-insurance-selection">
                   <div class="mr-30">
-                    <checkbox-basic v-model:valueCheckbox="formData.nationalPensionReport" label="국민연금" />
+                    <checkbox-basic v-model:valueCheckbox="formData.nationalPensionReport" label="국민연금" :disabled="!isStatusLeaveOfAbsence" />
                   </div>
                   <div class="mr-30">
-                    <checkbox-basic v-model:valueCheckbox="formData.healthInsuranceReport" label="건강보험" />
+                    <checkbox-basic v-model:valueCheckbox="formData.healthInsuranceReport" label="건강보험" :disabled="!isStatusLeaveOfAbsence" />
                   </div>
                   <div class="mr-30">
-                    <checkbox-basic v-model:valueCheckbox="formData.employeementInsuranceReport" label="고용보험" />
+                    <checkbox-basic v-model:valueCheckbox="formData.employeementInsuranceReport" label="고용보험" :disabled="!isStatusLeaveOfAbsence" />
                   </div>
                   <div>
-                    <checkbox-basic v-model:valueCheckbox="formData.industrialAccidentInsuranceReport" label="산재보험" />
+                    <checkbox-basic v-model:valueCheckbox="formData.industrialAccidentInsuranceReport" label="산재보험" :disabled="!isStatusLeaveOfAbsence" />
                   </div>
                 </div>
               </DxField>
@@ -155,10 +155,10 @@
               <DxField label="휴직종류" class="field-custom-2">
                 <div class="list-insurance-selection">
                   <div class="mr-30">
-                    <checkbox-basic v-model:valueCheckbox="formData.nationalPensionReport" label="국민연금" />
+                    <checkbox-basic v-model:valueCheckbox="formData.nationalPensionReport" label="국민연금" :disabled="isStatusLeaveOfAbsence"/>
                   </div>
                   <div class="mr-30">
-                    <checkbox-basic v-model:valueCheckbox="formData.healthInsuranceReport" label="건강보험" />
+                    <checkbox-basic v-model:valueCheckbox="formData.healthInsuranceReport" label="건강보험" :disabled="isStatusLeaveOfAbsence"/>
                   </div>
                 </div>
               </DxField>
@@ -167,23 +167,23 @@
           <a-row>
             <a-col span="12">
               <DxField label="납부재개 예정일" class="field-custom-2">
-              <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.returnDate"
-                width="200px" :disabled="isStatusLeaveOfAbsence" :teleport="true" />
-            </DxField>
+                <date-time-box :clearable="false" dateFormat="YYYY-MM-DD" v-model:valueDate="formData.returnDate"
+                  width="200px" :disabled="isStatusLeaveOfAbsence" :teleport="true" />
+              </DxField>
             </a-col>
             <a-col span="12">
               <DxField label="복귀후 급여(납부재개)" class="field-custom-2">
-              <number-box-money width="200px" v-model:valueInput="formData.salaryAfterReturn"
-                :disabled="isStatusLeaveOfAbsence" placeholder="원" format="#,### 원" />
-            </DxField>
+                <number-box-money width="200px" v-model:valueInput="formData.salaryAfterReturn"
+                  :disabled="isStatusLeaveOfAbsence" placeholder="원" format="#,### 원" />
+              </DxField>
             </a-col>
           </a-row>
           <a-row>
             <a-col span="12">
               <DxField label="재개월 납부 희망 여부" class="field-custom-2">
-              <radio-group :arrayValue="PaymentDesire" v-model:valueRadioCheck="formData.pensionPaymentAtReturnMonth"
-                layoutCustom="horizontal" :disabled="isStatusLeaveOfAbsence"></radio-group>
-            </DxField>
+                <radio-group :arrayValue="PaymentDesire" v-model:valueRadioCheck="formData.pensionPaymentAtReturnMonth"
+                  layoutCustom="horizontal" :disabled="isStatusLeaveOfAbsence"></radio-group>
+              </DxField>
             </a-col>
             <a-col span="12">
             </a-col>
@@ -197,61 +197,61 @@
           <a-row>
             <a-col span="12">
               <DxField label="연도" class="field-custom-2" alignment="right">
-              <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
-                :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
-                :enable-time-picker="false">
-              </Datepicker>
-            </DxField>
+                <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].year"
+                  :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
+                  :enable-time-picker="false">
+                </Datepicker>
+              </DxField>
             </a-col>
             <a-col span="12">
               <DxField label="보수총액" class="field-custom-2" alignment="right">
-              <number-box-money width="200px"
-                v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].totalSalary" placeholder="원"
-                :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
-            </DxField>
+                <number-box-money width="200px"
+                  v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].totalSalary" placeholder="원"
+                  :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
+              </DxField>
             </a-col>
           </a-row>
           <a-row>
             <a-col span="12">
               <DxField label="연도" class="field-custom-2" alignment="right">
-              <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[1].year"
-                :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
-                :enable-time-picker="false">
-              </Datepicker>
-            </DxField>
+                <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[1].year"
+                  :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
+                  :enable-time-picker="false">
+                </Datepicker>
+              </DxField>
             </a-col>
             <a-col span="12">
               <DxField label="보수총액" class="field-custom-2" alignment="right">
-              <number-box-money width="200px"
-                v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[1].totalSalary" placeholder="원"
-                :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
-            </DxField>
+                <number-box-money width="200px"
+                  v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[1].totalSalary" placeholder="원"
+                  :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
+              </DxField>
             </a-col>
           </a-row>
           <a-row>
             <a-col span="12">
               <DxField label="연도" class="field-custom-2" alignment="right">
-              <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[2].year"
-                :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
-                :enable-time-picker="false">
-              </Datepicker>
-            </DxField>
+                <Datepicker autoApply yearPicker v-model="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[2].year"
+                  :year-range="[1970, globalYear + 1]" :disabled="isStatusLeaveOfAbsence" width="200px" :teleport="true"
+                  :enable-time-picker="false">
+                </Datepicker>
+              </DxField>
             </a-col>
             <a-col span="12">
               <DxField label="보수총액" class="field-custom-2" alignment="right">
-              <number-box-money width="200px"
-                v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[2].totalSalary" placeholder="원"
-                :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
-            </DxField>
+                <number-box-money width="200px"
+                  v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[2].totalSalary" placeholder="원"
+                  :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
+              </DxField>
             </a-col>
           </a-row>
           <a-row>
             <a-col span="12">
               <DxField label="분할납부횟수" class="field-custom-2">
-              <!-- {{ formData.heathInstallmentPaymentCount }} -->
-              <number-box-money v-model:valueInput="formData.heathInstallmentPaymentCount" placeholder="건"
-                format="#,### 건" :disabled="isStatusLeaveOfAbsence" />
-            </DxField>
+                <!-- {{ formData.heathInstallmentPaymentCount }} -->
+                <number-box-money v-model:valueInput="formData.heathInstallmentPaymentCount" placeholder="건"
+                  format="#,### 건" :disabled="isStatusLeaveOfAbsence" />
+              </DxField>
             </a-col>
             <a-col span="12">
             </a-col>
@@ -533,7 +533,7 @@ export default defineComponent({
             salaryAfterReturn: formData.value.salaryAfterReturn,
             pensionPaymentAtReturnMonth: formData.value.pensionPaymentAtReturnMonth,
 
-            healthSalaryPaymentYearDuringLeaveOfAbsence: formData.value.healthSalaryPaymentYearDuringLeaveOfAbsence,
+            healthSalaryPaymentYearDuringLeaveOfAbsence: formData.value.healthSalaryPaymentYearDuringLeaveOfAbsence.filter ((item: any) => !!item.year),
             heathInstallmentPaymentCount: formData.value.heathInstallmentPaymentCount,
           }
           makeDataClean(dataType2, ['']);

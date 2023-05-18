@@ -64,6 +64,8 @@ let statesPA720 = {
     employeeId: '',
   },
   isClickEditDiffPA720: false,
+  isLoopDayPA720: false,
+  dayArrPA720: [],
 };
 
 export default statesPA720;

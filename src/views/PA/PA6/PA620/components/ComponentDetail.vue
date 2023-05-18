@@ -49,7 +49,7 @@
           v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging"
           id="tax-pay-620" noDataText="내역이 없습니다">
           <DxSelection select-all-mode="allPages" mode="multiple" />
-          <DxColumn caption="사업소득자 [소득구분]" cell-template="tag" />
+          <DxColumn caption="사업소득자 [소득구분]" cell-template="tag" data-field="employeeId" alignment="left" />
           <template #tag="{ data }">
             <div v-if="data.data.employeeId">
               <span class="btn-container">
@@ -75,7 +75,7 @@
             </div>
             <div v-else></div>
           </template>
-          <DxColumn width="80px" caption="지급일" cell-template="paymentDay" :format="amountFormat" data-type="string" />
+          <DxColumn width="80px" caption="지급일" data-field="paymentDay" cell-template="paymentDay" />
           <template #paymentDay="{ data }">
             {{ formatMonth(data.data.paymentDay) }}
           </template>
@@ -85,7 +85,8 @@
           <template #taxRateSlot="{ data }">
             {{ data.value }}%
           </template>
-          <DxColumn caption="공제" cell-template="income-tax" width="100px" alignment="right" />
+          <DxColumn caption="공제" cell-template="income-tax" data-field="withholdingLocalIncomeTax" width="100px"
+            alignment="right" :calculateCellValue="calculateIncomeTypeCodeAndName" />
           <template #income-tax="{ data }">
             <a-tooltip placement="top">
               <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -153,9 +154,12 @@
                   </div>
                 </a-form-item>
                 <a-form-item label="지급일" label-align="right" class="red">
-                  <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
-                    :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
-                    :disabled="disabledInput || idDisableNoData" />
+                  <div>
+                    <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
+                      :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
+                      :disabled="disabledInput || idDisableNoData" />
+                    <div v-if="isLoopDay" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+                  </div>
                 </a-form-item>
                 <a-form-item label="지급액" label-align="right" class="red">
                   <div class="d-flex-center">
@@ -223,7 +227,7 @@
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
     :data="paramIncomeBusinesses.processKey" title="변경이력" typeHistory="pa-620-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditSuccess" :data="editParam"
-    :processKey="paramIncomeBusinesses.processKey" :dataUpdate="changeDayData" />
+    :processKey="paramIncomeBusinesses.processKey" :dataUpdate="changeDayData" :dayArr="dayArr"/>
   <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" typeModal="confirm"
     :title="titleModalConfirm" content="" cancelText="아니요" okText="네" @checkConfirm="onRowChangeComfirm"
     :isConfirmIcon="false" />
@@ -505,14 +509,6 @@ export default defineComponent({
       isNewRow.value = false;
       compareType.value = 2;
     };
-    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-      if (compareForm()) {
-        emit('noSave', 1, newVal);
-      } else {
-        compareType.value = 2;
-        rowChangeStatus.value = true;
-      }
-    });
     //on add row
     const rowChangeStatus = ref<Boolean>(false);
     const openAddNewModal = async () => {
@@ -541,7 +537,6 @@ export default defineComponent({
         removeHoverRowKey();
         if (isClickEditDiff.value) {
           onEditItem();
-          // dataAction.value.input = {...dataActionEdit.value.input}
           compareType.value = 1;
           return;
         }
@@ -588,13 +583,11 @@ export default defineComponent({
           return;
         }
         item.component.selectRows(dataAction.value.input.incomeId, true);
-        // selectedRowKeys.value = [dataAction.value.input.incomeId];
         rowChangeStatus.value = true;
         return;
       }
       if (!compareForm()) {
         item.component.selectRows(dataAction.value.input.incomeId, true);
-        // selectedRowKeys.value = [dataAction.value.input.incomeId];
         rowChangeStatus.value = true;
         return;
       } else {
@@ -618,12 +611,19 @@ export default defineComponent({
         employeeId: event.selectedRowsData[0]?.employeeId,
       }
       popupDataDelete.value = event.selectedRowKeys;
+      var days:any = [];
+      var employeeIds:any[] = [];
       editParam.value = event.selectedRowsData.map((item: any) => {
+        if(employeeIds.indexOf(item.employeeId) < 0){
+          employeeIds.push(item.employeeId);
+          days = [...days,...(dataSourceDetail.value.filter((item2: any) => item2.employeeId == item.employeeId).map((item1: any) => item1.paymentDay))];
+        }
         return {
           param: { incomeId: item.incomeId },
           errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name },
         };
       });
+      dayArr.value = days;
     }
     const deleteItem = () => {
       if (popupDataDelete.value.length > 0) {
@@ -888,11 +888,41 @@ export default defineComponent({
       focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
       selectedRowKeys.value = compareType.value == 1 ? [dataAction.value.input.incomeId] : [idRowFake.value];
     }
+
+    const isLoopDay = ref(false);
+    const dayArr = ref<any[]>([]);
+    function countOccurrences(arr: any[], number: number) {
+      return arr.reduce((count, element) => {
+        if (element === number) {
+          return count + 1;
+        }
+        return count;
+      }, 0);
+    }
+    const checkLoopDay = () => {
+      let employeeId = dataAction.value.input.employeeId;
+      if (dataSourceDetail.value.length) {
+        dayArr.value = dataSourceDetail.value.filter((item: any) => item.employeeId == employeeId).map((item1: any) => item1.paymentDay);
+        if (countOccurrences(dayArr.value, dataAction.value.input.paymentDay) > 1) {
+          isLoopDay.value = true;
+        } else {
+          isLoopDay.value = false;
+        }
+      }
+    }
+    watch(() => [dataAction.value.input.employeeId, dataAction.value.input.paymentDay], ([newVal]) => {
+      if (newVal) {
+        checkLoopDay();
+      }
+    }, { deep: true });
+    function calculateIncomeTypeCodeAndName(rowData: any) {
+      return rowData.withholdingIncomeTax + rowData.withholdingLocalIncomeTax;
+    }
     return {
       loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax,
       caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef, changeDayData, savePA610, popupAddStatus, titleModalConfirm, editParam, companyId,
       paymentDayPA620, rowChangeStatus, checkLen, compareForm, triggerOption, refetchOption, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff, triggerIncomeBusiness, isClickEditClick,
-      calcSummary, checkLenTooltip, startDate, finishDate, dayDate
+      calcSummary, checkLenTooltip, startDate, finishDate, dayDate, isLoopDay, calculateIncomeTypeCodeAndName,dayArr,
     }
   }
 });

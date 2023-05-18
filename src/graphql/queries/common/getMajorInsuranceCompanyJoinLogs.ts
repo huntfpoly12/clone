@@ -1,0 +1,35 @@
+import gql from "graphql-tag";
+export default gql`
+  query getMajorInsuranceCompanyJoinLogs(
+    $companyId: Int!
+    $imputedYear: Int!
+    $workId: Int!
+  ) {
+    getMajorInsuranceCompanyJoinLogs(
+      companyId: $companyId
+      imputedYear: $imputedYear
+      workId: $workId
+    ) {
+      companyId
+      type
+      imputedYear
+      workId
+      ts
+      companyType
+      workingStatus
+      registeredAt
+      acceptedAt
+      completedAt
+      acceptedNumber
+      memo
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      ip
+      active
+      loggedAt
+      remark
+    }
+  }
+`;

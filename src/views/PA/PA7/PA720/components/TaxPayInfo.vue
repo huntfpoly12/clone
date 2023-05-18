@@ -9,7 +9,7 @@
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left"/>
+      <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left" />
       <template #tag="{ data }">
         <div v-if="data.data.employeeId">
           <span class="btn-container">
@@ -36,19 +36,19 @@
         </div>
         <div v-else></div>
       </template>
-      <DxColumn caption="지급일" width="55" alignment="left" cell-template="paymentDay" />
+      <DxColumn caption="지급일" width="55" alignment="left" data-field="paymentDay" cell-template="paymentDay" />
       <template #paymentDay="{ data }">
         {{ formatMonth(data.data.paymentDay) }}
       </template>
       <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" alignment="right" />
-      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney"
-        alignment="right" />
+      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" alignment="right" />
       <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" alignment="right" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
       <template #taxRateSlot="{ data }">
         {{ data.value }}%
       </template>
-      <DxColumn caption="공제" cell-template="incomLocalTax" alignment="right" />
+      <DxColumn caption="공제" cell-template="incomLocalTax" alignment="right"
+        :calculateCellValue="calculateIncomeTypeCodeAndName" />
       <template #incomLocalTax="{ data }">
         <a-tooltip placement="top">
           <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -259,15 +259,22 @@ export default defineComponent({
     const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
       if (e.selectedRowsData.length > 0) {
+        var days: any = [];
+        var employeeIds: any[] = [];
         incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
           return item.incomeId;
         });
         paymentData.value = e.selectedRowsData.map((item: any) => {
+          if (employeeIds.indexOf(item.employeeId) < 0) {
+            employeeIds.push(item.employeeId);
+            days = [...days, ...(dataSourceDetail.value.filter((item2: any) => item2.employeeId == item.employeeId).map((item1: any) => item1.paymentDay))];
+          }
           return {
             param: { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value },
             errorInfo: { employeeId: item.employee.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name },
           };
         });
+        store.state.common.dayArrPA720 = days;
       }
     };
     // set key again
@@ -338,6 +345,34 @@ export default defineComponent({
     const checkLenTooltip = (text: String, num: number) => {
       return text.length > num ? text : '';
     };
+
+    function countOccurrences(arr: any[], number: number) {
+      return arr.reduce((count, element) => {
+        if (element === number) {
+          return count + 1;
+        }
+        return count;
+      }, 0);
+    }
+    const checkLoopDay = () => {
+      let employeeId = formPA720.value.input.employeeId;
+      if (dataSourceDetail.value.length) {
+        store.state.common.dayArrPA720 = dataSourceDetail.value.filter((item: any) => item.employeeId == employeeId).map((item1: any) => item1.paymentDay);
+        if (countOccurrences(store.state.common.dayArrPA720, formPA720.value.input.paymentDay) > 1) {
+          store.state.common.isLoopDayPA720 = true;
+        } else {
+          store.state.common.isLoopDayPA720 = false;
+        }
+      }
+    }
+    watch(() => [formPA720.value.input.employeeId, formPA720.value.input.paymentDay], ([newVal]) => {
+      if (newVal) {
+        checkLoopDay();
+      }
+    }, { deep: true });
+    function calculateIncomeTypeCodeAndName(rowData: any) {
+      return rowData.withholdingIncomeTax + rowData.withholdingLocalIncomeTax;
+    }
     return {
       rowTable,
       per_page,
@@ -365,6 +400,7 @@ export default defineComponent({
       store,
       changeDayDataPA720,
       selectRow, calcSummary,
+      calculateIncomeTypeCodeAndName
     };
   },
 });

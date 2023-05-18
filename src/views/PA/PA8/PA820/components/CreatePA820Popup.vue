@@ -45,8 +45,7 @@
               </a-col>
               <a-col :span="12">
                 <a-form-item label="사업장관리번호" label-align="right">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.adding"
-                    :required="true" />
+                  <id-number-text-box disabled v-model:valueInput="infoMajorInsuranceConsignStatus.manageId" mask="000-00-00000-0" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -162,7 +161,7 @@
                   <div class="select-group">
                     <span>상실부호</span>
                     <SelectCustomField :dataSource=" includeDependentsSelectbox " :disabled=" isDisabled1 "
-                      v-model:valueInput=" showData.healthInsuranceAcquisitionCode2 " width="357px" />
+                      v-model:valueInput=" formState.employeementInsuranceLossCode " width="357px" />
                   </div>
                   <span class="ml-50">
                     <checkbox-basic size="14" label="이직확인서 발급희망"
@@ -227,6 +226,8 @@
 import mutations from "@/graphql/mutations/PA/PA8/PA820/index";
 import queries from "@/graphql/queries/PA/PA8/PA820/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
+import useGetMajorInsuranceConsignStatus from "@/helpers/usegetMajorInsuranceConsignStatus";
+
 // import INITIAL_DATA, {Company, DependentsType} from "./../utils";
 import {
   DeleteOutlined,
@@ -237,9 +238,7 @@ import {
   employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox,
   includeDependentsSelectbox,
 } from "../utils/index";
-import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
@@ -251,21 +250,10 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { getCurrentInstance } from "vue";
 import { DxTextBox } from "devextreme-vue";
-
-const getValue = (val: any, arr: any[]) => {
-  let data = arr.filter((item: any) => {
-    if (item.value == val) {
-      return item;
-    }
-    return false;
-  });
-  return data.length == 0 ? '' : data[0].label;
-}
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -279,7 +267,6 @@ export default defineComponent({
     DxTextBox
   },
   setup(props, { emit }) {
-    const store = useStore();
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
@@ -290,13 +277,12 @@ export default defineComponent({
       bizNumber: '',
       presidentName: '',
       adding: 'ADDING',
-      leavedAt: '',
+      leavedAt: null,
       residentId: '',
       joinedAt: '',
       acquisitionMonthPayment: false,
-      healthInsuranceAcquisitionCode2: 0,
     })
-    const formState = reactive({
+    const formState: any = reactive({
       employeeType: 10,
       employeeId: null,
       nationalPensionReport: false,
@@ -305,14 +291,15 @@ export default defineComponent({
       industrialAccidentInsuranceReport: true,
       nationalPensionLossCode: 0,
       nationalPensionPaymentCurrentMonthLoss: '',
-      employeementInsuranceLossCode: '',
+      employeementInsuranceLossCode: null,
       employeementInsuranceJobChangeReport: false,
       healthInsuranceLossCode: '1',
-      employeementInsuranceLossDescription: getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox),
+      employeementInsuranceLossDescription: '',
       totalSalaryThisYear: 100000,
       totalSalaryLastYear: 100000,
       workMonthThisYear: 1300,
       workMonthLastYear: 100000,
+      retireDate: null
     })
     const formStateToCompare = ref({ ...formState });
 
@@ -322,9 +309,10 @@ export default defineComponent({
       showData.name1 = '';
       showData.joinedAt = '';
       showData.residentId = '';
-      showData.leavedAt = '';
+      showData.leavedAt = null;
     }
-
+    // getMajorInsuranceConsignStatus
+    const { infoMajorInsuranceConsignStatus } = useGetMajorInsuranceConsignStatus(companyId)
     //-------------------------- get Company-----------------------
 
     const myCompanyParam = reactive({
@@ -403,7 +391,7 @@ export default defineComponent({
           showData.name1 = data.name || '';
           showData.joinedAt = data?.joinedAt || '';
           showData.residentId = data.residentId || '';
-          showData.leavedAt = data.leavedAt || '';
+          showData.leavedAt = data.leavedAt || null;
           formStateToCompare.value = { ...formState };
         }
         getEmployeeWageTrigger.value = false;
@@ -434,7 +422,7 @@ export default defineComponent({
             showData.name1 = data.name || '';
             showData.joinedAt = data.joinedAt || '';
             showData.residentId = data.residentId || '';
-            showData.leavedAt = data.leavedAt || '';
+            showData.leavedAt = data.leavedAt || null;
             formStateToCompare.value = { ...formState };
           }
           getEmployeeWageDailyTrigger.value = false;
@@ -471,18 +459,26 @@ export default defineComponent({
 
     //--------------------------------CHANGE DATA---------------------------------------
 
-    watch(() => showData.healthInsuranceAcquisitionCode2, (newVal: any) => {
+    watch(() => formState.employeementInsuranceLossCode, (newVal: any) => {
       if (newVal) {
-        formState.employeementInsuranceLossDescription = getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox)
+        formState.employeementInsuranceLossDescription = getValue(newVal, includeDependentsSelectbox)
       }
-    }, { deep: true })
+    }, { 
+      deep: true,
+      immediate: true
+    })
 
+    const getValue = (id: any, arr: any[]) => {
+      let data = arr.find((item: any) => item.id == id);
+      return !!data ? data.name : ''
+    }
     //---------------------------------DISABLED FIELD--------------------------------
 
     const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
     const isDisabled2 = computed(() => {
-      // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
-      let check = [23, 26, 31].some((item: any) => showData.healthInsuranceAcquisitionCode2 == item);
+      // if(formState.employeementInsuranceLossCode == 23 || )
+      const arr = [23, 26, 31]
+      let check = arr.includes(formState.employeementInsuranceLossCode)
       formState.employeementInsuranceJobChangeReport = check;
       formStateToCompare.value.employeementInsuranceJobChangeReport = check;
       return check;
@@ -507,7 +503,7 @@ export default defineComponent({
     }, { deep: true });
     watchEffect(() => {
       if (!formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport) {
-        showData.healthInsuranceAcquisitionCode2 = 0;
+        formState.employeementInsuranceLossCode = 0;
         formState.employeementInsuranceJobChangeReport = false;
         formState.employeementInsuranceLossDescription = '';
       }
@@ -533,6 +529,7 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
+        formState.retireDate = showData.leavedAt
         makeDataClean(formState, ['presidentResidentNumber']);
         createCompanyEmployeeLossMutate({ companyId: companyId, imputedYear: globalYear.value, input: formState });
       }
@@ -553,7 +550,7 @@ export default defineComponent({
       formState, onSubmit, showData, formStateToCompare,
       isDisabled1, isDisabled2,
       onCanCelModal,
-      getEmployeeWageLoading, getEmployeeWageDailyLoading,
+      getEmployeeWageLoading, getEmployeeWageDailyLoading, infoMajorInsuranceConsignStatus
     };
   },
 });

@@ -21,7 +21,7 @@
 import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
+import mutations from "@/graphql/mutations/AC/AC5/AC510/index"
 import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
@@ -39,38 +39,37 @@ export default defineComponent({
     setup(props, { emit }) {
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
-            emailAddress.value = val?.employeeInputs.receiverAddress
+            emailAddress.value = val?.emailInput.receiverAddress
         });
         
         const setModalVisible = () => {
             emit("closePopup", false)
         };
-        // const {
-        //     mutate: sendEmail,
-        //     onDone: onDoneAdd,
-        //     onError: errorSendEmail,
-        //     error,
-        // } = useMutation(mutations.sendIncomeBusinessWithholdingReceiptReportEmail);
+        const {
+            mutate: sendEmail,
+            onDone: onDoneEmail,
+            onError: errorSendEmail,
+        } = useMutation(mutations.sendAccountBookReportEmail);
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
                 let variables = props.data
-                variables.employeeInputs.receiverAddress = emailAddress.value
-                // sendEmail(variables);
+                variables.emailInput.receiverAddress = emailAddress.value
+                sendEmail(variables);
             }
         };
-        // onDoneAdd(() => {
-        //     notification('success', Message.getMessage('COMMON', '801').message)
-        //     emit("closePopup", false)
-        // })
-        // errorSendEmail((e: any) => {
-        //     notification('error', e.message)
-        // })
-        watch(() => props.modalStatus, (value) => {
-
+        onDoneEmail(() => {
+            notification('success', Message.getMessage('COMMON', '801').message)
+            emit("closePopup", false)
         })
+        errorSendEmail((e: any) => {
+            notification('error', e.message)
+        })
+        // watch(() => props.modalStatus, (value) => {
+
+        // })
 
         return {
             setModalVisible,

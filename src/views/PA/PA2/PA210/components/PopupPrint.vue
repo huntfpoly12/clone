@@ -156,7 +156,7 @@ export default defineComponent({
                     "type": 4
                 })
             trigger.value = true
-            refetchPrint()
+            // refetchPrint()
         }
         return {
             dataForm,

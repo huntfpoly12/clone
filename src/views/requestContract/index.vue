@@ -291,7 +291,7 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자(주민)등록번호 :</label>
-                                <id-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" mask="00000-00000" width="170px" :required="true" />
+                                <id-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" />
                                 <p>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px" /> :
                                     예금주의 사업자등록번호 또는 주민등록번호입니다
@@ -662,7 +662,8 @@ export default {
                     withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
                 };
             }
-            let dataCallCreated = {
+
+            let dataCallCreated: any = {
                 content: {
                     agreements: {
                         terms: contractCreacted.terms,
@@ -703,7 +704,7 @@ export default {
                     },
                     accounting: {
                         facilityBusinesses: dataFacility,
-                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? [1] : [0],
+                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? 1 : 0,
                     },
                     withholding: withholdingCustom,
                     cmsBank: {
@@ -720,6 +721,9 @@ export default {
                 }
             }
           if (dataCallCreated) {
+            if(!dataCallCreated.content.accounting.accountingServiceTypes){
+                dataCallCreated.content.accounting = null
+            }
               await makeDataClean(dataCallCreated, ['buildingName']);
               mutateCreated(dataCallCreated)
           }
@@ -770,7 +774,7 @@ export default {
                 if (newVal == 2) {
                   valueFacilityBusinesses.value = Array()
                   dataActiveRow.value = null
-                  contractCreacted.accountingServiceTypes = false
+                  contractCreacted.accountingServiceTypes = 0
                 }
             }
         );

@@ -88,15 +88,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="popup-detail-ac-110-sumary">
-                    <div
-                        v-html="`전체: <span style='font-size: 16px !important'>[${dataSource?.statementOfGoodsItems.length || 0}]</span>`">
-                    </div>
-                    <div v-html="customSumAmount()"></div>
-                    <div>지출액 <span>[{{ store.state.common.ac120.formData?.spending }}]</span></div>
-                    <div v-html="checkAlone()"></div>
-
-                </div> -->
             </standard-form>
         </div>
         <div class="btn_submit text-align-center mt-20">
@@ -112,7 +103,6 @@
 <script lang="ts">
 import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { useStore } from 'vuex';
-import { dataDemoMain } from '../utils/index'
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxEditing, DxPaging, DxTexts, DxLookup } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
@@ -161,6 +151,7 @@ export default defineComponent({
         const triggerSearchStatementOfGoodsUnits = ref(false)
 
         const amount = ref<number>(0)
+        const formData = computed(() => store.state.common.ac120.formData)
 
         // =================== GRAPHQL ===================
         // mutation deleteStatementOfGoods    
@@ -236,30 +227,16 @@ export default defineComponent({
                 triggerSearchStatementOfGoodsItems.value = true
                 triggerSearchStatementOfGoodsStandards.value = true
                 triggerSearchStatementOfGoodsUnits.value = true
-                dataSource.value = store.state.common.ac120.formData?.statementOfGoodsItems?.map((item: any, index: number) => {
+                dataSource.value = formData.value?.statementOfGoodsItems?.map((item: any, index: number) => {
                     return {
                         ...item,
                         id: index
                     }
                 })
-                // await setDataSelect()
             }
         })
 
         // ================ FUNCTION ============================================
-        // const setDataSelect = () => {
-        //     dataSource.value?.forEach((item: any, index: number) => {
-        //         if (!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())) {
-        //             arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item.toString().trim() }]
-        //         }
-        //         if (!!item.standard && !arrSelectStandard.value.some((option: any) => option.value === item.standard.toString().trim())) {
-        //             arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard.toString().trim() }]
-        //         }
-        //         if (!!item.unit && !arrSelectUnit.value.some((option: any) => option.value === item.unit.toString().trim())) {
-        //             arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit.toString().trim() }]
-        //         }
-        //     })
-        // }
         const cancel = () => {
             emit("closePopup", false)
         };
@@ -269,7 +246,6 @@ export default defineComponent({
             } else {
                 dataSource.value = [{ ...initStatementOfGoods, id: 'create' }]
             }
-            // await setDataSelect()
         }
 
         const deleteItem = (data: any) => {
@@ -285,8 +261,8 @@ export default defineComponent({
                         companyId: companyId,
                         fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
-                        transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
-                        accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
+                        transactionDetailDate: formData.value.transactionDetailDate,
+                        accountingDocumentId: formData.value.accountingDocumentId,
                     })
                 }
             }
@@ -311,14 +287,14 @@ export default defineComponent({
                             companyId: companyId,
                             fiscalYear: acYear.value,
                             facilityBusinessId: globalFacilityBizId.value,
-                            transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
-                            accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
+                            transactionDetailDate: formData.value.transactionDetailDate,
+                            accountingDocumentId: formData.value.accountingDocumentId,
                             items: dataItem
                         }
                         mutateSaveStatementOfGoods(dataSave)
                     }
                 } else {
-                    store.state.common.ac120.formData.statementOfGoodsItems = dataItem
+                    formData.value.statementOfGoodsItems = dataItem
                     emit("closePopup", false)
                 }
             }
@@ -329,12 +305,6 @@ export default defineComponent({
                 const dataTotalDifference = dataSource.value[index].unitPrice
                 dataSource.value[index].amount = dataTotalValue * dataTotalDifference
             }
-            // const elTotalValue: any = document.querySelector('.refTotalValue')
-            // const elTotalDifference: any = document.querySelector('.refTotalDifference')
-
-            // elTotalValue.textContent = customSumAmount()
-            // elTotalDifference.textContent = checkAlone()
-
         }
 
         const customSumAmount = () => {
@@ -349,10 +319,10 @@ export default defineComponent({
             dataSource.value?.map((item: any) => {
                 total += item.amount
             })
-            if (store.state.common.ac120.formData?.resolutionClassification == 1) {
+            if (formData.value?.resolutionClassification == 1) {
                 amount.value = 0
-            } else if (store.state.common.ac120.formData.resolutionClassification == 2) {
-                amount.value = store.state.common.ac120.formData?.amount
+            } else if (formData.value.resolutionClassification == 2) {
+                amount.value = formData.value?.amount
             }
             let totalShow = amount.value - total
             if (totalShow === 0) {
@@ -365,7 +335,6 @@ export default defineComponent({
         return {
             move_column,
             colomn_resize,
-            dataDemoMain,
             cancel,
             deleteItem,
             dataSource,

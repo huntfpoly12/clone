@@ -3,7 +3,7 @@ export default gql`
   mutation sendIncomeExtraWithholdingReceiptReportEmail(
     $companyId: Int!
     $input: IncomeExtraWithholdingReceiptInput!
-    $employeeInputs: [EmployeeExtraSendEmailRequestInput!]!
+    $employeeInputs: [EmployeeSendEmailRequestInput!]!
   ) {
     sendIncomeExtraWithholdingReceiptReportEmail(
       companyId: $companyId

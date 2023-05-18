@@ -18,29 +18,30 @@
 
     <div class="table-ctn mt-10">
       <a-spin :spinning="false" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="ID" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true" :focused-row-enabled="true" ref="taxPayDataRef" :on-cell-prepared="onCellPrepared">
-          <DxToolbar>
-            <DxItem location="after" template="button-template" css-class="cell-button-add" />
-          </DxToolbar>
-          <template #button-template>
-            <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs()">
-              <a-tooltip zIndex="9999999" placement="top" color="black">
-                <template #title>
-                  <div>
-                    변경이력
-                  </div>
-                </template>
-                <HistoryOutlined style="font-size: 18px" />
-              </a-tooltip>
-            </DxButton>
-          </template>
-          <DxPaging :page-size="0" />
-          <DxColumn caption="문서명" data-field="documentName" />
-          <DxColumn caption="사업장정보" data-field="businessSite" />
-          <DxColumn caption="사무대행업체정보" data-field="administrationAgency" />
-          <DxColumn caption="다운로드" cell-template="downA" width="80" />
+        <div class="d-flex">
+          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+            key-expr="ID" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+            :column-auto-width="true" :focused-row-enabled="true" ref="taxPayDataRef" :on-cell-prepared="onCellPrepared">
+            <DxToolbar>
+              <DxItem location="after" template="button-template" css-class="cell-button-add" />
+            </DxToolbar>
+            <template #button-template>
+              <!-- <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs()">
+                <a-tooltip zIndex="9999999" placement="top" color="black">
+                  <template #title>
+                    <div>
+                      변경이력
+                    </div>
+                  </template>
+                  <HistoryOutlined style="font-size: 18px" />
+                </a-tooltip>
+              </DxButton> -->
+            </template>
+            <DxPaging :page-size="0" />
+            <DxColumn caption="문서명" data-field="documentName" />
+            <DxColumn caption="사업장정보" data-field="businessSite" />
+            <DxColumn caption="사무대행업체정보" data-field="administrationAgency" />
+            <!-- <DxColumn caption="다운로드" cell-template="downA" width="80" />
           <template #downA="{ data }" class="custom-action">
 
             <div class="d-flex justify-content-center" v-if="dataState.registeredAt">
@@ -48,8 +49,34 @@
                 <DownloadOutlined :style="{ fontSize: 12 }" />
               </DxButton>
             </div>
-          </template>
-        </DxDataGrid>
+          </template> -->
+          </DxDataGrid>
+          <DxDataGrid id="fakeTable" :data-source="[{ ID: 1 }]" :show-borders="true" key-expr="ID">
+            <DxToolbar>
+              <DxItem location="after" template="button-template" css-class="cell-button-add" />
+            </DxToolbar>
+            <template #button-template>
+              <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs()">
+                <a-tooltip zIndex="9999999" placement="top" color="black">
+                  <template #title>
+                    <div>
+                      변경이력
+                    </div>
+                  </template>
+                  <HistoryOutlined style="font-size: 18px" />
+                </a-tooltip>
+              </DxButton>
+            </template>
+            <DxColumn caption="다운로드" cell-template="downA" width="80" />
+            <template #downA="{ data }" class="custom-action">
+              <div class="d-flex justify-content-center" v-if="dataState.registeredAt">
+                <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp()">
+                  <DownloadOutlined :style="{ fontSize: 12 }" />
+                </DxButton>
+              </div>
+            </template>
+          </DxDataGrid>
+        </div>
       </a-spin>
     </div>
     <a-row class="mt-20">
@@ -165,12 +192,12 @@ export default defineComponent({
         // const cells = lastRow.querySelectorAll('.dx-datagrid-cell');
         // && e.key == 1
         e.cellElement.style.display = 'none';
-        console.log(`output->e.key`,e.key)
         if (e.key == undefined) {
           e.cellElement.style.display = 'block';
         }
         if (e.key == 1) {
-          // e.cellElement.rowSpan="6"
+          console.log(`output->e.key`, e)
+          // e.cellElement.rowSpan="5r"
           e.cellElement.style.display = 'block';
         }
       }
@@ -221,12 +248,12 @@ export default defineComponent({
     const getMajorInsuranceParam = ref<any>({
       companyId: companyId,
       imputedYear: globalYear.value,
-      workId: dataState.value.workId,
     });
     const getMajorInsuranceTrigger = ref<boolean>(false);
     const {
       onError: getMajorInsuranceError,
       result: getMajorInsuranceResult,
+      refetch: getMajorInsuranceRefetch,
     } = useQuery(queries.getMajorInsuranceConsignStatusFaxFilingReportViewUrl, getMajorInsuranceParam, () => ({
       enabled: getMajorInsuranceTrigger.value,
       fetchPolicy: 'no-cache',
@@ -241,9 +268,9 @@ export default defineComponent({
       getMajorInsuranceTrigger.value = false;
     });
 
-    const onGetAcquistionRp = (workId: any) => {
-      getMajorInsuranceParam.value.workId = +workId;
+    const onGetAcquistionRp = () => {
       getMajorInsuranceTrigger.value = true;
+      getMajorInsuranceRefetch();
     };
 
     //-----------------------------------CREATE MAJOR--------------------------------
@@ -312,4 +339,18 @@ export default defineComponent({
 </script>
 <style lang="scss">
 @import './styles/index.scss';
+
+#fakeTable {
+  max-width: 82px;
+
+  .dx-row.dx-data-row {
+    td {
+      height: 180px;
+    }
+  }
+
+  tr.dx-row.dx-freespace-row.dx-column-lines {
+    display: none;
+  }
+}
 </style>

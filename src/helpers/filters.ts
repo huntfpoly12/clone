@@ -55,6 +55,21 @@ const filters = {
         return formattedNumber;
       } return null;
     },
-    
+    formatBizNumber(input: any) {
+      let inputStr = input.toString();
+      if (inputStr) {
+        let formattedNumber = `${inputStr.slice(0, 3)}-${inputStr.slice(3, 5)}-${inputStr.slice(5, 10)}`;
+        return formattedNumber;
+      } 
+      return input;
+    },
+    formatManageId(input: any) {
+      let inputStr = input.toString();
+      if (inputStr) {
+        let formattedNumber = `${inputStr.slice(0, 3)}-${inputStr.slice(3, 5)}-${inputStr.slice(5, 10)}-${inputStr.slice(10, 11)}`;
+        return formattedNumber;
+      } 
+      return input;
+    },
 }
 export default filters;

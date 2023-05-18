@@ -238,7 +238,7 @@
                         :auto-navigate-to-focused-row="true">
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                         <DxPaging :enabled="false" />
-                        <DxColumn caption="일용직사원" cell-template="tag" width="150" />
+                        <DxColumn caption="일용직사원" css-class="cell-left" cell-template="tag" width="150" data-field="employee.employeeId"/>
                         <template #tag="{ data }">
                             <div class="custom-action">
                                 <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -246,19 +246,19 @@
                                     :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                             </div>
                         </template>
-                        <DxColumn width="75" caption="근무일수" cell-template="workingDays" />
+                        <DxColumn width="75" caption="근무일수" cell-template="workingDays" data-field="workingDays"/>
                         <template #workingDays="{ data }">
                             {{ $filters.formatMonth(data.data.workingDays) }}
                         </template>
-                        <DxColumn css-class="money-column" width="85" caption="일급여" cell-template="dailyWage" />
+                        <DxColumn css-class="money-column" width="85" caption="일급여" cell-template="dailyWage" data-field="dailyWage"/>
                         <template #dailyWage="{ data }">
                             {{ $filters.formatCurrency(data.data.dailyWage) }}
                         </template>
-                        <DxColumn css-class="money-column" width="85" caption="월급여" cell-template="monthlyWage" />
+                        <DxColumn css-class="money-column" width="85" caption="월급여" cell-template="monthlyWage" data-field="monthlyWage"/>
                         <template #monthlyWage="{ data }">
                             {{ $filters.formatCurrency(data.data.monthlyWage) }}
                         </template>
-                        <DxColumn css-class="money-column" width="85" caption="공제" cell-template="total-deduction" />
+                        <DxColumn css-class="money-column" width="85" caption="공제" cell-template="total-deduction" data-field="totalDeduction"/>
                         <template #total-deduction="{ data }">
                             <a-tooltip placement="top">
                                 <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -269,7 +269,7 @@
                                 </span>
                             </a-tooltip>
                         </template>
-                        <DxColumn css-class="money-column" width="85" caption="차인지급액" cell-template="actualPayment" />
+                        <DxColumn css-class="money-column" width="85" caption="차인지급액" cell-template="actualPayment" data-field="actualPayment"/>
                         <template #actualPayment="{ data }">
                             {{ $filters.formatCurrency(data.data.actualPayment) }}
                         </template>
@@ -292,7 +292,7 @@
                                     :ratio="data.data.employee.incomeTaxMagnification" />
                             </div>
                         </template>
-                        <DxColumn caption="지급일" width="60px" cell-template="paymentDay" />
+                        <DxColumn css-class="cell-center" caption="지급일" width="55" cell-template="paymentDay" data-field="paymentDay"/>
                         <template #paymentDay="{ data }">
                             {{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
                         </template>

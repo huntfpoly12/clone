@@ -19,7 +19,7 @@
             </DxField>
           </a-col>
           <a-col :span="12">
-            <DxField label="직원유행">
+            <DxField label="직원선택">
               <employ-select required :arrayValue="employeeWages" v-model:valueEmploy="employeeWageSelected" width="300px"
                 placeholder="선택" />
             </DxField>
@@ -44,7 +44,7 @@
         </a-col>
         <a-col span="8">
           <DxField label="사업장관리번호">
-            <default-text-box :value="infoMajorInsuranceConsignStatus.manageId" placeholder="사업장관리번호" disabled />
+            <ManageIdTextBox :value="infoMajorInsuranceConsignStatus.manageId" disabled placeholder="" />
           </DxField>
         </a-col>
         <a-col span="16">
@@ -62,7 +62,7 @@
         <a-col span="4"></a-col>
         <a-col span="8">
           <DxField label="주민등록번호" class="field-custom">
-            <default-text-box :value="employee?.residentId" placeholder="주민등록번호" disabled />
+            <id-number-text-box :valueInput="employee?.residentId" placeholder="주민등록번호" disabled />
           </DxField>
         </a-col>
 
@@ -80,19 +80,19 @@
         </a-col>
         <a-col span="8">
           <DxField label="변경전급여" class="field-custom">
-            <number-box v-model:valueInput="formData.beforeSalary" :min="1" placeholder="보수변경 년월" />
+            <number-box-money v-model:valueInput="formData.beforeSalary" :min="1" />
           </DxField>
         </a-col>
         <a-col span="4" />
         <a-col span="8">
           <DxField label="변경후급여" class="field-custom">
-            <number-box v-model:valueInput="formData.afterSalary" required :min="1" placeholder="변경된 보수월액" />
+            <number-box-money v-model:valueInput="formData.afterSalary" required :min="1" />
           </DxField>
         </a-col>
         <a-col span="4" />
         <a-col span="8">
           <DxField label="변경년월" class="field-custom">
-            <month-picker-box v-model:valueDate="formData.changeYearmonth" />
+            <month-picker-box v-model:valueDate="formData.changeYearmonth" :teleport="true" />
           </DxField>
         </a-col>
         <a-col span="4" />

@@ -87,7 +87,7 @@ export default defineComponent({
         // sendBudgetSubjectTransitionReportEmail
         doneSendBudgetSubjectTransitionReportEmail((e) => {
             emit("closePopup", false)
-            notification('success', Message.getMessage('COMMON', '106').message)
+            notification('success', Message.getMessage('COMMON', '801').message)
         })
         errorSendBudgetSubjectTransitionReportEmail(e => {
             notification('error', e.message)
