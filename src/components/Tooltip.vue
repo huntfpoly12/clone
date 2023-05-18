@@ -1,12 +1,27 @@
 <template>
-  <div @mouseleave="hover && closePopper()" ref="popperContainerNode">
-    <div class="h-full flex-center" ref="triggerNode" @mouseover="hover && openPopper()" @click="togglePopper"
-         @focus="openPopper" @keyup.esc="closePopper">
+  <div
+
+    @mouseleave="hover && closePopper()"
+    ref="popperContainerNode"
+  >
+    <div
+      class="h-full flex-center"
+      ref="triggerNode"
+      @mouseover="hover && openPopper()"
+      @click="togglePopper"
+      @focus="openPopper"
+      @keyup.esc="closePopper"
+    >
       <!-- The default slot to trigger the popper  -->
-      <slot/>
+      <slot />
     </div>
     <Transition name="fade">
-      <div v-show="shouldShowPopper" class="popper" ref="popperNode" @mouseover="hover && openPopper()">
+      <div
+        v-show="shouldShowPopper"
+        class="popper"
+        ref="popperNode"
+        @mouseover="hover && openPopper()"
+      >
         <slot name="content" :close="close" :isOpen="modifiedIsOpen">
           {{ content }}
         </slot>
@@ -16,21 +31,21 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import debounce from "lodash/debounce";
 import {
   ref,
   computed,
+  defineProps,
   useSlots,
   toRefs,
   watch,
   watchEffect,
-  onMounted, Ref, onBeforeUnmount, reactive, nextTick, unref, isRef,
+  onMounted,
 } from "vue";
-import {Instance, arrow, createPopper, flip, offset, preventOverflow} from '@popperjs/core';
-
+import { usePopper, useContent, useClickAway } from "@/utils/tooltip";
 const emit = defineEmits(["open:popper", "close:popper"]);
-const slots: any = useSlots();
+const slots = useSlots();
 const props = defineProps({
   /**
    * Preferred placement (the "auto" placements will choose the side with most space.)
@@ -38,7 +53,7 @@ const props = defineProps({
   placement: {
     type: String,
     default: "top",
-    validator: function (value: string) {
+    validator: function(value) {
       return [
         "auto",
         "auto-start",
@@ -157,7 +172,7 @@ const triggerNode = ref(null);
 const modifiedIsOpen = ref(false);
 
 onMounted(() => {
-  const children = slots?.default();
+  const children = slots.default();
 
   if (children && children.length > 1) {
     return console.error(
@@ -180,7 +195,7 @@ const {
   show,
 } = toRefs(props);
 
-const {isOpen, open, close} = usePopper({
+const { isOpen, open, close } = usePopper({
   arrowPadding,
   emit,
   locked,
@@ -190,7 +205,7 @@ const {isOpen, open, close} = usePopper({
   popperNode,
   triggerNode,
 });
-const {hasContent} = useContent({slots, popperNode, content});
+const { hasContent } = useContent({slots, popperNode, content});
 
 const manualMode = computed(() => show.value !== null);
 const invalid = computed(() => disabled.value || !hasContent.value);
@@ -265,218 +280,7 @@ watchEffect(() => {
     useClickAway(popperContainerNode, closePopper);
   }
 });
-
-interface UseContentOptions {
-  slots: any;
-  popperNode: Ref<HTMLElement | null>;
-  content: Ref<any>;
-}
-
-function useContent({slots, popperNode, content}: UseContentOptions) {
-  let observer: MutationObserver | null = null;
-  const hasContent: Ref<boolean> = ref(false);
-  onMounted(() => {
-    if (slots.content !== undefined || content.value) {
-      hasContent.value = true;
-    }
-
-    observer = new MutationObserver(checkContent);
-    observer.observe(popperNode.value!, {
-      childList: true,
-      subtree: true,
-    });
-  });
-
-  onBeforeUnmount(() => {
-    if (observer) {
-      observer.disconnect();
-    }
-  });
-
-  /**
-   * Watch the content prop
-   */
-  watch(content, (newValue) => {
-    if (newValue) {
-      hasContent.value = true;
-    } else {
-      hasContent.value = false;
-    }
-  });
-
-  /**
-   * Check the content slot
-   */
-  const checkContent = () => {
-    if (slots.content) {
-      hasContent.value = true;
-    } else {
-      hasContent.value = false;
-    }
-  };
-
-  return {
-    hasContent,
-  };
-}
-
-// interface UsePopperOptions {
-//   arrowPadding: Ref<string>;
-//   emit: (event: string) => void;
-//   locked: Ref<boolean>;
-//   offsetDistance: Ref<number>;
-//   offsetSkid: Ref<number>;
-//   placement: Ref<Placement>;
-//   popperNode: Ref<HTMLElement | null>;
-//   triggerNode: Ref<HTMLElement | null>;
-// }
-const toInt = (x: string): number => parseInt(x, 10);
-
-function usePopper(
-  {
-    arrowPadding,
-    emit,
-    locked,
-    offsetDistance,
-    offsetSkid,
-    placement,
-    popperNode,
-    triggerNode,
-  }: any) {
-  const state = reactive({
-    isOpen: false,
-    popperInstance: null as Instance | null,
-  });
-
-  // Enable or disable event listeners to optimize performance.
-  const setPopperEventListeners = (enabled: boolean) => {
-    state.popperInstance?.setOptions(options => ({
-      ...options,
-      modifiers: [...<[]>options.modifiers, {name: 'eventListeners', enabled}],
-    }));
-  };
-
-  const enablePopperEventListeners = () => setPopperEventListeners(true);
-  const disablePopperEventListeners = () => setPopperEventListeners(false);
-
-  const close = () => {
-    if (!state.isOpen) {
-      return;
-    }
-
-    state.isOpen = false;
-    emit('close:popper');
-  };
-
-  const open = () => {
-    if (state.isOpen) {
-      return;
-    }
-
-    state.isOpen = true;
-    emit('open:popper');
-  };
-
-  // When isOpen or placement change
-  watch([() => state.isOpen, placement], async ([isOpen]) => {
-    if (isOpen) {
-      await initializePopper();
-      enablePopperEventListeners();
-    } else {
-      disablePopperEventListeners();
-    }
-  });
-
-  const initializePopper = async () => {
-    await nextTick();
-    state.popperInstance = createPopper(triggerNode.value!, popperNode.value!, {
-      placement: placement.value,
-      modifiers: [
-        preventOverflow,
-        flip,
-        {
-          name: 'flip',
-          enabled: !locked.value,
-        },
-        arrow,
-        {
-          name: 'arrow',
-          options: {
-            padding: toInt(arrowPadding.value),
-          },
-        },
-        offset,
-        {
-          name: 'offset',
-          options: {
-            offset: [toInt(offsetSkid.value.toString()), toInt(offsetDistance.value.toString())],
-          },
-        },
-      ],
-    });
-
-    // Update its position
-    state.popperInstance.update();
-  };
-
-  onBeforeUnmount(() => {
-    state.popperInstance?.destroy();
-  });
-
-  return {
-    ...toRefs(state),
-    open,
-    close,
-  };
-}
-
-const useClickAway = (target: any, handler: any) => {
-  const event = "pointerdown";
-
-  if (typeof window === 'undefined' || !window) {
-    return;
-  }
-
-  const listener = (event: Event) => {
-    const el = unref(target);
-    if (!el) {
-      return;
-    }
-
-    if (el === event.target || event.composedPath().includes(el)) {
-      return;
-    }
-
-    handler(event);
-  };
-
-  return useEventListener(window, event, listener);
-}
-
-type EventListenerTarget = EventTarget | Ref<EventTarget | null>;
-
-function useEventListener(
-  target: EventListenerTarget,
-  event: string,
-  handler: EventListenerOrEventListenerObject
-) {
-  if (isRef(target)) {
-    watch(target, (value: EventListenerTarget, oldValue: EventListenerTarget) => {
-      unref(oldValue)?.removeEventListener(event, handler);
-      unref(value)?.addEventListener(event, handler);
-    });
-  } else {
-    onMounted(() => {
-      unref(target)?.addEventListener(event, handler);
-    });
-  }
-
-  onBeforeUnmount(() => {
-    unref(target)?.removeEventListener(event, handler);
-  });
-}
 </script>
-
 <style scoped>
 .h-full {
   height: 100%;
