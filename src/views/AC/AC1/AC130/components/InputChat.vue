@@ -2,7 +2,7 @@
   <div class="input-edit-chat">
     <div class="input-edit-chat-input">
       <textarea :class="{ 'input-edit-chat-input-reply': Object.keys(!!dataReply ? dataReply : {}).length }" rows="1"
-        ref="inputChat" :placeholder="placeholder" v-model="textChat" @input="changeInput"
+        ref="inputChat" :placeholder="placeholder" v-model="contentBinding" @input="changeInput"
         @keypress.enter.exact.prevent="submitChat"></textarea>
       <div v-if="Object.keys(!!dataReply ? dataReply : {}).length" class="input-edit-chat-input-contentReply">
         <PreviewReply :dataReply="dataReply" />
@@ -27,9 +27,9 @@
       </div>
       <div class="input-edit-chat-input-action-btn">
         <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
-          :disabled="disabled || (!textChat.trim() && !filesUpload.length)" />
+          :disabled="disabled || (!contentBinding.trim() && !filesUpload.length)" />
         <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()"
-          :disabled="disabled || (!textChat.trim() && !filesUpload.length)" />
+          :disabled="disabled || (!contentBinding.trim() && !filesUpload.length)" />
       </div>
     </div>
     <div v-if="filesUpload.length" class="input-edit-chat-input-files">
@@ -38,9 +38,10 @@
           <FileOutlined style="margin-right: 10px;" />
           <div class="input-edit-chat-input-files-item-file-info">
             <p class="input-edit-chat-input-files-item-file-info-name">{{ file?.file ? file.file.name : file.name }}</p>
-            <p class="input-edit-chat-input-files-item-file-info-size">({{ formatFileSize(file?.file ? file.file.size :
+            <!-- wait BE -->
+            <!-- <p class="input-edit-chat-input-files-item-file-info-size">({{ formatFileSize(file?.file ? file.file.size :
               file.size) }})
-            </p>
+            </p> -->
           </div>
         </div>
         <DeleteOutlined class="input-edit-chat-input-files-item-delete" @click="removeFile(index)" />
@@ -51,7 +52,7 @@
 </template>
   
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, FileTextOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
@@ -62,13 +63,18 @@ import EmojiPicker from 'vue3-emoji-picker'
 import 'vue3-emoji-picker/css'
 import MarkdownCustom from './MarkdownCustom.vue';
 import PreviewReply from './PreviewReply.vue';
+import { companyId } from "@/helpers/commonFunction"
+
+import Repository from "@/repositories";
+
+const uploadRepository = Repository.get("upload");
 export default defineComponent({
   props: {
-    textChatProp: {
+    content: {
       type: String,
       default: ''
     },
-    filesUploadProps: {
+    files: {
       type: Array,
       default: []
     },
@@ -101,9 +107,12 @@ export default defineComponent({
     PreviewReply
   },
   setup(props, { emit }) {
+    const acYear: any = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
+    const globalFacilityBizId: any = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
+
     const inputFile = ref<any>()
-    let textChat = ref(props.textChatProp || '')
-    let filesUpload: any = ref(props.filesUploadProps || [])
+    let contentBinding = ref(props.content || '')
+    let filesUpload: any = ref(props.files || [])
     const inputChat: any = ref()
     let isVisibleEmojiForm = ref(false)
     const objectChatUpFile: any = ref(null)
@@ -120,11 +129,11 @@ export default defineComponent({
     };
 
     watch(() => filesUpload.value, (value) => {
-      emit('update:filesUploadProps', value)
+      emit('update:files', value)
     })
 
-    watch(() => textChat.value, (value) => {
-      emit('update:textChatProp', value)
+    watch(() => contentBinding.value, (value) => {
+      emit('update:content', value)
     })
 
     const changeInput = (event: any) => {
@@ -139,7 +148,7 @@ export default defineComponent({
     }
 
     const resetInputChat = () => {
-      textChat.value = ''
+      contentBinding.value = ''
       filesUpload.value = []
       inputChat.value.style.overflowY = "hidden"
       inputChat.value.style.height = "40px"
@@ -162,10 +171,10 @@ export default defineComponent({
 
     const uploadPreviewFile = async (e: any) => {
       const file = e.target.files[0]
-      // const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
-      // if (!isImage) {
-      //   notification('error', 'You can only upload png, jpg, jpeg, gif file!')
-      // }
+      const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
+      if (!isImage) {
+        notification('error', 'You can only upload png, jpg, jpeg, gif file!')
+      }
       const isLt10M = file.size / 1024 / 1024 <= 10;
       if (!isLt10M) {
         notification('error', 'Image must smaller than 10MB!')
@@ -174,21 +183,34 @@ export default defineComponent({
       if (isDuplicaseName) {
         notification('error', 'Duplicate image are not allowed!')
       }
-      // if (!isImage || !isLt10M || isDuplicaseName) {
-      //   e.target.value = null
-      //   return
-      // }
-      if (!isLt10M || isDuplicaseName) {
+      if (!isImage || !isLt10M || isDuplicaseName) {
         e.target.value = null
         return
       }
-      const url = await getBase64(file)
-      filesUpload.value.push({
-        file: file,
-        contentType: file.type,
-        url: url
+      // if (!isLt10M || isDuplicaseName) {
+      //   e.target.value = null
+      //   return
+      // }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('companyId', companyId);
+      formData.append('fiscalYear', acYear.value);
+      formData.append('facilityBusinessId', globalFacilityBizId.value);
+      uploadRepository.accountingProof(formData).then(async (res: any) => {
+        // const url = await getBase64(file)
+        filesUpload.value.push({
+          id: res.data.id,
+          // file: file,
+          contentType: file.type,
+          name: file.name,
+          // url: url
+        })
+      }).catch((error: any) => {
+        console.log('err Upload', error.message);
+      }).finally(() => {
+        e.target.value = null
       })
-      e.target.value = null
     }
 
     const getBase64 = (file: File) => {
@@ -206,9 +228,8 @@ export default defineComponent({
     }
 
     const onSelectEmoji = (emoji: any) => {
-      console.log('emoji', emoji);
       if (props.disabled) return
-      textChat.value += emoji.i
+      contentBinding.value += emoji.i
       changeInput(inputChat.value)
     }
 
@@ -241,7 +262,7 @@ export default defineComponent({
       listChat,
       changeInput,
       submitChat,
-      textChat,
+      contentBinding,
       inputChat,
       formatDate,
       inputFile,
