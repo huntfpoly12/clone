@@ -99,7 +99,7 @@
         <div class="main">
             <div class="data-grid">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
-                    <DxDataGrid noDataText="내역이 없습니다" id="dataGridAc120" key-expr="accountingDocumentId"
+                    <DxDataGrid noDataText="내역이 없습니다" id="dataGridAc120" :class="store.state.common.ac120.statusShowFull ? 'hiddenTable' : ''" key-expr="accountingDocumentId"
                         :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                         ref="gridRefAC120" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"

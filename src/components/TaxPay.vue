@@ -14,7 +14,7 @@ import type { CascaderProps } from "ant-design-vue";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
 
 const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
-  value: TaxPayItem.all()[index].enumOrdinal,
+  value: TaxPayItem.all()[index].enumOrdinal + 1,
   label: TaxPayItem.all()[index].name,
 }));
 const arrLabel = Array();
@@ -60,7 +60,7 @@ export default defineComponent({
     }
   },
   setup(props,{emit}) {
-    const value = ref();
+    const value = ref(props.selectedValue);
     watch(
       () => props.selectedValue,
       (newValue) => {
