@@ -1,7 +1,6 @@
-import { reactive, watch } from 'vue'
-import { useQuery } from '@vue/apollo-composable'
-import { Company } from "@/views/PA/PA8/PA810/utils";
 import getMajorInsuranceConsignStatus from "@/graphql/queries/common/getMajorInsuranceConsignStatus";
+import { useQuery } from '@vue/apollo-composable';
+import { reactive, watch } from 'vue';
 
 export default function useGetMajorInsuranceConsignStatus(companyId: number) {
   const infoMajorInsuranceConsignStatus = reactive({
