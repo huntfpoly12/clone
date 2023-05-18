@@ -27,7 +27,6 @@ export default gql`
       updatedBy
       ip
       active
-      company
     }
   }
 `;
