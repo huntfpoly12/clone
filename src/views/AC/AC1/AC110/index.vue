@@ -312,7 +312,7 @@
         <div class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
             <UploadPreviewImage width="295" :payLoadProofs="payloadGetTransactionDetails"
-              @updateAddBankbookDetailProof="updateAddBankbookDetailProof"
+              @updateAddBankbookDetailProof="updateAddBankbookDetailProof" :bankbookDetailId="rowKeyfocused"
               @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" :disabled="isRegistered" :limit="10" />
           </div>
         </div>
@@ -1050,13 +1050,13 @@ export default defineComponent({
       }
     }
 
-    const updateAddBankbookDetailProof = () => {
-      const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
+    const updateAddBankbookDetailProof = (bankbookDetailIdEdited: any) => {
+      const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === bankbookDetailIdEdited)
       dataSource.value[indexSelected].proofCount++
     }
 
-    const updateremoveBankbookDetailProof = () => {
-      const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
+    const updateremoveBankbookDetailProof = (bankbookDetailIdEdited: any) => {
+      const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === bankbookDetailIdEdited)
       dataSource.value[indexSelected].proofCount--
     }
     const focusInputIncomeSpending = (data: any, key: string) => {

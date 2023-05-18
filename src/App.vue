@@ -17,6 +17,12 @@ export default {
 </script>
 
 <style>
+#app {
+  /* min-width: 1900px;
+  overflow: hidden; */
+  /* overflow-x: auto;
+  overflow-y: hidden !important; */
+}
 .page-content {
   padding: 24px;
 }

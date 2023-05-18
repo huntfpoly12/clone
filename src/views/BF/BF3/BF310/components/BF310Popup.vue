@@ -320,7 +320,7 @@
                                     :label-col="labelCol">
                                     <id-number-text-box width="250px" :required="true"
                                         v-model:valueInput="formState.content.cmsBank.ownerBizNumber"
-                                        nameInput="cmsBank-ownerBizNumber" mask="00000-00000"/>
+                                        nameInput="cmsBank-ownerBizNumber" />
                                     <div class="noteImage">
                                         <img src="@/assets/images/iconInfo.png"
                                             style="width: 14px; height: 14px; margin-top: 0px;" />
@@ -496,7 +496,7 @@ export default defineComponent({
                 delete value.getSubscriptionRequest.content.company.license
                 formState.value = value.getSubscriptionRequest;
                 formState.value.institutionNumber =
-                    value.getSubscriptionRequest.content.accounting.facilityBusinesses.length > 0
+                    value.getSubscriptionRequest.content.accounting?.facilityBusinesses.length > 0
                         ? value.getSubscriptionRequest.content.accounting.facilityBusinesses[0].longTermCareInstitutionNumber : "";
                 // set date list status value
                 dataStatus[0].date = value.getSubscriptionRequest.createdAt;
@@ -514,13 +514,13 @@ export default defineComponent({
                 }
                 objDataDefault.value = JSON.parse(JSON.stringify(value.getSubscriptionRequest))
                 objDataDefault.value.institutionNumber =
-                    value.getSubscriptionRequest.content.accounting.facilityBusinesses.length > 0
+                    value.getSubscriptionRequest.content.accounting?.facilityBusinesses.length > 0
                         ? value.getSubscriptionRequest.content.accounting.facilityBusinesses[0].longTermCareInstitutionNumber : "";
-                dataSource.value = formState.value.content.accounting.facilityBusinesses.map((item: any, key: any) => {
+                dataSource.value = formState.value.content.accounting?.facilityBusinesses.map((item: any, key: any) => {
                     return {
                         ...item, rowIndex: key
                     }
-                })
+                }) || []
                 // Setting the first row of the dataSource as the active row.
                 if (dataSource.value.length) {
                     dataActiveRow.value = dataSource.value[0]

@@ -1,213 +1,242 @@
 <template>
     <div id="pa-110">
-        <a-spin :key="countKey" :spinning="loading || loadingGetEmployeeWage" size="large"><StandardForm formName="pa-110-form" ref="pa110FormRef">
-            <a-row class="row-1" >
-                <a-col :span="12">
-                    <a-form-item label="사원" :class="store.state.common.pa110.statusFormAdd ? 'red' : ''">
-                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus"
-                            :required="true" v-model:valueEmploy="dataIW.employee.employeeId" width="316px"
-                            @onChange="onUpdateValue" />
-                    </a-form-item>
-                </a-col>
-                <a-col :span="12">
-                    <a-form-item label="지급일" class="red">
-                        <date-time-box-custom ref="requiredPaymentDay" width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
-                v-model:valueDate="dataIW.paymentDay" :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus"/>
-                        <!-- <number-box width="100px" :min="1" v-model:valueInput="dataIW.paymentDay" :max="31" :isFormat="true"
+        <a-spin :key="countKey" :spinning="loading || loadingGetEmployeeWage" size="large">
+            <StandardForm formName="pa-110-form" ref="pa110FormRef">
+                <a-row class="row-1">
+                    <a-col :span="12">
+                        <a-form-item label="사원" :class="store.state.common.pa110.statusFormAdd ? 'red' : ''">
+                            <EmploySelect :arrayValue="arrayEmploySelect"
+                                :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus"
+                                :required="true" v-model:valueEmploy="dataIW.employee.employeeId" width="316px"
+                                @onChange="onUpdateValue" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item label="지급일" class="red">
+                            <date-time-box-custom ref="requiredPaymentDay" width="150px" :required="true"
+                                :startDate="startDate" :finishDate="finishDate" v-model:valueDate="dataIW.paymentDay"
+                                :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus" />
+                            <!-- <number-box width="100px" :min="1" v-model:valueInput="dataIW.paymentDay" :max="31" :isFormat="true"
                             :disabled="!store.state.common.pa110.statusFormAdd || store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :required="true" /> -->
-                    </a-form-item>
-                </a-col>
-            </a-row>
-            <a-row :gutter="16" :spinning="loadingGetEmployeeWage">
-                <a-col :span="14">
-                    <div class="header-text-2">요약</div>
-                    <div class="summary">
-                        <div class="d-flex-center">
-                            <span class="w-120">소득수당합계</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItem" />
-                            <span class="pl-5">원</span>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+                <a-row :gutter="16" :spinning="loadingGetEmployeeWage">
+                    <a-col :span="14">
+                        <div class="header-text-2">요약</div>
+                        <div class="summary">
+                            <div class="d-flex-center">
+                                <span class="w-120">소득수당합계</span>
+                                <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItem" />
+                                <span class="pl-5">원</span>
+                                <a-tooltip color="black" placement="top">
+                                    <template #title>수당 합계 = 수당 과세 + 수당 비과세</template>
+                                    <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                </a-tooltip>
+                            </div>
+                            <div class="text1 d-flex-center">
+                                <span class="w-110">수당 과세합계</span>
+                                <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItemTaxFree" />
+                                <span class="pl-5">원</span>
+                            </div>
+                            <div class="text2 d-flex-center">
+                                <span class="w-110">수당 비과세 합계</span>
+                                <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItemTax" />
+                                <span class="pl-5">원</span>
+                            </div>
+                            <div class="d-flex-center">
+                                <span class="w-120">공제 합계</span>
+                                <number-box-money :disabled="true" width="100px" v-model:valueInput="totalDeduction" />
+                                <span class="pl-5">원</span>
+                            </div>
+                            <div class="d-flex-center">
+                                <span class="w-120">차인지급액</span>
+                                <number-box-money :disabled="true" width="100px" v-model:valueInput="subPayment" />
+                                <span class="pl-5">원</span>
+                                <a-tooltip color="black" placement="top">
+                                    <template #title>차인지급액 = 수당 합계 - 공제 합계</template>
+                                    <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                </a-tooltip>
+                            </div>
+                        </div>
+                    </a-col>
+                    <a-col :span="10" class="input-items">
+                        <div class="header-text-2">근로시간
                             <a-tooltip color="black" placement="top">
-                                <template #title>수당 합계 = 수당 과세 + 수당 비과세</template>
-                                <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                                <template #title>사원별 급여명세서에 표시 됩니다.</template>
+                                <img src="@/assets/images/iconInfo.png" class="img-info" />
                             </a-tooltip>
                         </div>
-                        <div class="text1 d-flex-center">
-                            <span class="w-110">수당 과세합계</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItemTaxFree" />
-                            <span class="pl-5">원</span>
-                        </div>
-                        <div class="text2 d-flex-center">
-                            <span class="w-110">수당 비과세 합계</span>
-                            <number-box-money :disabled="true" width="100px"
-                                v-model:valueInput="totalPayItemTax" />
-                            <span class="pl-5">원</span>
-                        </div>
-                        <div class="d-flex-center">
-                            <span class="w-120">공제 합계</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="totalDeduction" />
-                            <span class="pl-5">원</span>
-                        </div>
-                        <div class="d-flex-center">
-                            <span class="w-120">차인지급액</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="subPayment" />
-                            <span class="pl-5">원</span>
-                            <a-tooltip color="black" placement="top">
-                                <template #title>차인지급액 = 수당 합계 - 공제 합계</template>
-                                <img src="@/assets/images/iconInfo.png" class="img-info"/>
-                            </a-tooltip>
-                        </div>
-                    </div>
-                </a-col>
-                <a-col :span="10" class="input-items">
-                    <div class="header-text-2">근로시간
-                        <a-tooltip color="black" placement="top">
-                            <template #title>사원별 급여명세서에 표시 됩니다.</template>
-                            <img src="@/assets/images/iconInfo.png" class="img-info"/>
-                        </a-tooltip>
-                    </div>
-                    <a-form-item label="근무일수" label-align="right">
-                        <div style="display: flex;align-items: center;">
-                            <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" :max="31" width="100px"
-                                v-model:valueInput="dataIW.workingDays" :required="true"/>
-                            <span style="padding-left: 5px;">일</span>
-                        </div>
-                    </a-form-item>
-                    <a-form-item label="총근로시간" label-align="right">
-                        <div style="display: flex;align-items: center;">
-                            <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
-                                v-model:valueInput="dataIW.totalWorkingHours" :required="true"/>
-                            <span style="padding-left: 5px;">시간</span>
-                        </div>
-                    </a-form-item>
-                    <a-form-item label="연장근로시간" label-align="right">
-                        <div style="display: flex;align-items: center;">
-                            <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
-                                v-model:valueInput="dataIW.overtimeWorkingHours" :required="true"/>
-                            <span style="padding-left: 5px;">시간</span>
-                        </div>
-                    </a-form-item>
-                    <a-form-item label="야간근로시간" label-align="right">
-                        <div style="display: flex;align-items: center;">
-                            <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
-                                v-model:valueInput="dataIW.workingHoursAtNight" :required="true"/>
-                            <span style="padding-left: 5px;">시간</span>
-                        </div>
-                    </a-form-item>
-                    <a-form-item label="휴일근로시간" label-align="right">
-                        <div style="display: flex;align-items: center;">
-                            <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true" :min="0" width="100px"
-                                v-model:valueInput="dataIW.workingHoursOnHolidays" :required="true"/>
-                            <span style="padding-left: 5px;">시간</span>
-                        </div>
-                    </a-form-item>
-                </a-col>
+                        <a-form-item label="근무일수" label-align="right">
+                            <div style="display: flex;align-items: center;">
+                                <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true"
+                                    :min="0" :max="31" width="100px" v-model:valueInput="dataIW.workingDays"
+                                    :required="true" />
+                                <span style="padding-left: 5px;">일</span>
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="총근로시간" label-align="right">
+                            <div style="display: flex;align-items: center;">
+                                <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true"
+                                    :min="0" width="100px" v-model:valueInput="dataIW.totalWorkingHours" :required="true" />
+                                <span style="padding-left: 5px;">시간</span>
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="연장근로시간" label-align="right">
+                            <div style="display: flex;align-items: center;">
+                                <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true"
+                                    :min="0" width="100px" v-model:valueInput="dataIW.overtimeWorkingHours"
+                                    :required="true" />
+                                <span style="padding-left: 5px;">시간</span>
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="야간근로시간" label-align="right">
+                            <div style="display: flex;align-items: center;">
+                                <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true"
+                                    :min="0" width="100px" v-model:valueInput="dataIW.workingHoursAtNight"
+                                    :required="true" />
+                                <span style="padding-left: 5px;">시간</span>
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="휴일근로시간" label-align="right">
+                            <div style="display: flex;align-items: center;">
+                                <number-box :disabled="store.state.common.pa110.statusDisabledStatus" :spinButtons="true"
+                                    :min="0" width="100px" v-model:valueInput="dataIW.workingHoursOnHolidays"
+                                    :required="true" />
+                                <span style="padding-left: 5px;">시간</span>
+                            </div>
+                        </a-form-item>
+                    </a-col>
 
-            </a-row>
-            <div class="header-text-3">급여 / 공제</div>
-            <a-row :gutter="16">
-                <a-col :span="13">
-                    <div class="header-text-2">급여 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 {{
-                        $filters.formatCurrency(totalPayItemTaxFree)
-                    }} + 비과세 {{
+                </a-row>
+                <div class="header-text-3">급여 / 공제</div>
+                <a-row :gutter="16">
+                    <a-col :span="13">
+                        <div class="header-text-2">급여 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 {{
+                            $filters.formatCurrency(totalPayItemTaxFree)
+                        }} + 비과세 {{
     $filters.formatCurrency(totalPayItemTax)
 }}</div>
-                    <a-spin :spinning="loadingConfigPayItems" size="large">
-                        <div class="deduction-main">
-                            <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
-                                <span>
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                        :name="item.name" :type="1" subName="과세" :showTooltip="false" :width="'130px'" />
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" subName="상여(과세)" :showTooltip="false" :width="'130px'" />
-                                    <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                        :name="item.name" :type="3" :showTooltip="false"
-                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission"
-                                        :width="'130px'" />
-                                    <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                        :name="item.name" :type="4" subName="공제" :showTooltip="false" :width="'130px'" />
-                                </span>
-                                <div>
-                                    <number-box-money :disabled="store.state.common.pa110.statusDisabledStatus" width="130px" @changeInput="onChangeInputPayItem" :spinButtons="false" :rtlEnabled="false"
-                                        v-model:valueInput="item.amount" :min="0">
-                                    </number-box-money>
-                                    <span class="pl-5">원</span>
+                        <a-spin :spinning="loadingConfigPayItems" size="large">
+                            <div class="deduction-main">
+                                <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
+                                    <span>
+                                        <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                                            :name="item.name" :type="1" subName="과세" :showTooltip="false"
+                                            :width="'130px'" />
+                                        <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                                            :name="item.name" :type="2" subName="상여(과세)" :showTooltip="false"
+                                            :width="'130px'" />
+                                        <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                                            :name="item.name" :type="3" :showTooltip="false"
+                                            :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission"
+                                            :width="'130px'" />
+                                        <deduction-items
+                                            v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                                            :name="item.name" :type="4" subName="공제" :showTooltip="false"
+                                            :width="'130px'" />
+                                    </span>
+                                    <div>
+                                        <number-box-money :disabled="store.state.common.pa110.statusDisabledStatus"
+                                            width="130px" @changeInput="onChangeInputPayItem" :spinButtons="false"
+                                            :rtlEnabled="false" v-model:valueInput="item.amount" :min="0">
+                                        </number-box-money>
+                                        <span class="pl-5">원</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </a-spin>
-                </a-col>
-                <a-col :span="11">
-                    <div class="header-text-2">공제 {{ $filters.formatCurrency(totalDeduction) }} 원 </div>
-                    <a-spin :spinning="loadingConfigDeductions" size="large">
-                        <div class="deduction-main">
-                            <div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
-                                <span>
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                        </a-spin>
+                    </a-col>
+                    <a-col :span="11">
+                        <div class="header-text-2">공제 {{ $filters.formatCurrency(totalDeduction) }} 원 </div>
+                        <a-spin :spinning="loadingConfigDeductions" size="large">
+                            <div class="deduction-main">
+                                <div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
+                                    <span>
+                                        <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
                                             :name="item.name" :type="1" :showTooltip="false" subName="과세" />
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" :showTooltip="false" subName="상여(과세)" />
-                                    <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                        :name="item.name" :type="3"
-                                         :showTooltip="false" :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-                                    <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                        :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
-                                </span>
-                                <div>
-                                    <a-tooltip color="black" :class="item.itemCode == 1012 && localIncomeBoo ? 'red' : ''" placement="top" zIndex="9999"
-                                    :title="item.itemCode == 1012 && localIncomeBoo ? '소액징수부면제 적용' + localReal : ''">
-                                        <!-- <template #title>
+                                        <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                                            :name="item.name" :type="2" :showTooltip="false" subName="상여(과세)" />
+                                        <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                                            :name="item.name" :type="3" :showTooltip="false"
+                                            :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                        <deduction-items
+                                            v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                                            :name="item.name" :width="'130px'" :type="4" :showTooltip="false"
+                                            subName="공제" />
+                                    </span>
+                                    <div>
+                                        <a-tooltip color="black"
+                                            :class="item.itemCode == 1012 && localIncomeBoo ? 'red' : ''" placement="top"
+                                            zIndex="9999"
+                                            :title="item.itemCode == 1012 && localIncomeBoo ? '소액징수부면제 적용' + localReal : ''">
+                                            <!-- <template #title>
                                             소액징수부면제 적용 {{ localReal }}
                                         </template> -->
-                                        <span>
-                                        <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true"
-                                            v-model:valueInput="item.amount" @changeInput="onChangeInputDeduction"
-                                            :disabled="store.state.common.pa110.statusDisabledStatus" format="#0,###" />
-                                        </span>
-                                    </a-tooltip>
-                                    <!-- <number-box-money v-else :disabled="store.state.common.pa110.statusDisabledStatus" width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false" :rtlEnabled="true"
+                                            <span>
+                                                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true"
+                                                    v-model:valueInput="item.amount" @changeInput="onChangeInputDeduction"
+                                                    :disabled="store.state.common.pa110.statusDisabledStatus"
+                                                    format="#0,###" />
+                                            </span>
+                                        </a-tooltip>
+                                        <!-- <number-box-money v-else :disabled="store.state.common.pa110.statusDisabledStatus" width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false" :rtlEnabled="true"
                                         v-model:valueInput="item.amount" :min="0">
                                     </number-box-money> -->
-                                    <span class="pl-5">원</span>
+                                        <span class="pl-5">원</span>
+                                    </div>
                                 </div>
                             </div>
+                        </a-spin>
+                    </a-col>
+                </a-row>
+                <a-row class="mt-20 mb-10">
+                    <a-col :offset="4" style="text-align: center;">
+                        <div class="text-align-center" style="display: flex; justify-content: center;">
+                            <a-tooltip placement="top" :overlayStyle="{ maxWidth: '500px' }">
+                                <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
+                                <div>
+                                    <button-tooltip-error :disabled="store.state.common.pa110.statusDisabledStatus"
+                                        :statusChange="store.state.common.pa110.statusChangeFormPrice"
+                                        @onClick="actionDedution" />
+                                </div>
+                            </a-tooltip>
+                            <a-tooltip placement="top">
+                                <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
+                                <div>
+                                    <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || true"
+                                        style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained"
+                                        type="default" text="4대보험 EDI 조회/적용" />
+                                </div>
+                            </a-tooltip>
+                            <a-tooltip placement="top">
+                                <template #title>중도퇴사자 연말정산 반영</template>
+                                <div>
+                                    <button-basic
+                                        :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement1"
+                                        style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained"
+                                        type="default" text="중도정산 반영" />
+                                </div>
+                            </a-tooltip>
+                            <a-tooltip placement="top">
+                                <template #title>중도퇴사자 연말정산 반영분 삭제</template>
+                                <div>
+                                    <button-basic
+                                        :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement2"
+                                        style="margin: 0px 5px"
+                                        @onClick="!store.state.common.pa110.statusFormAdd ? modalDeteleMidTerm = true : ''"
+                                        mode="contained" type="default" text="중도정산 삭제" />
+                                </div>
+                            </a-tooltip>
+                            <button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px"
+                                @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
                         </div>
-                    </a-spin>
-                </a-col>
-            </a-row>
-            <a-row class="mt-20 mb-10">
-                <a-col :offset="4" style="text-align: center;">
-                    <div class="text-align-center" style="display: flex; justify-content: center;">
-                        <a-tooltip placement="top" :overlayStyle="{maxWidth: '500px'}">
-                            <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
-                            <div>
-                                <button-tooltip-error :disabled="store.state.common.pa110.statusDisabledStatus" :statusChange="store.state.common.pa110.statusChangeFormPrice" @onClick="actionDedution"/>  
-                            </div>
-                        </a-tooltip>
-                        <a-tooltip placement="top">
-                            <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
-                            <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || true" style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
-                            </div>
-                        </a-tooltip>
-                        <a-tooltip placement="top">
-                            <template #title>중도퇴사자 연말정산 반영</template>
-                            <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement1" style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 반영" />
-                            </div>
-                        </a-tooltip>
-                        <a-tooltip placement="top">
-                            <template #title>중도퇴사자 연말정산 반영분 삭제</template>
-                            <div>
-                                <button-basic :disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement2" style="margin: 0px 5px" @onClick="!store.state.common.pa110.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
-                            </div>
-                        </a-tooltip>
-                        <button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
-                    </div>
-                </a-col>
-            </a-row>
-        </StandardForm></a-spin>
-        <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false"
-            :data="dataConfigDeductions" @updateDate="updateDataDeduction" />
+                    </a-col>
+                </a-row>
+            </StandardForm>
+        </a-spin>
+        <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" :data="dataConfigDeductions"
+            @updateDate="updateDataDeduction" />
         <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
         <DeletePopupTaxPay :modalStatus="modalDeteleTaxpay" @closePopup="modalDeteleTaxpay = false" />
         <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false" :data="dataIW" />
@@ -304,8 +333,8 @@ export default defineComponent({
         let statusMidTermSettlement1 = ref<boolean>(true);
         let statusMidTermSettlement2 = ref<boolean>(true);
         let requiredPaymentDay = ref()
-        const startDate = computed(() =>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).startOf('month').toDate()));
-        const finishDate = computed(() =>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).endOf('month').toDate()));
+        const startDate = computed(() => (dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).startOf('month').toDate()));
+        const finishDate = computed(() => (dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).endOf('month').toDate()));
         // ============ GRAPQL ===============================
         // get employeewage
         const { loading: loadingEmployeeWage, onResult: resEmployeeWage } = useQuery(queries.getEmployeeWages, originData, () => ({
@@ -436,7 +465,7 @@ export default defineComponent({
                 // return
             }
             await store.state.common.pa110.loadingTableInfo++
-            
+
         })
         doneCreated(async res => {
             notification('success', Message.getMessage('COMMON', '101').message)
@@ -455,8 +484,8 @@ export default defineComponent({
                 // return
             }
             await store.state.common.pa110.loadingTableInfo++
-            
-            
+
+
         })
 
         errorCreated(async res => {
@@ -486,12 +515,18 @@ export default defineComponent({
 
         watch(() => dataConfigDeductions.value, (value) => {
             // store.state.common.pa110.statusChangeFormEdit = true;
-            calculateTax();
+            
             // console.log(value.find((item: any) => item.itemCode == 1012).amountNew);
             // console.log(value.find((item: any) => item.itemCode == 1012).amount);
-            
+
             localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
             localReal.value = value.find((item: any) => item.itemCode == 1012).amount;
+            value.map((item: any) => {
+                if (item.itemCode == 1012) {
+                    item.amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
+                }
+            });
+            calculateTax();
         }, { deep: true })
 
         watch(() => dataConfigPayItems.value, (value) => {
@@ -505,7 +540,7 @@ export default defineComponent({
                 triggerEmployeeWages.value = true; //reset data table 2
             }
         })
-        
+
         // reset form data
         watch(() => store.state.common.pa110.actionResetForm, (value) => {
             onResetForm()
@@ -515,9 +550,9 @@ export default defineComponent({
             store.state.common.pa110.statusClickButtonAdd = false;
             store.state.common.pa110.dataTaxPayInfo = store.state.common.pa110.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
             dataIW.value = store.state.common.pa110.dataTaxPayInfo[store.state.common.pa110.dataTaxPayInfo.length - 1]
-            dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ? 
-            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`) : 
-            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())}`)
+            dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ?
+                parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`) :
+                parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())}`)
 
             store.state.common.pa110.focusedRowKey = 'PA110'
             onResetForm()
@@ -613,10 +648,10 @@ export default defineComponent({
                     statusMidTermSettlement1.value = false
                     statusMidTermSettlement2.value = false
                 }
-                
+
                 dataIW.value.employee.employeeId = data.employee.employeeId
                 dataIW.value.paymentDay = parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(data.paymentDay)}`)
-                
+
                 dataIW.value.workingDays = data.workingDays
                 dataIW.value.incomeId = data.incomeId
 
@@ -633,7 +668,7 @@ export default defineComponent({
 
                 store.state.common.pa110.dataRowOld = { ...dataIW.value }
                 store.state.common.pa110.focusedRowKey = data.incomeId
-                
+
             }
             // localIncomeBoo.value = false;
             store.state.common.pa110.statusChangeFormAdd = false;
@@ -647,7 +682,7 @@ export default defineComponent({
             //     store.state.common.pa110.statusChangeFormEdit = false;
             //     store.state.common.pa110.statusChangeFormPrice = false;
             // }, 200);
-            
+
         })
         watch(resCalcIncomeWageTax, (value) => {
             triggerCalcIncome.value = false
@@ -667,7 +702,7 @@ export default defineComponent({
                 await (dataIW.value.employee.foreigner = newVal.getEmployeeWage.foreigner);
 
                 await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
-                
+
                 await (dataIW.value.employee.nationalPensionDeduction = newVal.getEmployeeWage.nationalPensionDeduction);
                 await (dataIW.value.employee.healthInsuranceDeduction = newVal.getEmployeeWage.healthInsuranceDeduction);
                 await (dataIW.value.employee.employeementInsuranceDeduction = newVal.getEmployeeWage.employeementInsuranceDeduction);
@@ -776,43 +811,43 @@ export default defineComponent({
                 //     showErrorButton.value = true;
                 //     store.state.common.pa110.dataRowOnActive = dataIW.value
                 // } else {
-                    let payItems = dataConfigPayItems.value?.map((item: any) => {
-                        return {
-                            itemCode: item.itemCode,
-                            amount: item.amount ? item.amount : 0
-                        }
-                    })
-                    let deductionItems = dataConfigDeductions.value?.map((item: any) => {
-                        return {
-                            itemCode: item.itemCode,
-                            amount: item.amount ? item.amount : 0
-                        }
-                    })
-                    const variables: any = {
-                        companyId: companyId,
-                        processKey: { ...processKey.value },
-                        incomeId: store.state.common.pa110.incomeId,
-                        input: {
-                            workingDays: dataIW.value.workingDays,
-                            totalWorkingHours: dataIW.value.totalWorkingHours,
-                            overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
-                            workingHoursAtNight: dataIW.value.workingHoursAtNight,
-                            workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
-                            payItems: payItems,
-                            deductionItems: deductionItems,
-                        }
-                    };
-                    if (store.state.common.pa110.statusFormAdd) {
-                        variables.input.employeeId = dataIW.value.employee.employeeId,
+                let payItems = dataConfigPayItems.value?.map((item: any) => {
+                    return {
+                        itemCode: item.itemCode,
+                        amount: item.amount ? item.amount : 0
+                    }
+                })
+                let deductionItems = dataConfigDeductions.value?.map((item: any) => {
+                    return {
+                        itemCode: item.itemCode,
+                        amount: item.amount ? item.amount : 0
+                    }
+                })
+                const variables: any = {
+                    companyId: companyId,
+                    processKey: { ...processKey.value },
+                    incomeId: store.state.common.pa110.incomeId,
+                    input: {
+                        workingDays: dataIW.value.workingDays,
+                        totalWorkingHours: dataIW.value.totalWorkingHours,
+                        overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
+                        workingHoursAtNight: dataIW.value.workingHoursAtNight,
+                        workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
+                        payItems: payItems,
+                        deductionItems: deductionItems,
+                    }
+                };
+                if (store.state.common.pa110.statusFormAdd) {
+                    variables.input.employeeId = dataIW.value.employee.employeeId,
                         variables.input.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1,
                         actionCreated(variables)
-                    } else {
-                        actionUpdate(variables)
-                    }
+                } else {
+                    actionUpdate(variables)
+                }
                 // }
             }
         }
-        
+
         //  Calculate Pension Employee 
         const calculateTax = async () => {
             await (totalPayItem.value = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
@@ -871,8 +906,8 @@ export default defineComponent({
                     val.amount = val.amountNew
             })
             // setTimeout(() => {
-                store.state.common.pa110.statusChangeFormPrice = false;
-                // showErrorButton.value = false;
+            store.state.common.pa110.statusChangeFormPrice = false;
+            // showErrorButton.value = false;
             // }, 500);
         }
 
@@ -884,9 +919,9 @@ export default defineComponent({
             countKey.value++;
             await Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
             // dataIW.value.paymentDay = dayjs()
-            dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ? 
-            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`) : 
-            parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())}`)
+            dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ?
+                parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`) :
+                parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}${filters.formatMonth(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())}`)
             // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
             // dataIW.value.employee.employeeId = null
             await dataConfigDeductions.value.map((data: any) => {
@@ -900,7 +935,7 @@ export default defineComponent({
             await (store.state.common.pa110.statusFormAdd = true); // trạng thái form add
             await (store.state.common.pa110.statusChangeFormPrice = false)
         }
-        
+
 
         return {
             pa110FormRef,

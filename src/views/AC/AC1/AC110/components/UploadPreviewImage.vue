@@ -33,6 +33,7 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
 import Repository from "@/repositories";
+import { cloneDeep } from "lodash";
 import koKR from 'ant-design-vue/es/locale/ko_KR';
 const uploadRepository = Repository.get("upload");
 interface FileItem {
@@ -80,6 +81,10 @@ export default defineComponent({
     disabled: {
       type: Boolean,
       default: false
+    },
+    bankbookDetailId: {
+      type: String,
+      default: ''
     }
   },
   setup(props, { emit }) {
@@ -93,6 +98,7 @@ export default defineComponent({
     const elementUpload = ref<any>()
     let indexImgRemove = ref<any>(null)
     let isModalDelete = ref(false)
+    let bankbookDetailIdEditting = ref<any>('')
     // computed
     const payload = computed(() => props.payLoadProofs)
     // graphQL
@@ -117,7 +123,7 @@ export default defineComponent({
       loading: loadingAddBankbookDetailProof,
     } = useMutation(mutations.addBankbookDetailProof);
     doneAddBankbookDetailProof((e) => {
-      emit("updateAddBankbookDetailProof")
+      emit("updateAddBankbookDetailProof", bankbookDetailIdEditting.value)
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorAddBankbookDetailProof(e => {
@@ -140,7 +146,7 @@ export default defineComponent({
     doneRemoveBankbookDetailProof((e) => {
       fileList.value.splice(indexImgRemove.value, 1)
       listFileStorageId.value.splice(indexImgRemove.value, 1)
-      emit("updateremoveBankbookDetailProof")
+      emit("updateremoveBankbookDetailProof", bankbookDetailIdEditting.value)
       notification('success', Message.getMessage('COMMON', '402').message)
     })
     errorRemoveBankbookDetailProof(e => {
@@ -238,6 +244,7 @@ export default defineComponent({
         listFileStorageId.value.push({
           ...fileList.value[fileList.value.length - 1], fileStorageId: res.data.id
         })
+        bankbookDetailIdEditting.value = cloneDeep(props.bankbookDetailId)
         addBankbookDetailProof({
           ...payload.value,
           fileStorageId: res.data.id
@@ -266,6 +273,7 @@ export default defineComponent({
           isModalDelete.value = false
           return
         }
+        bankbookDetailIdEditting.value = cloneDeep(props.bankbookDetailId)
         removeBankbookDetailProof({
           ...props.payLoadProofs,
           fileStorageId: listFileStorageId.value[indexImgRemove.value].fileStorageId
