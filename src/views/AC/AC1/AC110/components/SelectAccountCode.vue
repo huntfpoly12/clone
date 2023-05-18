@@ -92,7 +92,6 @@ export default {
       messageRequired.value = props.messRequired;
     }
     const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
-    console.log('dataAccountSubject', dataAccountSubject);
 
     const resetSelect = ref(0)
     let value: any = ref(null);
