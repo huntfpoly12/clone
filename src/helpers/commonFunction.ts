@@ -8,6 +8,8 @@ import store from "@/store";
 import Router from '../router';
 import filters from "./filters";
 
+type CheckBonus = ('arr' | 'num')[];
+
 let companyId: any = null
 let startYearMonth: any = null
 let userType: any = null
@@ -92,19 +94,27 @@ const convertAge = (idCart: any) => {
     }
 }
 
-const makeDataClean = (obj: any, excluded: any=[]) => {
+const makeDataClean = (obj: any, excluded: any=[], checkBonus: CheckBonus=[]) => {
   if (obj === null || typeof obj !== "object") {
     return obj;
   }
-
   Object.keys(obj).forEach((key) => {
     if(excluded.findIndex((item:any) => {return item == key}) > - 1 ){
       return;
     }
     if (typeof obj[key] === "string" && obj[key].trim() === "") {
       obj[key] = null;
-    } else if (typeof obj[key] === "object") {
-      obj[key] = makeDataClean(obj[key], excluded);
+    }
+    checkBonus.forEach((item: any)=>{
+      if(item == 'arr' && Array.isArray(obj[key]) && obj[key].length === 0){
+        obj[key] = null;
+      }
+      if(item == 'num' && typeof obj[key] === "number" && obj[key] == null){
+        obj[key] = 0;
+      }
+    })
+    if (typeof obj[key] === "object") {
+      obj[key] = makeDataClean(obj[key], excluded, checkBonus);
     }
   });
 

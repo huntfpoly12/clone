@@ -176,6 +176,7 @@ import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { dataformStatePopup, formStateMomesUtils, inputInCollapseUtils, arrRadioTypeUtils, arrayRadioWithdrawDayUtils } from "../utils";
+import { isEqual } from "lodash";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -493,8 +494,17 @@ export default defineComponent({
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
+
+        const isChangedForm = ref(false)
+        // watch changed formState
+        const stopWatch = watch(formState, (value: any) => {
+          if(!isEqual(value, objDataDefault)) {
+            isChangedForm.value = true
+            stopWatch() // Stop watching for changes
+          }
+        }, { immediate: false })
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault) !== JSON.stringify(formState))
+            if (isChangedForm.value)
                 comfirmClosePopup(() => emit("closePopup", false))
             else
                 emit("closePopup", false)

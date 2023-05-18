@@ -123,6 +123,7 @@ import DxButton from 'devextreme-vue/button';
 import Field from './Field.vue';
 import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import isEqual from "lodash/isEqual";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -366,8 +367,17 @@ export default defineComponent({
                 e.preventDefault();
             }
         }
+        // handle changed form
+        const isChangedForm = ref(false)
+        // watch changed formState
+        const stopWatch = watch(formState, (value: any) => {
+          if(!isEqual(value, objDataDefault)) {
+            isChangedForm.value = true
+            stopWatch()
+          }
+        }, { immediate: false })
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == true)
+            if (!isChangedForm.value)
                 emit("closePopup", false)
             else
                 comfirmClosePopup(() => emit("closePopup", false))

@@ -144,6 +144,7 @@ import {
   MailOutlined,
   MenuOutlined,
 } from "@ant-design/icons-vue";
+import isEqual from "lodash/isEqual";
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
     components: {
@@ -265,8 +266,17 @@ export default defineComponent({
                 e.preventDefault();
             }
         }
+        // handle changed form
+        const isChangedForm = ref(false)
+        // watch changed formState
+        const stopWatch = watch(formState, (value: any) => {
+          if(!isEqual(value, objDataDefault)) {
+            isChangedForm.value = true
+            stopWatch()
+          }
+        }, { immediate: false })
         const setModalVisible = (e: any) => {
-            if (JSON.stringify(objDataDefault) === JSON.stringify(formState.value) == true)
+            if (!isChangedForm)
                 emit("closePopup", false)
             else
                 comfirmClosePopup(() => emit("closePopup", false))
