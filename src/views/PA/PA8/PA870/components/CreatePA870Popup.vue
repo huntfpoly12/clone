@@ -261,7 +261,7 @@
           </box-title>
 
           <box-title title="연금(고용)보험료지원신청">
-            <p class="px-10">[국민연금법] 제100조의3 또는 [국민보험 및 산업재해보상보험의 보험료징수 등에 관한 법률] 제21조에 따라 
+            <p class="px-10">[국민연금법] 제100조의3 또는 [국민보험 및 산업재해보상보험의 보험료징수 등에 관한 법률] 제21조에 따라
                 아래와 같이연금(고용)보험료 지원을 신청합니다.(근로자수가 10명 미만인 사업장만 해당합니다.) </p>
             <div class="d-flex-center justify-content-around">
                 <checkbox-basic label="국민연금" v-model:valueCheckbox="formState.nationalPensionSupport" />
@@ -486,7 +486,7 @@ import INITIAL_FORM, {
   companyTypeArr, combinedDirectDebitStatusArr, directDebitDateTypeArr, constructionSiteWorkplaceArr, nationalPensionSeparatelySiteStatusArr,
   industrialAccidentInsuranceBusinessTypeArr, industrialAccidentInsuranceOccurrenceArr,
 } from "../utils";
-import { useCompanyInfo } from "@/helpers/useCompanyInfo";
+import { useCompanyInfo } from "@/utils/useCompanyInfo";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import notification from '@/utils/notification';
 import { getCurrentInstance } from 'vue';
