@@ -35,10 +35,7 @@
                             <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" width="150px"/>
                         </a-col>
                         <a-col>
-                            <checkbox-basic label="회계" v-model:valueCheckbox="originData.filter.usedAccounting" :size="'18'" />
-                        </a-col>
-                        <a-col>
-                            <checkbox-basic label="원천" v-model:valueCheckbox="originData.filter.usedWithholding" :size="'18'" />
+                            <CheckboxGroup :options="serviceTypeCheckbox" v-model:valueCheckbox="originData.filter.useServiceTypes" :size="'18'"/>
                         </a-col>
                     </a-row>
                 </div>
@@ -130,6 +127,7 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF330/index"
 import notification from '@/utils/notification';
 import { makeDataClean } from '@/helpers/commonFunction';
+import { serviceTypeCheckbox } from "./utils";
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -177,11 +175,10 @@ export default defineComponent({
                 manageUserId: null,
                 salesRepresentativeId: null,
                 excludeCancel: true,
-                usedAccounting: true,
-                usedWithholding: true,
+                useServiceTypes: [1, 2],
             }
         })
-        const { refetch: refetchData, loading, result, onError } = useQuery(queries.searchServiceContracts, originData.value, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
+        const { refetch: refetchData, loading, result, onError } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
         onError((e) => {
             notification("error", e.message);
         });
@@ -192,16 +189,16 @@ export default defineComponent({
             trigger.value = false;
         });
         const changePage = () => {
-            makeDataClean(originData.value)
+            makeDataClean(originData.value, undefined, ["arr"])
             trigger.value = true;
         }
         const searching = () => {
-            makeDataClean(originData.value)
+            makeDataClean(originData.value, undefined, ["arr"])
             trigger.value = true;
         }
         const closePopup = () => {
             modalStatus.value = false
-            makeDataClean(originData.value)
+            makeDataClean(originData.value, undefined, ["arr"])
             trigger.value = true;
         }
         const onExporting = (e: any) => {
@@ -251,6 +248,7 @@ export default defineComponent({
             changePage,
             trigger,
             onExporting,
+            serviceTypeCheckbox,
         }
     },
 });
