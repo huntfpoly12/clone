@@ -131,8 +131,7 @@ import queriesGetEmployeeDailies from "@/graphql/queries/common/getEmployeeWageD
 import queriesGetEmployeeWages from "@/graphql/queries/common/getEmployeeWages";
 import mutations from '@/graphql/mutations/PA/PA8/PA830'
 import { companyId } from "@/helpers/commonFunction";
-import { useCompanyInfo } from "@/helpers/useCompanyInfo";
-import useGetMajorInsuranceConsignStatus from "@/helpers/usegetMajorInsuranceConsignStatus";
+
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
@@ -141,6 +140,8 @@ import isEqual from "lodash/isEqual";
 import { computed, reactive, ref, watch } from 'vue';
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
+import { useCompanyInfo } from "@/utils/useCompanyInfo";
+import useGetMajorInsuranceConsignStatus from "@/utils/usegetMajorInsuranceConsignStatus";
 
 
 enum EmployeeWageType {

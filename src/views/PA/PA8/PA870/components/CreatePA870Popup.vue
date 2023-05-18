@@ -41,12 +41,12 @@
             <a-row>
               <a-col span="8">
                 <DxField label="명칭">
-                  <default-text-box v-model:valueInput='formState.companyName' placeholder="성명" :disabled="true" />
+                  <default-text-box v-model:valueInput='formState.companyName' placeholder="" :disabled="true" />
                 </DxField>
               </a-col>
               <!-- <a-col span="8">
                 <DxField label="사업장관리번호">
-                  <text-number-box v-model:valueInput='formState.adding' placeholder="성명" :disabled="true" />
+                  <text-number-box v-model:valueInput='formState.adding' placeholder="" :disabled="true" />
                 </DxField>
               </a-col> -->
               <a-col span="8">
@@ -57,7 +57,7 @@
               </a-col>
             </a-row>
             <DxField label="주소" required>
-              <default-text-box :disabled="true" v-model:valueInput='formState.companyAddress' placeholder="성명" required />
+              <default-text-box :disabled="true" v-model:valueInput='formState.companyAddress' placeholder="" required />
             </DxField>
             <a-row>
               <a-col span="8">
@@ -68,12 +68,12 @@
               </a-col>
               <a-col span="8">
                 <DxField label="법인등록번호" required>
-                  <text-number-box :disabled="true" required v-model:valueInput='formState.companyCorpRegNuber' placeholder="성명" />
+                  <text-number-box :disabled="true" required v-model:valueInput='formState.companyCorpRegNuber' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label=" 전화번호(유선)" required>
-                  <tel-text-box v-model:valueInput="formState.companyTel" placeholder="성명" required/>
+                  <tel-text-box v-model:valueInput="formState.companyTel" placeholder="" required/>
                 </DxField>
               </a-col>
             </a-row>
@@ -81,17 +81,17 @@
             <a-row>
               <a-col span="8">
                 <DxField label=" 휴대전화번호">
-                  <tel-text-box :disabled="true" v-model:valueInput='formState.companyMobile' placeholder="성명" />
+                  <tel-text-box :disabled="true" v-model:valueInput='formState.companyMobile' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="우편번호">
-                  <text-number-box :disabled="true" v-model:valueInput='formState.companyPostNumber' placeholder="성명" />
+                  <text-number-box :disabled="true" v-model:valueInput='formState.companyPostNumber' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="FAX번호">
-                  <text-number-box :disabled="true" v-model:valueInput='formState.companyFax' placeholder="성명" />
+                  <text-number-box :disabled="true" v-model:valueInput='formState.companyFax' placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
@@ -99,12 +99,12 @@
             <a-row>
               <a-col span="8">
                 <DxField label="업태">
-                  <default-text-box v-model:valueInput='formState.companyUptae' placeholder="성명" />
+                  <default-text-box v-model:valueInput='formState.companyUptae' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="종목">
-                  <default-text-box v-model:valueInput='formState.companyjongmok' placeholder="성명" />
+                  <default-text-box v-model:valueInput='formState.companyjongmok' placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
@@ -112,17 +112,17 @@
             <a-row>
               <a-col span="8">
                 <DxField label="환급계좌은행">
-                  <default-text-box v-model:valueInput='formState.companyRefundBankName' placeholder="성명" />
+                  <default-text-box v-model:valueInput='formState.companyRefundBankName' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="환급계좌번호">
-                  <default-text-box v-model:valueInput='formState.companyRefundAccountNumber' placeholder="성명" />
+                  <default-text-box v-model:valueInput='formState.companyRefundAccountNumber' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="예금주명">
-                  <default-text-box v-model:valueInput='formState.companyRefundAccountOwner' placeholder="성명" />
+                  <default-text-box v-model:valueInput='formState.companyRefundAccountOwner' placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
@@ -132,17 +132,17 @@
             <a-row>
               <a-col span="8">
                 <DxField label="성명" required>
-                  <default-text-box v-model:valueInput='formState.presidentName' placeholder="성명" :disabled="true" required/>
+                  <default-text-box v-model:valueInput='formState.presidentName' placeholder="" :disabled="true" required/>
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="주민등록번호" required>
-                  <id-number-text-box v-model:valueInput="formState.presidentResidentNumber" placeholder="성명" required />
+                  <id-number-text-box v-model:valueInput="formState.presidentResidentNumber" placeholder="" required />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="전화번호">
-                  <tel-text-box v-model:valueInput="formState.presidentTel" placeholder="성명" :disabled="true" />
+                  <tel-text-box v-model:valueInput="formState.presidentTel" placeholder="" :disabled="true" />
                 </DxField>
               </a-col>
             </a-row>
@@ -150,7 +150,7 @@
             <a-row>
               <a-col span="24">
                 <DxField label="주소" required>
-                  <default-text-box v-model:valueInput='formState.presidentAddress' placeholder="성명" :disabled="true" required/>
+                  <default-text-box v-model:valueInput='formState.presidentAddress' placeholder="" :disabled="true" required/>
                 </DxField>
               </a-col>
             </a-row>
@@ -160,24 +160,24 @@
             <a-row>
               <a-col span="12">
                 <DxField label="은행명" class="field-custom">
-                  <default-text-box v-model:valueInput='formState.directDebitBankName' placeholder="성명" />
+                  <default-text-box v-model:valueInput='formState.directDebitBankName' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="12">
                 <DxField label="계좌번호" class="field-custom">
-                  <text-number-box v-model:valueInput='formState.directDebitAccountNumber' placeholder="성명" />
+                  <text-number-box v-model:valueInput='formState.directDebitAccountNumber' placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
             <a-row>
               <a-col span="12">
                 <DxField label="예금주명" class="field-custom">
-                  <default-text-box v-model:valueInput='formState.directDebitAccountOwner' placeholder="성명" />
+                  <default-text-box v-model:valueInput='formState.directDebitAccountOwner' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="12">
                 <DxField label="예금주주민등록번호" class="field-custom">
-                  <id-number-text-box v-model="formState.directDebitAccountOwnerResidentNumber" placeholder="성명" />
+                  <id-number-text-box v-model="formState.directDebitAccountOwnerResidentNumber" placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
@@ -223,20 +223,20 @@
 
             <a-row>
               <DxField label="수신처 (전자우편주소, 휴대전화번호 또는 아이디)" class="field-custom-auto">
-                <default-text-box v-model:valueInput='formState.electronicReceive' placeholder="성명" style="flex: 1" />
+                <default-text-box v-model:valueInput='formState.electronicReceive' placeholder="" style="flex: 1" />
               </DxField>
             </a-row>
 
             <a-row>
               <a-col span="12">
                 <DxField label="수신자명" class="field-custom">
-                  <default-text-box v-model:valueInput='formState.electronicReceiverName' placeholder="성명"
+                  <default-text-box v-model:valueInput='formState.electronicReceiverName' placeholder=""
                                     style="flex: 1" />
                 </DxField>
               </a-col>
               <a-col span="12">
                 <DxField label="수신자주민등록번호" class="field-custom">
-                  <id-number-text-box v-model:valueInput="formState.electronicReceiverResidentNumber" placeholder="성명"
+                  <id-number-text-box v-model:valueInput="formState.electronicReceiverResidentNumber" placeholder=""
                                       style="flex: 1" />
                 </DxField>
               </a-col>
@@ -254,14 +254,14 @@
               </a-col>
               <a-col span="12">
                 <DxField label="건설현장사업기간" class="field-custom">
-                  <default-text-box v-model:valueInput='formState.constructionSiteBusinessPeriod' placeholder="성명" />
+                  <default-text-box v-model:valueInput='formState.constructionSiteBusinessPeriod' placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
           </box-title>
 
           <box-title title="연금(고용)보험료지원신청">
-            <p class="px-10">[국민연금법] 제100조의3 또는 [국민보험 및 산업재해보상보험의 보험료징수 등에 관한 법률] 제21조에 따라 
+            <p class="px-10">[국민연금법] 제100조의3 또는 [국민보험 및 산업재해보상보험의 보험료징수 등에 관한 법률] 제21조에 따라
                 아래와 같이연금(고용)보험료 지원을 신청합니다.(근로자수가 10명 미만인 사업장만 해당합니다.) </p>
             <div class="d-flex-center justify-content-around">
                 <checkbox-basic label="국민연금" v-model:valueCheckbox="formState.nationalPensionSupport" />
@@ -273,19 +273,19 @@
             <a-row>
               <a-col span="8">
                 <DxField label="근로자수" :required="formState.nationalPensionReport">
-                  <number-box v-model:valueInput='formState.nationalPensionEmployeeCount' placeholder="성명"
+                  <number-box v-model:valueInput='formState.nationalPensionEmployeeCount' placeholder=""
                               :required="formState.nationalPensionReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="가입대상자수" :required="formState.nationalPensionReport">
-                  <number-box v-model:valueInput='formState.nationalPensionEmployeeTargetNumber' placeholder="성명"
+                  <number-box v-model:valueInput='formState.nationalPensionEmployeeTargetNumber' placeholder=""
                               :required="formState.nationalPensionReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="적용연월일" :required="formState.nationalPensionReport">
-                  <date-time-box :clearable="false" placeholder="성명" :required="formState.nationalPensionApplyDate" />
+                  <date-time-box :clearable="false" placeholder="" :required="formState.nationalPensionApplyDate" />
                 </DxField>
               </a-col>
             </a-row>
@@ -302,7 +302,7 @@
               <a-col span="10">
                 <DxField label="본점사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.nationalPensionSeparatelySiteManageNumber'
-                                   placeholder="성명" />
+                                   placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
@@ -312,20 +312,20 @@
             <a-row>
               <a-col span="8">
                 <DxField label="적용대상자수" :required="formState.healthInsuranceReport" class="field-custom-auto">
-                  <number-box v-model:valueInput='formState.healthInsuranceEmployeeTargetNumber' placeholder="성명"
+                  <number-box v-model:valueInput='formState.healthInsuranceEmployeeTargetNumber' placeholder=""
                               :required="formState.healthInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="적용연월일" :required="formState.healthInsuranceReport" class="field-custom-auto">
                   <date-time-box :clearable="false" v-model:valueDate="formState.healthInsuranceApplyDate"
-                                 placeholder="성명" :required="formState.healthInsuranceReport" />
+                                 placeholder="" :required="formState.healthInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
-                <DxField label="본점사업장관리번호" :required="formState.healthInsuranceReport" class="field-custom-auto">
+                <DxField label="본점사업장관리번호" class="field-custom-auto">
                   <text-number-box v-model:valueInput='formState.healthInsuranceHeadOfficeManageNumber'
-                                   placeholder="성명" />
+                                   placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
@@ -379,7 +379,7 @@
             </a-row>
             <DxField label="주된사업장"></DxField>
             <a-row>
-              <a-col span="12">
+              <a-col span="11" class="ml-25">
                 <DxField label="명칭" class="field-custom">
                   <default-text-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceName'
                                     placeholder="" />
@@ -391,7 +391,7 @@
                                        placeholder="" />
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="11" class="ml-25">
                 <DxField label="우선지원대상기업"  class="field-custom">
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.employeementInsuranceMainWorkplacePrioritySupport"
@@ -486,7 +486,7 @@ import INITIAL_FORM, {
   companyTypeArr, combinedDirectDebitStatusArr, directDebitDateTypeArr, constructionSiteWorkplaceArr, nationalPensionSeparatelySiteStatusArr,
   industrialAccidentInsuranceBusinessTypeArr, industrialAccidentInsuranceOccurrenceArr,
 } from "../utils";
-import { useCompanyInfo } from "@/helpers/useCompanyInfo";
+import { useCompanyInfo } from "@/utils/useCompanyInfo";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import notification from '@/utils/notification';
 import { getCurrentInstance } from 'vue';
@@ -600,5 +600,8 @@ export default defineComponent({
 }
 .mr-30 {
   margin-right: 30px;
+}
+:deep .popper {
+  width: 245px;
 }
 </style>

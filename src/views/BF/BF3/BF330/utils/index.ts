@@ -49,3 +49,7 @@ export const initialFormStateMomes =
     ip: "",
     active: "",
   };
+export const serviceTypeCheckbox = [
+  {id: 1, text: "회계"},
+  {id: 2, text: "원천"},
+]

@@ -50,7 +50,7 @@
                 </a-row>
             </div>
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column"
+                key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column" noDataText="내역이 없습니다"
                 :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxToolbar>

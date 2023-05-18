@@ -1,7 +1,6 @@
-import { reactive, watch } from 'vue'
-import { useQuery } from '@vue/apollo-composable'
-import { Company } from "@/views/PA/PA8/PA810/utils";
 import getMyCompany from "@/graphql/queries/common/getMycompany";
+import { useQuery } from '@vue/apollo-composable';
+import { reactive, watch } from 'vue';
 
 export function useCompanyInfo(companyId: number) {
   const infoCompany = reactive({

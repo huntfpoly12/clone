@@ -53,14 +53,6 @@
             </DxButton>
           </div>
         </template>
-        <DxColumn caption="이직확인서다운로드" cell-template="downEmploymentConfirmation" width="140px" alignment="left" />
-        <template #downEmploymentConfirmation=" { data }: any " class="custom-action">
-          <div class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer">
-              <DownloadOutlined :style="{fontSize: 12}"/>
-            </DxButton>
-          </div>
-        </template>
         <DxColumn caption="" cell-template="action" width="150px" />
         <template #action=" { data }: any ">
           <div class="custom-action" style="margin-left: 40px;">

@@ -108,7 +108,6 @@ export default defineComponent({
         errorState.value = [];
         daysInMonth.value = +dayjs(`${processKeyPA720.value.processKey?.paymentMonth}`).daysInMonth();
       }else{
-        console.log(`output->dayDefaultPA720`,dayDefaultPA720)
         store.state.common.paymentDayPA720 = dayDefaultPA720.value;
       }
     }, { deep: true })

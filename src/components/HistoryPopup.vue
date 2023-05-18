@@ -6,7 +6,7 @@
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820|| loadingPA840_1|| loadingPA840_2||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
-                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments || loadingAC570 || loadingPA860">
+                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingPA870 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments || loadingAC570 || loadingPA860">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" :keyExpr="keyExpr ? keyExpr : 'ts'" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -98,6 +98,7 @@ export default defineComponent({
         let triggerPA840_1 = ref<boolean>(false);
         let triggerPA840_2 = ref<boolean>(false);
         let triggerPA860 = ref<boolean>(false);
+        let triggerPA870 = ref<boolean>(false);
         let triggerPA880 = ref<boolean>(false);
         let triggerAC610 = ref<boolean>(false);
         let triggerCM121 = ref<boolean>(false);
@@ -431,6 +432,15 @@ export default defineComponent({
                             triggerPA860.value = true;
                             refetchPA860();
                             break;
+                        case 'pa-870':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                imputedYear: globalYear,
+                                workId: props.data,
+                            };
+                            triggerPA870.value = true;
+                            refetchPA870();
+                            break;
                         case 'pa-880':
                             dataQuery.value = {
                                 companyId: companyId,
@@ -507,6 +517,7 @@ export default defineComponent({
                     triggerPA840_1.value = false;
                     triggerPA840_2.value = false;
                     triggerPA860.value = false;
+                    triggerPA870.value = false;
                     triggerPA880.value = false;
                     triggerAC610.value = false;
                     triggerCM121.value = false;
@@ -981,6 +992,20 @@ export default defineComponent({
                 dataTableShow.value = value.getMajorInsuranceConsignStatusLogs;
             }
         });
+         // get pa-870
+         const { result: resultPA870, loading: loadingPA870, refetch: refetchPA870 } = useQuery(
+            queries.getMajorInsuranceCompanyJoinLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerPA870.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA870, (value) => {
+            if (value) {
+                dataTableShow.value = value.getMajorInsuranceCompanyJoinLogs;
+            }
+        });
         // get pa-880
         const { result: resultPA880, loading: loadingPA880, refetch: refetchPA880 } = useQuery(
             queries.getMajorInsuranceCompanyOutLogs,
@@ -1151,6 +1176,7 @@ export default defineComponent({
             loadingPA840_1,
             loadingPA840_2,
             loadingPA860,
+            loadingPA870,
             loadingPA880,
             loadingAC610,
             loadingCM121,

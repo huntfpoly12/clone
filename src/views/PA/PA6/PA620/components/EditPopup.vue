@@ -77,7 +77,7 @@ export default defineComponent({
     };
     const store = useStore()
     let day = computed(() => store.state.common.paymentDayPA620);
-    let dayDefaultPA620 = store.state.common.paymentDayDefaultPA620;
+    let dayDefaultPA620 = computed(() => store.state.common.paymentDayDefaultPA620);
     const paymentDayPA620 = computed({
       get() {
         const daysInMonth = dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
@@ -192,7 +192,7 @@ export default defineComponent({
         errorState.value = [];
         daysInMonth.value = +dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
       }else{
-        store.commit('common/paymentDayPA620', dayDefaultPA620);
+        store.commit('common/paymentDayPA620', dayDefaultPA620.value);
       }
     }, { deep: true })
     function checkDuplicateID(arr: any) {

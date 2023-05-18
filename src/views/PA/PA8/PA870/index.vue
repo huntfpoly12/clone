@@ -74,7 +74,7 @@
       </DxDataGrid>
     </a-spin>
     <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
-      typeHistory="pa-810" />
+      typeHistory="pa-870" />
     <CreatePA870Popup v-if=" modalCreate " @closeModal=" onCloseModal " />
     <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
       :content=" contentDelete.message " :okText=" contentDelete.yes " :cancelText=" contentDelete.no "
@@ -107,8 +107,6 @@ import {
 import notification from '@/utils/notification';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import { Message } from '@/configs/enum';
-import { DxTextBox, DxValidator } from 'devextreme-vue';
-import { DxNumericRule, DxRequiredRule } from 'devextreme-vue/validator';
 
 enum MajorInsuranceWorkingStatus {
   등록 = 1,

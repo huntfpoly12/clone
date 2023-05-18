@@ -7,9 +7,9 @@
                 <a-row :gutter="[24, 8]">
                     <a-col>
                         <label class="lable-item">서비스종류 :</label>
-                        <checkbox-basic v-model:valueCheckbox="originData.accounting" :disabled="false" :size="'14'"
+                        <checkbox-basic v-model:valueCheckbox="listCheckBox.accounting" :disabled="false" :size="'14'"
                             label="회계" style="margin-right: 10px;" />
-                        <checkbox-basic v-model:valueCheckbox="originData.withholding" :disabled="false" :size="'14'"
+                        <checkbox-basic v-model:valueCheckbox="listCheckBox.withholding" :disabled="false" :size="'14'"
                             label="원천" />
                     </a-col>
                     <a-col>
@@ -51,9 +51,9 @@
                 <DxDataGrid id="table-main-bf310" noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxPaging :enabled="false" />
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
-                    <!-- <DxPaging :page-size="rowTable" /> -->
                     <DxExport :enabled="true"/>
                     <DxToolbar>
                         <DxItem name="exportButton" css-class="cell-button-export"/>
@@ -176,12 +176,29 @@ export default defineComponent({
         let modalHistoryStatus = ref<boolean>(false)
         let popupData = ref([])
         const actionSearch: any = ref<boolean>(true)
+        const listCheckBox = ref({
+            accounting: true,
+            withholding: true,
+        })
         const originData = reactive({
             ...dataSearchIndex,
             rows: 1000,
             startDate: rangeDate.value[0],
             finishDate: rangeDate.value[1]
         })
+
+        watch(() => listCheckBox.value, (value) => {
+            originData.useServiceTypes = []
+            if(value.accounting) {
+                originData.useServiceTypes.push(1)
+            }
+            if(value.withholding) {
+                originData.useServiceTypes.push(2)
+            }
+            },{
+                deep: true
+            }
+        )
 
         const setModalVisible = (data: any,) => {
             idSubRequest.value = data.data.id;
@@ -272,6 +289,7 @@ export default defineComponent({
             dayjs,
             trigger,
             onDoneUpdate,
+            listCheckBox
         }
     },
 

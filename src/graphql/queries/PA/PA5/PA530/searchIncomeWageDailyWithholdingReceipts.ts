@@ -12,7 +12,6 @@ export default gql`
                 employee {
                     type 
                     employeeId 
-                    incomeTypeCode
                     name
                     foreigner
                     nationality

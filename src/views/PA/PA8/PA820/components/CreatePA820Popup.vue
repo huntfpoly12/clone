@@ -161,7 +161,7 @@
                   <div class="select-group">
                     <span>상실부호</span>
                     <SelectCustomField :dataSource=" includeDependentsSelectbox " :disabled=" isDisabled1 "
-                      v-model:valueInput=" showData.healthInsuranceAcquisitionCode2 " width="357px" />
+                      v-model:valueInput=" formState.employeementInsuranceLossCode " width="357px" />
                   </div>
                   <span class="ml-50">
                     <checkbox-basic size="14" label="이직확인서 발급희망"
@@ -226,7 +226,6 @@
 import mutations from "@/graphql/mutations/PA/PA8/PA820/index";
 import queries from "@/graphql/queries/PA/PA8/PA820/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
-import useGetMajorInsuranceConsignStatus from "@/helpers/usegetMajorInsuranceConsignStatus";
 
 // import INITIAL_DATA, {Company, DependentsType} from "./../utils";
 import {
@@ -254,11 +253,7 @@ import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { getCurrentInstance } from "vue";
 import { DxTextBox } from "devextreme-vue";
-
-const getValue = (id: any, arr: any[]) => {
-  let data = arr.find((item: any) => item.id == id);
-  return !!data ? data.name : ''
-}
+import useGetMajorInsuranceConsignStatus from "@/utils/usegetMajorInsuranceConsignStatus";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -286,9 +281,8 @@ export default defineComponent({
       residentId: '',
       joinedAt: '',
       acquisitionMonthPayment: false,
-      healthInsuranceAcquisitionCode2: 0,
     })
-    const formState = reactive({
+    const formState: any = reactive({
       employeeType: 10,
       employeeId: null,
       nationalPensionReport: false,
@@ -297,10 +291,10 @@ export default defineComponent({
       industrialAccidentInsuranceReport: true,
       nationalPensionLossCode: 0,
       nationalPensionPaymentCurrentMonthLoss: '',
-      employeementInsuranceLossCode: '',
+      employeementInsuranceLossCode: null,
       employeementInsuranceJobChangeReport: false,
       healthInsuranceLossCode: '1',
-      employeementInsuranceLossDescription: getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox),
+      employeementInsuranceLossDescription: '',
       totalSalaryThisYear: 100000,
       totalSalaryLastYear: 100000,
       workMonthThisYear: 1300,
@@ -465,18 +459,26 @@ export default defineComponent({
 
     //--------------------------------CHANGE DATA---------------------------------------
 
-    watch(() => showData.healthInsuranceAcquisitionCode2, (newVal: any) => {
+    watch(() => formState.employeementInsuranceLossCode, (newVal: any) => {
       if (newVal) {
         formState.employeementInsuranceLossDescription = getValue(newVal, includeDependentsSelectbox)
       }
-    }, { deep: true })
+    }, {
+      deep: true,
+      immediate: true
+    })
 
+    const getValue = (id: any, arr: any[]) => {
+      let data = arr.find((item: any) => item.id == id);
+      return !!data ? data.name : ''
+    }
     //---------------------------------DISABLED FIELD--------------------------------
 
     const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
     const isDisabled2 = computed(() => {
-      // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
-      let check = [23, 26, 31].some((item: any) => showData.healthInsuranceAcquisitionCode2 == item);
+      // if(formState.employeementInsuranceLossCode == 23 || )
+      const arr = [23, 26, 31]
+      let check = arr.includes(formState.employeementInsuranceLossCode)
       formState.employeementInsuranceJobChangeReport = check;
       formStateToCompare.value.employeementInsuranceJobChangeReport = check;
       return check;
@@ -501,7 +503,7 @@ export default defineComponent({
     }, { deep: true });
     watchEffect(() => {
       if (!formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport) {
-        showData.healthInsuranceAcquisitionCode2 = 0;
+        formState.employeementInsuranceLossCode = 0;
         formState.employeementInsuranceJobChangeReport = false;
         formState.employeementInsuranceLossDescription = '';
       }

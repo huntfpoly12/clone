@@ -71,7 +71,7 @@
           </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" />
-          <DxColumn caption="성명" cell-template="employee-info" width="300" />
+          <DxColumn caption="성명" data-field="employee.name" cell-template="employee-info" width="300" />
           <template #employee-info="{ data }">
             <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
               :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
@@ -81,7 +81,7 @@
           <template #employee-residentId="{ data }">
             <div>{{ convertResidentId(data.data.employee.residentId) }}</div>
           </template>
-          <DxColumn caption="비고" cell-template="four-major-insurance" />
+          <DxColumn caption="비고 " data-field="employee.incomeTaxMagnification" cell-template="four-major-insurance" alignment="left" />
           <template #four-major-insurance="{ data }">
             <div>
               <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
@@ -89,22 +89,21 @@
               <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
                 :typeValue="1" />
               <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
-                :ratio="data.data.nationalPensionSupportPercent" />
+                :ratio="data.data.employee.nationalPensionSupportPercent" />
               <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
-                :ratio="data.data.employeementInsuranceSupportPercent" />
+                :ratio="data.data.employee.employeementInsuranceSupportPercent" />
               <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
                 :ratio="data.data.employee.employeementReductionRatePercent" />
               <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
                 :ratio="data.data.employee.incomeTaxMagnification" />
             </div>
           </template>
-          <DxColumn caption="구분" cell-template="status" width="100" />
+          <DxColumn caption="구분" data-field="employee.status" cell-template="status" width="100" />
           <template #status="{ data }">
             <span class="status-blue" v-if="data.data.employee.status != 0">계속</span>
             <span class="status-red" v-else>중도</span>
           </template>
-          <DxColumn caption="총급여계" alignment="right" data-field="totalPay" format="#,###" data-type="string"
-            width="160" />
+          <DxColumn caption="총급여계" alignment="right" data-field="totalPay" format="#,###" data-type="string" width="160" />
           <DxColumn caption="" cell-template="pupop" width="100" />
           <template #pupop="{ data }">
             <div class="custom-action" style="text-align: center;">
