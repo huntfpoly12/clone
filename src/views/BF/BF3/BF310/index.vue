@@ -51,9 +51,9 @@
                 <DxDataGrid id="table-main-bf310" noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxPaging :enabled="false" />
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
-                    <!-- <DxPaging :page-size="rowTable" /> -->
                     <DxExport :enabled="true"/>
                     <DxToolbar>
                         <DxItem name="exportButton" css-class="cell-button-export"/>
