@@ -343,7 +343,7 @@
               </template>
               <template v-else>
                 <tr class="">
-                  <td colspan="9" style="height: 50px;color: #999; font-size: 17px;">No data</td>
+                  <td colspan="9" style="height: 50px;color: #999; font-size: 17px;">내역이 없습니다</td>
                 </tr>
               </template>
             </tbody>

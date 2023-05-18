@@ -81,7 +81,7 @@
           <template #employee-residentId="{ data }">
             <div>{{ convertResidentId(data.data.employee.residentId) }}</div>
           </template>
-          <DxColumn caption="비고" cell-template="four-major-insurance" />
+          <DxColumn caption="비고 " cell-template="four-major-insurance" />
           <template #four-major-insurance="{ data }">
             <div>
               <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
@@ -89,9 +89,9 @@
               <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
                 :typeValue="1" />
               <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
-                :ratio="data.data.nationalPensionSupportPercent" />
+                :ratio="data.data.employee.nationalPensionSupportPercent" />
               <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
-                :ratio="data.data.employeementInsuranceSupportPercent" />
+                :ratio="data.data.employee.employeementInsuranceSupportPercent" />
               <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
                 :ratio="data.data.employee.employeementReductionRatePercent" />
               <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
