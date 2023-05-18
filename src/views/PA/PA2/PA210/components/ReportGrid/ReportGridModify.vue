@@ -488,9 +488,13 @@ export default defineComponent({
     color: #fff;
     background-color: #808080;
   }
-  :deep td.disable-cell {
+  :deep td.gray-cell {
     color: black;
-    background-color: #808080;
+    background-color: #D9D9D9;
+  }
+  :deep td.mid-gray-cell {
+    color: black;
+    background-color: #AEAAAA;
   }
   .action-right{
     margin-bottom: 1px;
