@@ -1,6 +1,6 @@
 <template>
     <div class="column">
-        <div class="detail" :class="store.state.common.ac120.statusShowFull ? 'showFull' : ''">
+        <div class="detail">
             <div class="detail-header">
                 <a-row class="text-align-center">
                     <a-col :span="8" @click="openShowFull">
@@ -38,7 +38,7 @@
                     </a-col>
                 </a-row>
             </div>
-            <a-row class="detail-body">
+            <a-row class="detail-body" :class="store.state.common.ac120.statusShowFull ? 'showFull' : ''">
                 <a-col class="detail1">
                     <StandardForm formName="ac-120-form" ref="refFormAC120" :key='store.state.common.ac120.keyRefreshForm'>
                         <div class="ac120">
@@ -59,14 +59,14 @@
                                             mode="contained" type="default" :text="textButton + '으로 변경'" />
                                     </div>
                                 </a-col>
-                                <a-col :span="6" class="col-2">
+                                <a-col :span="5" class="col-2">
                                     <a-form-item label="결의일자" class="red">
-                                        <date-time-box :teleport="true" v-model:valueDate="store.state.common.ac120.transactionDetailDate"
-                                            width="150px" :required="true" disabled="true" />
+                                        <date-time-box :teleport="true" v-model:valueDate="formData.transactionDetailDate"
+                                            width="130px" :required="true" disabled="true" />
                                     </a-form-item>
 
                                     <a-form-item label="통장" class="red">
-                                        <default-text-box v-model:valueInput="bankbookNickname" width="150px"
+                                        <default-text-box v-model:valueInput="bankbookNickname" width="130px"
                                             style="margin-right: 10px;" :required="true" disabled="true" />
                                     </a-form-item>
                                 </a-col>
@@ -80,16 +80,16 @@
                                             width="150px" :required="true" />
                                     </a-form-item>
                                 </a-col>
-                                <a-col :span="5" class="col-4">
+                                <a-col :span="6" class="col-4 fl-r">
                                     <a-form-item label="계정과목" class="red">
                                         <account-code-select :key="resetSelectAccount" :classification="classificationAccountCode"
-                                            v-model:valueInput="formData.accountCode" width="190px"
+                                            v-model:valueInput="formData.accountCode" width="230px"
                                             :required="true" />
                                     </a-form-item>
                                     <a-form-item label="자금원천" class="red">
                                         <FundingSourceSelect
                                             v-model:valueInput="formData.fundingSource"
-                                            width="190px" :required="true" />
+                                            width="230px" :required="true" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="7" class="col-1">
@@ -106,20 +106,20 @@
                                             width="150px" />
                                     </a-form-item>
                                 </a-col>
-                                <a-col :span="6" class="col-2">
+                                <a-col :span="5" class="col-2">
                                     <a-form-item :label="null" style="margin-left: 75px;">
-                                        <default-text-box v-model:valueInput="bankbookNumber" width="150px" :required="true"
+                                        <default-text-box v-model:valueInput="bankbookNumber" width="130px" :required="true"
                                             disabled="true" />
                                     </a-form-item>
 
                                     <a-form-item label="출납일자">
                                         <date-time-box :teleport="true" v-model:valueDate="formData.accountingDate"
-                                            width="150px" />
+                                            width="130px" />
                                     </a-form-item>
                                     <a-form-item label="등기일자">
                                         <date-time-box :teleport="true"
                                             v-model:valueDate="formData.registrationDate"
-                                            width="150px" />
+                                            width="130px" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="6" class="col-3">
@@ -154,17 +154,17 @@
                                         </a-tooltip>
                                     </div>
                                 </a-col>
-                                <a-col :span="5" class="col-4">
+                                <a-col :span="6" class="col-4 fl-r">
                                     <a-form-item label="상대계정">
                                         <account-code-select :key="resetSelectAccount" :disabled="formData.resolutionClassification == 1"
                                             :classification="classificationRelationCode"
                                             v-model:valueInput="formData.relationCode"
-                                            width="190px" />
+                                            width="230px" />
                                     </a-form-item>
                                     <a-form-item label="메모">
                                         <!-- <default-text-box v-model:valueInput="formData.memo"
                                             width="150px" height="60px" /> -->
-                                        <text-area-box width="190px"
+                                        <text-area-box width="230px"
                                             v-model:valueInput="formData.memo" :height="60" />
                                     </a-form-item>
                                 </a-col>
@@ -384,9 +384,9 @@ export default defineComponent({
         }, { deep: true })
 
         // ================ FUNCTION ============================================
-        const toggleTransition = () => {
-            store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull
-        }
+        // const toggleTransition = () => {
+        //     store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull
+        // }
         const actionOpenModalCopy = () => {
             if (formData.value.resolutionType == 11) {
                 statusPopupCopyData.value = true
@@ -506,7 +506,7 @@ export default defineComponent({
 
         return {
             store,
-            toggleTransition,
+            // toggleTransition,
             statusPopupCopyData,
             arrayRadioCheck,
             onSubmit,

@@ -71,13 +71,13 @@
                     <DxColumn data-field="spending" caption="지출액" format="fixedPoint" />
                     <DxColumn data-field="summaryOfBankbookDetail" caption="통장적요" />
                     <DxColumn data-field="summary" caption="적요" />
-                    <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
+                    <DxColumn caption="계정과목" data-field="accountCode" width="220" cell-template="accountCode" />
                     <template #accountCode="{ data }">
-                        <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
+                        <account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
                     </template>
-                    <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
+                    <DxColumn caption="상대계정" data-field="relationCode" width="220" cell-template="relationCode" />
                     <template #relationCode="{ data }">
-                        <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
+                        <account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
                     </template>
                     <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left" cell-template="fundingSource"
                         width="75" />

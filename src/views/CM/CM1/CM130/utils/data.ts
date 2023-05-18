@@ -39,7 +39,7 @@ export const initialFormStateDeduction = {
 }
 
 export const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
-  value: TaxPayItem.all()[index].enumOrdinal,
+  value: TaxPayItem.all()[index].enumOrdinal + 1,
   label: TaxPayItem.all()[index].name,
 }));
 
