@@ -274,7 +274,7 @@ import mutations from "@/graphql/mutations/PA/PA8/PA840/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
 
 import DxSelectBox from 'devextreme-vue/select-box';
-import { useCompanyInfo } from "@/helpers/useCompanyInfo";
+import { useCompanyInfo } from "@/utils/useCompanyInfo";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import INITIAL_FORM from '../utils';
 import { EmploymentStatus, PaymentDesire, } from '../utils';

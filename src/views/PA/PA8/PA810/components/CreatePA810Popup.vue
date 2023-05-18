@@ -321,7 +321,7 @@
                     </td>
                     <td>
                       <default-text-box width="100%" v-model:valueInput="dependent.stayQualification" textUppercase placeholder="" />
-                    </td> 
+                    </td>
 
                     <td>
                       <range-date-time-box width="100%" v-model:valueDate="dependent.contractExpiredDate" :maxRange="365"
@@ -343,7 +343,7 @@
               </template>
               <template v-else>
                 <tr class="">
-                  <td colspan="9" style="height: 50px;color: #999; font-size: 17px;">No data</td>
+                  <td colspan="9" style="height: 50px;color: #999; font-size: 17px;">내역이 없습니다</td>
                 </tr>
               </template>
             </tbody>
@@ -386,10 +386,9 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import URL_CONST from "./../const";
-import INITIAL_DATA, { Company } from "./../utils";
+import INITIAL_DATA from "./../utils";
 import SearchCodeButton from "./SearchCodeButton.vue";
-import TableEmployeeWage from "./TableEmployeeWage.vue";
-import { useCompanyInfo } from "@/helpers/useCompanyInfo";
+import { useCompanyInfo } from "@/utils/useCompanyInfo";
 
 let dpRelation = enum2Entries(DependantsRelation);
 const getCodeOrLabel = (id: number) => {

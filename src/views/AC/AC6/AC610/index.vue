@@ -258,10 +258,11 @@ import {
 import {Store} from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
-import {computed, defineComponent, ref} from "vue";
+import {computed, defineComponent, ref, watch} from "vue";
 import {useStore} from "vuex";
 import {initialState} from "./utils/index";
 import isEqual from "lodash/isEqual";
+import { watchEffect } from "vue";
 
 const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: any}) => {
   if (value) {
@@ -399,6 +400,7 @@ export default defineComponent({
     });
     onDoneUpdate(async (res) => {
       await refetchData();
+      isChangedForm.value = false
       previousRowData.value = { ...formState.value };
       // update when click discard
       if (!isNewRow.value) {
@@ -410,6 +412,7 @@ export default defineComponent({
       notification("success", Message.getCommonMessage('106').message);
     });
     onErrorUpdate((e) => {
+      isChangedForm.value = false
       notification("error", e.message);
     });
 
@@ -418,7 +421,7 @@ export default defineComponent({
       if (!isNewRow.value) {
         // When there is no row created yet and you are focusing on one row,
         // compare 2 values to check and open a popup.
-        if (previousRowData.value && !isEqual(previousRowData.value, formState.value)) {
+        if (previousRowData.value && isChangedForm.value) {
           isClickAddRow.value = true;
           isDiscard.value = true;
         } else {
@@ -443,6 +446,15 @@ export default defineComponent({
         }
       }
     };
+
+    // handle changed form
+    const isChangedForm = ref(false)
+        // watch changed formState
+    watchEffect(() => {
+      if(!isEqual(formState.value, previousRowData.value) && previousRowData.value) {
+        isChangedForm.value = true
+      }
+    })
     // TODO handle onFocusedRowChanging to row
     const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
       const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
@@ -451,7 +463,7 @@ export default defineComponent({
         focusedRowKey.value = 0;
         if (e.rows[e.newRowIndex].key === 0) return;
         // when isNewRow and click row other then check data input
-        if (isEqual(formState.value, initialState)) {
+        if (!isChangedForm.value) {
           storeDataSource.value.remove(0).then(() => {
             storeDataSource.value
               .byKey(e.rows[e.newRowIndex].key)
@@ -477,8 +489,7 @@ export default defineComponent({
         }
         if (
           focusedRowKey.value !== e.rows[e.newRowIndex].key &&
-          previousRowData.value &&
-          !isEqual(formState.value, previousRowData.value)
+          isChangedForm.value
         ) {
           isDiscard.value = true;
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -496,6 +507,7 @@ export default defineComponent({
     const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
       formState.value = e.row?.data;
       previousRowData.value = { ...e.row?.data };
+      isChangedForm.value = false
     };
     const addNewRow = () => {
       storeDataSource.value.insert(initialState).then((result) => {
@@ -556,6 +568,11 @@ export default defineComponent({
           isNewRow.value = false;
           isClickAddRow.value && addNewRow()
         } else {
+          storeDataSource.value
+          .update(previousRowData.value.clientId, previousRowData.value)
+          .then(() => {
+            dataSource.value?.reload()
+          });
           // when change other row and want to add row
           storeDataSource.value.insert(initialState).then((result) => {
             formRef.value.resetValidate();
@@ -567,14 +584,14 @@ export default defineComponent({
         }
       } else {
         storeDataSource.value
-          .update(previousRowData.value.clientId, previousRowData.value)
+          .update(formState.value.clientId, previousRowData.value)
           .then((value) => {
             focusedRowKey.value = selectRowKeyAction.value || 0;
-
             storeDataSource.value.byKey(selectRowKeyAction.value).then((value) => {
-                formState.value = value;
+              formState.value = value;
+              previousRowData.value = value;
+              dataSource.value?.reload()
               });
-            dataGridRef.value?.refresh();
           });
       }
     };

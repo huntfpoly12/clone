@@ -226,7 +226,6 @@
 import mutations from "@/graphql/mutations/PA/PA8/PA820/index";
 import queries from "@/graphql/queries/PA/PA8/PA820/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
-import useGetMajorInsuranceConsignStatus from "@/helpers/usegetMajorInsuranceConsignStatus";
 
 // import INITIAL_DATA, {Company, DependentsType} from "./../utils";
 import {
@@ -254,6 +253,7 @@ import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { getCurrentInstance } from "vue";
 import { DxTextBox } from "devextreme-vue";
+import useGetMajorInsuranceConsignStatus from "@/utils/usegetMajorInsuranceConsignStatus";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -463,7 +463,7 @@ export default defineComponent({
       if (newVal) {
         formState.employeementInsuranceLossDescription = getValue(newVal, includeDependentsSelectbox)
       }
-    }, { 
+    }, {
       deep: true,
       immediate: true
     })

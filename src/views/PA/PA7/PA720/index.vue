@@ -814,7 +814,6 @@ export default defineComponent({
         store.state.common.paymentDayPA720 = data.paymentDay;
         store.state.common.paymentDayDefaultPA720 = data.paymentDay;
         configTrigger.value = false;
-        console.log(`output->newVal`,newVal)
       }
     });
     //-----------------------------hover column-----------------------------
