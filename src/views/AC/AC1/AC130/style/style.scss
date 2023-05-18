@@ -39,8 +39,8 @@
       &:last-child {
         padding-left: 5px;
       }
-      &-check {
-        height: 100%;
+      &-check {   
+        height: calc(100vh - 271px);
         border: 1px solid #bfbfbf;
         overflow: hidden;
         &-title {
@@ -71,7 +71,7 @@
           padding: 3px 5px;
         }
         &-chat {
-          height: calc(100% - 26px);
+          height: calc(100% - 27px);
         }
         :deep(.ant-badge-dot) {
           width: 10px;

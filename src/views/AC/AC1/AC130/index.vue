@@ -23,56 +23,57 @@
     </div>
     <a-row class="ac-130__main">
       <a-col span="12" class="ac-130__main-content">
-        <div class="ac-130__main-content-check">
-          <div class="ac-130__main-content-check-title">
-            <b>체크사항</b>
+        <a-spin :spinning="loadinggetAccountingClosingCheckItems" size="large">
+          <div class="ac-130__main-content-check">
+            <div class="ac-130__main-content-check-title">
+              <b>체크사항</b>
+            </div>
+            <div class="ac-130__main-content-check-checklist">
+              <a-collapse>
+                <a-collapse-panel key="1">
+                  <template #header>
+                    <div class="ac-130__main-content-check-checklist-header">
+                      <span>현금출납부 잔액 -></span>
+                      <DxButton v-if="getStatusCashRegisterSummary()" text="정상"
+                        style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
+                      <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                        :height="$config_styles.HeightInput" width="90" />
+                    </div>
+                  </template>
+                  <TableCashRegisterSummary :data="dataSource.cashRegisterSummary" :year="acYear"
+                    :month="monthSelected" />
+                </a-collapse-panel>
+                <a-collapse-panel key="2">
+                  <template #header>
+                    <div class="ac-130__main-content-check-checklist-header">
+                      <span>예산서 -></span>
+                      <DxButton v-if="getStatusExpenditureBudgetSummary()" text="정상"
+                        style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
+                      <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                        :height="$config_styles.HeightInput" width="90" />
+                    </div>
+                  </template>
+                  <TableExpenditureBudgetSummary :data="{
+                    expenditureBudgetSummary: dataSource.expenditureBudgetSummary,
+                    revenueBudgetSummary: dataSource.revenueBudgetSummary,
+                  }" />
+                </a-collapse-panel>
+                <a-collapse-panel key="3">
+                  <template #header>
+                    <div class="ac-130__main-content-check-checklist-header">
+                      <span>인건비 -></span>
+                      <DxButton v-if="getStatusRevenueBudgetSummary()" text="정상"
+                        style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
+                      <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                        :height="$config_styles.HeightInput" width="90" />
+                    </div>
+                  </template>
+                  <TableRevenueBudgetSummary :data="dataSource.laborCostSubjectSummaries" />
+                </a-collapse-panel>
+              </a-collapse>
+            </div>
           </div>
-          <div class="ac-130__main-content-check-checklist">
-            <a-collapse>
-              <a-collapse-panel key="1">
-                <template #header>
-                  <div class="ac-130__main-content-check-checklist-header">
-                    <span>현금출납부 잔액 -></span>
-                    <DxButton v-if="getStatusCashRegisterSummary()" text="정상" style="background-color: #337614; color: white"
-                      :height="$config_styles.HeightInput" width="90" />
-                    <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
-                      :height="$config_styles.HeightInput" width="90" />
-                  </div>
-                </template>
-                <TableCashRegisterSummary :data="dataSource.cashRegisterSummary" :year="acYear" :month="monthSelected"/>
-              </a-collapse-panel>
-              <a-collapse-panel key="2">
-                <template #header>
-                  <div class="ac-130__main-content-check-checklist-header">
-                    <span>예산서 -></span>
-                    <DxButton v-if="getStatusExpenditureBudgetSummary()" text="정상" style="background-color: #337614; color: white"
-                      :height="$config_styles.HeightInput" width="90" />
-                    <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
-                      :height="$config_styles.HeightInput" width="90" />
-                  </div>
-                </template>
-                <TableExpenditureBudgetSummary 
-                :data="{
-                  expenditureBudgetSummary: dataSource.expenditureBudgetSummary,
-                  revenueBudgetSummary: dataSource.revenueBudgetSummary,
-                }" 
-                />
-              </a-collapse-panel>
-              <a-collapse-panel key="3">
-                <template #header>
-                  <div class="ac-130__main-content-check-checklist-header">
-                    <span>인건비 -></span>
-                    <DxButton v-if="getStatusRevenueBudgetSummary()" text="정상" style="background-color: #337614; color: white"
-                      :height="$config_styles.HeightInput" width="90" />
-                    <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
-                      :height="$config_styles.HeightInput" width="90" />
-                  </div>
-                </template>
-                <TableRevenueBudgetSummary :data="dataSource.laborCostSubjectSummaries" />
-              </a-collapse-panel>
-            </a-collapse>
-          </div>
-        </div>
+        </a-spin>
       </a-col>
       <a-col span="12" class="ac-130__main-content">
         <div class="ac-130__main-content-manager">
@@ -80,9 +81,7 @@
             <b>관리사항</b>
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormNotification keyChatChannel="keyChatChannelCommon">
-              <FormChat keyChatChannel="keyChatChannelCommon" />
-            </FormNotification>
+            <FormNotification :payload="payloadCheckItems" />
           </div>
         </div>
       </a-col>
@@ -103,7 +102,6 @@ import { dataDemoMain, contentPopupRetrieveStatements } from "./utils/index"
 import TableCashRegisterSummary from "./components/TableCashRegisterSummary.vue"
 import TableRevenueBudgetSummary from "./components/TableRevenueBudgetSummary.vue"
 import TableExpenditureBudgetSummary from "./components/TableExpenditureBudgetSummary.vue"
-import FormChat from "./components/FormChat.vue"
 import FormNotification from "./components/FormNotification.vue"
 import { Message } from "@/configs/enum"
 import DxButton from "devextreme-vue/button";
@@ -128,7 +126,6 @@ export default defineComponent({
     TableCashRegisterSummary,
     TableRevenueBudgetSummary,
     TableExpenditureBudgetSummary,
-    FormChat,
     FormNotification
   },
   setup() {
@@ -140,7 +137,7 @@ export default defineComponent({
     let dataSource = ref<any>({})
     let monthSelected = ref(dayjs().month() + 1)
     let listAccountingProcesses = ref<any[]>([])
-      
+
     //trigger
     let triggerAccountingProcesses = ref<boolean>(true)
     let triggerAccountingClosingCheckItems = ref<boolean>(true)
@@ -168,30 +165,32 @@ export default defineComponent({
       triggerAccountingProcesses.value = false
     })
 
-    /// getAccountingClosingCheckItems
-    const {
-      onResult: onResAccountingClosingCheckItems,
-      loading: loadinggetAccountingClosingCheckItems,
-    } = useQuery(queries.getAccountingClosingCheckItems, {
+    const payloadCheckItems = reactive({
       companyId: companyId,
       fiscalYear: acYear.value,
       facilityBusinessId: globalFacilityBizId.value,
       year: acYear.value,
       month: monthSelected.value,
-    },
+    })
+    /// getAccountingClosingCheckItems
+    const {
+      onResult: onResAccountingClosingCheckItems,
+      loading: loadinggetAccountingClosingCheckItems,
+    } = useQuery(queries.getAccountingClosingCheckItems, payloadCheckItems,
       () => ({
         enabled: triggerAccountingClosingCheckItems.value,
         fetchPolicy: "no-cache",
       }))
     onResAccountingClosingCheckItems((data) => {
       dataSource.value = data.data.getAccountingClosingCheckItems
-      console.log('dataSource.value', dataSource.value);
       triggerAccountingClosingCheckItems.value = false
     })
 
     // METHODS
     const selectedMonth = (month: number) => {
       monthSelected.value = month
+      payloadCheckItems.month = month
+      triggerAccountingClosingCheckItems.value = true
     }
     const selectionChanged = () => { }
 
@@ -204,32 +203,32 @@ export default defineComponent({
     };
 
     const getStatusCashRegisterSummary = () => {
-      if(dataSource.value?.cashRegisterSummary){
+      if (dataSource.value?.cashRegisterSummary) {
         const cashRegisterSummary = dataSource.value.cashRegisterSummary
         return (cashRegisterSummary.bankbookBalance - cashRegisterSummary.totalIncome - cashRegisterSummary.totalSpending) === 0
-      }else{
+      } else {
         return false
       }
     }
 
     const getStatusExpenditureBudgetSummary = () => {
-      if(dataSource.value?.expenditureBudgetSummary && dataSource.value?.revenueBudgetSummary){
+      if (dataSource.value?.expenditureBudgetSummary && dataSource.value?.revenueBudgetSummary) {
         const revenueBudgetSummary = dataSource.value.revenueBudgetSummary
         const expenditureBudgetSummary = dataSource.value.expenditureBudgetSummary
         const revenue = (revenueBudgetSummary.cumulativeTotal / revenueBudgetSummary.amount) * 100
         const annualExpenditure = (expenditureBudgetSummary.cumulativeTotal / expenditureBudgetSummary.amount) * 100
         return revenue === 100 && annualExpenditure === 100
-      }else{
+      } else {
         return false
       }
     }
 
     const getStatusRevenueBudgetSummary = () => {
-      if(dataSource.value?.laborCostSubjectSummaries){
+      if (dataSource.value?.laborCostSubjectSummaries) {
         const laborCostSubjectSummaries = dataSource.value.laborCostSubjectSummaries
         const executionRate = (laborCostSubjectSummaries.cumulativeTotal / laborCostSubjectSummaries.amount) * 100
         return executionRate === 100
-      }else{
+      } else {
         return false
       }
     }
@@ -248,7 +247,9 @@ export default defineComponent({
       listAccountingProcesses,
       getStatusCashRegisterSummary,
       getStatusExpenditureBudgetSummary,
-      getStatusRevenueBudgetSummary
+      getStatusRevenueBudgetSummary,
+      loadinggetAccountingClosingCheckItems,
+      payloadCheckItems
     };
   },
 });

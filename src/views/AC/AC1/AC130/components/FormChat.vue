@@ -4,36 +4,46 @@
       회계마감 관리사항
     </p>
     <div ref="formTimeline" class="form-chat-timeline">
-      <div v-for="(items, index) in listChat" :key="index" :id="items.key">
+      <div v-for="(items, index) in listChat" :key="index" :id="items.createdAt">
         <div class="form-chat-timeline-line mb-10"
-          :class="{ 'form-chat-timeline-line-short': index > 0 && listChat[index - 1].userId === items.userId }">
+          :class="{ 'form-chat-timeline-line-short': index > 0 && listChat[index - 1].writerUser.id === items.writerUser.id }">
         </div>
         <div class="form-chat-timeline-common">
           <div class="form-chat-timeline-avatar">
-            <a-badge :dot="true" :offset="[-5, 33]" :status="items.userId === userId ? 'success' : 'error'"
-              :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].userId === items.userId }">
+            <a-badge :dot="true" :offset="[-5, 33]" :status="items.writerUser.id === userId ? 'success' : 'error'"
+              :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].writerUser.id === items.writerUser.id }">
               <a-avatar shape="circle" size="large"
-                :style="`background-color: ${items.userId === userId ? '#1890ff' : '#f56a00'}`">{{ items.name
+                :style="`background-color: ${items.writerUser.id === userId ? '#1890ff' : '#f56a00'}`">{{ items.writerUser.name
                 }}</a-avatar>
             </a-badge>
           </div>
           <div class="form-chat-timeline-content">
             <div class="form-chat-timeline-content-info">
               <div class="form-chat-timeline-content-info-user">
-                <span class="form-chat-timeline-content-info-user-status">{{ items.status }}</span>
+                <div class="form-chat-timeline-content-info-user-status">
+                  <StatusChat :valueSelect="items.expresstionType" :isSelect="false" />
+                </div>
+                <!-- <span class="form-chat-timeline-content-info-user-status">{{ items.status }}</span> -->
                 <div class="form-chat-timeline-content-info-user-name"
-                  :class="{ 'form-chat-timeline-content-info-user-name-login': items.userId === userId }">{{ items.name }}
+                  :class="{ 'form-chat-timeline-content-info-user-name-login': items.writerUser.id === userId }">{{ items.writerUser.name }}
                 </div>
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
             <div v-if="itemEditComment?.key !== items.key" class="form-chat-timeline-content-background">
               <div class="form-chat-timeline-content-text">
-                <MarkdownCustom :options="{ source: items.text, linkify: true, typographer: true, highlight: true }" />
+                <MarkdownCustom :options="{ source: items.content, linkify: true, typographer: true, highlight: true }" />
               </div>
               <div v-if="items?.files && items?.files.length" class="form-chat-timeline-content-files">
                 <div class="form-chat-timeline-content-files-preview">
                   <div class="form-chat-timeline-content-files-preview-images">
+                    <img
+                      v-for="(file, indexFile) in items.files"
+                      :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
+                      alt=""
+                      @click="previewImage(items.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)">
+                  </div>
+                  <!-- <div class="form-chat-timeline-content-files-preview-images">
                     <img
                       v-for="(file, indexFile) in items.files.filter((item: any) => item?.contentType.includes('image/'))"
                       :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
@@ -47,37 +57,36 @@
                     <FileTextOutlined style="margin-right: 10px; font-size:30px" />
                     <div class="form-chat-timeline-content-files-preview-filetext-info">
                       <p class="form-chat-timeline-content-files-preview-filetext-info-name">{{ file.name }}</p>
-                      <p class="form-chat-timeline-content-files-preview-filetext-info-size">({{ formatFileSize(file.size)
-                      }})</p>
+                      <p class="form-chat-timeline-content-files-preview-filetext-info-size">({{ formatFileSize(file.size) }})</p>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <!-- pewview reply -->
               <PreviewReply v-if="Object.keys(!!items?.reply ? items.reply : {}).length" :dataReply="items?.reply || { }"  />
             </div>
 
-            <InputChat v-else ref="inputEditChat" v-model:textChatProp="itemEditComment.text"
+            <InputChat v-else ref="inputEditChat" v-model:content="itemEditComment.text"
               :dataReply="itemEditComment?.reply" @removeReply="itemEditComment.reply = {}"
-              v-model:filesUploadProps="itemEditComment.files" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
+              v-model:files="itemEditComment.files" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
               @submitChat="submitChat" @cancel="cancelEdit(index)" />
           </div>
 
           <div class="form-chat-timeline-common-menu">
-            <a-dropdown :placement="items.userId === userId ? 'bottomRight' : 'bottomLeft'" :trigger="['click']">
+            <a-dropdown :placement="items.writerUser.id === userId ? 'bottomRight' : 'bottomLeft'" :trigger="['click']">
               <EllipsisOutlined :style="{ fontSize: '16px' }" />
               <template #overlay>
                 <a-menu>
-                  <a-menu-item @click="replyComment(items)" :disabled="itemEditComment?.key">
+                  <a-menu-item @click="replyComment(items)" :disabled="itemEditComment?.key || isLoadingUpload || true">
                     <RollbackOutlined />
                     회신하다
                   </a-menu-item>
-                  <a-menu-item v-if="items.userId === userId" @click="editComment(items)"
-                    :disabled="itemEditComment?.key">
+                  <a-menu-item v-if="items.writerUser.id === userId" @click="editComment(items)"
+                    :disabled="itemEditComment?.key || true">
                     <EditOutlined />
                     수정
                   </a-menu-item>
-                  <a-menu-item v-if="items.userId === userId" @click="openComfirmDetele(items)">
+                  <a-menu-item v-if="items.writerUser.id === userId" @click="openComfirmDetele(items)" :disabled="true">
                     <DeleteOutlined />
                     삭제
                   </a-menu-item>
@@ -125,7 +134,7 @@
         <span style="margin: 0 10px;">분류:</span>
         <span>회계-마감-({{ currentTime }})</span>
       </div>
-      <InputChat ref="inputChat" v-model:textChatProp="textChat" v-model:filesUploadProps="filesUpload"
+      <InputChat ref="inputChat" v-model:content="content" v-model:files="filesUpload"
         :dataReply="itemCommentReply" placeholder="댓글을 입력하세요…" :disabled="isLoadingUpload"
         @removeReply="itemCommentReply = {}" @submitChat="submitChat" />
     </div>
@@ -138,20 +147,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, nextTick, watch, computed, onMounted } from 'vue'
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import mutations from "@/graphql/mutations/AC/AC1/AC130";
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, FileAddOutlined, FileOutlined, SendOutlined, FileTextOutlined, RollbackOutlined } from '@ant-design/icons-vue';
-// import { databaseFirebase, storage } from "@/firebaseConfig";
-// import {
-//   ref as reffb,
-//   push,
-//   set,
-//   query,
-//   onChildAdded,
-//   onChildChanged,
-//   onValue,
-//   update,
-//   limitToLast
-// } from "firebase/database";
-// import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getJwtObject } from "@bankda/jangbuda-common";
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
 import StatusChat from './StatusChat.vue'
@@ -166,16 +164,14 @@ import { cloneDeep } from "lodash"
 import { dataChat } from '../utils'
 export default defineComponent({
   props: {
-    // Message only 2 people
-    idUserTo: {
-      type: [String, Number],
-      default: ''
+    payload: {
+      type: Object,
+      default: () => {}
     },
-    // message to the group
-    keyChatChannel: {
-      type: [String, Number],
-      default: ''
-    },
+    data: {
+      type: Array,
+      default: []
+    }
   },
   components: {
     EllipsisOutlined,
@@ -199,9 +195,9 @@ export default defineComponent({
     let jwtObject = getJwtObject(token.value!);
     const userName = ref(sessionStorage.getItem("name"));
     const userId = jwtObject.userId
-    let firstLoadChat = ref(true)
+    let firstLoadData = ref(true)
     const inputFile = ref<any>()
-    let textChat = ref('')
+    let content = ref('')
     let isModalPreview = ref(false)
     let isModalDeleteChat = ref(false)
     const formTimeline: any = ref()
@@ -229,37 +225,54 @@ export default defineComponent({
       reply: {}
     })
     const objectChatUploadUpFile: any = ref(null)
-    const listChat = ref<any>([...dataChat])
+    const listChat = ref<any>([])
     let listImagePreview: any = ref({
       index: 0,
       files: [],
     })
     let itemDetele: any = ref()
     let itemOriginEdit: any = ref()
+    const isCreate = ref(false)
 
-    watch(() => listChat.value, (value) => {
-      emit('updateNoti', value)
+
+    watch(() => props.data, (value) => {
+      if(value.length) {
+        if(firstLoadData.value) {
+          listChat.value = [...value]
+        }else {
+          const index = value.findIndex((item: any) => item.id === listChat.value[listChat.value.length].id)
+          listChat.value = [...listChat.value, value.slice(index)]
+        }
+        if(isCreate.value || firstLoadData.value) {
+          nextTick(() => {
+            formTimeline.value.scrollTop = 10000000
+          })
+        }
+        isCreate.value = false
+      }
     }, { 
       deep: true,
       immediate: true
     })
 
-    // const channelChatSubrights = () => {
-    //   if (!!props.idUserTo) {
-    //     const idUser = userName.value?.toString() || ''
-    //     if (props.idUserTo > idUser) {
-    //       return props.idUserTo + idUser;
-    //     } else {
-    //       return idUser + props.idUserTo;
-    //     }
-    //   } else {
-    //     return props.keyChatChannel.toString()
-    //   }
-    // };
+    const {
+      mutate: createAccountingClosingMessage,
+      onDone: doneCreateAccountingClosingMessage,
+      onError: errorCreateAccountingClosingMessage,
+      loading: loadingcreateAccountingClosingMessage,
+    } = useMutation(mutations.createAccountingClosingMessage);
+    doneCreateAccountingClosingMessage((e) => {
+      emit('updateData')
+      isCreate.value = true
+      inputChat.value.resetInputChat()
+      isLoadingUpload.value = false
+    })
+    errorCreateAccountingClosingMessage(e => {
+      isLoadingUpload.value = false
+      console.log('errorCreateAccountingClosingMessage', e);
+    })
 
-    // let chatListRef: any = computed(() => {
-    //   return !!channelChatSubrights() ? reffb(databaseFirebase, channelChatSubrights()) : null
-    // });
+
     const date = new Date()
     const currentTime = date.getFullYear() + '-' + ((date.getMonth() + 1) < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
     const getListContentChat = () => {
@@ -268,7 +281,7 @@ export default defineComponent({
       //   (snapshot) => {
       //     const objList = snapshot.val()
       //     if (!objList) {
-      //       firstLoadChat.value = false
+      //       firstLoadData.value = false
       //     }
       //     let arr = []
       //     for (const key in objList) {
@@ -284,7 +297,7 @@ export default defineComponent({
       //     console.log('listChat.value', listChat.value)
 
       //     onChildAdded(query(chatListRef.value, limitToLast(1)), (data) => {
-      //       if (!firstLoadChat.value) {
+      //       if (!firstLoadData.value) {
       //         if (isLoadingUpload.value && objectChatUploadUpFile.value) {
       //           if (data.val().userId === userId && data.val().createdAt === objectChatUploadUpFile.value.createdAt) {
       //             objectChatUploadUpFile.value = null
@@ -306,7 +319,7 @@ export default defineComponent({
       //           });
       //         })
       //       }
-      //       firstLoadChat.value = false
+      //       firstLoadData.value = false
       //     });
       //     onChildChanged(chatListRef.value, (data) => {
       //       const indexUpdate = listChat.value.findIndex((chat: any) => chat.key === data.key)
@@ -332,48 +345,58 @@ export default defineComponent({
 
     const submitChat = () => {
       if (isLoadingUpload.value || isProcessingDeleteUpdate.value) return
-      
-      let textInputed = textChat.value
-      let fileUploaded = [...filesUpload.value]
-      if (itemEditComment.value.key) {
-        
-        textInputed = itemEditComment.value.text
-        fileUploaded = [...itemEditComment.value.files]
-      }
-      if (!textInputed.trim() && !fileUploaded.length) return
       isLoadingUpload.value = true
-      payload.value = {
-        ...payload.value,
-        text: textInputed,
-        files: []
+      let fileStorageIds = null
+      if(filesUpload.value.length) {
+        fileStorageIds = filesUpload.value.map((file: any) => parseInt(file.id))
       }
-      if (Object.keys(itemCommentReply.value).length) {
-        payload.value.reply = { ...itemCommentReply.value }
-      }
-      if (fileUploaded.length) {
-        listFileUploadHandleLoading.value = [...fileUploaded]
-        if (itemEditComment.value.key === null) {
-          objectChatUploadUpFile.value = {
-            ...payload.value,
-            text: textInputed,
-            files: [...listFileUploadHandleLoading.value],
-          }
-        } else {
-          const indexEdit = listChat.value.findIndex((item: any) => item.key === itemEditComment.value.key)
-          listChat.value[indexEdit] = {
-            ...listChat.value[indexEdit],
-            text: textInputed,
-            files: [...listFileUploadHandleLoading.value],
-          }
+      createAccountingClosingMessage({
+        ...props.payload,
+        input: {
+          content: content.value,
+          fileStorageIds
         }
-        nextTick(() => {
-          formTimeline.value.scrollTop = 10000000
-          inputChat.value.resetInputChat()
-        })
-        uploadFileServer()
-      } else {
-        sendChat()
-      }
+      })
+      // let contentInputed = content.value
+      // let fileInputUploaded = [...filesUpload.value]
+      // if (itemEditComment.value.key) {
+      //   contentInputed = itemEditComment.value.text
+      //   fileInputUploaded = [...itemEditComment.value.files]
+      // }
+      // if (!contentInputed.trim() && !fileInputUploaded.length) return
+      // isLoadingUpload.value = true
+      // payload.value = {
+      //   ...payload.value,
+      //   text: contentInputed,
+      //   files: []
+      // }
+      // if (Object.keys(itemCommentReply.value).length) {
+      //   payload.value.reply = { ...itemCommentReply.value }
+      // }
+      // if (fileInputUploaded.length) {
+      //   listFileUploadHandleLoading.value = [...fileInputUploaded]
+      //   if (itemEditComment.value.key === null) {
+      //     objectChatUploadUpFile.value = {
+      //       ...payload.value,
+      //       text: contentInputed,
+      //       files: [...listFileUploadHandleLoading.value],
+      //     }
+      //   } else {
+      //     const indexEdit = listChat.value.findIndex((item: any) => item.key === itemEditComment.value.key)
+      //     listChat.value[indexEdit] = {
+      //       ...listChat.value[indexEdit],
+      //       text: contentInputed,
+      //       files: [...listFileUploadHandleLoading.value],
+      //     }
+      //   }
+      //   nextTick(() => {
+      //     formTimeline.value.scrollTop = 10000000
+      //     inputChat.value.resetInputChat()
+      //   })
+      //   uploadFileServer()
+      // } else {
+      //   sendChat()
+      // }
     };
 
     const sendChat = () => {
@@ -382,7 +405,7 @@ export default defineComponent({
           ...payload.value,
           files: listImageUpload.value
         }
-        textChat.value = "";
+        content.value = "";
         listImageUpload.value = []
         listFileUploadHandleLoading.value = []
       }
@@ -462,20 +485,6 @@ export default defineComponent({
       })
     }
 
-    watch(() => [props.idUserTo, props.keyChatChannel], (value) => {
-      // if (!!value[0] || !!value[1]) {
-      //   firstLoadChat.value = true
-        // chatListRef.value = reffb(databaseFirebase, channelChatSubrights());
-        // getListContentChat();
-        // nextTick(() => {
-        //   formTimeline.value.scrollTop = 10000000
-        // })
-      // }
-    }, {
-      deep: true,
-      immediate: true,
-    })
-
     watch(() => listImageUpload.value, (value) => {
       if (value.length && value.length === listFileUploadHandleLoading.value.length) {
         sendChat()
@@ -536,32 +545,33 @@ export default defineComponent({
     }
 
     const uploadFileServer = () => {
-      listImageUpload.value = []
-      listFileUploadHandleLoading.value.forEach((file: any) => {
-        if (!!file?.file) {
-          // const storageRef = refStorage(storage, file.file.name);
-          // uploadBytes(storageRef, file.file, { contentType: file.contentType }).then(async (res) => {
-          //   const url = await getDownloadURL(res.ref)
-          //   listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size, contentType: file.contentType }]
-          // }).catch((err) => {
-          //   isLoadingUpload.value = false
-          //   console.log('error', err);
-          // })video
-          let url = ''
-          if(file.contentType.includes('image/')) {
-            url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/cach-chup-anh-chan-dung-9.jpg?alt=media&token=246270e1-334f-4dce-b312-6642c7d1dc3c'
+      if(filesUpload.value.length) {
+        filesUpload.value.forEach((file: any) => {
+          if(file?.id) {
+
           }else {
-            if(file.contentType.includes('video')){
-              url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/video-5-seconds.mp4?alt=media&token=f3a80d6f-d0a0-47aa-b6ac-bfff433b2109'
-            }else{
-              url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/ac130-notice.pptx?alt=media&token=0d759619-e4b7-4b67-95e8-5651c6d858a0'
-            }
+
           }
-          listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size, contentType: file.contentType }]
-        } else {
-          listImageUpload.value = [...listImageUpload.value, { url: file.url, name: file.name, size: file.size, contentType: file.contentType }]
-        }
-      })
+        })
+      }
+      // listImageUpload.value = []
+      // listFileUploadHandleLoading.value.forEach((file: any) => {
+      //   if (!!file?.file) {
+      //     let url = ''
+      //     if(file.contentType.includes('image/')) {
+      //       url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/cach-chup-anh-chan-dung-9.jpg?alt=media&token=246270e1-334f-4dce-b312-6642c7d1dc3c'
+      //     }else {
+      //       if(file.contentType.includes('video')){
+      //         url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/video-5-seconds.mp4?alt=media&token=f3a80d6f-d0a0-47aa-b6ac-bfff433b2109'
+      //       }else{
+      //         url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/ac130-notice.pptx?alt=media&token=0d759619-e4b7-4b67-95e8-5651c6d858a0'
+      //       }
+      //     }
+      //     listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size, contentType: file.contentType }]
+      //   } else {
+      //     listImageUpload.value = [...listImageUpload.value, { url: file.url, name: file.name, size: file.size, contentType: file.contentType }]
+      //   }
+      // })
     }
 
     const previewImage = (files: any, index: number) => {
@@ -597,7 +607,7 @@ export default defineComponent({
       userName,
       listChat,
       submitChat,
-      textChat,
+      content,
       formTimeline,
       editComment,
       handleConfirmDelete,
@@ -648,7 +658,7 @@ export default defineComponent({
     // height: calc(100% - 40px);
     padding-bottom: 10px;
     padding-top: 2px;
-    scroll-behavior: smooth;
+    // scroll-behavior: smooth;
     overflow-y: auto;
 
     &-line {
@@ -789,20 +799,22 @@ export default defineComponent({
           margin-right: 20px;
 
           &-status {
-            display: inline;
-            padding: 0 10px;
-            border-radius: 5px;
-            border: 1px solid #7f7f7f;
-            background-color: #ffffff;
-            color: #7f7f7f;
-            font-size: 10px;
+            // display: inline;
+            // padding: 0 10px;
+            // border-radius: 5px;
+            // border: 1px solid #7f7f7f;
+            // background-color: #ffffff;
+            // color: #7f7f7f;
+            // font-size: 10px;
             margin-right: 5px;
           }
 
           &-name {
             font-size: 16px;
+            white-space: nowrap;
             font-weight: bold;
             color: #333333;
+            
             &-login {
               color: #1a73e8;
             }

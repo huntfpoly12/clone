@@ -3,27 +3,27 @@
     <CloseOutlined v-if="!visible" class="form-notification-btnOpen" @click="openNoti" />
     <a-drawer placement="left" :closable="false" :visible="visible" :get-container="false" width="100%"
       :style="{ position: 'absolute' }">
-      <a-spin :spinning="firstLoadChat">
+      <a-spin :spinning="firstLoadData">
         <div class="form-notification-wrapper">
-          <div class="form-notification-wrapper-title">
+          <div class="form-notification-wrapper-title" @click="test">
             알림
           </div>
-          <div v-if="listNotification.length" ref="refTimelineNoti" class="form-notification-wrapper-list">
-            <a v-for="(noti, index) in listNotification" :key="index" :href="`#${noti.key}`"
+          <div v-if="listNotification.length" class="form-notification-wrapper-list" ref="refTimelineNoti">
+            <a v-for="(noti, index) in listNotification" :key="index" :href="`#${noti.createdAt}`"
               class="form-notification-wrapper-list-items"
-              :class="{ 'form-notification-wrapper-list-items-notseen': noti?.seen ? !noti.seen.includes(userId) : true }"
+              :class="{ 'form-notification-wrapper-list-items-notseen': !noti.active }"
               @click="goToChatByNoti(noti)">
               <a-badge :dot="true" :offset="[-5, 33]" :status="noti?.online ? 'success' : 'error'" class="mr-5">
-                <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff">{{ noti.name }}</a-avatar>
+                <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff">{{ noti.writerUser.name }}</a-avatar>
               </a-badge>
               <div class="form-notification-wrapper-list-items-item">
                 <div class="form-notification-wrapper-list-items-item-infor">
                   <div class="form-notification-wrapper-list-items-item-infor-status">
-                    <StatusChat :valueSelect="index" :isSelect="false" />
+                    <StatusChat :valueSelect="noti.expresstionType" :isSelect="false" />
                   </div>
-                  <span class="form-notification-wrapper-list-items-item-infor-username"> {{ noti.name }}</span>
+                  <span class="form-notification-wrapper-list-items-item-infor-username"> {{ noti.writerUser.name }}</span>
                   <span class="form-notification-wrapper-list-items-item-infor-textConcat">댓글을 남겼습니다: </span>
-                  <span class="form-notification-wrapper-list-items-item-infor-content">"{{ noti.text }}</span>"
+                  <span class="form-notification-wrapper-list-items-item-infor-content">"{{ noti.content }}</span>"
                 </div>
                 <div class="form-notification-wrapper-list-items-item-time">{{ formatDate(noti.createdAt) }}</div>
               </div>
@@ -36,38 +36,34 @@
         </div>
       </a-spin>
     </a-drawer>
-    <slot />
+    <FormChat :payload="payload" :data="listData" @updateData="updateData"/>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
-import { getJwtObject } from "@bankda/jangbuda-common";
+import { defineComponent, ref, watch, onMounted, nextTick } from 'vue'
+import { getJwtObject } from "@bankda/jangbuda-common"
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import queries from "@/graphql/queries/AC/AC1/AC130";
 import { CloseOutlined } from "@ant-design/icons-vue";
-// import { databaseFirebase, storage } from "@/firebaseConfig";
-// import {
-//   ref as reffb,
-//   push,
-//   set,
-//   query,
-//   update,
-//   onChildAdded,
-//   onChildChanged,
-//   onValue,
-//   limitToLast
-// } from "firebase/database";
 import StatusChat from './StatusChat.vue'
-import { dataChat } from '../utils'
+import FormChat from "./FormChat.vue"
+import { cloneDeep } from 'lodash';
 export default defineComponent({
   props: {
     listNoti: {
       type: Array,
       default: []
-    }
+    },
+    payload: {
+      type: Object,
+      default: () => {}
+    },
   },
   components: {
     CloseOutlined,
-    StatusChat
+    StatusChat,
+    FormChat
   },
   setup(props, { emit }) {
     const token = ref(sessionStorage.getItem("token"))
@@ -77,88 +73,64 @@ export default defineComponent({
     const keyChatChannel = 'keyChatChannelCommon';
     const visible = ref(true)
     const listNotification = ref<any>([])
+    const listData = ref<any>([])
     const refTimelineNoti: any = ref()
-    const firstLoadChat = ref(true)
+    const firstLoadData = ref(true)
+    const page = ref(1)
+    const rows = ref(50)
 
-    // const chatListRef = reffb(databaseFirebase, keyChatChannel)
-    onMounted(() => {
-      getListNoti()
+    const triggerGetAccountingClosingMessages = ref(false)
+
+    watch(() => props.payload, (value) => {
+      if(Object.keys(value).length) {
+        triggerGetAccountingClosingMessages.value = true
+      }
+    },{
+      deep: true,
+      immediate: true,
     })
 
-    const getListNoti = () => {
-      listNotification.value = dataChat.filter((noti: any) => noti.userId !== userId)
-      setTimeout(() => {
-        firstLoadChat.value = false
-      }, 500);
-      // onValue(
-      //   chatListRef,
-      //   (snapshot) => {
-      //     const objList = snapshot.val()
-      //     if (!objList) {
-      //       firstLoadChat.value = false
-      //     }
-      //     let arr = []
-      //     for (const key in objList) {
-      //       if (!objList[key]?.isDelete && objList[key].userId !== userId) {
-      //         arr.push({
-      //           key: key,
-      //           files: objList?.files || [],
-      //           ...objList[key]
-      //         })
-      //       }
-      //     }
-      //     listNotification.value = arr
+    const {
+      onResult: onResGetAccountingClosingMessages,
+      loading: loadinggetGetAccountingClosingMessages,
+    } = useQuery(queries.getAccountingClosingMessages, {
+      filter: {
+        ...props.payload,
+        page: page.value,
+        rows: rows.value,
+      }
+    },
+      () => ({
+        enabled: triggerGetAccountingClosingMessages.value,
+        fetchPolicy: "no-cache",
+      }))
+    onResGetAccountingClosingMessages((data) => {
+      if(firstLoadData.value) {
+        listNotification.value = data.data.getAccountingClosingMessages.datas.reverse()
+        listData.value = cloneDeep(listNotification.value)
+      }else {
+        if(data.data.getAccountingClosingMessages.datas.length){
+          const index = listNotification.value.findIndex((noti: any) => noti.id === data.data.getAccountingClosingMessages.datas[rows.value-1].id)
+          if(index >= 0) {
+            listNotification.value = [...listNotification.value.splice(index), ...data.data.getAccountingClosingMessages.datas.reverse()]
+            listData.value = cloneDeep(listNotification.value)
+          }else{
+            listNotification.value = data.data.getAccountingClosingMessages.datas
+            listData.value = data.data.getAccountingClosingMessages.datas.reverse()
+          }
+        }
+      }
+      triggerGetAccountingClosingMessages.value = false
+      firstLoadData.value = false
 
-      //     onChildAdded(query(chatListRef, limitToLast(1)), (data) => {
-      //       if (!firstLoadChat.value && data.val().userId !== userId) {
-      //         listNotification.value.push({
-      //           ...data.val(),
-      //           key: data.key
-      //         })
-      //         nextTick(() => {
-      //           refTimelineNoti.value.scrollTop = 10000000
-      //         })
-      //       } else {
-      //         nextTick(() => {
-      //           refTimelineNoti.value.scrollTo({
-      //             top: 10000000,
-      //             behavior: "instant",
-      //           });
-      //         })
-      //       }
-      //       firstLoadChat.value = false
-      //     });
-      //     onChildChanged(chatListRef, (data) => {
-      //       const indexUpdate = listNotification.value.findIndex((chat: any) => chat.key === data.key)
-      //       if (indexUpdate >= 0) {
-      //         listNotification.value[indexUpdate] = {
-      //           ...listNotification.value[indexUpdate],
-      //           text: data.val().text,
-      //           files: data.val().files,
-      //           reply: data.val()?.reply ? data.val().reply : {},
-      //           seen: data.val()?.seen ? data.val().seen : [],
-      //         }
-      //       }
-      //     });
-      //   },
-      //   {
-      //     onlyOnce: true,
-      //   }
-      // );
-    };
+      nextTick(() => {
+        refTimelineNoti.value.scrollTop = 10000000
+      })
+    })
+
 
     const goToChatByNoti = (noti: any) => {
       visible.value = false
-      // if (noti?.seen && noti.seen.includes(userId)) return
-      // const updates: any = {};
-      // const payloadEdit = { ...noti, seen: noti?.seen ? [...noti.seen, userId] : [userId] }
-      // delete payloadEdit.key
-      // updates[`/${noti.key}`] = payloadEdit
-      // update(chatListRef, updates).then(() => {
-      // }).catch(() => {
-      //   console.log('eeeeeeeee');
-      // }).finally(() => {
-      // })
     }
 
     const closeNoti = () => {
@@ -176,8 +148,12 @@ export default defineComponent({
       return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${date.getMinutes()}`
     }
 
-    const updateNoti = (value: any) => {
-      console.log('2', value);
+    const updateData = () => {
+      rows.value = 5
+      triggerGetAccountingClosingMessages.value = true
+    }
+    const test = () => {
+      refTimelineNoti.value.scrollTop = 10000000
     }
     return {
       userId,
@@ -189,8 +165,11 @@ export default defineComponent({
       closeNoti,
       openNoti,
       goToChatByNoti,
-      firstLoadChat,
-      updateNoti
+      firstLoadData,
+      updateData,
+      listData,
+      loadinggetGetAccountingClosingMessages,
+      test
     }
   },
 })
@@ -202,7 +181,7 @@ export default defineComponent({
   width: 100%;
   position: relative;
   overflow: hidden;
-
+  
   :deep .ant-drawer-body {
     padding: 10px;
   }
