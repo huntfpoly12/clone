@@ -616,42 +616,42 @@ export const clearAllCellValue = (wrapper: any) => {
 export const setValueDataTable = (wrapper: any,code: string, data: any) => {
   let hot = wrapper?.value.hotInstance;
   const rowPosition = inputPosition.find(item => item.className == code);
-  if (typeof data.numberOfPeople === "number" && data.numberOfPeople >= 0)
+  if (typeof data.numberOfPeople === "number")
     hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople, 'setdata');
-  if (typeof data.totalPayment === "number" && data.totalPayment >= 0)
+  if (typeof data.totalPayment === "number")
     hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment,'setdata');
-  if (typeof data.collectedIncomeTax === "number" && data.collectedIncomeTax >= 0)
+  if (typeof data.collectedIncomeTax === "number")
     hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax,'setdata');
-  if (typeof data.collectedRuralSpecialTax === "number" && data.collectedRuralSpecialTax >= 0)
+  if (typeof data.collectedRuralSpecialTax === "number")
     hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax,'setdata');
-  if (typeof data.collectedExtraTax === "number" && data.collectedExtraTax >= 0)
+  if (typeof data.collectedExtraTax === "number")
     hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax,'setdata');
-  if (typeof data.thisMonthAdjustedRefundTaxAmount === "number" && data.thisMonthAdjustedRefundTaxAmount >= 0)
+  if (typeof data.thisMonthAdjustedRefundTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount,'setdata');
-  if (typeof data.incomeTaxPaid === "number" && data.incomeTaxPaid >= 0)
+  if (typeof data.incomeTaxPaid === "number")
     hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid,'setdata');
-  if (typeof data.ruralSpecialTaxPaid === "number" && data.ruralSpecialTaxPaid >= 0)
+  if (typeof data.ruralSpecialTaxPaid === "number")
     hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid,'setdata');
 
-  if (typeof data.prevMonthNonRefundableTaxAmount === "number" && data.prevMonthNonRefundableTaxAmount >= 0)
+  if (typeof data.prevMonthNonRefundableTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.prevMonthNonRefundableTaxAmount,'setdata');
-  if (typeof data.preRefundApplicationTaxAmount === "number" && data.preRefundApplicationTaxAmount >= 0)
+  if (typeof data.preRefundApplicationTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.preRefundApplicationTaxAmount,'setdata');
-  if (typeof data.deductibleBalance === "number" && data.deductibleBalance >= 0)
+  if (typeof data.deductibleBalance === "number")
     hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.deductibleBalance,'setdata');
-  if (typeof data.thisMonthRefundTaxGeneral === "number" && data.thisMonthRefundTaxGeneral >= 0)
+  if (typeof data.thisMonthRefundTaxGeneral === "number")
     hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.thisMonthRefundTaxGeneral,'setdata');
-  if (typeof data.thisMonthRefundTaxOtherFinancialCompany === "number" && data.thisMonthRefundTaxOtherFinancialCompany >= 0)
+  if (typeof data.thisMonthRefundTaxOtherFinancialCompany === "number")
     hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.thisMonthRefundTaxOtherFinancialCompany,'setdata');
-  if (typeof data.thisMonthRefundTaxOtherMerge === "number" && data.thisMonthRefundTaxOtherMerge >= 0)
+  if (typeof data.thisMonthRefundTaxOtherMerge === "number")
     hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthRefundTaxOtherMerge,'setdata');
-  if (typeof data.refundTaxSubjectToAdjustment === "number" && data.refundTaxSubjectToAdjustment >= 0)
+  if (typeof data.refundTaxSubjectToAdjustment === "number")
     hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.refundTaxSubjectToAdjustment,'setdata');
-  if (typeof data.thisMonthTotalAdjustedRefundTaxAmount === "number" && data.thisMonthTotalAdjustedRefundTaxAmount >= 0)
+  if (typeof data.thisMonthTotalAdjustedRefundTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.thisMonthTotalAdjustedRefundTaxAmount,'setdata');
-  if (typeof data.nextMonthRefundTaxAmount === "number" && data.nextMonthRefundTaxAmount >= 0)
+  if (typeof data.nextMonthRefundTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value[8][0], rowPosition?.value[8][1], data.nextMonthRefundTaxAmount,'setdata');
-  if (typeof data.refundApplicationAmount === "number"  && data.refundApplicationAmount >= 0)
+  if (typeof data.refundApplicationAmount === "number")
     hot.setDataAtCell(rowPosition?.value[9][0], rowPosition?.value[9][1], data.refundApplicationAmount,'setdata');
 }
 
@@ -662,6 +662,8 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
   } else {
     let hot = wrapper.value.hotInstance;
     const arrData = hot.getData()
+    console.log(arrData);
+    
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 32) {
         // check để lọc hết những row không có dữ liệu ra
@@ -692,8 +694,10 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
       }
     }
   }
+  console.log(cellData);
   const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
-    if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
+  console.log(output);
+  if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
       output.incomeWages.forEach((item) => {
         setValueDataTable(wrapper,item.code,item)
       })
