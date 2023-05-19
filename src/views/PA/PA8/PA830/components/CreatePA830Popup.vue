@@ -1,10 +1,10 @@
 <template>
-  <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
+  <a-modal class="form-modal" width="980px" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
     :visible="isOpenModalCreate" title="급여변경신고 신규 등록" centered @cancel="closePopup" :footer="null" :mask-closable="false">
     <standard-form ref="formRef">
       <div class="mb-10">
         <a-row>
-          <a-col span="12">
+          <a-col span="8">
             <DxField label="직원유행">
               <a-radio-group v-model:value="employeeWageType" class="d-flex items-center">
                 <a-radio :value="EmployeeWageType.WAGE" @change="handleRadioChange"
@@ -18,9 +18,9 @@
               </a-radio-group>
             </DxField>
           </a-col>
-          <a-col :span="12">
-            <DxField label="직원선택">
-              <employ-select required :arrayValue="employeeWages" v-model:valueEmploy="employeeWageSelected" width="300px"
+          <a-col :span="8">
+            <DxField label="직원유행">
+              <employ-select required :arrayValue="employeeWages" v-model:valueEmploy="employeeWageSelected"
                 placeholder="선택" />
             </DxField>
           </a-col>
@@ -44,7 +44,7 @@
         </a-col>
         <a-col span="8">
           <DxField label="사업장관리번호">
-            <ManageIdTextBox :value="infoMajorInsuranceConsignStatus.manageId" disabled placeholder="" />
+            <default-text-box :value="infoMajorInsuranceConsignStatus.manageId" placeholder="사업장관리번호" disabled />
           </DxField>
         </a-col>
         <a-col span="16">
@@ -59,10 +59,9 @@
             <default-text-box :value="employee?.name" placeholder="성명" disabled />
           </DxField>
         </a-col>
-        <a-col span="4"></a-col>
         <a-col span="8">
-          <DxField label="주민등록번호" class="field-custom">
-            <id-number-text-box :valueInput="employee?.residentId" placeholder="주민등록번호" disabled />
+          <DxField label="주민등록번호" >
+            <default-text-box :value="employee?.residentId" placeholder="주민등록번호" disabled />
           </DxField>
         </a-col>
 
@@ -79,25 +78,23 @@
           </DxField>
         </a-col>
         <a-col span="8">
-          <DxField label="변경전급여" class="field-custom">
-            <number-box-money v-model:valueInput="formData.beforeSalary" :min="1" />
+          <DxField label="변경전급여">
+            <number-box v-model:valueInput="formData.beforeSalary" :min="1" placeholder="보수변경 년월" />
+          </DxField>
+        </a-col>
+        <a-col span="8">
+          <DxField label="변경후급여">
+            <number-box v-model:valueInput="formData.afterSalary" required :min="1" placeholder="변경된 보수월액" />
           </DxField>
         </a-col>
         <a-col span="4" />
         <a-col span="8">
-          <DxField label="변경후급여" class="field-custom">
-            <number-box-money v-model:valueInput="formData.afterSalary" required :min="1" />
+          <DxField label="변경년월">
+            <month-picker-box v-model:valueDate="formData.changeYearmonth" />
           </DxField>
         </a-col>
-        <a-col span="4" />
-        <a-col span="8">
-          <DxField label="변경년월" class="field-custom">
-            <month-picker-box v-model:valueDate="formData.changeYearmonth" :teleport="true" />
-          </DxField>
-        </a-col>
-        <a-col span="4" />
         <a-col span="12">
-          <DxField label="변경사유" class="field-custom">
+          <DxField label="변경사유">
             <div class="d-flex gap-20">
               <a-radio-group v-model:value="formData.changeReason" class="d-flex items-center">
                 <a-radio :value="1">보수 인상</a-radio>
@@ -131,7 +128,8 @@ import queriesGetEmployeeDailies from "@/graphql/queries/common/getEmployeeWageD
 import queriesGetEmployeeWages from "@/graphql/queries/common/getEmployeeWages";
 import mutations from '@/graphql/mutations/PA/PA8/PA830'
 import { companyId } from "@/helpers/commonFunction";
-
+import { useCompanyInfo } from "@/utils/useCompanyInfo";
+import useGetMajorInsuranceConsignStatus from "@/utils/usegetMajorInsuranceConsignStatus";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
@@ -140,8 +138,6 @@ import isEqual from "lodash/isEqual";
 import { computed, reactive, ref, watch } from 'vue';
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
-import { useCompanyInfo } from "@/utils/useCompanyInfo";
-import useGetMajorInsuranceConsignStatus from "@/utils/usegetMajorInsuranceConsignStatus";
 
 
 enum EmployeeWageType {
@@ -201,9 +197,9 @@ const { onResult: onResultEmployeeWages, refetch: refetchDataEmployeeWages } = u
 onResultEmployeeWages(({ data }) => {
   if (data) {
     if (stateSelectQuery.selectedRadioValue === EmployeeWageType.WAGE) {
-      employeeWages.value = data.getEmployeeWages;
+      employeeWages.value = data.getEmployeeWages.filter((item: any) => !item.leavedAt);
     } else {
-      employeeWages.value = data.getEmployeeWageDailies;
+      employeeWages.value = data.getEmployeeWageDailies.filter((item: any) => !item.leavedAt);
     }
   }
 })
