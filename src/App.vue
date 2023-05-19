@@ -16,7 +16,7 @@ export default {
 
 <style>
 #app {
-  min-width: 1900px;
+  min-width: 1640px;
   overflow-x: auto;
 }
 .page-content {

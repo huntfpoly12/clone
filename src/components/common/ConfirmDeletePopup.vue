@@ -3,7 +3,7 @@
         :width="500">
         <div class="custom-modal-delete">
             <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
-            <span>{{ contentDelete }}</span>
+            <slot></slot>
         </div>
         <div class="text-align-center mt-30">
             <button-basic class="button-form-modal" :text="contentNo" :type="'default'" :mode="'outlined'"
@@ -22,10 +22,10 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
-        contentDelete: {
-            type: String,
-            default: '',
-        },
+        // contentDelete: {
+        //     type: String,
+        //     default: '',
+        // },
         contentYes: {
             type: String,
             default: '네. 삭제합니다',

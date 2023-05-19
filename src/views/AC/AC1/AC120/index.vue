@@ -1,113 +1,36 @@
 <template>
-  <action-header
-    :buttonDelete="false"
-    :buttonSearch="false"
-    :buttonSave="false"
-    :buttonPrint="false"
-  />
+  <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false" />
   <div class="ac-120">
     <div class="top">
       <a-spin tip="Loading..." :spinning="loadingGetAccountingProcesses">
         <div class="grid">
-          <div
-            v-for="(month, index) in 12"
-            :key="index"
-            class="items"
-            :class="{ 'items-active': monthSelected === month }"
-            @click="selectedMonth(month)"
-          >
-            <colorful-badge
-              :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
+          <div v-for="(month, index) in 12" :key="index" class="items"
+            :class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
+            <colorful-badge :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
               :year="dataGetAccountingProcesses.find((item: any) => item.month === month)?.year || acYear"
-              :month="dataGetAccountingProcesses.find((item: any) => item.month === month)?.month || month"
-            />
+              :month="dataGetAccountingProcesses.find((item: any) => item.month === month)?.month || month" />
           </div>
         </div>
       </a-spin>
       <div class="flex">
         <div class="action">
-          <ProcessStatus
-            v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+          <ProcessStatus v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
             :valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
-            :disabled="true"
-          />
-          <button-basic
-            v-else
-            mode="contained"
-            style="width: 90px"
-            :disabled="true"
-          >
+            :disabled="true" />
+          <button-basic v-else mode="contained" style="width: 90px" :disabled="true">
           </button-basic>
-          <DxButton
-            icon="plus"
-            class="ml-4"
-            @click="modalHistoryAccountingProcess"
-          >
+          <DxButton icon="plus" class="ml-4" @click="modalHistoryAccountingProcess">
             <a-tooltip placement="top" title="마감상태 변경이력">
               <HistoryOutlined style="font-size: 18px" />
             </a-tooltip>
           </DxButton>
         </div>
         <div class="action">
-          <div
-            style="
-              border: 1px solid #ddd;
-              width: 100%;
-              display: flex;
-              padding: 5px 0;
-            "
-          >
-            <div style="width: 90px; margin-left: 5px">
-              <div
-                class="dx-datagrid-summary-item dx-datagrid-text-content"
-                v-html="customCountRow()"
-              ></div>
-            </div>
-            <div style="width: 200px; margin-left: 30px">
-              <div
-                class="dx-datagrid-summary-item dx-datagrid-text-content"
-                v-html="sumOfResolutionClassification1()"
-              ></div>
-            </div>
-            <div style="width: 200px">
-              <div
-                class="dx-datagrid-summary-item dx-datagrid-text-content"
-                v-html="sumOfResolutionClassification2()"
-              ></div>
-            </div>
-            <div style="width: 300px">
-              <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-                <a-tooltip
-                  placement="top"
-                  title="조정마감되지 않는경우 전월이 0입니다"
-                >
-                  <div style="display: inline">
-                    전월 잔액
-                    <span>[{{ $filters.formatCurrency(lastBalance) }}]</span>
-                  </div>
-                </a-tooltip>
-                <div style="display: inline" v-html="customBalance()"></div>
-              </div>
-            </div>
-            <div style="width: 240px">
-              <div
-                class="dx-datagrid-summary-item dx-datagrid-text-content"
-                v-html="countResolutionNormalStatus()"
-              ></div>
-            </div>
-          </div>
-        </div>
-        <div class="action">
           <a-tooltip placement="top" color="black">
             <template #title>전표 신규 건별 등록</template>
             <span>
-              <DxButton
-                class="ml-4 custom-button"
-                type="default"
-                :height="$config_styles.HeightInput"
-                @click="actionOpenModalAdd"
-                :disabled="store.state.common.ac120.statusFormAdd"
-              >
+              <DxButton class="ml-4 custom-button" type="default" :height="$config_styles.HeightInput"
+                @click="actionOpenModalAdd" :width="120" :disabled="store.state.common.ac120.statusFormAdd">
                 <div class="d-flex-center">
                   <PlusOutlined style="font-size: 14px" />
                   <span class="pl-5">전표 건별 등록</span>
@@ -118,12 +41,8 @@
           <a-tooltip placement="top" color="black">
             <template #title>결의서 신규 엑셀 등록</template>
             <span>
-              <DxButton
-                class="ml-4 custom-button"
-                type="default"
-                disabled="true"
-                :height="$config_styles.HeightInput"
-              >
+              <DxButton class="ml-4 custom-button" type="default" disabled="true" :width="130"
+                :height="$config_styles.HeightInput">
                 <div class="d-flex-center">
                   <PlusOutlined style="font-size: 14px" />
                   <span class="pl-5">결의서 엑셀 등록</span>
@@ -131,12 +50,8 @@
               </DxButton>
             </span>
           </a-tooltip>
-          <DxButton
-            class="ml-4 mr-4 custom-button-checkbox custom-button"
-            type="default"
-            :height="$config_styles.HeightInput"
-            @click="actionModalDelete"
-          >
+          <DxButton class="ml-4 mr-4 custom-button-checkbox custom-button" type="default" :width="90"
+            :height="$config_styles.HeightInput" @click="actionModalDelete">
             <div class="d-flex-center">
               <checkbox-basic :valueCheckbox="true" disabled="true" />
               <span class="pl-5">전표취소</span>
@@ -150,15 +65,227 @@
         </div>
       </div>
     </div>
-    <div class="main">
+    <DxDrawer :opened-state-mode="'shrink'" :position="'bottom'" :reveal-mode="'expand'"
+      v-model:opened="store.state.common.ac120.statusShowFull" :height="'100%'" template="listMenu">
+      <template #listMenu="{ data }">
+        <DetailComponent @changeAmountDataGrid="changeAmountDataGrid" />
+      </template>
+      <div id="content" class="dx-theme-background-color">
+        <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
+          <DxDataGrid noDataText="내역이 없습니다" id="dataGridAc120"
+            :class="store.state.common.ac120.statusShowFull ? 'hiddenTable' : ''" key-expr="accountingDocumentId"
+            :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+            ref="gridRefAC120" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+            v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
+            @focused-row-changing="onFocusedRowChanging" :column-auto-width="true"
+            v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys" @selection-changed="selectionChanged">
+            <DxRowDragging
+              v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10"
+              :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder" />
+            <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
+            <DxScrolling mode="standard" show-scrollbar="always" />
+            <DxPaging :enabled="false" />
+            <DxColumn caption="일자" :allow-sorting="false" cell-template="transactionDetailDate"
+              data-field="transactionDetailDate" width="85" />
+            <template #transactionDetailDate="{ data }">
+              {{ $filters.formatDate(data.value) }}
+            </template>
+
+            <DxColumn caption="순번" :allow-sorting="false" data-field="documentOrderByDate" width="45" />
+
+            <DxColumn caption="결의번호" :allow-sorting="false" data-field="resolutionNumber" width="68" />
+
+            <DxColumn caption="통장" :allow-sorting="false" cell-template="bankbook" data-field="bankbook" width="80" />
+            <template #bankbook="{ data }">
+              <a-tooltip placement="top" :title="data.data.bankbook?.type +
+                ' ' +
+                data.data.bankbook?.bankbookNumber
+                ">
+                <div>{{ data.data.bankbook?.bankbookNickname }}</div>
+              </a-tooltip>
+            </template>
+
+            <DxColumn caption="결의 구분" :allow-sorting="false" data-field="resolutionClassification"
+              cell-template="resolutionClassification" width="75" />
+            <template #resolutionClassification="{ data }">
+              {{
+                store.state.common.ac120.arrResolutionClassification.find(
+                  (item: any) => data.data.resolutionClassification == item.id
+                )?.text
+              }}
+            </template>
+
+            <DxColumn caption="수입액" :allow-sorting="false" cell-template="amountCustom1" width="80" />
+            <template #amountCustom1="{ data }">
+              {{
+                data.data.resolutionClassification == 1
+                ? $filters.formatCurrency(data.data.amount)
+                : 0
+              }}
+            </template>
+
+            <DxColumn caption="지출액" :allow-sorting="false" cell-template="amountCustom2" width="80" />
+            <template #amountCustom2="{ data }">
+              {{
+                data.data.resolutionClassification == 2
+                ? $filters.formatCurrency(data.data.amount)
+                : 0
+              }}
+            </template>
+
+            <DxColumn caption="잔액" :allow-sorting="false" data-field="balance" width="90" format="fixedPoint" />
+
+            <DxColumn caption="통장적요" :allow-sorting="false" data-field="summaryOfBankbookDetail" width="75" />
+
+            <DxColumn caption="적요" :allow-sorting="false" data-field="summary" />
+
+            <DxColumn caption="계정과목" :allow-sorting="false" data-field="accountCode" cell-template="accountCode"
+              width="150" />
+            <template #accountCode="{ data }">
+              <account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
+            </template>
+
+            <DxColumn caption="상대계정" :allow-sorting="false" data-field="relationCode" cell-template="relationCode"
+              width="150" />
+            <template #relationCode="{ data }">
+              <account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
+            </template>
+
+            <DxColumn caption="자금원천" :allow-sorting="false" data-field="fundingSource" css-class="cell-left"
+              cell-template="fundingSource" width="75" />
+            <template #fundingSource="{ data }">
+              {{
+                store.state.common.ac120.arrFundingSource.find(
+                  (item: any) => data.data.fundingSource == item.id
+                )?.text
+              }}
+            </template>
+
+            <DxColumn caption="거래처" :allow-sorting="false" data-field="clientId" cell-template="clientId" width="75" />
+            <template #clientId="{ data }">
+              {{
+                clients.find((item: any) => item.value == data.data.clientId)
+                  ?.label
+              }}
+            </template>
+
+            <DxColumn caption="증빙" :allow-sorting="false" data-field="proofCount" width="50" />
+
+            <DxColumn caption="물품 내역" :allow-sorting="false" cell-template="normality" css-class="cell-center"
+              width="75" />
+            <template #normality="{ data }">
+              <div v-if="data.data.resolutionClassification != 1">
+                <PlusOutlined v-if="data.data.goodsCount == 0" class="icon-add"
+                  @click="actionPopupItemDetail(data.data)" />
+                <div v-else style="cursor: pointer" @click="actionPopupItemDetail(data.data)">
+                  {{ data.data.goodsCount }}
+                </div>
+              </div>
+            </template>
+
+            <DxColumn caption="수기 여부" :allow-sorting="false" cell-template="handwriting" width="75" />
+            <template #handwriting="{ data }">
+              <div class="slipRegistration">
+                <DxButton v-if="data.data.handwriting == true" :focusStateEnabled="false" text="O"
+                  :style="{ backgroundColor: '#BB3835', color: 'white' }" :height="$config_styles.HeightInput" />
+              </div>
+            </template>
+
+            <DxColumn caption="정상 여부" :allow-sorting="false" cell-template="resolutionNormalStatus" width="75" />
+            <template #resolutionNormalStatus="{ data }">
+              <div class="slipRegistration">
+                <DxButton :focusStateEnabled="false" :text="data.data.resolutionNormalStatus ? 'O' : 'X'" :style="{
+                  backgroundColor: data.data.resolutionNormalStatus
+                    ? '#337614'
+                    : '#BB3835',
+                  color: 'white',
+                }" :height="$config_styles.HeightInput" />
+              </div>
+            </template>
+          </DxDataGrid>
+          <!-- <div class="action"> -->
+          <div style="
+              border: 1px solid #ddd;
+              border-top: none;
+              /* width: 100%; */
+              display: flex;
+              padding: 5px;
+              justify-content: space-around;
+            ">
+            <div>
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customCountRow()"></div>
+            </div>
+            <div style="margin-left: 20px">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfResolutionClassification1()">
+              </div>
+            </div>
+            <div style="margin-left: 20px">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="sumOfResolutionClassification2()">
+              </div>
+            </div>
+            <div style="margin-left: 20px">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                <a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
+                  <div style="display: inline">
+                    전월 잔액
+                    <span>[{{ $filters.formatCurrency(lastBalance) }}]</span>
+                  </div>
+                </a-tooltip>
+                <div style="display: inline" v-html="customBalance()"></div>
+              </div>
+            </div>
+            <div style="margin-left: 20px">
+              <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="countResolutionNormalStatus()"></div>
+            </div>
+          <!-- </div> -->
+        </div>
+        </a-spin>
+        <div class="detail-header mt-10">
+          <a-row class="text-align-center">
+            <a-col :span="8" @click="store.state.common.ac120.statusShowFull =
+              !store.state.common.ac120.statusShowFull;">
+              <span style="float: left">
+                <fullscreen-exit-outlined :style="{ fontSize: '20px' }" v-if="store.state.common.ac120.statusShowFull" />
+                <fullscreen-outlined :style="{ fontSize: '20px' }" v-else />
+              </span>
+            </a-col>
+            <a-col :span="8">
+              <div style="display: flex; justify-content: center; margin-left: 35px">
+                <span style="font-weight: bold; font-size: 18px; margin-right: 5px">결의서</span>
+                <a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true" placement="top"
+                  color="black" title="정상 여부">
+                  <DxButton :focusStateEnabled="false" text="O" :style="{ backgroundColor: '#337614', color: 'white' }"
+                    :height="$config_styles.HeightInput" />
+                </a-tooltip>
+                <DxButton v-else :focusStateEnabled="false" text="X"
+                  :style="{ backgroundColor: '#BB3835', color: 'white' }" :height="$config_styles.HeightInput" />
+              </div>
+            </a-col>
+            <a-col :span="8">
+              <div style="display: flex; justify-content: flex-end">
+                <a-form-item label="결의번호">
+                  {{
+                    store.state.common.ac120.formData.resolutionNumber
+                    ? store.state.common.ac120.formData.resolutionNumber
+                    : "_____"
+                  }}
+                  <DxButton v-if="store.state.common.ac120.formData.handwriting == true" :focusStateEnabled="false"
+                    text="수기" :style="{ backgroundColor: '#BB3835', color: 'white' }"
+                    :height="$config_styles.HeightInput" />
+                </a-form-item>
+              </div>
+            </a-col>
+          </a-row>
+        </div>
+      </div>
+    </DxDrawer>
+    <!-- <div class="main">
       <div class="data-grid">
         <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
           <DxDataGrid
             noDataText="내역이 없습니다"
             id="dataGridAc120"
-            :class="
-              store.state.common.ac120.statusShowFull ? 'hiddenTable' : ''
-            "
+            :class="store.state.common.ac120.statusShowFull ? 'hiddenTable' : ''"
             key-expr="accountingDocumentId"
             :show-row-lines="true"
             :hoverStateEnabled="true"
@@ -428,49 +555,23 @@
         </a-spin>
       </div>
       <DetailComponent @changeAmountDataGrid="changeAmountDataGrid" />
-    </div>
+    </div> -->
   </div>
-  <PopupMessage
-    :modalStatus="isModalConfirmChangeData"
-    @closePopup="isModalConfirmChangeData = false"
-    :typeModal="'confirm'"
-    title=""
-    content="변경 내용을 저장하시겠습니까?"
-    okText="네"
-    cancelText="아니요"
-    @checkConfirm="handleConfirmChange"
-  />
-  <ModalDelete
-    :modalStatus="statusModalDelete"
-    @closePopup="statusModalDelete = false"
-    :dataRows="dataRows"
-  />
+  <PopupMessage :modalStatus="isModalConfirmChangeData" @closePopup="isModalConfirmChangeData = false"
+    :typeModal="'confirm'" title="" content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니요"
+    @checkConfirm="handleConfirmChange" />
+  <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows="dataRows" />
 
-  <ModalAdd
-    :modalStatus="statusModalAdd"
-    @closePopup="statusModalAdd = false"
-    :monthSelected="monthSelected"
-  />
+  <ModalAdd :modalStatus="statusModalAdd" @closePopup="statusModalAdd = false" :monthSelected="monthSelected" />
 
-  <PopupItemDetails
-    :modalStatus="statusModalItemDetail"
-    @closePopup="statusModalItemDetail = false"
-  />
+  <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false" />
 
-  <HistoryPopup
-    :modalStatus="modalHistoryStatusAccountingProcess"
-    @closePopup="modalHistoryStatusAccountingProcess = false"
-    :data="popupData"
-    title="변경이력"
-    typeHistory="ac-120-accounting-process"
-  />
-  <HistoryPopup
-    :modalStatus="modalHistoryStatuAccountingDocuments"
-    @closePopup="modalHistoryStatuAccountingDocuments = false"
-    :data="popupData"
-    title="변경이력"
-    typeHistory="ac-120-accounting-documents"
-  />
+  <HistoryPopup :modalStatus="modalHistoryStatusAccountingProcess"
+    @closePopup="modalHistoryStatusAccountingProcess = false" :data="popupData" title="변경이력"
+    typeHistory="ac-120-accounting-process" />
+  <HistoryPopup :modalStatus="modalHistoryStatuAccountingDocuments"
+    @closePopup="modalHistoryStatuAccountingDocuments = false" :data="popupData" title="변경이력"
+    typeHistory="ac-120-accounting-documents" />
 </template>
 <script lang="ts">
 import { useStore } from "vuex";
@@ -495,6 +596,7 @@ import {
   DxRowDragging,
   DxPaging,
 } from "devextreme-vue/data-grid";
+import DxDrawer from 'devextreme-vue/drawer';
 import {
   HistoryOutlined,
   EditOutlined,
@@ -516,6 +618,10 @@ import notification from "@/utils/notification";
 import DataSource from "devextreme/data/data_source";
 import { Store } from "devextreme/data";
 import { cloneDeep, isEqual } from "lodash";
+import {
+  FullscreenOutlined,
+  FullscreenExitOutlined,
+} from "@ant-design/icons-vue";
 export default defineComponent({
   components: {
     ProcessStatus,
@@ -536,6 +642,9 @@ export default defineComponent({
     DxButton,
     DxRowDragging,
     DetailComponent,
+    DxDrawer,
+    FullscreenOutlined,
+    FullscreenExitOutlined,
   },
   setup() {
     const store = useStore();
@@ -1062,9 +1171,8 @@ export default defineComponent({
 
     // ================ CUSTOM SUMMARY TABLE ============================================
     const customCountRow = () => {
-      return `전표 건수 <span>[${
-        totalCount.value ? totalCount.value : 0
-      }]</span>`;
+      return `전표 건수 <span>[${totalCount.value ? totalCount.value : 0
+        }]</span>`;
     };
     const sumOfResolutionClassification1 = () => {
       let total = 0;
@@ -1120,6 +1228,8 @@ export default defineComponent({
       )}]</span>`;
     };
 
+    const heightDrawer = ref('calc(100vh - 245px)')
+
     return {
       dataGetAccountingProcesses,
       dataSource,
@@ -1164,6 +1274,7 @@ export default defineComponent({
       clients,
       gridRefAC120,
       changeAmountDataGrid,
+      heightDrawer,
     };
   },
 });

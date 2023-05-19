@@ -1,11 +1,5 @@
 <template>
-  <a-modal
-    :visible="modalStatus"
-    width="60%"
-    footer=""
-    @cancel="setModalVisible()"
-    :mask-closable="false"
-  >
+  <a-modal :visible="modalStatus" width="75%" footer="" @cancel="setModalVisible()" :mask-closable="false">
     <div style="text-align: center; margin-top: 32px">
       <h2>여입 대상 지출결의서 검색</h2>
       <span>
@@ -16,23 +10,15 @@
     <a-row class="mt-10">
       <a-col :span="24">
         <div class="top-content">
-          <a-typography-title :level="5" style="margin-bottom: 0"
-            >원본 지출결의서 검색</a-typography-title
-          >
+          <a-typography-title :level="5" style="margin-bottom: 0">원본 지출결의서 검색</a-typography-title>
         </div>
       </a-col>
     </a-row>
     <a-row class="mt-10">
       <a-col :span="18">
         <a-form-item class="red" label="대상월">
-          <radio-group
-            :arrayValue="arrayRadioMonth"
-            v-model:valueRadioCheck="
-              dataQuerySearchSpendingAccountingDocuments.month
-            "
-            :layoutCustom="'horizontal'"
-            :required="true"
-          />
+          <radio-group :arrayValue="arrayRadioMonth" v-model:valueRadioCheck="dataQuerySearchSpendingAccountingDocuments.month
+            " :layoutCustom="'horizontal'" :required="true" />
         </a-form-item>
       </a-col>
       <!-- <a-col :span="6">
@@ -46,76 +32,38 @@
             <button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'"
                 @onClick="onSearch" />
         </div> -->
-    <a-spin
-      tip="Loading..."
-      :spinning="loadingSearchSpendingAccountingDocuments"
-    >
-      <div style="margin: 48px 0">
-        <DxDataGrid
-          noDataText="내역이 없습니다"
-          id="formItemAC120"
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="accountingDocumentId"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          v-model:focused-row-key="focusedRowKey"
-          focused-row-enabled="true"
-          :onRowClick="onSelectionChanged"
-          :column-auto-width="true"
-        >
+    <a-spin tip="Loading..." :spinning="loadingSearchSpendingAccountingDocuments">
+      <div style="margin: 5px 0 48px 0">
+        <DxDataGrid noDataText="내역이 없습니다" id="formItemAC120" :show-row-lines="true" :hoverStateEnabled="true"
+          :data-source="dataSource" :show-borders="true" key-expr="accountingDocumentId"
+          :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          v-model:focused-row-key="focusedRowKey" focused-row-enabled="true" :onRowClick="onSelectionChanged"
+          :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxSearchPanel
-            :visible="true"
-            :highlight-case-sensitive="true"
-            placeholder="검색"
-          />
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
           <DxColumn caption="선택" cell-template="radioCheck" />
           <template #radioCheck="{ data }">
-            <div class="text-align-center pt-8">
-              <input
-                type="radio"
-                name="radioCheck"
-                :checked="
-                  focusedRowKey == data.data.accountingDocumentId ? true : false
-                "
-              />
+            <div class="text-align-center">
+              <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.accountingDocumentId ? true : false
+                " />
             </div>
           </template>
           <DxColumn data-field="resolutionNumber" caption="결의번호" />
-          <DxColumn
-            caption="통장"
-            cell-template="bankbook"
-            data-field="bankbook"
-          />
+          <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
           <template #bankbook="{ data }">
-            <a-tooltip
-              placement="top"
-              :title="
-                data.data.bankbook?.type +
-                ' ' +
-                data.data.bankbook?.bankbookNumber
-              "
-            >
+            <a-tooltip placement="top" :title="data.data.bankbook?.type +
+              ' ' +
+              data.data.bankbook?.bankbookNumber
+              ">
               <div>{{ data.data.bankbook?.bankbookNickname }}</div>
             </a-tooltip>
           </template>
-          <DxColumn
-            caption="일자"
-            data-field="transactionDetailDate"
-            cell-template="transactionDetailDate"
-          />
+          <DxColumn caption="일자" data-field="transactionDetailDate" cell-template="transactionDetailDate" />
           <template #transactionDetailDate="{ data }">
             {{ $filters.formatDate(data.value) }}
           </template>
-          <DxColumn
-            caption="결의 구분"
-            data-field="resolutionClassification"
-            cell-template="resolutionClassification"
-            width="75"
-          />
+          <DxColumn caption="결의 구분" data-field="resolutionClassification" cell-template="resolutionClassification"
+            width="75" />
           <template #resolutionClassification="{ data }">
             {{
               store.state.common.ac120.arrResolutionClassification.find(
@@ -124,44 +72,19 @@
             }}
           </template>
           <DxColumn data-field="income" caption="수입액" />
-          <DxColumn
-            data-field="spending"
-            caption="지출액"
-            format="fixedPoint"
-          />
+          <DxColumn data-field="spending" caption="지출액" format="fixedPoint" />
           <DxColumn data-field="summaryOfBankbookDetail" caption="통장적요" />
           <DxColumn data-field="summary" caption="적요" />
-          <DxColumn
-            caption="계정과목"
-            data-field="accountCode"
-            width="220"
-            cell-template="accountCode"
-          />
+          <DxColumn caption="계정과목" data-field="accountCode" width="220" cell-template="accountCode" />
           <template #accountCode="{ data }">
-            <account-code-select
-              :valueInput="data.data.accountCode"
-              :readOnly="true"
-            />
+            <account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
           </template>
-          <DxColumn
-            caption="상대계정"
-            data-field="relationCode"
-            width="220"
-            cell-template="relationCode"
-          />
+          <DxColumn caption="상대계정" data-field="relationCode" width="220" cell-template="relationCode" />
           <template #relationCode="{ data }">
-            <account-code-select
-              :valueInput="data.data.relationCode"
-              :readOnly="true"
-            />
+            <account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
           </template>
-          <DxColumn
-            caption="자금원천"
-            data-field="fundingSource"
-            css-class="cell-left"
-            cell-template="fundingSource"
-            width="75"
-          />
+          <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left" cell-template="fundingSource"
+            width="75" />
           <template #fundingSource="{ data }">
             {{
               store.state.common.ac120.arrFundingSource?.find(
@@ -169,12 +92,7 @@
               )?.text
             }}
           </template>
-          <DxColumn
-            caption="거래처"
-            data-field="clientId"
-            cell-template="clientId"
-            width="75"
-          />
+          <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" width="75" />
           <template #clientId="{ data }">
             {{
               store.state.settings.clients?.find(
@@ -188,38 +106,20 @@
     <div class="btn_submit">
       <a-tooltip placement="top" title="원본결의서 참조없이 여입결의서로 변경">
         <span>
-          <button-basic
-            class="button-form-modal1"
-            :text="'원본결의서 반영 안함'"
-            :type="'default'"
-            :mode="'contained'"
-            @onClick="onChange"
-          />
+          <button-basic class="button-form-modal1" :text="'원본결의서 반영 안함'" :type="'default'" :mode="'contained'"
+            @onClick="onChange" />
         </span>
       </a-tooltip>
 
-      <a-tooltip
-        placement="top"
-        title="선택한 원본결의서 반영하여 여입결의서로 변경"
-      >
+      <a-tooltip placement="top" title="선택한 원본결의서 반영하여 여입결의서로 변경">
         <span>
-          <button-basic
-            class="button-form-modal2"
-            :text="'원본결의서 반영'"
-            :type="'default'"
-            :mode="'contained'"
-            @onClick="onCopy"
-          />
+          <button-basic class="button-form-modal2" :text="'원본결의서 반영'" :type="'default'" :mode="'contained'"
+            @onClick="onCopy" />
         </span>
       </a-tooltip>
 
-      <button-basic
-        class="button-form-modal3"
-        :text="'반영 취소'"
-        :type="'default'"
-        :mode="'contained'"
-        @onClick="setModalVisible()"
-      />
+      <button-basic class="button-form-modal3" :text="'반영 취소'" :type="'default'" :mode="'contained'"
+        @onClick="setModalVisible()" />
     </div>
   </a-modal>
 </template>
@@ -377,26 +277,33 @@ export default defineComponent({
 .btn_submit {
   text-align: center;
 }
+
 .button-form-modal1 {
   background-color: orange;
 }
+
 .button-form-modal1:hover {
   background-color: rgb(207, 135, 0);
 }
+
 .button-form-modal2 {
   margin: 0 10px;
 }
+
 .button-form-modal3 {
   background-color: gray;
 }
+
 .button-form-modal3:hover {
   background-color: rgb(100, 100, 100);
 }
+
 :deep .dx-datagrid-header-panel {
   position: absolute;
-  top: -80px;
+  top: -40px;
   right: 0;
 }
+
 #formItemAC120 {
   max-height: 450px;
   overflow: inherit;
