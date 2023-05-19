@@ -1,11 +1,11 @@
 <template>
-  <a-modal class="form-modal" width="980px" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
+  <a-modal class="form-modal" width="1130px" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
     :visible="isOpenModalCreate" title="급여변경신고 신규 등록" centered @cancel="closePopup" :footer="null" :mask-closable="false">
     <standard-form ref="formRef">
       <div class="mb-10">
         <a-row>
           <a-col span="8">
-            <DxField label="직원유행">
+            <DxField label="직원유행" class="field-custom-1">
               <a-radio-group v-model:value="employeeWageType" class="d-flex items-center">
                 <a-radio :value="EmployeeWageType.WAGE" @change="handleRadioChange"
                   v-model="stateSelectQuery.selectedRadioValue">
@@ -19,7 +19,7 @@
             </DxField>
           </a-col>
           <a-col :span="8">
-            <DxField label="직원유행">
+            <DxField label="직원유행" >
               <employ-select required :arrayValue="employeeWages" v-model:valueEmploy="employeeWageSelected"
                 placeholder="선택" />
             </DxField>
@@ -28,7 +28,7 @@
       </div>
       <a-row :gutter="[0, 0]" class="item-group mb-10">
         <a-col span="8">
-          <DxField label="업체명">
+          <DxField label="업체명" class="field-custom-1">
             <default-text-box :value="infoCompany.name" placeholder="업체명" disabled />
           </DxField>
         </a-col>
@@ -43,8 +43,8 @@
           </DxField>
         </a-col>
         <a-col span="8">
-          <DxField label="사업장관리번호">
-            <default-text-box :value="infoMajorInsuranceConsignStatus.manageId" placeholder="사업장관리번호" disabled />
+          <DxField label="사업장관리번호" class="field-custom-1">
+            <ManageIdTextBox :value="infoMajorInsuranceConsignStatus.manageId" disabled placeholder="" />
           </DxField>
         </a-col>
         <a-col span="16">
@@ -55,20 +55,20 @@
       </a-row>
       <a-row :gutter="[0, 0]" class="item-group mb-10">
         <a-col span="8">
-          <DxField label="성명">
+          <DxField label="성명" class="field-custom-1">
             <default-text-box :value="employee?.name" placeholder="성명" disabled />
           </DxField>
         </a-col>
         <a-col span="8">
-          <DxField label="주민등록번호" >
-            <default-text-box :value="employee?.residentId" placeholder="주민등록번호" disabled />
+          <DxField label="주민등록번호">
+            <id-number-text-box :valueInput="employee?.residentId" placeholder="주민등록번호" disabled />
           </DxField>
         </a-col>
 
       </a-row>
       <a-row :gutter="[0, 0]" class="item-group mb-10">
         <a-col span="24">
-          <DxField label="취득대상보험선택" class="field-custom">
+          <DxField label="취득대상보험선택" class="field-custom-1">
             <div class="d-flex gap-20">
               <checkbox-basic disabled label="연금" v-model:valueCheckbox="formData.nationalPensionReport" />
               <checkbox-basic label="건강" v-model:valueCheckbox="formData.healthInsuranceReport" />
@@ -78,19 +78,28 @@
           </DxField>
         </a-col>
         <a-col span="8">
-          <DxField label="변경전급여">
-            <number-box v-model:valueInput="formData.beforeSalary" :min="1" placeholder="보수변경 년월" />
+          <DxField label="변경전급여" class="field-custom-1">
+            <number-box-money v-model:valueInput="formData.beforeSalary" :min="1" />
           </DxField>
         </a-col>
         <a-col span="8">
           <DxField label="변경후급여">
-            <number-box v-model:valueInput="formData.afterSalary" required :min="1" placeholder="변경된 보수월액" />
+            <number-box-money v-model:valueInput="formData.afterSalary" required :min="1" />
           </DxField>
         </a-col>
-        <a-col span="4" />
         <a-col span="8">
-          <DxField label="변경년월">
-            <month-picker-box v-model:valueDate="formData.changeYearmonth" />
+          <DxField label="변경년월" >
+            <month-picker-box v-model:valueDate="formData.changeYearmonth" :teleport="true"/>
+          </DxField>
+        </a-col>
+        <a-col span="8">
+          <DxField label="일자리안정자금 지원 신청여부" class="field-custom-2">
+            <div class="d-flex gap-20">
+              <a-radio-group v-model:value="formData.jobStabilitySupport" class="d-flex items-center">
+                <a-radio :value="true">예</a-radio>
+                <a-radio :value="false">아니요</a-radio>
+              </a-radio-group>
+            </div>
           </DxField>
         </a-col>
         <a-col span="12">
@@ -104,16 +113,7 @@
             </div>
           </DxField>
         </a-col>
-        <a-col span="12">
-          <DxField label="일자리안정자금 지원 신청여부" class="field-custom-2">
-            <div class="d-flex gap-20">
-              <a-radio-group v-model:value="formData.jobStabilitySupport" class="d-flex items-center">
-                <a-radio :value="true">예</a-radio>
-                <a-radio :value="false">아니요</a-radio>
-              </a-radio-group>
-            </div>
-          </DxField>
-        </a-col>
+
       </a-row>
       <div class="d-flex justify-center mt-20">
         <button-basic :width="90" id="btn-save" @onClick="onSubmit($event)" style="margin: auto" mode="contained"

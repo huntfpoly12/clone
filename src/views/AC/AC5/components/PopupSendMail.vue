@@ -17,7 +17,8 @@
   </a-modal>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import {computed, defineComponent, ref} from "vue";
+import {useStore} from "vuex";
 export default defineComponent({
   props: {
     isModalSendMail: {
@@ -29,6 +30,9 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const email = ref()
+    const store = useStore();
+    const userInfo = computed(() => store.state.auth.userInfor);
+
     let keyRefreshForm = ref(0)
     const closePopup = () => {
       email.value = ''

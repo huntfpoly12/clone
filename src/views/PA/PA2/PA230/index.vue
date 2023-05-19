@@ -291,7 +291,6 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
-import Tooltip from "@/components/common/Tooltip.vue";
 import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA2/PA230/index";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
