@@ -1,7 +1,5 @@
 <template>
-  <div id="app">
     <router-view></router-view>
-  </div>
 </template>
 
 <script lang="ts">
@@ -18,10 +16,8 @@ export default {
 
 <style>
 #app {
-  /* min-width: 1900px;
-  overflow: hidden; */
-  /* overflow-x: auto;
-  overflow-y: hidden !important; */
+  min-width: 1900px;
+  overflow-x: auto;
 }
 .page-content {
   padding: 24px;
