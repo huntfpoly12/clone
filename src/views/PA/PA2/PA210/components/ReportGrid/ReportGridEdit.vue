@@ -357,7 +357,7 @@ export default defineComponent({
       confirmLoadNewStatus.value = true;
     };
     onError((error) => {
-      //notification('error', error.message)
+      ////notification('error', error.message)
     });
     watch(result, (data) => {
       if (data) {
@@ -548,7 +548,7 @@ export default defineComponent({
       setModalVisible();
     });
     errUpdate((error) => {
-      //notification('error', error.message)
+      ////notification('error', error.message)
       setModalVisible();
     });
 
@@ -672,7 +672,7 @@ export default defineComponent({
       notification("success", `업부상태 변경되었습니다!`);
     });
     errChangeStatus((error) => {
-      //notification('error', error.message)
+      ////notification('error', error.message)
     });
     // A function that is called when the user clicks on the button to change the status of the report.
     const changeStatusRowTable = (data: any) => {

@@ -346,7 +346,7 @@ export default defineComponent({
       confirmLoadNewStatus.value = true;
     };
     onError((error) => {
-      //notification('error', error.message)
+      ////notification('error', error.message)
     });
     watch(result, (data) => {
       if (data) {
@@ -673,7 +673,7 @@ export default defineComponent({
       setModalVisible();
     });
     errChangeStatus((error) => {
-      ////notification('error', error.message)
+      //////notification('error', error.message)
       setModalVisible();
     });
 

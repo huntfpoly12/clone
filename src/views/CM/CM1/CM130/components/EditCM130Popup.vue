@@ -1,70 +1,112 @@
 <template>
-    <div id="edit-popup-130">
-        <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" width="700px" :mask-closable="false" footer="">
-            <standard-form formName="edit-cm-310">
-                <a-spin tip="Loading..." :spinning="loading">
-                    <h2 style="font-weight: 600; color: gray" class="title_modal">
-                        급여상세항목
-                    </h2>
-                    <a-row :gutter="24">
-                        <a-col :span="14">
-                            <a-form-item label="코드" :label-col="labelCol">
-                                <number-box :width="150" placeholder="Number box" :min="0" :max="30" :disabled="true"
-                                    v-model:valueInput="formState.itemCode" :spinButtons="true">
-                                </number-box>
-                            </a-form-item>
-                        </a-col>
-                        <a-col :span="4"></a-col>
-                        <a-col :span="6">
-                            <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :textCheck="'이용중'"
-                                :textUnCheck="'이용중지'" />
-                        </a-col>
-                    </a-row>
-                    <a-row>
-                        <a-col :span="14">
-                            <a-form-item label="항목명" :label-col="labelCol" class="red">
-                                <default-text-box style="width: 150px; margin-right: 10px" :required="true"
-                                    v-model:valueInput="formState.name">
-                                </default-text-box>
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
-                    <a-row>
-                        <a-col :span="24">
-                            <a-form-item label="과세구분/유형" :label-col="labelCol">
-                                <div style="width: 320px;">
-                                    <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode" :disabled="true">
-                                    </TaxPay>
-                                </div>
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
-                    <a-row>
-                        <a-col :span="24">
-                            <div style="display: -webkit-inline-box;">
-                                <a-form-item label="산출방법" :label-col="labelCol">
-                                    <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
-                                        v-model:valueInput="formState.formula">
-                                    </default-text-box>
-                                </a-form-item>
-                            </div>
-                            <a-tooltip color="black" placement="top">
-                                <template #title>급여명세서 계산방법에 표시됩니다.</template>
-                                <img src="@/assets/images/iconInfo.png" class="img-info" />
-                            </a-tooltip>
-                        </a-col>
-                    </a-row>
-                </a-spin>
-                <div class="text-align-center mt-20">
-                    <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
-                        @onClick="setModalVisible()" />
-                    <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140"
-                        :type="'default'" :mode="'contained'" @onClick="onSubmit($event)" />
+  <div id="edit-popup-130">
+    <a-modal
+      :visible="modalStatus"
+      :title="title"
+      centered
+      okText="저장하고 나가기"
+      cancelText="그냥 나가기"
+      @cancel="setModalVisible()"
+      width="700px"
+      :mask-closable="false"
+      footer=""
+    >
+      <standard-form formName="edit-cm-310">
+        <a-spin tip="Loading..." :spinning="loading">
+          <h2 style="font-weight: 600; color: gray" class="title_modal">
+            급여상세항목
+          </h2>
+          <a-row :gutter="24">
+            <a-col :span="14">
+              <a-form-item label="코드" :label-col="labelCol">
+                <number-box
+                  :width="150"
+                  placeholder="Number box"
+                  :min="0"
+                  :max="30"
+                  :disabled="true"
+                  v-model:valueInput="formState.itemCode"
+                  :spinButtons="true"
+                >
+                </number-box>
+              </a-form-item>
+            </a-col>
+            <a-col :span="4"></a-col>
+            <a-col :span="6">
+              <switch-basic
+                style="width: 80px"
+                v-model:valueSwitch="formState.use"
+                :textCheck="'이용중'"
+                :textUnCheck="'이용중지'"
+              />
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="14">
+              <a-form-item label="항목명" :label-col="labelCol" class="red">
+                <default-text-box
+                  style="width: 150px; margin-right: 10px"
+                  :required="true"
+                  v-model:valueInput="formState.name"
+                >
+                </default-text-box>
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="24">
+              <a-form-item label="과세구분/유형" :label-col="labelCol">
+                <div style="width: 320px">
+                  <TaxPay
+                    placeholder="선택"
+                    v-model:selectedValue="formState.taxPayCode"
+                    :disabled="true"
+                  >
+                  </TaxPay>
                 </div>
-            </standard-form>
-        </a-modal>
-    </div>
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="24">
+              <div style="display: -webkit-inline-box">
+                <a-form-item label="산출방법" :label-col="labelCol">
+                  <default-text-box
+                    style="width: 320px"
+                    placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                    v-model:valueInput="formState.formula"
+                  >
+                  </default-text-box>
+                </a-form-item>
+              </div>
+              <a-tooltip color="black" placement="top">
+                <template #title>급여명세서 계산방법에 표시됩니다.</template>
+                <img src="@/assets/images/iconInfo.png" class="img-info" />
+              </a-tooltip>
+            </a-col>
+          </a-row>
+        </a-spin>
+        <div class="text-align-center mt-20">
+          <button-basic
+            class="button-form-modal"
+            :text="'그냥 나가기'"
+            :type="'default'"
+            :mode="'outlined'"
+            @onClick="setModalVisible()"
+          />
+          <button-basic
+            class="button-form-modal"
+            :loading="loading"
+            :text="'저장하고 나가기'"
+            :width="140"
+            :type="'default'"
+            :mode="'contained'"
+            @onClick="onSubmit($event)"
+          />
+        </div>
+      </standard-form>
+    </a-modal>
+  </div>
 </template>
 
 <script lang="ts">
@@ -72,111 +114,120 @@ import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import notification from "@/utils/notification";
-import { initialState } from "../utils/data"
+import { initialState } from "../utils/data";
 import queries from "@/graphql/queries/CM/CM130/index";
 import mutations from "@/graphql/mutations/CM/CM130/index";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import TaxPay from "@/components/TaxPay.vue";
 import dayjs from "dayjs";
-import { Message } from "@/configs/enum"
+import { Message } from "@/configs/enum";
 export default defineComponent({
-    props: ["modalStatus", "data", "msg", "title", "idRowEdit"],
+  props: ["modalStatus", "data", "msg", "title", "idRowEdit"],
 
-    components: {
-        TaxPay,
-    },
-    setup(props, { emit }) {
-        const globalYear = dayjs().year()
-        let trigger = ref<boolean>(false);
-        const dataQuery = ref();
-        watch(
-            () => props.modalStatus,
-            (newValue) => {
-                trigger.value = true;
-                if (newValue) {
-                    dataQuery.value = { companyId: companyId, imputedYear: globalYear, itemCode: props.idRowEdit };
-                    refetchConfigPayItem();
-                } else {
-                    Object.assign(formState, initialState);
-                    trigger.value = false;
-                }
-            }
-        );
-        const formState = reactive({ ...initialState });
-
-        let objDataDefault = ref({ ...initialState });
-        // get detail withholding config pay item
-        const { result: resultConfigPayItem, loading, refetch: refetchConfigPayItem } = useQuery(
-            queries.getWithholdingConfigPayItem,
-            dataQuery,
-            () => ({
-                enabled: trigger.value,
-                fetchPolicy: "no-cache",
-            })
-        );
-
-        watch(resultConfigPayItem, (value) => {
-            if (value) {
-                formState.itemCode = value.getWithholdingConfigPayItem.itemCode;
-                formState.taxPayCode = value.getWithholdingConfigPayItem.taxfreePayItemCode != null ? ['비과세', value.getWithholdingConfigPayItem.taxfreePayItemCode] : ['과세', value.getWithholdingConfigPayItem.taxPayItemCode];
-                formState.name = value.getWithholdingConfigPayItem.name;
-                formState.use = value.getWithholdingConfigPayItem.use;
-                formState.formula = value.getWithholdingConfigPayItem.formula;
-                objDataDefault.value = { ...formState };
-            }
-        });
-
-        // update detail withholding config pay item
-        const { mutate: actionUpdateWithholdingConfigPayItem, onDone: onDoneUpdated, onError: errorPayItem } = useMutation(
-            mutations.updateWithholdingConfigPayItem
-        );
-
-        errorPayItem((error) => {
-            notification('error', error.message)
-        })
-        onDoneUpdated(() => {
-            notification('success', Message.getMessage('COMMON', '106').message)
-            refetchConfigPayItem();
-            emit("closePopup", false);
-        });
-
-        const onSubmit = (e: any) => {
-            var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
-                let variables = {
-                    companyId: companyId,
-                    imputedYear: globalYear,
-                    itemCode: formState.itemCode,
-                    input: {
-                        name: formState.name,
-                        use: formState.use,
-                        formula: formState.formula
-                    }
-                };
-                makeDataClean(variables)
-                actionUpdateWithholdingConfigPayItem(variables)
-            }
-        };
-        const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
-                emit("closePopup", false)
-            else
-                comfirmClosePopup(() => emit('closePopup', false))
+  components: {
+    TaxPay,
+  },
+  setup(props, { emit }) {
+    const globalYear = dayjs().year();
+    let trigger = ref<boolean>(false);
+    const dataQuery = ref();
+    watch(
+      () => props.modalStatus,
+      (newValue) => {
+        trigger.value = true;
+        if (newValue) {
+          dataQuery.value = {
+            companyId: companyId,
+            imputedYear: globalYear,
+            itemCode: props.idRowEdit,
+          };
+          refetchConfigPayItem();
+        } else {
+          Object.assign(formState, initialState);
+          trigger.value = false;
         }
-        return {
-            labelCol: { style: { width: "150px" } },
-            formState,
-            loading,
-            onSubmit,
-            setModalVisible,
-            // value: ref<string[]>(["과세", "G03"]),
-        };
-    },
-    methods: {
+      }
+    );
+    const formState = reactive({ ...initialState });
 
-    },
+    let objDataDefault = ref({ ...initialState });
+    // get detail withholding config pay item
+    const {
+      result: resultConfigPayItem,
+      loading,
+      refetch: refetchConfigPayItem,
+    } = useQuery(queries.getWithholdingConfigPayItem, dataQuery, () => ({
+      enabled: trigger.value,
+      fetchPolicy: "no-cache",
+    }));
+
+    watch(resultConfigPayItem, (value) => {
+      if (value) {
+        formState.itemCode = value.getWithholdingConfigPayItem.itemCode;
+        formState.taxPayCode =
+          value.getWithholdingConfigPayItem.taxfreePayItemCode != null
+            ? ["비과세", value.getWithholdingConfigPayItem.taxfreePayItemCode]
+            : ["과세", value.getWithholdingConfigPayItem.taxPayItemCode];
+        formState.name = value.getWithholdingConfigPayItem.name;
+        formState.use = value.getWithholdingConfigPayItem.use;
+        formState.formula = value.getWithholdingConfigPayItem.formula;
+        objDataDefault.value = { ...formState };
+      }
+    });
+
+    // update detail withholding config pay item
+    const {
+      mutate: actionUpdateWithholdingConfigPayItem,
+      onDone: onDoneUpdated,
+      onError: errorPayItem,
+    } = useMutation(mutations.updateWithholdingConfigPayItem);
+
+    errorPayItem((error) => {
+      //notification('error', error.message)
+    });
+    onDoneUpdated(() => {
+      notification("success", Message.getMessage("COMMON", "106").message);
+      refetchConfigPayItem();
+      emit("closePopup", false);
+    });
+
+    const onSubmit = (e: any) => {
+      var res = e.validationGroup.validate();
+      if (!res.isValid) {
+        res.brokenRules[0].validator.focus();
+      } else {
+        let variables = {
+          companyId: companyId,
+          imputedYear: globalYear,
+          itemCode: formState.itemCode,
+          input: {
+            name: formState.name,
+            use: formState.use,
+            formula: formState.formula,
+          },
+        };
+        makeDataClean(variables);
+        actionUpdateWithholdingConfigPayItem(variables);
+      }
+    };
+    const setModalVisible = () => {
+      if (
+        (JSON.stringify(objDataDefault.value) === JSON.stringify(formState)) ==
+        true
+      )
+        emit("closePopup", false);
+      else comfirmClosePopup(() => emit("closePopup", false));
+    };
+    return {
+      labelCol: { style: { width: "150px" } },
+      formState,
+      loading,
+      onSubmit,
+      setModalVisible,
+      // value: ref<string[]>(["과세", "G03"]),
+    };
+  },
+  methods: {},
 });
 </script>
 <style lang="scss" scoped src="../style/style.scss"></style>

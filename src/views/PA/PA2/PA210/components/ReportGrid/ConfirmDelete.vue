@@ -84,7 +84,7 @@ export default defineComponent({
       setModalVisible();
     });
     errUpdate((error) => {
-      //notification('error', error.message)
+      ////notification('error', error.message)
     });
     const deleteReport = () => {
       if (textComfirm.value === "삭제") {
