@@ -157,12 +157,16 @@
               css-class="cell-center"
             />
             <template #refund="{ data }">
-              <switch-basic
-                v-model:valueSwitch="data.data.refund"
-                :textCheck="'O'"
-                :textUnCheck="'X'"
-                :disabled="true"
-              />
+              <a-tooltip  :title="'환급신청여부'">
+                  <div>
+                    <switch-basic
+                      v-model:valueSwitch="data.data.refund"
+                      :textCheck="'O'"
+                      :textUnCheck="'X'"
+                      :disabled="true"
+                      />
+                  </div>
+              </a-tooltip>
             </template>
             <DxColumn
               caption="제출일"

@@ -7,7 +7,7 @@
     style="top: 20px"
     width="1368px"
     :bodyStyle="{ height: '890px', padding: '8px' }"
-  >
+  > 
     <a-spin tip="Loading..." :spinning="false">
       <div class="report-grid">
         <div class="header-report">
@@ -163,12 +163,16 @@
                 css-class="cell-center"
               />
               <template #refund="{ data }">
-                <switch-basic
-                  v-model:valueSwitch="data.data.refund"
-                  :textCheck="'O'"
-                  :textUnCheck="'X'"
-                  :disabled="true"
-                />
+                <a-tooltip  :title="'환급신청여부'">
+                  <div>
+                    <switch-basic
+                      v-model:valueSwitch="data.data.refund"
+                      :textCheck="'O'"
+                      :textUnCheck="'X'"
+                      :disabled="true"
+                      />
+                  </div>
+                </a-tooltip>
               </template>
               <DxColumn
                 caption="제출일"
@@ -396,7 +400,10 @@ export default defineComponent({
         trigger.value = true;
         refetchData();
       }
+
+
       let hot = wrapper.value?.hotInstance;
+
       // fill value to table report
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data: any) => {
         const rowPosition = inputPosition.find(
@@ -534,6 +541,7 @@ export default defineComponent({
           adjustment?.refundApplicationAmount,
           "initTable"
         );
+        checkDisableA04A06()
     };
 
     const {
@@ -652,7 +660,47 @@ export default defineComponent({
       // Calling the actionUpdateTaxWithholding function with the variables object as a parameter.
       actionUpdateTaxWithholding(variables);
     };
-
+    // update cell settings flow condition
+    const checkDisableA04A06 = () => {
+      let hot = wrapper.value.hotInstance;
+      let newCellSetting = [...cellsSetting]
+      if (
+        (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6)
+      ) {
+        newCellSetting[123].readOnly = true
+        newCellSetting[123].className = "htMiddle htRight disable-cell"
+        newCellSetting[124].readOnly = true
+        newCellSetting[124].className = "htMiddle htRight disable-cell"
+        newCellSetting[141].readOnly = true
+        newCellSetting[141].className = "htMiddle htRight disable-cell"
+        newCellSetting[143].readOnly = true
+        newCellSetting[143].className = "htMiddle htRight disable-cell"
+      } else {
+          newCellSetting[123].readOnly = false
+          newCellSetting[124].readOnly = false
+          newCellSetting[141].readOnly = false
+          newCellSetting[143].readOnly = false
+      }
+      hot.updateSettings({
+        cell: newCellSetting
+      });
+    }
+    // const checkDisableA04A06 = () => {
+    //   let hot = wrapper.value.hotInstance;
+    //   let newCellSetting = [...cellsSetting]
+    //   console.log(hot.getData());
+      
+    //   // newCellSetting[123].readOnly = true
+    //   hot.updateSettings({
+    //     cell: newCellSetting
+    //   });
+    // }
     // The above code is creating a function called actionConfirmDelete. This function is setting the value
     // of confirmStatus.value to true.
     const actionConfirmDelete = () => {
