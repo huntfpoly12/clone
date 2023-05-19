@@ -337,9 +337,8 @@ const {
 }));
 const employeeList = computed(() => {
   if (!resultEmployee.value) return []
-  const isJoinedBeforeSelectedMonth = (item: any) => +item.joinedAt.toString().slice(4, 6) < selectMonthColumn.value.imputedMonth;
-  const isLeavedAfterSelectedMonth = (item: any) => +item.leavedAt.toString().slice(4, 6) > selectMonthColumn.value.imputedMonth;
-
+  const isJoinedBeforeSelectedMonth = (item: any) => +item.joinedAt.toString().slice(4, 6) <= selectMonthColumn.value.imputedMonth;
+  const isLeavedAfterSelectedMonth = (item: any) => +item.leavedAt.toString().slice(4, 6) >= selectMonthColumn.value.imputedMonth;
   if (props.retirementIncome === EmployeeWageType.WAGE) { // 10
     if (props.retirementType === 1) { // 1 is leaved
       return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWages.filter(isLeavedAfterSelectedMonth)
