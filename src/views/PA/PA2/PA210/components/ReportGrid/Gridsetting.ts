@@ -662,36 +662,37 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
   } else {
     let hot = wrapper.value.hotInstance;
     const arrData = hot.getData()
-    console.log(arrData);
-    
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 32) {
-        cellData.push({    
-          /** 코드 (code) */
-          code: arrData[index][4],
-          /** 소득지급 인원 (numberOfPeople) */
-          numberOfPeople: arrData[index][5],
-          /** 소득지급 총지급액 (totalPayment) */
-          totalPayment: arrData[index][6],
-          /** 징수 소득세 (collectedIncomeTax) */
-          collectedIncomeTax: arrData[index][7],
-          /** 징수 농어촌특별세 (collectedRuralSpecialTax) */
-          collectedRuralSpecialTax: arrData[index][8],
-          /** 징수 가산세 (collectedExtraTax) */
-          collectedExtraTax: arrData[index][9],
-          /** 당월조정환급세액 (thisMonthAdjustedRefundTaxAmount) */
-          thisMonthAdjustedRefundTaxAmount: arrData[index][10],
-          /** 납부 소득세 (incomeTaxPaid) */
-          incomeTaxPaid: arrData[index][11],
-          /** 납부 농어촌특별세 (ruralSpecialTaxPaid) */
-          ruralSpecialTaxPaid: arrData[index][12],
-        });
+        // check để lọc hết những row không có dữ liệu ra
+        if (arrData[index][5] || arrData[index][6] || arrData[index][7] || arrData[index][8] || arrData[index][9] || arrData[index][10] || arrData[index][11] || arrData[index][12]) {
+          cellData.push({    
+            /** 코드 (code) */
+            code: arrData[index][4],
+            /** 소득지급 인원 (numberOfPeople) */
+            numberOfPeople: arrData[index][5],
+            /** 소득지급 총지급액 (totalPayment) */
+            totalPayment: arrData[index][6],
+            /** 징수 소득세 (collectedIncomeTax) */
+            collectedIncomeTax: arrData[index][7],
+            /** 징수 농어촌특별세 (collectedRuralSpecialTax) */
+            collectedRuralSpecialTax: arrData[index][8],
+            /** 징수 가산세 (collectedExtraTax) */
+            collectedExtraTax: arrData[index][9],
+            /** 당월조정환급세액 (thisMonthAdjustedRefundTaxAmount) */
+            thisMonthAdjustedRefundTaxAmount: arrData[index][10],
+            /** 납부 소득세 (incomeTaxPaid) */
+            incomeTaxPaid: arrData[index][11],
+            /** 납부 농어촌특별세 (ruralSpecialTaxPaid) */
+            ruralSpecialTaxPaid: arrData[index][12],
+          });
+          
+        }
+
       }
     }
   }
-  
   const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
-  console.log(output);
     if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
       output.incomeWages.forEach((item) => {
         setValueDataTable(wrapper,item.code,item)
@@ -730,6 +731,8 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
         
     }
     setValueDataTable(wrapper,output.summary.code, output.summary)
-    setValueDataTable(wrapper,"adjustmentOfRefundTaxAmount",output.adjustmentOfRefundTaxAmount)
+  setValueDataTable(wrapper, "adjustmentOfRefundTaxAmount", output.adjustmentOfRefundTaxAmount)
+  console.log(wrapper.value.hotInstance);
+  
     //r.push(output.summary); // 총합계(A99)
 }
