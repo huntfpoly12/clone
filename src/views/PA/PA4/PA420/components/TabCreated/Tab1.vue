@@ -104,7 +104,7 @@
         </DxFieldCustom>
         <DxFieldCustom label="제외일수" class="field-custom">
           <div class="d-flex-center">
-            <number-box
+            <number-box-money
               :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
               v-model:valueInput="formState.prevRetiredYearsOfService.exclusionDays"
               format="#0,###"
@@ -119,7 +119,7 @@
         </DxFieldCustom>
         <DxFieldCustom label="가산일수" class="field-custom">
           <div class="d-flex-center">
-            <number-box :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
+            <number-box-money :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
                         v-model:valueInput="formState.prevRetiredYearsOfService.additionalDays"
                         format="#0,###"
             />
@@ -174,7 +174,7 @@
         </DxFieldCustom>
         <DxFieldCustom label="제외일수" class="field-custom" required>
           <div class="d-flex-center">
-            <number-box :required="true" width="150px" format="#0,###"
+            <number-box-money :required="true" width="150px" format="#0,###"
                         v-model:valueInput="formState.lastRetiredYearsOfService.exclusionDays"/>
             <div class="ml-5 d-flex-center">
               <info-tool-tip class="ml-5">
@@ -185,7 +185,7 @@
         </DxFieldCustom>
         <DxFieldCustom label="가산일수" class="field-custom" required>
           <div class="d-flex-center">
-            <number-box :required="true" width="150px" format="#0,###"
+            <number-box-money :required="true" width="150px" format="#0,###"
                         v-model:valueInput="formState.lastRetiredYearsOfService.additionalDays"/>
             <div class="ml-5 d-flex-center">
               <info-tool-tip class="ml-5">
@@ -279,6 +279,7 @@ import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420";
 import {companyId} from "@/helpers/commonFunction";
 import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
+import NumberBoxMoney from "@/components/common/NumberBoxMoney.vue";
 
 enum EmployeeWageType {
   WAGE = 10,
@@ -336,8 +337,21 @@ const {
 }));
 const employeeList = computed(() => {
   if (!resultEmployee.value) return []
-  if (props.retirementIncome === EmployeeWageType.WAGE) return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWages
-  return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWageDailies
+  const isJoinedBeforeSelectedMonth = (item: any) => +item.joinedAt.toString().slice(4, 6) <= selectMonthColumn.value.imputedMonth;
+  const isLeavedAfterSelectedMonth = (item: any) => +item.leavedAt.toString().slice(4, 6) >= selectMonthColumn.value.imputedMonth;
+  if (props.retirementIncome === EmployeeWageType.WAGE) { // 10
+    if (props.retirementType === 1) { // 1 is leaved
+      return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWages.filter(isLeavedAfterSelectedMonth)
+    } else {
+      return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWages.filter(isJoinedBeforeSelectedMonth)
+    }
+  } else {
+    if (props.retirementType === 1) { // 1 is leaved
+      return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWageDailies.filter(isLeavedAfterSelectedMonth)
+    } else {
+      return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWageDailies.filter(isJoinedBeforeSelectedMonth)
+    }
+  }
 })
 
 const validatePreRetirementBenefitStatus = computed(() => {

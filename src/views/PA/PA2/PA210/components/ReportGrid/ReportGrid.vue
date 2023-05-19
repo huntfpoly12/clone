@@ -139,7 +139,7 @@
                 css-class="cell-center"
               />
               <template #yearEndTaxAdjustment="{ data }">
-                <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment" />
+                <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"  :disabled="true"/>
               </template>
               <DxColumn
                 caption="환급"
@@ -148,11 +148,16 @@
                 css-class="cell-center"
               />
               <template #refund="{ data }">
-                <switch-basic
-                  v-model:valueSwitch="data.data.refund"
-                  :textCheck="'O'"
-                  :textUnCheck="'X'"
-                />
+                <a-tooltip  :title="'환급신청여부'">
+                  <div>
+                    <switch-basic
+                      v-model:valueSwitch="data.data.refund"
+                      :textCheck="'O'"
+                      :textUnCheck="'X'"
+                      :disabled="true"
+                      />
+                  </div>
+                </a-tooltip>
               </template>
               <DxColumn
                 caption="제출일"
@@ -438,6 +443,7 @@ export default defineComponent({
       };
       trigger.value = true;
       refetchData();
+      checkDisableA04A06()
     };
 
     const {
@@ -551,6 +557,38 @@ export default defineComponent({
       };
       actionCreateTaxWithholding(variables);
     };
+
+    // update cell settings flow condition
+    const checkDisableA04A06 = () => {
+      let hot = wrapper.value.hotInstance;
+      let newCellSetting = [...cellsSetting]
+      if (
+        (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6)
+      ) {
+        newCellSetting[123].readOnly = true
+        newCellSetting[123].className = "htMiddle htRight disable-cell"
+        newCellSetting[124].readOnly = true
+        newCellSetting[124].className = "htMiddle htRight disable-cell"
+        newCellSetting[141].readOnly = true
+        newCellSetting[141].className = "htMiddle htRight disable-cell"
+        newCellSetting[143].readOnly = true
+        newCellSetting[143].className = "htMiddle htRight disable-cell"
+      } else {
+          newCellSetting[123].readOnly = false
+          newCellSetting[124].readOnly = false
+          newCellSetting[141].readOnly = false
+          newCellSetting[143].readOnly = false
+      }
+      hot.updateSettings({
+        cell: newCellSetting
+      });
+    }
     return {
       setModalVisible,
       loading,

@@ -178,7 +178,6 @@ import { computed, defineComponent, reactive, ref, watch, watchEffect } from "vu
 import { useStore } from "vuex";
 
 import HistoryPopup from "@/components/HistoryPopup.vue";
-import Tooltip from "@/components/common/Tooltip.vue";
 import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
 import { companyId, onExportingCommon } from "@/helpers/commonFunction";
@@ -233,7 +232,6 @@ export default defineComponent({
     DxButton,
     HistoryPopup,
     PopupMessageCustom,
-    Tooltip,
     PlusOutlined,
     DxPaging,
     DxPager,
