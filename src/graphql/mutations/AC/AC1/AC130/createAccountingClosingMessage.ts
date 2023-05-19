@@ -6,7 +6,7 @@ export default gql`
     $facilityBusinessId: Int!,
     $year: Int!,
     $month: Int!
-    $input: Int!
+    $input: AccountingClosingMessageInput!
   ) {
     createAccountingClosingMessage(
       companyId: $companyId,
@@ -32,7 +32,13 @@ export default gql`
       updatedBy
       ip
       active
-      writerUser
+      writerUser {
+        id
+        type
+        username
+        name
+        active
+      }
       files {
         id
         name

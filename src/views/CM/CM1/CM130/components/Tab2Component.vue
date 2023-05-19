@@ -61,10 +61,16 @@
                     </a-row>
                     <a-row>
                         <a-col :span="24">
-                            <a-form-item label="과세구분/유형" :label-col="labelCol" class="red">
-                                <TaxPay style="width: 320px" placeholder="선택" v-model:selectedValue="formState.taxPayCode"
-                                    :required="true"></TaxPay>
-                            </a-form-item>
+                            <div style="display: -webkit-inline-box;">
+                                <a-form-item label="과세구분/유형" :label-col="labelCol" class="red">
+                                    <TaxPay style="width: 320px" placeholder="선택" v-model:selectedValue="formState.taxPayCode"
+                                        :required="true"></TaxPay>
+                                </a-form-item>
+                                <a-tooltip color="black" placement="top">
+                                    <template #title>비과세인 경우 동일한 유형은 중복등록 불가합니다.</template>
+                                    <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                </a-tooltip>
+                            </div>
                         </a-col>
                     </a-row>
                     <a-row>
@@ -480,7 +486,7 @@ export default defineComponent({
                             taxfreePayItemCode:
                                 formState.value.taxPayCode[0] === "비과세" ? formState.value.taxPayCode[1] : null,
                             taxPayItemCode:
-                                formState.value.taxPayCode[0] === "과세" ? formState.value.taxPayCode[1] + 1 : null,
+                                formState.value.taxPayCode[0] === "과세" ? formState.value.taxPayCode[1] : null,
                         },
                     };
                     makeDataClean(variables)

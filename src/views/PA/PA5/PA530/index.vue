@@ -134,7 +134,7 @@
                         <DxItem template="group-print" />
                     </DxToolbar>
                     <template #group-print>
-                        <a-tooltip placement="top" color="black">
+                        <a-tooltip placement="topRight" color="black">
                             <template #title>출력 / 저장</template>
                             <div class="custom-mail-group">
                                 <DxButton>
@@ -153,7 +153,7 @@
                         </div>
                     </template>
                     <DxSelection mode="multiple" />
-                    <DxColumn caption="성명 (상호)" cell-template="tag" />
+                    <DxColumn caption="성명 (상호)" data-field="employee.employeeId" cell-template="tag" alignment="left"/>
                     <template #tag="{ data }">
                         <div class="custom-action" v-if="data.data.employee.employeeId != '-1'">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -164,7 +164,7 @@
                             {{ data.data.employee.summary }}
                         </div>
                     </template>
-                    <DxColumn caption="주민등록번호" cell-template="residentId" width="150px" />
+                    <DxColumn caption="주민등록번호" data-field="employee.residentId" cell-template="residentId" width="150px" />
                     <template #residentId="{ data }">
                         {{ data.data.employee.residentId.slice(0, 6) + '-' + data.data.employee.residentId.slice(6, 13) }}
                     </template>

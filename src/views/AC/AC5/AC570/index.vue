@@ -51,31 +51,31 @@
                             <template #transitionDate="{ data }">
                                 {{ $filters.formatDate(data.value) }}
                             </template>
-                            <DxColumn caption="관" cell-template="customDxColumn2" />
+                            <DxColumn caption="관" cell-template="customDxColumn2" data-field="sourceCode1"/>
                             <template #customDxColumn2="{ data }">
-                                <div>{{ data.data.sourceCode }}</div>
-                                <div>{{ data.data.transitionCode }}</div>
+                                <div>{{ data.data.sourceCode1 }}</div>
+                                <div>{{ data.data.transitionCode1 }}</div>
                             </template>
 
-                            <DxColumn caption="항" cell-template="customDxColumn3" />
+                            <DxColumn caption="항" cell-template="customDxColumn3" data-field="sourceCode2"/>
                             <template #customDxColumn3="{ data }">
-                                <div>{{ data.data.sourceCode }}</div>
-                                <div>{{ data.data.transitionCode }}</div>
+                                <div>{{ data.data.sourceCode2 }}</div>
+                                <div>{{ data.data.transitionCode2 }}</div>
                             </template>
 
-                            <DxColumn caption="목" cell-template="customDxColumn4" />
+                            <DxColumn caption="목" cell-template="customDxColumn4" data-field="sourceCode3"/>
                             <template #customDxColumn4="{ data }">
-                                <div>{{ data.data.sourceCode }}</div>
-                                <div>{{ data.data.transitionCode }}</div>
+                                <div>{{ data.data.sourceCode3 }}</div>
+                                <div>{{ data.data.transitionCode3 }}</div>
                             </template>
 
-                            <DxColumn caption="세목" cell-template="customDxColumn5" />
+                            <DxColumn caption="세목" cell-template="customDxColumn5" data-field="sourceCode"/>
                             <template #customDxColumn5="{ data }">
                                 <div>{{ data.data.sourceCode }}</div>
                                 <div>{{ data.data.transitionCode }}</div>
                             </template>
 
-                            <DxColumn caption="예산액" cell-template="customDxColumn6" />
+                            <DxColumn caption="예산액" cell-template="customDxColumn6" data-field="sourceBudgetAmount"/>
                             <template #customDxColumn6="{ data }">
                                 <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount) }}</div>
                                 <div>{{ $filters.formatCurrency(data.data.transitionBudgetAmount) }}</div>
@@ -87,26 +87,22 @@
                                 <div>{{ $filters.formatCurrency(data.data.transitionAmount) }}</div>
                             </template>
 
-                            <DxColumn caption="예산현액" cell-template="customDxColumn8" />
+                            <DxColumn caption="예산현액" cell-template="customDxColumn8" data-field="customDxColumn8One"/>
                             <template #customDxColumn8="{ data }">
-                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount +
-                                    (-data.data.transitionAmount)) }}</div>
-                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)
-                                    + data.data.transitionAmount) }}</div>
+                                <div>{{ data.data.customDxColumn8One }}</div>
+                                <div>{{ data.data.customDxColumn8Two }}</div>
                             </template>
 
-                            <DxColumn caption="지출액" cell-template="customDxColumn9" />
+                            <DxColumn caption="지출액" cell-template="customDxColumn9" data-field="sourceExpenditureAmount"/>
                             <template #customDxColumn9="{ data }">
                                 <div>{{ $filters.formatCurrency(data.data.sourceExpenditureAmount) }}</div>
                                 <div>{{ $filters.formatCurrency(data.data.transitionExpenditureAmount) }}</div>
                             </template>
 
-                            <DxColumn caption="불용액" cell-template="customDxColumn10" />
+                            <DxColumn caption="불용액" cell-template="customDxColumn10" data-field="customDxColumn10One"/>
                             <template #customDxColumn10="{ data }">
-                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)
-                                    - data.data.sourceExpenditureAmount) }}</div>
-                                <div>{{ $filters.formatCurrency(data.data.sourceBudgetAmount + (-data.data.transitionAmount)
-                                    + data.data.transitionAmount - data.data.transitionExpenditureAmount) }}</div>
+                                <div>{{ data.data.customDxColumn10One }}</div>
+                                <div>{{ data.data.customDxColumn10Two }}</div>
                             </template>
 
                             <DxColumn caption="최종저장일시" data-field="savedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
@@ -134,6 +130,9 @@
             @callApi="trigger = true" />
         <EmailGroupPopup :modalStatus="modalEmailGroupStatus" @closePopup="modalEmailGroupStatus = false"
             :selectedRowKeys="selectedRowKeys" />
+        <ConfirmDeletePopup :modalStatus="modalRowDelete" @closePopup="modalRowDelete = false" :contentDelete="Message.getMessage('AC570', '001').message" 
+        :contentYes="Message.getMessage('AC570', '001').yes" :contentNo="Message.getMessage('AC570', '001').no" @confirmDelete="confirmDelete"
+        />
     </div>
 </template>
 <script lang="ts">
@@ -152,7 +151,8 @@ import { companyId } from "@/helpers/commonFunction";
 import AddPopup from './components/AddPopup.vue'
 import { Message } from "@/configs/enum"
 import DetailPopup from './components/DetailPopup.vue';
-import { Modal } from 'ant-design-vue';
+import filters from "@/helpers/filters";
+// import { Modal } from 'ant-design-vue';
 export default defineComponent({
     components: {
         AddPopup, DxSelection, DetailPopup, EmailGroupPopup,
@@ -164,8 +164,10 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
+        const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
         const modalHistoryStatus = ref<boolean>(false);
         const modalEmailGroupStatus = ref<boolean>(false);
+        const modalRowDelete = ref<boolean>(false);
         let popupData = ref();
         const focusedRowKey = ref()
         const modalStatus = ref(false)
@@ -189,6 +191,7 @@ export default defineComponent({
         };
         const dataRows = ref([])
         const selectedRowKeys = ref([])
+        const transitionId = ref();
 
         // ================GRAPQL==============================================
         // query getBudgetSubjectTransitions
@@ -226,7 +229,7 @@ export default defineComponent({
         // deleteBudgetSubjectTransition
         doneDeleteBudgetSubjectTransition((e) => {
             trigger.value = true
-            notification('success', Message.getMessage('COMMON', '302').message)
+            notification('success', Message.getMessage('COMMON', '402').message)
         })
         errorDeleteBudgetSubjectTransition(e => {
             notification('error', e.message)
@@ -237,10 +240,28 @@ export default defineComponent({
         // 1. GetBudgetSubjectTransitions
         watch(resGetBudgetSubjectTransitions, (value) => {
             trigger.value = false
-            dataSource.value = value.getBudgetSubjectTransitions
+            // dataSource.value = value.getBudgetSubjectTransitions
             selectedRowKeys.value = value.getBudgetSubjectTransitions?.map((item: any) => {
+                let row = dataAccountSubject.value.find((data: any) => data.useStartDate <= item.transitionDate <= data.useFinishDate)
+                item.sourceCode = row.codes?.find((data: any) => data.code == item.sourceCode)?.name ?? item.sourceCode
+                item.sourceCode1 = row.codes?.find((data: any) => data.code1 == item.sourceCode)?.name1 ?? item.sourceCode
+                item.sourceCode2 = row.codes?.find((data: any) => data.code2 == item.sourceCode)?.name2 ?? item.sourceCode
+                item.sourceCode3 = row.codes?.find((data: any) => data.code3 == item.sourceCode)?.name3 ?? item.sourceCode
+
+                item.transitionCode = row.codes?.find((data: any) => data.code == item.transitionCode)?.name ?? item.transitionCode
+                item.transitionCode1 = row.codes?.find((data: any) => data.code1 == item.transitionCode)?.name1 ?? item.transitionCode
+                item.transitionCode2 = row.codes?.find((data: any) => data.code2 == item.transitionCode)?.name2 ?? item.transitionCode
+                item.transitionCode3 = row.codes?.find((data: any) => data.code3 == item.transitionCode)?.name3 ?? item.transitionCode
+
+                item.customDxColumn8One = filters.formatCurrency(item.sourceBudgetAmount + (-item.transitionAmount))
+                item.customDxColumn8Two = filters.formatCurrency(item.sourceBudgetAmount + (-item.transitionAmount) + item.transitionAmount)
+
+                item.customDxColumn10One = filters.formatCurrency(item.sourceBudgetAmount + (-item.transitionAmount) - item.sourceExpenditureAmount)
+                item.customDxColumn10Two = filters.formatCurrency(item.sourceBudgetAmount + (-item.transitionAmount) + item.transitionAmount - item.transitionExpenditureAmount)
+
                 return item.transitionId
             })
+            dataSource.value = value.getBudgetSubjectTransitions
         })
 
         // 2. GetBudgetSubjectTransitionReportViewUrl
@@ -274,22 +295,17 @@ export default defineComponent({
         }
 
         const actonDeleteBudgetSubjectTransition = (data: any) => {
-            Modal.confirm({
-                title: Message.getMessage('AC570', '001').message,
-                icon: createVNode(DeleteOutlined),
-                okText: Message.getMessage('AC570', '001').yes,
-                cancelText: Message.getMessage('AC570', '001').no,
-                onOk() {
-                    let variables = {
-                        companyId: companyId,
-                        fiscalYear: acYear.value,
-                        facilityBusinessId: globalFacilityBizId.value,
-                        transitionId: data.transitionId
-                    };
-                    deleteBudgetSubjectTransition(variables);
-                },
-                class: 'confirm',
-            });
+            transitionId.value = data.transitionId
+            modalRowDelete.value = true;
+        }
+        const confirmDelete = () => {
+            let variables = {
+                companyId: companyId,
+                fiscalYear: acYear.value,
+                facilityBusinessId: globalFacilityBizId.value,
+                transitionId: transitionId.value
+            };
+            deleteBudgetSubjectTransition(variables);
         }
 
         const actionPrint = () => {
@@ -315,6 +331,7 @@ export default defineComponent({
             move_column, colomn_resize,
             modalHistoryStatus,
             modalEmailGroupStatus,
+            modalRowDelete,
             popupData, dataSource,
             modalStatus, focusedRowKey, modalStatusAdd,
             onFocusedRowChanging,
@@ -325,6 +342,7 @@ export default defineComponent({
             dataGridRef,
             actonDeleteBudgetSubjectTransition,
             actionPrint, actionSendEmailGroup,
+            confirmDelete,
         };
     },
 });
