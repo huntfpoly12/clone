@@ -1,96 +1,243 @@
 <template>
-  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px', padding: '8px'}">
-      <div class="report-grid">
-        <div class="header-report">
-          <div class="header-1">원천세신고서</div>
-          <div class="action-right">
-            <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status == 10">
-            <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy" v-if="dataSource[0].status == 10">
-            <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status != 10"></button-basic>
-          </div>
-          <div class="table-detail">
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-              :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
-              :allow-column-resizing="colomn_resize" :column-auto-width="true" 
-              :focused-row-enabled="true">
-              <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
-              <template #status="{ data }">
-                <process-status-tooltip :valueStatus="10" :height="32"
-                            :dataRow="data.data" />
-              </template>
-              <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
-              <template #imputedYear-imputedMonth="{ data }">
-                <a-tooltip>
-                  <template #title>
-                      귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
-                  </template>
-                  <div class="custom-grade-cell">
-                      <DxButton
-                          :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
-                          :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
-                  </div>
-                </a-tooltip>
-              </template>
-              <DxColumn caption="지급연월" cell-template="paymentYear-paymentMonth" css-class="cell-center"/>
-              <template #paymentYear-paymentMonth="{ data }">
-                <a-tooltip>
-                  <template #title>
-                      지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
-                  </template>
-                  <div class="custom-grade-cell">
-                      <DxButton
-                          :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
-                          :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
-                  </div>
-                </a-tooltip>
-              </template>
-              <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
-              <template #afterDeadline-index="{ data }">
-                <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
-              </template>
-              <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
-              <template #yearEndTaxAdjustment="{ data }">
-                <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"  :disabled="true"/>
-              </template>
-              <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
-              <template #refund="{ data }">
-                <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'O'" :textUnCheck="'X'"   :disabled="true"/>
-              </template>
-              <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
-              <template #submission-date="{ data }">
-                <date-time-box :valueDate="data.data.submissionDate" :disabled="true" :teleport="true"></date-time-box>
-              </template>
-            </DxDataGrid>
-          </div>
+  <a-modal
+    :visible="modalStatus"
+    @cancel="setModalVisible"
+    :mask-closable="false"
+    footer=""
+    style="top: 20px"
+    width="1368px"
+    :bodyStyle="{ height: '890px', padding: '8px' }"
+  >
+    <div class="report-grid">
+      <div class="header-report">
+        <div class="header-1">원천세신고서</div>
+        <div class="action-right">
+          <img
+            style="width: 29px; cursor: pointer"
+            src="@/assets/images/icon_delete.png"
+            alt=""
+            class="ml-3"
+            @click="actionConfirmDelete"
+            v-if="dataSource[0].status == 10"
+          />
+          <img
+            style="width: 31px; cursor: pointer"
+            src="@/assets/images/save_icon.svg"
+            alt=""
+            class="ml-3"
+            @click="updateTaxWithholdingModifiy"
+            v-if="dataSource[0].status == 10"
+          />
+          <button-basic
+            :width="150"
+            text="새로불러오기"
+            class="btn-get-income"
+            @onClick="actionConfirmLoadNew"
+            :disabled="dataSource[0].status != 10"
+          ></button-basic>
         </div>
-        <div class="table-grid">
-          <hot-table ref="wrapper" :settings="hotSettings" :readOnly="dataSource[0].status != 10"></hot-table>
-        </div> 
+        <div class="table-detail">
+          <DxDataGrid
+            :show-row-lines="true"
+            :hoverStateEnabled="true"
+            :data-source="dataSource"
+            :show-borders="true"
+            key-expr="index"
+            :allow-column-reordering="move_column"
+            :allow-column-resizing="colomn_resize"
+            :column-auto-width="true"
+            :focused-row-enabled="true"
+          >
+            <DxColumn
+              caption="마감 현황"
+              cell-template="status"
+              css-class="cell-center"
+            />
+            <template #status="{ data }">
+              <process-status-tooltip
+                :valueStatus="10"
+                :height="32"
+                :dataRow="data.data"
+              />
+            </template>
+            <DxColumn
+              caption="귀속연월"
+              cell-template="imputedYear-imputedMonth"
+              css-class="cell-center"
+            />
+            <template #imputedYear-imputedMonth="{ data }">
+              <a-tooltip>
+                <template #title>
+                  귀속기간{{
+                    showTooltipYearMonth(
+                      data.data.reportType,
+                      data.data.imputedStartYearMonth,
+                      data.data.imputedFinishYearMonth
+                    )
+                  }}
+                </template>
+                <div class="custom-grade-cell">
+                  <DxButton
+                    :text="
+                      '귀 ' +
+                      data.data.imputedYear +
+                      '-' +
+                      (data.data.imputedMonth > 9
+                        ? data.data.imputedMonth
+                        : '0' + data.data.imputedMonth)
+                    "
+                    :style="{ color: 'white', backgroundColor: 'gray' }"
+                    :height="$config_styles.HeightInput"
+                  />
+                </div>
+              </a-tooltip>
+            </template>
+            <DxColumn
+              caption="지급연월"
+              cell-template="paymentYear-paymentMonth"
+              css-class="cell-center"
+            />
+            <template #paymentYear-paymentMonth="{ data }">
+              <a-tooltip>
+                <template #title>
+                  지급기간{{
+                    showTooltipYearMonth(
+                      data.data.reportType,
+                      data.data.paymentStartYearMonth,
+                      data.data.paymentFinishYearMonth
+                    )
+                  }}
+                </template>
+                <div class="custom-grade-cell">
+                  <DxButton
+                    :text="
+                      '지 ' +
+                      data.data.paymentYear +
+                      '-' +
+                      (data.data.paymentMonth > 9
+                        ? data.data.paymentMonth
+                        : '0' + data.data.paymentMonth)
+                    "
+                    :style="{ color: 'white', backgroundColor: 'black' }"
+                    :height="$config_styles.HeightInput"
+                  />
+                </div>
+              </a-tooltip>
+            </template>
+            <DxColumn
+              caption="신고 종류"
+              cell-template="afterDeadline-index"
+              css-class="cell-center"
+            />
+            <template #afterDeadline-index="{ data }">
+              <DxButton
+                :text="
+                  getAfterDeadline(data.data.index, data.data.afterDeadline)
+                    ?.tag_name
+                "
+                :style="
+                  getAfterDeadline(data.data.index, data.data.afterDeadline)
+                    ?.style
+                "
+                :height="$config_styles.HeightInput"
+              />
+            </template>
+            <DxColumn
+              caption="연말"
+              cell-template="yearEndTaxAdjustment"
+              css-class="cell-center"
+            />
+            <template #yearEndTaxAdjustment="{ data }">
+              <DxCheckBox
+                v-model:value="data.data.yearEndTaxAdjustment"
+                :disabled="true"
+              />
+            </template>
+            <DxColumn
+              caption="환급"
+              cell-template="refund"
+              :width="80"
+              css-class="cell-center"
+            />
+            <template #refund="{ data }">
+              <switch-basic
+                v-model:valueSwitch="data.data.refund"
+                :textCheck="'O'"
+                :textUnCheck="'X'"
+                :disabled="true"
+              />
+            </template>
+            <DxColumn
+              caption="제출일"
+              cell-template="submission-date"
+              :width="160"
+            />
+            <template #submission-date="{ data }">
+              <date-time-box
+                :valueDate="data.data.submissionDate"
+                :disabled="true"
+                :teleport="true"
+              ></date-time-box>
+            </template>
+          </DxDataGrid>
+        </div>
       </div>
+      <div class="table-grid">
+        <hot-table
+          ref="wrapper"
+          :settings="hotSettings"
+          :readOnly="dataSource[0].status != 10"
+        ></hot-table>
+      </div>
+    </div>
   </a-modal>
-  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource[0].imputedYear" :reportId="dataSource[0].reportId"></confirm-delete>
-  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew(false)" />
+  <confirm-delete
+    v-if="confirmStatus"
+    :modalStatus="confirmStatus"
+    @closePopup="actionCloseConfirm"
+    :imputedYear="dataSource[0].imputedYear"
+    :reportId="dataSource[0].reportId"
+  ></confirm-delete>
+  <confirmload-new
+    v-if="confirmLoadNewStatus"
+    :modalStatus="confirmLoadNewStatus"
+    @closePopup="confirmLoadNewStatus = false"
+    @loadNewAction="loadNew(false)"
+  />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import DxButton from "devextreme-vue/button";
-import { DxCheckBox } from 'devextreme-vue/check-box';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "devextreme-vue/data-grid";
+import { DxCheckBox } from "devextreme-vue/check-box";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxToolbar,
+  DxItem,
+  DxPaging,
+  DxScrolling,
+} from "devextreme-vue/data-grid";
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useMutation, useQuery} from "@vue/apollo-composable";
-import { mergeCellsModified, cellsSettingModified, dataModified ,calculateWithholdingStatusReportModified,inputPositionModified,clearAllCellValue} from "./GridsettingModify"
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import {
+  mergeCellsModified,
+  cellsSettingModified,
+  dataModified,
+  calculateWithholdingStatusReportModified,
+  inputPositionModified,
+  clearAllCellValue,
+} from "./GridsettingModify";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
-import notification from "@/utils/notification"
+import notification from "@/utils/notification";
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
-import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
-import ConfirmDelete from "./ConfirmDelete.vue"
-import ConfirmloadNew from "./ConfirmloadNew.vue"
+import { getAfterDeadline, showTooltipYearMonth } from "../../utils/index";
+import ConfirmDelete from "./ConfirmDelete.vue";
+import ConfirmloadNew from "./ConfirmloadNew.vue";
 import { Message } from "@/configs/enum";
 // register Handsontable's modules
 registerAllModules();
@@ -108,21 +255,26 @@ export default defineComponent({
     isEdit: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   components: {
     HotTable,
     DxDataGrid,
     DxColumn,
-    DxToolbar, DxPaging,
-    DxItem, DxScrolling,DxButton,DxCheckBox,
-    ConfirmDelete,ConfirmloadNew
+    DxToolbar,
+    DxPaging,
+    DxItem,
+    DxScrolling,
+    DxButton,
+    DxCheckBox,
+    ConfirmDelete,
+    ConfirmloadNew,
   },
   setup(props, { emit }) {
-    const wrapper =  ref<any>(null);
-    const confirmStatus = ref<boolean>(false)
-    const confirmLoadNewStatus = ref<boolean>(false)
-    const hotSettings =  {
+    const wrapper = ref<any>(null);
+    const confirmStatus = ref<boolean>(false);
+    const confirmLoadNewStatus = ref<boolean>(false);
+    const hotSettings = {
       comments: true,
       fillHandle: true,
       colWidths: 102.5,
@@ -130,30 +282,28 @@ export default defineComponent({
       fixedRowsTop: 4,
       beforeKeyDown: (e: any) => {
         var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
-        if (!reg.test(e.key) && e.key != 'Backspace' && e.key != '-') {
-          e.preventDefault()
+        if (!reg.test(e.key) && e.key != "Backspace" && e.key != "-") {
+          e.preventDefault();
         }
       },
       afterValidate: (isValid: boolean, value: any, row: any, prop: any) => {
         let hot = wrapper.value.hotInstance;
-        
+
         if (isValid == false) {
           hot.setDataAtCell(row, hot.propToCol(prop), 0);
         }
       },
-      afterChange: (changes: any,source : string)=>{
-        if(source == 'edit'){
-          calculateWithholdingStatusReportModified(wrapper)
-          store.commit('common/setHasChangedPopupPA210',false);
+      afterChange: (changes: any, source: string) => {
+        if (source == "edit") {
+          calculateWithholdingStatusReportModified(wrapper);
+          store.commit("common/setHasChangedPopupPA210", false);
         }
       },
       hotRef: null,
       data: dataModified,
       mergeCells: mergeCellsModified,
-      cell: [
-        ...cellsSettingModified,
-      ],
-      width: 'auto',
+      cell: [...cellsSettingModified],
+      width: "auto",
       licenseKey: "non-commercial-and-evaluation",
     };
     const store = useStore();
@@ -161,231 +311,435 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref<any>(props.dataReport);
-    const trigger = ref<boolean>(false)
-    const originData = ref()
+    const trigger = ref<boolean>(false);
+    const originData = ref();
     const setModalVisible = () => {
-      emit('closePopup', false)
-    }
+      emit("closePopup", false);
+    };
 
-    watch(() => props.dataReport,(newValue : any) => {
-      dataSource.value = newValue
-    })
+    watch(
+      () => props.dataReport,
+      (newValue: any) => {
+        dataSource.value = newValue;
+      }
+    );
     // load new data when first time open popup
     onMounted(() => {
-      loadNew(true)
-    })
+      loadNew(true);
+    });
 
-      // Get IncomesForTaxWithholdingStatusReport
-      const {
-          refetch: refetchData,
-          result,
-          loading,
-          onError
-      } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
-          enabled: trigger.value,
-          fetchPolicy: "no-cache",
-    }));
-    const actionConfirmLoadNew = ()=>{
-      confirmLoadNewStatus.value = true
-    }
+    // Get IncomesForTaxWithholdingStatusReport
+    const {
+      refetch: refetchData,
+      result,
+      loading,
+      onError,
+    } = useQuery(
+      queries.getIncomesForTaxWithholdingStatusReport,
+      originData,
+      () => ({
+        enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    const actionConfirmLoadNew = () => {
+      confirmLoadNewStatus.value = true;
+    };
     onError((error) => {
-      notification('error', error.message)
-    })
+      ////notification('error', error.message)
+    });
     watch(result, (data) => {
       if (data) {
         // make new format for data
-        const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
-          return {
-            code: item.code,
-            numberOfPeople: item.numberOfPeople,
-            totalPayment: item.totalPayment,
-            collectedIncomeTax: item.collectedIncomeTax,
+        const newData = data.getIncomesForTaxWithholdingStatusReport.map(
+          (item: any) => {
+            return {
+              code: item.code,
+              numberOfPeople: item.numberOfPeople,
+              totalPayment: item.totalPayment,
+              collectedIncomeTax: item.collectedIncomeTax,
+            };
           }
-        });
-        calculateWithholdingStatusReportModified(wrapper,newData)
+        );
+        calculateWithholdingStatusReportModified(wrapper, newData);
       }
-    })
+    });
     // The above code is used to load the data from the database to the table.
-    const loadNew = (firstLoad :  boolean) => {
-      clearAllCellValue(wrapper)
+    const loadNew = (firstLoad: boolean) => {
+      clearAllCellValue(wrapper);
       // call api to set modified value
       originData.value = {
-          companyId: companyId,
-          input:{
-            imputedYear: dataSource.value[0].imputedYear,
-            imputedMonth: dataSource.value[0].imputedMonth,
-            paymentYear: dataSource.value[0].paymentYear,
-            paymentMonth: dataSource.value[0].paymentMonth,
-            reportType: dataSource.value[0].reportType,
-            index: dataSource.value[0].index,
-            paymentType: dataSource.value[0].paymentType,
-            yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
-          },
-      }
+        companyId: companyId,
+        input: {
+          imputedYear: dataSource.value[0].imputedYear,
+          imputedMonth: dataSource.value[0].imputedMonth,
+          paymentYear: dataSource.value[0].paymentYear,
+          paymentMonth: dataSource.value[0].paymentMonth,
+          reportType: dataSource.value[0].reportType,
+          index: dataSource.value[0].index,
+          paymentType: dataSource.value[0].paymentType,
+          yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+        },
+      };
       if (!firstLoad) {
         trigger.value = true;
-        refetchData()
+        refetchData();
       }
 
-      let hot = wrapper.value?.hotInstance; 
+      let hot = wrapper.value?.hotInstance;
       //Put in a loop to set data into each cell
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data: any) => {
-          if (!data.code) {
-            return; 
-          }
-        
-          const rowPosition = inputPositionModified.find(item => item.className == data.code);
-          if (data.numberOfPeople)
-            hot.setDataAtCell(rowPosition?.value.inputPosition[0][0], rowPosition?.value.inputPosition[0][1], data.numberOfPeople,'initTable');
-          if (data.totalPayment)
-            hot.setDataAtCell(rowPosition?.value.inputPosition[1][0], rowPosition?.value.inputPosition[1][1], data.totalPayment,'initTable');
-          if (data.collectedIncomeTax)
-            hot.setDataAtCell(rowPosition?.value.inputPosition[2][0], rowPosition?.value.inputPosition[2][1], data.collectedIncomeTax,'initTable');
-          if (data.collectedRuralSpecialTax)
-            hot.setDataAtCell(rowPosition?.value.inputPosition[3][0], rowPosition?.value.inputPosition[3][1], data.collectedRuralSpecialTax,'initTable');
-          if (data.collectedExtraTax)
-            hot.setDataAtCell(rowPosition?.value.inputPosition[4][0], rowPosition?.value.inputPosition[4][1], data.collectedExtraTax,'initTable');
-          if (data.thisMonthAdjustedRefundTaxAmount)
-            hot.setDataAtCell(rowPosition?.value.inputPosition[5][0], rowPosition?.value.inputPosition[5][1], data.thisMonthAdjustedRefundTaxAmount,'initTable');
-          if (data.incomeTaxPaid)
-            hot.setDataAtCell(rowPosition?.value.inputPosition[6][0], rowPosition?.value.inputPosition[6][1], data.incomeTaxPaid,'initTable');
-          if (data.ruralSpecialTaxPaid)
-            hot.setDataAtCell(rowPosition?.value.inputPosition[7][0], rowPosition?.value.inputPosition[7][1], data.ruralSpecialTaxPaid,'initTable');
+        if (!data.code) {
+          return;
+        }
 
-          // set modify value
-          if (data.numberOfPeopleModified)
-            hot.setDataAtCell(rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.numberOfPeopleModified,'initTable');
-          if (data.totalPaymentModified)
-            hot.setDataAtCell(rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.totalPaymentModified,'initTable');
-          if (data.collectedIncomeTaxModified)
-            hot.setDataAtCell(rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.collectedIncomeTaxModified,'initTable');
-          if (data.collectedRuralSpecialTaxModified)
-            hot.setDataAtCell(rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.collectedRuralSpecialTaxModified,'initTable');
-          if (data.collectedExtraTaxModified)
-            hot.setDataAtCell(rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.collectedExtraTaxModified,'initTable');
-          if (data.thisMonthAdjustedRefundTaxAmountModified)
-            hot.setDataAtCell(rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthAdjustedRefundTaxAmountModified,'initTable');
-          if (data.incomeTaxPaidModified)
-            hot.setDataAtCell(rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.incomeTaxPaidModified,'initTable');
-          if (data.ruralSpecialTaxPaidModified)
-            hot.setDataAtCell(rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.ruralSpecialTaxPaidModified,'initTable');
-      })
+        const rowPosition = inputPositionModified.find(
+          (item) => item.className == data.code
+        );
+        if (data.numberOfPeople)
+          hot.setDataAtCell(
+            rowPosition?.value.inputPosition[0][0],
+            rowPosition?.value.inputPosition[0][1],
+            data.numberOfPeople,
+            "initTable"
+          );
+        if (data.totalPayment)
+          hot.setDataAtCell(
+            rowPosition?.value.inputPosition[1][0],
+            rowPosition?.value.inputPosition[1][1],
+            data.totalPayment,
+            "initTable"
+          );
+        if (data.collectedIncomeTax)
+          hot.setDataAtCell(
+            rowPosition?.value.inputPosition[2][0],
+            rowPosition?.value.inputPosition[2][1],
+            data.collectedIncomeTax,
+            "initTable"
+          );
+        if (data.collectedRuralSpecialTax)
+          hot.setDataAtCell(
+            rowPosition?.value.inputPosition[3][0],
+            rowPosition?.value.inputPosition[3][1],
+            data.collectedRuralSpecialTax,
+            "initTable"
+          );
+        if (data.collectedExtraTax)
+          hot.setDataAtCell(
+            rowPosition?.value.inputPosition[4][0],
+            rowPosition?.value.inputPosition[4][1],
+            data.collectedExtraTax,
+            "initTable"
+          );
+        if (data.thisMonthAdjustedRefundTaxAmount)
+          hot.setDataAtCell(
+            rowPosition?.value.inputPosition[5][0],
+            rowPosition?.value.inputPosition[5][1],
+            data.thisMonthAdjustedRefundTaxAmount,
+            "initTable"
+          );
+        if (data.incomeTaxPaid)
+          hot.setDataAtCell(
+            rowPosition?.value.inputPosition[6][0],
+            rowPosition?.value.inputPosition[6][1],
+            data.incomeTaxPaid,
+            "initTable"
+          );
+        if (data.ruralSpecialTaxPaid)
+          hot.setDataAtCell(
+            rowPosition?.value.inputPosition[7][0],
+            rowPosition?.value.inputPosition[7][1],
+            data.ruralSpecialTaxPaid,
+            "initTable"
+          );
+
+        // set modify value
+        if (data.numberOfPeopleModified)
+          hot.setDataAtCell(
+            rowPosition?.value.modifiedPosition[0][0],
+            rowPosition?.value.modifiedPosition[0][1],
+            data.numberOfPeopleModified,
+            "initTable"
+          );
+        if (data.totalPaymentModified)
+          hot.setDataAtCell(
+            rowPosition?.value.modifiedPosition[1][0],
+            rowPosition?.value.modifiedPosition[1][1],
+            data.totalPaymentModified,
+            "initTable"
+          );
+        if (data.collectedIncomeTaxModified)
+          hot.setDataAtCell(
+            rowPosition?.value.modifiedPosition[2][0],
+            rowPosition?.value.modifiedPosition[2][1],
+            data.collectedIncomeTaxModified,
+            "initTable"
+          );
+        if (data.collectedRuralSpecialTaxModified)
+          hot.setDataAtCell(
+            rowPosition?.value.modifiedPosition[3][0],
+            rowPosition?.value.modifiedPosition[3][1],
+            data.collectedRuralSpecialTaxModified,
+            "initTable"
+          );
+        if (data.collectedExtraTaxModified)
+          hot.setDataAtCell(
+            rowPosition?.value.modifiedPosition[4][0],
+            rowPosition?.value.modifiedPosition[4][1],
+            data.collectedExtraTaxModified,
+            "initTable"
+          );
+        if (data.thisMonthAdjustedRefundTaxAmountModified)
+          hot.setDataAtCell(
+            rowPosition?.value.modifiedPosition[5][0],
+            rowPosition?.value.modifiedPosition[5][1],
+            data.thisMonthAdjustedRefundTaxAmountModified,
+            "initTable"
+          );
+        if (data.incomeTaxPaidModified)
+          hot.setDataAtCell(
+            rowPosition?.value.modifiedPosition[6][0],
+            rowPosition?.value.modifiedPosition[6][1],
+            data.incomeTaxPaidModified,
+            "initTable"
+          );
+        if (data.ruralSpecialTaxPaidModified)
+          hot.setDataAtCell(
+            rowPosition?.value.modifiedPosition[7][0],
+            rowPosition?.value.modifiedPosition[7][1],
+            data.ruralSpecialTaxPaidModified,
+            "initTable"
+          );
+      });
       // adjustment Of Refund Tax Amount
-      const adjustment = dataSource.value[0]?.adjustmentOfRefundTaxAmount
-      const adjustmentPosition = inputPositionModified.find(item => item.className == 'adjustmentOfRefundTaxAmount');
+      const adjustment = dataSource.value[0]?.adjustmentOfRefundTaxAmount;
+      const adjustmentPosition = inputPositionModified.find(
+        (item) => item.className == "adjustmentOfRefundTaxAmount"
+      );
       if (adjustment?.prevMonthNonRefundableTaxAmount)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[0][0], adjustmentPosition?.value.inputPosition[0][1], adjustment?.prevMonthNonRefundableTaxAmount,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[0][0],
+          adjustmentPosition?.value.inputPosition[0][1],
+          adjustment?.prevMonthNonRefundableTaxAmount,
+          "initTable"
+        );
       if (adjustment?.preRefundApplicationTaxAmount)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[1][0], adjustmentPosition?.value.inputPosition[1][1], adjustment?.preRefundApplicationTaxAmount,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[1][0],
+          adjustmentPosition?.value.inputPosition[1][1],
+          adjustment?.preRefundApplicationTaxAmount,
+          "initTable"
+        );
       if (adjustment?.deductibleBalance)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[2][0], adjustmentPosition?.value.inputPosition[2][1], adjustment?.deductibleBalance,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[2][0],
+          adjustmentPosition?.value.inputPosition[2][1],
+          adjustment?.deductibleBalance,
+          "initTable"
+        );
       if (adjustment?.thisMonthRefundTaxGeneral)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[3][0], adjustmentPosition?.value.inputPosition[3][1], adjustment?.thisMonthRefundTaxGeneral,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[3][0],
+          adjustmentPosition?.value.inputPosition[3][1],
+          adjustment?.thisMonthRefundTaxGeneral,
+          "initTable"
+        );
       if (adjustment?.thisMonthRefundTaxOtherFinancialCompany)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[4][0], adjustmentPosition?.value.inputPosition[4][1], adjustment?.thisMonthRefundTaxOtherFinancialCompany,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[4][0],
+          adjustmentPosition?.value.inputPosition[4][1],
+          adjustment?.thisMonthRefundTaxOtherFinancialCompany,
+          "initTable"
+        );
       if (adjustment?.thisMonthRefundTaxOtherMerge)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[5][0], adjustmentPosition?.value.inputPosition[5][1], adjustment?.thisMonthRefundTaxOtherMerge,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[5][0],
+          adjustmentPosition?.value.inputPosition[5][1],
+          adjustment?.thisMonthRefundTaxOtherMerge,
+          "initTable"
+        );
       if (adjustment?.refundTaxSubjectToAdjustment)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[6][0], adjustmentPosition?.value.inputPosition[6][1], adjustment?.refundTaxSubjectToAdjustment,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[6][0],
+          adjustmentPosition?.value.inputPosition[6][1],
+          adjustment?.refundTaxSubjectToAdjustment,
+          "initTable"
+        );
       if (adjustment?.thisMonthTotalAdjustedRefundTaxAmount)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[7][0], adjustmentPosition?.value.inputPosition[7][1], adjustment?.thisMonthTotalAdjustedRefundTaxAmount,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[7][0],
+          adjustmentPosition?.value.inputPosition[7][1],
+          adjustment?.thisMonthTotalAdjustedRefundTaxAmount,
+          "initTable"
+        );
       if (adjustment?.nextMonthRefundTaxAmount)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[8][0], adjustmentPosition?.value.inputPosition[8][1], adjustment?.nextMonthRefundTaxAmount,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[8][0],
+          adjustmentPosition?.value.inputPosition[8][1],
+          adjustment?.nextMonthRefundTaxAmount,
+          "initTable"
+        );
       if (adjustment?.refundApplicationAmount)
-        hot.setDataAtCell(adjustmentPosition?.value.inputPosition[9][0], adjustmentPosition?.value.inputPosition[9][1], adjustment?.refundApplicationAmount,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.inputPosition[9][0],
+          adjustmentPosition?.value.inputPosition[9][1],
+          adjustment?.refundApplicationAmount,
+          "initTable"
+        );
 
       // adjustment Of Refund Tax Amount modified
       if (adjustment?.prevMonthNonRefundableTaxAmountModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[0][0], adjustmentPosition?.value.modifiedPosition[0][1], adjustment?.prevMonthNonRefundableTaxAmountModified,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[0][0],
+          adjustmentPosition?.value.modifiedPosition[0][1],
+          adjustment?.prevMonthNonRefundableTaxAmountModified,
+          "initTable"
+        );
       if (adjustment?.preRefundApplicationTaxAmountModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[1][0], adjustmentPosition?.value.modifiedPosition[1][1], adjustment?.preRefundApplicationTaxAmountModified,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[1][0],
+          adjustmentPosition?.value.modifiedPosition[1][1],
+          adjustment?.preRefundApplicationTaxAmountModified,
+          "initTable"
+        );
       if (adjustment?.deductibleBalanceModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[2][0], adjustmentPosition?.value.modifiedPosition[2][1], adjustment?.deductibleBalanceModified,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[2][0],
+          adjustmentPosition?.value.modifiedPosition[2][1],
+          adjustment?.deductibleBalanceModified,
+          "initTable"
+        );
       if (adjustment?.thisMonthRefundTaxGeneralModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[3][0], adjustmentPosition?.value.modifiedPosition[3][1], adjustment?.thisMonthRefundTaxGeneralModified,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[3][0],
+          adjustmentPosition?.value.modifiedPosition[3][1],
+          adjustment?.thisMonthRefundTaxGeneralModified,
+          "initTable"
+        );
       if (adjustment?.thisMonthRefundTaxOtherFinancialCompanyModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[4][0], adjustmentPosition?.value.modifiedPosition[4][1], adjustment?.thisMonthRefundTaxOtherFinancialCompanyModified,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[4][0],
+          adjustmentPosition?.value.modifiedPosition[4][1],
+          adjustment?.thisMonthRefundTaxOtherFinancialCompanyModified,
+          "initTable"
+        );
       if (adjustment?.thisMonthRefundTaxOtherMergeModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[5][0], adjustmentPosition?.value.modifiedPosition[5][1], adjustment?.thisMonthRefundTaxOtherMergeModified,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[5][0],
+          adjustmentPosition?.value.modifiedPosition[5][1],
+          adjustment?.thisMonthRefundTaxOtherMergeModified,
+          "initTable"
+        );
       if (adjustment?.refundTaxSubjectToAdjustmentModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[6][0], adjustmentPosition?.value.modifiedPosition[6][1], adjustment?.refundTaxSubjectToAdjustmentModified,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[6][0],
+          adjustmentPosition?.value.modifiedPosition[6][1],
+          adjustment?.refundTaxSubjectToAdjustmentModified,
+          "initTable"
+        );
       if (adjustment?.thisMonthTotalAdjustedRefundTaxAmountModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[7][0], adjustmentPosition?.value.modifiedPosition[7][1], adjustment?.thisMonthTotalAdjustedRefundTaxAmountModified,'initTable');
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[7][0],
+          adjustmentPosition?.value.modifiedPosition[7][1],
+          adjustment?.thisMonthTotalAdjustedRefundTaxAmountModified,
+          "initTable"
+        );
       if (adjustment?.nextMonthRefundTaxAmountModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[8][0], adjustmentPosition?.value.modifiedPosition[8][1], adjustment?.nextMonthRefundTaxAmountModified,'initTable');;
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[8][0],
+          adjustmentPosition?.value.modifiedPosition[8][1],
+          adjustment?.nextMonthRefundTaxAmountModified,
+          "initTable"
+        );
       if (adjustment?.refundApplicationAmountModified)
-        hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[9][0], adjustmentPosition?.value.modifiedPosition[9][1], adjustment?.refundApplicationAmountModified,'initTable');
-    }
+        hot.setDataAtCell(
+          adjustmentPosition?.value.modifiedPosition[9][0],
+          adjustmentPosition?.value.modifiedPosition[9][1],
+          adjustment?.refundApplicationAmountModified,
+          "initTable"
+        );
+    };
 
     const {
-            mutate: actionUpdateTaxWithholding,
-            onDone: doneChangeStatus,
-            onError: errChangeStatus
+      mutate: actionUpdateTaxWithholding,
+      onDone: doneChangeStatus,
+      onError: errChangeStatus,
     } = useMutation(mutations.updateTaxWithholdingStatusReport);
-        
+
     doneChangeStatus((result: any) => {
-      store.state.common.focusedRowKeyPA210 = result.data.createTaxWithholdingStatusReport.reportId
-      notification('success', Message.getMessage('COMMON', '106').message)
-      setModalVisible()
-    })
+      store.state.common.focusedRowKeyPA210 =
+        result.data.createTaxWithholdingStatusReport.reportId;
+      notification("success", Message.getMessage("COMMON", "106").message);
+      setModalVisible();
+    });
     errChangeStatus((error) => {
-      //notification('error', error.message)
-      setModalVisible()
-    })
+      //////notification('error', error.message)
+      setModalVisible();
+    });
 
     // The above code is a function that is called when the user clicks the "수정" button.
     const updateTaxWithholdingModifiy = () => {
       let hot = wrapper.value.hotInstance;
-      const arrData = hot.getData()
-      let statement = Array()
+      const arrData = hot.getData();
+      let statement = Array();
       for (let index = 0; index < arrData.length; index++) {
         if (
-            index >= 4 && index <= 61 &&
-            arrData[index][4] &&
-          (
-            arrData[index+1][5] != '' ||
-            arrData[index+1][6] != '' ||
-            arrData[index+1][7] != '' ||
-            arrData[index+1][8] != '' ||
-            arrData[index+1][9] != '' ||
-            arrData[index+1][10] != '' ||
-            arrData[index+1][11] != '' ||
-            arrData[index+1][12] != ''
-          )
-          ) {
+          index >= 4 &&
+          index <= 61 &&
+          arrData[index][4] &&
+          (arrData[index + 1][5] != "" ||
+            arrData[index + 1][6] != "" ||
+            arrData[index + 1][7] != "" ||
+            arrData[index + 1][8] != "" ||
+            arrData[index + 1][9] != "" ||
+            arrData[index + 1][10] != "" ||
+            arrData[index + 1][11] != "" ||
+            arrData[index + 1][12] != "")
+        ) {
           statement.push({
             code: arrData[index][4],
-            numberOfPeopleModified: arrData[index+1][5] != '' ? arrData[index+1][5] : 0,
-            numberOfPeople: arrData[index][5] != '' ? arrData[index][5] : 0,
+            numberOfPeopleModified:
+              arrData[index + 1][5] != "" ? arrData[index + 1][5] : 0,
+            numberOfPeople: arrData[index][5] != "" ? arrData[index][5] : 0,
 
-            totalPaymentModified: arrData[index+1][6] != '' ? arrData[index+1][6] : 0,
-            totalPayment: arrData[index][6] != '' ? arrData[index][6] : 0,
+            totalPaymentModified:
+              arrData[index + 1][6] != "" ? arrData[index + 1][6] : 0,
+            totalPayment: arrData[index][6] != "" ? arrData[index][6] : 0,
 
-            collectedIncomeTaxModified: arrData[index+1][7] != '' ? arrData[index+1][7] : 0,
-            collectedIncomeTax: arrData[index][7] != '' ? arrData[index][7] : 0,
+            collectedIncomeTaxModified:
+              arrData[index + 1][7] != "" ? arrData[index + 1][7] : 0,
+            collectedIncomeTax: arrData[index][7] != "" ? arrData[index][7] : 0,
 
-            collectedRuralSpecialTaxModified: arrData[index+1][8] != '' ? arrData[index+1][8] : 0,
-            collectedRuralSpecialTax: arrData[index][8] != '' ? arrData[index][8] : 0,
+            collectedRuralSpecialTaxModified:
+              arrData[index + 1][8] != "" ? arrData[index + 1][8] : 0,
+            collectedRuralSpecialTax:
+              arrData[index][8] != "" ? arrData[index][8] : 0,
 
-            collectedExtraTaxModified: arrData[index+1][9] != '' ? arrData[index+1][9] : 0,
-            collectedExtraTax: arrData[index][9] != '' ? arrData[index][9] : 0,
+            collectedExtraTaxModified:
+              arrData[index + 1][9] != "" ? arrData[index + 1][9] : 0,
+            collectedExtraTax: arrData[index][9] != "" ? arrData[index][9] : 0,
 
-            thisMonthAdjustedRefundTaxAmountModified: arrData[index+1][10] != '' ? arrData[index+1][10] : 0,
-            thisMonthAdjustedRefundTaxAmount: arrData[index][10] != '' ? arrData[index][10] : 0,
+            thisMonthAdjustedRefundTaxAmountModified:
+              arrData[index + 1][10] != "" ? arrData[index + 1][10] : 0,
+            thisMonthAdjustedRefundTaxAmount:
+              arrData[index][10] != "" ? arrData[index][10] : 0,
 
-            incomeTaxPaidModified: arrData[index+1][11] != '' ? arrData[index+1][11] : 0,
-            incomeTaxPaid: arrData[index][11] != '' ? arrData[index][11] : 0,
+            incomeTaxPaidModified:
+              arrData[index + 1][11] != "" ? arrData[index + 1][11] : 0,
+            incomeTaxPaid: arrData[index][11] != "" ? arrData[index][11] : 0,
 
-            ruralSpecialTaxPaidModified: arrData[index+1][12] != '' ? arrData[index+1][12] : 0,
-            ruralSpecialTaxPaid: arrData[index][12] != '' ? arrData[index][12] : 0,
+            ruralSpecialTaxPaidModified:
+              arrData[index + 1][12] != "" ? arrData[index + 1][12] : 0,
+            ruralSpecialTaxPaid:
+              arrData[index][12] != "" ? arrData[index][12] : 0,
           });
         }
       }
-      
+
       const variables = {
-        companyId:companyId,
-        reportId:dataSource.value[0].reportId,
-        key:{
+        companyId: companyId,
+        reportId: dataSource.value[0].reportId,
+        key: {
           imputedYear: dataSource.value[0].imputedYear,
           imputedMonth: dataSource.value[0].imputedMonth,
           paymentYear: dataSource.value[0].paymentYear,
@@ -393,7 +747,7 @@ export default defineComponent({
           reportType: dataSource.value[0].reportType,
           index: dataSource.value[0].index,
         },
-        input:{
+        input: {
           paymentType: dataSource.value[0].paymentType,
           yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
           additionalIncome: false,
@@ -401,67 +755,95 @@ export default defineComponent({
           afterDeadline: dataSource.value[0].afterDeadline,
           submissionDate: parseInt(dataSource.value[0].submissionDate),
           reportClassCode: dataSource.value[0].reportClassCode,
-          header:{
+          header: {
             withholdingDutyName: dataSource.value[0].header.withholdingDutyName,
-            withholdingDutyPresidentName: dataSource.value[0].header.withholdingDutyPresidentName,
-            withholdingDutyBizNumber: dataSource.value[0].header.withholdingDutyBizNumber,
-            withholdingDutyAddress: dataSource.value[0].header.withholdingDutyAddress,
-            withholdingDutyCollectivePayment: dataSource.value[0].header.withholdingDutyCollectivePayment,
-            withholdingDutyTaxForEachBusiness: dataSource.value[0].header.withholdingDutyTaxForEachBusiness,
-            withholdingDutyTelephone:  dataSource.value[0].header.withholdingDutyTelephone,
-            withholdingDutyEmail: dataSource.value[0].header.withholdingDutyEmail,
+            withholdingDutyPresidentName:
+              dataSource.value[0].header.withholdingDutyPresidentName,
+            withholdingDutyBizNumber:
+              dataSource.value[0].header.withholdingDutyBizNumber,
+            withholdingDutyAddress:
+              dataSource.value[0].header.withholdingDutyAddress,
+            withholdingDutyCollectivePayment:
+              dataSource.value[0].header.withholdingDutyCollectivePayment,
+            withholdingDutyTaxForEachBusiness:
+              dataSource.value[0].header.withholdingDutyTaxForEachBusiness,
+            withholdingDutyTelephone:
+              dataSource.value[0].header.withholdingDutyTelephone,
+            withholdingDutyEmail:
+              dataSource.value[0].header.withholdingDutyEmail,
           },
           statementAndAmountOfTaxPaids: statement,
-          adjustmentOfRefundTaxAmount:{
-            prevMonthNonRefundableTaxAmount: arrData[66][0] != '' ? arrData[66][0] : 0,
-            prevMonthNonRefundableTaxAmountModified: arrData[67][0] != '' ? arrData[67][0] : 0,
+          adjustmentOfRefundTaxAmount: {
+            prevMonthNonRefundableTaxAmount:
+              arrData[66][0] != "" ? arrData[66][0] : 0,
+            prevMonthNonRefundableTaxAmountModified:
+              arrData[67][0] != "" ? arrData[67][0] : 0,
 
-            preRefundApplicationTaxAmount:  arrData[66][2] != '' ? arrData[66][2] : 0,
-            preRefundApplicationTaxAmountModified:  arrData[67][2] != '' ? arrData[67][2] : 0,
+            preRefundApplicationTaxAmount:
+              arrData[66][2] != "" ? arrData[66][2] : 0,
+            preRefundApplicationTaxAmountModified:
+              arrData[67][2] != "" ? arrData[67][2] : 0,
 
-            deductibleBalance:  arrData[66][4] != '' ? arrData[66][4] : 0,
-            deductibleBalanceModified:  arrData[67][4] != '' ? arrData[67][4] : 0,
+            deductibleBalance: arrData[66][4] != "" ? arrData[66][4] : 0,
+            deductibleBalanceModified:
+              arrData[67][4] != "" ? arrData[67][4] : 0,
 
-            thisMonthRefundTaxGeneral:  arrData[66][5] != '' ? arrData[66][5] : 0,
-            thisMonthRefundTaxGeneralModified:  arrData[67][5] != '' ? arrData[67][5] : 0,
+            thisMonthRefundTaxGeneral:
+              arrData[66][5] != "" ? arrData[66][5] : 0,
+            thisMonthRefundTaxGeneralModified:
+              arrData[67][5] != "" ? arrData[67][5] : 0,
 
-            thisMonthRefundTaxFiduciaryEstates:  arrData[66][6] != '' ? arrData[66][6] : 0,
-            thisMonthRefundTaxFiduciaryEstatesModified:  arrData[67][6] != '' ? arrData[67][6] : 0,
+            thisMonthRefundTaxFiduciaryEstates:
+              arrData[66][6] != "" ? arrData[66][6] : 0,
+            thisMonthRefundTaxFiduciaryEstatesModified:
+              arrData[67][6] != "" ? arrData[67][6] : 0,
 
-            thisMonthRefundTaxOtherFinancialCompany:  arrData[66][7] != '' ? arrData[66][7] : 0,
-            thisMonthRefundTaxOtherFinancialCompanyModified:  arrData[67][7] != '' ? arrData[67][7] : 0,
+            thisMonthRefundTaxOtherFinancialCompany:
+              arrData[66][7] != "" ? arrData[66][7] : 0,
+            thisMonthRefundTaxOtherFinancialCompanyModified:
+              arrData[67][7] != "" ? arrData[67][7] : 0,
 
-            thisMonthRefundTaxOtherMerge:  arrData[66][8] != '' ? arrData[66][8] : 0,
-            thisMonthRefundTaxOtherMergeModified:  arrData[67][8] != '' ? arrData[67][8] : 0,
+            thisMonthRefundTaxOtherMerge:
+              arrData[66][8] != "" ? arrData[66][8] : 0,
+            thisMonthRefundTaxOtherMergeModified:
+              arrData[67][8] != "" ? arrData[67][8] : 0,
 
-            refundTaxSubjectToAdjustment:  arrData[66][9] != '' ? arrData[66][9] : 0,
-            refundTaxSubjectToAdjustmentModified:  arrData[67][9] != '' ? arrData[67][9] : 0,
+            refundTaxSubjectToAdjustment:
+              arrData[66][9] != "" ? arrData[66][9] : 0,
+            refundTaxSubjectToAdjustmentModified:
+              arrData[67][9] != "" ? arrData[67][9] : 0,
 
-            thisMonthTotalAdjustedRefundTaxAmount:  arrData[66][10] != '' ? arrData[66][10] : 0,
-            thisMonthTotalAdjustedRefundTaxAmountModified:  arrData[67][10] != '' ? arrData[67][10] : 0,
+            thisMonthTotalAdjustedRefundTaxAmount:
+              arrData[66][10] != "" ? arrData[66][10] : 0,
+            thisMonthTotalAdjustedRefundTaxAmountModified:
+              arrData[67][10] != "" ? arrData[67][10] : 0,
 
-            nextMonthRefundTaxAmount:  arrData[66][11] != '' ? arrData[66][11] : 0,
-            nextMonthRefundTaxAmountModified:  arrData[67][11] != '' ? arrData[67][11] : 0,
+            nextMonthRefundTaxAmount:
+              arrData[66][11] != "" ? arrData[66][11] : 0,
+            nextMonthRefundTaxAmountModified:
+              arrData[67][11] != "" ? arrData[67][11] : 0,
 
-            refundApplicationAmount:  arrData[66][12] != '' ? arrData[37][66] : 0,
-            refundApplicationAmountModified:  arrData[67][12] != '' ? arrData[67][12] : 0,
-          }
-        }
-      }
-      actionUpdateTaxWithholding(variables)
-    }
+            refundApplicationAmount:
+              arrData[66][12] != "" ? arrData[37][66] : 0,
+            refundApplicationAmountModified:
+              arrData[67][12] != "" ? arrData[67][12] : 0,
+          },
+        },
+      };
+      actionUpdateTaxWithholding(variables);
+    };
 
     // The above code is creating a function called actionConfirmDelete. This function is setting the value
     // of confirmStatus to true.
-    const actionConfirmDelete = ()=>{
-      confirmStatus.value = true
-    }
+    const actionConfirmDelete = () => {
+      confirmStatus.value = true;
+    };
 
     // Creating a function that will close the confirm box.
     const actionCloseConfirm = () => {
-      confirmStatus.value = false
-      setModalVisible()
-    }
+      confirmStatus.value = false;
+      setModalVisible();
+    };
     return {
       setModalVisible,
       hotSettings,
@@ -478,16 +860,17 @@ export default defineComponent({
       actionCloseConfirm,
       actionConfirmLoadNew,
       confirmLoadNewStatus,
-      showTooltipYearMonth,dataModified
-    }
-  }
+      showTooltipYearMonth,
+      dataModified,
+    };
+  },
 });
 </script>
 <style lang="scss" scoped>
 :deep .cell-center {
-    text-align: center !important
+  text-align: center !important;
 }
-.report-grid{
+.report-grid {
   padding: 8px 0px 0px 5px;
   height: 860px;
   :deep td.disable-cell {
@@ -496,27 +879,27 @@ export default defineComponent({
   }
   :deep td.gray-cell {
     color: black;
-    background-color: #D9D9D9;
+    background-color: #d9d9d9;
   }
   :deep td.mid-gray-cell {
     color: black;
-    background-color: #AEAAAA;
+    background-color: #aeaaaa;
   }
-  .action-right{
+  .action-right {
     margin-bottom: 1px;
     display: flex;
     justify-content: flex-end;
   }
-  .table-detail{
+  .table-detail {
     margin-bottom: 5px;
   }
-  .btn-get-income{
-      color: white;
-      background-color: #558ED5;
-      font-size: 14px;
-      border: none;
-      border-radius: 5px;
-      height: 35px;
+  .btn-get-income {
+    color: white;
+    background-color: #558ed5;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    height: 35px;
   }
   // .table-grid{
   //   overflow-x: hidden;
@@ -526,23 +909,23 @@ export default defineComponent({
   :deep .wtHolder {
     width: 100% !important;
     // height: 730px !important;
-   }
+  }
 
   :deep .ht_clone_left .wtHolder {
-      overflow:hidden;
+    overflow: hidden;
   }
-  .header-1{
+  .header-1 {
     text-align: center;
     font-size: 18px;
     font-weight: bold;
   }
-  .header-2{
+  .header-2 {
     text-align: center;
     font-size: 18px;
     font-weight: bold;
   }
   .header-text-3 {
-    background-color: #C6D9F1;
+    background-color: #c6d9f1;
     padding: 5px;
     font-weight: bold;
     font-size: 18px;
@@ -561,5 +944,4 @@ export default defineComponent({
     }
   }
 }
-
 </style>
