@@ -1,13 +1,21 @@
+import {useQuery} from "@vue/apollo-composable";
+import GET_EMPLOYEE_PAY_TABLE_REPORT_VIEW_URL from "@/graphql/queries/AC/AC5/AC520/getEmployeePayTableReportViewUrl";
+import {Ref, UnwrapNestedRefs} from "vue";
 export const initialState = {
   index : 0,
-  // accounSubjectOrder : 1,
-  status : 10,
-  savedAt : 0,
-  savedBy : "C23041201",
-  employeePaySum : 0,
-  revenueBudgetSum : null,
-  expenditureBudgetSum : 0,
-  createdAt : 1683342097404,
-  createdBy : "C23041201",
-  // active : true
+}
+// create function get data from useQuery hook
+interface IGetEmployeePayTableReportViewUrl {
+  companyId: number
+  fiscalYear: number
+  facilityBusinessId: number
+  index: number
+}
+export const useGetEmployeePayTableReportViewUrl = (dataQuery: IGetEmployeePayTableReportViewUrl) => {
+  const { result , loading, error, onResult } = useQuery(GET_EMPLOYEE_PAY_TABLE_REPORT_VIEW_URL,
+    dataQuery,
+    () => ({
+      fetchPolicy: "no-cache",
+    }));
+  return { result, loading, error, onResult };
 }

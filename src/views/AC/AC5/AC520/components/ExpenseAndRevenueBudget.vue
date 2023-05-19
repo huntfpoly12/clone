@@ -26,8 +26,8 @@
           <DxColumn caption="목" data-field="Eight"/>
           <DxColumn caption="세목" data-field="Nine"/>
           <DxColumn caption="세목코드" data-field="Ten"/>
-          <DxColumn :caption="dataBudget?.budget ? `전년도` :`{해당차수}차 추경`" data-field="Two"/>
-          <DxColumn :caption="dataBudget?.budget ? `당해년도` :`{해당차수}차 추경`" data-field="Three"/>
+          <DxColumn :caption="dataBudget?.index ? `전년도` :`{해당차수}차 추경`" data-field="Two"/>
+          <DxColumn :caption="dataBudget?.index ? `당해년도` :`{해당차수}차 추경`" data-field="Three"/>
           <DxColumn caption="증감액" data-field="Eleven"/>
           <DxColumn caption="증감비율" data-field="Twelve"/>
           <DxColumn caption="자금원천" data-field="Four" cell-template="sourceOfFunding"/>

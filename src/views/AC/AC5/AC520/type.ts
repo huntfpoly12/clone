@@ -1,6 +1,5 @@
 export interface Budget {
-  budget: boolean;
-  status: number;
+  index: number
   employeeSalaryTable: number | null;
 }
 
