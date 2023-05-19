@@ -13,13 +13,13 @@
                     <DxPaging page-size="15"/>
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn caption="기록일시" data-field="loggedAt" data-type="date"
-                        format="yyyy-MM-dd hh:mm"  />
+                        format="yyyy-MM-dd HH:mm"  />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" data-type="date"
-                        format="yyyy-MM-dd hh:mm"/>
+                        format="yyyy-MM-dd HH:mm"/>
                     <DxColumn caption="생성자ID" data-field="createdBy" />
                     <DxColumn caption="수정일시" data-field="updatedAt" data-type="date"
-                        format="yyyy-MM-dd hh:mm" />
+                        format="yyyy-MM-dd HH:mm" />
                     <DxColumn caption="수정자ID" data-field="updatedBy" />
                     <DxColumn caption="삭제여부" data-field="active" :width="80" />
                     <DxColumn caption="IP주소" data-field="ip" />
