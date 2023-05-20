@@ -16,6 +16,7 @@ import statesBF620 from "./screenStates/screenStateBF620";
 import statesAC120 from "./screenStates/screenStateAC120";
 import statesAC580 from "./screenStates/screenStateAC580";
 import statesAC520 from "./screenStates/screenStateAC520";
+import statesBF530 from "./screenStates/screenStateBF530";
 import {Module} from "vuex";
 const commonState = {
   ...layputState,
@@ -32,7 +33,8 @@ const commonState = {
   ...statesBF620,
   ...statesAC120,
   ...statesAC580,
-  ...statesAC520
+  ...statesAC520,
+  ...statesBF530,
 }
 export type TypeCommonState = typeof commonState;
 const commonModule: Module<TypeCommonState, any> = {

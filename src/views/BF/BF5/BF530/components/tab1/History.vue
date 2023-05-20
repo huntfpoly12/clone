@@ -1,29 +1,29 @@
 <template>
   <a-modal :visible="true" @cancel="setModalStatus" :mask-closable="false" class="confirm-md" footer="" :width="'80%'">
     <section class="mt-20">
-      <a-spin :spinning="false">
+      <a-spin :spinning="loading1">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="code" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true">
+          key-expr="loggedAt" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true" noDataText="내역이 없습니다">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="기록일시" data-field="code" />
-          <DxColumn caption="내용" data-field="bizNumber" />
-          <DxColumn caption="사업장관리번호" data-field="name" />
-          <DxColumn caption="수임상태" data-field="presidentName" />
-          <DxColumn caption="처리상태" data-field="presidentName1" />
-          <DxColumn caption="연금EDI상태" data-field="presidentName2" />
-          <DxColumn caption="건보EDI상태" data-field="presidentName3" />
-          <DxColumn caption="연금지사명" data-field="presidentName4" />
-          <DxColumn caption="연금지사FAX" data-field="presidentName5" />
-          <DxColumn caption="건보지사명" data-field="presidentName6" />
-          <DxColumn caption="건보지사FAX" data-field="presidentName7" />
-          <DxColumn caption="고용지사명" data-field="presidentName8" />
-          <DxColumn caption="고용FAX" data-field="presidentName9" />
-          <DxColumn caption="산재지사명" data-field="presidentName10" />
-          <DxColumn caption="산재FAX" data-field="presidentName11" />
-          <DxColumn caption="메모" data-field="presidentName12" />
-          <DxColumn caption="IP" data-field="presidentName13" />
-          <DxColumn caption="수정ID" data-field="presidentName14" />
+          <DxColumn caption="기록일시" data-field="loggedAt" alignment="left" data-type="date" format="yyyy-MM-dd HH:mm" />
+          <DxColumn caption="내용" data-field="remark" />
+          <DxColumn caption="사업장관리번호" data-field="manageId" />
+          <DxColumn caption="수임상태" data-field="companyConsignStatus" />
+          <DxColumn caption="처리상태" data-field="workingStatus" />
+          <DxColumn caption="연금EDI상태" data-field="nationalPensionEDIStatus" />
+          <DxColumn caption="건보EDI상태" data-field="healthInsuranceEDIStatus" />
+          <DxColumn caption="연금지사명" data-field="nationalPensionBranchName" />
+          <DxColumn caption="연금지사FAX" data-field="nationalPensionFax" />
+          <DxColumn caption="건보지사명" data-field="healthInsuranceBranchName" />
+          <DxColumn caption="건보지사FAX" data-field="healthInsuranceFax" />
+          <DxColumn caption="고용지사명" data-field="employeementInsuranceBranchName" />
+          <DxColumn caption="고용FAX" data-field="employeementInsuranceFax" />
+          <DxColumn caption="산재지사명" data-field="industrialAccidentInsuranceBranchName" />
+          <DxColumn caption="산재FAX" data-field="industrialAccidentInsuranceFax" />
+          <DxColumn caption="메모" data-field="memo" />
+          <DxColumn caption="IP" data-field="ip" />
+          <DxColumn caption="수정ID" data-field="updatedBy" />
         </DxDataGrid>
       </a-spin>
     </section>
@@ -32,15 +32,39 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex';
-import DxDataGrid, { DxColumn, DxScrolling, DxSummary } from 'devextreme-vue/data-grid';
+import DxDataGrid, { DxColumn, DxScrolling } from 'devextreme-vue/data-grid';
+import queries from "@/graphql/queries/common/index";
+import { watch } from 'vue';
+import { useQuery } from '@vue/apollo-composable';
+import notification from '@/utils/notification';
 
 export default defineComponent({
   components: { DxDataGrid, DxScrolling, DxColumn, },
+  props:{
+    companyIdParam:{
+      type: Number,
+      required: true,
+    }
+  },
   setup(props, { emit }) {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
-    const dataSource = ref([]);
-    
+    const dataSource = ref<any[]>([]);
+    const { result: consignStatusLogsResult, onError: consignStatusLogsError, loading: loading1 } = useQuery(
+      queries.getMajorInsuranceConsignStatusLogs,
+      {companyId: props.companyIdParam},
+      () => ({
+        fetchPolicy: 'no-cache',
+      })
+    );
+    watch(consignStatusLogsResult, (newVal) => {
+      let dataArr = newVal.getMajorInsuranceConsignStatusLogs;
+      dataSource.value = dataArr;
+    });
+    consignStatusLogsError((res: any) => {
+      notification('error', res.message)
+    })
+
     const setModalStatus = () => {
       emit("closeModal", false)
     };
@@ -49,11 +73,10 @@ export default defineComponent({
       per_page,
       move_column,
       colomn_resize,
-      dataSource,
-      
+      dataSource,loading1,
+
     };
   },
 });
 </script>
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

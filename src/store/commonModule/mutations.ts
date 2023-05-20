@@ -7,6 +7,7 @@ import screenMutatePA520 from "./screenMutates/screenMutatePA520.js";
 import screenMutatePA410 from "./screenMutates/screenMutatePA410.js";
 import screenMutatePA420 from "./screenMutates/screenMutatePA420.js";
 import screenMutateAC520 from "./screenMutates/screenMutateAC520";
+import screenMutateBF530 from "./screenMutates/screenMutateBF530";
 import {MutationTree} from "vuex";
 import {TypeCommonState} from "@/store/commonModule/index";
 
@@ -24,6 +25,7 @@ const mutations: MutationTree<TypeCommonState> = {
     ...screenMutatePA520,
     ...screenMutatePA620,
     ...screenMutateAC520,
+    ...screenMutateBF530,
 };
 
 export default mutations;

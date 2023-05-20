@@ -5,12 +5,13 @@
       <a-spin :spinning="false">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           key-expr="code" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true">
+          :column-auto-width="true" :sorting="false">
+          <DxLoadPanel :enabled="true" :showPane="true" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxEditing :allow-updating="true" mode="cell" />
           <DxColumn caption="보험명" data-field="code" :allowEditing="false" />
-          <DxColumn caption="지사명" data-field="bizNumber" />
-          <DxColumn caption="팩스번호" data-field="name" />
+          <DxColumn caption="지사명" data-field="col1" />
+          <DxColumn caption="팩스번호" data-field="col2" />
         </DxDataGrid>
       </a-spin>
       <a-row class="mt-15">
@@ -23,88 +24,116 @@
 </template>
 <script lang="ts">
 import { useMutation } from '@vue/apollo-composable';
-import { defineComponent, ref } from 'vue';
-import mutations from '@/graphql/mutations/BF/BF6/BF620/index';
+import { computed, defineComponent, ref } from 'vue';
+import mutations from '@/graphql/mutations/BF/BF5/BF530/index';
 import notification from '@/utils/notification';
 import { useStore } from 'vuex';
 import DxDataGrid, { DxColumn, DxEditing, DxScrolling, DxSummary } from 'devextreme-vue/data-grid';
+import { watch } from 'vue';
+import { Message } from '@/configs/enum';
+import { DxLoadPanel } from 'devextreme-vue';
 
 export default defineComponent({
+  props: {
+    companyIdParam: {
+      type: Number,
+      required: true,
+      default: 0,
+    }
+  },
   setup(props, { emit }) {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
+
+    // --------------------------GET DATASOURCE --------------------------
+
     const dataSource = ref([
-      { code: '국민연금', bizNumber: '', name: '' },
-      { code: '건강보험', bizNumber: '', name: '' },
-      { code: '고용보험', bizNumber: '', name: '' },
-      { code: '산재보험', bizNumber: '', name: '' },
+      { code: '국민연금', col1: '', col2: '' },
+      { code: '건강보험', col1: '', col2: '' },
+      { code: '고용보험', col1: '', col2: '' },
+      { code: '산재보험', col1: '', col2: '' },
     ]);
-    //
-    // const companiesInElectronicDataSource = ref([]);
-    // const companiesInElectronicTrigger = ref(false);
-    // const modalStatus = ref<boolean>(false);
-    // const companiesInElectronic = ref({
-    //   type: ElecFilingFileFilter.type,
-    //   electronicFilingId: 1,
-    // });
-    // const {
-    //   result: companiesInElectronicResult,
-    //   loading: companiesInElectronicLoading,
-    //   refetch: companiesInElectronicRefetch,
-    //   //   variables: companiesVariable,
-    // } = useQuery(queries.getCompaniesInElectronicFilingFile, companiesInElectronic, () => ({
-    //   enabled: companiesInElectronicTrigger.value,
-    //   fetchPolicy: 'no-cache',
-    // }));
-    // watch(companiesInElectronicResult, (newVal) => {
-    //   let data = newVal.getCompaniesInElectronicFilingFile;
-    //   companiesInElectronicDataSource.value = data;
-    //   companiesInElectronicTrigger.value = false;
-    // });
-    //----------------- query send request file tab 1--------------------------------
-    const { mutate: creationWithholdingTaxTab1, onDone: onDoneTab1, onError: onErrorTab1, } = useMutation(mutations.requestCreationWithholdingTaxElectronicFilingFile);
-    // --------------query send request file tab 2--------------------------------
-    const { mutate: creationLocalTab2, onDone: onDoneTab2, onError: onErrorTab2 } = useMutation(mutations.requestCreationLocalIncomeTaxElectronicFilingFile);
-    //-------------------on Submit request --------------------------------
-    const onSubmit = (e: any) => {
-      var res = e.validationGroup.validate();
-      if (!res.isValid) {
-        res.brokenRules[0].validator.focus();
+    const filterDsTab1Bf530 = computed(() => store.state.common.filterDsTab1Bf530);
+    watch(() => props.companyIdParam, (newVal: any) => {
+      if (newVal) {
+        let data = filterDsTab1Bf530.value.filter((item: any) => item.companyId == newVal)[0];
+        dataSource.value.forEach((item: any) => {
+          if (item.code == '국민연금') {
+            item.col1 = data.nationalPensionBranchName;
+            item.col2 = data.nationalPensionFax;
+            return;
+          }
+          if (item.code == '건강보험') {
+            item.col1 = data.healthInsuranceBranchName;
+            item.col2 = data.healthInsuranceFax;
+            return;
+          }
+          if (item.code == '고용보험') {
+            item.col1 = data.employeementInsuranceBranchName;
+            item.col2 = data.employeementInsuranceFax;
+            return;
+          }
+          if (item.code == '산재보험') {
+            item.col1 = data.industrialAccidentInsuranceBranchName;
+            item.col2 = data.industrialAccidentInsuranceFax;
+            return;
+          }
+        })
       }
-      else {
-        // switch (props.tabName) {
-        //   case 'tab1':
-        //     creationWithholdingTaxTab1(dataRequestFile.value);
-        //     break;
-        //   case 'tab2':
-        //     creationLocalTab2(dataRequestFile.value);
-        //     break;
-        //   default:
-        //     break;
-        // }
-      }
+    }, { immediate: true })
+
+    //--------------------------------CLOSE MODAL--------------------------------
+
+    const setModalStatus = () => {
+      emit("closeModal", false)
     };
-    // onDone tab 1
+
+    //----------------- UPDATE LOCAL OFFICCE INFO --------------------------------+
+
+    const { mutate: creationLocalOfficeInfo, onDone: onDoneTab1, onError: onErrorTab1, } =
+      useMutation(mutations.updateMajorInsuranceLocalOfficeInfo);
     onDoneTab1(() => {
-      notification("success", `업데이트 완료!`);
-      emit("cancel", false);
+      notification("success", Message.getCommonMessage('106').message);
+      emit("closeModal", true)
     });
     onErrorTab1((e: any) => {
       notification("error", e.message);
     });
-    // onDone tab 2
-    onDoneTab2(() => {
-      notification("success", `업데이트 완료!`);
-      emit("closePopup", false);
-    });
-    onErrorTab2((e: any) => {
-      notification("error", e.message);
-    });
-    const setModalStatus = () => {
-      emit("closeModal", false)
+    const onSubmit = () => {
+      setTimeout(() => {
+
+        let input: any = {};
+        dataSource.value.forEach((item: any) => {
+          if (item.code == '국민연금') {
+            input.nationalPensionBranchName = item.col1;
+            input.nationalPensionFax = item.col2;
+            return;
+          }
+          if (item.code == '건강보험') {
+            input.healthInsuranceBranchName = item.col1;
+            input.healthInsuranceFax = item.col2;
+            return;
+          }
+          if (item.code == '고용보험') {
+            input.employeementInsuranceBranchName = item.col1;
+            input.employeementInsuranceFax = item.col2;
+            return;
+          }
+          if (item.code == '산재보험') {
+            input.industrialAccidentInsuranceBranchName = item.col1;
+            input.industrialAccidentInsuranceFax = item.col2;
+            return;
+          }
+        })
+        creationLocalOfficeInfo({
+          companyId: props.companyIdParam,
+          input
+        })
+        console.log(`output->input`, input);
+      }, 10)
     };
-    const onAllowUpdate = (e: any) => {
-    }
+    // onDone tab 1
+    
     return {
       onSubmit,
       setModalStatus,
@@ -112,14 +141,13 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
-      onAllowUpdate,
     };
   },
-  components: { DxDataGrid, DxScrolling, DxColumn, DxSummary, DxEditing }
+  components: { DxDataGrid, DxScrolling, DxColumn, DxSummary, DxEditing, DxLoadPanel }
 });
 </script>
 <style lang="scss" scoped>
 :deep .dx-datagrid-content .dx-datagrid-table .dx-row>td {
-  height: 20px;
+  height: 34px;
 }
 </style>
