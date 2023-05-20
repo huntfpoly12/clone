@@ -1,8 +1,11 @@
 .ac-120 {
     // overflow-y: hidden !important;
     margin: 10px;
-
+    margin-bottom: 0;
+    // min-height: calc(100vh - 140px);
     .top {
+        margin-bottom: 10px;
+
         .grid {
             display: flex;
             justify-content: space-between;
@@ -39,95 +42,164 @@
         }
     }
 
-    .main {
-        margin-top: 15px;
+    // .main {
+    // margin-top: 15px;
 
-        :deep .dx-data-row .custom-column {
-            padding: 0;
+    :deep .dx-data-row .custom-column {
+        padding: 0;
 
-            .main-row {
-                height: 40px;
-                padding: 10px 4px;
-                width: 100%;
-                border-bottom: 1px solid #ddd;
+        .main-row {
+            height: 40px;
+            padding: 10px 4px;
+            width: 100%;
+            border-bottom: 1px solid #ddd;
 
-                &:hover {
-                    background-color: blue;
-                }
-            }
-            .last {
-                border-bottom: none;
+            &:hover {
+                background-color: blue;
             }
         }
 
+        .last {
+            border-bottom: none;
+        }
+    }
 
+
+
+    #content {
+        // height: 100%;
         #dataGridAc120 {
-            height: calc(100vh - 310px);
+            height: calc(100vh - 330px);
+            // height: 100vh;
             max-width: 100% !important;
-            transition: .3s;
+            transition: .4s;
         }
-        .hiddenTable {
-            transition: .3s;
-            height: calc(100vh - 670px) !important;
-        }
+    }
 
-        .data-grid {
+    //   .dx-drawer-shrink #content {
+    //     overflow: hidden;
+    //     transition: all 0.4s ease-out;
+    //     column-width: 900px;
+    //   }
+    //   .dx-drawer-shrink.dx-drawer-opened #content {
+    //     // column-width: 300px;
+    //     // margin-right: -10px;
+    //   }
+    .hiddenTable {
+        transition: .4s;
+        height: calc(100vh - 690px) !important;
+    }
+
+    .data-grid {
+        // overflow: hidden;
+        // transition: .5s;
+        margin-bottom: 10px;
+
+    }
+
+    :deep .dx-freespace-row {
+        display: none !important; // cục lúc hiện lúc không
+    }
+
+    .slipRegistration {
+        display: flex;
+        align-items: center;
+    }
+
+    // .showFull {
+    //     // height: 100% !important;
+    //     // transition: .3s;
+    //     // overflow: hidden;
+    // }
+
+    .detail {
+        height: max-content;
+        // .detail-header {
+        //     background-color: #e9e9e9;
+        //     .text-align-center {
+        //         text-align: center;
+        //         align-items: center;
+        //         padding: 5px;
+        //         height: 38px;
+        //     }
+        // }
+
+        .detail-body {
+            // height: 0;
+            // transition: .3s;
             // overflow: hidden;
-            // transition: .5s;
-            margin-bottom: 10px;
-            :deep .dx-freespace-row {
-                display: none !important; // cục lúc hiện lúc không
-            }
-        }
+            // background-color: white;
+            margin-top: -10px;
+            .detail1 {
+                width: calc(100% - 307px);
 
-        .slipRegistration {
-            display: flex;
-            align-items: center;
-        }
-        .showFull {
-            height: 100% !important;
-            transition: .3s;
-            overflow: hidden;
-        }
-        .detail {
-            .detail-header {
-                background-color: #e9e9e9;
-                .text-align-center {
-                    text-align: center;
-                    align-items: center;
-                    padding: 5px;
-                    height: 38px;
+                .fl-r .ant-form-item {
+                    float: right;
                 }
             }
 
-            .detail-body {
-                height: 0;
-                transition: .3s;
-                overflow: hidden;
-                background-color: white;
+            .detail2 {
+                width: 307px;
+                padding-left: 15px;
+                overflow-x: hidden;
+                height: 360px;
+                max-width: 307px;
 
+                .upload {
+                    border: 1px solid #ddd;
+                    height: 100%;
+                }
+            }
+
+            @media only screen and (max-width: 1812px) {
                 .detail1 {
-                    width: calc(100% - 307px);
-                    .fl-r .ant-form-item {
-                        float: right;
-                    }
+                    width: calc(100% - 150px);
                 }
 
                 .detail2 {
-                    width: 307px;
-                    padding-left: 15px;
-                    overflow-x: hidden;
-                    height: 360px;
-                    max-width: 307px; 
-                    .upload {
-                        border: 1px solid #ddd;
-                        height: 100%;
-                    }
+                    width: 150px;
                 }
             }
         }
+    }
+
+    // }
+}
+
+.detail-header {
+    background-color: #e9e9e9;
+
+    .text-align-center {
+        text-align: center;
+        align-items: center;
+        padding: 5px;
+        height: 38px;
+    }
+}
+
+@media only screen and (max-width: 1640px) {
+
+    .ac-120 {
+        // #content {
+        //     #dataGridAc120 {
+        //         height: calc(100vh - 340px);
+        //     }
+        // }
+        // .hiddenTable {
+        //     height: calc(100vh - 690px) !important;
+        // }
+        // zoom: 0.9;
+        // min-width: 1480px;
+        // overflow-x: auto;
+        // overflow-y: hidden;
+        // .main {
+        //     #dataGridAc120 {
+        //         height: calc(100vh - 325px);
+        //     }
+        // }
 
     }
+
 }
 
 .input_info {
@@ -172,6 +244,7 @@
     font-size: 16px;
     font-weight: bold;
 }
+
 :deep .redColor input.dp__input {
     color: #ff3030;
 }
@@ -179,6 +252,7 @@
 :deep .greenColor input.dp__input {
     color: #48b148;
 }
+
 :deep .dx-datagrid-text-content span {
     font-size: 15px;
     font-weight: bold;
