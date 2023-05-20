@@ -207,12 +207,17 @@ export default defineComponent({
                 e.onError("");
                 return;
             }
+            const config = {
+                onUploadProgress: (progressEvent: any) => {
+                e.onProgress({ percent: Math.round((progressEvent.loaded * 100) / progressEvent.total) });
+                }
+            }
             const formData = new FormData();
             formData.append("file", e.file);
             formData.append("companyId", companyId);
             formData.append("fiscalYear", acYear.value.toString());
             formData.append("facilityBusinessId", globalFacilityBizId.value.toString());
-            uploadRepository.accountingProof(formData)
+            uploadRepository.accountingProof(formData, config)
                 .then((res: any) => {
                     e.onSuccess("ok");
                     fileList.value[fileList.value.length - 1].id = res.data.id
