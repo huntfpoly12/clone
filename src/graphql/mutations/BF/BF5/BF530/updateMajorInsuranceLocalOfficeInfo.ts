@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation updateMajorInsuranceConsignStatus(
+  mutation updateMajorInsuranceLocalOfficeInfo(
     $companyId: Int!
-    $input: MajorInsuranceConsignStatusInput!
+    $input: MajorInsuranceLocalOfficeInfo!
   ) {
-    updateMajorInsuranceConsignStatus(companyId: $companyId, input: $input) {
+    updateMajorInsuranceLocalOfficeInfo(companyId: $companyId, input: $input) {
       companyId
       manageId
       partnerId

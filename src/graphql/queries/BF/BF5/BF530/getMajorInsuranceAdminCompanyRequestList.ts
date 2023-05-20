@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-  query getMajorInsuranceAdminCompanyRequestList($input: AdminConsignSearchInput) {
+  query getMajorInsuranceAdminCompanyRequestList($input: AdminMajorInsuranceSearchInput!) {
     getMajorInsuranceAdminCompanyRequestList(input: $input) {
       companyId
       type
@@ -29,7 +29,7 @@ export default gql`
         phone
         presidentName
         presidentMobilePhone
-        extendInfo
+        # extendInfo
         sealFileStorageId
         createdAt
         createdBy
@@ -38,7 +38,7 @@ export default gql`
         ip
         active
         residentId
-        seal
+        # seal
         canceledAt
         unpaidMonths
       }
