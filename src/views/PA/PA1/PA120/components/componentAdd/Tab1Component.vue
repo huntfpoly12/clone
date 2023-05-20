@@ -4,228 +4,122 @@
       <standard-form formName="tab1-pa120" :disabled="true">
         <a-form-item label="사번(코드)" label-align="right">
           <div class="input-text">
-            <number-box
-              width="200px"
-              :min="1"
-              :max="9999999999"
-              :disabled="true"
-              v-model:valueInput="initFormStateTabPA120.employeeId"
-            />
-            <!-- <a-tooltip placement="top" class="custom-tooltip">
-              <template #title>
-                최초 저장된 이후 수정 불가.
-              </template>
-              <div style="text-align: center;">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
-              </div>
-            </a-tooltip> -->
+            <number-box width="200px" :min="1" :max="9999999999" :disabled="true"
+              v-model:valueInput="initFormStateTabPA120.employeeId" />
           </div>
         </a-form-item>
 
         <a-form-item label="대표자 여부 " label-align="right">
           <div class="input-text">
-            <switch-basic
-              :disabled="notDatasourcePA120"
-              v-model:valueSwitch="initFormStateTabPA120.president"
-              textCheck="O"
-              textUnCheck="X"
-              style="width: 80px"
-            ></switch-basic>
+            <switch-basic :disabled="notDatasourcePA120" v-model:valueSwitch="initFormStateTabPA120.president"
+              textCheck="O" textUnCheck="X" style="width: 80px"></switch-basic>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title> 대표자인 경우 고용보험 제외됩니다. </template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
 
         <a-form-item label="성명" label-align="right" class="red">
-          <default-text-box
-            width="200px"
-            :disabled="notDatasourcePA120"
-            v-model:valueInput="initFormStateTabPA120.name"
-            @onChange="onChange"
-            :required="true"
-            placeholder="한글,영문(대문자) 입력 가능"
-          />
+          <default-text-box width="200px" :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.name"
+            @onChange="onChange" :required="true" placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
-          <date-time-box
-            width="150px"
-            :disabled="notDatasourcePA120"
-            v-model:valueDate="initFormStateTabPA120.joinedAt"
-          >
+          <date-time-box width="150px" :disabled="notDatasourcePA120" v-model:valueDate="initFormStateTabPA120.joinedAt">
           </date-time-box>
         </a-form-item>
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
-            <date-time-box
-              width="150px"
-              :disabled="notDatasourcePA120"
-              v-model:valueDate="initFormStateTabPA120.leavedAt"
-            >
+            <date-time-box width="150px" :disabled="notDatasourcePA120"
+              v-model:valueDate="initFormStateTabPA120.leavedAt">
             </date-time-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title> 마지막 근무한 날. </template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
 
         <a-form-item label="내/외국인" label-align="right">
-          <radio-group
-            :arrayValue="radioCheckForeigner"
-            :disabled="notDatasourcePA120"
-            v-model:valueRadioCheck="foreigner"
-            layoutCustom="horizontal"
-            class="mt-1"
-          ></radio-group>
+          <radio-group :arrayValue="radioCheckForeigner" :disabled="notDatasourcePA120"
+            v-model:valueRadioCheck="foreigner" layoutCustom="horizontal" class="mt-1"></radio-group>
         </a-form-item>
         <a-row>
-          <a-form-item
-            label="외국인 국적"
-            label-align="right"
-            :class="{ red: foreigner == 1 }"
-          >
-            <country-code-select-box
-              style="width: 200px"
-              v-model:valueCountry="initFormStateTabPA120.nationalityCode"
-              @textCountry="changeTextCountry"
-              :required="initFormStateTabPA120.foreigner"
+          <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
+            <country-code-select-box style="width: 200px" v-model:valueCountry="initFormStateTabPA120.nationalityCode"
+              @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
               :disabled="!initFormStateTabPA120.foreigner || notDatasourcePA120"
-              :hiddenOptionKR="initFormStateTabPA120.foreigner"
-            />
+              :hiddenOptionKR="initFormStateTabPA120.foreigner" />
           </a-form-item>
-          <a-form-item
-            label="외국인 체류자격"
-            label-align="right"
-            :class="{ red: foreigner == 1 }"
-          >
-            <stay-qualification-select-box
-              v-model:valueStayQualifiction="
-                initFormStateTabPA120.stayQualification
-              "
-              :disabled="foreigner == 0 || notDatasourcePA120"
-              :required="initFormStateTabPA120.foreigner"
-            />
+          <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
+            <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification
+              " :disabled="foreigner == 0 || notDatasourcePA120" :required="initFormStateTabPA120.foreigner" />
           </a-form-item>
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box
-            :required="true"
-            :disabled="notDatasourcePA120"
-            v-model:valueInput="initFormStateTabPA120.residentId"
-            width="150px"
-            :foreigner="initFormStateTabPA120.foreigner"
-          ></id-number-text-box>
+          <id-number-text-box :required="true" :disabled="notDatasourcePA120"
+            v-model:valueInput="initFormStateTabPA120.residentId" width="150px"
+            :foreigner="initFormStateTabPA120.foreigner"></id-number-text-box>
         </a-form-item>
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
           <div class="input-text">
-            <number-box
-              :required="true"
-              :spinButtons="true"
-              :disabled="notDatasourcePA120"
-              v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours"
-              width="150px"
-              :min="1"
-              :max="52"
-            ></number-box>
+            <number-box :required="true" :spinButtons="true" :disabled="notDatasourcePA120"
+              v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 급여명세서 및 4대보험 취득신고시 이용됩니다.
               </template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
 
         <a-form-item label="세대주여부" label-align="right">
-          <switch-basic
-            :disabled="notDatasourcePA120"
-            v-model:valueSwitch="initFormStateTabPA120.householder"
-            textCheck="O"
-            textUnCheck="X"
-            style="width: 80px"
-          ></switch-basic>
+          <switch-basic :disabled="notDatasourcePA120" v-model:valueSwitch="initFormStateTabPA120.householder"
+            textCheck="O" textUnCheck="X" style="width: 80px"></switch-basic>
         </a-form-item>
 
         <a-form-item label="주소" class="clr" label-align="left">
           <div class="zip-code">
-            <default-text-box
-              v-model:valueInput="initFormStateTabPA120.roadAddress"
-              width="300px"
-              :disabled="true || notDatasourcePA120"
-              class="roadAddress"
-              placeholder="도로명주소"
-            />
+            <default-text-box v-model:valueInput="initFormStateTabPA120.roadAddress" width="300px"
+              :disabled="true || notDatasourcePA120" class="roadAddress" placeholder="도로명주소" />
             <div style="margin-left: 5px">
               <post-code-button @dataAddress="funcAddress" text="주소검색" />
             </div>
           </div>
-          <default-text-box
-            :disabled="notDatasourcePA120"
-            v-model:valueInput="initFormStateTabPA120.addressExtend"
-            width="300px"
-            placeholder="상세 주소 입력"
-          />
+          <default-text-box :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.addressExtend"
+            width="300px" placeholder="상세 주소 입력" />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
           <div class="input-text">
-            <mail-text-box
-              :disabled="notDatasourcePA120"
-              v-model:valueInput="initFormStateTabPA120.email"
-              width="200px"
-              placeholder="abc@example.com"
-            >
+            <mail-text-box :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.email" width="200px"
+              placeholder="abc@example.com">
             </mail-text-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
               </template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-          <SelectSearchEdit
-            v-model:valueInput="initFormStateTabPA120.department"
-            :data="arrDepartments"
-            @updateArrSelect="(value: any) => arrDepartments = [...value]"
-            width="200px"
-          />
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.department" :data="arrDepartments"
+            @updateArrSelect="(value: any) => arrDepartments = [...value]" width="200px" />
         </a-form-item>
         <a-form-item label="직위" label-align="right">
-          <SelectSearchEdit
-            v-model:valueInput="initFormStateTabPA120.responsibility"
-            :data="arrResponsibility"
-            @updateArrSelect="(value: any) => arrResponsibility = [...value]"
-            width="200px"
-          />
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.responsibility" :data="arrResponsibility"
+            @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
         </a-form-item>
         <!-- <a-form-item label="부서" label-align="right">
           iii{{ initFormStateTabPA120.department }}
@@ -239,15 +133,8 @@
         </a-form-item> -->
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center">
-            <button-basic
-              text="저장"
-              type="default"
-              mode="contained"
-              :width="90"
-              id="btn-save"
-              @onClick="createNewEmployeeWage($event)"
-              :disabled="notDatasourcePA120"
-            />
+            <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save"
+              @onClick="createNewEmployeeWage($event)" :disabled="notDatasourcePA120" />
           </a-col>
         </a-row>
       </standard-form>
@@ -261,7 +148,6 @@ import {
   ref,
   watch,
   computed,
-  onUnmounted,
 } from "vue";
 import { useStore } from "vuex";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -272,9 +158,11 @@ import {
   radioCheckForeigner,
   radioCheckHouseholder,
   initFormStateTab1,
+  initFormStateTab2,
 } from "../../utils/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum";
+import queriesPA120 from "@/graphql/queries/PA/PA1/PA120/index";
 export default defineComponent({
   components: {},
   props: {
@@ -368,6 +256,103 @@ export default defineComponent({
       }
     });
 
+    //save default value for tab 2;
+
+    /**
+     * get WithholdingConfigPayItems
+    */
+    let dataDefaultTab2: any = ref({ ...initFormStateTab2 });
+    const originDataDetail = ref({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      useOnly: true,
+    });
+    const payItemTrigger = ref(true);
+    const { result: resConfigPayItems, loading: loading1 } = useQuery(
+      queriesPA120.getWithholdingConfigPayItems,
+      originDataDetail,
+      () => ({
+        fetchPolicy: "no-cache",
+        enabled: payItemTrigger.value,
+      })
+    );
+    watch(resConfigPayItems, (value) => {
+      if (value) {
+        let data = value.getWithholdingConfigPayItems;
+        let dataConfigPayItem = data.map((item: any) => {
+          return {
+            itemCode: item.itemCode,
+            amount: 0,
+          };
+        });
+        dataDefaultTab2.value.payItems = JSON.parse(
+          JSON.stringify(dataConfigPayItem)
+        );
+        payItemTrigger.value = false;
+      }
+    });
+
+    /**
+     *  get Withouthoulding Config deduction
+     */
+    const deductionTrigger = ref(true);
+    const { result: resConfigDeduction, loading: loading2 } = useQuery(
+      queriesPA120.getWithholdingConfigDeductionItems,
+      originDataDetail,
+      () => ({
+        fetchPolicy: "no-cache",
+        enabled: deductionTrigger.value,
+      })
+    );
+    watch(resConfigDeduction, (value) => {
+      if (value) {
+        let data = value.getWithholdingConfigDeductionItems;
+        for (var i = 0; i < data.length; i++) {
+          var item = data[i];
+          if (item.itemCode == 1001) {
+            dataDefaultTab2.value.deductionItems.push({
+              itemCode: item.itemCode,
+              amount: 0,
+            });
+          }
+          if (item.itemCode == 1002) {
+            dataDefaultTab2.value.deductionItems.push({
+              itemCode: item.itemCode,
+              amount: 0,
+            });
+          }
+          if (item.itemCode == 1003) {
+            dataDefaultTab2.value.deductionItems.push({
+              itemCode: item.itemCode,
+              amount: 0,
+            });
+          }
+          if (item.itemCode == 1004) {
+            dataDefaultTab2.value.deductionItems.push({
+              itemCode: item.itemCode,
+              amount: 0,
+            });
+          }
+          if (item.itemCode == 1011) {
+            dataDefaultTab2.value.deductionItems.push({
+              itemCode: item.itemCode,
+              amount: 0,
+            });
+          }
+          if (item.itemCode == 1012) {
+            dataDefaultTab2.value.deductionItems.push({
+              itemCode: item.itemCode,
+              amount: 0,
+            });
+          }
+        }
+        deductionTrigger.value = false;
+      }
+    });
+    const { mutate } = useMutation(
+      mutations.saveEmployeeWagePayDeductionReduction
+    );
+
     // getResponsibilities
     const { onError: errorResponsibility, result: resResponsibility } =
       useQuery(queries.getResponsibilities, { companyId: companyId }, () => ({
@@ -415,12 +400,25 @@ export default defineComponent({
 
     onDoneAdd((res: any) => {
       let employeeId = res.data.createEmployeeWage.employeeId;
+      if (initFormStateTabPA120.value.president) {
+        dataDefaultTab2.value.nationalPensionDeduction = false;
+        dataDefaultTab2.value.healthInsuranceDeduction = false;
+        dataDefaultTab2.value.employeementInsuranceDeduction = false;
+      } else {
+        dataDefaultTab2.value.nationalPensionDeduction = true;
+        dataDefaultTab2.value.healthInsuranceDeduction = true;
+        dataDefaultTab2.value.employeementInsuranceDeduction = true;
+      }
+      mutate({
+        companyId,
+        imputedYear: globalYear.value,
+        employeeId,
+        input: { ...dataDefaultTab2.value }
+      })
       emit("setTabsStatus", false);
       notification("success", messageCreate);
       store.commit("common/actionFormDonePA120");
-      store.state.common.isCompareEditPA120 = false;
       store.state.common.isNewRowPA120 = false;
-      store.state.common.isAddFormErrorPA120 = false;
       store.commit("common/editRowPA120", initFormStateTabPA120.value);
       initFormStateTabPA120.value.employeeId = employeeId;
       store.state.common.rowKeyTab2PA120 = employeeId;
@@ -533,7 +531,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 #tab1-pa120 {
-  ::v-deep .ant-form-item-label > label {
+  ::v-deep .ant-form-item-label>label {
     width: 135px;
     padding-left: 10px;
   }
