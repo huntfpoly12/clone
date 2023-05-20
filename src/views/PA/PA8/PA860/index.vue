@@ -300,9 +300,9 @@ export default defineComponent({
 
     const messageDelNoItem = Message.getMessage('PA860', '001').message;
     const onSubmit = (e: any) => {
-      var res = e.validationGroup.validate();
-      if (!res.isValid || !dataState.value.check) {
-        res?.brokenRules[0]?.validator.focus();
+      // var res = e.validationGroup.validate();
+      if (!dataState.value.check) {
+        // res?.brokenRules[0]?.validator.focus();
         notification('warning', messageDelNoItem);
       } else {
         let formData = {

@@ -447,7 +447,6 @@ export default defineComponent({
           },
         };
         mutate(dataCallCreat);
-        store.state.common.isAddFormErrorPA120 = false;
       }
     };
     onError((e) => {

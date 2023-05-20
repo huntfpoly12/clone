@@ -76,19 +76,23 @@ const convertAge = (idCart: any) => {
         let typeParam = idCart.length == 13 ? 1 : 2;
         let birthDay = typeParam == 1 ? idCart.toString().slice(0,6) : idCart.split("-")[0]
         let typeYear = typeParam == 1 ? idCart.toString().slice(6,13).charAt(0) : idCart.split("-")[1].charAt(0);
-    if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6) {
-        const bdDate1 = '19' + birthDay.slice(0, 2) + '-' + birthDay.slice(2, 4) + '-' + birthDay.slice(4, 6);
-        const date1 = dayjs(bdDate1);
-        const date2 = dayjs();
-        return date2.diff(date1, 'year')
-    }
-
-        else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8) {
+        if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6) {
+            const bdDate1 = '19' + birthDay.slice(0, 2) + '-' + birthDay.slice(2, 4) + '-' + birthDay.slice(4, 6);
+            const date1 = dayjs(bdDate1);
+            const date2 = dayjs();
+            return date2.diff(date1, 'year') > 0 ? date2.diff(date1, 'year') : 0;
+        }else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8) {
             const bdDate2 = '20' + birthDay.slice(0, 2) + '-' + birthDay.slice(2, 4) + '-' + birthDay.slice(4, 6);
             const date1 = dayjs(bdDate2);
             const date2 = dayjs();
-            return date2.diff(date1, 'year')
+            return date2.diff(date1, 'year') > 0 ? date2.diff(date1, 'year') : 0;
+        }else if (typeYear == 0 || typeYear == 9) {
+            const bdDate2 = '18' + birthDay.slice(0, 2) + '-' + birthDay.slice(2, 4) + '-' + birthDay.slice(4, 6);
+            const date1 = dayjs(bdDate2);
+            const date2 = dayjs();
+            return date2.diff(date1, 'year') > 0 ? date2.diff(date1, 'year') : 0;
         }
+        
     }else {
         return 0;
     }

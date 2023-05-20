@@ -470,7 +470,6 @@ import {
   watch,
   computed,
   watchEffect,
-  onMounted,
   h,
 } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
