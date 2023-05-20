@@ -517,8 +517,8 @@
                       <a-row
                         :gutter="24"
                         class="custom-label-master-detail"
-                        v-if="dataActiveRow || formState.usedAccounting"
-                        :key="dataActiveRow.rowIndex ?? 99"
+                        v-if="dataActiveRow && formState.usedAccounting && dataSource.length"
+                        :key="dataActiveRow?.rowIndex ?? 99"
                       >
                         <a-col :span="9">
                           <a-form-item label="사업분류" :label-col="labelCol">
@@ -726,14 +726,8 @@
                   label-align="left"
                   :label-col="labelCol"
                 >
-                  <id-number-text-box
-                    width="250px"
-                    :required="true"
-                    v-model:valueInput="
-                      formState.content.cmsBank.ownerBizNumber
-                    "
-                    nameInput="cmsBank-ownerBizNumber"
-                  />
+                  <biz-number-text-box width="250px" 
+                  v-model:valueInput=" formState.content.cmsBank.ownerBizNumber" :required="true" />
                   <div class="noteImage">
                     <img
                       src="@/assets/images/iconInfo.png"
@@ -895,9 +889,9 @@ export default defineComponent({
     var dataStatus = initialDataStatus;
     let objDataDefault = ref({ ...initialFormState });
     const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay]);
-    var formState = ref<any>({ ...initialFormState });
-    const dataSource = ref([]);
-    const dataSourceOld = ref([]);
+    var formState: any = ref({ ...initialFormState });
+    const dataSource: any = ref([]);
+    const dataSourceOld: any = ref([]);
     const isResidentId = ref(false);
     const statusPupopInfo = ref<boolean>(false);
     const keyInfo = ref<number>(0);
@@ -977,6 +971,13 @@ export default defineComponent({
             ? value.getSubscriptionRequest.content.accounting
                 .facilityBusinesses[0].longTermCareInstitutionNumber
             : "";
+          if(!!formState.value.content.withholding) {
+            formState.value.content.withholding = {
+              startYearMonth: "",
+              capacity: 0,
+              withholdingServiceTypes: [0]
+            }
+          }
         // set date list status value
         dataStatus[0].date = value.getSubscriptionRequest.createdAt;
         dataStatus[1].date = value.getSubscriptionRequest.createdAt;
@@ -1046,9 +1047,11 @@ export default defineComponent({
       () => checkedSourceService.value,
       (value) => {
         if (value === 2) {
-          formState.value.content.withholding.startYearMonth = null;
-          formState.value.content.withholding.capacity = 0;
-          formState.value.content.withholding.withholdingServiceTypes[0] = 0;
+          formState.value.content.withholding = {
+            startYearMonth: "",
+            capacity: 0,
+            withholdingServiceTypes: [0]
+          }
         }
       }
     );
@@ -1207,7 +1210,7 @@ export default defineComponent({
     };
     // change form
     const gridRefName: any = ref("grid");
-    const dataActiveRow = ref<any>(dataSource.value[0]);
+    const dataActiveRow: any = ref(dataSource.value[0]);
     const focusedRowKey = ref(0);
     const initRow = { rowIndex: null };
     // A function that is called when a row is clicked.

@@ -47,7 +47,7 @@ const messageRequired = Message.getCommonMessage('102').message;
     item-template="item" validation-message-position="bottom">
     <template #field=" { data } : any ">
       <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
-        <a-tag>{{ data[props.valueExpr] }}</a-tag>
+        <div class="SelectCustomField-tag">{{ data[props.valueExpr] }}</div>
         <a-tooltip zIndex="9999" placement="top" color="black">
           <template #title v-if=" data[props.displayeExpr].length > 10 ">
             <div>{{data[props.displayeExpr]}}</div>
@@ -65,7 +65,7 @@ const messageRequired = Message.getCommonMessage('102').message;
     </template>
     <template #item=" { data } : any ">
       <div style="display: flex; align-items: center;">
-        <a-tag>{{ data[props.valueExpr] }}</a-tag>
+        <div class="SelectCustomField-tag">{{ data[props.valueExpr] }}</div>
         <a-tooltip zIndex="9999" placement="top" color="black">
           <template #title v-if=" data[props.displayeExpr].length > 10 ">
             <div>{{ data[props.displayeExpr] }}</div>
@@ -82,4 +82,13 @@ const messageRequired = Message.getCommonMessage('102').message;
     </DxValidator>
   </DxSelectBox>
 </template>
-<style lang="scss"></style>
+<style scoped lang="scss">
+.SelectCustomField-tag {
+  border: 1px solid #d9d9d9;
+  color: rgba(0, 0, 0, 0.85);
+  min-width: 30px;
+  padding: 0 2px;
+  text-align: center;
+  margin-right: 5px;
+}
+</style>
