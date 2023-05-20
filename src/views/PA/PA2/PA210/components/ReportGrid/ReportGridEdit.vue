@@ -238,6 +238,7 @@ import {
   inputPosition,
   clearAllCellValue,
 } from "./Gridsetting";
+import { cellsSettingModified } from './GridsettingModify'
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification";
 import { useStore } from "vuex";
@@ -662,6 +663,8 @@ export default defineComponent({
     };
     // update cell settings flow condition
     const checkDisableA04A06 = () => {
+      console.log(cellsSettingModified);
+      
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...cellsSetting]
       if (
