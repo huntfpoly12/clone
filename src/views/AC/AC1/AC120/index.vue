@@ -871,7 +871,7 @@ export default defineComponent({
         store.state.common.ac120.formData = { ...initialStateFormData };
         store.state.common.ac120.keyRefreshForm++;
       }
-      // console.log(store.state.common.ac120.selectedRowKeys);
+      // //console\.log(store.state.common.ac120.selectedRowKeys);
 
       store.state.common.ac120.focusedRowKey =
         store.state.common.ac120.formData.accountingDocumentId;
@@ -954,6 +954,7 @@ export default defineComponent({
         delete formDataOldCheck.proofCount;
         delete formData.proofCount;
         if (!isEqual(formDataOldCheck, formData)) {
+          //console\.log(formDataOldCheck, formData);
           isModalConfirmChangeData.value = true;
           e.cancel = true;
           idRowFocusedRowNew.value =
@@ -965,7 +966,7 @@ export default defineComponent({
           // store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
           // store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
           store.state.common.ac120.selectedRowKeys = null;
-          // console.log(store.state.common.ac120.selectedRowKeys);
+          // //console\.log(store.state.common.ac120.selectedRowKeys);
 
           // store.state.common.ac120.keyRefreshForm++
           store.state.common.ac120.resetDataAccountingDocumentProofs++;
@@ -990,6 +991,8 @@ export default defineComponent({
       delete formDataOldCheck.proofCount;
       delete formData.proofCount;
       if (!isEqual(formDataOldCheck, formData)) {
+        //console\.log('1');
+        
         isModalConfirmChangeData.value = true;
         statusClickAdd.value = true;
       } else {
@@ -1112,6 +1115,7 @@ export default defineComponent({
       delete formDataOldCheck.proofCount;
       delete formData.proofCount;
       if (!isEqual(formDataOldCheck, formData)) {
+        //console\.log(formDataOldCheck, formData,'ẻtreterte');
         isModalConfirmChangeData.value = true;
         // statusClickMonth.value = true;
         monthNewClick.value = month;
