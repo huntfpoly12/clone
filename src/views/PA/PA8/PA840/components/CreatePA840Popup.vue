@@ -87,7 +87,7 @@
           </a-row>
           <a-row>
             <a-col span="12">
-              <DxField label="4대보험 선택" class="field-custom-2">
+              <DxField label="휴직종류" class="field-custom-2">
                 <DxSelectBox v-model="formData.typeOfLeave" :search-enabled="true"
                   :data-source="INITIAL_FORM.LeaveOfAbsenceDocument" display-expr="name" value-expr="id" name="type"
                   placeholder="선택" width="200px" :disabled="!isStatusLeaveOfAbsence">

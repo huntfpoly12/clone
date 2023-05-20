@@ -5,7 +5,7 @@
       :style="{ position: 'absolute' }">
       <a-spin :spinning="firstLoadData">
         <div class="form-notification-wrapper">
-          <div class="form-notification-wrapper-title" @click="test">
+          <div class="form-notification-wrapper-title">
             알림
           </div>
           <div v-if="listNotification.length" class="form-notification-wrapper-list" ref="refTimelineNoti">
@@ -124,7 +124,9 @@ export default defineComponent({
       firstLoadData.value = false
 
       nextTick(() => {
-        refTimelineNoti.value.scrollTop = 10000000
+        if(refTimelineNoti.value) {
+          refTimelineNoti.value.scrollTop = 10000000
+        }
       })
     })
 
@@ -152,9 +154,6 @@ export default defineComponent({
       rows.value = 5
       triggerGetAccountingClosingMessages.value = true
     }
-    const test = () => {
-      refTimelineNoti.value.scrollTop = 10000000
-    }
     return {
       userId,
       refTimelineNoti,
@@ -169,7 +168,6 @@ export default defineComponent({
       updateData,
       listData,
       loadinggetGetAccountingClosingMessages,
-      test
     }
   },
 })
