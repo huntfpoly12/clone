@@ -1272,7 +1272,16 @@ export const calculateWithholdingStatusReportModified = (wrapper: any, data: any
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 61 && !arrData[index][4]) {
         // check để lọc hết những row không có dữ liệu ra
-        if (arrData[index][5] || arrData[index][6] || arrData[index][7] || arrData[index][8] || arrData[index][9] || arrData[index][10] || arrData[index][11] || arrData[index][12]) {
+        if (
+          typeof arrData[index][5] == 'number' ||
+          typeof arrData[index][6] == 'number' ||
+          typeof arrData[index][7] == 'number' ||
+          typeof arrData[index][8] == 'number' ||
+          typeof arrData[index][9] == 'number' ||
+          typeof arrData[index][10] == 'number' ||
+          typeof arrData[index][11] == 'number' ||
+          typeof arrData[index][12] == 'number'
+        ) {
           cellData.push({
             /** 코드 (code) */
             code: arrData[index - 1][4],
