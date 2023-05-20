@@ -7,7 +7,7 @@
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxPaging :page-size="rowTable" />
                 <DxColumn data-field="createdAt" caption="기록일시" data-type="date"
-                        format="yyyy-MM-dd hh:mm"/>
+                        format="yyyy-MM-dd HH:mm"/>
                 <DxColumn data-field="success" caption="성공여부" cell-template="modal-table" />
                 <template #modal-table="{ data }">
                     <a-tag :color="getColorTag(data.value)">{{ data.value == true ? '성공' : "실패"}}</a-tag>

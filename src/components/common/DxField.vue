@@ -79,6 +79,14 @@ export default defineComponent({
       width: calc(100% - 170px) !important;
     }
   }
+  &.field-custom-1 {
+    .dx-field-label {
+      width: 130px ;
+    }
+    .dx-field-value {
+      width: calc(100% - 130px) !important;
+    }
+  }
   &.field-custom-2 {
     .dx-field-label {
       width: 200px ;

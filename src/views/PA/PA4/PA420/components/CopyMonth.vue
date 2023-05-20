@@ -10,7 +10,7 @@
       </div>
     </a-form-item>
     <a-form-item label="지급일" label-align="right" class="label-required">
-      <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
+      <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate" :clearable="false"
                             v-model:valueDate="paymentDayConfig"/>
     </a-form-item>
     <div class="text-align-center mt-30">
@@ -105,24 +105,20 @@ watch(() => props.modalStatus, (val) => {
 
 const onSubmit = (e: any) => {
   const res = e.validationGroup.validate();
-  if (!res.isValid) {
-    res.brokenRules[0].validator.focus();
-  } else {
-    emit("dataAddIncomeProcess", {
-      imputedYear: paYear.value,
-      imputedMonth: attributionMonth.value,
-      paymentYear: parseInt(paymentYearMonthChoose.value.toString().slice(0, 4)),
-      paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),
-    })
-    emit("closePopup", false)
-    store.commit('common/setPaymentDay', +dayjs(paymentDayConfig.value.toString()).format('DD'))
-    store.commit('common/setSelectMonthColumn', {
-      ...selectMonthColumnOld.value,
-      paymentYear: parseInt(paymentYearMonthChoose.value.toString().slice(0, 4)),
-      paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),
-    })
-    store.commit('common/sethasIncProcRetirements', true)
-  }
+  emit("dataAddIncomeProcess", {
+    imputedYear: paYear.value,
+    imputedMonth: attributionMonth.value,
+    paymentYear: parseInt(paymentYearMonthChoose.value.toString().slice(0, 4)),
+    paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),
+  })
+  emit("closePopup", false)
+  store.commit('common/setPaymentDay', +dayjs(paymentDayConfig.value.toString()).format('DD'))
+  store.commit('common/setSelectMonthColumn', {
+    ...selectMonthColumnOld.value,
+    paymentYear: parseInt(paymentYearMonthChoose.value.toString().slice(0, 4)),
+    paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),
+  })
+  store.commit('common/sethasIncProcRetirements', true)
 };
 
 </script>

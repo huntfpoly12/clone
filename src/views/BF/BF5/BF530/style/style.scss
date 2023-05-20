@@ -6,13 +6,22 @@
       display: none !important;
     }
   }
+  #tab2-bf530 {
+    height: calc(100vh - 290px) !important;
+
+    .dx-freespace-row {
+      display: none !important;
+    }
+  }
   .tab-group {
     .search-group {
       background: #f1f3f4;
       padding: 8px 5px;
       margin-bottom: 16px;
     }
+  }
 
+  .tab1 {
     :deep .ant-form-item-label>label {
       width: 120px;
     }
@@ -104,9 +113,11 @@
     width: 80px;
     background-color: rgba(0, 0, 0, 0.25);
   }
-  :deep .dx-datagrid-content .dx-datagrid-table .dx-row > td{
+
+  :deep .dx-datagrid-content .dx-datagrid-table .dx-row>td {
     height: 20px;
   }
+
   // :deep .dx-scrollable-container {
   //   overflow: visible;
   // }

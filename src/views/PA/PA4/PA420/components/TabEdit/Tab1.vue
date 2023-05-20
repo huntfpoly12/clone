@@ -145,14 +145,14 @@
         </DxFieldCustom>
         <DxFieldCustom label="제외일수" class="field-custom" required>
           <div class="d-flex-center">
-            <number-box :required="true" width="150px"
+            <number-box-money :required="true" width="150px" format="#0,###"
                         v-model:valueInput="formState.lastRetiredYearsOfService.exclusionDays"/>
             <info-tool-tip>정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</info-tool-tip>
           </div>
         </DxFieldCustom>
         <DxFieldCustom label="가산일수" class="field-custom" required>
           <div class="d-flex-center">
-            <number-box :required="true" width="150px"
+            <number-box-money :required="true" width="150px" format="#0,###"
                         v-model:valueInput="formState.lastRetiredYearsOfService.additionalDays"/>
             <info-tool-tip>정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</info-tool-tip>
           </div>

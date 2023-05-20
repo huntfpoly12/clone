@@ -70,7 +70,6 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                formState.value.transitionAmount = -formState.value.transitionAmount
                 emit("closePopup", false)
                 modalStatusDetail.value = true;
             }

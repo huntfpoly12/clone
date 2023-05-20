@@ -219,7 +219,7 @@
                 caption="최종저장일시"
                 data-field="savedAt"
                 data-type="date"
-                format="yyyy-MM-dd hh:mm"
+                format="yyyy-MM-dd HH:mm"
               />
               <DxColumn caption="최종저장아이디" data-field="savedBy" />
               <DxColumn
@@ -269,11 +269,10 @@
     <ConfirmDeletePopup
       :modalStatus="modalRowDelete"
       @closePopup="modalRowDelete = false"
-      :contentDelete="Message.getMessage('AC570', '001').message"
       :contentYes="Message.getMessage('AC570', '001').yes"
       :contentNo="Message.getMessage('AC570', '001').no"
       @confirmDelete="confirmDelete"
-    />
+    >{{ Message.getMessage('AC570', '001').message }}</ConfirmDeletePopup>
   </div>
 </template>
 <script lang="ts">
@@ -434,31 +433,33 @@ export default defineComponent({
             (data: any) =>
               data.useStartDate <= item.transitionDate <= data.useFinishDate
           );
+          let sourceCode = item.sourceCode
           item.sourceCode =
-            row.codes?.find((data: any) => data.code == item.sourceCode)
-              ?.name ?? item.sourceCode;
+            row.codes?.find((data: any) => data.code == sourceCode)
+              ?.name ?? sourceCode;
           item.sourceCode1 =
-            row.codes?.find((data: any) => data.code1 == item.sourceCode)
-              ?.name1 ?? item.sourceCode;
+            row.codes?.find((data: any) => data.code == sourceCode)
+              ?.name1 ?? sourceCode;
           item.sourceCode2 =
-            row.codes?.find((data: any) => data.code2 == item.sourceCode)
-              ?.name2 ?? item.sourceCode;
+            row.codes?.find((data: any) => data.code == sourceCode)
+              ?.name2 ?? sourceCode;
           item.sourceCode3 =
-            row.codes?.find((data: any) => data.code3 == item.sourceCode)
-              ?.name3 ?? item.sourceCode;
+            row.codes?.find((data: any) => data.code == sourceCode)
+              ?.name3 ?? sourceCode;
 
+        let transitionCode = item.transitionCode
           item.transitionCode =
-            row.codes?.find((data: any) => data.code == item.transitionCode)
-              ?.name ?? item.transitionCode;
+            row.codes?.find((data: any) => data.code == transitionCode)
+              ?.name ?? transitionCode;
           item.transitionCode1 =
-            row.codes?.find((data: any) => data.code1 == item.transitionCode)
-              ?.name1 ?? item.transitionCode;
+            row.codes?.find((data: any) => data.code == transitionCode)
+              ?.name1 ?? transitionCode;
           item.transitionCode2 =
-            row.codes?.find((data: any) => data.code2 == item.transitionCode)
-              ?.name2 ?? item.transitionCode;
+            row.codes?.find((data: any) => data.code == transitionCode)
+              ?.name2 ?? transitionCode;
           item.transitionCode3 =
-            row.codes?.find((data: any) => data.code3 == item.transitionCode)
-              ?.name3 ?? item.transitionCode;
+            row.codes?.find((data: any) => data.code == transitionCode)
+              ?.name3 ?? transitionCode;
 
           item.customDxColumn8One = filters.formatCurrency(
             item.sourceBudgetAmount + -item.transitionAmount

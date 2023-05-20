@@ -9,7 +9,7 @@
     :footer="false"
   >
     <div v-if="step === StepCreateBudget.Step1">
-      <div v-if="dataBudget?.budget" class="modal-content">
+      <div v-if="dataBudget?.index" class="modal-content">
         <span>전년도 최종차수 ${서식명}를 불러와서 작성합니다.</span>
         <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
         <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>

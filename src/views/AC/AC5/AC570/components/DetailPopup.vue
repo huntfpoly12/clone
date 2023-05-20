@@ -55,7 +55,7 @@
             <a-form-item label="전용액" :label-col="labelCol" class="red">
               <number-box-money
                 width="150px"
-                v-model:valueInput="formState.transitionAmount"
+                :valueInput="-formState.transitionAmount"
                 disabled="true"
                 :required="true"
                 placeholder=""
@@ -66,7 +66,7 @@
                 width="150px"
                 disabled="true"
                 :valueInput="
-                  formState.sourceBudgetAmount + formState.transitionAmount
+                  formState.sourceBudgetAmount + (-formState.transitionAmount)
                 "
               />
             </a-form-item>
@@ -85,7 +85,7 @@
                 disabled="true"
                 :valueInput="
                   formState.sourceBudgetAmount +
-                  formState.transitionAmount -
+                  (-formState.transitionAmount) -
                   formState.sourceExpenditureAmount
                 "
               />

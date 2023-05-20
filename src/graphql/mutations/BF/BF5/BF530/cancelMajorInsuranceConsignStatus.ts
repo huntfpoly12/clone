@@ -3,9 +3,8 @@ export default gql`
   mutation cancelMajorInsuranceConsignStatus(
     $companyId: Int!
     $imputedYear: Int!
-    $workId: Int!
   ) {
-    cancelMajorInsuranceConsignStatus(companyId: $companyId, imputedYear: $imputedYear, workId: $workId) {
+    cancelMajorInsuranceConsignStatus(companyId: $companyId, imputedYear: $imputedYear) {
       companyId
       manageId
       partnerId
