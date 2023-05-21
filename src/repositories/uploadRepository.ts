@@ -14,4 +14,7 @@ export default {
   accountingProof(payload: any, config?: any) {
     return Client.post(`${resource}/accounting-proof `, payload, config);
   },
+  accountingFile(payload: any, config?: any) {
+    return Client.post(`${resource}/accounting-file `, payload, config);
+  },
 };

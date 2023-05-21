@@ -1,8 +1,9 @@
 <template>
   <div class="form-chat">
-    <p class="form-chat-title">
-      회계마감 관리사항
-    </p>
+    <div class="form-chat-header">
+      <span class="form-chat-header-title">회계마감 관리사항</span>
+      <ReloadOutlined class="form-chat-header-btnReload" @click="refreshForm"/>
+    </div>
     <div ref="formTimeline" class="form-chat-timeline">
       <div v-for="(items, index) in listChat" :key="index" :id="items.createdAt">
         <div class="form-chat-timeline-line mb-10"
@@ -29,6 +30,7 @@
                 </div>
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
+              <div class="form-chat-timeline-content-info-classification">{{ items.classification }}</div>
             </div>
             <div v-if="itemEditComment?.key !== items.key" class="form-chat-timeline-content-background">
               <div class="form-chat-timeline-content-text">
@@ -41,7 +43,12 @@
                       v-for="(file, indexFile) in items.files"
                       :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
                       alt=""
-                      @click="previewImage(items.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)">
+                      @click="previewImage(items.files, indexFile)">
+                    <!-- <img
+                      v-for="(file, indexFile) in items.files"
+                      :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
+                      alt=""
+                      @click="previewImage(items.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)"> -->
                   </div>
                   <!-- <div class="form-chat-timeline-content-files-preview-images">
                     <img
@@ -130,7 +137,7 @@
     </div>
     <div class="form-chat-bottom">
       <div class="form-chat-bottom-category">
-        <StatusChat with="150" />
+        <StatusChat with="150" disabled/>
         <span style="margin: 0 10px;">분류:</span>
         <span>회계-마감-({{ currentTime }})</span>
       </div>
@@ -149,7 +156,7 @@
 import { defineComponent, ref, nextTick, watch, computed, onMounted } from 'vue'
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/AC/AC1/AC130";
-import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, FileAddOutlined, FileOutlined, SendOutlined, FileTextOutlined, RollbackOutlined } from '@ant-design/icons-vue';
+import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, FileAddOutlined, FileOutlined, SendOutlined, FileTextOutlined, RollbackOutlined, ReloadOutlined } from '@ant-design/icons-vue';
 import { getJwtObject } from "@bankda/jangbuda-common";
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
 import StatusChat from './StatusChat.vue'
@@ -188,7 +195,8 @@ export default defineComponent({
     StatusChat,
     InputChat,
     MarkdownCustom,
-    PreviewReply
+    PreviewReply,
+    ReloadOutlined
   },
   setup(props, { emit }) {
     const token = ref(sessionStorage.getItem("token"))
@@ -220,7 +228,6 @@ export default defineComponent({
       text: '',
       files: [],
       createdAt: new Date().getTime(),
-      status: '일반',
       userId: jwtObject.userId,
       reply: {}
     })
@@ -232,23 +239,14 @@ export default defineComponent({
     })
     let itemDetele: any = ref()
     let itemOriginEdit: any = ref()
-    const isCreate = ref(false)
 
 
     watch(() => props.data, (value) => {
       if(value.length) {
-        if(firstLoadData.value) {
-          listChat.value = [...value]
-        }else {
-          const index = value.findIndex((item: any) => item.id === listChat.value[listChat.value.length].id)
-          listChat.value = [...listChat.value, value.slice(index)]
-        }
-        if(isCreate.value || firstLoadData.value) {
-          nextTick(() => {
-            formTimeline.value.scrollTop = 10000000
-          })
-        }
-        isCreate.value = false
+        listChat.value = [...value]
+        nextTick(() => {
+          formTimeline.value.scrollTop = 10000000
+        })
       }
     }, { 
       deep: true,
@@ -261,11 +259,13 @@ export default defineComponent({
       onError: errorCreateAccountingClosingMessage,
       loading: loadingcreateAccountingClosingMessage,
     } = useMutation(mutations.createAccountingClosingMessage);
-    doneCreateAccountingClosingMessage((e) => {
-      emit('updateData')
-      isCreate.value = true
+    doneCreateAccountingClosingMessage((newMessage) => {
       inputChat.value.resetInputChat()
       isLoadingUpload.value = false
+      listChat.value.push(newMessage.data.createAccountingClosingMessage)
+      nextTick(() => {
+        formTimeline.value.scrollTop = 10000000
+      })
     })
     errorCreateAccountingClosingMessage(e => {
       isLoadingUpload.value = false
@@ -275,76 +275,9 @@ export default defineComponent({
 
     const date = new Date()
     const currentTime = date.getFullYear() + '-' + ((date.getMonth() + 1) < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
-    const getListContentChat = () => {
-      // onValue(
-      //   chatListRef.value,
-      //   (snapshot) => {
-      //     const objList = snapshot.val()
-      //     if (!objList) {
-      //       firstLoadData.value = false
-      //     }
-      //     let arr = []
-      //     for (const key in objList) {
-      //       if (!objList[key]?.isDelete) {
-      //         arr.push({
-      //           key: key,
-      //           files: objList?.files || [],
-      //           ...objList[key]
-      //         })
-      //       }
-      //     }
-      //     listChat.value = arr
-      //     console.log('listChat.value', listChat.value)
-
-      //     onChildAdded(query(chatListRef.value, limitToLast(1)), (data) => {
-      //       if (!firstLoadData.value) {
-      //         if (isLoadingUpload.value && objectChatUploadUpFile.value) {
-      //           if (data.val().userId === userId && data.val().createdAt === objectChatUploadUpFile.value.createdAt) {
-      //             objectChatUploadUpFile.value = null
-      //             isLoadingUpload.value = false
-      //           }
-      //         }
-      //         listChat.value.push({
-      //           ...data.val(),
-      //           key: data.key
-      //         })
-      //         nextTick(() => {
-      //           formTimeline.value.scrollTop = 10000000
-      //         })
-      //       } else {
-      //         nextTick(() => {
-      //           formTimeline.value.scrollTo({
-      //             top: 10000000,
-      //             behavior: "instant",
-      //           });
-      //         })
-      //       }
-      //       firstLoadData.value = false
-      //     });
-      //     onChildChanged(chatListRef.value, (data) => {
-      //       const indexUpdate = listChat.value.findIndex((chat: any) => chat.key === data.key)
-      //       if (indexUpdate >= 0) {
-      //         if (!!data.val()?.isDelete) {
-      //           listChat.value.splice(indexUpdate, 1)
-      //         } else {
-      //           listChat.value[indexUpdate] = {
-      //             ...listChat.value[indexUpdate],
-      //             text: data.val().text,
-      //             files: data.val().files,
-      //             reply: data.val()?.reply ? data.val().reply : {},
-      //           }
-      //         }
-      //       }
-      //     });
-      //   },
-      //   {
-      //     onlyOnce: true,
-      //   }
-      // );
-    };
 
     const submitChat = () => {
-      if (isLoadingUpload.value || isProcessingDeleteUpdate.value) return
+      if (isLoadingUpload.value || isProcessingDeleteUpdate.value || !content.value.trim()) return
       isLoadingUpload.value = true
       let fileStorageIds = null
       if(filesUpload.value.length) {
@@ -353,145 +286,64 @@ export default defineComponent({
       createAccountingClosingMessage({
         ...props.payload,
         input: {
-          content: content.value,
+          content: content.value.trim(),
           fileStorageIds
         }
       })
-      // let contentInputed = content.value
-      // let fileInputUploaded = [...filesUpload.value]
-      // if (itemEditComment.value.key) {
-      //   contentInputed = itemEditComment.value.text
-      //   fileInputUploaded = [...itemEditComment.value.files]
-      // }
-      // if (!contentInputed.trim() && !fileInputUploaded.length) return
-      // isLoadingUpload.value = true
-      // payload.value = {
-      //   ...payload.value,
-      //   text: contentInputed,
-      //   files: []
-      // }
-      // if (Object.keys(itemCommentReply.value).length) {
-      //   payload.value.reply = { ...itemCommentReply.value }
-      // }
-      // if (fileInputUploaded.length) {
-      //   listFileUploadHandleLoading.value = [...fileInputUploaded]
-      //   if (itemEditComment.value.key === null) {
-      //     objectChatUploadUpFile.value = {
-      //       ...payload.value,
-      //       text: contentInputed,
-      //       files: [...listFileUploadHandleLoading.value],
-      //     }
-      //   } else {
-      //     const indexEdit = listChat.value.findIndex((item: any) => item.key === itemEditComment.value.key)
-      //     listChat.value[indexEdit] = {
-      //       ...listChat.value[indexEdit],
-      //       text: contentInputed,
-      //       files: [...listFileUploadHandleLoading.value],
-      //     }
-      //   }
-      //   nextTick(() => {
-      //     formTimeline.value.scrollTop = 10000000
-      //     inputChat.value.resetInputChat()
-      //   })
-      //   uploadFileServer()
-      // } else {
-      //   sendChat()
-      // }
     };
 
-    const sendChat = () => {
-      if (listFileUploadHandleLoading.value.length) {
-        payload.value = {
-          ...payload.value,
-          files: listImageUpload.value
-        }
-        content.value = "";
-        listImageUpload.value = []
-        listFileUploadHandleLoading.value = []
-      }
-      if (itemEditComment.value.key === null) {
-        listChat.value.push({...payload.value, key: payload.value.createdAt.toString()})
+    // const sendChat = () => {
+    //   if (listFileUploadHandleLoading.value.length) {
+    //     payload.value = {
+    //       ...payload.value,
+    //       files: listImageUpload.value
+    //     }
+    //     content.value = "";
+    //     listImageUpload.value = []
+    //     listFileUploadHandleLoading.value = []
+    //   }
+    //   if (itemEditComment.value.key === null) {
+    //     listChat.value.push({...payload.value, key: payload.value.createdAt.toString()})
 
-        nextTick(() => {
-            itemCommentReply.value = {}
-            objectChatUploadUpFile.value = null
-            isLoadingUpload.value = false
-            formTimeline.value.scrollTop = 10000000
-            inputChat.value.resetInputChat()
-        })
-        // const postListRef = reffb(databaseFirebase, channelChatSubrights());
-        // const newPostRef = push(postListRef);
-        // set(newPostRef, payload.value)
-        //   .then(() => {
-        //     nextTick(() => {
-        //       formTimeline.value.scrollTop = 10000000
-        //       inputChat.value.resetInputChat()
-        //     })
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   }).finally(() => {
-        //     itemCommentReply.value = {}
-        //     objectChatUploadUpFile.value = null
-        //     isLoadingUpload.value = false
-        //     formTimeline.value.scrollTop = 10000000
-        //   })
-      } else {
-        const updates: any = {};
-        if (!Object.keys(itemEditComment.value?.reply || {}).length) {
-          delete itemEditComment.value.reply
-        }
-        const payloadEdit = { ...itemEditComment.value, ...payload.value }
-        const index = listChat.value.findIndex((chat: any) => chat.key === payloadEdit.key)
-        listChat.value[index] = {...payloadEdit}
-        nextTick(() => {
-          itemEditComment.value = {
-              key: null,
-              text: '',
-              files: [],
-            }
-            isLoadingUpload.value = false
-        })
+    //     nextTick(() => {
+    //         itemCommentReply.value = {}
+    //         objectChatUploadUpFile.value = null
+    //         isLoadingUpload.value = false
+    //         formTimeline.value.scrollTop = 10000000
+    //         inputChat.value.resetInputChat()
+    //     })
+    //   } else {
+    //     const updates: any = {};
+    //     if (!Object.keys(itemEditComment.value?.reply || {}).length) {
+    //       delete itemEditComment.value.reply
+    //     }
+    //     const payloadEdit = { ...itemEditComment.value, ...payload.value }
+    //     const index = listChat.value.findIndex((chat: any) => chat.key === payloadEdit.key)
+    //     listChat.value[index] = {...payloadEdit}
+    //     nextTick(() => {
+    //       itemEditComment.value = {
+    //           key: null,
+    //           text: '',
+    //           files: [],
+    //         }
+    //         isLoadingUpload.value = false
+    //     })
+    //   }
+    //   nextTick(() => {
+    //     filesUpload.value = []
+    //     objectChatUploadUpFile.value = null
+    //     listFileUploadHandleLoading.value = []
+    //     inputChat.value.resetInputChat()
+    //   })
+    // }
 
-
-
-
-        // const updates: any = {};
-        // if (!Object.keys(itemEditComment.value?.reply || {}).length) {
-        //   delete itemEditComment.value.reply
-        // }
-        // const payloadEdit = { ...itemEditComment.value, ...payload.value }
-        // delete payloadEdit.key
-        // updates[`/${itemEditComment.value.key}`] = payloadEdit
-        // update(chatListRef.value, updates).then(() => {
-        // }).catch(() => {
-        //   console.log('eeeeeeeee');
-        // }).finally(() => {
-        //   nextTick(() => {
-        //     itemEditComment.value = {
-        //       key: null,
-        //       text: '',
-        //       files: [],
-        //     }
-        //     isLoadingUpload.value = false
-        //   })
-        // })
-      }
-      nextTick(() => {
-        filesUpload.value = []
-        objectChatUploadUpFile.value = null
-        listFileUploadHandleLoading.value = []
-        inputChat.value.resetInputChat()
-      })
-    }
-
-    watch(() => listImageUpload.value, (value) => {
-      if (value.length && value.length === listFileUploadHandleLoading.value.length) {
-        sendChat()
-      }
-    }, {
-      deep: true,
-    })
+    // watch(() => listImageUpload.value, (value) => {
+    //   if (value.length && value.length === listFileUploadHandleLoading.value.length) {
+    //     sendChat()
+    //   }
+    // }, {
+    //   deep: true,
+    // })
 
     const editComment = (item: any) => {
       itemEditComment.value = { ...item, files: !!item.files ? item.files : [] }
@@ -520,16 +372,6 @@ export default defineComponent({
           itemDetele.value = null
           isProcessingDeleteUpdate.value = false
         })
-        // isProcessingDeleteUpdate.value = true
-        // const updates: any = {};
-        // updates[`/${itemDetele.value.key}`] = { ...itemDetele.value, isDelete: true }
-        // update(chatListRef.value, updates).then(() => {
-        // }).catch(() => {
-        //   console.log('e');
-        // }).finally(() => {
-        //   itemDetele.value = null
-        //   isProcessingDeleteUpdate.value = false
-        // })
 
       } else {
         isModalDeleteChat.value = false
@@ -554,24 +396,11 @@ export default defineComponent({
           }
         })
       }
-      // listImageUpload.value = []
-      // listFileUploadHandleLoading.value.forEach((file: any) => {
-      //   if (!!file?.file) {
-      //     let url = ''
-      //     if(file.contentType.includes('image/')) {
-      //       url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/cach-chup-anh-chan-dung-9.jpg?alt=media&token=246270e1-334f-4dce-b312-6642c7d1dc3c'
-      //     }else {
-      //       if(file.contentType.includes('video')){
-      //         url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/video-5-seconds.mp4?alt=media&token=f3a80d6f-d0a0-47aa-b6ac-bfff433b2109'
-      //       }else{
-      //         url = 'https://firebasestorage.googleapis.com/v0/b/chat-jangbuda.appspot.com/o/ac130-notice.pptx?alt=media&token=0d759619-e4b7-4b67-95e8-5651c6d858a0'
-      //       }
-      //     }
-      //     listImageUpload.value = [...listImageUpload.value, { url: url, name: file.file.name, size: file.file.size, contentType: file.contentType }]
-      //   } else {
-      //     listImageUpload.value = [...listImageUpload.value, { url: file.url, name: file.name, size: file.size, contentType: file.contentType }]
-      //   }
-      // })
+    }
+
+    const refreshForm = () => {
+      inputChat.value.resetInputChat()
+      emit('refresh')
     }
 
     const previewImage = (files: any, index: number) => {
@@ -630,7 +459,8 @@ export default defineComponent({
       formatFileSize,
       openLinkDownFile,
       replyComment,
-      itemCommentReply
+      itemCommentReply,
+      refreshForm
     }
   },
 })
@@ -644,13 +474,21 @@ export default defineComponent({
   justify-content: space-between;
   flex-direction: column;
 
-  &-title {
+  &-header {
     text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0;
-    padding: 4px 0;
     border-bottom: 1px solid rgba(17, 17, 26, 0.1);
+    padding: 4px 0;
+    position: relative;
+    &-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    &-btnReload {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+    }
   }
 
   &-timeline {
@@ -658,7 +496,7 @@ export default defineComponent({
     // height: calc(100% - 40px);
     padding-bottom: 10px;
     padding-top: 2px;
-    // scroll-behavior: smooth;
+    scroll-behavior: smooth;
     overflow-y: auto;
 
     &-line {
@@ -822,7 +660,13 @@ export default defineComponent({
         }
 
         &-time {
-          color: #333;
+          color: #bcbcc2ff;
+          text-align: end;
+          font-size: 11px;
+          margin-right: 10px;
+        }
+        &-classification {
+          color: #bcbcc2ff;
           text-align: end;
           font-size: 11px;
         }
