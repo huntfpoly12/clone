@@ -3,7 +3,7 @@
         <a-modal :visible="modalStatus" :title="title" centered @cancel="setModalVisible()" :mask-closable="false"
             width="50%">
             <a-spin tip="Loading..." :spinning="loadingCM110">
-                <DxDataGrid :noDataText="Message.getMessage('COMMON', '901').message" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
+                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn data-field="createdAt" caption="기록일시" cell-template="creactedAt" data-type="text"/>
@@ -43,7 +43,6 @@ import queries from "../../src/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from 'dayjs';
 import { companyId } from "@/helpers/commonFunction"
-import { Message } from "@/configs/enum"
 export default defineComponent({
     props: ['modalStatus', 'title', 'idRowEdit', 'typeHistory', 'companyId'],
     components: {
@@ -114,7 +113,6 @@ export default defineComponent({
             move_column,
             colomn_resize,
             formarDate,
-            Message
         }
     },
     methods: {
