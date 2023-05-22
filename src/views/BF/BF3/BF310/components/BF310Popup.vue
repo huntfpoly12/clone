@@ -517,7 +517,11 @@
                       <a-row
                         :gutter="24"
                         class="custom-label-master-detail"
-                        v-if="dataActiveRow && formState.usedAccounting && dataSource.length"
+                        v-if="
+                          dataActiveRow &&
+                          formState.usedAccounting &&
+                          dataSource.length
+                        "
                         :key="dataActiveRow?.rowIndex ?? 99"
                       >
                         <a-col :span="9">
@@ -650,7 +654,7 @@
                     >
                       <number-box
                         :required="true"
-                        width="100px"
+                        width="120px"
                         :min="0"
                         :spinButtons="true"
                         v-model:valueInput="
@@ -668,10 +672,7 @@
                     >
                       <checkbox-basic
                         label="4대보험신고서비스"
-                        v-model:valueCheckbox="
-                          formState.content.withholding
-                            .withholdingServiceTypes[0]
-                        "
+                        v-model:valueCheckbox="formState.content.withholding.withholdingServiceTypes[0]"
                         :disabled="checkedSourceService == 2"
                         :size="'16'"
                       />
@@ -726,8 +727,13 @@
                   label-align="left"
                   :label-col="labelCol"
                 >
-                  <biz-number-text-box width="250px" 
-                  v-model:valueInput=" formState.content.cmsBank.ownerBizNumber" :required="true" />
+                  <biz-number-text-box
+                    width="250px"
+                    v-model:valueInput="
+                      formState.content.cmsBank.ownerBizNumber
+                    "
+                    :required="true"
+                  />
                   <div class="noteImage">
                     <img
                       src="@/assets/images/iconInfo.png"
@@ -971,13 +977,13 @@ export default defineComponent({
             ? value.getSubscriptionRequest.content.accounting
                 .facilityBusinesses[0].longTermCareInstitutionNumber
             : "";
-          if(!!formState.value.content.withholding) {
-            formState.value.content.withholding = {
-              startYearMonth: "",
-              capacity: 0,
-              withholdingServiceTypes: [0]
-            }
-          }
+        // if (formState.value.content.withholding) {
+        //   formState.value.content.withholding = {
+        //     startYearMonth: +dayjs().format('YYYYMM'),
+        //     capacity: 0,
+        //     withholdingServiceTypes: 1,
+        //   };
+        // }
         // set date list status value
         dataStatus[0].date = value.getSubscriptionRequest.createdAt;
         dataStatus[1].date = value.getSubscriptionRequest.createdAt;
@@ -1048,10 +1054,16 @@ export default defineComponent({
       (value) => {
         if (value === 2) {
           formState.value.content.withholding = {
-            startYearMonth: "",
+            startYearMonth: NaN,
             capacity: 0,
-            withholdingServiceTypes: [0]
-          }
+            withholdingServiceTypes: 1,
+          };
+        }else{
+          formState.value.content.withholding = {
+            startYearMonth: +dayjs().format('YYYYMM'),
+            capacity: 0,
+            withholdingServiceTypes: 1,
+          };
         }
       }
     );
@@ -1139,23 +1151,25 @@ export default defineComponent({
           item.startYearMonth.toString();
           return { item };
         });
-        contentData.accounting.facilityBusinesses = [...newObj];
-        contentData.accounting.accountingServiceTypes.map((item: any) => {
-          item = !!item == true ? 1 : 0;
-        });
+        if (contentData.accounting) {
+          contentData.accounting.facilityBusinesses = [...newObj];
+          contentData.accounting.accountingServiceTypes.map((item: any) => {
+            item = !!item == true ? 1 : 0;
+          });
+        }
         if (checkedSourceService.value === 2) {
           contentData.withholding = null;
         } else {
           contentData.withholding.withholdingServiceTypes = !!contentData
             .withholding.withholdingServiceTypes[0]
-            ? [1]
-            : [0];
+            ? 1
+            : [];
         }
         const cleanData = JSON.parse(
           JSON.stringify(contentData, (name, val) => {
-            if (val == null) {
-              return;
-            }
+            // if (val == null) {
+            //   return;
+            // }
             if (
               name === "__typename" ||
               name === "registrationCard" ||
