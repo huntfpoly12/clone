@@ -27,8 +27,8 @@
         <DxItem location="after" template="button-history" css-class="cell-button-add"/>
       </DxToolbar>
       <template #button-history>
-        <DxButton icon="plus">
-          <HistoryOutlined style="font-size: 18px;"/>
+        <DxButton >
+          <HistoryOutlined style="font-size: 18px;" @click="modalHistory"/>
         </DxButton>
       </template>
       <template #button-template>
@@ -63,13 +63,13 @@
         </div>
       </template>
       <template #status="{data}">
-        <accounting-process-status-edit :valueStatus="data.data.status"/>
+        <accounting-process-status-edit :index="index" :status="data.data.status"/>
       </template>
       <template #employeeSalaryTable="{data}">
         <div v-if="data.data.accounSubjectOrder" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
-                    @click="openModalBudget({data: data.data, type: ComponentCreateBudget.EmployeeSalaryTable})"/>
-          <DxButton type="ghost" >
+                    @click="openModalEditEmployeeTable(data.data.index)"/>
+          <DxButton type="ghost" @click="actionSendMail(data.data)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
           <DxButton type="ghost" @click="actionPrint(data.data)">
@@ -87,26 +87,34 @@
         <a-tooltip title="세출예산서 작성">
           <div>
             <DxButton type="ghost" icon="plus"
-                      @click="openModalBudget({data: data.data, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
+                      @click="openModalBudget({data: {...data.data, budgetType: 5}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
           </div>
         </a-tooltip>
       </template>
       <template #revenueBudget="{data}">
         <a-tooltip title="세입예산서 작성">
           <DxButton type="ghost" icon="plus"
-                    @click="openModalBudget({data: data.data, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
+                    @click="openModalBudget({data: {...data.data, budgetType: 4}, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
         </a-tooltip>
       </template>
     </DxDataGrid>
     <BudgetPopup
-      :modal-status="modalBudget"
+      :modal-status="modal.budget"
       @close-popup="closePopupBudget"
+      :index="index"
     />
     <PopupSendMail
       :isModalSendMail="isModalSendMail.employeeRemunerationList"
-      @closePopup="isModalSendMail.employeeRemunerationList = false"
+      @closePopup="handleEmitClosePopup"
+      :variable="query"
+      :index="index"
     />
-
+    <EditEmployeeSalaryTable
+      v-if="modal.editEmployeeSalaryTable"
+      :index="index"
+      :modal-status="modal.editEmployeeSalaryTable"
+      @close-popup="closePopupEditEmployeeTable"
+    />
   </div>
 </template>
 
@@ -125,7 +133,8 @@ import {companyId} from "@/helpers/commonFunction";
 import {Store} from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import {initialState, useGetEmployeePayTableReportViewUrl} from "./utils/index";
-import PopupSendMail from "@/views/AC/AC5/components/PopupSendMail.vue";
+import PopupSendMail from "./components/PopupSendMail.vue";
+import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
 
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
@@ -137,7 +146,7 @@ const gridRef = ref();
 const dataSource = ref<DataSource>()
 const query = reactive({
   companyId,
-  fiscalYear: acYear.value,
+  fiscalYear: acYear.value ,// acYear.value
   facilityBusinessId: globalFacilityBizId.value,
 })
 const isModalSendMail = reactive({
@@ -145,6 +154,7 @@ const isModalSendMail = reactive({
   appropriationStatement: false,
   revenueBudgetStatement: false
 })
+const index = ref(0)
 const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 
 const storeDataSource = computed(() => dataSource.value?.store() as Store);
@@ -171,15 +181,32 @@ onError((param) => {
 
 // function add row
 const addRow = () => {
+  if(dataSource.value && (dataSource.value?.totalCount() as number) > 0) {
+    initialState.index = dataSource.value.totalCount() as number
+  }
   storeDataSource.value.insert(initialState).then((result) => {
     dataGridRef.value?.refresh();
+    disableAddRow.value = true
   });
 }
-const modalBudget = ref(false);
-const closePopupBudget = () => modalBudget.value = false;
+const modal = reactive({
+  budget: false,
+  editEmployeeSalaryTable: false
+});
+const closePopupBudget = (e: boolean) => {
+  if (e){
+    query.fiscalYear = acYear.value
+    // refetchBudget()
+    disableAddRow.value = false
+  }
+  modal.budget = false
+};
 const openModalBudget = (data: any) => {
-  modalBudget.value = true;
+  modal.budget = true;
   store.dispatch('common/setDataBudget', data)
+}
+const openModalEditEmployeeTable = (index: any) => {
+  modal.editEmployeeSalaryTable = true;
 }
 const actionPrint = (data: any) => {
   const {onResult} = useGetEmployeePayTableReportViewUrl({
@@ -187,9 +214,26 @@ const actionPrint = (data: any) => {
     index: data.index
   })
   onResult(({data}) => {
-    console.log('data', data)
     window.open(data.getEmployeePayTableReportViewUrl, '_blank')
   })
+}
+const actionSendMail = (data: any) => {
+  index.value = data.index as number
+  isModalSendMail.employeeRemunerationList = true
+}
+const handleEmitClosePopup = (e: boolean) => {
+  if (e){
+    isModalSendMail.employeeRemunerationList = false
+  }
+}
+const closePopupEditEmployeeTable = (e: boolean) => {
+  if (e){
+    refetchBudget()
+  }
+  modal.editEmployeeSalaryTable = false
+}
+const modalHistory = () => {
+
 }
 </script>
 

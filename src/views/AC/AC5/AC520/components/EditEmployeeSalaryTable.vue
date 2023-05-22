@@ -1,99 +1,108 @@
 <template>
-  <div class="title">임직원보수일람표</div>
-  <standard-form ref="formRef">
-    <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true"
-                :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
-                @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" @row-removed="logEvent('RowRemoved')"
-                @row-removing="logEvent('RowRemoving')"
-                @saving="handleSaving" @saved="logEvent('Saved')" @editor-preparing="onEditorPreparing"
-                style="height: 70vh"
-                @init-new-row="initNewRow"
-                :remote-operations="true"
-    >
-      <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
-      <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
-                 :use-icons="true"
-      />
-      <DxPaging :page-size="0"/>
-      <DxToolbar>
-        <DxItem location="after" name="addRowButton" css-class="cell-button-add"/>
-        <DxItem name="saveButton"/>
-        <DxItem name="revertButton"/>
-      </DxToolbar>
-      <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
-        <DxRequiredRule/>
-      </DxColumn>
-      <DxColumn ref="occupationRef" caption="직종" data-field="occupation" :editor-options="{ placeholder: '선택 또는 직접입력' }"
-                css-class="text-red p-0" width="165" alignment="center">
-        <DxRequiredRule/>
-      </DxColumn>
-      <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
-                :editor-options="{ placeholder: '선택' }">
-        <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value"/>
-        <DxRequiredRule/>
-      </DxColumn>
-      <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right"/>
-      <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right"/>
-      <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right"/>
-      <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right"/>
-      <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right"/>
-      <DxColumn caption="계" data-field="total" alignment="center" cell-template="total" :allowEditing="false"/>
-      <template #total="{ data }">
-        <span class="px-7">{{ calculateSalary(data) }}</span>
-      </template>
-      <DxColumn type="buttons">
-        <DxButtonGrid name="delete" @click="deleteRow"/>
-      </DxColumn>
-      <DxSummary>
-        <DxTotalItem cssClass="custom" show-in-column="drag" display-format="소계"/>
+  <a-modal
+    :visible="modalStatus"
+    title="예산서"
+    centered
+    @cancel="setModalVisible"
+    :mask-closable="false"
+    :footer="false"
+    width="90%"
+  >
+    <standard-form ref="formRef">
+      <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true"
+                  :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
+                  :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
+                  @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" @row-removed="logEvent('RowRemoved')"
+                  @row-removing="logEvent('RowRemoving')"
+                  @saving="handleSaving" @saved="logEvent('Saved')" @editor-preparing="onEditorPreparing"
+                  style="height: 70vh"
+                  @init-new-row="initNewRow"
+                  :remote-operations="true"
+      >
+        <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
+        <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
+                   :use-icons="true"
+        />
+        <DxPaging :page-size="0"/>
+        <DxToolbar>
+          <DxItem location="after" name="addRowButton" css-class="cell-button-add"/>
+          <DxItem name="saveButton"/>
+          <DxItem name="revertButton"/>
+        </DxToolbar>
+        <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
+          <DxRequiredRule/>
+        </DxColumn>
+        <DxColumn ref="occupationRef" caption="직종" data-field="occupation" :editor-options="{ placeholder: '선택 또는 직접입력' }"
+                  css-class="text-red p-0" width="165" alignment="center">
+          <DxRequiredRule/>
+        </DxColumn>
+        <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
+                  :editor-options="{ placeholder: '선택' }">
+          <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value"/>
+          <DxRequiredRule/>
+        </DxColumn>
+        <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right"/>
+        <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right"/>
+        <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right"/>
+        <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right"/>
+        <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right"/>
+        <DxColumn caption="계" data-field="total" alignment="center" cell-template="total" :allowEditing="false"/>
+        <template #total="{ data }">
+          <span class="px-7">{{ calculateSalary(data) }}</span>
+        </template>
+        <DxColumn type="buttons">
+          <DxButtonGrid name="delete" @click="deleteRow"/>
+        </DxColumn>
+        <DxSummary>
+          <DxTotalItem cssClass="custom" show-in-column="drag" display-format="소계"/>
 
-        <DxTotalItem show-in-column="name" alignment="center" display-format="직접인건비 계"/>
-        <DxTotalItem show-in-column="name" alignment="center" display-format="간접인건비 계"/>
-        <DxTotalItem cssClass="custom" show-in-column="name" alignment="center" display-format="총 인건비 계"/>
+          <DxTotalItem show-in-column="name" alignment="center" display-format="직접인건비 계"/>
+          <DxTotalItem show-in-column="name" alignment="center" display-format="간접인건비 계"/>
+          <DxTotalItem cssClass="custom" show-in-column="name" alignment="center" display-format="총 인건비 계"/>
 
-        <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => formatSummary.salary1"/>
-        <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => formatSummary.salary2"/>
-        <DxTotalItem show-in-column="salary" alignment="right"
-                     :customizeText="() => formatSummary.salary1 + formatSummary.salary2" cssClass="custom"/>
+          <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => formatSummary.salary1"/>
+          <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => formatSummary.salary2"/>
+          <DxTotalItem show-in-column="salary" alignment="right"
+                       :customizeText="() => formatSummary.salary1 + formatSummary.salary2" cssClass="custom"/>
 
-        <DxTotalItem show-in-column="allowance" alignment="right" :customizeText="() => formatSummary.allowance1"/>
-        <DxTotalItem show-in-column="allowance" alignment="right" :customizeText="() => formatSummary.allowance2"/>
-        <DxTotalItem show-in-column="allowance" alignment="right"
-                     :customizeText="() => formatSummary.allowance1 + formatSummary.allowance2" cssClass="custom"/>
+          <DxTotalItem show-in-column="allowance" alignment="right" :customizeText="() => formatSummary.allowance1"/>
+          <DxTotalItem show-in-column="allowance" alignment="right" :customizeText="() => formatSummary.allowance2"/>
+          <DxTotalItem show-in-column="allowance" alignment="right"
+                       :customizeText="() => formatSummary.allowance1 + formatSummary.allowance2" cssClass="custom"/>
 
-        <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                     :customizeText="() => formatSummary.dailyAllowance1"/>
-        <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                     :customizeText="() => formatSummary.dailyAllowance2"/>
-        <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                     :customizeText="() => formatSummary.dailyAllowance1 + formatSummary.dailyAllowance2"
-                     cssClass="custom"/>
+          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
+                       :customizeText="() => formatSummary.dailyAllowance1"/>
+          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
+                       :customizeText="() => formatSummary.dailyAllowance2"/>
+          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
+                       :customizeText="() => formatSummary.dailyAllowance1 + formatSummary.dailyAllowance2"
+                       cssClass="custom"/>
 
-        <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                     :customizeText="() => formatSummary.retirementReserve1"/>
-        <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                     :customizeText="() => formatSummary.retirementReserve2"/>
-        <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                     :customizeText="() => formatSummary.retirementReserve1 + formatSummary.retirementReserve2"
-                     cssClass="custom"/>
+          <DxTotalItem show-in-column="retirementReserve" alignment="right"
+                       :customizeText="() => formatSummary.retirementReserve1"/>
+          <DxTotalItem show-in-column="retirementReserve" alignment="right"
+                       :customizeText="() => formatSummary.retirementReserve2"/>
+          <DxTotalItem show-in-column="retirementReserve" alignment="right"
+                       :customizeText="() => formatSummary.retirementReserve1 + formatSummary.retirementReserve2"
+                       cssClass="custom"/>
 
-        <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                     :customizeText="() => formatSummary.socialInsuranceLevy1"/>
-        <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                     :customizeText="() => formatSummary.socialInsuranceLevy2"/>
-        <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                     :customizeText="() => formatSummary.socialInsuranceLevy1 + formatSummary.socialInsuranceLevy2"
-                     cssClass="custom"/>
+          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
+                       :customizeText="() => formatSummary.socialInsuranceLevy1"/>
+          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
+                       :customizeText="() => formatSummary.socialInsuranceLevy2"/>
+          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
+                       :customizeText="() => formatSummary.socialInsuranceLevy1 + formatSummary.socialInsuranceLevy2"
+                       cssClass="custom"/>
 
-        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total1"/>
-        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total2"/>
-        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total"
-                     cssClass="custom"/>
-      </DxSummary>
-    </DxDataGrid>
-    <div style="display: none"> {{ formatSummary }}</div>
-  </standard-form>
+          <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total1"/>
+          <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total2"/>
+          <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total"
+                       cssClass="custom"/>
+        </DxSummary>
+      </DxDataGrid>
+      <div style="display: none"> {{ formatSummary }}</div>
+    </standard-form>
+  </a-modal>
 </template>
 
 <script lang="ts" setup>
@@ -115,7 +124,7 @@ import {
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons-vue';
 import DxButton from 'devextreme-vue/button';
 
-import {computed, defineComponent, ref} from 'vue'
+import {computed, defineComponent, ref, watchEffect} from 'vue'
 import {useStore} from "vuex";
 import deletePopup from "@/utils/deletePopup";
 import {
@@ -133,8 +142,20 @@ import {useMutation, useQuery} from "@vue/apollo-composable";
 import {accountSubject, companyId} from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
+import getEmployeePayTable from "@/graphql/queries/AC/AC5/AC520/getEmployeePayTable";
+import Guid from "devextreme/core/guid";
 
 const emit = defineEmits(['closePopup'])
+const props = defineProps({
+  modalStatus: {
+    type: Boolean,
+    required: true,
+  },
+  index: {
+    type: Number,
+    required: true
+  }
+})
 const arrSelectOccupation: any = []
 const occupationRef = ref()
 const formRef = ref()
@@ -154,10 +175,29 @@ const dataSource = ref(new DataSource({
     key: "key",
     data: [],
   },
-  // requireTotalCount: true,
 }))
-const arrSelectClassification = ref([{id: 'test', name: 'test'}])
-console.log('accountSubject', accountSubject)
+
+// query
+const {onResult: onResultEmployeePayTable ,  onError: onErrorEmployeePayTable} = useQuery(getEmployeePayTable, {
+  companyId,
+  fiscalYear: acYear.value ,// acYear.value
+  facilityBusinessId: globalFacilityBizId.value,
+  index: props.index
+},  () => ({
+  fetchPolicy: "no-cache"
+}))
+onResultEmployeePayTable(({data}) => {
+  if (data) {
+    const transformData = data?.getEmployeePayTable?.items.map((item: any) => ({...item, key: new Guid().toString()}))
+    dataSource.value = new DataSource({
+      store: {
+        type: "array",
+        key: "key",
+        data: transformData ?? [],
+      },
+    })
+  }
+})
 // create mutation useQuery
 const {mutate, onDone, loading, onError} = useMutation(mutations.saveEmployeePayTable)
 onDone(({data}) => {
@@ -195,22 +235,6 @@ const handleSaving = (e: SavingEvent) => {
   }
   e.cancel = true
 }
-
-function calculateOptions(options: any, name: string) {
-  if (options.name === name) {
-    if (options.summaryProcess === 'start') {
-      options.totalValue = 0;
-    } else if (options.summaryProcess === 'calculate') {
-      options.totalValue += options.value.salary ?? 0;
-    }
-  }
-}
-
-const calculate = (options: any) => {
-  calculateOptions(options, 'summarySalary1')
-  calculateOptions(options, 'summarySalary2')
-  // console.log('dataSource --- ', options)
-}
 const dataAllRow: any = ref([])
 const formatSummary = reactive({
   salary1: 0,
@@ -227,8 +251,7 @@ const formatSummary = reactive({
   total2: 0,
   total: 0,
 })
-watch(() => dataAllRow.value, (val) => {
-  if (val) {
+watch(() => dataAllRow.value,  (val) => {
     const initialValue = {
       salary1: 0,
       salary2: 0,
@@ -244,8 +267,7 @@ watch(() => dataAllRow.value, (val) => {
       total2: 0,
       total: 0,
     };
-
-    const result = val.reduce((acc: any, item: any) => {
+    const result = val?.reduce((acc: any, item: any) => {
       const {
         classification,
         salary = 0,
@@ -274,7 +296,6 @@ watch(() => dataAllRow.value, (val) => {
       return acc;
     }, initialValue)
     Object.assign(formatSummary, result)
-  }
 }, {deep: true})
 const onEditorPreparing = (e: any) => {
   if (e.dataField == "classification" && e.parentType === "dataRow") {
@@ -308,10 +329,8 @@ const logEvent = (e: any) => {
   console.log('log event', e)
 }
 
-const customize = (data: any) => {
-  // console.log('data row', dataAllRow.value)
-  // console.log('data customize', data)
-  // return data?.classification === 1 ? data?. : '간접'
+const setModalVisible = () => {
+  emit('closePopup', false)
 }
 
 const onCellPrepared = (e: any) => {
@@ -330,16 +349,14 @@ const onCellPrepared = (e: any) => {
   // }
 }
 const onRowPrepared = (e: any) => {
-  if (!e.isEditing && e.rowType === 'data') {
+  if (!e.isEditing && e.rowType === 'data' && !e?.removed) {
     if (!dataAllRow.value.length) {
       dataAllRow.value.push({...e.data, key: e.key})
     } else {
       const isRowExits = dataAllRow.value.find((item: any) => item.key === e.key)
       if (!isRowExits) dataAllRow.value.push({...e.data, key: e.key})
       else {
-        // console.log(e?.removed)
-        if (e?.removed) dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== e.key)
-        else dataAllRow.value = dataAllRow.value.map((item: any) => item.key === e.key ? {...item, ...e.data} : {...item})
+        dataAllRow.value = dataAllRow.value.map((item: any) => item.key === e.key ? {...item, ...e.data} : {...item})
       }
     }
   }
@@ -380,11 +397,11 @@ const randomString = () => {
 //   })
 // }
 function calculateSalary(data: any) {
-  const salary = +data.data.salary || 0;
-  const allowance = +data.data.allowance || 0;
-  const dailyAllowance = +data.data.dailyAllowance || 0;
-  const retirementReserve = +data.data.retirementReserve || 0;
-  const socialInsuranceLevy = +data.data.socialInsuranceLevy || 0;
+  const salary = +data.data?.salary || 0;
+  const allowance = +data.data?.allowance || 0;
+  const dailyAllowance = +data.data?.dailyAllowance || 0;
+  const retirementReserve = +data.data?.retirementReserve || 0;
+  const socialInsuranceLevy = +data.data?.socialInsuranceLevy || 0;
   return salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy;
 }
 </script>

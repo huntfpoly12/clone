@@ -110,7 +110,8 @@ const statesPA420 = {
     paymentMonth: dayjs().month() + 1,
   },
   // tab 1
-  ...cloneDeep(INITIAL_STATE)
+  ...cloneDeep(INITIAL_STATE),
+  employeeIdCreated: [],
 };
 
 export default statesPA420;

@@ -8,7 +8,7 @@
           :hoverStateEnabled="true"
           :show-borders="true"
           :data-source="dataSource"
-          key-expr="Id"
+          key-expr="code"
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
@@ -17,36 +17,39 @@
           v-model:focused-row-key="focusedRowKey"
           @focused-row-changing="onFocusedRowChanging"
           @focused-row-changed="onFocusedRowChanged"
+          noDataText="내역이 없습니다"
           style="max-height: 700px"
         >
-          <DxPaging :page-size="0" />
+          <DxPaging :page-size="0"/>
 
-          <DxColumn caption="관" data-field="Six"/>
-          <DxColumn caption="항" data-field="Seven"/>
-          <DxColumn caption="목" data-field="Eight"/>
-          <DxColumn caption="세목" data-field="Nine"/>
-          <DxColumn caption="세목코드" data-field="Ten"/>
-          <DxColumn :caption="dataBudget?.index ? `전년도` :`{해당차수}차 추경`" data-field="Two"/>
-          <DxColumn :caption="dataBudget?.index ? `당해년도` :`{해당차수}차 추경`" data-field="Three"/>
-          <DxColumn caption="증감액" data-field="Eleven"/>
+          <DxColumn caption="관" data-field="code1"/>
+          <DxColumn caption="항" data-field="code2"/>
+          <DxColumn caption="목" data-field="code3"/>
+          <DxColumn caption="세목" data-field="code11"/>
+          <DxColumn caption="세목코드" data-field="code"/>
+          <DxColumn :caption="dataBudget?.index ? `전년도` :`{해당차수}차 추경`" data-field="amount1"/>
+          <DxColumn :caption="dataBudget?.index ? `당해년도` :`{해당차수}차 추경`" data-field="amount"/>
+          <DxColumn caption="증감액" cell-template="calculateAmount"/>
+          <template #calculateAmount="{data}">{{data.data.amount}}</template>
+
           <DxColumn caption="증감비율" data-field="Twelve"/>
-          <DxColumn caption="자금원천" data-field="Four" cell-template="sourceOfFunding"/>
-          <DxColumn caption="산출내역" data-field="Thirteen" cell-template="outputRecord"/>
+          <DxColumn caption="자금원천" cell-template="sourceOfFunding"/>
+          <DxColumn caption="산출내역" data-field="details" cell-template="outputRecord"/>
           <DxColumn caption="비고" data-field="Five"/>
 
           <template #sourceOfFunding="{data}">
             <tag-funding-source
-              :selfFunding="Boolean(data.data.Four.selfFunding)"
-              :revenueGeneratingBusiness="Boolean(data.data.Four.revenueGeneratingBusiness)"
-              :subsidy="Boolean(data.data.Four.subsidy)"
-              :donation="Boolean(data.data.Four.donation)"
+              :fundingSource1="data.data.fundingSource1"
+              :fundingSource2="data.data.fundingSource2"
+              :fundingSource3="data.data.fundingSource3"
+              :fundingSource4="data.data.fundingSource4"
             />
           </template>
           <template #outputRecord="{data}">
-            <div v-if="data.data && data.data.Thirteen.length > 0">
+            <div v-if="data.data && data.data.details?.length > 0">
               <ul>
                 <li v-for="(row, index) in data.data.Thirteen" :key="index">
-                  <div class="d-flex">{{ row.detail}} - {{ row.amount}}</div>
+                  <div class="d-flex">{{ row.detail }} - {{ row.amount }}</div>
                 </li>
               </ul>
             </div>
@@ -54,14 +57,16 @@
         </DxDataGrid>
       </a-col>
       <a-col span="8">
+        {{ dataBudget }}
         <standard-form ref="formRef">
-          <DxField label="계정과목">
+          <DxField :label="dataBudget?.index ? `${dataBudget?.index - 1} 차 추경` : `전년도`">
             <default-text-box
               placeholder="${세목명} (${세목코드)}"
+              :value="`${formState?.code}`"
               disabled
             />
           </DxField>
-          <DxField label="계정과목">
+          <DxField :label="dataBudget?.index ? `${dataBudget?.index - 1} 차 추경` : `당해년도`">
             <div class="d-flex-center">
               <number-box-money
                 class="flex-1 mr-5"
@@ -69,7 +74,7 @@
               <a-tag>임직원보수일람표 반영</a-tag>
             </div>
           </DxField>
-          <DxField label="${현예산}}">
+          <DxField :label="dataBudget?.index === 0 ? `전년도` : `${dataBudget?.index || 0 - 1}차 추경`">
             <div class="d-flex-center">
               <number-box-money
                 class="flex-1 mr-5"
@@ -79,7 +84,7 @@
               <info-tool-tip>인건비 관련 예산액은 [임직원보수일람표]의 금액이 반영되며, 수정불가입니다.</info-tool-tip>
             </div>
           </DxField>
-          <DxField label="증감액">
+          <DxField :label="dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index}차 추경`">
             <default-text-box placeholder="${증감액}" disabled/>
           </DxField>
           <DxField label="증감비율(%)">
@@ -140,7 +145,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, ComputedRef, defineComponent, ref} from 'vue'
+import {computed, ComputedRef, defineComponent, ref, watch} from 'vue'
 import {useStore} from "vuex";
 import {DxDataGrid, DxColumn, DxPaging} from 'devextreme-vue/data-grid';
 import {Budget} from "@/views/AC/AC5/AC520/type";
@@ -150,33 +155,52 @@ import DxButton from "devextreme-vue/button";
 import CalculationDetailsPopup from "@/views/AC/AC5/AC520/components/CalculationDetailsPopup.vue";
 import {FocusedRowChangedEvent} from "devextreme/ui/data_grid";
 import cloneDeep from "lodash/cloneDeep";
+import {useQuery} from "@vue/apollo-composable";
+import queries from "@/graphql/queries/AC/AC5/AC520";
+import {companyId} from "@/helpers/commonFunction";
+import DataSource from "devextreme/data/data_source";
+import dayjs from "dayjs";
 
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
 const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters["common/getDataBudget"]);
 const typePopup: ComputedRef<boolean> = computed(() => store.getters['common/getTypeCreateBudget'])
+const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
+
 const isPopupCalculateVisible = ref(false)
 const focusedRowKey = ref<number>(0); // focused row key
 const formState = ref();
 const previousRowData = ref();
 // create array have 10 item data
-const data = new Array(1).fill({
-  Id: 1,
-  Two: 2,
-  Three: 3,
-  Four: {selfFunding: 12, revenueGeneratingBusiness: null, subsidy: 1, donation: 2},
-  Five: 5,
-  Six: 6,
-  Seven: 7,
-  Eight: 8,
-  Nine: 9,
-  Ten: 10,
-  Eleven: 11,
-  Twelve: 12,
-  Thirteen: []
+store.dispatch('settings/getAccountSubject', { companyId: companyId, fiscalYear: Number(dayjs().year()), facilityBizType: globalFacilityBizId.value })
+const accountSubject = computed(() =>  store.getters["settings/accountSubjects"])
+const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
+const dataSource = ref()
+const codes = computed(() => accountSubject.value[0]?.codes || null)
+const query = {
+  companyId,
+  fiscalYear: acYear.value,
+  facilityBusinessId: globalFacilityBizId.value,
+  index: dataBudget.value?.index,
+  type: dataBudget.value?.budgetType,
+}
+const {onResult, onError} = useQuery(queries.getBudget, query, () => ({
+  fetchPolicy: "no-cache",
+}))
+
+onResult(({data}) => {
+  if (data?.getBudget) {
+    dataSource.value =  new DataSource({
+      store: {
+        type: "array",
+        key: "code",
+        data: data.getBudget.records || []
+      },
+    })
+  }
 })
-const dataSource = ref(data)
+
 const handleOpenCalPopup = () => {
   isPopupCalculateVisible.value = true
 }
@@ -186,7 +210,8 @@ const handleCloseCalPopup = (value: any) => {
   }
   isPopupCalculateVisible.value = false
 }
-const onFocusedRowChanging = () => {}
+const onFocusedRowChanging = () => {
+}
 const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
   formState.value = e.row?.data;
   previousRowData.value = cloneDeep(e.row?.data);
@@ -204,6 +229,7 @@ const handleSubmit = () => {
   padding: 0px 10px;
   background-color: #97c0e1;
 }
+
 .table-left {
   padding: 10px;
   height: 700px;
@@ -216,6 +242,7 @@ const handleSubmit = () => {
 :deep(.dx-button-content) {
   padding: 4px;
 }
+
 ul, li {
   margin-bottom: 0;
   padding: 0;

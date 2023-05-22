@@ -303,7 +303,7 @@
                   </div>
                 </DxField>
               </a-col>
-              <a-col span="16">
+              <a-col span="8">
                 <DxField label="본점사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.nationalPensionSeparatelySiteManageNumber'
                                    placeholder="" />
@@ -381,10 +381,10 @@
                 </DxField>
               </a-col>
             </a-row>
-            <DxField label="주된사업장"></DxField>
+            <DxField label="주된사업장" />
             <a-row>
-              <a-col span="8" class="pl-25">
-                <DxField label="명칭" class="">
+              <a-col span="8" class="">
+                <DxField label="명칭" class="" styleLabel="padding-left: 15px">
                   <default-text-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceName'
                                     placeholder="" />
                 </DxField>
