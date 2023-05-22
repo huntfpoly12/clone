@@ -292,14 +292,13 @@ export default defineComponent({
       },
       afterValidate: (isValid: boolean, value: any, row: any, prop: any) => {
         let hot = wrapper.value.hotInstance;
-
         if (isValid == false) {
           hot.setDataAtCell(row, hot.propToCol(prop), 0);
         }
       },
       afterChange: (changes: any, source: string) => {
         if (source == "edit") {
-          calculateWithholdingStatusReportModified(wrapper);
+          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReportModified(wrapper);
           store.commit("common/setHasChangedPopupPA210", false);
         }
       },
