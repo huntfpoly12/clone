@@ -48,6 +48,7 @@ export default defineComponent({
       email.value = value?.email || ''
     },{
       deep: true,
+      immediate: true
     })
 
     let keyRefreshForm = ref(0)
