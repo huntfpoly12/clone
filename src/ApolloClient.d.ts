@@ -36,38 +36,51 @@ const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }
 
             // call the mutation to refresh token
             return new Observable((observer) => {
-              client.mutate({
-                mutation: mutations.refreshLogin,
-                variables: {
-                  accessToken: accessToken,
-                  refreshToken: refreshToken
-                },
-              })
-                .then(({ data }) => {
-                  console.log(data)
-                  // save the new tokens
-                  sessionStorage.setItem('token', data.refreshLogin.accessToken);
-                  sessionStorage.setItem('refreshToken', data.refreshLogin.refreshToken);
-                  // update the headers with the new token
-                  const oldHeaders = operation.getContext().headers;
-                  operation.setContext({
-                    headers: {
-                      ...oldHeaders,
-                      authorization: `Bearer ${data.refreshLogin.accessToken}`,
-                    },
-                  });
-                  // retry the request, returning the new observable
-                  const subscriber = {
-                    next: observer.next.bind(observer),
-                    error: observer.error.bind(observer),
-                    complete: observer.complete.bind(observer),
-                  };
-                  return forward(operation).subscribe(subscriber);
+              const jwtObject = getJwtObject(accessToken);
+              if (jwtObject.isExpired()) {
+                client.mutate({
+                  mutation: mutations.refreshLogin,
+                  variables: {
+                    accessToken: accessToken,
+                    refreshToken: refreshToken
+                  },
                 })
-                .catch((error) => {
-                  // handle error
-                  console.log(error);
-                });
+                  .then(({ data }) => {
+                    // console.log(data)
+                    // save the new tokens
+                    sessionStorage.setItem('token', data.refreshLogin.accessToken);
+                    sessionStorage.setItem('refreshToken', data.refreshLogin.refreshToken);
+                    // update the headers with the new token
+                    const oldHeaders = operation.getContext().headers;
+                    operation.setContext({
+                      headers: {
+                        ...oldHeaders,
+                        authorization: `Bearer ${data.refreshLogin.accessToken}`,
+                      },
+                    });
+                    // retry the request, returning the new observable
+                    const subscriber = {
+                      next: observer.next.bind(observer),
+                      error: observer.error.bind(observer),
+                      complete: observer.complete.bind(observer),
+                    };
+                    return forward(operation).subscribe(subscriber);
+                  })
+                  .catch((error) => {
+                    // handle error
+                    console.log(error);
+                  });
+              } else {
+                 // if toke not expired 
+                 const oldHeaders = operation.getContext().headers;
+                 operation.setContext({
+                   headers: {
+                     ...oldHeaders,
+                     authorization: `Bearer ${accessToken}`,
+                   },
+                 });
+                 return forward(operation)
+              }
             });
         }
       } else {
