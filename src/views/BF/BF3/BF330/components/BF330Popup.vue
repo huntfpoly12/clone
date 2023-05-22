@@ -401,6 +401,7 @@ export default defineComponent({
         const deleteModal = ref(false);
         const rowIndexDelete = ref(0);
         const contentDelete = Message.getCommonMessage('401').message;
+        const isWatching = ref(false);
         // ============ GRAPQL ===============================
         // get service contract
         const { result } = useQuery(
@@ -511,8 +512,16 @@ export default defineComponent({
                 formState.extra.salesRepresentativeId = data.salesRepresentativeId;
                 formState.extra.manageUserId = data.manageUserId;
                 formStateExtraOld.value = { ...formState.extra };
-                if (formState.info.withholding.options[0]?.withholdingServiceType) {
+                if (formState.info.withholding?.options[0]?.withholdingServiceType) {
                     withholdingServiceType.value = true
+                }else {
+                    withholdingServiceType.value = false;
+                    if(formState.info.withholding){
+                        formState.info.withholding.options = [{
+                          withholdingServiceType: 1,
+                          price: 0,
+                        }]
+                    }
                 }
                 dataSource.value = formState.info.accounting?.map((item: any, key: any) => {
                     return {
@@ -520,7 +529,10 @@ export default defineComponent({
                     }
                 })
                 dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
-                dataActiveRow.value = dataSource.value[0]
+                dataActiveRow.value = dataSource.value[0];
+                setTimeout(() => {
+                    isWatching.value = true;
+                }, 0);
             }
             setTimeout(() => {
                 objDataDefault = JSON.parse(JSON.stringify({ ...formState }))
@@ -535,13 +547,35 @@ export default defineComponent({
                 formState.info.accountingPrice = 0
             }
         })
+        watch(withholdingServiceType, (value) => {
+            if(value && formState.info.withholding && isWatching.value){
+                formState.info.withholding.options = [{
+                  withholdingServiceType: 1,
+                  price: 0,
+                }]
+            }
+        })
         watch(() => formState.info.usedWithholding, (value) => {
+          if(isWatching.value){
             if (value) {
-                if (formState.id) {
-                    formState.info.withholdingPrice = formState.info.withholding.price + formState.info.withholding.options[0]?.price
+              if (formState.id) {
+                withholdingServiceType.value = true;
+                formState.info.withholding = 
+                  {  
+                    startYearMonth: +dayjs().format('YYYYMM'),
+                    capacity: null,
+                    price: 0,
+                    options: [{
+                      withholdingServiceType: 1,
+                      price: 0,
+                    }]
+                  }
                 }
-            } else {
+                formState.info.withholdingPrice = formState.info.withholding?.price + (formState.info.withholding?.options[0]?.price??0);
+              } else {
+                formState.info.withholding = null;
                 formState.info.withholdingPrice = 0
+              }
             }
         })
         watch(resultMemo, (value) => {
@@ -552,6 +586,7 @@ export default defineComponent({
         watch(() => props.modalStatus, (newValue) => {
             trigger.value = true;
             if (newValue) {
+                isWatching.value = false;
                 dataQuery.value = { id: props.idRowEdit };
                 dataQueryMemos.value = { companyId: props.idRowEdit };
                 refetchMemo();
@@ -606,6 +641,9 @@ export default defineComponent({
                 if (!variables.info.usedWithholding) {
                     delete variables.info.withholding
                 }
+                if(!withholdingServiceType.value && variables.info.withholding){
+                    variables.info.withholding.options = [];
+                }
                 delete variables.extra
                 actionUpdate(variables);
             }
@@ -614,7 +652,7 @@ export default defineComponent({
         const totalWithholdingService = computed(() => {
             let ttwithholdingPrice = 0
             if (formState.id) {
-                ttwithholdingPrice = formState.info.withholding.price + formState.info.withholding.options[0]?.price
+                ttwithholdingPrice = formState.info.withholding.price + (formState.info.withholding.options[0]?.price??0)
             }
             formState.info.withholdingPrice = ttwithholdingPrice
             return ttwithholdingPrice

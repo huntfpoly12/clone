@@ -58,3 +58,28 @@ export const showTooltipYearMonth = (reportType: any, startYearMonth: any, finis
     }
         
 }
+
+
+export const  getObjectWithPositiveValues = (obj:any)=>{
+  if (typeof obj !== 'object' || obj === null) {
+    return null;
+  }
+
+  let hasPositiveValue = false;
+
+  for (let key in obj) {
+    if (key === 'code') {
+      continue;
+    }
+    if (typeof obj[key] === 'number' && obj[key] > 0) {
+      hasPositiveValue = true;
+      break; 
+    }
+  }
+
+  if (hasPositiveValue) {
+    return true;
+  } else {
+    return false;
+  }
+}

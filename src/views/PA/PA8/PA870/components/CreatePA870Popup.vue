@@ -40,35 +40,35 @@
           <box-title title="사업장">
             <a-row>
               <a-col span="8">
-                <DxField label="명칭">
-                  <default-text-box v-model:valueInput='formState.companyName' placeholder="" :disabled="true" />
+                <DxField label="명칭" required>
+                  <default-text-box v-model:valueInput='formState.companyName' placeholder="" />
                 </DxField>
               </a-col>
               <!-- <a-col span="8">
                 <DxField label="사업장관리번호">
-                  <text-number-box v-model:valueInput='formState.adding' placeholder="" :disabled="true" />
+                  <text-number-box v-model:valueInput='formState.adding' placeholder="" />
                 </DxField>
               </a-col> -->
               <a-col span="8">
                 <DxField label="사업장형태" required>
                   <radio-group :arrayValue="companyTypeArr" v-model:valueRadioCheck="formState.companyType"
-                               layoutCustom="horizontal" class="mt-1" :disabled="true" required></radio-group>
+                               layoutCustom="horizontal" class="mt-1" required></radio-group>
                 </DxField>
               </a-col>
             </a-row>
-            <DxField label="주소" required>
-              <default-text-box :disabled="true" v-model:valueInput='formState.companyAddress' placeholder="" required />
+            <DxField label="소재지" required>
+              <default-text-box v-model:valueInput='formState.companyAddress' placeholder="" required />
             </DxField>
             <a-row>
               <a-col span="8">
                 <DxField label="사업자등록번호" required>
-                  <biz-number-text-box :disabled="true" v-model:valueInput='formState.companyBizNuber'
+                  <biz-number-text-box v-model:valueInput='formState.companyBizNuber'
                                        mess="이항목은 필수 입력사항입니다!" nameInput="companyBizNumber" required/>
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="법인등록번호" required>
-                  <text-number-box :disabled="true" required v-model:valueInput='formState.companyCorpRegNuber' placeholder="" />
+                  <text-number-box required v-model:valueInput='formState.companyCorpRegNuber' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
@@ -81,17 +81,17 @@
             <a-row>
               <a-col span="8">
                 <DxField label=" 휴대전화번호">
-                  <tel-text-box :disabled="true" v-model:valueInput='formState.companyMobile' placeholder="" />
+                  <tel-text-box v-model:valueInput='formState.companyMobile' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="우편번호">
-                  <text-number-box :disabled="true" v-model:valueInput='formState.companyPostNumber' placeholder="" />
+                  <text-number-box v-model:valueInput='formState.companyPostNumber' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="FAX번호">
-                  <text-number-box :disabled="true" v-model:valueInput='formState.companyFax' placeholder="" />
+                  <text-number-box v-model:valueInput='formState.companyFax' placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
@@ -132,7 +132,7 @@
             <a-row>
               <a-col span="8">
                 <DxField label="성명" required>
-                  <default-text-box v-model:valueInput='formState.presidentName' placeholder="" :disabled="true" required/>
+                  <default-text-box v-model:valueInput='formState.presidentName' placeholder="" required/>
                 </DxField>
               </a-col>
               <a-col span="8">
@@ -142,7 +142,7 @@
               </a-col>
               <a-col span="8">
                 <DxField label="전화번호">
-                  <tel-text-box v-model:valueInput="formState.presidentTel" placeholder="" :disabled="true" />
+                  <tel-text-box v-model:valueInput="formState.presidentTel" placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
@@ -150,7 +150,7 @@
             <a-row>
               <a-col span="24">
                 <DxField label="주소" required>
-                  <default-text-box v-model:valueInput='formState.presidentAddress' placeholder="" :disabled="true" required/>
+                  <default-text-box v-model:valueInput='formState.presidentAddress' placeholder="" required/>
                 </DxField>
               </a-col>
             </a-row>
@@ -158,31 +158,31 @@
 
           <box-title title="보험료자동이체신청">
             <a-row>
-              <a-col span="12">
-                <DxField label="은행명" class="field-custom">
+              <a-col span="8">
+                <DxField label="은행명" >
                   <default-text-box v-model:valueInput='formState.directDebitBankName' placeholder="" />
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="계좌번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.directDebitAccountNumber' placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
             <a-row>
-              <a-col span="12">
-                <DxField label="예금주명" class="field-custom">
+              <a-col span="8">
+                <DxField label="예금주명" >
                   <default-text-box v-model:valueInput='formState.directDebitAccountOwner' placeholder="" />
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="예금주주민등록번호" class="field-custom">
                   <id-number-text-box v-model="formState.directDebitAccountOwnerResidentNumber" placeholder="" />
                 </DxField>
               </a-col>
             </a-row>
             <a-row>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="합산자동이체적용여부" class="field-custom">
                   <radio-group :arrayValue="combinedDirectDebitStatusArr"
                                v-model:valueRadioCheck="formState.combinedDirectDebitStatus" layoutCustom="horizontal"
@@ -228,13 +228,13 @@
             </a-row>
 
             <a-row>
-              <a-col span="12">
-                <DxField label="수신자명" class="field-custom">
+              <a-col span="8">
+                <DxField label="수신자명" >
                   <default-text-box v-model:valueInput='formState.electronicReceiverName' placeholder=""
                                     style="flex: 1" />
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="수신자주민등록번호" class="field-custom">
                   <id-number-text-box v-model:valueInput="formState.electronicReceiverResidentNumber" placeholder=""
                                       style="flex: 1" />
@@ -245,16 +245,20 @@
 
           <box-title title="국민연금/건강보험">
             <a-row>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="건설현장사업장해당여부" class="field-custom-auto">
                   <radio-group :arrayValue="constructionSiteWorkplaceArr"
                                v-model:valueRadioCheck="formState.constructionSiteWorkplace" layoutCustom="horizontal"
                                class="mt-1"></radio-group>
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="10">
                 <DxField label="건설현장사업기간" class="field-custom">
-                  <default-text-box v-model:valueInput='formState.constructionSiteBusinessPeriod' placeholder="" />
+<!--                  <default-text-box v-model:valueInput='formState.constructionSiteBusinessPeriod' placeholder="" />-->
+                  <range-date-time-box
+                    v-model:valueDate="formState.constructionSiteBusinessPeriod"
+                    :multi-calendars="true"
+                  />
                 </DxField>
               </a-col>
             </a-row>
@@ -278,13 +282,13 @@
                 </DxField>
               </a-col>
               <a-col span="8">
-                <DxField label="가입대상자수" :required="formState.nationalPensionReport">
+                <DxField label="가입대상자수" :required="formState.nationalPensionReport" class="field-custom">
                   <number-box v-model:valueInput='formState.nationalPensionEmployeeTargetNumber' placeholder=""
                               :required="formState.nationalPensionReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
-                <DxField label="적용연월일" :required="formState.nationalPensionReport">
+                <DxField label="적용연월일" :required="formState.nationalPensionReport" >
                   <date-time-box :clearable="false" placeholder="" :required="formState.nationalPensionApplyDate" />
                 </DxField>
               </a-col>
@@ -299,7 +303,7 @@
                   </div>
                 </DxField>
               </a-col>
-              <a-col span="10">
+              <a-col span="16">
                 <DxField label="본점사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.nationalPensionSeparatelySiteManageNumber'
                                    placeholder="" />
@@ -311,13 +315,13 @@
           <box-title title="건강보험">
             <a-row>
               <a-col span="8">
-                <DxField label="적용대상자수" :required="formState.healthInsuranceReport" class="field-custom-auto">
+                <DxField label="적용대상자수" :required="formState.healthInsuranceReport">
                   <number-box v-model:valueInput='formState.healthInsuranceEmployeeTargetNumber' placeholder=""
                               :required="formState.healthInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
-                <DxField label="적용연월일" :required="formState.healthInsuranceReport" class="field-custom-auto">
+                <DxField label="적용연월일" :required="formState.healthInsuranceReport" class="field-custom">
                   <date-time-box :clearable="false" v-model:valueDate="formState.healthInsuranceApplyDate"
                                  placeholder="" :required="formState.healthInsuranceReport" />
                 </DxField>
@@ -366,7 +370,7 @@
                 </DxField>
               </a-col>
               <a-col span="8">
-                <DxField label="피보험자수" :required="formState.employeementInsuranceReport">
+                <DxField label="피보험자수" :required="formState.employeementInsuranceReport" class="field-custom">
                   <number-box v-model:valueInput='formState.employeementInsuranceEmployeeTargetNumber' placeholder=""
                               :required="formState.employeementInsuranceReport" />
                 </DxField>
@@ -379,26 +383,27 @@
             </a-row>
             <DxField label="주된사업장"></DxField>
             <a-row>
-              <a-col span="11" class="ml-25">
-                <DxField label="명칭" class="field-custom">
+              <a-col span="8" class="pl-25">
+                <DxField label="명칭" class="">
                   <default-text-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceName'
                                     placeholder="" />
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="사업자등록번호" class="field-custom">
                   <biz-number-text-box v-model:valueInput="formState.employeementInsuranceMainWorkplaceBizNumber"
                                        placeholder="" />
                 </DxField>
               </a-col>
-              <a-col span="11" class="ml-25">
-                <DxField label="우선지원대상기업"  class="field-custom">
+              <a-col span="8" />
+              <a-col span="8" class="pl-25">
+                <DxField label="우선지원대상기업"  class="field-custom-1">
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.employeementInsuranceMainWorkplacePrioritySupport"
                                layoutCustom="horizontal" class="mt-1"></radio-group>
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="주된사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceManageNumber'
                                    placeholder="" />
@@ -416,25 +421,25 @@
                 </DxField>
               </a-col>
               <a-col span="8">
-                <DxField label="성립일" :required="formState.industrialAccidentInsuranceReport">
+                <DxField label="성립일" class="field-custom" :required="formState.industrialAccidentInsuranceReport">
                   <date-time-box :clearable="false" v-model:valueDate="formState.industrialAccidentInsuranceApplyDate"
                                  placeholder="" :required="formState.industrialAccidentInsuranceReport" />
                 </DxField>
               </a-col>
-              <a-col span="8">
+              <a-col span="6">
                 <DxField label="사업종류코드" >
                   <default-text-box v-model:valueInput='formState.industrialAccidentInsuranceBusinessTypeCode'
                                     placeholder="" />
                 </DxField>
               </a-col>
-              <a-col span="12">
-                <DxField label="사업의형태" class="field-custom" :required="formState.industrialAccidentInsuranceReport">
+              <a-col span="8">
+                <DxField label="사업의형태"  :required="formState.industrialAccidentInsuranceReport">
                   <radio-group :arrayValue="industrialAccidentInsuranceBusinessTypeArr"
                                v-model:valueRadioCheck="formState.industrialAccidentInsuranceBusinessType" layoutCustom="horizontal"
                                class="mt-1"></radio-group>
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="10">
                 <DxField label="신고일현재 산재발생여부" :required="formState.industrialAccidentInsuranceReport"
                          class="field-custom">
                   <radio-group :arrayValue="industrialAccidentInsuranceOccurrenceArr"
@@ -442,14 +447,14 @@
                                class="mt-1"></radio-group>
                 </DxField>
               </a-col>
-              <a-col span="12">
-                <DxField label="주된사업장여부" class="field-custom">
+              <a-col span="8">
+                <DxField label="주된사업장여부" >
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.industrialAccidentInsuranceMainWorkplace" layoutCustom="horizontal"
                                class="mt-1"></radio-group>
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="주된사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.industrialAccidentInsuranceMainWorkplaceBizNumber'
                                    placeholder="" />
@@ -490,6 +495,8 @@ import { useCompanyInfo } from "@/utils/useCompanyInfo";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import notification from '@/utils/notification';
 import { getCurrentInstance } from 'vue';
+import dayjs from "dayjs";
+import cloneDeep from "lodash/cloneDeep";
 
 export default defineComponent({
   components: {},
@@ -510,7 +517,6 @@ export default defineComponent({
     const formRef = ref();
     const formState = ref({ ...INITIAL_FORM.INITIAL_FORM_PA870 });
     const formStateToCompare = ref<any>({ ...INITIAL_FORM.INITIAL_FORM_PA870 });
-
     //-------------------------- get Company-----------------------
 
     const myCompanyParam = reactive({
@@ -544,7 +550,6 @@ export default defineComponent({
         formState.value.presidentAddress = data.address;
         formStateToCompare.value = { ...formState.value };
       }
-      console.log();
     });
 
     //-----------------------------API CREATE && FORM ACTION--------------------------------
@@ -553,6 +558,7 @@ export default defineComponent({
     const { mutate: createCompanyJoinMutate, onDone: createCompanyJoinDone, onError: createCompanyJoinError } = useMutation(mutations.createMajorInsuranceCompanyJoin);
     createCompanyJoinDone((res: any) => {
       notification('success', messageCreate);
+      formState.value = cloneDeep(INITIAL_FORM.INITIAL_FORM_PA870)
       emit('closeModal', true);
     })
     createCompanyJoinError((res: any) => {
@@ -563,9 +569,10 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        let { adding, ...sendData } = formState.value;
+        let { adding,constructionSiteBusinessPeriod, ...sendData } = formState.value;
+        const convertConstructionSiteBusinessPeriod = `${constructionSiteBusinessPeriod[0]}-${constructionSiteBusinessPeriod[1]}`
         makeDataClean(sendData, ['presidentResidentNumber']);
-        createCompanyJoinMutate({ companyId: companyId, imputedYear: globalYear.value, input: sendData });
+        createCompanyJoinMutate({ companyId: companyId, imputedYear: globalYear.value, input: {...sendData, constructionSiteBusinessPeriod: convertConstructionSiteBusinessPeriod} });
       }
     }
 
@@ -588,7 +595,7 @@ export default defineComponent({
       formRef,
       companyTypeArr, combinedDirectDebitStatusArr, directDebitDateTypeArr, constructionSiteWorkplaceArr, nationalPensionSeparatelySiteStatusArr,
       industrialAccidentInsuranceBusinessTypeArr, industrialAccidentInsuranceOccurrenceArr,
-      myCompanyLoading
+      myCompanyLoading,
     }
   },
 })
