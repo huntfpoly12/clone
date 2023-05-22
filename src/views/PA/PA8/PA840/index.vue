@@ -27,11 +27,8 @@
         <!--        <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/>-->
         <DxColumn caption="메모" data-field="memo" alignment="center" />
         <!--        <DxScrolling column-rendering-mode="virtual"/>-->
-        <DxColumn caption="연금휴복직신고서다운로드" cell-template="fileStorageId" alignment="center" />
-
-        <DxColumn caption="건강보험휴복직신고서다운로드" cell-template="fileStorageId1" alignment="center" />
-        <DxColumn caption="고용산재휴복직신고서다운로드" cell-template="fileStorageId2" alignment="center" />
-        <DxColumn caption="" cell-template="action" />
+        <DxColumn caption="휴복직신고서다운로드" cell-template="fileStorageId" alignment="center" />
+        <DxColumn caption="" cell-template="action" width="100px"/>
 
         <template #button-template>
           <a-tooltip placement="top">
@@ -56,25 +53,9 @@
           </div>
         </template>
         <template #fileStorageId=" { data }: any " class="custom-action">
-          <div v-if=" data.data.leaveOfAbsenceRequestFileStorageId " class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer"
-              @click=" onGetFileStorageId(data.data.type, data.data.leaveOfAbsenceRequestFileStorageId) ">
-              <DownloadOutlined :style="{fontSize: 12}"/>
-            </DxButton>
-          </div>
-        </template>
-        <template #fileStorageId1=" { data }: any " class="custom-action">
-          <div v-if=" data.data.leaveOfAbsenceRequestFileStorageId " class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer"
-              @click=" onGetFileStorageId(data.data.type, data.data.leaveOfAbsenceRequestFileStorageId) ">
-              <DownloadOutlined :style="{fontSize: 12}"/>
-            </DxButton>
-          </div>
-        </template>
-        <template #fileStorageId2=" { data }: any " class="custom-action">
-          <div v-if=" data.data.leaveOfAbsenceRequestFileStorageId " class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer"
-              @click=" onGetFileStorageId(data.data.type, data.data.leaveOfAbsenceRequestFileStorageId) ">
+              @click=" onGetFileStorageId(data.data.type, data.data.workId) ">
               <DownloadOutlined :style="{fontSize: 12}"/>
             </DxButton>
           </div>
@@ -332,7 +313,7 @@ leaveOfAbsenceViewUrlError((res: any) => {
 })
 watch(leaveOfAbsenceViewUrlResult, (newVal: any) => {
   if (newVal) {
-    window.open(newVal.getMajorInsuranceCompanyEmployeeLossViewUrl);
+    window.open(newVal.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl);
     leaveOfAbsenceViewUrlTrigger.value = false;
   }
 });
@@ -351,7 +332,7 @@ returnToWorkViewUrlError((res: any) => {
 })
 watch(returnToWorkViewUrl, (newVal: any) => {
   if (newVal) {
-    window.open(newVal.getMajorInsuranceCompanyEmployeeLossViewUrl);
+    window.open(newVal.getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl);
     returnToWorkViewUrlTrigger.value = false;
   }
 });
