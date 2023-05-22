@@ -216,7 +216,7 @@
 					<div style="
               border: 1px solid #ddd;
               border-top: none;
-              /* width: 100%; */
+              background-color: #ddd;
               display: flex;
               padding: 5px;
               justify-content: space-around;
@@ -252,19 +252,35 @@
 						<!-- </div> -->
 					</div>
 				</a-spin>
-				<div class="detail-header mt-10">
+				<div class="detail-header mt-10"
+					@click="store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull">
 					<a-row class="text-align-center">
-						<a-col :span="8" @click="store.state.common.ac120.statusShowFull =
-							!store.state.common.ac120.statusShowFull;">
-							<span style="float: left">
-								<fullscreen-exit-outlined :style="{ fontSize: '20px' }"
-									v-if="store.state.common.ac120.statusShowFull" />
-								<fullscreen-outlined :style="{ fontSize: '20px' }" v-else />
-							</span>
+						<a-col :span="2">
 						</a-col>
-						<a-col :span="8">
-							<div style="display: flex; justify-content: center; margin-left: 35px">
-								<span style="font-weight: bold; font-size: 18px; margin-right: 5px">결의서</span>
+						<a-col :span="9">
+							<span class="info-left">파란색 아무곳이나 누르시면 결의서 상세내역을 펼치거나 숨기실 수 있습니다</span>
+						</a-col>
+						<a-col :span="2">
+							<span style="font-weight: bold; font-size: 18px;">결 의 서</span>
+						</a-col>
+						<a-col :span="9">
+							<div class="info-right">
+								<!-- <span style="font-size: 16px;">결의번호: </span> -->
+								<a-form-item label="결의번호">
+									{{
+										store.state.common.ac120.formData.resolutionNumber
+										? "[" + store.state.common.ac120.formData.resolutionNumber + "]"
+										: "[]"
+									}}
+									<DxButton v-if="store.state.common.ac120.formData.handwriting == true"
+										:focusStateEnabled="false" text="수기"
+										:style="{ backgroundColor: '#BB3835', color: 'white' }"
+										:height="$config_styles.HeightInput" />
+								</a-form-item>
+							</div>
+						</a-col>
+						<a-col :span="2">
+							<div style="display: flex; justify-content: flex-end">
 								<a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
 									placement="top" color="black" title="정상 여부">
 									<DxButton :focusStateEnabled="false" text="O"
@@ -276,302 +292,10 @@
 									:height="$config_styles.HeightInput" />
 							</div>
 						</a-col>
-						<a-col :span="8">
-							<div style="display: flex; justify-content: flex-end">
-								<a-form-item label="결의번호">
-									{{
-										store.state.common.ac120.formData.resolutionNumber
-										? store.state.common.ac120.formData.resolutionNumber
-										: "_____"
-									}}
-									<DxButton v-if="store.state.common.ac120.formData.handwriting == true"
-										:focusStateEnabled="false" text="수기"
-										:style="{ backgroundColor: '#BB3835', color: 'white' }"
-										:height="$config_styles.HeightInput" />
-								</a-form-item>
-							</div>
-						</a-col>
 					</a-row>
 				</div>
 			</div>
 		</DxDrawer>
-		<!-- <div class="main">
-      <div class="data-grid">
-        <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
-          <DxDataGrid
-            noDataText="내역이 없습니다"
-            id="dataGridAc120"
-            :class="store.state.common.ac120.statusShowFull ? 'hiddenTable' : ''"
-            key-expr="accountingDocumentId"
-            :show-row-lines="true"
-            :hoverStateEnabled="true"
-            :data-source="dataSource"
-            :show-borders="true"
-            ref="gridRefAC120"
-            :allow-column-reordering="move_column"
-            :allow-column-resizing="colomn_resize"
-            v-model:focused-row-key="store.state.common.ac120.focusedRowKey"
-            :focused-row-enabled="true"
-            @focused-row-changing="onFocusedRowChanging"
-            :column-auto-width="true"
-            v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
-            @selection-changed="selectionChanged"
-          >
-            <DxRowDragging
-              v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10"
-              :allow-reordering="true"
-              :show-drag-icons="true"
-              :on-reorder="onReorder"
-            />
-            <DxSelection
-              select-all-mode="allPages"
-              show-check-boxes-mode="onClick"
-              mode="multiple"
-            />
-            <DxScrolling mode="standard" show-scrollbar="always" />
-            <DxPaging :enabled="false" />
-            <DxColumn
-              caption="일자"
-              :allow-sorting="false"
-              cell-template="transactionDetailDate"
-              data-field="transactionDetailDate"
-              width="85"
-            />
-            <template #transactionDetailDate="{ data }">
-              {{ $filters.formatDate(data.value) }}
-            </template>
-
-            <DxColumn
-              caption="순번"
-              :allow-sorting="false"
-              data-field="documentOrderByDate"
-              width="45"
-            />
-
-            <DxColumn
-              caption="결의번호"
-              :allow-sorting="false"
-              data-field="resolutionNumber"
-              width="68"
-            />
-
-            <DxColumn
-              caption="통장"
-              :allow-sorting="false"
-              cell-template="bankbook"
-              data-field="bankbook"
-              width="80"
-            />
-            <template #bankbook="{ data }">
-              <a-tooltip
-                placement="top"
-                :title="
-                  data.data.bankbook?.type +
-                  ' ' +
-                  data.data.bankbook?.bankbookNumber
-                "
-              >
-                <div>{{ data.data.bankbook?.bankbookNickname }}</div>
-              </a-tooltip>
-            </template>
-
-            <DxColumn
-              caption="결의 구분"
-              :allow-sorting="false"
-              data-field="resolutionClassification"
-              cell-template="resolutionClassification"
-              width="75"
-            />
-            <template #resolutionClassification="{ data }">
-              {{
-                store.state.common.ac120.arrResolutionClassification.find(
-                  (item: any) => data.data.resolutionClassification == item.id
-                )?.text
-              }}
-            </template>
-
-            <DxColumn
-              caption="수입액"
-              :allow-sorting="false"
-              cell-template="amountCustom1"
-              width="80"
-            />
-            <template #amountCustom1="{ data }">
-              {{
-                data.data.resolutionClassification == 1
-                  ? $filters.formatCurrency(data.data.amount)
-                  : 0
-              }}
-            </template>
-
-            <DxColumn
-              caption="지출액"
-              :allow-sorting="false"
-              cell-template="amountCustom2"
-              width="80"
-            />
-            <template #amountCustom2="{ data }">
-              {{
-                data.data.resolutionClassification == 2
-                  ? $filters.formatCurrency(data.data.amount)
-                  : 0
-              }}
-            </template>
-
-            <DxColumn
-              caption="잔액"
-              :allow-sorting="false"
-              data-field="balance"
-              width="90"
-              format="fixedPoint"
-            />
-
-            <DxColumn
-              caption="통장적요"
-              :allow-sorting="false"
-              data-field="summaryOfBankbookDetail"
-              width="75"
-            />
-
-            <DxColumn
-              caption="적요"
-              :allow-sorting="false"
-              data-field="summary"
-            />
-
-            <DxColumn
-              caption="계정과목"
-              :allow-sorting="false"
-              data-field="accountCode"
-              cell-template="accountCode"
-              width="150"
-            />
-            <template #accountCode="{ data }">
-              <account-code-select
-                :valueInput="data.data.accountCode"
-                :readOnly="true"
-              />
-            </template>
-
-            <DxColumn
-              caption="상대계정"
-              :allow-sorting="false"
-              data-field="relationCode"
-              cell-template="relationCode"
-              width="150"
-            />
-            <template #relationCode="{ data }">
-              <account-code-select
-                :valueInput="data.data.relationCode"
-                :readOnly="true"
-              />
-            </template>
-
-            <DxColumn
-              caption="자금원천"
-              :allow-sorting="false"
-              data-field="fundingSource"
-              css-class="cell-left"
-              cell-template="fundingSource"
-              width="75"
-            />
-            <template #fundingSource="{ data }">
-              {{
-                store.state.common.ac120.arrFundingSource.find(
-                  (item: any) => data.data.fundingSource == item.id
-                )?.text
-              }}
-            </template>
-
-            <DxColumn
-              caption="거래처"
-              :allow-sorting="false"
-              data-field="clientId"
-              cell-template="clientId"
-              width="75"
-            />
-            <template #clientId="{ data }">
-              {{
-                clients.find((item: any) => item.value == data.data.clientId)
-                  ?.label
-              }}
-            </template>
-
-            <DxColumn
-              caption="증빙"
-              :allow-sorting="false"
-              data-field="proofCount"
-              width="50"
-            />
-
-            <DxColumn
-              caption="물품 내역"
-              :allow-sorting="false"
-              cell-template="normality"
-              css-class="cell-center"
-              width="75"
-            />
-            <template #normality="{ data }">
-              <div v-if="data.data.resolutionClassification != 1">
-                <PlusOutlined
-                  v-if="data.data.goodsCount == 0"
-                  class="icon-add"
-                  @click="actionPopupItemDetail(data.data)"
-                />
-                <div
-                  v-else
-                  style="cursor: pointer"
-                  @click="actionPopupItemDetail(data.data)"
-                >
-                  {{ data.data.goodsCount }}
-                </div>
-              </div>
-            </template>
-
-            <DxColumn
-              caption="수기 여부"
-              :allow-sorting="false"
-              cell-template="handwriting"
-              width="75"
-            />
-            <template #handwriting="{ data }">
-              <div class="slipRegistration">
-                <DxButton
-                  v-if="data.data.handwriting == true"
-                  :focusStateEnabled="false"
-                  text="O"
-                  :style="{ backgroundColor: '#BB3835', color: 'white' }"
-                  :height="$config_styles.HeightInput"
-                />
-              </div>
-            </template>
-
-            <DxColumn
-              caption="정상 여부"
-              :allow-sorting="false"
-              cell-template="resolutionNormalStatus"
-              width="75"
-            />
-            <template #resolutionNormalStatus="{ data }">
-              <div class="slipRegistration">
-                <DxButton
-                  :focusStateEnabled="false"
-                  :text="data.data.resolutionNormalStatus ? 'O' : 'X'"
-                  :style="{
-                    backgroundColor: data.data.resolutionNormalStatus
-                      ? '#337614'
-                      : '#BB3835',
-                    color: 'white',
-                  }"
-                  :height="$config_styles.HeightInput"
-                />
-              </div>
-            </template>
-          </DxDataGrid>
-        </a-spin>
-      </div>
-      <DetailComponent @changeAmountDataGrid="changeAmountDataGrid" />
-    </div> -->
 	</div>
 	<PopupMessage :modalStatus="isModalConfirmChangeData" @closePopup="isModalConfirmChangeData = false"
 		:typeModal="'confirm'" title="" content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니요"
@@ -634,10 +358,10 @@ import notification from "@/utils/notification";
 import DataSource from "devextreme/data/data_source";
 import { Store } from "devextreme/data";
 import { cloneDeep, isEqual } from "lodash";
-import {
-	FullscreenOutlined,
-	FullscreenExitOutlined,
-} from "@ant-design/icons-vue";
+// import {
+// 	FullscreenOutlined,
+// 	FullscreenExitOutlined,
+// } from "@ant-design/icons-vue";
 export default defineComponent({
 	components: {
 		ProcessStatus,
@@ -659,8 +383,8 @@ export default defineComponent({
 		DxRowDragging,
 		DetailComponent,
 		DxDrawer,
-		FullscreenOutlined,
-		FullscreenExitOutlined,
+		// FullscreenOutlined,
+		// FullscreenExitOutlined,
 	},
 	setup() {
 		const store = useStore();
