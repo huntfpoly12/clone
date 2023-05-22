@@ -562,6 +562,8 @@ export default defineComponent({
     const checkDisableA04A06 = () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...cellsSetting]
+      console.log(dataSource.value[0].reportType, dataSource.value[0].paymentType,dataSource.value[0].imputedMonth,dataSource.value[0].paymentMonth);
+      
       if (
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
@@ -571,6 +573,15 @@ export default defineComponent({
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6)
       ) {
+        newCellSetting[123].readOnly = false
+        newCellSetting[123].className = "htMiddle htRight"
+        newCellSetting[124].readOnly = false
+        newCellSetting[124].className = "htMiddle htRight"
+        newCellSetting[141].readOnly = false
+        newCellSetting[141].className = "htMiddle htRight"
+        newCellSetting[143].readOnly = false
+        newCellSetting[143].className = "htMiddle htRight"
+      } else {   
         newCellSetting[123].readOnly = true
         newCellSetting[123].className = "htMiddle htRight disable-cell"
         newCellSetting[124].readOnly = true
@@ -579,11 +590,6 @@ export default defineComponent({
         newCellSetting[141].className = "htMiddle htRight disable-cell"
         newCellSetting[143].readOnly = true
         newCellSetting[143].className = "htMiddle htRight disable-cell"
-      } else {
-          newCellSetting[123].readOnly = false
-          newCellSetting[124].readOnly = false
-          newCellSetting[141].readOnly = false
-          newCellSetting[143].readOnly = false
       }
       hot.updateSettings({
         cell: newCellSetting
