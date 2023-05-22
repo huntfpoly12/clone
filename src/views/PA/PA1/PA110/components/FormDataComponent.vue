@@ -889,14 +889,16 @@ export default defineComponent({
 		// ======================= FUNCTION ================================
 		const resetArrayEmploySelect = () => {
 			arrayEmploySelect.value = [];
+			let data = dataEmployeeWageDailies.value?.filter((data: any) => {
+				let statusJoinedAt = data.joinedAt ? parseInt(data.joinedAt.toString().slice(4, 6)) <= store.state.common.pa110.processKeyPA110.imputedMonth : true
+				let statusLeavedAt = data.leavedAt ? parseInt(data.leavedAt.toString().slice(4, 6)) >= store.state.common.pa110.processKeyPA110.imputedMonth : true
+				if (statusJoinedAt && statusLeavedAt) {
+					return data
+				}
+			})
 			if (store.state.common.pa110.statusFormAdd) {
-				dataEmployeeWageDailies.value.map((dataEmployee: any) => {
-					if (
-						!store.state.common.pa110.dataTaxPayInfo.find(
-							(dataTaxPay: any) =>
-								dataTaxPay.employeeId == dataEmployee.employeeId
-						)
-					) {
+				data.map((dataEmployee: any) => {
+					if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
 						if (dataEmployee.leavedAt) {
 							if (
 								parseInt(dataEmployee.leavedAt?.toString().slice(4, 6)) >=
