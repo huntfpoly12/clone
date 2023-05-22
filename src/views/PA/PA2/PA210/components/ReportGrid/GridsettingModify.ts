@@ -1,6 +1,7 @@
 import filters from "@/helpers/filters";
 import { WithholdingStatusReport } from "@bankda/jangbuda-common";
 import Handsontable from "handsontable";
+import { getObjectWithPositiveValues } from "../../utils";
 const cellValueGreaterThan0 = (query: any, callback: any) => {
   if (typeof query == 'number' && query >= 0) {
     callback(true)
@@ -1273,16 +1274,19 @@ export const calculateWithholdingStatusReportModified = (wrapper: any, data: any
       if (index >= 4 && index <= 61 && !arrData[index][4]) {
         // check để lọc hết những row không có dữ liệu ra
         if (
-          typeof arrData[index][5] == 'number' ||
-          typeof arrData[index][6] == 'number' ||
-          typeof arrData[index][7] == 'number' ||
-          typeof arrData[index][8] == 'number' ||
-          typeof arrData[index][9] == 'number' ||
-          typeof arrData[index][10] == 'number' ||
-          typeof arrData[index][11] == 'number' ||
-          typeof arrData[index][12] == 'number'
+          (arrData[index][4] !== 'A10' && arrData[index][4] !== 'A99') && 
+          (
+            typeof arrData[index][5] == 'number' ||
+            typeof arrData[index][6] == 'number' ||
+            typeof arrData[index][7] == 'number' ||
+            typeof arrData[index][8] == 'number' ||
+            typeof arrData[index][9] == 'number' ||
+            typeof arrData[index][10] == 'number' ||
+            typeof arrData[index][11] == 'number' ||
+            typeof arrData[index][12] == 'number'
+          )
         ) {
-          cellData.push({
+          let itemObject = {
             /** 코드 (code) */
             code: arrData[index - 1][4],
             /** 소득지급 인원 (numberOfPeople) */
@@ -1301,7 +1305,13 @@ export const calculateWithholdingStatusReportModified = (wrapper: any, data: any
             incomeTaxPaid: arrData[index][11],
             /** 납부 농어촌특별세 (ruralSpecialTaxPaid) */
             ruralSpecialTaxPaid: arrData[index][12],
-          });
+          }
+          // check xem object đã đạt tiêu chuẩn chưa có ít nhất 1 trường có giá trị
+          if (
+            getObjectWithPositiveValues(itemObject)
+          ) {
+            cellData.push(itemObject);
+          }
         }
       }
     }
@@ -1347,7 +1357,41 @@ export const calculateWithholdingStatusReportModified = (wrapper: any, data: any
     }
     setValueDataTable(wrapper,output.summary.code, output.summary)
     setValueDataTable(wrapper,"adjustmentOfRefundTaxAmount",output.adjustmentOfRefundTaxAmount)
+    let checkYETaxAdj = checkYETaxAdjustment(output)
+    return checkYETaxAdj
     //r.push(output.summary); // 총합계(A99)
 }
 
-
+export const checkYETaxAdjustment = (output: any) => {
+  let checkStatus = false
+  const A04 = output.incomeWages.find((el: { code: string; }) =>{
+    if (el.code == 'A04' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A05 = output.incomeWages.find((el: { code: string; }) => {
+    if (el.code == 'A05' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A06 = output.incomeWages.find((el: { code: string; }) => {
+    if (el.code == 'A06' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A26 = output.incomeBusinesses.find((el: { code: string; }) => {
+    if (el.code == 'A26' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A46 = output.incomePensions.find((el: { code: string; }) => {
+    if (el.code == 'A46' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  console.log(A04 , A05 , A06 , A26, A46);
+  if (A04 || A05 || A06 || A26 || A46) {
+    checkStatus = true
+  }
+  return checkStatus
+}

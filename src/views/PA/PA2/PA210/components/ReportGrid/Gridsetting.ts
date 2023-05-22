@@ -1,6 +1,7 @@
 import filters from "@/helpers/filters";
 import { WithholdingStatusReport } from "@bankda/jangbuda-common";
 import Handsontable from "handsontable";
+import { getObjectWithPositiveValues } from "../../utils";
 const cellValueGreaterThan0 = (query: any, callback: any) => {
   if (typeof query == 'number' && query >= 0) {
     callback(true)
@@ -662,22 +663,26 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
   } else {
     let hot = wrapper.value.hotInstance;
     const arrData = hot.getData()
-    console.log(arrData);
+    console.log(arrData,'arrData');
     
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 32) {
-        // check để lọc hết những row không có dữ liệu ra
+        // check để lọc hết những row không có dữ liệu ra 
+        // nếu là cột A10 và A99 cũng loại vì tất cả các cell đều disable
         if (
-          typeof arrData[index][5] == 'number' ||
-          typeof arrData[index][6] == 'number' ||
-          typeof arrData[index][7] == 'number' ||
-          typeof arrData[index][8] == 'number' ||
-          typeof arrData[index][9] == 'number' ||
-          typeof arrData[index][10] == 'number' ||
-          typeof arrData[index][11] == 'number' ||
-          typeof arrData[index][12] == 'number'
+          (arrData[index][4] !== 'A10' && arrData[index][4] !== 'A99') && 
+          (
+            typeof arrData[index][5] == 'number' ||
+            typeof arrData[index][6] == 'number' ||
+            typeof arrData[index][7] == 'number' ||
+            typeof arrData[index][8] == 'number' ||
+            typeof arrData[index][9] == 'number' ||
+            typeof arrData[index][10] == 'number' ||
+            typeof arrData[index][11] == 'number' ||
+            typeof arrData[index][12] == 'number'
+          )
         ) {
-          cellData.push({    
+          let itemObject = {    
             /** 코드 (code) */
             code: arrData[index][4],
             /** 소득지급 인원 (numberOfPeople) */
@@ -696,8 +701,13 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
             incomeTaxPaid: arrData[index][11],
             /** 납부 농어촌특별세 (ruralSpecialTaxPaid) */
             ruralSpecialTaxPaid: arrData[index][12],
-          });
-          
+          }
+          // check xem object đã đạt tiêu chuẩn chưa có ít nhất 1 trường có giá trị
+          if (
+            getObjectWithPositiveValues(itemObject)
+          ) {
+            cellData.push(itemObject);
+          }
         }
 
       }
@@ -705,12 +715,13 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
   }
   console.log(cellData, 'inputdata');
   const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
-  console.log(output ,'outputdata');
+  console.log(output, 'outputdata');
+  // set value to cell after get common result
   if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
     output.incomeWages.forEach((item) => {
         setValueDataTable(wrapper,item.code,item)
-      })
-    }
+    })
+  }
   if (output.incomeRetirements.length > 0) { // 퇴직소득 [연금계좌(A12), 그외(A22), 가감계(A20)]
     output.incomeRetirements.forEach((item) => {
       setValueDataTable(wrapper,item.code,item)
@@ -753,12 +764,30 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
 export const checkYETaxAdjustment = (output: any) => {
   let checkStatus = false
   const A04 = output.incomeWages.find((el: { code: string; }) =>{
-    el.code == 'A04'
+    if (el.code == 'A04' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
   });
-  const A05 = output.incomeWages.find((el: { code: string; }) => el.code == 'A05');
-  const A06 = output.incomeWages.find((el: { code: string; }) => el.code == 'A06');
-  const A26 = output.incomeBusinesses.find((el: { code: string; }) => el.code === 'A26');
-  const A46 = output.incomePensions.find((el: { code: string; }) => el.code == 'A46');
+  const A05 = output.incomeWages.find((el: { code: string; }) => {
+    if (el.code == 'A05' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A06 = output.incomeWages.find((el: { code: string; }) => {
+    if (el.code == 'A06' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A26 = output.incomeBusinesses.find((el: { code: string; }) => {
+    if (el.code == 'A26' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A46 = output.incomePensions.find((el: { code: string; }) => {
+    if (el.code == 'A46' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
   console.log(A04 , A05 , A06 , A26, A46);
   if (A04 || A05 || A06 || A26 || A46) {
     checkStatus = true

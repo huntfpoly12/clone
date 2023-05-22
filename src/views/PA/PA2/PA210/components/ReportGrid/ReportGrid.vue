@@ -355,7 +355,7 @@ export default defineComponent({
       },
       afterChange: (changes: any, source: string) => {
         if (source == "edit") {
-          calculateWithholdingStatusReport(wrapper);
+          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReport(wrapper);
           store.commit("common/setHasChangedPopupPA210", true);
         }
       },
@@ -561,9 +561,7 @@ export default defineComponent({
     // update cell settings flow condition
     const checkDisableA04A06 = () => {
       let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...cellsSetting]
-      console.log(dataSource.value[0].reportType, dataSource.value[0].paymentType,dataSource.value[0].imputedMonth,dataSource.value[0].paymentMonth);
-      
+      let newCellSetting = [...cellsSetting] 
       if (
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
