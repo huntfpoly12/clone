@@ -59,8 +59,14 @@
         <a-col :span="9" :offset="paStateYear && acStateYear ? 8 : 9">
           <div style="display: flex;">
             <button-basic v-if="paStateYear && acStateYear" class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="handleCancel" style="margin-right: 10px;"/>
-            <button-basic class="button-form-modal" :text="paStateYear && acStateYear ? '네' : '확인'" :width="74" :type="'default'"
-                            :mode="'contained'" @onClick="handleOk" />
+            <DxButton 
+              :width="74"
+              @click="handleOk" 
+              styling-mode="contained"  
+              :style="{ color: $config_styles.ColorButtonDefault, backgroundColor: '#0078D7', border: $config_styles.BorderButtonDefault }" 
+              :height="$config_styles.HeightInput"
+              :text="paStateYear && acStateYear ? '네' : '확인'" 
+            />
           </div>         
         </a-col>
       </a-row>
@@ -74,6 +80,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { companyId, setMenuTab } from "@/helpers/commonFunction";
 import { WarningOutlined } from "@ant-design/icons-vue";
+import DxButton from 'devextreme-vue/button';
 import { getJwtObject } from "@bankda/jangbuda-common";
 import notification from "@/utils/notification"
 import { Message } from "@/configs/enum";
@@ -82,7 +89,7 @@ dayjs
 
 export default defineComponent({
   components: {
-    WarningOutlined,DxSelectBox, DxValidator, DxRequiredRule
+    WarningOutlined,DxSelectBox, DxValidator, DxRequiredRule,DxButton
   },
   setup() {
     const token  = sessionStorage.getItem("token")
@@ -90,7 +97,6 @@ export default defineComponent({
     const paStateYear = ref(sessionStorage.getItem("paYear"))
     const namelFacilityBiz = ref(sessionStorage.getItem("name"))
     const globalFacilityBizId = ref(sessionStorage.getItem("globalFacilityBizId"))
-    const trigger = ref<boolean>(false)
     const modalConfirm = ref<boolean>(false)
     const facilityBiz: any = ref(null)
     const jwtObject = getJwtObject(token!);
@@ -183,7 +189,7 @@ export default defineComponent({
       acYear.value = parseInt(sessionStorage.getItem("acYear")?? "0")
       paYear.value = parseInt(sessionStorage.getItem("paYear")?? "0")
       facilityBiz.value = parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0")
-      trigger.value = true
+
       modalConfirm.value = true
     }
     return {
@@ -244,9 +250,6 @@ p {
   span{
     margin: 5px 0px;
   }
-}
-.dx-button-mode-contained.dx-button-default {
-  background-color:#0078D7
 }
 
 </style>
