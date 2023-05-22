@@ -123,7 +123,6 @@ export default defineComponent({
     );
 
     onResAccountingProcesses((data: any) => {
-      console.log('data.data.getAccountingProcesses', data.data.getAccountingProcesses);
       listAccountingProcesses.value = data.data.getAccountingProcesses
       minMonth.value = data.data.getAccountingProcesses[0].month
       maxMonth.value = data.data.getAccountingProcesses[data.data.getAccountingProcesses.length - 1].month

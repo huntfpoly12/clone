@@ -17,7 +17,7 @@
   </a-modal>
 </template>
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useStore } from "vuex";
 import mutations530 from "@/graphql/mutations/AC/AC5/AC530";
 import mutations540 from "@/graphql/mutations/AC/AC5/AC540";
@@ -40,10 +40,16 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
-    const email = ref()
     const store = useStore();
     const userInfo = computed(() => store.state.auth.userInfor);
-    const payLoad: any = ref(null)
+    const email = ref('')
+    
+    watch(() => userInfo.value, (value) => {
+      email.value = value?.email || ''
+    },{
+      deep: true,
+    })
+
     let keyRefreshForm = ref(0)
     const closePopup = () => {
       email.value = ''
