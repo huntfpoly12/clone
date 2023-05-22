@@ -21,6 +21,8 @@ export default gql`
                 dailyAllowance
                 retirementReserve
                 socialInsuranceLevy
+                __typename @skip(if: true)
+
             }
         }
     }

@@ -13,18 +13,18 @@
         <span>전년도 최종차수 ${서식명}를 불러와서 작성합니다.</span>
         <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
         <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>
-        <span>${서식명}를 작성하시겠습니까?</span>
+        <span>{{index}} 를 작성하시겠습니까?</span>
       </div>
       <div v-else class="modal-content">
         <span>직전 최종차수 ${서식명}를 불러와서 작성합니다.</span>
         <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
         <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>
-        <span>${서식명}를 작성하시겠습니까?</span>
+        <span>{{index}} 를 작성하시겠습니까?</span>
       </div>
     </div>
     <div v-else-if="step === StepCreateBudget.Step2">
       <keep-alive>
-        <component v-bind:is="currentComponent" />
+        <component v-bind:is="currentComponent" @closePopup="closePopup" />
       </keep-alive>
     </div>
     <div v-else>
@@ -67,6 +67,10 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
+    index: {
+      type: Number,
+      required: true
+    }
   },
   emits: ['closePopup'],
   setup(props, {emit}) {
@@ -94,13 +98,19 @@ export default defineComponent({
         return ComponentCreateBudget.ExpenseAndRevenueBudget
       }
     })
+    const closePopup = (e: boolean) => {
+      if (e) {
+        emit('closePopup', true)
+      }
+    }
     return {
       setModalVisible,
       onConfirm,
       step,
       StepCreateBudget,
       currentComponent,
-      dataBudget
+      dataBudget,
+      closePopup
     }
   }
 })
