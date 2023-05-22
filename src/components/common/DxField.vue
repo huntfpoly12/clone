@@ -1,6 +1,6 @@
 <template>
   <div :class="computedClass" :style="style">
-    <div :class="dxFieldLabel" :title="showTitle ? label : ``" :style="`text-align: ${alignment}`">{{ label }}:</div>
+    <div :class="dxFieldLabel" :title="showTitle ? label : ``" :style="styleLabel">{{ label }}:</div>
     <div class="dx-field-value">
       <slot />
     </div>
@@ -28,6 +28,10 @@ export default defineComponent({
       type: String,
       default: ''
     },
+    styleLabel: {
+      type: String,
+      default: ''
+    },
     class: {
       type: String,
       default: ''
@@ -48,10 +52,13 @@ export default defineComponent({
     const computedClass = computed(() => {
       return `dx-field px-10 d-flex items-center ${props.class}`;
     });
-
+    const styleLabel = computed(() => {
+      return `text-align: ${props.alignment}; ${props.styleLabel}`;
+    });
     return {
       computedClass,
-      dxFieldLabel
+      dxFieldLabel,
+      styleLabel
     };
   },
 })

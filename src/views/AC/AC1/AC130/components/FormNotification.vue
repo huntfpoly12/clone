@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, onMounted, nextTick } from 'vue'
+import { defineComponent, ref, reactive, watch, onMounted, nextTick } from 'vue'
 import { getJwtObject } from "@bankda/jangbuda-common"
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC130";
@@ -82,8 +82,18 @@ export default defineComponent({
 
     const triggerGetAccountingClosingMessages = ref(false)
 
+    let filter: any = {}
+
     watch(() => props.payload, (value) => {
       if(Object.keys(value).length) {
+        firstLoadData.value = true
+        filter.companyId = value.companyId,
+        filter.fiscalYear = value.fiscalYear,
+        filter.facilityBusinessId = value.facilityBusinessId,
+        filter.year = value.year,
+        filter.month = value.month,
+        filter.page = page.value,
+        filter.rows = rows.value,
         triggerGetAccountingClosingMessages.value = true
       }
     },{
@@ -94,13 +104,7 @@ export default defineComponent({
     const {
       onResult: onResGetAccountingClosingMessages,
       loading: loadinggetGetAccountingClosingMessages,
-    } = useQuery(queries.getAccountingClosingMessages, {
-      filter: {
-        ...props.payload,
-        page: page.value,
-        rows: rows.value,
-      }
-    },
+    } = useQuery(queries.getAccountingClosingMessages, {filter: filter},
       () => ({
         enabled: triggerGetAccountingClosingMessages.value,
         fetchPolicy: "no-cache",

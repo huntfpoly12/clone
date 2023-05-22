@@ -5,12 +5,14 @@ export default gql`
         $fiscalYear: Int!,
         $facilityBusinessId: Int!,
         $index: Int!,
+        $status: ProcessStatusScalar!
     ) {
         changeBudgetStatus(
             companyId: $companyId
             fiscalYear: $fiscalYear
             facilityBusinessId: $facilityBusinessId
             index: $index
+            status: $status
         )
     }
 `;

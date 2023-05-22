@@ -242,12 +242,10 @@ export default defineComponent({
 
 
     watch(() => props.data, (value) => {
-      if(value.length) {
-        listChat.value = [...value]
-        nextTick(() => {
-          formTimeline.value.scrollTop = 10000000
-        })
-      }
+      listChat.value = [...value]
+      nextTick(() => {
+        formTimeline.value.scrollTop = 10000000
+      })
     }, { 
       deep: true,
       immediate: true
