@@ -151,7 +151,6 @@
                 css-class="cell-center"
               />
               <template #yearEndTaxAdjustment="{ data }">
-                {{ data.data.yearEndTaxAdjustment }}
                 <DxCheckBox
                   v-model:value="data.data.yearEndTaxAdjustment"
                   :disabled="true"
@@ -308,9 +307,7 @@ export default defineComponent({
       },
       afterChange: (changes: any, source: string) => {
         if (source == "edit" && firstTimeLoad.value) {
-          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReport(wrapper);
-
-         
+          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReport(wrapper);  
           store.commit("common/setHasChangedPopupPA210", false);
         } else if (source == "edit") {
           firstTimeLoad.value = true;
@@ -697,16 +694,6 @@ export default defineComponent({
         cell: newCellSetting
       });
     }
-    // const checkDisableA04A06 = () => {
-    //   let hot = wrapper.value.hotInstance;
-    //   let newCellSetting = [...cellsSetting]
-    //   console.log(hot.getData());
-
-    //   // newCellSetting[123].readOnly = true
-    //   hot.updateSettings({
-    //     cell: newCellSetting
-    //   });
-    // }
     // The above code is creating a function called actionConfirmDelete. This function is setting the value
     // of confirmStatus.value to true.
     const actionConfirmDelete = () => {

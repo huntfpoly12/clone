@@ -19,7 +19,7 @@ export const initialState = {
         registrationCard: {}
     }],
     withholding: {
-        startYearMonth: null,
+        startYearMonth: +dayjs().format('YYYYMM'),
         capacity: null,
         price: 0,
         options: [{

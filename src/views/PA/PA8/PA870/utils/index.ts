@@ -46,7 +46,10 @@ const INITIAL_FORM_PA870 = {
   electronicReceiverResidentNumber: '',
 
   constructionSiteWorkplace: true,
-  constructionSiteBusinessPeriod: '',
+  constructionSiteBusinessPeriod: [
+    parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
+    parseInt(dayjs().format("YYYYMMDD")),
+  ],
 
   nationalPensionSupport: true,
   employeementInsuranceSupport: true,

@@ -288,7 +288,7 @@ export default defineComponent({
       },
       afterChange: (changes: any, source: string) => {
         if (source == "edit") {
-          calculateWithholdingStatusReportModified(wrapper);
+          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReportModified(wrapper);
           store.commit("common/setHasChangedPopupPA210", false);
         }
       },
