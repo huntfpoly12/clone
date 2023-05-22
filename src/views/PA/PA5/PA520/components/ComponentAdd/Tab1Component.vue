@@ -191,7 +191,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
-import { radioCheckForeigner, DataCreated } from "../../utils/index";
+import { radioCheckForeigner, DataCreated, originDataInputUpdate } from "../../utils/index";
 import queries from "@/graphql/queries/PA/PA5/PA520/index";
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -207,6 +207,9 @@ export default defineComponent({
     const clickYearStatus = computed(
       () => store.getters["settings/clickYearStatus"]
     );
+    const globalYear: any = computed(() =>
+      parseInt(sessionStorage.getItem("paYear") ?? "0")
+    );
     const isError = computed(() => store.getters["common/isErrorPA520"]);
     const activeLabel = ref(false);
     const disabledSelectBox = ref(true);
@@ -218,10 +221,16 @@ export default defineComponent({
     const originData = ref({
       companyId: companyId,
     });
+
+    let originDataInitTab2: any = ref({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      employeeId: 0,
+      input: {
+        ...originDataInputUpdate,
+      },
+    });
     const store = useStore();
-    const globalYear: any = computed(() =>
-      parseInt(sessionStorage.getItem("paYear") ?? "0")
-    );
     // ============ GRAPQL ===============================
     const { onResult: resGetDepartments } = useQuery(
       queries.getDepartments,
@@ -278,6 +287,9 @@ export default defineComponent({
       //store.state.common.addRowBtOnclickPA520 = false
       //store.state.common.activeAddRowPA520 = false
       //store.commit('common/setAddBtOnclickPA520',false)
+      originDataInitTab2.value.employeeId = result.data.createEmployeeWageDaily.employeeId
+      originDataInitTab2.value.input.employeementInsuranceDeduction = true
+      mutateTab2(originDataInitTab2.value)
       store.commit(
         "common/setIdRowSaveDonePA520",
         result.data.createEmployeeWageDaily.employeeId
@@ -288,6 +300,10 @@ export default defineComponent({
         await store.commit("settings/setCurrentYear");
       await store.dispatch("settings/resetYearStatus");
     });
+
+    const { mutate:mutateTab2 } = useMutation(
+      mutations.saveEmployeeWageDailyPayDeduction
+    );
     //============ WATCH =================================
 
     //check if the year is changed, then confirm first if you are adding or editing data
