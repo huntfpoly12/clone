@@ -662,6 +662,7 @@ export default defineComponent({
           adjustment?.refundApplicationAmountModified,
           "initTable"
         );
+      checkDisableA04A06()
     };
 
     const {
@@ -863,6 +864,16 @@ export default defineComponent({
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6)
       ) {
+        newCellSetting[155].readOnly = false
+        newCellSetting[155].className = "htMiddle htRight"
+        newCellSetting[156].readOnly = false
+        newCellSetting[156].className = "htMiddle htRight"
+        newCellSetting[189].readOnly = false
+        newCellSetting[189].className = "htMiddle htRight"
+        newCellSetting[191].readOnly = false
+        newCellSetting[191].className = "htMiddle htRight"
+
+      } else {
         newCellSetting[155].readOnly = true
         newCellSetting[155].className = "htMiddle htRight disable-cell"
         newCellSetting[156].readOnly = true
@@ -871,11 +882,6 @@ export default defineComponent({
         newCellSetting[189].className = "htMiddle htRight disable-cell"
         newCellSetting[191].readOnly = true
         newCellSetting[191].className = "htMiddle htRight disable-cell"
-      } else {
-          newCellSetting[155].readOnly = false
-          newCellSetting[156].readOnly = false
-          newCellSetting[189].readOnly = false
-          newCellSetting[191].readOnly = false
       }
       hot.updateSettings({
         cell: newCellSetting

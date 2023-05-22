@@ -1,6 +1,6 @@
 <template>
   <div class="form-notification">
-    <CloseOutlined v-if="!visible" class="form-notification-btnOpen" @click="openNoti" />
+    <BellOutlined style="font-size: 20px" v-if="!visible" class="form-notification-btnOpenNoti" @click="openNoti" />
     <a-drawer placement="left" :closable="false" :visible="visible" :get-container="false" width="100%"
       :style="{ position: 'absolute' }">
       <a-spin :spinning="firstLoadData">
@@ -32,11 +32,11 @@
           <div v-else class="form-notification-wrapper-noData">
             통지 없음
           </div>
-          <CloseOutlined class="form-notification-wrapper-btnClose" @click="closeNoti" />
+          <CommentOutlined style="font-size: 20px" class="form-notification-wrapper-btnOpenMessages" @click="closeNoti" />
         </div>
       </a-spin>
     </a-drawer>
-    <FormChat :payload="payload" :data="listData" @updateData="updateData"/>
+    <FormChat :payload="payload" :data="listData" @refresh="refresh"/>
   </div>
 </template>
 
@@ -45,7 +45,7 @@ import { defineComponent, ref, watch, onMounted, nextTick } from 'vue'
 import { getJwtObject } from "@bankda/jangbuda-common"
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC130";
-import { CloseOutlined } from "@ant-design/icons-vue";
+import { CommentOutlined, BellOutlined } from "@ant-design/icons-vue";
 import StatusChat from './StatusChat.vue'
 import FormChat from "./FormChat.vue"
 import { cloneDeep } from 'lodash';
@@ -61,7 +61,8 @@ export default defineComponent({
     },
   },
   components: {
-    CloseOutlined,
+    CommentOutlined,
+    BellOutlined,
     StatusChat,
     FormChat
   },
@@ -105,24 +106,10 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       }))
     onResGetAccountingClosingMessages((data) => {
-      if(firstLoadData.value) {
-        listNotification.value = data.data.getAccountingClosingMessages.datas.reverse()
-        listData.value = cloneDeep(listNotification.value)
-      }else {
-        if(data.data.getAccountingClosingMessages.datas.length){
-          const index = listNotification.value.findIndex((noti: any) => noti.id === data.data.getAccountingClosingMessages.datas[rows.value-1].id)
-          if(index >= 0) {
-            listNotification.value = [...listNotification.value.splice(index), ...data.data.getAccountingClosingMessages.datas.reverse()]
-            listData.value = cloneDeep(listNotification.value)
-          }else{
-            listNotification.value = data.data.getAccountingClosingMessages.datas
-            listData.value = data.data.getAccountingClosingMessages.datas.reverse()
-          }
-        }
-      }
+      listNotification.value = data.data.getAccountingClosingMessages.datas.reverse()
+      listData.value = cloneDeep(listNotification.value)
       triggerGetAccountingClosingMessages.value = false
       firstLoadData.value = false
-
       nextTick(() => {
         if(refTimelineNoti.value) {
           refTimelineNoti.value.scrollTop = 10000000
@@ -149,11 +136,12 @@ export default defineComponent({
       const day = date.getDate()
       return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${date.getMinutes()}`
     }
-
-    const updateData = () => {
-      rows.value = 5
+    const refresh = () => {
+      visible.value = true
+      firstLoadData.value = true
       triggerGetAccountingClosingMessages.value = true
     }
+
     return {
       userId,
       refTimelineNoti,
@@ -165,9 +153,9 @@ export default defineComponent({
       openNoti,
       goToChatByNoti,
       firstLoadData,
-      updateData,
       listData,
       loadinggetGetAccountingClosingMessages,
+      refresh
     }
   },
 })
@@ -263,10 +251,10 @@ export default defineComponent({
       }
     }
 
-    &-btnClose {
+    &-btnOpenMessages {
       position: absolute;
       top: 6px;
-      left: 10px;
+      right: 10px;
       cursor: pointer;
     }
 
@@ -277,10 +265,11 @@ export default defineComponent({
     }
   }
 
-  &-btnOpen {
+  &-btnOpenNoti {
     position: absolute;
-    right: 15px;
+    left: 20px;
     top: 15px;
+    z-index: 1;
   }
 }
 </style>
