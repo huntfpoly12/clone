@@ -486,25 +486,6 @@ export default defineComponent({
       return bsDeduction;
     });
 
-    // data select
-    const arrAllCallApi = computed(
-      () => store.getters["settings/accountSubjects"]
-    );
-    let arrAccoountSubjects = ref([]);
-    watch(
-      () => arrAllCallApi.value,
-      (value) => {
-        const arrAll: any = [];
-        if (value.length) {
-          value.forEach((items: any) => {
-            items.codes.forEach((x: any) => {
-              arrAll.push(x);
-            });
-          });
-        }
-        arrAccoountSubjects.value = arrAll;
-      }
-    );
     const fundingSource: any = computed(() => {
       let bsDeduction: any = enum2Entries(FundingSource).map((value) => ({
         value: value[1],
@@ -627,20 +608,6 @@ export default defineComponent({
       //notification('error', e.message)
       triggerBankbookDetails.value = false;
     });
-    // const {
-    //   result: resTransactionDetails,
-    //   // onResult: onResTransactionDetails,
-    //   loading: loadingGetTransactionDetails,
-    //   // refetch,
-    //   onError: errorTransactionDetails
-    // } = useQuery(queries.getTransactionDetails, payloadGetTransactionDetails,
-    //   () => ({
-    //     enabled: triggerTransactionDetails.value,
-    //     fetchPolicy: "no-cache",
-    //   }))
-    // errorTransactionDetails(e => {
-    //   //notification('error', e.message)
-    // })
     // mutations
     const {
       mutate: syncBankbookDetails,
@@ -864,8 +831,6 @@ export default defineComponent({
     );
     // Grid Main
     const selectionChanged = (event: any) => {
-      // normalTransactionDetails
-      // slipRegistration
       const listItemDisable: any = [];
       dataSource.value.forEach((items: any) => {
         if (items.normalTransactionDetails && !items.documentRegistered) {
@@ -1397,7 +1362,6 @@ export default defineComponent({
       updateremoveBankbookDetailProof,
       updateAddBankbookDetailProof,
       refGridDetailAc110,
-      arrAccoountSubjects,
       fundingSource,
       letterOfApprovalType,
       focusInputIncomeSpending,
