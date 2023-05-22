@@ -289,6 +289,14 @@ export default defineComponent({
       //store.commit('common/setAddBtOnclickPA520',false)
       originDataInitTab2.value.employeeId = result.data.createEmployeeWageDaily.employeeId
       originDataInitTab2.value.input.employeementInsuranceDeduction = true
+      originDataInitTab2.value.input.deductionItems = [
+        {itemCode: 1001, amount: 0},
+        {itemCode: 1002, amount: 0},
+        {itemCode: 1003, amount: 0},
+        {itemCode: 1004, amount: 0},
+        {itemCode: 1011, amount: 0},
+        {itemCode: 1012, amount: 0}
+      ]
       mutateTab2(originDataInitTab2.value)
       store.commit(
         "common/setIdRowSaveDonePA520",

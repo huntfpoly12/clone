@@ -17,8 +17,15 @@
   </a-modal>
 </template>
 <script lang="ts">
-import {computed, defineComponent, ref} from "vue";
-import {useStore} from "vuex";
+import { computed, defineComponent, ref } from "vue";
+import { useStore } from "vuex";
+import mutations530 from "@/graphql/mutations/AC/AC5/AC530";
+import mutations540 from "@/graphql/mutations/AC/AC5/AC540";
+import mutations550 from "@/graphql/mutations/AC/AC5/AC550";
+import { useMutation } from "@vue/apollo-composable";
+import { Message } from "@/configs/enum";
+import notification from "@/utils/notification";
+
 export default defineComponent({
   props: {
     isModalSendMail: {
@@ -26,28 +33,100 @@ export default defineComponent({
     },
     dataPopup: {
       type: Object
+    },
+    type: {
+      type: String,
+      default: '',
     }
   },
   setup(props, { emit }) {
     const email = ref()
     const store = useStore();
     const userInfo = computed(() => store.state.auth.userInfor);
-
+    const payLoad: any = ref(null)
     let keyRefreshForm = ref(0)
     const closePopup = () => {
       email.value = ''
       keyRefreshForm.value++
       emit('closePopup')
     }
+
+    /////// mutations
+    ///// api 530
+    const {
+      mutate: sendStatementOfGoverbmentSubsidiesReportEmail,
+      onDone: doneSendStatementOfGoverbmentSubsidiesReportEmail,
+      onError: errorSendStatementOfGoverbmentSubsidiesReportEmail,
+      loading: loadingsendStatementOfGoverbmentSubsidiesReportEmail,
+    } = useMutation(mutations530.sendStatementOfGoverbmentSubsidiesReportEmail);
+    doneSendStatementOfGoverbmentSubsidiesReportEmail((data) => {
+      notification("success", Message.getCommonMessage("801").message);
+      email.value = ''
+      keyRefreshForm.value++
+      emit('closePopup')
+    })
+    errorSendStatementOfGoverbmentSubsidiesReportEmail(e => {
+      console.log('errorsendStatementOfGoverbmentSubsidiesReportEmail', e);
+    })
+
+    ///// api 540
+    const {
+      mutate: sendPreliminaryStatementOfUseReportEmail,
+      onDone: doneSendPreliminaryStatementOfUseReportEmail,
+      onError: errorSendPreliminaryStatementOfUseReportEmail,
+      loading: loadingsendPreliminaryStatementOfUseReportEmail,
+    } = useMutation(mutations540.sendPreliminaryStatementOfUseReportEmail);
+    doneSendPreliminaryStatementOfUseReportEmail((data) => {
+      notification("success", Message.getCommonMessage("801").message);
+      email.value = ''
+      keyRefreshForm.value++
+      emit('closePopup')
+    })
+    errorSendPreliminaryStatementOfUseReportEmail(e => {
+      console.log('errorsendPreliminaryStatementOfUseReportEmail', e);
+    })
+
+    ///// api 550, 560
+    const {
+      mutate: sendCostStatementReportEmail,
+      onDone: doneSendCostStatementReportEmail,
+      onError: errorSendCostStatementReportEmail,
+      loading: loadingSendCostStatementReportEmail,
+    } = useMutation(mutations550.sendCostStatementReportEmail);
+    doneSendCostStatementReportEmail((data) => {
+      notification("success", Message.getCommonMessage("801").message);
+      email.value = ''
+      keyRefreshForm.value++
+      emit('closePopup')
+    })
+    errorSendCostStatementReportEmail(e => {
+      console.log('errorSendCostStatementReportEmail', e);
+    })
+
+
     const sendEmail = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
         return
       }
-      email.value = ''
-      keyRefreshForm.value++
-      emit('closePopup')
+      const payloadCommon = {
+        ...props.dataPopup,
+        emailInput: {
+          receiverName: userInfo?.value?.name,
+          receiverAddress: userInfo?.value?.email,
+          senderName: email.value
+        }
+      }
+      if (props.type === 'AC530') {
+        sendStatementOfGoverbmentSubsidiesReportEmail(payloadCommon)
+      }
+      if (props.type === 'AC540') {
+        sendPreliminaryStatementOfUseReportEmail(payloadCommon)
+      }
+      if(props.type === 'AC550' || props.type === 'AC560') {
+        sendCostStatementReportEmail(payloadCommon)
+      }
     }
     return {
       email,

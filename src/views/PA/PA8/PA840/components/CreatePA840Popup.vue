@@ -6,13 +6,13 @@
       <a-spin :spinning="getEmployeeWageLoading || getEmployeeWageDailyLoading">
         <div class="mb-10">
           <a-row class="px-10">
-            <a-col :span="col.left">
+            <a-col :span="12">
               <DxField label="직원유행">
                 <radio-group :arrayValue="INITIAL_FORM.employeeFashionArr" v-model:valueRadioCheck="formData.employeeType"
                   layoutCustom="horizontal" class="mt-1"></radio-group>
               </DxField>
             </a-col>
-            <a-col :span="col.right">
+            <a-col :span="12">
               <DxField label="직원선택" :required="true">
                 <employ-select :arrayValue="employeeArr" :required="true" v-model:valueEmploy="formData.employeeId"
                   :width="formData.employeeType == 10 ? '220px' : '280px'" />
@@ -23,22 +23,22 @@
         <a-row :gutter="[0, 0]" class="item-group mb-20 row-bd">
           <a-col span="12">
             <DxField label="업체명">
-              <default-text-box v-model:valueInput="infoCompany.name" placeholder="업체명" disabled />
+              <default-text-box width="290px" v-model:valueInput="infoCompany.name" placeholder="업체명" disabled />
             </DxField>
           </a-col>
           <a-col span="12">
             <DxField label="대표자명">
-              <default-text-box v-model:valueInput="infoCompany.presidentName" placeholder="대표자명" disabled />
+              <default-text-box width="290px" v-model:valueInput="infoCompany.presidentName" placeholder="대표자명" disabled />
             </DxField>
           </a-col>
           <a-col span="12">
             <DxField label="사업자등록번호">
-              <biz-number-text-box v-model:valueInput="infoCompany.bizNumber" placeholder="사업장관리번호" disabled/>
+              <biz-number-text-box width="290px" v-model:valueInput="infoCompany.bizNumber" placeholder="사업장관리번호" disabled/>
             </DxField>
           </a-col>
           <a-col span="12">
             <DxField label="사업장관리번호">
-              <id-number-text-box disabled v-model:valueInput="majorInsuranceConsignStatus" mask="000-00-00000-0" />
+              <id-number-text-box width="290px" disabled v-model:valueInput="majorInsuranceConsignStatus" mask="000-00-00000-0" />
             </DxField>
           </a-col>
         </a-row>
@@ -172,9 +172,9 @@
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="복귀후 급여(납부재개)" class="field-custom-2">
+              <DxField label="복귀후 급여(납부재개)(원)" class="field-custom-2">
                 <number-box-money width="200px" v-model:valueInput="formData.salaryAfterReturn"
-                  :disabled="isStatusLeaveOfAbsence" placeholder="원" format="#,### 원" />
+                  :disabled="isStatusLeaveOfAbsence" placeholder="원" format="#,###" />
               </DxField>
             </a-col>
           </a-row>
@@ -204,10 +204,10 @@
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="보수총액" class="field-custom-2" alignment="right">
+              <DxField label="보수총액(원)" class="field-custom-2" alignment="right">
                 <number-box-money width="200px"
                   v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[0].totalSalary" placeholder="원"
-                  :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
+                  :disabled="isStatusLeaveOfAbsence" format="#,###" />
               </DxField>
             </a-col>
           </a-row>
@@ -221,10 +221,10 @@
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="보수총액" class="field-custom-2" alignment="right">
+              <DxField label="보수총액(원)" class="field-custom-2" alignment="right">
                 <number-box-money width="200px"
                   v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[1].totalSalary" placeholder="원"
-                  :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
+                  :disabled="isStatusLeaveOfAbsence" format="#,###" />
               </DxField>
             </a-col>
           </a-row>
@@ -238,19 +238,19 @@
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="보수총액" class="field-custom-2" alignment="right">
+              <DxField label="보수총액(원)" class="field-custom-2" alignment="right">
                 <number-box-money width="200px"
                   v-model:valueInput="formData.healthSalaryPaymentYearDuringLeaveOfAbsence[2].totalSalary" placeholder="원"
-                  :disabled="isStatusLeaveOfAbsence" format="#,### 원" />
+                  :disabled="isStatusLeaveOfAbsence" format="#,###" />
               </DxField>
             </a-col>
           </a-row>
           <a-row>
             <a-col span="12">
-              <DxField label="분할납부횟수" class="field-custom-2">
+              <DxField label="분할납부횟수(건)" class="field-custom-2">
                 <!-- {{ formData.heathInstallmentPaymentCount }} -->
                 <number-box-money v-model:valueInput="formData.heathInstallmentPaymentCount" placeholder="건"
-                  format="#,### 건" :disabled="isStatusLeaveOfAbsence" />
+                  format="#,###" :disabled="isStatusLeaveOfAbsence" />
               </DxField>
             </a-col>
             <a-col span="12">
