@@ -266,7 +266,7 @@ export const cellsSetting = [
 
     { row: 9, col: 5   , className: 'htMiddle htRight disable-cell',readOnly: true},
     { row: 9, col: 6   , className: 'htMiddle htRight disable-cell',readOnly: true},
-    { row: 9, col: 7  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
+    { row: 9, col: 7  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },validator:cellValueGreaterThan0,},
     { row: 9, col: 8  , className: 'htMiddle htRight mid-gray-cell',readOnly: true ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
     { row: 9, col: 9  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },validator:cellValueGreaterThan0,editor:CustomNumberEditor},
     { row: 9, col: 10  , className: 'htMiddle htRight disable-cell',readOnly: true },
@@ -667,7 +667,16 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 32) {
         // check để lọc hết những row không có dữ liệu ra
-        if (arrData[index][5] || arrData[index][6] || arrData[index][7] || arrData[index][8] || arrData[index][9] || arrData[index][10] || arrData[index][11] || arrData[index][12]) {
+        if (
+          typeof arrData[index][5] == 'number' ||
+          typeof arrData[index][6] == 'number' ||
+          typeof arrData[index][7] == 'number' ||
+          typeof arrData[index][8] == 'number' ||
+          typeof arrData[index][9] == 'number' ||
+          typeof arrData[index][10] == 'number' ||
+          typeof arrData[index][11] == 'number' ||
+          typeof arrData[index][12] == 'number'
+        ) {
           cellData.push({    
             /** 코드 (code) */
             code: arrData[index][4],
@@ -694,49 +703,65 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
       }
     }
   }
-  console.log(cellData);
+  console.log(cellData, 'inputdata');
   const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
-  console.log(output);
+  console.log(output ,'outputdata');
   if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
-      output.incomeWages.forEach((item) => {
+    output.incomeWages.forEach((item) => {
         setValueDataTable(wrapper,item.code,item)
       })
     }
-    if (output.incomeRetirements.length > 0) { // 퇴직소득 [연금계좌(A12), 그외(A22), 가감계(A20)]
-      output.incomeRetirements.forEach((item) => {
-        setValueDataTable(wrapper,item.code,item)
-      })
-    }
-    if (output.incomeBusinesses.length > 0) { // 사업소득 [매월징수(A25), 연말정산(A26), 가감계(A30)]
-      output.incomeBusinesses.forEach((item) => {
-        setValueDataTable(wrapper,item.code,item)
-      })
-    }
-    if (output.incomeExtras.length > 0) { // 기타소득 [연금계좌(A41), 종교인소득-매월징수(A43), 종교인소득-연말정산(A44), 그외(A42), 가감계(A40)]
-      output.incomeExtras.forEach((item) => {
-        setValueDataTable(wrapper,item.code,item)
-      })
-    }
-    if (output.incomePensions.length > 0) { // 연금소득 [연금계좌(A48), 공적연금(A45), 연말정산(A46), 가감계(A47)]
-      output.incomePensions.forEach((item) => {
-        setValueDataTable(wrapper,item.code,item)
-      })
-    }
-    if (output.incomeInterest) { // 이자소득(A50)
-        
-    }
-    if (output.incomeDividend) { // 배당소득(A60)
-        
-    }
-    if (output.incomeSaving) { // 저축등해지추징세액등(A69)
-        
-    }
-    if (output.modifyReport) { // 수정신고세액(A90)
-        
-    }
-    setValueDataTable(wrapper,output.summary.code, output.summary)
+  if (output.incomeRetirements.length > 0) { // 퇴직소득 [연금계좌(A12), 그외(A22), 가감계(A20)]
+    output.incomeRetirements.forEach((item) => {
+      setValueDataTable(wrapper,item.code,item)
+    })
+  }
+  if (output.incomeBusinesses.length > 0) { // 사업소득 [매월징수(A25), 연말정산(A26), 가감계(A30)]
+    output.incomeBusinesses.forEach((item) => {
+      setValueDataTable(wrapper,item.code,item)
+    })
+  }
+  if (output.incomeExtras.length > 0) { // 기타소득 [연금계좌(A41), 종교인소득-매월징수(A43), 종교인소득-연말정산(A44), 그외(A42), 가감계(A40)]
+    output.incomeExtras.forEach((item) => {
+      setValueDataTable(wrapper,item.code,item)
+    })
+  }
+  if (output.incomePensions.length > 0) { // 연금소득 [연금계좌(A48), 공적연금(A45), 연말정산(A46), 가감계(A47)]
+    output.incomePensions.forEach((item) => {
+      setValueDataTable(wrapper,item.code,item)
+    })
+  }
+  if (output.incomeInterest) { // 이자소득(A50)
+      
+  }
+  if (output.incomeDividend) { // 배당소득(A60)
+      
+  }
+  if (output.incomeSaving) { // 저축등해지추징세액등(A69)
+      
+  }
+  if (output.modifyReport) { // 수정신고세액(A90)
+      
+  }
+  setValueDataTable(wrapper,output.summary.code, output.summary)
   setValueDataTable(wrapper, "adjustmentOfRefundTaxAmount", output.adjustmentOfRefundTaxAmount)
-  console.log(wrapper.value.hotInstance);
-  
-    //r.push(output.summary); // 총합계(A99)
+  let checkYETaxAdj = checkYETaxAdjustment(output)
+  return checkYETaxAdj
+  //r.push(output.summary); // 총합계(A99)
+}
+
+export const checkYETaxAdjustment = (output: any) => {
+  let checkStatus = false
+  const A04 = output.incomeWages.find((el: { code: string; }) =>{
+    el.code == 'A04'
+  });
+  const A05 = output.incomeWages.find((el: { code: string; }) => el.code == 'A05');
+  const A06 = output.incomeWages.find((el: { code: string; }) => el.code == 'A06');
+  const A26 = output.incomeBusinesses.find((el: { code: string; }) => el.code === 'A26');
+  const A46 = output.incomePensions.find((el: { code: string; }) => el.code == 'A46');
+  console.log(A04 , A05 , A06 , A26, A46);
+  if (A04 || A05 || A06 || A26 || A46) {
+    checkStatus = true
+  }
+  return checkStatus
 }
