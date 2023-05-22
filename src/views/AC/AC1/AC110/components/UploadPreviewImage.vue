@@ -3,32 +3,18 @@
     <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
       <div class="form-upload-ac110">
         <div ref="elementUpload" class="upload-pewview-img-ac-110">
-          <a-upload
-            list-type="picture-card"
-            :disabled="
-              !payload.bankbookDetailId ||
-              loadingRemoveBankbookDetailProof ||
-              disabled
-            "
-            :multiple="multiple"
-            v-model:file-list="fileList"
-            @preview="handlePreview"
-            @change="changeFile"
-            :customRequest="customRequest"
-            :before-upload="beforeUpload"
-            @remove="remove"
-            accept="image/png, image/jpeg, image/jpg image/gif"
-          >
+          <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId ||
+            loadingRemoveBankbookDetailProof ||
+            disabled
+            " :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview" @change="changeFile"
+            :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
+            accept="image/png, image/jpeg, image/jpg image/gif">
             <div v-if="fileList.length <= limit">
               <div class="ant-btn-upload">
                 <p class="ant-btn-upload-text">
                   이미지 파일을 여기에 끌이다 놓으세요
                 </p>
-                <img
-                  src="@/assets/images/iconImage.png"
-                  class="ant-btn-upload-image"
-                  alt=""
-                />
+                <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="" />
                 <p class="ant-btn-upload-text">또는</p>
                 <button class="ant-btn-upload-button">파일 선택</button>
               </div>
@@ -38,21 +24,11 @@
       </div>
     </a-spin>
   </a-config-provider>
-  <PopupMessage
-    :modalStatus="isModalDelete"
-    @closePopup="isModalDelete = false"
-    :typeModal="'confirm'"
-    :title="Message.getMessage('COMMON', '401').message"
-    content=""
-    :okText="Message.getMessage('COMMON', '401').yes"
-    :cancelText="Message.getMessage('COMMON', '401').no"
-    @checkConfirm="handleDelete"
-  />
-  <a-image
-    :preview="{ visible: previewVisible, onVisibleChange: setVisible }"
-    style="width: 100%; display: none"
-    :src="previewImage"
-  />
+  <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
+    :title="Message.getMessage('COMMON', '401').message" content="" :okText="Message.getMessage('COMMON', '401').yes"
+    :cancelText="Message.getMessage('COMMON', '401').no" @checkConfirm="handleDelete" />
+  <a-image :preview="{ visible: previewVisible, onVisibleChange: setVisible }" style="width: 100%; display: none"
+    :src="previewImage" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from "vue";
@@ -105,7 +81,7 @@ export default defineComponent({
     },
     payLoadProofs: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
     disabled: {
       type: Boolean,
@@ -247,7 +223,7 @@ export default defineComponent({
       previewVisible.value = false;
     };
 
-    const changeFile = ({ file, fileList: newFileList }: FileInfo) => {};
+    const changeFile = ({ file, fileList: newFileList }: FileInfo) => { };
 
     const beforeUpload = (file: any) => {
       const isImage =
@@ -270,12 +246,17 @@ export default defineComponent({
       }
       isFailUpload.value = isImage && isLt10M && !isDuplicaseName;
     };
-
+    
     const customRequest = (e: any) => {
       if (!isFailUpload.value) {
         fileList.value.splice(fileList.value.length - 1, 1);
         e.onError("");
         return;
+      }
+      const config = {
+        onUploadProgress: (progressEvent: any) => {
+          e.onProgress({ percent: Math.round((progressEvent.loaded * 100) / progressEvent.total) });
+        }
       }
       const formData = new FormData();
       formData.append("file", e.file);
@@ -286,7 +267,7 @@ export default defineComponent({
         props.payLoadProofs.facilityBusinessId
       );
       uploadRepository
-        .accountingProof(formData)
+        .accountingProof(formData, config)
         .then((res: any) => {
           e.onSuccess("ok");
           listFileStorageId.value.push({

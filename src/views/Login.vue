@@ -4,7 +4,7 @@
     <div class="dx-fieldset-header" ><img src="../assets/images/Logo-Jangbuda-home.png" style="width: 133px;"/></div>
     <div class="dx-fieldset-header" style="font-weight: bold;">로그인</div>
     <form @submit="submitForm">
-      <p v-if="errors" class="invalid">
+      <p v-if="errors && !signinLoading" class="invalid">
         {{ errors }}
       </p>
       <div>
@@ -33,9 +33,9 @@
       </p>
       <a-row>
           <a-col :span="5">
-            <button class="primary" type="submit">
-              로그인
-            </button>
+            <a-spin :spinning="signinLoading" size="small">
+              <button class="primary" type="submit">로그인</button>
+            </a-spin>
           </a-col>
           <a-col :span="19">
             <div style="float: right;padding: 6px 0px 6px 0px;">

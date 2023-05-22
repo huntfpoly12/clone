@@ -1,12 +1,12 @@
 <template>
-  <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
+  <a-modal class="form-modal" width="900px" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
     title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="getEmployeeWageDailyLoading || getEmployeeWageLoading">
       <standard-form ref="formPa820Ref">
         <div class="form-container">
           <div class="form-first pl-15">
             <a-row>
-              <a-col :span="10">
+              <a-col :span="12">
                 <a-form-item label="직원유행" label-align="right">
                   <radio-group :arrayValue="employeeFashionArr" v-model:valueRadioCheck="formState.employeeType"
                     layoutCustom="horizontal" class="mt-1"></radio-group>
@@ -16,7 +16,7 @@
                 <a-form-item label="직원선택" class="red">
                   <div class="d-flex-center">
                     <employ-select :arrayValue="employeeArr" :required="true" v-model:valueEmploy="formState.employeeId"
-                      :width="formState.employeeType == 10 ? '220px' : '280px'" />
+                      width="200" />
                   </div>
                 </a-form-item>
               </a-col>
@@ -24,7 +24,7 @@
           </div>
           <div class="form-group">
             <a-row>
-              <a-col :span="10">
+              <a-col :span="12">
                 <a-form-item label="업체명" label-align="right">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.name" :required="true" />
                 </a-form-item>
@@ -37,7 +37,7 @@
               </a-col>
             </a-row>
             <a-row class="mt-10">
-              <a-col :span="10">
+              <a-col :span="12">
                 <a-form-item label="사업자등록번호" label-align="right">
                   <biz-number-text-box v-model:valueInput="showData.bizNumber" width="200px" :disabled="true"
                     messRequired="이항목은 필수 입력사항입니다!" nameInput="companyBizNumber" />
@@ -45,14 +45,15 @@
               </a-col>
               <a-col :span="12">
                 <a-form-item label="사업장관리번호" label-align="right">
-                  <id-number-text-box disabled v-model:valueInput="infoMajorInsuranceConsignStatus.manageId" mask="000-00-00000-0" />
+                  <id-number-text-box disabled v-model:valueInput="infoMajorInsuranceConsignStatus.manageId"
+                    mask="000-00-00000-0" width="200px" />
                 </a-form-item>
               </a-col>
             </a-row>
           </div>
           <div class="form-group">
             <a-row>
-              <a-col :span="10">
+              <a-col :span="12">
                 <a-form-item label="성명" label-align="right">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.name1" :required="true" />
                 </a-form-item>
@@ -65,7 +66,7 @@
               </a-col>
             </a-row>
             <a-row class="mt-10">
-              <a-col :span="10">
+              <a-col :span="12">
                 <a-form-item label="취득일(입사일)" label-align="right">
                   <date-time-box text="지" v-model:valueDate="showData.joinedAt" bgColor="white" :clearable="false"
                     width="200px" :disabled="true" />
@@ -82,11 +83,12 @@
           <div class="form-group">
             <a-form-item label="4대보험 선택" label-align="left" class="mb-0">
               <div class="check-box-group">
-                <checkbox-basic size="14" label="국민연금" class="mr-10 mx-10"
+                <checkbox-basic size="14" label="국민연금" class="mr-35"
                   v-model:valueCheckbox="formState.nationalPensionReport" />
-                <checkbox-basic size="14" label="건강보험" class="mr-10"
+                <checkbox-basic size="14" label="건강보험" class="mr-35"
                   v-model:valueCheckbox="formState.healthInsuranceReport" />
-                <checkbox-basic size="14" label="고용보험" v-model:valueCheckbox="formState.employeementInsuranceReport" />
+                <checkbox-basic size="14" label="고용보험" class="mr-35"
+                  v-model:valueCheckbox="formState.employeementInsuranceReport" />
                 <checkbox-basic size="14" label="산재보험"
                   v-model:valueCheckbox="formState.industrialAccidentInsuranceReport" />
               </div>
@@ -96,8 +98,8 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <SelectCustomField :dataSource=" nationaPersionSelectbox " :disabled=" !formState.nationalPensionReport "
-                      v-model:valueInput=" formState.nationalPensionLossCode " width="357px" />
+                    <SelectCustomField :dataSource="nationaPersionSelectbox" :disabled="!formState.nationalPensionReport"
+                      v-model:valueInput="formState.nationalPensionLossCode" width="357px" />
                     <!-- <DxSelectBox :search-enabled="false" width="357px" :data-source="nationaPersionSelectbox"
                       :show-clear-button="false" display-expr="label" value-expr="value"
                       :disabled="!formState.nationalPensionReport" v-model="formState.nationalPensionLossCode"
@@ -129,16 +131,15 @@
                   <!-- <select-box-common width="357px" :arrSelect="nationaPersionSelectbox" :required="true"
                     v-model:valueInput="formState.nationalPensionLossCode"
                     :disabled="!formState.nationalPensionReport" placeholder="선택" /> -->
-                  <span class="ml-50">
-                    <checkbox-basic size="14" label="취득월 국민연금 납부"
-                      v-model:valueCheckbox=" showData.acquisitionMonthPayment "
-                      :disabled=" !formState.nationalPensionReport " />
+                  <span class="ml-40">
+                    <checkbox-basic size="14" label="취득월 국민연금 납부" v-model:valueCheckbox="showData.acquisitionMonthPayment"
+                      :disabled="!formState.nationalPensionReport" />
                   </span>
                   <!-- <span class="ml-10 notice">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 1월취득은 만근퇴사의 경우 의무납부.
                   </span> -->
                   <a-tooltip color="black" placement="top">
-                    <template #title>1일취득은 만근퇴사의 경우 의무납부.</template>
+                    <template #title>1일취득은 만근퇴사의 경우 의무납부</template>
                     <img src="@/assets/images/iconInfo.png" class="img-info" />
                   </a-tooltip>
                 </div>
@@ -149,8 +150,8 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <SelectCustomField :dataSource=" healthInsuranceSelectbox " :disabled="  !formState.healthInsuranceReport  "
-                      v-model:valueInput=" formState.healthInsuranceLossCode " width="357px" />
+                    <SelectCustomField :dataSource="healthInsuranceSelectbox" :disabled="!formState.healthInsuranceReport"
+                      v-model:valueInput="formState.healthInsuranceLossCode" width="357px" />
                   </div>
                 </div>
               </a-form-item>
@@ -160,13 +161,13 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <SelectCustomField :dataSource=" includeDependentsSelectbox " :disabled=" isDisabled1 "
-                      v-model:valueInput=" formState.employeementInsuranceLossCode " width="357px" />
+                    <SelectCustomField :dataSource="includeDependentsSelectbox" :disabled="isDisabled1"
+                      v-model:valueInput="formState.employeementInsuranceLossCode" width="357px" />
                   </div>
-                  <span class="ml-50">
+                  <span class="ml-40">
                     <checkbox-basic size="14" label="이직확인서 발급희망"
-                      v-model:valueCheckbox=" formState.employeementInsuranceJobChangeReport "
-                      :disabled=" isDisabled1 || !isDisabled2 " />
+                      v-model:valueCheckbox="formState.employeementInsuranceJobChangeReport"
+                      :disabled="isDisabled1 || !isDisabled2" />
                   </span>
                 </div>
               </a-form-item>
@@ -174,46 +175,46 @@
             <a-row class="mt-10">
               <div class="input-text jobtype-margin">
                 <div class="text-detail">상실사유 (10자이내 간략히)</div>
-                <text-number-box :disabled=" true " width="580px"
-                  v-model:valueInput=" formState.employeementInsuranceLossDescription " />
+                <text-number-box :disabled="true" width="540px"
+                  v-model:valueInput="formState.employeementInsuranceLossDescription" />
               </div>
             </a-row>
           </div>
           <div class="form-group">
             <a-row>
-              <a-col :span=" 10 ">
+              <a-col :span="12">
                 <a-form-item label="당해년도 보수총액" label-align="right">
-                  <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.totalSalaryThisYear "
-                    :required=" true " />
+                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.totalSalaryThisYear"
+                    :required="true" />
                 </a-form-item>
               </a-col>
-              <a-col :span=" 12 ">
+              <a-col :span="12">
                 <a-form-item label="당해년도 산정월수" label-align="right">
-                  <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.workMonthThisYear "
-                    :required=" true " />
+                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.workMonthThisYear"
+                    :required="true" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row>
-              <a-col :span=" 10 ">
+              <a-col :span="12">
                 <a-form-item label="전년도 보수총액" label-align="right">
-                  <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.totalSalaryLastYear "
-                    :required=" true " />
+                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.totalSalaryLastYear"
+                    :required="true" />
                 </a-form-item>
               </a-col>
-              <a-col :span=" 12 ">
+              <a-col :span="12">
                 <a-form-item label="전년도 산정월수" label-align="right">
-                  <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.workMonthLastYear "
-                    :required=" true " />
+                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.workMonthLastYear"
+                    :required="true" />
                 </a-form-item>
               </a-col>
             </a-row>
 
           </div>
           <a-row class="mt-15">
-            <a-col :span=" 8 " :offset=" 8 " style="text-align: center;">
-              <button-basic text="저장" type="default" mode="contained" :width=" 90 " id="btn-save"
-                @onClick=" onSubmit($event) " />
+            <a-col :span="8" :offset="8" style="text-align: center;">
+              <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save"
+                @onClick=" onSubmit($event)" />
             </a-col>
           </a-row>
         </div>
@@ -254,6 +255,7 @@ import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { getCurrentInstance } from "vue";
 import { DxTextBox } from "devextreme-vue";
 import useGetMajorInsuranceConsignStatus from "@/utils/usegetMajorInsuranceConsignStatus";
+import dayjs from 'dayjs';
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -352,7 +354,7 @@ export default defineComponent({
     watch(dataEmployeeWages, (value) => {
       if (value) {
         employeeWages.value = value.getEmployeeWages;
-        employeeArr.value = value.getEmployeeWages;
+        employeeArr.value = value.getEmployeeWages.filter((employee: any) => !employee.leavedAt)
       }
     }, { deep: true });
 
@@ -451,13 +453,28 @@ export default defineComponent({
     }, { deep: true })
     watch(() => formState.employeeType, (newVal: any) => {
       if (newVal == 10) {
-        employeeArr.value = employeeWages.value;
+        employeeArr.value = employeeWages.value.filter((employee: any) => !employee.leavedAt)
       } else {
-        employeeArr.value = employeeWageDailies.value;
+        employeeArr.value = employeeWageDailies.value
       }
     }, { deep: true })
 
     //--------------------------------CHANGE DATA---------------------------------------
+    watch(() => [showData.joinedAt, showData.leavedAt], (value: any) => {
+      const joinedAt: any = showData.joinedAt
+      const leavedAt: any = showData.leavedAt
+      if(!!joinedAt && !!leavedAt) {
+        const joinedAtFomat = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4,6)}-${joinedAt.toString().slice(6)}`
+        const leavedAtFomat = `${leavedAt.toString().slice(0, 4)}-${leavedAt.toString().slice(4,6)}-${leavedAt.toString().slice(6)}`
+        const firstDayInMonth = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4,6)}-01`
+        const lastDayInMonth = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4,6)}-${dayjs(joinedAtFomat).daysInMonth()}`
+        if(joinedAtFomat === firstDayInMonth && leavedAtFomat === lastDayInMonth) {
+          showData.acquisitionMonthPayment = true
+        }
+      }
+    }, {
+      deep: true
+    })
 
     watch(() => formState.employeementInsuranceLossCode, (newVal: any) => {
       if (newVal) {
