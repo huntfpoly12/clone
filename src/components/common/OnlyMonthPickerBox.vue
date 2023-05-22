@@ -66,7 +66,7 @@ export default defineComponent({
         resultMin = new Date(`${year}-${props.min.toString().length === 2 ? props.min.toString() : '0' + props.min.toString()}-15`)
       }
       if (!!props.max && parseInt(props.max.toString()) >= 1 && parseInt(props.max.toString()) <= 12) {
-        resultMax = new Date(`${year}-${props.max.toString().length === 2 ? props.max.toString() : '0' + props.max.toString()}-15`)
+        resultMax = new Date(`${year}-${props.max.toString().length === 2 ? props.max.toString() : '0' + props.max.toString()}-25`)
       }
       return {
         min: resultMin,

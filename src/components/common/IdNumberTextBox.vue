@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex resident-ctn" :style="{ width: widthCustom }">
-    <DxTextBox id="resident-id" ref="residentRef" :width="widthCustom" value-change-event="input"
+    <DxTextBox ref="residentRef" :width="widthCustom" value-change-event="input"
                :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
                @input="updateValue(value)" :mask="mask" :mask-invalid-message="maskMess" :height="$config_styles.HeightInput"
                :name="nameInput" @focusIn="onFocusIn" :style="{ width: widthCustom }">
@@ -101,6 +101,9 @@ export default defineComponent({
     const validatorRef = ref();
     const widthCustom = computed(() => {
       if (props.width == '100%') {
+        return props.width;
+      }
+      if (props.width.includes("%")){
         return props.width;
       }
       if (typeof +props.width == 'number' && +props.width > 0) {
@@ -233,7 +236,7 @@ export default defineComponent({
     visibility: hidden;
   }
 
-  #resident-id.dx-invalid.dx-texteditor {
+  .dx-invalid.dx-texteditor {
 
     :deep .dx-texteditor-input-container.error-other {
       &::after {
@@ -244,7 +247,7 @@ export default defineComponent({
 
   }
 
-  #resident-id .dx-datagrid-validator.dx-validator.dx-datagrid-invalid::after {
+  .dx-datagrid-validator.dx-validator.dx-datagrid-invalid::after {
     border-color: unset;
   }
 
