@@ -197,7 +197,7 @@ export default defineComponent({
       formData.append('companyId', companyId);
       formData.append('fiscalYear', acYear.value);
       formData.append('facilityBusinessId', globalFacilityBizId.value);
-      uploadRepository.accountingProof(formData).then(async (res: any) => {
+      uploadRepository.accountingFile(formData).then(async (res: any) => {
         // const url = await getBase64(file)
         filesUpload.value.push({
           id: res.data.id,
