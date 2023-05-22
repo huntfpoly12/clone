@@ -372,7 +372,6 @@ export default defineComponent({
         imputedYear: globalYear.value,
         employeeId: idAction.value,
       });
-      actionChangeComponent.value = 1;
     };
     successDelete((e) => {
       notification("success", messageDel);

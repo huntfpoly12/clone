@@ -1221,42 +1221,42 @@ export const clearAllCellValue = (wrapper: any) => {
 export const setValueDataTable = (wrapper: any,code: string, data: any) => {
   let hot = wrapper?.value.hotInstance;
   const rowPosition = inputPositionModified.find(item => item.className == code);
-  if (typeof data.numberOfPeople === "number" && data.numberOfPeople >= 0)
+  if (typeof data.numberOfPeople === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.numberOfPeople,'setdata');
-  if (typeof data.totalPayment === "number" && data.totalPayment >= 0)
+  if (typeof data.totalPayment === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.totalPayment,'setdata');
-  if (typeof data.collectedIncomeTax === "number" && data.collectedIncomeTax >= 0)
+  if (typeof data.collectedIncomeTax === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.collectedIncomeTax,'setdata');
-  if (typeof data.collectedRuralSpecialTax === "number" && data.collectedRuralSpecialTax >= 0)
+  if (typeof data.collectedRuralSpecialTax === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.collectedRuralSpecialTax,'setdata');
-  if (typeof data.collectedExtraTax === "number" && data.collectedExtraTax >= 0)
+  if (typeof data.collectedExtraTax === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.collectedExtraTax,'setdata');
-  if (typeof data.thisMonthAdjustedRefundTaxAmount === "number" && data.thisMonthAdjustedRefundTaxAmount >= 0)
+  if (typeof data.thisMonthAdjustedRefundTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthAdjustedRefundTaxAmount,'setdata');
-  if (typeof data.incomeTaxPaid === "number" && data.incomeTaxPaid >= 0)
+  if (typeof data.incomeTaxPaid === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.incomeTaxPaid,'setdata');
-  if (typeof data.ruralSpecialTaxPaid === "number" && data.ruralSpecialTaxPaid >= 0)
+  if (typeof data.ruralSpecialTaxPaid === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.ruralSpecialTaxPaid,'setdata');
 
-  if (typeof data.prevMonthNonRefundableTaxAmount === "number" && data.prevMonthNonRefundableTaxAmount >= 0)
+  if (typeof data.prevMonthNonRefundableTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.prevMonthNonRefundableTaxAmount,'setdata');
-  if (typeof data.preRefundApplicationTaxAmount === "number" && data.preRefundApplicationTaxAmount >= 0)
+  if (typeof data.preRefundApplicationTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.preRefundApplicationTaxAmount,'setdata');
-  if (typeof data.deductibleBalance === "number" && data.deductibleBalance >= 0)
+  if (typeof data.deductibleBalance === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.deductibleBalance,'setdata');
-  if (typeof data.thisMonthRefundTaxGeneral === "number" && data.thisMonthRefundTaxGeneral >= 0)
+  if (typeof data.thisMonthRefundTaxGeneral === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.thisMonthRefundTaxGeneral,'setdata');
-  if (typeof data.thisMonthRefundTaxOtherFinancialCompany === "number" && data.thisMonthRefundTaxOtherFinancialCompany >= 0)
+  if (typeof data.thisMonthRefundTaxOtherFinancialCompany === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.thisMonthRefundTaxOtherFinancialCompany,'setdata');
-  if (typeof data.thisMonthRefundTaxOtherMerge === "number" && data.thisMonthRefundTaxOtherMerge >= 0)
+  if (typeof data.thisMonthRefundTaxOtherMerge === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthRefundTaxOtherMerge,'setdata');
-  if (typeof data.refundTaxSubjectToAdjustment === "number" && data.refundTaxSubjectToAdjustment >= 0)
+  if (typeof data.refundTaxSubjectToAdjustment === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.refundTaxSubjectToAdjustment,'setdata');
-  if (typeof data.thisMonthTotalAdjustedRefundTaxAmount === "number" && data.thisMonthTotalAdjustedRefundTaxAmount >= 0)
+  if (typeof data.thisMonthTotalAdjustedRefundTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.thisMonthTotalAdjustedRefundTaxAmount,'setdata');
-  if (typeof data.nextMonthRefundTaxAmount === "number" && data.nextMonthRefundTaxAmount >= 0)
+  if (typeof data.nextMonthRefundTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[8][0], rowPosition?.value.modifiedPosition[8][1], data.nextMonthRefundTaxAmount,'setdata');
-  if (typeof data.refundApplicationAmount === "number"  && data.refundApplicationAmount >= 0)
+  if (typeof data.refundApplicationAmount === "number")
     hot.setDataAtCell(rowPosition?.value.modifiedPosition[9][0], rowPosition?.value.modifiedPosition[9][1], data.refundApplicationAmount,'setdata');
 }
 
@@ -1272,7 +1272,16 @@ export const calculateWithholdingStatusReportModified = (wrapper: any, data: any
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 61 && !arrData[index][4]) {
         // check để lọc hết những row không có dữ liệu ra
-        if (arrData[index][5] || arrData[index][6] || arrData[index][7] || arrData[index][8] || arrData[index][9] || arrData[index][10] || arrData[index][11] || arrData[index][12]) {
+        if (
+          typeof arrData[index][5] == 'number' ||
+          typeof arrData[index][6] == 'number' ||
+          typeof arrData[index][7] == 'number' ||
+          typeof arrData[index][8] == 'number' ||
+          typeof arrData[index][9] == 'number' ||
+          typeof arrData[index][10] == 'number' ||
+          typeof arrData[index][11] == 'number' ||
+          typeof arrData[index][12] == 'number'
+        ) {
           cellData.push({
             /** 코드 (code) */
             code: arrData[index - 1][4],

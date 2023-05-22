@@ -151,6 +151,7 @@
                 css-class="cell-center"
               />
               <template #yearEndTaxAdjustment="{ data }">
+                {{ data.data.yearEndTaxAdjustment }}
                 <DxCheckBox
                   v-model:value="data.data.yearEndTaxAdjustment"
                   :disabled="true"
@@ -301,14 +302,15 @@ export default defineComponent({
         source: any
       ) => {
         let hot = wrapper.value.hotInstance;
-
         if (isValid == false) {
           hot.setDataAtCell(row, hot.propToCol(prop), 0);
         }
       },
       afterChange: (changes: any, source: string) => {
         if (source == "edit" && firstTimeLoad.value) {
-          calculateWithholdingStatusReport(wrapper);
+          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReport(wrapper);
+
+         
           store.commit("common/setHasChangedPopupPA210", false);
         } else if (source == "edit") {
           firstTimeLoad.value = true;
@@ -695,7 +697,7 @@ export default defineComponent({
     //   let hot = wrapper.value.hotInstance;
     //   let newCellSetting = [...cellsSetting]
     //   console.log(hot.getData());
-      
+
     //   // newCellSetting[123].readOnly = true
     //   hot.updateSettings({
     //     cell: newCellSetting
