@@ -354,7 +354,7 @@ export default defineComponent({
     watch(dataEmployeeWages, (value) => {
       if (value) {
         employeeWages.value = value.getEmployeeWages;
-        employeeArr.value = value.getEmployeeWages.filter((employee: any) => !employee.leavedAt)
+        employeeArr.value = value.getEmployeeWages.filter((employee: any) => !!employee.leavedAt)
       }
     }, { deep: true });
 
@@ -453,7 +453,7 @@ export default defineComponent({
     }, { deep: true })
     watch(() => formState.employeeType, (newVal: any) => {
       if (newVal == 10) {
-        employeeArr.value = employeeWages.value.filter((employee: any) => !employee.leavedAt)
+        employeeArr.value = employeeWages.value.filter((employee: any) => !!employee.leavedAt)
       } else {
         employeeArr.value = employeeWageDailies.value
       }
