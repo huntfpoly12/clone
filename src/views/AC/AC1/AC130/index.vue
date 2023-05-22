@@ -10,9 +10,8 @@
         </div>
       </div>
       <div class="ac-130__top-status">
-        <ProcessStatus v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
-          :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
-          :disabled="true" />
+        <ProcessStatus v-if="accountingProcessesSelected?.status || 0"
+          :valueStatus="accountingProcessesSelected?.status || 0" @checkConfirmRowTable="changeStatusAccountingProcess"/>
         <button-basic v-else mode="contained" height="30" style="width: 90px" :disabled="true">
         </button-basic>
         <a-tooltip color="black" placement="top">
@@ -29,15 +28,18 @@
               <b>체크사항</b>
             </div>
             <div class="ac-130__main-content-check-checklist">
-              <a-collapse>
+              <a-collapse expandIconPosition="right">
+                <template #expandIcon="{ isActive }">
+                  <DoubleRightOutlined :rotate="isActive ? 90 : 0" />
+                </template>
                 <a-collapse-panel key="1">
                   <template #header>
                     <div class="ac-130__main-content-check-checklist-header">
-                      <span>현금출납부 잔액 -></span>
                       <DxButton v-if="getStatusCashRegisterSummary()" text="정상"
                         style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
-                      <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                      <DxButton v-else text="확인필요" style="background-color: #BB3835; color: white"
                         :height="$config_styles.HeightInput" width="90" />
+                      <span class="ac-130__main-content-check-checklist-header-title">현금출납부 잔액</span>
                     </div>
                   </template>
                   <TableCashRegisterSummary :data="dataSource.cashRegisterSummary" :year="acYear"
@@ -46,11 +48,11 @@
                 <a-collapse-panel key="2">
                   <template #header>
                     <div class="ac-130__main-content-check-checklist-header">
-                      <span>예산서 -></span>
                       <DxButton v-if="getStatusExpenditureBudgetSummary()" text="정상"
                         style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
-                      <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                      <DxButton v-else text="확인필요" style="background-color: #BB3835; color: white"
                         :height="$config_styles.HeightInput" width="90" />
+                      <span class="ac-130__main-content-check-checklist-header-title">예산서</span>
                     </div>
                   </template>
                   <TableExpenditureBudgetSummary :data="{
@@ -61,11 +63,11 @@
                 <a-collapse-panel key="3">
                   <template #header>
                     <div class="ac-130__main-content-check-checklist-header">
-                      <span>인건비 -></span>
                       <DxButton v-if="getStatusRevenueBudgetSummary()" text="정상"
                         style="background-color: #337614; color: white" :height="$config_styles.HeightInput" width="90" />
-                      <DxButton v-else class="mr-5" text="확인필요" style="background-color: #BB3835; color: white"
+                      <DxButton v-else text="확인필요" style="background-color: #BB3835; color: white"
                         :height="$config_styles.HeightInput" width="90" />
+                      <span class="ac-130__main-content-check-checklist-header-title">인건비</span>
                     </div>
                   </template>
                   <TableRevenueBudgetSummary :data="dataSource.laborCostSubjectSummaries" />
@@ -81,7 +83,7 @@
             <b>관리사항</b>
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormNotification :payload="payloadCheckItems" />
+            <FormNotification :payload="payload" />
           </div>
         </div>
       </a-col>
@@ -97,7 +99,7 @@ import queries from "@/graphql/queries/AC/AC1/AC130";
 import mutations from "@/graphql/mutations/AC/AC1/AC130";
 import { companyId } from "@/helpers/commonFunction"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport } from "devextreme-vue/data-grid";
-import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
+import { HistoryOutlined, EditOutlined, PlusOutlined, DoubleRightOutlined } from "@ant-design/icons-vue";
 import { dataDemoMain, contentPopupRetrieveStatements } from "./utils/index"
 import TableCashRegisterSummary from "./components/TableCashRegisterSummary.vue"
 import TableRevenueBudgetSummary from "./components/TableRevenueBudgetSummary.vue"
@@ -120,6 +122,7 @@ export default defineComponent({
     DxTotalItem,
     EditOutlined,
     PlusOutlined,
+    DoubleRightOutlined,
     DxButton,
     DxToolbar,
     DxExport,
@@ -142,9 +145,13 @@ export default defineComponent({
     let triggerAccountingProcesses = ref<boolean>(true)
     let triggerAccountingClosingCheckItems = ref<boolean>(true)
 
+    const accountingProcessesSelected: any = computed(() => {
+      return listAccountingProcesses.value.find((item: any) => item.month === monthSelected.value) || null
+    })
 
     // COMPUTED
     /// Graphql 
+    /// queries
     //// getAccountingProcesses
     const {
       onResult: onResAccountingProcesses,
@@ -165,7 +172,7 @@ export default defineComponent({
       triggerAccountingProcesses.value = false
     })
 
-    const payloadCheckItems = reactive({
+    const payload = reactive({
       companyId: companyId,
       fiscalYear: acYear.value,
       facilityBusinessId: globalFacilityBizId.value,
@@ -176,7 +183,7 @@ export default defineComponent({
     const {
       onResult: onResAccountingClosingCheckItems,
       loading: loadinggetAccountingClosingCheckItems,
-    } = useQuery(queries.getAccountingClosingCheckItems, payloadCheckItems,
+    } = useQuery(queries.getAccountingClosingCheckItems, payload,
       () => ({
         enabled: triggerAccountingClosingCheckItems.value,
         fetchPolicy: "no-cache",
@@ -185,14 +192,34 @@ export default defineComponent({
       dataSource.value = data.data.getAccountingClosingCheckItems
       triggerAccountingClosingCheckItems.value = false
     })
+    ///// mutations
+    const {
+      mutate: changeAccountingProcessStatus,
+      onDone: doneChangeAccountingProcessStatus,
+      onError: errorChangeAccountingProcessStatus,
+      loading: loadingChangeAccountingProcessStatus,
+    } = useMutation(mutations.changeAccountingProcessStatus);
+    doneChangeAccountingProcessStatus((data) => {
+      triggerAccountingProcesses.value = true
+    })
+    errorChangeAccountingProcessStatus(e => {
+      console.log('errorChangeAccountingProcessStatus', e);
+    })
 
     // METHODS
     const selectedMonth = (month: number) => {
+      if(monthSelected.value === month) return
       monthSelected.value = month
-      payloadCheckItems.month = month
+      payload.month = month
       triggerAccountingClosingCheckItems.value = true
     }
-    const selectionChanged = () => { }
+
+    const changeStatusAccountingProcess = (value: any) => {
+      changeAccountingProcessStatus({
+        ...payload,
+        status: parseInt(value.status)
+      })
+    }
 
     const totalDeposits = () => {
       let total = 0;
@@ -238,7 +265,6 @@ export default defineComponent({
       move_column,
       colomn_resize,
       acYear,
-      selectionChanged,
       totalDeposits,
       Message,
       contentPopupRetrieveStatements,
@@ -249,7 +275,9 @@ export default defineComponent({
       getStatusExpenditureBudgetSummary,
       getStatusRevenueBudgetSummary,
       loadinggetAccountingClosingCheckItems,
-      payloadCheckItems
+      payload,
+      accountingProcessesSelected,
+      changeStatusAccountingProcess
     };
   },
 });
