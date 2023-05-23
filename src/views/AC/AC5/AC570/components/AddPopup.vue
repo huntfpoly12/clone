@@ -8,10 +8,18 @@
                         <date-time-box width="230px" dateFormat="YYYY-MM-DD" v-model:valueDate="formState.transitionDate" ref="requiredTransitionDate" />
                     </a-form-item>
                     <a-form-item label="원천계정과목" class="red">
-                        <account-code-select width="230px" v-model:valueInput="formState.sourceCode" :required="true" />
+                        <account-code-select width="230px" @valueCode3="onCodeSourceCode" 
+                        :code1Check="valueCode1TransitionCode"
+                        :code2Check="valueCode2TransitionCode"
+                        :code3Check="valueCode3TransitionCode"
+                        v-model:valueInput="formState.sourceCode" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용계정과목" class="red">
-                        <account-code-select width="230px" v-model:valueInput="formState.transitionCode" :required="true" />
+                        <account-code-select width="230px" @valueCode3="onCodeTransitionCode" 
+                        :code1Check="valueCode1SourceCode" 
+                        :code2Check="valueCode2SourceCode" 
+                        :code3Check="valueCode3SourceCode"
+                        v-model:valueInput="formState.transitionCode" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용액" class="red">
                         <number-box-money width="230px" v-model:valueInput="formState.transitionAmount" :min="1" :required="true" :spinButtons="false" placeholder="양수만 가능"/>
@@ -55,9 +63,15 @@ export default defineComponent({
         const modalStatusDetail = ref<boolean>(false)
         const ac570FormRef = ref()
         let resetFormNum = ref(1);
-        let requiredTransitionDate = ref()
-        const formState = ref<any>()
 
+        let requiredTransitionDate = ref()
+        let valueCode1SourceCode = ref()
+        let valueCode2SourceCode = ref()
+        let valueCode3SourceCode = ref()
+        let valueCode1TransitionCode = ref()
+        let valueCode2TransitionCode = ref()
+        let valueCode3TransitionCode = ref()
+        const formState = ref<any>()
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -75,6 +89,17 @@ export default defineComponent({
             }
             
         };
+        const onCodeSourceCode = (val: any) => {
+            valueCode1SourceCode.value = val.code1
+            valueCode2SourceCode.value = val.code2
+            valueCode3SourceCode.value = val.code3
+            
+        }
+        const onCodeTransitionCode = (val: any) => {
+            valueCode1TransitionCode.value = val.code1
+            valueCode2TransitionCode.value = val.code2
+            valueCode3TransitionCode.value = val.code3
+        }
         const callApi = () => {
             emit("callApi", true)
         }
@@ -94,6 +119,10 @@ export default defineComponent({
             requiredTransitionDate,
             ac570FormRef, resetFormNum, formState,
             callApi,
+            onCodeSourceCode, onCodeTransitionCode,
+            valueCode1SourceCode, valueCode1TransitionCode,
+            valueCode2SourceCode, valueCode2TransitionCode,
+            valueCode3SourceCode, valueCode3TransitionCode,
         }
     },
 })

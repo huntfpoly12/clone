@@ -1,7 +1,8 @@
 .ac-120 {
-    // overflow-y: hidden !important;
+    overflow-y: hidden !important;
     margin: 10px;
     margin-bottom: 0;
+    max-height: calc(100vh - 140px);
     // min-height: calc(100vh - 140px);
     .top {
         margin-bottom: 10px;
@@ -67,32 +68,18 @@
 
 
     #content {
-        // height: 100%;
         #dataGridAc120 {
             height: calc(100vh - 330px);
-            // height: 100vh;
             max-width: 100% !important;
             transition: .4s;
         }
     }
-
-    //   .dx-drawer-shrink #content {
-    //     overflow: hidden;
-    //     transition: all 0.4s ease-out;
-    //     column-width: 900px;
-    //   }
-    //   .dx-drawer-shrink.dx-drawer-opened #content {
-    //     // column-width: 300px;
-    //     // margin-right: -10px;
-    //   }
     .hiddenTable {
         transition: .4s;
         height: calc(100vh - 690px) !important;
     }
 
     .data-grid {
-        // overflow: hidden;
-        // transition: .5s;
         margin-bottom: 10px;
 
     }
@@ -102,33 +89,14 @@
     }
 
     .slipRegistration {
-        display: flex;
+        // display: flex;
         align-items: center;
     }
 
-    // .showFull {
-    //     // height: 100% !important;
-    //     // transition: .3s;
-    //     // overflow: hidden;
-    // }
-
     .detail {
         height: max-content;
-        // .detail-header {
-        //     background-color: #e9e9e9;
-        //     .text-align-center {
-        //         text-align: center;
-        //         align-items: center;
-        //         padding: 5px;
-        //         height: 38px;
-        //     }
-        // }
 
         .detail-body {
-            // height: 0;
-            // transition: .3s;
-            // overflow: hidden;
-            // background-color: white;
             margin-top: -10px;
             .detail1 {
                 width: calc(100% - 307px);
@@ -165,6 +133,15 @@
     .detail-header {
         background-color: #337ab7;
         color: #fff;
+        .detail1 {
+            width: calc(100% - 307px);
+        }
+        .detail2 {
+            width: 307px;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 20px;
+        }
         
         .text-align-center {
             text-align: center;
@@ -172,7 +149,7 @@
             padding: 5px;
             height: 38px;
             .info-left {
-                float: right; 
+                float: left; 
                 font-size: 11px;
             }
             .info-right {
@@ -181,6 +158,7 @@
                     .ant-form-item-label > label {
                         color: #fff;
                     }
+                    margin-bottom: 0;
                     color: #fff;
                 }
             }

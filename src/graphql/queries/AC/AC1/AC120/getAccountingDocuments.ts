@@ -58,12 +58,12 @@ export default gql`
         paymentDate
         source
         writer
-        # bankbook{
-        #  bankbookNickname
-        #  type
-        #  bankbookNumber
-        #  bankbookId
-        #}
+        bankbook{
+          bankbookNickname
+          type
+          bankbookNumber
+          bankbookId
+        }
         summaryOfBankbookDetail
       }
     }

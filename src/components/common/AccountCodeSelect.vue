@@ -28,6 +28,7 @@
         </template>
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
+            <DxCustomRule  :message="messageCheckCode" :validation-callback="validateCheckCode" />
         </DxValidator>
     </DxSelectBox>
 </template>
@@ -35,7 +36,7 @@
 import { ref, watch, getCurrentInstance, computed, onMounted } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule, DxCustomRule } from "devextreme-vue/validator";
 import { useStore } from 'vuex';
 import { Message } from "@/configs/enum"
 export default {
@@ -52,6 +53,18 @@ export default {
         clearButton: Boolean,
         disabled: Boolean,
         valueInput: {
+            type: [Number, String],
+            default: null,
+        },
+        code1Check: {
+            type: [Number, String],
+            default: null,
+        },
+        code2Check: {
+            type: [Number, String],
+            default: null,
+        },
+        code3Check: {
             type: [Number, String],
             default: null,
         },
@@ -82,11 +95,13 @@ export default {
         DxValidator,
         DxRequiredRule,
         DxTextBox,
+        DxCustomRule,
     },
     setup(props: any, { emit }: any) {
         const store = useStore();
         const app: any = getCurrentInstance();
         const messages = app.appContext.config.globalProperties.$messages;
+        const messageCheckCode = ref('원천/전용 계정과목의 목이 동일합니다.')
         const messageRequired = ref(messages.getCommonMessage('102').message);
         if (props.messRequired != "") {
             messageRequired.value = props.messRequired;
@@ -139,6 +154,11 @@ export default {
                     shortCode: val.shortCode,
                     name2: val.name2,
                     code: val.code,
+                    valueEmit: {
+                        code1: val.code1,
+                        code2: val.code2,
+                        code3: val.code3,
+                    }
                 })
             })
             if (!accountSubjects.value?.find((element: any) => element.code == props.valueInput)) {
@@ -151,6 +171,7 @@ export default {
 
         const updateValue = (code: any) => {
             emit("update:valueInput", code);
+            emit("valueCode3", accountSubjects.value?.find((element: any) => element.code == code)?.valueEmit);
         };
 
         watch(() => props.valueInput, (newValue) => {
@@ -159,15 +180,37 @@ export default {
             deep: true,
             immediate: true,
         });
+        watch(() => [props.code1Check, props.code2Check, props.code3Check], () => {
+            resetSelect.value++
+            validateCheckCode()
+        });
         const onOpened = (e: any) => {
             e.component._popup.option('width', props.width);
         }
+        const validateCheckCode = () => {
+            if(!props.code3Check || !props.code1Check || !props.code2Check) {
+                return true
+            }
+            if (props.code3Check == accountSubjects.value?.find((element: any) => element.code == value.value)?.valueEmit.code3) {
+                messageCheckCode.value = '원천/전용 계정과목의 목이 동일합니다.'
+                return false;
+            }
+            if (props.code1Check != accountSubjects.value?.find((element: any) => element.code == value.value)?.valueEmit.code1 
+            || props.code2Check != accountSubjects.value?.find((element: any) => element.code == value.value)?.valueEmit.code2) {
+                messageCheckCode.value = '원천/전용계정과목의 관/항코드는 동일해야 합니다.'
+                return false;
+            }
+            return true
+            
+        } 
         return {
             messageRequired, resetSelect, onOpened,
             accountSubjects,
             updateValue,
             value,
             Message,
+            messageCheckCode, 
+            validateCheckCode,
         };
     },
 };
