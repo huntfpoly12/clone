@@ -5,9 +5,9 @@
     :mask-closable="false"
     class="confirm-md ac-110-popup-detail"
     footer=""
-    :width="1000"
+    :width="1100"
   >
-    <p class="ac-110-popup-detail-title">물품내역 {{ indexInputChange }}{{ keyInputChange }}</p>
+    <p class="ac-110-popup-detail-title">물품내역</p>
     <a-spin :spinning="false" size="large">
       <standard-form>
         <DxDataGrid
@@ -39,7 +39,7 @@
             </a-tooltip>
           </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="품목" cell-template="item" width="150" />
+          <DxColumn caption="품목" cell-template="item" width="185" />
           <template #item="{ data }">
             <SelectSearchEdit
               v-model:valueInput="data.data.item"
@@ -47,7 +47,7 @@
               :required="true"
             />
           </template>
-          <DxColumn caption="규격" cell-template="standard" width="150" />
+          <DxColumn caption="규격" cell-template="standard" width="185" />
           <template #standard="{ data }">
             <SelectSearchEdit
               v-model:valueInput="data.data.standard"
@@ -55,7 +55,7 @@
               :required="true"
             />
           </template>
-          <DxColumn caption="단위" cell-template="unit" width="150" />
+          <DxColumn caption="단위" cell-template="unit" width="185" />
           <template #unit="{ data }">
             <SelectSearchEdit
               v-model:valueInput="data.data.unit"
@@ -326,6 +326,9 @@ export default defineComponent({
         dataSource.value.statementOfGoodsItems = [];
       }
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems);
+      if(!dataSource.value.statementOfGoodsItems.length) {
+        addNewRow()
+      }
     };
 
     const cancel = () => {

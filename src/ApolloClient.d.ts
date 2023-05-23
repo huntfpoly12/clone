@@ -6,6 +6,7 @@ import {
 import mutations from "@/graphql/mutations/index";
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
+import { getJwtObject } from "@bankda/jangbuda-common";
 import store from '@/store'
 import { Observable } from 'rxjs';
 const baseURL = import.meta.env.VITE_GRAPHQL_ENDPOINT;
