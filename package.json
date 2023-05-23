@@ -48,6 +48,7 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
+    "@popperjs/core": "^2.11.7",
     "@types/lodash": "^4.14.187",
     "@types/webpack-env": "^1.18.0",
     "@vitejs/plugin-vue": "^3.1.0",

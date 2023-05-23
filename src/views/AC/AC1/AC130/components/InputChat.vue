@@ -89,7 +89,6 @@ export default defineComponent({
     let contentBinding = ref(props.content || '')
     let filesUpload: any = ref(props.files || [])
     const inputChat: any = ref()
-    let isVisibleEmojiForm = ref(false)
     const objectChatUpFile: any = ref(null)
     const listChat = ref<any>([])
     let listImagePreview: any = ref({
@@ -222,7 +221,6 @@ export default defineComponent({
       removeFile,
       objectChatUpFile,
       listImagePreview,
-      isVisibleEmojiForm,
       currentTime,
       formatFileSize,
       resetInputChat,
@@ -295,16 +293,6 @@ export default defineComponent({
           align-items: center;
           cursor: pointer;
           margin-right: 5px;
-        }
-
-        &-emoji {
-          background-color: #cfd8dc;
-          width: 26px;
-          height: 26px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
         }
       }
     }
