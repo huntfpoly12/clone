@@ -103,7 +103,7 @@ export default defineComponent({
       if (props.width == '100%') {
         return props.width;
       }
-      if (props.width.includes("%")){
+      if (props.width.toString().includes("%")){
         return props.width;
       }
       if (typeof +props.width == 'number' && +props.width > 0) {

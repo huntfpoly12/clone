@@ -272,9 +272,6 @@
       >
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
-            <!-- <SelectCustomField :dataSource="arrayEmploySelect" :disabled="disabledInput || idDisableNoData"
-              v-model:valueInput="dataAction.input.employeeId" width="350px" required displayeExpr="incomeTypeName"
-              valueExpr="key" /> -->
             <employ-type-select
               :arrayValue="arrayEmploySelect"
               v-model:valueEmploy="dataAction.input.employeeId"
@@ -1195,7 +1192,7 @@ export default defineComponent({
     };
     const onSave = (e: any) => {
       var res = e.validationGroup.validate();
-      if (!res.isValid) {
+      if (!res.isValid || isLoopDay.value) {
         res.brokenRules[0].validator.focus();
         resetOnError();
       } else {
