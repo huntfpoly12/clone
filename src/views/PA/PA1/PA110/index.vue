@@ -23,7 +23,7 @@
 						<DxColumn width="100px" caption="01" cell-template="imputed-month1" :cssClass="classObject(1)" />
 						<template #imputed-month1="{ data }">
 							<div v-if="data.data.month1">
-								<colorful-badge class="hover-underlined" :value="data.data.month1.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 1
+								<colorful-badge class="hover-underlined" :value="data.data.month1.status" :isUnder="processKey.imputedMonth == 1
 									" @click="showDetailSelected(data.data.month1)" :year="data.data.month1.paymentYear"
 									:month="data.data.month1.paymentMonth" />
 							</div>
@@ -34,7 +34,7 @@
 						<DxColumn width="100px" caption="02" cell-template="imputed-month2" :cssClass="classObject(2)" />
 						<template #imputed-month2="{ data }">
 							<div v-if="data.data.month2">
-								<colorful-badge class="hover-underlined" :value="data.data.month2.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 2
+								<colorful-badge class="hover-underlined" :value="data.data.month2.status" :isUnder="processKey.imputedMonth == 2
 									" @click="showDetailSelected(data.data.month2)" :year="data.data.month2.paymentYear"
 									:month="data.data.month2.paymentMonth" />
 							</div>
@@ -45,7 +45,7 @@
 						<DxColumn width="100px" caption="03" cell-template="imputed-month3" :cssClass="classObject(3)" />
 						<template #imputed-month3="{ data }">
 							<div v-if="data.data.month3">
-								<colorful-badge class="hover-underlined" :value="data.data.month3.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 3
+								<colorful-badge class="hover-underlined" :value="data.data.month3.status" :isUnder="processKey.imputedMonth == 3
 									" @click="showDetailSelected(data.data.month3)" :year="data.data.month3.paymentYear"
 									:month="data.data.month3.paymentMonth" />
 							</div>
@@ -56,7 +56,7 @@
 						<DxColumn width="100px" caption="04" cell-template="imputed-month4" :cssClass="classObject(4)" />
 						<template #imputed-month4="{ data }">
 							<div v-if="data.data.month4">
-								<colorful-badge class="hover-underlined" :value="data.data.month4.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 4
+								<colorful-badge class="hover-underlined" :value="data.data.month4.status" :isUnder="processKey.imputedMonth == 4
 									" @click="showDetailSelected(data.data.month4)" :year="data.data.month4.paymentYear"
 									:month="data.data.month4.paymentMonth" />
 							</div>
@@ -67,7 +67,7 @@
 						<DxColumn width="100px" caption="05" cell-template="imputed-month5" :cssClass="classObject(5)" />
 						<template #imputed-month5="{ data }">
 							<div v-if="data.data.month5">
-								<colorful-badge class="hover-underlined" :value="data.data.month5.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 5
+								<colorful-badge class="hover-underlined" :value="data.data.month5.status" :isUnder="processKey.imputedMonth == 5
 									" @click="showDetailSelected(data.data.month5)" :year="data.data.month5.paymentYear"
 									:month="data.data.month5.paymentMonth" />
 							</div>
@@ -78,7 +78,7 @@
 						<DxColumn width="100px" caption="06" cell-template="imputed-month6" :cssClass="classObject(6)" />
 						<template #imputed-month6="{ data }">
 							<div v-if="data.data.month6">
-								<colorful-badge class="hover-underlined" :value="data.data.month6.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 6
+								<colorful-badge class="hover-underlined" :value="data.data.month6.status" :isUnder="processKey.imputedMonth == 6
 									" @click="showDetailSelected(data.data.month6)" :year="data.data.month6.paymentYear"
 									:month="data.data.month6.paymentMonth" />
 							</div>
@@ -89,7 +89,7 @@
 						<DxColumn width="100px" caption="07" cell-template="imputed-month7" :cssClass="classObject(7)" />
 						<template #imputed-month7="{ data }">
 							<div v-if="data.data.month7">
-								<colorful-badge class="hover-underlined" :value="data.data.month7.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 7
+								<colorful-badge class="hover-underlined" :value="data.data.month7.status" :isUnder="processKey.imputedMonth == 7
 									" @click="showDetailSelected(data.data.month7)" :year="data.data.month7.paymentYear"
 									:month="data.data.month7.paymentMonth" />
 							</div>
@@ -100,7 +100,7 @@
 						<DxColumn width="100px" caption="08" cell-template="imputed-month8" :cssClass="classObject(8)" />
 						<template #imputed-month8="{ data }">
 							<div v-if="data.data.month8">
-								<colorful-badge class="hover-underlined" :value="data.data.month8.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 8
+								<colorful-badge class="hover-underlined" :value="data.data.month8.status" :isUnder="processKey.imputedMonth == 8
 									" @click="showDetailSelected(data.data.month8)" :year="data.data.month8.paymentYear"
 									:month="data.data.month8.paymentMonth" />
 							</div>
@@ -111,7 +111,7 @@
 						<DxColumn width="100px" caption="09" cell-template="imputed-month9" :cssClass="classObject(9)" />
 						<template #imputed-month9="{ data }">
 							<div v-if="data.data.month9">
-								<colorful-badge class="hover-underlined" :value="data.data.month9.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 9
+								<colorful-badge class="hover-underlined" :value="data.data.month9.status" :isUnder="processKey.imputedMonth == 9
 									" @click="showDetailSelected(data.data.month9)" :year="data.data.month9.paymentYear"
 									:month="data.data.month9.paymentMonth" />
 							</div>
@@ -122,7 +122,7 @@
 						<DxColumn width="100px" caption="10" cell-template="imputed-month10" :cssClass="classObject(10)" />
 						<template #imputed-month10="{ data }">
 							<div v-if="data.data.month10">
-								<colorful-badge class="hover-underlined" :value="data.data.month10.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 10
+								<colorful-badge class="hover-underlined" :value="data.data.month10.status" :isUnder="processKey.imputedMonth == 10
 									" @click="showDetailSelected(data.data.month10)" :year="data.data.month10.paymentYear"
 									:month="data.data.month10.paymentMonth" />
 							</div>
@@ -133,7 +133,7 @@
 						<DxColumn width="100px" caption="11" cell-template="imputed-month11" :cssClass="classObject(11)" />
 						<template #imputed-month11="{ data }">
 							<div v-if="data.data.month11">
-								<colorful-badge class="hover-underlined" :value="data.data.month11.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 11
+								<colorful-badge class="hover-underlined" :value="data.data.month11.status" :isUnder="processKey.imputedMonth == 11
 									" @click="showDetailSelected(data.data.month11)" :year="data.data.month11.paymentYear"
 									:month="data.data.month11.paymentMonth" />
 							</div>
@@ -144,7 +144,7 @@
 						<DxColumn width="100px" caption="12" cell-template="imputed-month12" :cssClass="classObject(12)" />
 						<template #imputed-month12="{ data }">
 							<div v-if="data.data.month12">
-								<colorful-badge class="hover-underlined" :value="data.data.month12.status" :isUnder="store.state.common.pa110.processKeyPA110.imputedMonth == 12
+								<colorful-badge class="hover-underlined" :value="data.data.month12.status" :isUnder="processKey.imputedMonth == 12
 									" @click="showDetailSelected(data.data.month12)" :year="data.data.month12.paymentYear"
 									:month="data.data.month12.paymentMonth" />
 							</div>
@@ -421,7 +421,7 @@
                     :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no"
                     @checkConfirm="statusComfirmChangePrice" /> -->
 				<CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint" @closePopup="
-				            {
+								            {
 					modalCopy = false;
 					hoverColClick = 0;
 				}
@@ -652,7 +652,7 @@ export default defineComponent({
 			}
 			const obj =
 				dataSource.value[0][
-				"month" + store.state.common.pa110.processKeyPA110.imputedMonth
+				"month" + processKey.value.imputedMonth
 				];
 			if (obj) {
 				statusDisabledBlock.value = false;
@@ -868,13 +868,13 @@ export default defineComponent({
 		// A function that is called when a user clicks on a month.
 		const showDetailSelected = (month: any) => {
 			if (
-				store.state.common.pa110.processKeyPA110.imputedYear !=
+				processKey.value.imputedYear !=
 				month.imputedYear ||
-				store.state.common.pa110.processKeyPA110.paymentYear !=
+				processKey.value.paymentYear !=
 				month.paymentYear ||
-				store.state.common.pa110.processKeyPA110.paymentMonth !=
+				processKey.value.paymentMonth !=
 				month.paymentMonth ||
-				store.state.common.pa110.processKeyPA110.imputedMonth !=
+				processKey.value.imputedMonth !=
 				month.imputedMonth
 			) {
 				store.state.common.pa110.actionCallGetMonthDetail++;
@@ -899,11 +899,11 @@ export default defineComponent({
 		// A function that is called when a user clicks on a button.
 		const activeNewMonth = (month: any) => {
 			status.value = month.status;
-			store.state.common.pa110.processKeyPA110.imputedYear = month.imputedYear;
-			store.state.common.pa110.processKeyPA110.paymentYear = month.paymentYear;
-			store.state.common.pa110.processKeyPA110.paymentMonth =
+			processKey.value.imputedYear = month.imputedYear;
+			processKey.value.paymentYear = month.paymentYear;
+			processKey.value.paymentMonth =
 				month.paymentMonth;
-			store.state.common.pa110.processKeyPA110.imputedMonth =
+			processKey.value.imputedMonth =
 				month.imputedMonth;
 			triggerDataTaxPayInfo.value = true; //reset data table 2
 			statusDisabledBlock.value = false;
@@ -960,7 +960,7 @@ export default defineComponent({
 		const statusComfirm = () => {
 			actionChangeIncomeProcess({
 				companyId: companyId,
-				processKey: store.state.common.pa110.processKeyPA110,
+				processKey: processKey.value,
 				status: status.value,
 			});
 		};
@@ -1087,7 +1087,7 @@ export default defineComponent({
 
 		const classObject = (month: number) => {
 			let string = "cell-center";
-			store.state.common.pa110.processKeyPA110.imputedMonth == month
+			processKey.value.imputedMonth == month
 				? (string += " column-focus")
 				: "";
 			hoverColClick.value == month ? (string += " column-hover") : "";
@@ -1096,7 +1096,7 @@ export default defineComponent({
 		};
 		const classObjectDetail = (month: number) => {
 			let string = "";
-			store.state.common.pa110.processKeyPA110.imputedMonth == month
+			processKey.value.imputedMonth == month
 				? (string += " column-focus")
 				: "";
 			hoverColClick.value == month ? (string += " column-hover") : "";
@@ -1108,7 +1108,7 @@ export default defineComponent({
 				if (
 					data.leavedAt?.toString().slice(0, 6) ==
 					`${paYear.value}${filters.formatMonth(
-						store.state.common.pa110.processKeyPA110.imputedMonth
+						processKey.value.imputedMonth
 					)}`
 				) {
 					return 0;

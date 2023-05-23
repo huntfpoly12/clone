@@ -85,17 +85,17 @@ export default defineComponent({
 		const paYear = ref<number>(
 			parseInt(sessionStorage.getItem("paYear") ?? "0")
 		);
-		// const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth())
+		// const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth())
 		const startDate = computed(() =>
 			dayjs(
-				`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`
+				`${paYear.value}-${processKey.value.paymentMonth}`
 			)
 				.startOf("month")
 				.toDate()
 		);
 		const finishDate = computed(() =>
 			dayjs(
-				`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`
+				`${paYear.value}-${processKey.value.paymentMonth}`
 			)
 				.endOf("month")
 				.toDate()
@@ -175,24 +175,24 @@ export default defineComponent({
 			() => props.modalStatus,
 			(value) => {
 				if (value) {
-					// dayValue.value = parseInt(`${paYear.value}${filters.formatMonth(store.state.common.pa110.processKeyPA110.paymentMonth)}01}`)
+					// dayValue.value = parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}01}`)
 					dayValue.value = sampleDataIncomeWage.paymentDay
 						? parseInt(
 							`${paYear.value}${filters.formatMonth(
-								store.state.common.pa110.processKeyPA110.paymentMonth
+								processKey.value.paymentMonth
 							)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`
 						)
 						: parseInt(
 							`${paYear.value}${filters.formatMonth(
-								store.state.common.pa110.processKeyPA110.paymentMonth
+								processKey.value.paymentMonth
 							)}${filters.formatMonth(
 								dayjs(
-									`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`
+									`${paYear.value}-${processKey.value.paymentMonth}`
 								).daysInMonth()
 							)}`
 						);
 					// dayValue.value = 1
-					// maxDayMonth.value = dayjs(`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`).daysInMonth()
+					// maxDayMonth.value = dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth()
 					// resetInput.value++
 				}
 			}
