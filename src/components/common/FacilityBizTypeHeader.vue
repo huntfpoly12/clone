@@ -3,7 +3,8 @@
     <a @click="openPopup"><span  v-if="acStateYear">회계({{ namelFacilityBiz }}, {{acStateYear}}) </span> <span v-if="paStateYear">원천({{paStateYear}})</span></a>
   </div>
   <a-modal :visible="modalConfirm" :closable="false" :width="paStateYear && acStateYear ? 420 : 377" footer="" :bodyStyle="{padding: '15px'}">
-    <standard-form  formName="forget-password" ref="settingFacilityBizType">
+    <a-spin :spinning="!userInfor" size="small">
+      <standard-form  formName="forget-password" ref="settingFacilityBizType">
       <h2 :style="paStateYear && acStateYear ? {'padding-left':'39px','margin-top': '20px'}:''">시설사업 및 귀속연도 선택</h2>
         <div class="popup-content">
           <a-row class="item-row">
@@ -70,7 +71,8 @@
           </div>         
         </a-col>
       </a-row>
-  </standard-form>
+      </standard-form>
+    </a-spin>
   </a-modal>
 </template>
 <script lang="ts">
@@ -210,7 +212,8 @@ export default defineComponent({
       paStateYear,
       openPopup,
       Message,
-      settingFacilityBizType
+      settingFacilityBizType,
+      userInfor
     }
   },
 });

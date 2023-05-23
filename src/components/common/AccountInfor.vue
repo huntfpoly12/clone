@@ -14,11 +14,11 @@
               <p v-if="userInfor.compactCompany">{{ userInfor.compactCompany.name}}</p>
             </div>
           </a-menu-item>
-          <a-menu-item>
-            <p @click="openChangePassword">비밀번호 변경</p>
+          <a-menu-item @click="openChangePassword">
+            <p >비밀번호 변경</p>
           </a-menu-item>
-          <a-menu-item>
-            <p @click="logout">로그아웃</p>
+          <a-menu-item @click="logout">
+            <p >로그아웃</p>
           </a-menu-item>
         </a-menu>
       </template>

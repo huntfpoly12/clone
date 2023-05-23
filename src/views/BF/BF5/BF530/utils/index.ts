@@ -23,6 +23,13 @@ export const reportTypeSelectbox = [
   { id: 1, text: "가입" },
   { id: 2, text: "탈퇴" },
 ];
+export const reportTypeSelectboxTab3 = [
+  { id: 1, text: "취득" },
+  { id: 2, text: "상실" },
+  { id: 3, text: "급여변경" },
+  { id: 4, text: "휴직" },
+  { id: 5, text: "복직" },
+];
 export const situationSelectbox = [
   { id: 1, text: "등록" },
   { id: 2, text: "접수" },
