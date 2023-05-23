@@ -87,10 +87,9 @@
           @selection-changed="selectionChanged"
           :allowSelection="true"
           ref="tab1Bf520Ref"
+          noDataText="내역이 없습니다"
         >
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <!-- <DxColumnFixing :enabled="true" /> -->
-          <!-- <DxEditing mode="row" /> -->
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection
             :select-all-mode="'allPages'"
@@ -263,14 +262,7 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  reactive,
-  ref,
-  watch,
-  watchEffect,
-} from "vue";
+import { computed, defineComponent, reactive, ref, watch } from "vue";
 import queries from "@/graphql/queries/BF/BF5/BF530/index";
 import mutations from "@/graphql/mutations/BF/BF5/BF530/index";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -410,7 +402,9 @@ export default defineComponent({
         }
       );
       dataSource.value = dataArr;
-      store.commit("common/filterDsTab2Bf530", dataArr);
+      if (props.onSearch) {
+        props.onSearch();
+      }
       companyRequestListTrigger.value = false;
       countGet.value++;
     });
@@ -601,7 +595,6 @@ export default defineComponent({
           });
         }
       });
-      console.log(`output->formData`, formData);
       formData.forEach((item: any) => {
         if (item.type == 1) {
           if (item.field.data.workingStatus == 0) {
