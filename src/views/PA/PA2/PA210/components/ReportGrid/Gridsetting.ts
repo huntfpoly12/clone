@@ -3,7 +3,7 @@ import { WithholdingStatusReport } from "@bankda/jangbuda-common";
 import Handsontable from "handsontable";
 import { getObjectWithPositiveValues } from "../../utils";
 const cellValueGreaterThan0 = (query: any, callback: any) => {
-  if (typeof query == 'number' && query >= 0) {
+  if ((typeof query == 'number' && query >= 0) || query === null) {
     callback(true)
   } else {
     callback(false)
@@ -625,8 +625,10 @@ export const setValueDataTable = (wrapper: any,code: string, data: any) => {
     hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax,'setdata');
   if (typeof data.collectedRuralSpecialTax === "number")
     hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax,'setdata');
-  if (typeof data.collectedExtraTax === "number")
-    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax,'setdata');
+  if (typeof data.collectedExtraTax === "number")  
+    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax, 'setdata');
+
+ 
   if (typeof data.thisMonthAdjustedRefundTaxAmount === "number")
     hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount,'setdata');
   if (typeof data.incomeTaxPaid === "number")
@@ -670,7 +672,7 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
         // check để lọc hết những row không có dữ liệu ra 
         // nếu là cột A10 và A99 cũng loại vì tất cả các cell đều disable
         if (
-          (arrData[index][4] !== 'A10' && arrData[index][4] !== 'A99') && 
+          (arrData[index][4] !== 'A99') && 
           (
             typeof arrData[index][5] == 'number' ||
             typeof arrData[index][6] == 'number' ||
@@ -682,32 +684,33 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
             typeof arrData[index][12] == 'number'
           )
         ) {
+          // tất cả các trường đều phải lớn hơn 0 hoặc một số ô  như (A02-collectedIncomeTax),(A06-collectedIncomeTax),(A90-collectedIncomeTax)
           let itemObject = {    
             /** 코드 (code) */
             code: arrData[index][4],
             /** 소득지급 인원 (numberOfPeople) */
-            numberOfPeople: arrData[index][5],
+            numberOfPeople: arrData[index][5] && arrData[index][5] !=='' ? arrData[index][5] : null,
             /** 소득지급 총지급액 (totalPayment) */
-            totalPayment: arrData[index][6],
+            totalPayment: arrData[index][6] && arrData[index][6] !=='' ? arrData[index][6] : null,
             /** 징수 소득세 (collectedIncomeTax) */
-            collectedIncomeTax: arrData[index][7],
+            collectedIncomeTax: arrData[index][7] && arrData[index][7] !=='' ? arrData[index][7] : null,
             /** 징수 농어촌특별세 (collectedRuralSpecialTax) */
-            collectedRuralSpecialTax: arrData[index][8],
+            collectedRuralSpecialTax: arrData[index][8] && arrData[index][8] !=='' ? arrData[index][8] : null,
             /** 징수 가산세 (collectedExtraTax) */
-            collectedExtraTax: arrData[index][9],
+            collectedExtraTax: arrData[index][9] && arrData[index][9] !=='' ? arrData[index][9] : null,
             /** 당월조정환급세액 (thisMonthAdjustedRefundTaxAmount) */
-            thisMonthAdjustedRefundTaxAmount: arrData[index][10],
+            thisMonthAdjustedRefundTaxAmount: arrData[index][10] && arrData[index][10] !=='' ? arrData[index][10] : null,
             /** 납부 소득세 (incomeTaxPaid) */
-            incomeTaxPaid: arrData[index][11],
+            incomeTaxPaid: arrData[index][11] && arrData[index][11] !=='' ? arrData[index][11] : null,
             /** 납부 농어촌특별세 (ruralSpecialTaxPaid) */
-            ruralSpecialTaxPaid: arrData[index][12],
+            ruralSpecialTaxPaid: arrData[index][12] && arrData[index][12] !=='' ? arrData[index][12] : null,
           }
           // check xem object đã đạt tiêu chuẩn chưa có ít nhất 1 trường có giá trị
-          if (
-            getObjectWithPositiveValues(itemObject)
-          ) {
+          // if (
+          //   getObjectWithPositiveValues(itemObject)
+          // ) {
             cellData.push(itemObject);
-          }
+          // }
         }
 
       }
@@ -715,6 +718,7 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
   }
   console.log(cellData, 'inputdata');
   const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
+  clearAllCellValue(wrapper)
   console.log(output, 'outputdata');
   // set value to cell after get common result
   if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]

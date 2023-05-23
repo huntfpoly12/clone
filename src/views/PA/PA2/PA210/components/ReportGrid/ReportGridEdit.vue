@@ -302,7 +302,7 @@ export default defineComponent({
       ) => {
         let hot = wrapper.value.hotInstance;
         if (isValid == false) {
-          hot.setDataAtCell(row, hot.propToCol(prop), 0);
+          hot.setDataAtCell(row, hot.propToCol(prop), 0,"edit");
         }
       },
       afterChange: (changes: any, source: string) => {
