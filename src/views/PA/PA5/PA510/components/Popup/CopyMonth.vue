@@ -141,9 +141,9 @@ export default defineComponent({
             setModalVisible()
             setModalVisibleCopy()
             notification('success', `완료!`)
-            store.state.common.pa510.processKeyPA510.imputedMonth = month.value
-            store.state.common.pa510.processKeyPA510.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
-            store.state.common.pa510.processKeyPA510.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
+            processKey.value.imputedMonth = month.value
+            processKey.value.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
+            processKey.value.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
             store.state.common.pa510.loadingTableInfo++
         })
 
@@ -220,9 +220,9 @@ export default defineComponent({
                 requiredPaymentDayCopy.value.validate(true)
                 return
             }
-            store.state.common.pa510.processKeyPA510.imputedMonth = month.value
-            store.state.common.pa510.processKeyPA510.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
-            store.state.common.pa510.processKeyPA510.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
+            processKey.value.imputedMonth = month.value
+            processKey.value.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
+            processKey.value.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
             emit("dataAddIncomeProcess", {
                 imputedYear: paYear.value,
                 imputedMonth: month.value,
