@@ -120,7 +120,7 @@
 							}}
 						</template>
 
-						<DxColumn caption="수입액" :allow-sorting="false" cell-template="amountCustom1" width="80" />
+						<DxColumn caption="수입액" :allow-sorting="false" css-class="cell-right" cell-template="amountCustom1" width="80" />
 						<template #amountCustom1="{ data }">
 							{{
 								data.data.resolutionClassification == 1
@@ -129,7 +129,7 @@
 							}}
 						</template>
 
-						<DxColumn caption="지출액" :allow-sorting="false" cell-template="amountCustom2" width="80" />
+						<DxColumn caption="지출액" :allow-sorting="false" css-class="cell-right" cell-template="amountCustom2" width="80" />
 						<template #amountCustom2="{ data }">
 							{{
 								data.data.resolutionClassification == 2
@@ -189,7 +189,7 @@
 							</div>
 						</template>
 
-						<DxColumn caption="수기 여부" :allow-sorting="false" cell-template="handwriting" width="75" />
+						<DxColumn caption="수기 여부" :allow-sorting="false" css-class="cell-center" cell-template="handwriting" width="75" />
 						<template #handwriting="{ data }">
 							<div class="slipRegistration">
 								<DxButton v-if="data.data.handwriting == true" :focusStateEnabled="false" text="O"
@@ -198,7 +198,7 @@
 							</div>
 						</template>
 
-						<DxColumn caption="정상 여부" :allow-sorting="false" cell-template="resolutionNormalStatus"
+						<DxColumn caption="정상 여부" :allow-sorting="false" css-class="cell-center" cell-template="resolutionNormalStatus"
 							width="75" />
 						<template #resolutionNormalStatus="{ data }">
 							<div class="slipRegistration">
@@ -216,7 +216,7 @@
 					<div style="
               border: 1px solid #ddd;
               border-top: none;
-              background-color: #ddd;
+              background-color: #f2f5f7;
               display: flex;
               padding: 5px;
               justify-content: space-around;
@@ -255,32 +255,32 @@
 				<div class="detail-header mt-10"
 					@click="store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull">
 					<a-row class="text-align-center">
-						<a-col :span="2">
+						<a-col class="detail1">
+							<a-row style="align-items: center;">
+								<a-col :span="11">
+									<div class="info-left">파란색 아무곳이나 누르시면 결의서 상세내역을 펼치거나 숨기실 수 있습니다</div>
+								</a-col>
+								<a-col :span="2">
+									<span style="font-weight: bold; font-size: 18px;">결 의 서</span>
+								</a-col>
+								<a-col :span="11">
+									<div class="info-right">
+										<a-form-item label="결의번호">
+											{{
+												store.state.common.ac120.formData.resolutionNumber
+												? "[" + store.state.common.ac120.formData.resolutionNumber + "]"
+												: "[]"
+											}}
+										</a-form-item>
+									</div>
+								</a-col>
+							</a-row>
 						</a-col>
-						<a-col :span="9">
-							<span class="info-left">파란색 아무곳이나 누르시면 결의서 상세내역을 펼치거나 숨기실 수 있습니다</span>
-						</a-col>
-						<a-col :span="2">
-							<span style="font-weight: bold; font-size: 18px;">결 의 서</span>
-						</a-col>
-						<a-col :span="9">
-							<div class="info-right">
-								<!-- <span style="font-size: 16px;">결의번호: </span> -->
-								<a-form-item label="결의번호">
-									{{
-										store.state.common.ac120.formData.resolutionNumber
-										? "[" + store.state.common.ac120.formData.resolutionNumber + "]"
-										: "[]"
-									}}
-									<DxButton v-if="store.state.common.ac120.formData.handwriting == true"
-										:focusStateEnabled="false" text="수기"
-										:style="{ backgroundColor: '#BB3835', color: 'white' }"
-										:height="$config_styles.HeightInput" />
-								</a-form-item>
-							</div>
-						</a-col>
-						<a-col :span="2">
-							<div style="display: flex; justify-content: flex-end">
+						<a-col class="detail2">
+							<DxButton v-if="store.state.common.ac120.formData.handwriting == true"
+								:focusStateEnabled="false" text="수기" :style="{ backgroundColor: '#BB3835', color: 'white' }"
+								:height="$config_styles.HeightInput" />
+							<div class="ml-20">
 								<a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
 									placement="top" color="black" title="정상 여부">
 									<DxButton :focusStateEnabled="false" text="O"

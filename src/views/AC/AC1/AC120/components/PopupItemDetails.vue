@@ -1,5 +1,5 @@
 <template>
-	<a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1000">
+	<a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1050">
 		<div class="mt-30">
 			<div class="text-align-center">
 				<h2><b>물품내역</b></h2>
@@ -20,21 +20,21 @@
 						</a-tooltip>
 					</template>
 					<DxScrolling mode="standard" show-scrollbar="always" />
-					<DxColumn caption="품목" cell-template="item" width="140" />
+					<DxColumn caption="품목" cell-template="item" width="180" />
 					<template #item="{ data }">
 						<!-- <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem"
                             :required="true" /> -->
 						<SelectSearchEdit v-model:valueInput="data.data.item" v-model:data="arrSelectItem"
 							:required="true" />
 					</template>
-					<DxColumn caption="규격" cell-template="standard" width="140" />
+					<DxColumn caption="규격" cell-template="standard" width="181" />
 					<template #standard="{ data }">
 						<!-- <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
                             :required="true" /> -->
 						<SelectSearchEdit v-model:valueInput="data.data.standard" v-model:data="arrSelectStandard"
 							:required="true" />
 					</template>
-					<DxColumn caption="단위" cell-template="unit" width="140" />
+					<DxColumn caption="단위" cell-template="unit" width="181" />
 					<template #unit="{ data }">
 						<!-- <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit"
                             :required="true" /> -->
@@ -297,6 +297,9 @@ export default defineComponent({
 							};
 						}
 					);
+					if (!dataSource.value?.length) {
+						addNewRow()
+					}
 				}
 			}
 		);

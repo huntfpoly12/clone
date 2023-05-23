@@ -1,78 +1,11 @@
 <template>
-  <!-- <div class="column"> -->
   <div class="detail">
-    <!-- <div class="detail-header">
-        <a-row class="text-align-center">
-          <a-col :span="8" @click="openShowFull">
-            <span style="float: left">
-              <fullscreen-exit-outlined
-                :style="{ fontSize: '20px' }"
-                v-if="store.state.common.ac120.statusShowFull"
-              />
-              <fullscreen-outlined :style="{ fontSize: '20px' }" v-else />
-            </span>
-          </a-col>
-          <a-col :span="8">
-            <div
-              style="display: flex; justify-content: center; margin-left: 35px"
-            >
-              <span
-                style="font-weight: bold; font-size: 18px; margin-right: 5px"
-                >결의서</span
-              >
-              <a-tooltip
-                v-if="formData.resolutionNormalStatus == true"
-                placement="top"
-                color="black"
-                title="정상 여부"
-              >
-                <DxButton
-                  :focusStateEnabled="false"
-                  text="O"
-                  :style="{ backgroundColor: '#337614', color: 'white' }"
-                  :height="$config_styles.HeightInput"
-                />
-              </a-tooltip>
-              <DxButton
-                v-else
-                :focusStateEnabled="false"
-                text="X"
-                :style="{ backgroundColor: '#BB3835', color: 'white' }"
-                :height="$config_styles.HeightInput"
-              />
-            </div>
-          </a-col>
-          <a-col :span="8">
-            <div style="display: flex; justify-content: flex-end">
-              <a-form-item label="결의번호">
-                {{
-                  formData.resolutionNumber
-                    ? formData.resolutionNumber
-                    : "_____"
-                }}
-                <DxButton
-                  v-if="formData.handwriting == true"
-                  :focusStateEnabled="false"
-                  text="수기"
-                  :style="{ backgroundColor: '#BB3835', color: 'white' }"
-                  :height="$config_styles.HeightInput"
-                />
-              </a-form-item>
-            </div>
-          </a-col>
-        </a-row>
-      </div> -->
     <a-row class="detail-body">
       <a-col class="detail1">
         <StandardForm formName="ac-120-form" ref="refFormAC120" :key="store.state.common.ac120.keyRefreshForm">
           <div class="ac120">
             <a-row class="mt-20">
               <a-col :span="7" class="col-1">
-                <a-form-item label="결의구분">
-                  <default-text-box
-                    :valueInput="store.state.common.ac120.arrResolutionClassification.find((item: any) => formData.resolutionClassification == item.id)?.text"
-                    width="100px" placeholder="지출" disabled="true" />
-                </a-form-item>
                 <div class="input_info">
                   <a-form-item label="결의서 종류">
                     <default-text-box
@@ -82,6 +15,11 @@
                   <button-basic @onClick="actionOpenModalCopy" style="margin: -5px 0px 0px 5px" mode="contained"
                     type="default" :text="textButton + '으로 변경'" />
                 </div>
+                <a-form-item label="결의구분">
+                  <default-text-box
+                    :valueInput="store.state.common.ac120.arrResolutionClassification.find((item: any) => formData.resolutionClassification == item.id)?.text"
+                    width="100px" placeholder="지출" disabled="true" />
+                </a-form-item>
               </a-col>
               <a-col :span="5" class="col-2">
                 <a-form-item label="결의일자" class="red">
@@ -214,14 +152,14 @@
           </div>
         </StandardForm>
         <div class="text-align-center mt-20">
-          <DxButton @click="onCancelDeleteRow" class="ml-4 custom-button-checkbox custom-button" type="default"
+          <DxButton @click="onCancelDeleteRow" class="custom-button-checkbox custom-button" type="default"
             :height="$config_styles.HeightInput">
             <div class="d-flex-center">
               <checkbox-basic :valueCheckbox="true" disabled="true" />
               <span class="pl-5">전표취소</span>
             </div>
           </DxButton>
-          <button-basic @onClick="onSubmit" style="margin: 0px 5px" mode="contained" type="default" text="저장" />
+          <button-basic @onClick="onSubmit" style="margin-left: 5px" mode="contained" type="default" text="저장" />
         </div>
       </a-col>
       <a-col class="upload detail2">
@@ -229,9 +167,8 @@
       </a-col>
     </a-row>
   </div>
-  <!-- </div> -->
   <PopupCopyData :modalStatus="statusPopupCopyData" @closePopup="statusPopupCopyData = false"
-    @submit="statusPopupCopyData = false" />
+    @submit="statusPopupCopyData = false" :key="keyResetPopupCopy"/>
   <ModalDelete :modalStatus="statusModalDelete" @closePopup="statusModalDelete = false" :dataRows="[formData]" />
   <PopupMessage :modalStatus="isModalChange" @closePopup="isModalChange = false" :typeModal="'confirm'" :title="''"
     :content="Message.getMessage('AC120', '001').message" :okText="Message.getMessage('AC120', '001').yes"
@@ -304,6 +241,7 @@ export default defineComponent({
     let dataAccountSubject = JSON.parse(
       sessionStorage.getItem("accountSubject") ?? "[]"
     );
+    const keyResetPopupCopy = ref<number>(0)
     // =================== GRAPHQL ===================
     // mutation updateAccountingDocument
     const {
@@ -381,7 +319,7 @@ export default defineComponent({
             formData.value.resolutionClassification = 2;
             textLabelInputSource.value = "지출원";
             textButton.value = store.state.common.ac120.arrResolutionType.find(
-              (element: any) => element.id == 12
+              (element: any) => element.id == 21
             )?.text;
             formData.value.letterOfApprovalType =
               formData.value.letterOfApprovalType ?? 1;
@@ -394,7 +332,7 @@ export default defineComponent({
             formData.value.clientId = null
             textLabelInputSource.value = "수입원";
             textButton.value = store.state.common.ac120.arrResolutionType.find(
-              (element: any) => element.id == 21
+              (element: any) => element.id == 12
             )?.text;
             formData.value.letterOfApprovalType = null;
             formData.value.causeUsage = null;
@@ -448,6 +386,7 @@ export default defineComponent({
     const actionOpenModalCopy = () => {
       if (formData.value.resolutionType == 11) {
         statusPopupCopyData.value = true;
+        keyResetPopupCopy.value++
       } else {
         isModalChange.value = true;
       }
@@ -570,7 +509,7 @@ export default defineComponent({
     return {
       store,
       // toggleTransition,
-      statusPopupCopyData,
+      statusPopupCopyData, keyResetPopupCopy,
       arrayRadioCheck,
       onSubmit,
       fileList,
