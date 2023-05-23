@@ -72,7 +72,7 @@ export default defineComponent({
     };
 
     watch(textComfirm, (newVal) => {
-      newVal ? (disabledBtn.value = false) : (disabledBtn.value = true);
+      newVal && newVal== '삭제' ? (disabledBtn.value = false) : (disabledBtn.value = true);
     });
     const {
       mutate: actionDeleteReport,
