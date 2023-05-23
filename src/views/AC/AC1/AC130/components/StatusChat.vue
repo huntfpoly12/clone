@@ -21,7 +21,7 @@
     </template>
   </DxSelectBox>
   <div v-else class="category-select">
-    <div class="category-select-items"
+    <div class="category-select-items fs-10"
       :style="`background: ${objectFilter?.background}; color: ${objectFilter?.color}; border: 1px solid  ${objectFilter?.color};`">{{
         objectFilter?.value || '' }}</div>
   </div>
@@ -122,6 +122,9 @@ export default {
     width: 60px;
     text-align: center;
     border-radius: 5px;
+  }
+  .fs-10 {
+    font-size: 10px;
   }
 }
 </style>

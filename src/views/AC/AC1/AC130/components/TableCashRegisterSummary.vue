@@ -68,7 +68,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 .ac130TableBalanceOfCashRegister {
   &-header {
-    padding: 10px 10px 5px 10px;
+    padding: 0 10px 5px 10px;
+    text-align: end;
     &-label {
       margin-right: 10px;
     }
