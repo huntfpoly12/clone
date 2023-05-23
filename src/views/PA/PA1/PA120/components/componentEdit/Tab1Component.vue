@@ -13,14 +13,6 @@
               placeholder="숫자만 입력 가능"
               :disabled="true"
             />
-            <!-- <a-tooltip placement="top" class="custom-tooltip">
-              <template #title>
-                최초 저장된 이후 수정 불가.
-              </template>
-              <div style="text-align: center;">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
-              </div>
-            </a-tooltip> -->
           </div>
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
@@ -50,6 +42,7 @@
             width="200px"
             v-model:valueInput="initFormStateTabPA120.name"
             :required="true"
+            @onChange="onChange" 
             placeholder="한글,영문(대문자) 입력 가능"
           />
         </a-form-item>
@@ -523,6 +516,9 @@ export default defineComponent({
         presidenStatus.value = true;
       }
     };
+    const onChange = (emitVal: any) => {
+      initFormStateTabPA120.value.name = emitVal.toUpperCase();
+    };
     return {
       loading,
       formStateTab1,
@@ -543,6 +539,7 @@ export default defineComponent({
       presidentWaring,
       onChangePresident,
       originDataDetail,
+      onChange,
     };
   },
 });

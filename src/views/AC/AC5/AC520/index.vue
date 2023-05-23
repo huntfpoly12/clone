@@ -179,6 +179,24 @@ onError((param) => {
   disableAddRow.value = true
 })
 
+const {onResult: onResultBudgetPreYear, onError: onErrorPreYear} = useQuery(queries.getBudgets,
+  {...query, fiscalYear: acYear.value - 1},
+  () => ({
+    fetchPolicy: "no-cache",
+  })
+)
+// get previous year budgets
+onResultBudgetPreYear(({data}) => {
+  if (data.getBudgets.length) {
+    store.commit('common/setDataBudgetPreYear', data.getBudgets[data.getBudgets.length - 1])
+  } else {
+    store.commit('common/setDataBudgetPreYear', null)
+  }
+})
+onErrorPreYear((error) => {
+  console.log('error', error)
+  store.commit('common/setDataBudgetPreYear', null)
+})
 // function add row
 const addRow = () => {
   if(dataSource.value && (dataSource.value?.totalCount() as number) > 0) {

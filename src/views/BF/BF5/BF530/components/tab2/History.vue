@@ -34,7 +34,8 @@
           <DxColumn
             caption="처리상태"
             data-field="workingStatus"
-            alignment="left"
+            alignment="center"
+            :format="workStatusText"
           />
           <DxColumn caption="메모" data-field="memo" />
           <DxColumn caption="IP" data-field="ip" />
@@ -52,6 +53,7 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/common/index";
 import dayjs from "dayjs";
 import notification from "@/utils/notification";
+import { workStatusText } from "../../utils";
 
 export default defineComponent({
   components: { DxDataGrid, DxScrolling, DxColumn },
@@ -153,6 +155,7 @@ export default defineComponent({
       dataSource,
       loading1,
       loading2,
+      workStatusText,
     };
   },
 });

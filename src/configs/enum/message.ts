@@ -134,7 +134,12 @@ export class Message extends BaseType {
         '002': { "message" : "여입결의서 반영되었습니다"}, // It was reflected in the entry resolution
         '003': { "message" : "동일일자 내에서만 순서변경 가능합니다"}, // You can change the order only within the same date
     });
+          
+   //마감
+    public static AC130 = new Message({
+        '001': { "message" : "정상여부 = X 인 내역이 있기에 조정마감으로 변경 불가합니다"}, // Since there is a history of whether it is normal = X, it cannot be changed due to the adjustment deadline
   
+    });
   //과목전용조서
     public static AC570 = new Message({
         '001': { "message" : "해당 과목전용조서 삭제시 전용일자 이후 등록된 예산서의 예산액이 틀려질 수도 있습니다. 그래도 삭제하시겠습니까?","yes": "네. 삭제합니","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?

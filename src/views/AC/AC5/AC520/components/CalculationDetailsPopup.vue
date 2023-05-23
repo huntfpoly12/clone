@@ -6,7 +6,7 @@
       <a-col span="9">
         <dx-field label="산출내역">
           <a-radio-group
-            :value="typeCal"
+            v-model:value="typeCal"
             class="d-flex-center"
             required
           >
@@ -18,19 +18,20 @@
 
       <a-col span="15" class="custom-content">
         <standard-form ref="formRef">
-          <div v-for="(data, index) in dataSource" :key="index" class="mb-10">
+          <div v-for="(data, index) in details" :key="index" class="mb-10">
             <div class="d-flex-center gap-10">
-              <default-text-box required v-model="data.detail" placeholder="한글, 영문, 숫자, 괄호(), 사칙연산(+, -, *, /)"/>
-              <number-box-money required v-model.number="data.amount" placeholder="계산결과"/>
+              <default-text-box v-model="data.detail" placeholder="한글, 영문, 숫자, 괄호(), 사칙연산(+, -, *, /)"/>
+              <number-box-money v-model.number="data.calculationResult" placeholder="계산결과"/>
               <div class="wrap-action">
-                <DxButton @click="removeRow(index)" icon="minus" v-if="index > 0 || dataSource.length > 1 " />
-                <DxButton @click="addRow" icon="plus" v-if="+index === dataSource.length - 1 || dataSource.length === 0  " />
+                <DxButton @click="removeRow(index)" icon="minus" v-if="index > 0 || details.length > 1 " />
+                <DxButton @click="addRow" icon="plus" v-if="+index === details.length - 1 || details.length === 0  " />
               </div>
             </div>
           </div>
         </standard-form>
       </a-col>
       <div class="wf-100 text-center">
+        <DxButton type="default" :disabled="typeCal === 1" @click="handleCalculate" text="calculate" class="mr-10"/>
         <DxButton type="default" @click="handleSubmit" text="산출내역 저장"/>
       </div>
     </a-row>
@@ -53,53 +54,59 @@ interface Props extends ModalProps {
 
 interface Description {
   detail: string;
-  amount: number | null;
+  calculationResult: string | null;
 }
 
 const newDescription = {
   detail: '',
-  amount: null
+  calculationResult: null
 }
 
 const props = defineProps<Props>()
 // watch visible
 watch(() => props.visible, (val) => {
   if (val) {
-    dataSource.value =  props.data && props.data.length > 0 ? cloneDeep(props.data) : [{...newDescription}];
+    details.value =  props.data && props.data.length > 0 ? cloneDeep(props.data) : [{...newDescription}];
     valueOld.value =  props.data && props.data.length > 0 ? cloneDeep(props.data) : [{...newDescription}];
   }
 }, {deep: true})
 const emit = defineEmits(['closePopup', 'ok'])
 
 const typeCal = ref(2);
-const dataSource = ref<Description[]>([]);
+const details = ref<Description[]>([]);
 const formRef = ref();
 const valueOld = ref();
 
 const isFormChange = computed(() => {
-  return !isEqual(dataSource.value, valueOld.value)
+  return !isEqual(details.value, valueOld.value)
 })
 function addRow() {
-  dataSource.value.push({...newDescription});
+  details.value.push({...newDescription});
 }
 
 const handleSubmit = () => {
-  const res = formRef.value?.validate();
-  if (!res.isValid) {
-    res.brokenRules[0].validator.focus();
-  } else {
-    if (isFormChange.value) {
-      emit('ok', dataSource.value)
-      return;
-    }
-
-  }
+    emit('ok', details.value.map((item: any) => ({
+      ...item,
+      type: typeCal.value,
+    })))
+    return;
 }
 
 function removeRow(index: number) {
-  dataSource.value.splice(index, 1);
+  details.value.splice(index, 1);
 }
-
+// watch(() => details.value, (val) => {
+//   console.log('val', val)
+//   if(typeCal.value === 2) {
+//     details.value = val.map((item: any) => {
+//       if(!item.detail) return item;
+//       return {
+//         ...item,
+//         calculationResult: item.detail ? eval(item.detail.replace(/[^\d+\-*/().]/g, "")) : item.calculationResult,
+//       }
+//     })
+//   }
+// }, {deep: true})
 const handleOk = () => {
 
 }
@@ -118,6 +125,17 @@ const closePopup = () => {
   } else {
     emit('closePopup', false)
     return;
+  }
+}
+const handleCalculate = () => {
+  if(typeCal.value === 2) {
+    details.value = details.value.map((item: any) => {
+      if(!item.detail) return item;
+      return {
+        ...item,
+        calculationResult: item.detail ? eval(item.detail.replace(/[^\d+\-*/().]/g, "")).toString() : item.calculationResult,
+      }
+    })
   }
 }
 </script>
