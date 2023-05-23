@@ -73,6 +73,9 @@ const screenMutatePA420 = {
   },
   setEmployeeIdCreated(state: any, data: any) {
     state.employeeIdCreated = data
+  },
+  setRetirementStatus(state: any, data: number) {
+    state.retirementStatus = data
   }
 };
 export default screenMutatePA420;

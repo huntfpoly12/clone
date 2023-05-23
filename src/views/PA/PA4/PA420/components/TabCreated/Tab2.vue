@@ -114,6 +114,11 @@ watch(() => dataFormIncomeCalculation.value, (value) => {
 // watch definedRetirementBenefits to set value to store
 watch(definedRetirementBenefits, (value) => {
   store.commit('common/setDefinedRetirementBenefits', value)
+  if(!value) store.commit('common/setIsDisableBtnTab2', true) 
+  else {
+    if(value && !isEqual(dataFormIncomeCalculation.value, incomeCalculationInput.value)) store.commit('common/setIsDisableBtnTab2', true)
+    else store.commit('common/setIsDisableBtnTab2', false)
+  }
 })
 const formRef = ref()
 const { client } = useApolloClient()
