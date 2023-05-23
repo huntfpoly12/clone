@@ -28,7 +28,7 @@
               <b>체크사항</b>
             </div>
             <div class="ac-130__main-content-check-checklist">
-              <a-collapse expandIconPosition="right">
+              <a-collapse v-model:activeKey="activeKey" expandIconPosition="right" >
                 <template #expandIcon="{ isActive }">
                   <DoubleRightOutlined :rotate="isActive ? 90 : 0" />
                 </template>
@@ -42,7 +42,7 @@
                       <span class="ac-130__main-content-check-checklist-header-title">현금출납부 잔액</span>
                     </div>
                   </template>
-                  <TableCashRegisterSummary :data="dataSource.cashRegisterSummary" :year="acYear"
+                  <TableCashRegisterSummary v-if="Object.keys(dataSource).length" :data="dataSource.cashRegisterSummary" :year="acYear"
                     :month="monthSelected" />
                 </a-collapse-panel>
                 <a-collapse-panel key="2">
@@ -80,10 +80,11 @@
       <a-col span="12" class="ac-130__main-content">
         <div class="ac-130__main-content-manager">
           <div class="ac-130__main-content-manager-title">
-            <b>관리사항</b>
+            <b>회계마감 관리사항</b>
+            <ReloadOutlined class="ac-130__main-content-manager-title-btnReload" @click="refreshFormChat" />
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormNotification :payload="payload" />
+            <FormChat ref="formChat" :payload="payload" :disabled="accountingProcessesSelected?.status === 20"/>
           </div>
         </div>
       </a-col>
@@ -99,12 +100,12 @@ import queries from "@/graphql/queries/AC/AC1/AC130";
 import mutations from "@/graphql/mutations/AC/AC1/AC130";
 import { companyId } from "@/helpers/commonFunction"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport } from "devextreme-vue/data-grid";
-import { HistoryOutlined, EditOutlined, PlusOutlined, DoubleRightOutlined } from "@ant-design/icons-vue";
+import { HistoryOutlined, EditOutlined, PlusOutlined, DoubleRightOutlined, ReloadOutlined } from "@ant-design/icons-vue";
 import { dataDemoMain, contentPopupRetrieveStatements } from "./utils/index"
 import TableCashRegisterSummary from "./components/TableCashRegisterSummary.vue"
 import TableRevenueBudgetSummary from "./components/TableRevenueBudgetSummary.vue"
 import TableExpenditureBudgetSummary from "./components/TableExpenditureBudgetSummary.vue"
-import FormNotification from "./components/FormNotification.vue"
+import FormChat from "./components/FormChat.vue"
 import { Message } from "@/configs/enum"
 import DxButton from "devextreme-vue/button";
 import dayjs from "dayjs";
@@ -129,7 +130,8 @@ export default defineComponent({
     TableCashRegisterSummary,
     TableRevenueBudgetSummary,
     TableExpenditureBudgetSummary,
-    FormNotification
+    FormChat,
+    ReloadOutlined
   },
   setup() {
     const store = useStore();
@@ -140,7 +142,8 @@ export default defineComponent({
     let dataSource = ref<any>({})
     let monthSelected = ref(dayjs().month() + 1)
     let listAccountingProcesses = ref<any[]>([])
-
+    const activeKey = ref(['1'])
+    const formChat = ref()
     //trigger
     let triggerAccountingProcesses = ref<boolean>(true)
     let triggerAccountingClosingCheckItems = ref<boolean>(true)
@@ -209,6 +212,7 @@ export default defineComponent({
     // METHODS
     const selectedMonth = (month: number) => {
       if(monthSelected.value === month) return
+      activeKey.value = ['1']
       monthSelected.value = month
       payload.month = month
       triggerAccountingClosingCheckItems.value = true
@@ -260,7 +264,14 @@ export default defineComponent({
       }
     }
 
+    const refreshFormChat = () => {
+      if(formChat.value) {
+        formChat.value.refreshForm()
+      }
+    }
+    
     return {
+      activeKey,
       dataSource,
       move_column,
       colomn_resize,
@@ -277,7 +288,9 @@ export default defineComponent({
       loadinggetAccountingClosingCheckItems,
       payload,
       accountingProcessesSelected,
-      changeStatusAccountingProcess
+      changeStatusAccountingProcess,
+      formChat,
+      refreshFormChat
     };
   },
 });

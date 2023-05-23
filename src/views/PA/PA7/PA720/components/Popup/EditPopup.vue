@@ -8,7 +8,7 @@
         <div>
           <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
             v-model:valueDate="paymentDayPA720" :clearable="false" />
-          <div v-if="checkDuplicateID(data) || checkDuplicateDay" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+          <div v-if="errorDate" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
         </div>
         <span class="mt-5">일로 변경하시겠습니까?</span>
       </div>
@@ -21,7 +21,7 @@
       </div>
     </standard-form>
   </a-modal>
-  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null">
+  <!-- <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null">
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ data.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
       incomeIdRender.length }}건</p>
@@ -35,7 +35,7 @@
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
         @onClick="updateStatus = false" />
     </a-row>
-  </a-modal>
+  </a-modal> -->
 </template>
 
 <script lang="ts">
@@ -75,7 +75,7 @@ export default defineComponent({
         store.commit('common/paymentDayPA720', day);
       },
     });
-    const dayArrPA720 = computed(()=> store.state.common.dayArrPA720)
+    const dayArrPA720 = computed(() => store.state.common.dayArrPA720)
     const startDate = computed(() => {
       let day = dayjs(`${processKeyPA720.value.processKey?.paymentYear}${processKeyPA720.value.processKey?.paymentMonth}`).startOf('month').toDate();
       return day;
@@ -100,6 +100,11 @@ export default defineComponent({
     const succesState = ref<any>([]);
     const errorState = ref<any>([]);
     const errTitle = ref('');
+    const checkDuplicateDay = computed(() => {
+      return dayArrPA720.value.indexOf(daySelected.value) > -1;
+    });
+    const errorDate = computed(() => checkDuplicateID(props.data) || checkDuplicateDay.value)
+
     watch(() => props.modalStatus, (newVal: any) => {
       if (newVal) {
         dataUpdateLen.value = props?.data?.length;
@@ -107,7 +112,7 @@ export default defineComponent({
         succesState.value = [];
         errorState.value = [];
         daysInMonth.value = +dayjs(`${processKeyPA720.value.processKey?.paymentMonth}`).daysInMonth();
-      }else{
+      } else {
         store.state.common.paymentDayPA720 = dayDefaultPA720.value;
       }
     }, { deep: true })
@@ -174,6 +179,9 @@ export default defineComponent({
       }
     })
     const onSubmit = (e: any) => {
+      if (errorDate.value) {
+        return;
+      }
       const reversedArr: any = props.data.reverse();
       reversedArr.forEach((item: any) => {
         mutate({
@@ -196,9 +204,6 @@ export default defineComponent({
       }
       return false;
     }
-    const checkDuplicateDay = computed(() => {
-      return dayArrPA720.value.indexOf(daySelected.value) > -1;
-    });
     return {
       setModalVisible,
       onSubmit,
@@ -208,8 +213,8 @@ export default defineComponent({
       daysInMonth,
       processKeyPA720,
       startDate, finishDate, paymentDayPA720,
-      checkDuplicateID, checkDuplicateDay,
-      dayDefaultPA720,dayArrPA720
+      errorDate,
+      dayDefaultPA720, dayArrPA720
     }
   },
 })

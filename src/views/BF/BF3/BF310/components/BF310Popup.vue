@@ -553,6 +553,7 @@
                               :required="true"
                               v-model:valueDate="dataActiveRow.startYearMonth"
                               width="160px"
+                              :teleport="true"
                             />
                           </a-form-item>
                           <a-form-item
@@ -605,10 +606,7 @@
                         </a-col>
                         <a-col :span="12">
                           <checkbox-basic
-                            v-model:valueCheckbox="
-                              formState.content.accounting
-                                .accountingServiceTypes[0]
-                            "
+                            v-model:valueCheckbox="accountingServiceTypes"
                             :disabled="false"
                             size="15"
                             label="회계입력대행서비스"
@@ -643,6 +641,7 @@
                           v-model:valueDate="
                             formState.content.withholding.startYearMonth
                           "
+                          :teleport="true"
                         />
                       </div>
                     </a-form-item>
@@ -662,7 +661,6 @@
                         "
                         :disabled="checkedSourceService == 2"
                         messRequired="이항목은 필수 입력사항입니다!"
-                        nameInput="withholding-capacity"
                       />
                     </a-form-item>
                     <a-form-item
@@ -672,7 +670,10 @@
                     >
                       <checkbox-basic
                         label="4대보험신고서비스"
-                        v-model:valueCheckbox="formState.content.withholding.withholdingServiceTypes[0]"
+                        v-model:valueCheckbox="
+                          formState.content.withholding
+                            .withholdingServiceTypes[0]
+                        "
                         :disabled="checkedSourceService == 2"
                         :size="'16'"
                       />
@@ -904,11 +905,13 @@ export default defineComponent({
     const arrayRadioCheckSourceServices = ref([
       ...arrayUtilRadioCheckSourceServices,
     ]);
+    const accountingServiceTypes = ref(false);
+    const isWatching = ref(false);
     // event close popup
     const setModalVisible = () => {
       if (
-        JSON.stringify(objDataDefault.value) !=
-          JSON.stringify(formState.value) ||
+        JSON.stringify(objDataDefault.value.content) !=
+          JSON.stringify(formState.value.content) ||
         JSON.stringify(dataSource.value) != JSON.stringify(dataSourceOld.value)
       )
         comfirmClosePopup(() => emit("closePopup", false));
@@ -919,6 +922,7 @@ export default defineComponent({
       () => props.modalStatus,
       (newValue, old) => {
         if (newValue) {
+          isWatching.value = false;
           trigger.value = true;
           visible.value = newValue;
           dataQuery.value = { id: props.data };
@@ -929,9 +933,6 @@ export default defineComponent({
           licenseFileName.value = "";
           visible.value = newValue;
         }
-        // setTimeout(() => {
-        //     activeKey.value = 1;
-        // }, 500);
       }
     );
     const { result, loading, error, refetch } = useQuery(
@@ -977,13 +978,6 @@ export default defineComponent({
             ? value.getSubscriptionRequest.content.accounting
                 .facilityBusinesses[0].longTermCareInstitutionNumber
             : "";
-        // if (formState.value.content.withholding) {
-        //   formState.value.content.withholding = {
-        //     startYearMonth: +dayjs().format('YYYYMM'),
-        //     capacity: 0,
-        //     withholdingServiceTypes: 1,
-        //   };
-        // }
         // set date list status value
         dataStatus[0].date = value.getSubscriptionRequest.createdAt;
         dataStatus[1].date = value.getSubscriptionRequest.createdAt;
@@ -998,15 +992,6 @@ export default defineComponent({
           id: value.getSubscriptionRequest.id,
           bizNumber: value.getSubscriptionRequest.companyBizNumber,
         };
-        objDataDefault.value = JSON.parse(
-          JSON.stringify(value.getSubscriptionRequest)
-        );
-        objDataDefault.value.institutionNumber =
-          value.getSubscriptionRequest.content.accounting?.facilityBusinesses
-            .length > 0
-            ? value.getSubscriptionRequest.content.accounting
-                .facilityBusinesses[0].longTermCareInstitutionNumber
-            : "";
         dataSource.value =
           formState.value.content.accounting?.facilityBusinesses.map(
             (item: any, key: any) => {
@@ -1021,15 +1006,21 @@ export default defineComponent({
           dataActiveRow.value = dataSource.value[0];
           focusedRowKey.value = 0;
         }
-        dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value));
         formState.value.usedAccounting =
           value.getSubscriptionRequest.usedAccounting;
+        accountingServiceTypes.value =
+          formState.value?.accounting?.accountingServiceTypes[0];
         checkedSourceService.value = value.getSubscriptionRequest
           .usedWithholding
           ? 1
           : 2;
         triggerCheckPer.value = true;
+        dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value));
+        objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
       }
+      setTimeout(() => {
+        isWatching.value = true;
+      }, 0);
     });
     watch(
       () => formState.value.usedAccounting,
@@ -1039,14 +1030,18 @@ export default defineComponent({
           if (dataSource.value.length) {
             dataActiveRow.value = dataSource.value[0];
             focusedRowKey.value = 0;
-            formState.content.accounting.accountingServiceTypes[0] = true;
+            accountingServiceTypes.value = true;
           }
         } else {
           dataSource.value = [];
           dataActiveRow.value = null;
           focusedRowKey.value = 0;
-          formState.content.accounting.accountingServiceTypes[0] = false;
+          formState.value.content.accounting = {};
+          accountingServiceTypes.value = false;
         }
+        // if (!isWatching.value) {
+        //   objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
+        // }
       }
     );
     watch(
@@ -1058,12 +1053,15 @@ export default defineComponent({
             capacity: 0,
             withholdingServiceTypes: 1,
           };
-        }else{
+        } else {
           formState.value.content.withholding = {
-            startYearMonth: +dayjs().format('YYYYMM'),
+            startYearMonth: +dayjs().format("YYYYMM"),
             capacity: 0,
             withholdingServiceTypes: 1,
           };
+        }
+        if (!isWatching.value) {
+          objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
         }
       }
     );
@@ -1137,55 +1135,63 @@ export default defineComponent({
         });
       } else {
         // process data befor handle update
-        let contentData: any = JSON.parse(
-          JSON.stringify(formState.value.content)
-        );
-        let newObj = JSON.parse(JSON.stringify(dataSource.value));
-        newObj.map((item: any) => {
-          delete item.rowIndex;
-
-          delete item.dataImg;
-          if (item?.registrationCardFileStorageId?.length < 1) {
-            delete item.registrationCardFileStorageId;
+        let contentData: any = { ...formState.value.content };
+        const deleteField = (obj: any): any => {
+          if (obj === null || obj === undefined) {
+            return obj;
           }
-          item.startYearMonth.toString();
-          return { item };
-        });
-        if (contentData.accounting) {
-          contentData.accounting.facilityBusinesses = [...newObj];
-          contentData.accounting.accountingServiceTypes.map((item: any) => {
-            item = !!item == true ? 1 : 0;
+
+          if (Array.isArray(obj)) {
+            return obj.map((item) => deleteField(item));
+          }
+
+          if (typeof obj === "object") {
+            const newObj: any = {};
+            Object.keys(obj).forEach((key) => {
+              if (key !== "__typename") {
+                newObj[key] = deleteField(obj[key]);
+              }
+            });
+            return newObj;
+          }
+
+          return obj;
+        };
+        const newContent = deleteField(contentData);
+        if (!formState.value.usedAccounting) {
+          newContent.accounting = null;
+        } else {
+          let newObj = JSON.parse(JSON.stringify(dataSource.value));
+          newObj.map((item: any) => {
+            delete item.rowIndex;
+            delete item.dataImg;
+            delete item.__typename;
+            delete item.registrationCard;
+            if (item?.registrationCardFileStorageId?.length < 1) {
+              delete item.registrationCardFileStorageId;
+            }
+            item.startYearMonth.toString();
+            return { item };
           });
+          if (newContent.accounting) {
+            newContent.accounting.facilityBusinesses = [...newObj];
+            newContent.accounting.accountingServiceTypes =
+              accountingServiceTypes.value ? 1 : [];
+          }
         }
         if (checkedSourceService.value === 2) {
-          contentData.withholding = null;
+          newContent.withholding = null;
         } else {
-          contentData.withholding.withholdingServiceTypes = !!contentData
+          newContent.withholding.withholdingServiceTypes = !!newContent
             .withholding.withholdingServiceTypes[0]
             ? 1
             : [];
         }
-        const cleanData = JSON.parse(
-          JSON.stringify(contentData, (name, val) => {
-            // if (val == null) {
-            //   return;
-            // }
-            if (
-              name === "__typename" ||
-              name === "registrationCard" ||
-              name === "__KEY__"
-            ) {
-              delete val[name];
-            } else {
-              return val;
-            }
-          })
-        );
         let variables = {
           id: formState.value.id,
           status: formState.value.status,
           memo: formState.value.memo,
-          content: cleanData,
+          content: newContent,
         };
         actionUpdate(variables);
       }
@@ -1306,6 +1312,7 @@ export default defineComponent({
       onOpenPopupInfo,
       keyInfo,
       arrayRadioCheckSourceServices,
+      accountingServiceTypes,
     };
   },
 });
