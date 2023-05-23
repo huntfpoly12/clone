@@ -347,7 +347,7 @@ export default defineComponent({
     //submit
     const onSubmitForm = (e: any) => {
       var res = e.validationGroup.validate();
-      if (!res.isValid) {
+      if (!res.isValid || isLoopDayPA720.value) {
         emit('subValidate');
         res.brokenRules[0].validator.focus();
         store.state.common.isErrorFormPA720 = true;
