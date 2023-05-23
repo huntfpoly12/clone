@@ -1,13 +1,8 @@
 <template>
   <div class="input-edit-chat">
     <div class="input-edit-chat-input">
-      <textarea :class="{ 'input-edit-chat-input-reply': Object.keys(!!dataReply ? dataReply : {}).length }" rows="1"
-        ref="inputChat" :placeholder="placeholder" v-model="contentBinding" @input="changeInput"
-        @keypress.enter.exact.prevent="submitChat"></textarea>
-      <div v-if="Object.keys(!!dataReply ? dataReply : {}).length" class="input-edit-chat-input-contentReply">
-        <PreviewReply :dataReply="dataReply" />
-        <CloseOutlined class="input-edit-chat-input-contentReply-iconclose" @click="removeReply" />
-      </div>
+      <textarea rows="1" ref="inputChat" :placeholder="placeholder" v-model="contentBinding" @input="changeInput"
+        @keypress.enter.exact.prevent="submitChat" :disabled="disabled" ></textarea>
     </div>
 
     <div class="input-edit-chat-input-action">
@@ -15,15 +10,6 @@
         <div class="input-edit-chat-input-action-icon-files" @click="openFile">
           <FileAddOutlined />
         </div>
-        <a-dropdown :visible="isVisibleEmojiForm">
-          <div class="input-edit-chat-input-action-icon-emoji" @click.stop="isVisibleEmojiForm = !isVisibleEmojiForm">
-            <SmileOutlined style="margin: 0 5px;" />
-          </div>
-          <template #overlay>
-            <EmojiPicker theme="dark" :native="true" :disable-skin-tones="true" :hide-group-names="true"
-              :static-texts="{ placeholder: '그림 이모티콘 검색' }" @select="onSelectEmoji" v-click-outside="clickOutside" />
-          </template>
-        </a-dropdown>
       </div>
       <div class="input-edit-chat-input-action-btn">
         <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
@@ -57,12 +43,7 @@ import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOut
 import notification from '@/utils/notification';
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
 import StatusChat from './StatusChat.vue'
-// import picker compopnent
-import EmojiPicker from 'vue3-emoji-picker'
-// import css
-import 'vue3-emoji-picker/css'
 import MarkdownCustom from './MarkdownCustom.vue';
-import PreviewReply from './PreviewReply.vue';
 import { companyId } from "@/helpers/commonFunction"
 
 import Repository from "@/repositories";
@@ -86,10 +67,6 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
-    dataReply: {
-      type: Object,
-      default: () => { }
-    }
   },
   components: {
     EllipsisOutlined,
@@ -101,10 +78,8 @@ export default defineComponent({
     FileAddOutlined,
     FileTextOutlined,
     ModalPreviewListImage,
-    EmojiPicker,
     StatusChat,
     MarkdownCustom,
-    PreviewReply
   },
   setup(props, { emit }) {
     const acYear: any = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
@@ -114,7 +89,6 @@ export default defineComponent({
     let contentBinding = ref(props.content || '')
     let filesUpload: any = ref(props.files || [])
     const inputChat: any = ref()
-    let isVisibleEmojiForm = ref(false)
     const objectChatUpFile: any = ref(null)
     const listChat = ref<any>([])
     let listImagePreview: any = ref({
@@ -171,10 +145,6 @@ export default defineComponent({
 
     const uploadPreviewFile = async (e: any) => {
       const file = e.target.files[0]
-      // const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
-      // if (!isImage) {
-      //   notification('error', 'You can only upload png, jpg, jpeg, gif file!')
-      // }
       const isLt10M = file.size / 1024 / 1024 <= 10;
       if (!isLt10M) {
         notification('error', 'Image must smaller than 10MB!')
@@ -183,10 +153,6 @@ export default defineComponent({
       if (isDuplicaseName) {
         notification('error', 'Duplicate image are not allowed!')
       }
-      // if (!isImage || !isLt10M || isDuplicaseName) {
-      //   e.target.value = null
-      //   return
-      // }
       if (!isLt10M || isDuplicaseName) {
         e.target.value = null
         return
@@ -198,13 +164,10 @@ export default defineComponent({
       formData.append('fiscalYear', acYear.value);
       formData.append('facilityBusinessId', globalFacilityBizId.value);
       uploadRepository.accountingFile(formData).then(async (res: any) => {
-        // const url = await getBase64(file)
         filesUpload.value.push({
           id: res.data.id,
-          // file: file,
           contentType: file.type,
           name: file.name,
-          // url: url
         })
       }).catch((error: any) => {
         console.log('err Upload', error.message);
@@ -227,16 +190,6 @@ export default defineComponent({
       filesUpload.value.splice(index, 1)
     }
 
-    const onSelectEmoji = (emoji: any) => {
-      if (props.disabled) return
-      contentBinding.value += emoji.i
-      changeInput(inputChat.value)
-    }
-
-    const clickOutside = () => {
-      isVisibleEmojiForm.value = false
-    }
-
     const formatFileSize = (bytes: number) => {
       if (bytes === 0) return '0 Bytes'
       const k = 1000
@@ -254,10 +207,6 @@ export default defineComponent({
       inputChat.value.focus()
     }
 
-    const removeReply = () => {
-      emit('removeReply')
-    }
-
     return {
       listChat,
       changeInput,
@@ -272,15 +221,11 @@ export default defineComponent({
       removeFile,
       objectChatUpFile,
       listImagePreview,
-      onSelectEmoji,
-      clickOutside,
-      isVisibleEmojiForm,
       currentTime,
       formatFileSize,
       resetInputChat,
       resizeInput,
       focus,
-      removeReply
     }
   },
 })
@@ -301,10 +246,12 @@ export default defineComponent({
       width: 100%;
       min-height: 40px;
       max-height: 200px;
-      // border-radius: 20px;
       padding: 7px 75px 7px 10px;
       font-size: 15px;
-      border: 1px solid #385D8A;
+      border: 1px solid #b3b5b6;
+      &:placeholder-shown {
+        font-style: italic;
+      }
     }
 
     &-reply {
@@ -346,16 +293,6 @@ export default defineComponent({
           align-items: center;
           cursor: pointer;
           margin-right: 5px;
-        }
-
-        &-emoji {
-          background-color: #cfd8dc;
-          width: 26px;
-          height: 26px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
         }
       }
     }

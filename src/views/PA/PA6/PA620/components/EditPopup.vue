@@ -8,7 +8,7 @@
         <div>
           <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
             v-model:valueDate="paymentDayPA620" :clearable="false" />
-          <div v-if="checkDuplicateID(data) || checkDuplicateDay" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+          <div v-if="errorDate" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
         </div>
         <span class="mt-5">일로 변경하시겠습니까?</span>
       </div>
@@ -20,7 +20,7 @@
       </div>
     </standard-form>
   </a-modal>
-  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null">
+  <!-- <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null">
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{
       incomeIdRender.length + errorState.length }}건</p>
     <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
@@ -35,7 +35,7 @@
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
         @onClick="updateStatus = false" />
     </a-row>
-  </a-modal>
+  </a-modal> -->
 </template>
 
 <script lang="ts">
@@ -46,6 +46,8 @@ import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 import dayjs from 'dayjs';
 import { useStore } from 'vuex';
 import filters from '@/helpers/filters';
+import notification from '@/utils/notification';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -105,6 +107,12 @@ export default defineComponent({
     const errorState = ref<any>([]);
     const updateStatus = ref(false);
     const errTitle = ref('');
+    const messageUpdate = Message.getMessage("COMMON", "106").message;
+    const checkDuplicateDay = computed(() => {
+      return props.dayArr.indexOf(day.value) > -1;
+    });
+    const errorDate = computed(() => checkDuplicateID(props.data) || checkDuplicateDay.value)
+
     const {
       mutate,
       onDone,
@@ -118,6 +126,7 @@ export default defineComponent({
         employeeId: resData.employeeId,
       });
       if (dataUpdateLen.value == 0) {
+        notification('success', messageUpdate);
         let allData = props.data;
         allData = allData.filter((item: any, index) => {
           const firstIndex = allData.findIndex((elem: any) =>
@@ -174,6 +183,9 @@ export default defineComponent({
     })
 
     const onSubmit = () => {
+      if(errorDate.value){
+        return;
+      }
       const reversedArr = props.data.reverse();
       reversedArr.forEach(async (val: any) => {
         await mutate({
@@ -191,7 +203,7 @@ export default defineComponent({
         succesState.value = [];
         errorState.value = [];
         daysInMonth.value = +dayjs(`${props.processKey?.paymentMonth}`).daysInMonth();
-      }else{
+      } else {
         store.commit('common/paymentDayPA620', dayDefaultPA620.value);
       }
     }, { deep: true })
@@ -207,16 +219,13 @@ export default defineComponent({
       }
       return false;
     }
-    const checkDuplicateDay = computed(() => {
-      return props.dayArr.indexOf(day.value) > -1;
-    });
     return {
       setModalVisible,
       onSubmit,
       updateStatus, incomeIdRender, errorState, errTitle,
       dataUpdateLen, succesState, daysInMonth,
       startDate, finishDate, paymentDayPA620,
-      checkDuplicateID, checkDuplicateDay,
+      errorDate,
     }
   },
 })
