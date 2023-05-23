@@ -1,6 +1,7 @@
-import {ComponentCreateBudget} from "@/views/AC/AC5/AC520/type";
+import { ComponentCreateBudget } from "@/views/AC/AC5/AC520/type";
 let statesAC520 = {
   dataBudget: null,
+  dataBudgetPreYear: null,
   typeCreateBudget: ComponentCreateBudget.EmployeeSalaryTable
 };
 

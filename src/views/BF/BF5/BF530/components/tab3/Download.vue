@@ -27,16 +27,19 @@
             caption="신고종류"
             data-field="typeName"
             :allowEditing="false"
+            alignment="center"
           />
-          <DxColumn caption="신고대상" data-field="subject" />
-          <DxColumn caption="사무위탁" data-field="consignment" />
+          <DxColumn caption="신고대상" data-field="subject" alignment="center"/>
+          <DxColumn caption="사무위탁" data-field="consignment" alignment="center" />
           <DxColumn
             caption="다운로드"
             cell-template="name1"
             alignment="center"
           />
           <template #name1="{ data }">
+            <div v-if="!data.data.url" style="padding: 5px">취득신고</div>
             <button-basic
+              v-else
               text="받기"
               type="default"
               mode신고대상="contained"
@@ -77,7 +80,7 @@ export default defineComponent({
       {
         typeId: 1,
         typeName: "취득",
-        subject: "갈베아리사랑어린이집 / 신민선 등 1건",
+        subject: "",
         consignment: "",
         url: "",
       },
@@ -114,7 +117,7 @@ export default defineComponent({
       const downloadLink = document.createElement("a");
       downloadLink.href = e;
       downloadLink.download = "filename.ext";
-      downloadLink.target = '_blank';
+      downloadLink.target = "_blank";
       downloadLink.click();
     };
     return {

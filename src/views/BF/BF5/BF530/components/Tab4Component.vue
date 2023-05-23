@@ -86,7 +86,7 @@ import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem,
 import { DownloadOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
 import { Message } from '@/configs/enum';
-import { reportTypeSelectbox2, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox, formatMonth, dataTableTab1, states1 } from '../utils/index'
+import { reportTypeSelectbox2, workingStatusSelectbox, companyConsignStatusSelectbox, EDIStatusSelectbox, formatMonth, dataTableTab1, states1 } from '../utils/index'
 import dayjs from 'dayjs';
 import { isNumber } from 'lodash';
 export default defineComponent({
@@ -395,7 +395,7 @@ export default defineComponent({
       searchWithholdingParam,
       filteredDataSource,
       onEditorPreparing,
-      reportTypeSelectbox2, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox, states1,
+      reportTypeSelectbox2, workingStatusSelectbox, companyConsignStatusSelectbox, EDIStatusSelectbox, states1,
       handleOkConfirm, onOpenPop2,
       onGetAcquistionRp,
     };

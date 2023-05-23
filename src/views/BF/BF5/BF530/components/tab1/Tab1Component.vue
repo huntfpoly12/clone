@@ -36,7 +36,7 @@
           <a-form-item label="상태">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="situationSelectbox"
+              :arrSelect="workingStatusSelectbox"
               v-model:valueInput="formState.workingStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -49,7 +49,7 @@
           <a-form-item label="수임상태">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="acceptanceStatusSelectbox"
+              :arrSelect="companyConsignStatusSelectbox"
               v-model:valueInput="formState.companyConsignStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -62,7 +62,7 @@
           <a-form-item label="건강ED 연계상태">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="healthSelectbox"
+              :arrSelect="EDIStatusSelectbox"
               v-model:valueInput="formState.healthInsuranceEDIStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -75,7 +75,7 @@
           <a-form-item label="연금EDI 연계상태">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="healthSelectbox"
+              :arrSelect="EDIStatusSelectbox"
               v-model:valueInput="formState.nationalPensionEDIStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -160,7 +160,7 @@
           <template #companyConsignStatus="{ data }: any">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="acceptanceStatusSelectbox"
+              :arrSelect="companyConsignStatusSelectbox"
               v-model:valueInput="data.data.companyConsignStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -179,7 +179,7 @@
           <template #workingStatus="{ data }: any">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="situationSelectbox"
+              :arrSelect="workingStatusSelectbox"
               v-model:valueInput="data.data.workingStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -189,10 +189,14 @@
           </template>
           <DxColumn caption="메모" width="135" cell-template="memo" />
           <template #memo="{ data }: any">
-            <default-text-box
-              :width="120"
-              v-model:valueInput="data.data.memo"
-            />
+            <a-tooltip zIndex="9999999" placement="top" color="black">
+              <template #title> {{data.data.memo}} </template>
+              <div></div>
+              <default-text-box
+                :width="120"
+                v-model:valueInput="data.data.memo"
+              />
+            </a-tooltip>
           </template>
           <DxColumn
             data-field="healthInsuranceEDIStatus"
@@ -205,7 +209,7 @@
           <template #healthInsuranceEDIStatus="{ data }: any">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="healthSelectbox"
+              :arrSelect="EDIStatusSelectbox"
               v-model:valueInput="data.data.healthInsuranceEDIStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -224,7 +228,7 @@
           <template #nationalPensionEDIStatus="{ data }: any">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="healthSelectbox"
+              :arrSelect="EDIStatusSelectbox"
               v-model:valueInput="data.data.nationalPensionEDIStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -269,15 +273,24 @@
             data-field="registeredAt"
             alignment="left"
             data-type="date"
-            format="yyyy-MM-dd HH:mm"
+            format="yyyy-MM-dd"
           />
           <DxColumn
             caption="완료일"
             data-field="completedAt"
             alignment="left"
             data-type="date"
-            format="yyyy-MM-dd HH:mm"
+            cell-template="completedAt"
           />
+          <template #completedAt="{ data }">
+            <div
+              v-if="
+                data.data.workingStatus == 0 || data.data.workingStatus == 10
+              "
+            >
+              {{ dayjs(data.data.completedAt).format("YYYY-MM-DD") }}
+            </div>
+          </template>
           <DxColumn caption="팩스발송" cell-template="downD" width="100px" />
           <template #downD="{ data }: any">
             <div class="d-flex justify-content-center">
@@ -287,9 +300,6 @@
                 zIndex="9999"
               >
                 <template #content>
-                  <span @click="data.data.visible = false" class="btn-close"
-                    >x</span
-                  >
                   <div class="mb-5">아직 제공되지 않는 기능입니다.</div>
                 </template>
                 <a href="#"></a>
@@ -360,25 +370,21 @@ import {
   DxColumn,
   DxScrolling,
   DxSelection,
-  DxSummary,
-  DxTotalItem,
   DxLoadPanel,
-  DxEditing,
-  DxLookup,
-  DxColumnFixing,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
   SaveOutlined,
   HistoryOutlined,
 } from "@ant-design/icons-vue";
+import { DxTextBox, DxTooltip } from 'devextreme-vue';
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
 import {
   reportTypeSelectbox,
-  situationSelectbox,
-  acceptanceStatusSelectbox,
-  healthSelectbox,
+  workingStatusSelectbox,
+  companyConsignStatusSelectbox,
+  EDIStatusSelectbox,
   formatMonth,
   dataTableTab1,
   states1,
@@ -397,18 +403,15 @@ export default defineComponent({
     DxSelection,
     DxColumn,
     SaveOutlined,
-    DxSummary,
-    DxTotalItem,
     DxLoadPanel,
     Correction,
     SendTax,
     History,
-    DxEditing,
-    DxLookup,
     DownloadOutlined,
-    DxColumnFixing,
     SelectBoxCT,
     HistoryOutlined,
+    DxTextBox, DxTooltip
+
   },
   props: {
     search: {
@@ -596,7 +599,7 @@ export default defineComponent({
 
     //------------------------ACTION UPDATE TABLE--------------------------------
 
-    //ConsignStatus
+    //updateConsignStatus
     const {
       mutate: creationConsignStatus,
       onDone: onDoneConsignStatus,
@@ -609,7 +612,7 @@ export default defineComponent({
     onErrorConsignStatus((e: any) => {
       notification("error", e.message);
     });
-    //ConsignMemo
+    //updateConsignMemo
     const {
       mutate: creationConsignMemo,
       onDone: onDoneConsignMemo,
@@ -622,7 +625,7 @@ export default defineComponent({
     onErrorConsignMemo((e: any) => {
       notification("error", e.message);
     });
-    //ConsignWorkingStatus
+    //updateConsignWorkingStatus
     const {
       mutate: creationConsignWorkingStatus,
       onDone: onDoneConsignWorkingStatus,
@@ -635,7 +638,7 @@ export default defineComponent({
     onErrorConsignWorkingStatus((e: any) => {
       notification("error", e.message);
     });
-    //ConsignWorkingStatus
+    //cancelConsignWorkingStatus
     const {
       mutate: cancelConsignWorkingStatus,
       onDone: onDoneConsignWorkingStatus2,
@@ -644,6 +647,7 @@ export default defineComponent({
     onDoneConsignWorkingStatus2(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      adminConsignStatusTrigger.value = true;
     });
     onErrorConsignWorkingStatus2((e: any) => {
       notification("error", e.message);
@@ -714,9 +718,9 @@ export default defineComponent({
       selectionChanged,
       formatMonth,
       reportTypeSelectbox,
-      situationSelectbox,
-      acceptanceStatusSelectbox,
-      healthSelectbox,
+      workingStatusSelectbox,
+      companyConsignStatusSelectbox,
+      EDIStatusSelectbox,
       states1,
       modalStatus1,
       onOpenPop1,
@@ -730,6 +734,7 @@ export default defineComponent({
       loading1,
       adminConsignStatusTrigger,
       onGetAcquistionRp,
+      dayjs,
     };
   },
 });

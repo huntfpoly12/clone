@@ -37,8 +37,8 @@ const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }
 
             // call the mutation to refresh token
             return new Observable((observer) => {
-              const jwtObject = getJwtObject(accessToken);
-              if (jwtObject.isExpired()) {
+              // const jwtObject = getJwtObject(accessToken);
+              // if (jwtObject.isExpired()) {
                 client.mutate({
                   mutation: mutations.refreshLogin,
                   variables: {
@@ -71,17 +71,17 @@ const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }
                     // handle error
                     console.log(error);
                   });
-              } else {
-                 // if toke not expired 
-                 const oldHeaders = operation.getContext().headers;
-                 operation.setContext({
-                   headers: {
-                     ...oldHeaders,
-                     authorization: `Bearer ${accessToken}`,
-                   },
-                 });
-                 return forward(operation)
-              }
+              // } else {
+              //    // if toke not expired 
+              //    const oldHeaders = operation.getContext().headers;
+              //    operation.setContext({
+              //      headers: {
+              //        ...oldHeaders,
+              //        authorization: `Bearer ${accessToken}`,
+              //      },
+              //    });
+              //    return forward(operation)
+              // }
             });
         }
       } else {
