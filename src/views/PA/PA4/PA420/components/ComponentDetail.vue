@@ -308,8 +308,7 @@
         </template>
       </DxDataGrid>
       <div
-        style="
-          border: 1px solid #ddd;
+        style="border: 1px solid #ddd;
           border-top: none;
           width: 100%;
           display: flex;
@@ -412,12 +411,12 @@ import DeletePopup from "./DeletePopup.vue";
 import EditPopup from "./EditPaymentDayPopup.vue";
 import UpdatePopup from "./UpdatePopup.vue";
 import ViewDetail from "./ViewDetail.vue";
+import { watchEffect } from "vue";
 
 const props = defineProps<{ statusButton: number; actionSave: number }>();
-const emit = defineEmits(["createdDone"]);
+const emit = defineEmits(["createdDone", "changedStatus"]);
 
 const dataGrid = ref();
-let statusButton = ref(0);
 const dataSourceDetail = ref([]);
 const listEmployeeId = ref<any>([]);
 const keyDetailRow = ref();
@@ -434,13 +433,16 @@ const hasDataIncRetirements = computed(
 const selectMonthColumn = computed(
   () => store.getters["common/getSelectMonthColumn"]
 );
+const retirementStatus = computed(() => store.getters["common/getRetirementStatus"]);
+let statusButton = ref(retirementStatus.value);
+
 const modalHistory = ref<boolean>(false);
 const modalAdd = ref(false);
 const modalUpdate = ref(false);
 const modalView = ref(false);
 const modalHistoryStatus = ref<boolean>(false);
 const resetFormNum = ref(1);
-let checkActionValue = ref(props.statusButton != 10); // disabeld button
+const checkActionValue = computed(() => retirementStatus.value !== 10); // disabeld button
 let dataAction: any = reactive({
   ...dataActionUtils,
 });
@@ -489,8 +491,10 @@ const { mutate, onError, onDone } = useMutation(
 onError((e) => {
   //notification('error', e.message)
 });
-onDone((e) => {
+onDone(({data}) => {
   actionDeleteSuccess();
+
+  store.commit('common/setRetirementStatus', data.changeIncomeProcessRetirementStatus.status)
   notification("success", Message.getCommonMessage("106").message);
 });
 // ================WATCHING============================================
@@ -506,11 +510,9 @@ watch(
   { deep: true }
 );
 
-watch(
-  () => props.statusButton,
+watch(() => retirementStatus.value,
   (newValue) => {
     statusButton.value = newValue;
-    checkActionValue.value = !(newValue === 10);
   }
 );
 // ================FUNCTION============================================

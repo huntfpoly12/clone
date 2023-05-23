@@ -112,6 +112,7 @@ const statesPA420 = {
   // tab 1
   ...cloneDeep(INITIAL_STATE),
   employeeIdCreated: [],
+  retirementStatus: 10,
 };
 
 export default statesPA420;

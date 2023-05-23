@@ -33,6 +33,7 @@ const screenGetterPA420 = {
   getIsChangeForm: (state: any) => state.isChangeForm.tab1 || state.isChangeForm.tab2 || state.isChangeForm.tab3,
   getEmployeeEdit: (state: any) => state.employee,
   getEmployeeIdCreated: (state: any) => state.employeeIdCreated,
+  getRetirementStatus: (state: any) => state.retirementStatus,
 };
 
 export default screenGetterPA420;
