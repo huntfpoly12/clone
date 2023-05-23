@@ -43,7 +43,7 @@
           <a-form-item label="상태">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="situationSelectbox"
+              :arrSelect="workingStatusSelectbox"
               v-model:valueInput="formState.workingStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -101,7 +101,7 @@
             data-field="companyId"
             alignment="left"
           />
-          <DxColumn caption="신고구분" data-field="type" alignment="left" />
+          <DxColumn caption="신고구분" data-field="type" alignment="left" :format="reportTypeText"/>
           <DxColumn caption="업체명" data-field="companyName" />
           <DxColumn
             caption="사업장관리번호"
@@ -117,7 +117,7 @@
           <template #workingStatus="{ data }: any">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="situationSelectbox"
+              :arrSelect="workingStatusSelectbox"
               v-model:valueInput="data.data.workingStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -136,7 +136,7 @@
             width="125"
             alignment="left"
             data-type="date"
-            format="yyyy-MM-dd HH:mm"
+            format="yyyy-MM-dd"
           >
           </DxColumn>
           <DxColumn
@@ -144,15 +144,20 @@
             data-field="acceptedAt"
             width="125"
             data-type="date"
-            format="yyyy-MM-dd HH:mm"
+            format="yyyy-MM-dd"
           />
           <DxColumn
             caption="완료일"
             data-field="completedAt"
-            width="125"
+            alignment="left"
             data-type="date"
-            format="yyyy-MM-dd HH:mm"
+            cell-template="completedAt"
           />
+          <template #completedAt="{data}">
+            <div v-if="data.data.workingStatus == 0 || data.data.workingStatus == 10">
+              {{ dayjs(data.data.completedAt).format('YYYY-MM-DD') }}
+            </div>
+          </template>
           <DxColumn
             caption="접수번호"
             width="155px"
@@ -166,10 +171,14 @@
           </template>
           <DxColumn caption="메모" width="135px" cell-template="memo" />
           <template #memo="{ data }: any">
-            <default-text-box
-              :width="120"
-              v-model:valueInput="data.data.memo"
-            />
+            <a-tooltip zIndex="9999999" placement="top" color="black">
+              <template #title> {{data.data.memo}} </template>
+              <div></div>
+              <default-text-box
+                :width="120"
+                v-model:valueInput="data.data.memo"
+              />
+            </a-tooltip>
           </template>
           <DxColumn
             caption="신고서다운로드"
@@ -204,9 +213,6 @@
                 zIndex="9999"
               >
                 <template #content>
-                  <span @click="data.data.visible = false" class="btn-close"
-                    >x</span
-                  >
                   <div class="mb-5">아직 제공되지 않는 기능입니다.</div>
                 </template>
                 <a href="#"></a>
@@ -289,13 +295,14 @@ import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
 import {
   reportTypeSelectbox,
-  situationSelectbox,
-  acceptanceStatusSelectbox,
-  healthSelectbox,
+  workingStatusSelectbox,
+  companyConsignStatusSelectbox,
+  EDIStatusSelectbox,
   formatMonth,
   dataTableTab1,
   states1,
   reportTypeSelectbox2,
+reportTypeText,
 } from "../../utils/index";
 import dayjs from "dayjs";
 import History from "./History.vue";
@@ -543,6 +550,7 @@ export default defineComponent({
     onDoneCompanyJoin2(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      companyRequestListTrigger.value = true;
     });
     onErrorCompanyJoin2((e: any) => {
       notification("error", e.message);
@@ -569,6 +577,7 @@ export default defineComponent({
     onDoneCompanyOut2(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      companyRequestListTrigger.value = true;
     });
     onErrorCompanyOut2((e: any) => {
       notification("error", e.message);
@@ -623,9 +632,9 @@ export default defineComponent({
       filterDsTab2Bf530,
       loading1,
       reportTypeSelectbox,
-      situationSelectbox,
-      acceptanceStatusSelectbox,
-      healthSelectbox,
+      workingStatusSelectbox,
+      companyConsignStatusSelectbox,
+      EDIStatusSelectbox,
       states1,
       reportTypeSelectbox2,
       onGetAcquistionRp,
@@ -635,6 +644,8 @@ export default defineComponent({
       tab1Bf520Ref,
       dataType,
       paramValue,
+      reportTypeText,
+      dayjs,
     };
   },
 });
