@@ -1,9 +1,9 @@
 <template>
   <div :class="cssClass">
-    <div v-if="selfFunding" class="tag">자</div>
-    <div v-if="revenueGeneratingBusiness" class="tag">수</div>
-    <div v-if="subsidy" class="tag">보</div>
-    <div v-if="donation" class="tag">후</div>
+    <div v-if="fundingSource1" class="tag">자</div>
+    <div v-if="fundingSource2" class="tag">수</div>
+    <div v-if="fundingSource3" class="tag">보</div>
+    <div v-if="fundingSource4" class="tag">후</div>
   </div>
 </template>
 
@@ -16,20 +16,20 @@ export default defineComponent({
       type: String,
       default: 'tag-center',
     },
-    selfFunding: {
-      type: Boolean,
+    fundingSource1: {
+      type: String,
       default: false,
     },
-    revenueGeneratingBusiness: {
-      type: Boolean,
+    fundingSource2: {
+      type: String,
       default: false,
     },
-    subsidy: {
-      type: Boolean,
+    fundingSource3: {
+      type: String,
       default: false,
     },
-    donation: {
-      type: Boolean,
+    fundingSource4: {
+      type: String,
       default: false,
     },
   },

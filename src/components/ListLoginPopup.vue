@@ -3,7 +3,7 @@
         <a-modal :visible="modalStatus" :title="title" centered @cancel="setModalVisible()" :mask-closable="false"
             width="50%">
             <a-spin tip="Loading..." :spinning="loadingCM110">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
+                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn data-field="createdAt" caption="기록일시" cell-template="creactedAt" data-type="text"/>
@@ -112,7 +112,7 @@ export default defineComponent({
             loadingCM110,
             move_column,
             colomn_resize,
-            formarDate
+            formarDate,
         }
     },
     methods: {

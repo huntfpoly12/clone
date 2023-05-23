@@ -56,7 +56,7 @@ export const initialStateFormData = {
   
   accountCode: null,
   relationCode: null,
-  // clientId: null,
+  clientId: null,
   source: null,
   writer: null,
   memo: null,

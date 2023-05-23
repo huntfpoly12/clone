@@ -70,6 +70,9 @@ const screenMutatePA420 = {
         employee: INITIAL_STATE.employee
       })
     })
+  },
+  setEmployeeIdCreated(state: any, data: any) {
+    state.employeeIdCreated = data
   }
 };
 export default screenMutatePA420;

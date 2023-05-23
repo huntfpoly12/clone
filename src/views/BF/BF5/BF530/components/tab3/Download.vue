@@ -1,19 +1,48 @@
 <template>
-  <a-modal title="" :visible="true" @cancel="setModalStatus" :mask-closable="false" class="confirm-md"
-    footer="" :width="700">
+  <a-modal
+    title=""
+    :visible="true"
+    @cancel="setModalStatus"
+    :mask-closable="false"
+    class="confirm-md"
+    footer=""
+    :width="700"
+  >
     <section class="mt-20">
       <a-spin :spinning="false">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="code" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true">
+        <DxDataGrid
+          :show-row-lines="true"
+          :hoverStateEnabled="true"
+          :data-source="dataSource"
+          :show-borders="true"
+          key-expr="typeId"
+          class="mt-10"
+          :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize"
+          :column-auto-width="true"
+        >
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxEditing :allow-updating="true" mode="cell" />
-          <DxColumn caption="신고종류" data-field="code" :allowEditing="false" />
-          <DxColumn caption="신고대상" data-field="bizNumber" />
-          <DxColumn caption="사무위탁" data-field="name" />
-          <DxColumn caption="다운로드" cell-template="name1" />
-          <template #name1>
-            <button-basic text="받기" type="default" mode신고대상="contained" :width="90" />
+          <DxColumn
+            caption="신고종류"
+            data-field="typeName"
+            :allowEditing="false"
+          />
+          <DxColumn caption="신고대상" data-field="subject" />
+          <DxColumn caption="사무위탁" data-field="consignment" />
+          <DxColumn
+            caption="다운로드"
+            cell-template="name1"
+            alignment="center"
+          />
+          <template #name1="{ data }">
+            <button-basic
+              text="받기"
+              type="default"
+              mode신고대상="contained"
+              :width="90"
+              @onClick="() => onDownLoad(data.data.url)"
+            />
           </template>
         </DxDataGrid>
       </a-spin>
@@ -21,43 +50,87 @@
   </a-modal>
 </template>
 <script lang="ts">
-import { useMutation } from '@vue/apollo-composable';
-import { defineComponent, ref } from 'vue';
-import mutations from '@/graphql/mutations/BF/BF6/BF620/index';
-import notification from '@/utils/notification';
-import { useStore } from 'vuex';
-import DxDataGrid, { DxColumn, DxEditing, DxScrolling, DxSummary } from 'devextreme-vue/data-grid';
+import { computed, defineComponent, ref } from "vue";
+import { useStore } from "vuex";
+import DxDataGrid, {
+  DxColumn,
+  DxEditing,
+  DxScrolling,
+  DxSummary,
+} from "devextreme-vue/data-grid";
+import { watch } from "vue";
 
 export default defineComponent({
+  props: {
+    payload: {
+      type: Object,
+      required: true,
+    },
+  },
   setup(props, { emit }) {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
+
+    // --------------------------GET DATASOURCE --------------------------
+
     const dataSource = ref([
-      { code: '취득', bizNumber: '', name: '' },
-      { code: '휴직', bizNumber: '', name: '' },
-      { code: '성실', bizNumber: '', name: '' },
-      { code: '급여변경', bizNumber: '', name: '' },
+      {
+        typeId: 1,
+        typeName: "취득",
+        subject: "갈베아리사랑어린이집 / 신민선 등 1건",
+        consignment: "",
+        url: "",
+      },
+      { typeId: 4, typeName: "휴직", subject: "", consignment: "", url: "" },
+      { typeId: 2, typeName: "상실", subject: "", consignment: "", url: "" },
+      {
+        typeId: 3,
+        typeName: "급여변경",
+        subject: "",
+        consignment: "",
+        url: "",
+      },
     ]);
+    watch(
+      () => props.payload,
+      (newVal: any) => {
+        if (newVal) {
+          dataSource.value.forEach((item: any) => {
+            if (item.typeId == props.payload.type) {
+              item.subject =
+                props.payload.companyName + "/" + props.payload.name;
+              item.url = props.payload.url;
+              return;
+            }
+          });
+        }
+      },
+      { immediate: true }
+    );
     const setModalStatus = () => {
-      emit("closeModal", false)
+      emit("closeModal", false);
     };
-    const onAllowUpdate = (e: any) => {
-      // console.log(`output->e`, e)
-    }
+    const onDownLoad = (e: any) => {
+      const downloadLink = document.createElement("a");
+      downloadLink.href = e;
+      downloadLink.download = "filename.ext";
+      downloadLink.target = '_blank';
+      downloadLink.click();
+    };
     return {
       setModalStatus,
       per_page,
       move_column,
       colomn_resize,
       dataSource,
-      onAllowUpdate,
+      onDownLoad,
     };
   },
-  components: { DxDataGrid, DxScrolling, DxColumn, DxSummary, DxEditing }
+  components: { DxDataGrid, DxScrolling, DxColumn, DxSummary, DxEditing },
 });
 </script>
 <style lang="scss" scoped>
-:deep .dx-datagrid-content .dx-datagrid-table .dx-row>td {
+:deep .dx-datagrid-content .dx-datagrid-table .dx-row > td {
   height: 20px;
 }
 </style>

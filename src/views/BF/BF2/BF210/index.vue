@@ -54,7 +54,7 @@
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
-                    <DxPaging :page-size="dataSearch.rows" />
+                    <DxPaging :page-size="0" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
                     <DxToolbar>
@@ -77,7 +77,7 @@
                             <template #title>신규</template>
                             <div><DxButton icon="plus" @click="openAddNewModal" /></div>
                         </a-tooltip>
-                        
+
                     </template>
                     <DxColumn data-field="active" caption="상태" css-class="cell-center" cell-template="check-box" />
                     <template #check-box="{ data }">
@@ -191,7 +191,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const dataSearch:any = ref({
             ...dataSearchIndex,
-            rows: per_page.value
+            rows: 100000
         })
         const rowTable = ref()
         var idRowEdit = ref<number>(0)
@@ -284,7 +284,7 @@ export default defineComponent({
             }
         );
         const closePopupAdd = () => {
-            modalAddNewStatus.value = false; 
+            modalAddNewStatus.value = false;
             count.value++
         }
         return {
@@ -318,5 +318,5 @@ export default defineComponent({
         }
     },
 });
-</script>  
+</script>
 <style scoped lang="scss" src="./style/style.scss"/>

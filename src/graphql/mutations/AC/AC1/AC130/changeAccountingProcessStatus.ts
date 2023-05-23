@@ -6,13 +6,13 @@ export default gql`
     $facilityBusinessId: Int!,
     $year: Int!,
     $month: Int!
-    $status: Int!
+    $status: ProcessStatusScalar!
   ) {
     changeAccountingProcessStatus(
-      companyId: $companyId,
-      fiscalYear: $fiscalYear,
-      facilityBusinessId: $facilityBusinessId,
-      year: $year,
+      companyId: $companyId
+      fiscalYear: $fiscalYear
+      facilityBusinessId: $facilityBusinessId
+      year: $year
       month: $month
       status: $status
     ){

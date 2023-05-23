@@ -573,25 +573,15 @@ export default defineComponent({
 			}
 		);
 
-		watch(
-			() => dataConfigDeductions.value,
-			(value) => {
+		watch(() => dataConfigDeductions.value, (value) => {
 				// store.state.common.pa110.statusChangeFormEdit = true;
 
 				// console.log(value.find((item: any) => item.itemCode == 1012).amountNew);
 				// console.log(value.find((item: any) => item.itemCode == 1012).amount);
 
 				localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
-				localReal.value = value.find((item: any) => item.itemCode == 1012).amount;
-				console.log(value);
-				
-				value.map((item: any) => {
-					if (item.itemCode == 1012) {
-						item.amount =
-							value.find((item: any) => item.itemCode == 1012).amount < 1000
-								? 0 : value.find((item: any) => item.itemCode == 1012).amount;
-					}
-				});
+				localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
+				value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
 				calculateTax();
 			},
 			{ deep: true }
@@ -889,14 +879,16 @@ export default defineComponent({
 		// ======================= FUNCTION ================================
 		const resetArrayEmploySelect = () => {
 			arrayEmploySelect.value = [];
+			let data = dataEmployeeWageDailies.value?.filter((data: any) => {
+				let statusJoinedAt = data.joinedAt ? parseInt(data.joinedAt.toString().slice(4, 6)) <= store.state.common.pa110.processKeyPA110.imputedMonth : true
+				let statusLeavedAt = data.leavedAt ? parseInt(data.leavedAt.toString().slice(4, 6)) >= store.state.common.pa110.processKeyPA110.imputedMonth : true
+				if (statusJoinedAt && statusLeavedAt) {
+					return data
+				}
+			})
 			if (store.state.common.pa110.statusFormAdd) {
-				dataEmployeeWageDailies.value.map((dataEmployee: any) => {
-					if (
-						!store.state.common.pa110.dataTaxPayInfo.find(
-							(dataTaxPay: any) =>
-								dataTaxPay.employeeId == dataEmployee.employeeId
-						)
-					) {
+				data.map((dataEmployee: any) => {
+					if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
 						if (dataEmployee.leavedAt) {
 							if (
 								parseInt(dataEmployee.leavedAt?.toString().slice(4, 6)) >=
@@ -1087,16 +1079,11 @@ export default defineComponent({
 			modalDeductions.value = true;
 		};
 		const updateDataDeduction = async () => {
-			console.log(dataConfigDeductions.value);
-			
-			await dataConfigDeductions.value.forEach((val: any, index: number) => {
+			await dataConfigDeductions.value?.forEach((val: any, index: number) => {
 				if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
 					val.amount = val.amountNew;
 			});
-			// setTimeout(() => {
 			store.state.common.pa110.statusChangeFormPrice = false;
-			// showErrorButton.value = false;
-			// }, 500);
 		};
 
 		const onUpdateValue = (employeeId: any) => {

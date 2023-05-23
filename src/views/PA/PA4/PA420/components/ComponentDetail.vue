@@ -466,6 +466,7 @@ const {
 }));
 resTableDetail((res) => {
   dataSourceDetail.value = res.data.getIncomeRetirements;
+  store.commit('common/setEmployeeIdCreated', res.data.getIncomeRetirements?.map((item: any) => item.employeeId) || [])
   const listEmployee: any = [];
   // create array id already exist
   res.data.getIncomeRetirements.map((item: any) => {

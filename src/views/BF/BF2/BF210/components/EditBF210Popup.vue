@@ -395,21 +395,21 @@ export default defineComponent({
         e.preventDefault();
       }
     };
-    // handle changed form
-    const isChangedForm = ref(false);
-    // watch changed formState
-    const stopWatch = watch(
-      formState,
-      (value: any) => {
-        if (!isEqual(value, objDataDefault)) {
-          isChangedForm.value = true;
-          stopWatch();
-        }
-      },
-      { immediate: false }
-    );
+    // // handle changed form
+    // const isChangedForm = ref(false);
+    // // watch changed formState
+    // const stopWatch = watch(
+    //   formState,
+    //   (value: any) => {
+    //     if (!isEqual(value, objDataDefault)) {
+    //       isChangedForm.value = true;
+    //       stopWatch();
+    //     }
+    //   },
+    //   { immediate: false }
+    // );
     const setModalVisible = (e: any) => {
-      if (!isChangedForm) emit("closePopup", false);
+      if (JSON.stringify(objDataDefault) === JSON.stringify(formState.value)) emit("closePopup", false);
       else comfirmClosePopup(() => emit("closePopup", false));
     };
     const getColorTag = (data: string) => {
