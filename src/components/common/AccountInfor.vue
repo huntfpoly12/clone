@@ -1,5 +1,5 @@
 <template>
-  <a-dropdown  :overlayStyle="{ 'border': '2px solid'}">
+  <a-dropdown  :overlayStyle="{ 'border': '2px solid'}" trigger="click">
       <a class="ant-dropdown-link" @click.prevent>
         <a-spin :spinning="!userInfor" size="small"></a-spin>{{ userInfor ? userInfor.name : ''}}
         <DownOutlined />
@@ -14,11 +14,11 @@
               <p v-if="userInfor.compactCompany">{{ userInfor.compactCompany.name}}</p>
             </div>
           </a-menu-item>
-          <a-menu-item>
-            <p @click="openChangePassword">비밀번호 변경</p>
+          <a-menu-item @click="openChangePassword">
+            <p >비밀번호 변경</p>
           </a-menu-item>
-          <a-menu-item>
-            <p @click="logout">로그아웃</p>
+          <a-menu-item @click="logout">
+            <p >로그아웃</p>
           </a-menu-item>
         </a-menu>
       </template>
