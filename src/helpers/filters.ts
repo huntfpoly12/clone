@@ -60,7 +60,7 @@ const filters = {
       if (inputStr) {
         let formattedNumber = `${inputStr.slice(0, 3)}-${inputStr.slice(3, 5)}-${inputStr.slice(5, 10)}`;
         return formattedNumber;
-      } 
+      }
       return input;
     },
     formatManageId(input: any) {
@@ -68,8 +68,13 @@ const filters = {
       if (inputStr) {
         let formattedNumber = `${inputStr.slice(0, 3)}-${inputStr.slice(3, 5)}-${inputStr.slice(5, 10)}-${inputStr.slice(10, 11)}`;
         return formattedNumber;
-      } 
+      }
       return input;
     },
+    formatNumber(input: number) {
+      if (input) {
+        return input.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      }
+    }
 }
 export default filters;

@@ -235,7 +235,7 @@
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
                 <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || isCheckedBizNumber || formState.type === 1" />
-                <info-tool-tip>
+                <info-tool-tip placement="left">
                     <span>
                     이용하지 않는 경우 삭제되지 않으며<br />
                     거래처 리스트에서 조회되지 않습니다
@@ -253,7 +253,7 @@
                 <div style="margin-left: -5px">
                   <post-code-button @dataAddress="funcAddress" text="주소검색" width="90"/>
                 </div>
-                <info-tool-tip>
+                <info-tool-tip placement="left">
                   기부금영수증 발행시 반드시 필요합니다.
                 </info-tool-tip>
               </div>

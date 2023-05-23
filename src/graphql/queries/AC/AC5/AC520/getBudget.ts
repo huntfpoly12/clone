@@ -27,7 +27,10 @@ export default gql`
                     type
                     detail
                     calculationResult
+                    __typename @skip(if: true)
                 }
+                __typename @skip(if: true)
+
             }
         }
     }
