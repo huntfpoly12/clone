@@ -428,6 +428,7 @@ export default defineComponent({
 
     // A function that is called when the user clicks on the "Load New" button.
     const loadNew = () => {
+      clearAllCellValue(wrapper);
       originData.value = {
         companyId: companyId,
         input: {
