@@ -16,7 +16,7 @@
           border-left: 1px solid #bfbfbf;
         }
         &-active {
-          background-color: #D1E1F8;
+          background-color: #d1e1f8;
         }
       }
     }
@@ -47,6 +47,46 @@
         height: calc(100vh - 540px);
         :deep .dx-freespace-row {
           display: none !important;
+        }
+        :deep #dx-col-1 {
+          padding: 0;
+        }
+        :deep td[aria-describedby="dx-col-1"] {
+          padding: 0;
+          box-sizing: border-box;
+          pointer-events: none;
+        }
+        .ac-110-checkboxAll {
+          cursor: pointer;
+          width: 80px;
+          text-align: center;
+          justify-content: center;
+          height: 26px;
+          padding-top: 2px;
+          :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
+            border-color: #ddd;
+            cursor: pointer;
+          }
+          &-disable {
+            background-color: #dddddd49;
+            pointer-events: none;
+          }
+        }
+        .ac-110-checkbox {
+          cursor: pointer;
+          width: 80px;
+          height: 36px;
+          justify-content: center;
+          padding-top: 8px;
+          pointer-events: auto;
+          :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
+            border-color: #ddd;
+            cursor: pointer;
+          }
+          &-disable {
+            background-color: #dddddd49;
+            pointer-events: none;
+          }
         }
       }
       &-tabUserType {
@@ -136,11 +176,11 @@
   }
   .disable-icon-column {
     pointer-events: none;
-    opacity: .1;
+    opacity: 0.1;
   }
   .disable-input-column {
     pointer-events: none;
-    opacity: .4;
+    opacity: 0.4;
   }
   .DxDataGridMain-ac-110-sumary {
     display: flex;
@@ -150,7 +190,7 @@
     border: 1px solid #ddd;
     border-top: none;
     padding: 7px;
-    color: rgba(51, 51, 51, .7);
+    color: rgba(51, 51, 51, 0.7);
   }
   .tag-green-ac110 {
     color: #ffffff;
@@ -165,7 +205,7 @@
   }
   .tag-red-ac110 {
     color: #ffffff;
-    background-color: #BB3835;
+    background-color: #bb3835;
     height: 28px;
     width: 40px;
     border: 1px solid #ffffff;
