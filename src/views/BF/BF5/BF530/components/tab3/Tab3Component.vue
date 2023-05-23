@@ -2,143 +2,341 @@
   <div class="tab-group">
     <section>
       <a-row :gutter="[0, 5]">
-        <a-rol class="mr-15">
+        <a-rol class="mr-20">
           <a-form-item label="업체명">
-            <default-text-box width="150px" v-model:valueInput="formState.companyName1" />
+            <default-text-box
+              width="150px"
+              v-model:valueInput="formState.companyName"
+            />
           </a-form-item>
         </a-rol>
         <a-rol class="mr-15">
           <a-form-item label="사업장관리번호">
-            <biz-number-text-box width="150px" v-model:valueInput="formState.companyName2" />
+            <ManageIdTextBox
+              width="150px"
+              v-model:valueInput="formState.manageId"
+            />
           </a-form-item>
         </a-rol>
-        <a-rol class="mr-15">
+        <a-rol class="mr-20">
           <a-form-item label="상태">
-            <select-box-common :arrSelect="reportTypeSelectbox2" v-model:valueInput="formState.companyName4"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="사업유형 선택" :searchEnabled="false" />
+            <SelectBoxCT
+              :searchEnabled="true"
+              :arrSelect="situationSelectbox"
+              v-model:valueInput="formState.workingStatus"
+              displayeExpr="text"
+              valueExpr="id"
+              width="150px"
+              placeholder="선택"
+            />
           </a-form-item>
         </a-rol>
-        <a-rol class="mr-15">
-          <a-form-item label="신고구분">
-            <select-box-common :arrSelect="reportTypeSelectbox2" v-model:valueInput="formState.companyName4"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="사업유형 선택" :searchEnabled="false" />
+        <a-rol class="mr-20">
+          <a-form-item label="신고종류">
+            <SelectBoxCT
+              :searchEnabled="true"
+              :arrSelect="reportTypeSelectboxTab3"
+              v-model:valueInput="formState.type"
+              displayeExpr="text"
+              valueExpr="id"
+              width="150px"
+              placeholder="선택"
+            />
           </a-form-item>
         </a-rol>
         <a-col>
           <a-form-item label="기간">
-            <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+            <range-date-time-box
+              v-model:valueDate="rangeDate"
+              width="250px"
+              :multi-calendars="true"
+            />
           </a-form-item>
         </a-col>
       </a-row>
     </section>
     <a-row class="top-table" justify="end">
-      <button-basic @onClick="onSave" mode="contained" type="default" text="상태일괄변경" />
+      <button-basic
+        @onClick="onSave"
+        mode="contained"
+        type="default"
+        text="상태일괄변경"
+      />
     </a-row>
     <div class="content-grid">
-      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-        key-expr="id" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-        :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true" ref="tab1Bf520Ref">
-        <DxScrolling mode="standard" show-scrollbar="always" />
-        <!-- <DxColumnFixing :enabled="true" /> -->
-        <DxEditing mode="row" />
-        <DxLoadPanel :enabled="true" :showPane="true" />
-        <DxSelection mode="multiple" :fixed="true" />
-        <DxColumn caption="일련번호" data-field="companyCode" :allow-editing="false" />
-        <DxColumn caption="신고구분" data-field="companyName" :allow-editing="false" />
-        <DxColumn caption="업체명" data-field="inputYearMonth" :allow-editing="false" />
-        <DxColumn caption="사업장관리번호" data-field="paymentYearMonth" :allow-editing="false" />
-        <DxColumn caption="대표자명" data-field="reportType" width="95px" :allow-editing="false" />
-        <DxColumn caption="상태" data-field="afterDeadline" width="155px" edit-cell-template="afterDeadline" />
-        <template #afterDeadline="{ data } : any">
-          <SelectBoxCT :searchEnabled=" true " :arrSelect=" states1 " v-model:valueInput=" data.data.afterDeadline "
-            displayeExpr="text" valueExpr="id" width="125px" placeholder="선택" />
-        </template>
-        <DxColumn caption="사무대행위탁상태" data-field="productionStatus2" width="125" />
-        <DxColumn caption="사원명" data-field="productionStatus3" width="125" />
-        <DxColumn caption="사원주민번호" data-field="totalCollectedTaxAmount" width="125" />
-        <DxColumn data-field="statusUpdatedAt" caption="신청일" width="125">
-        </DxColumn>
-        <DxColumn data-field="lastProductionRequestedAt" caption="접수일" width="125" :allow-editing=" false " />
-        <DxColumn data-field="productionStatus" caption="완료일" width="125" />
-        <DxColumn caption="접수번호" data-field="afterDeadline" width="155px" :allow-editing=" false " data-type="date" />
-        <DxColumn caption="메모" data-field="afterDeadline" width="155px" :allow-editing=" false " />
-        <DxColumn caption="신고서다운로드" cell-template="downA" alignment="right" :allow-editing=" false " />
-        <template #downA=" { data } : any " class="custom-action">
-          <div class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(1) ">
-              <DownloadOutlined :style="{fontSize: 12}"/>
-            </DxButton>
-          </div>
-        </template>
-        <DxColumn caption="전자신고파일다운로드" cell-template="downB" alignment="right" :allow-editing=" false " />
-        <template #downB=" { data } : any " class="custom-action">
-          <div class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(2) ">
-              <DownloadOutlined :style="{fontSize: 12}"/>
-            </DxButton>
-          </div>
-        </template>
-        <DxColumn caption="팩스발송" cell-template="downD" :allow-editing=" false " width="100px" />
-        <template #downD=" { data } : any " class="custom-action">
-          <div class="d-flex justify-content-center">
-            <!-- <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
-              <DownloadOutlined :size="12" />
-            </DxButton> -->
-            <button-basic @onClick=" onOpenPop1 " mode="contained" type="default" text="팩스발송" />
-          </div>
-        </template>
-        <DxColumn caption="팩스상태" cell-template="downE" alignment="right" :allow-editing=" false " />
-        <template #downE=" { data } : any " class="custom-action">
-          <div class="d-flex justify-content-center">
-            <!-- <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
-              <DownloadOutlined :style="{fontSize: 12}"/>
-            </DxButton> -->
-          </div>
-        </template>
-        <DxColumn cell-template="history" :allow-editing=" false " />
-        <template #history=" { data } : any " class="custom-action">
-          <div class="d-flex justify-content-center">
-            <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs ">
-              <a-tooltip zIndex="9999999" placement="top" color="black">
-                <template #title>
-                  <div>
-                    변경이력
-                  </div>
+      <a-spin :spinning="loading1">
+        <DxDataGrid
+          id="tab3-bf530"
+          :show-row-lines="true"
+          :hoverStateEnabled="true"
+          :data-source="filterDsTab3Bf530"
+          :show-borders="true"
+          key-expr="workId"
+          class="mt-10"
+          :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize"
+          :column-auto-width="true"
+          @selection-changed="selectionChanged"
+          :allowSelection="true"
+          ref="tab3Bf520Ref"
+          noDataText="내역이 없습니다"
+        >
+          <DxPaging :page-size="1000" />
+          <DxScrolling mode="standard" show-scrollbar="always" />
+          <DxSelection
+            :select-all-mode="'allPages'"
+            :show-check-boxes-mode="'onClick'"
+            mode="multiple"
+          />
+          <DxLoadPanel :enabled="true" :showPane="true" />
+          <DxColumn
+            caption="일련번호"
+            data-field="companyId"
+            alignment="center"
+          />
+          <DxColumn caption="신고구분" data-field="type" alignment="center" />
+          <DxColumn caption="업체명" data-field="companyName" />
+          <DxColumn caption="사업장관리번호" data-field="paymentYearMonth" />
+          <DxColumn caption="대표자명" data-field="companyPresidentName" />
+          <DxColumn
+            caption="상태"
+            width="135px"
+            cell-template="workingStatus"
+          />
+          <template #workingStatus="{ data }: any">
+            <SelectBoxCT
+              :searchEnabled="true"
+              :arrSelect="situationSelectbox"
+              v-model:valueInput="data.data.workingStatus"
+              displayeExpr="text"
+              valueExpr="id"
+              width="120px"
+              placeholder="선택"
+            />
+          </template>
+          <DxColumn
+            caption="사무대행위탁상태"
+            data-field="productionStatus2"
+            width="125"
+          />
+          <DxColumn caption="사원명" data-field="name" />
+          <DxColumn
+            caption="사원주민번호"
+            data-field="employeeId"
+            alignment="center"
+          />
+          <DxColumn
+            caption="신청일"
+            data-field="registeredAt"
+            width="125"
+            alignment="center"
+            data-type="date"
+            format="yyyy-MM-dd HH:mm"
+          />
+          <DxColumn
+            caption="접수일"
+            data-field="acceptedAt"
+            width="125"
+            data-type="date"
+            format="yyyy-MM-dd HH:mm"
+          />
+          <DxColumn
+            caption="완료일"
+            data-field="completedAt"
+            width="125"
+            data-type="date"
+            format="yyyy-MM-dd HH:mm"
+          />
+          <DxColumn
+            caption="접수번호"
+            width="155px"
+            cell-template="acceptedNumber"
+          />
+          <template #acceptedNumber="{ data }: any">
+            <default-text-box
+              :width="120"
+              v-model:valueInput="data.data.acceptedNumber"
+            />
+          </template>
+          <DxColumn caption="메모" width="135px" cell-template="memo" />
+          <template #memo="{ data }: any">
+            <default-text-box
+              :width="120"
+              v-model:valueInput="data.data.memo"
+            />
+          </template>
+          <DxColumn
+            caption="신고서다운로드"
+            cell-template="downA"
+            alignment="right"
+          />
+          <template #downA="{ data }: any" class="custom-action">
+            <div class="d-flex justify-content-center">
+              <DxButton
+                type="ghost"
+                class=""
+                style="cursor: pointer"
+                @click="
+                  onGetAcquistionRp(
+                    data.data.workId,
+                    data.data.companyId,
+                    data.data.type
+                  )
+                "
+              >
+                <DownloadOutlined :style="{ fontSize: 12 }" />
+              </DxButton>
+            </div>
+          </template>
+          <DxColumn
+            caption="전자신고파일다운로드"
+            cell-template="downB"
+            alignment="right"
+          />
+          <template #downB="{ data }: any" class="custom-action">
+            <div class="d-flex justify-content-center">
+              <DxButton
+                type="ghost"
+                class=""
+                style="cursor: pointer"
+                @click="onDownLoad(data.data)"
+              >
+                <DownloadOutlined :style="{ fontSize: 12 }" />
+              </DxButton>
+            </div>
+          </template>
+          <DxColumn caption="팩스발송" cell-template="downD" width="100px" />
+          <template #downD="{ data }: any" class="custom-action">
+            <div class="d-flex justify-content-center">
+              <a-popover
+                v-model:visible="data.data.visible"
+                trigger="click"
+                zIndex="9999"
+              >
+                <template #content>
+                  <span @click="data.data.visible = false" class="btn-close"
+                    >x</span
+                  >
+                  <div class="mb-5">아직 제공되지 않는 기능입니다.</div>
                 </template>
-                <HistoryOutlined style="font-size: 16px" />
-              </a-tooltip>
-            </DxButton>
-          </div>
-        </template>
-      </DxDataGrid>
+                <a href="#"></a>
+                <button-basic mode="contained" type="default" text="팩스발송" />
+              </a-popover>
+            </div>
+          </template>
+          <DxColumn
+            caption="팩스상태"
+            cell-template="downE"
+            alignment="right"
+          />
+          <template #downE="{ data }: any" class="custom-action">
+            <div class="d-flex justify-content-center">
+              <!-- <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
+              <DownloadOutlined :style="{fontSize: 12}"/>
+            </DxButton> -->
+            </div>
+          </template>
+          <DxColumn cell-template="history" />
+          <template #history="{ data }: any" class="custom-action">
+            <div class="d-flex justify-content-center">
+              <DxButton
+                type="ghost"
+                style="cursor: pointer"
+                @click="
+                  onOpenLogs(
+                    data.data.workId,
+                    data.data.companyId,
+                    data.data.type
+                  )
+                "
+              >
+                <a-tooltip zIndex="9999999" placement="top" color="black">
+                  <template #title>
+                    <div>변경이력</div>
+                  </template>
+                  <HistoryOutlined style="font-size: 16px" />
+                </a-tooltip>
+              </DxButton>
+            </div>
+          </template>
+        </DxDataGrid>
+      </a-spin>
     </div>
-    <Correction v-if=" modalStatus1 " @closeModal=" modalStatus1 = false " />
-    <Download v-if=" modalStatus2 " @closeModal=" modalStatus2 = false " />
-    <History v-if=" modalHistory " @closeModal=" modalHistory = false " />
-    <popup-message :modalStatus=" downModal1 " @closePopup=" downModal1 = false " title="다운로드받은 신고의 상태를 ‘완료’로 전환하시겠습니까?"
-      content="" okText="네" cancelText="아니오" @checkConfirm=" downConfirm1 " typeModal="confirm" />
-    <popup-message :modalStatus=" downModal2 " @closePopup=" downModal2 = false " title="다운로드받은 신고의 상태를 ‘완료’로 전환하시겠습니까?"
-      content="" okText="네" cancelText="아니오" @checkConfirm=" downConfirm2 " typeModal="confirm" />
+    <Download
+      v-if="viewUrlModal"
+      @closeModal="viewUrlModal = false"
+      :payload="downLoadParam"
+    />
+    <History
+      v-if="modalHistory"
+      @closeModal="modalHistory = false"
+      :param-value="paramValue"
+      :dataType="dataType"
+    />
+    <popup-message
+      :modalStatus="downModal1"
+      @closePopup="downModal1 = false"
+      title="다운로드받은 신고의 상태를 ‘완료’로 전환하시겠습니까?"
+      content=""
+      okText="네"
+      cancelText="아니오"
+      @checkConfirm="downConfirm1"
+      typeModal="confirm"
+    />
+    <popup-message
+      :modalStatus="downModal2"
+      @closePopup="downModal2 = false"
+      title="다운로드받은 신고의 상태를 ‘완료’로 전환하시겠습니까?"
+      content=""
+      okText="네"
+      cancelText="아니오"
+      @checkConfirm="viewUrlModal = true"
+      typeModal="confirm"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
-import queries from '@/graphql/queries/BF/BF6/BF620/index';
-import { useQuery } from '@vue/apollo-composable';
-import { useStore } from 'vuex';
-import DxButton from 'devextreme-vue/button';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel, DxEditing, DxLookup, DxColumnFixing } from 'devextreme-vue/data-grid';
-import { DownloadOutlined, SaveOutlined, HistoryOutlined } from '@ant-design/icons-vue';
-import notification from '@/utils/notification';
-import { Message } from '@/configs/enum';
-import { reportTypeSelectbox, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox, formatMonth, dataTableTab1, states1, reportTypeSelectbox2 } from '../../utils/index'
-import dayjs from 'dayjs';
-import { isNumber } from 'lodash';
-import Correction from './Correction.vue';
-import Download from './Download.vue';
-import History from './History.vue';
-import SelectBoxCT from './../SelectBoxCT.vue';
+import { computed, defineComponent, reactive, ref, watch } from "vue";
+import queries from "@/graphql/queries/BF/BF5/BF530/index";
+import mutations from "@/graphql/mutations/BF/BF5/BF530/index";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useStore } from "vuex";
+import DxButton from "devextreme-vue/button";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxScrolling,
+  DxSelection,
+  DxSummary,
+  DxTotalItem,
+  DxLoadPanel,
+  DxEditing,
+  DxLookup,
+  DxColumnFixing,
+  DxPaging,
+} from "devextreme-vue/data-grid";
+import {
+  DownloadOutlined,
+  SaveOutlined,
+  HistoryOutlined,
+} from "@ant-design/icons-vue";
+import notification from "@/utils/notification";
+import { Message } from "@/configs/enum";
+import {
+  reportTypeSelectboxTab3,
+  situationSelectbox,
+  acceptanceStatusSelectbox,
+  healthSelectbox,
+  formatMonth,
+  dataTableTab1,
+  states1,
+  reportTypeSelectbox2,
+} from "../../utils/index";
+import dayjs from "dayjs";
+import Download from "./Download.vue";
+import History from "./History.vue";
+import SelectBoxCT from "./../SelectBoxCT.vue";
 export default defineComponent({
   components: {
     DxButton,
@@ -150,13 +348,15 @@ export default defineComponent({
     DxSummary,
     DxTotalItem,
     DxLoadPanel,
-    Correction, Download, History,
+    Download,
+    History,
     DxEditing,
     DxLookup,
     DownloadOutlined,
     DxColumnFixing,
     SelectBoxCT,
     HistoryOutlined,
+    DxPaging,
   },
   props: {
     search: {
@@ -164,120 +364,554 @@ export default defineComponent({
     },
     onSearch: {
       type: Function,
-      default: () => { },
-    }
+      default: () => {},
+    },
   },
   setup(props, { emit }) {
     const store = useStore();
-    const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
-    const formState = reactive({
-      companyName1: '',
-      companyName2: '',
-      companyName3: '',
-      companyName4: '',
-      companyName5: '',
-      companyName6: '',
-      companyName7: '',
-      companyName8: '',
-      paymentMonth: '',
-      paymentYear: '',
+    const countGet = ref(0);
+    const rangeDate: any = computed({
+      get() {
+        return [
+          parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
+          parseInt(dayjs().format("YYYYMMDD")),
+        ];
+      },
+      set(newVal: any) {
+        employeeRequestListParam.input = {
+          fromDate: newVal[0],
+          toDate: newVal[1],
+        };
+        if (countGet.value == 1) {
+          employeeRequestListTrigger.value = true;
+        } else {
+          countGet.value = 0;
+        }
+      },
+    });
+    const formState: any = reactive({
+      companyName: "",
+      manageId: "",
+      type: "",
+      workingStatus: "",
     });
     const { move_column, colomn_resize } = store.state.settings;
-    const tab1Bf520Ref = ref();
+    const tab3Bf520Ref = ref();
+    const workIds = ref<any[]>([]);
+    const dataType = ref(1);
+    const globalYear = dayjs().year();
 
     //-----------------------Fcn common-----------------------------------------
-
-
-    // watch range date
-
-    watch(rangeDate, (newVal) => {
-      // ElecFilingFileFilter.requesteStartDate = newVal[0];
-      // ElecFilingFileFilter.requesteFinishDate = newVal[1];
-    });
 
     //-----------------------Search with holding and data source----------------
 
     const dataSource = ref<any[]>([...dataTableTab1]);
-    const filteredDataSource = ref<any[]>([]);
-    let searchWithholdingParam = ref({
-      paymentMonth: formState.paymentMonth,
-      paymentYear: formState.paymentYear,
-    })
+    const filterDsTab3Bf530 = computed(
+      () => store.state.common.filterDsTab3Bf530
+    );
+    const employeeRequestListParam = reactive({
+      input: {
+        fromDate: rangeDate.value[0],
+        toDate: rangeDate.value[1],
+      },
+    });
+    const employeeRequestListTrigger = ref(true);
+    const {
+      result: employeeRequestListResult,
+      onError: employeeRequestListError,
+      loading: loading1,
+    } = useQuery(
+      queries.getMajorInsuranceAdminCompanyEmployeeRequestList,
+      employeeRequestListParam,
+      () => ({
+        fetchPolicy: "no-cache",
+        enabled: employeeRequestListTrigger.value,
+      })
+    );
+    watch(employeeRequestListResult, (newVal) => {
+      let dataArr = newVal.getMajorInsuranceAdminCompanyEmployeeRequestList.map(
+        (item: any) => {
+          return {
+            companyName: item.company.name,
+            companyPresidentName: item.company.presidentName,
+            visible: false,
+            ...item,
+          };
+        }
+      );
+      dataSource.value = dataArr;
+      if (props.onSearch) {
+        props.onSearch();
+      }
+      employeeRequestListTrigger.value = false;
+      countGet.value++;
+    });
+    employeeRequestListError((res: any) => {
+      notification("error", res.message);
+    });
+
+    //----------------------------ON SEARCH ------------------------------
+
+    watch(
+      () => props.search,
+      () => {
+        let arr = dataSource.value.filter((item: any) => {
+          return Object.keys(formState).every((key: any) => {
+            if (formState[key]) {
+              return formState[key] == item[key];
+            }
+            if (formState[key] === 0) {
+              return formState[key] == item[key];
+            }
+            return true;
+          });
+        });
+        store.commit("common/filterDsTab3Bf530", arr);
+      },
+      { deep: true }
+    );
 
     // -----------------------------HISTORY-------------------
 
     const modalHistory = ref(false);
-    const workIdHistory = ref();
-    const onOpenLogs = () => {
+    const paramValue = reactive({
+      companyId: NaN,
+      workId: NaN,
+    });
+    const onOpenLogs = (workId: number, companyId: number, type: number) => {
+      paramValue.workId = workId;
+      paramValue.companyId = companyId;
+      dataType.value = type;
       modalHistory.value = true;
-      // workIdHistory.value = e;
-      // actionParam.workId = e;
     };
+
+    //----------------------------SELECT ROW IN TABLES ------------------------
+
     const selectionChanged = (event: any) => {
-      // let deselectRowKeys: any = [];
-      let { currentSelectedRowKeys, selectedRowsData } = event;
-      // console.log(`output->event`, event);
-      // console.log(`output->event`, tab1Bf520Ref.value.instance);
-      // console.log(`output->currentSelectedRowKeys`, currentSelectedRowKeys[0])
-      tab1Bf520Ref.value.instance.editRow(currentSelectedRowKeys[0] - 1);
-      // selectedRowsData.component.editRow(selectedRowsData.currentSelectedRowKeys);
-      // event.selectedRowsData.forEach((item: any) => {
-      //   if (!item.allowSelection)
-      //     deselectRowKeys.push(event.component.keyOf(item));
-      // });
-      // if (deselectRowKeys.length) {
-      //   event.component.deselectRows(deselectRowKeys);
-      //   return;
-      // }
+      let { selectedRowsData } = event;
+      workIds.value = selectedRowsData.map((item: any) => item.workId);
     };
-    const modalStatus1 = ref<boolean>(false);
-    //handleOkConfirm
-    const onOpenPop1 = () => {
-      modalStatus1.value = true;
-    }
 
-    //------------------------disable selection row--------------------------------
+    //----------------------GET ViewURL------------------------
 
-    const modalStatus2 = ref<boolean>(false);
-    const onOpenPop2 = () => {
-      modalStatus2.value = true;
-    }
+    const viewUrlModal = ref<boolean>(false);
+    const viewUrlParam = ref({
+      companyId: NaN,
+      imputedYear: globalYear,
+      workId: NaN,
+    });
+    const viewUrlType = ref(1);
+    //dataType == 1
+    const type1ViewUrlTrigger = ref<boolean>(false);
+    const { result: type1ViewUrlResult, onError: type1ViewUrlError } = useQuery(
+      queries.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl,
+      viewUrlParam,
+      () => ({
+        enabled: type1ViewUrlTrigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    type1ViewUrlError((res: any) => {
+      notification("error", res.message);
+    });
+    watch(type1ViewUrlResult, (newVal) => {
+      if (newVal) {
+        if (downModal2.value) {
+          downLoadParam.value.url =
+            newVal.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl;
+        } else {
+          window.open(
+            newVal.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl
+          );
+        }
+        type1ViewUrlTrigger.value = false;
+      }
+    });
+    //dataType == 2
+    const type2ViewUrlTrigger = ref<boolean>(false);
+    const { result: type2ViewUrlResult, onError: type2ViewUrlError } = useQuery(
+      queries.getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl,
+      viewUrlParam,
+      () => ({
+        enabled: type2ViewUrlTrigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    type2ViewUrlError((res: any) => {
+      notification("error", res.message);
+    });
+    watch(type2ViewUrlResult, (newVal) => {
+      if (newVal) {
+        if (downModal2.value) {
+          downLoadParam.value.url =
+            newVal.getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl;
+        } else {
+          window.open(
+            newVal.getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl
+          );
+        }
+        type2ViewUrlTrigger.value = false;
+      }
+    });
+    //dataType == 3
+    const type3ViewUrlTrigger = ref<boolean>(false);
+    const { result: type3ViewUrlResult, onError: type3ViewUrlError } = useQuery(
+      queries.getMajorInsuranceCompanyEmployeeSalaryChangeFaxFilingReportViewUrl,
+      viewUrlParam,
+      () => ({
+        enabled: type3ViewUrlTrigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    type3ViewUrlError((res: any) => {
+      notification("error", res.message);
+    });
+    watch(type3ViewUrlResult, (newVal) => {
+      if (newVal) {
+        if (downModal2.value) {
+          downLoadParam.value.url =
+            newVal.getMajorInsuranceCompanyEmployeeSalaryChangeFaxFilingReportViewUrl;
+        } else {
+          window.open(
+            newVal.getMajorInsuranceCompanyEmployeeSalaryChangeFaxFilingReportViewUrl
+          );
+        }
+        type3ViewUrlTrigger.value = false;
+      }
+    });
+    //dataType == 4
+    const type4ViewUrlTrigger = ref<boolean>(false);
+    const { result: type4ViewUrlResult, onError: type4ViewUrlError } = useQuery(
+      queries.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl,
+      viewUrlParam,
+      () => ({
+        enabled: type4ViewUrlTrigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    type4ViewUrlError((res: any) => {
+      notification("error", res.message);
+    });
+    watch(type4ViewUrlResult, (newVal) => {
+      if (newVal) {
+        if (downModal2.value) {
+          downLoadParam.value.url =
+            newVal.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl;
+        } else {
+          window.open(
+            newVal.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl
+          );
+        }
+        type4ViewUrlTrigger.value = false;
+      }
+    });
+    //dataType == 5
+    const type5ViewUrlTrigger = ref<boolean>(false);
+    const { result: type5ViewUrlResult, onError: type5ViewUrlError } = useQuery(
+      queries.getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl,
+      viewUrlParam,
+      () => ({
+        enabled: type5ViewUrlTrigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    type5ViewUrlError((res: any) => {
+      notification("error", res.message);
+    });
+    watch(type5ViewUrlResult, (newVal) => {
+      if (newVal) {
+        if (downModal2.value) {
+          downLoadParam.value.url =
+            newVal.getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl;
+        } else {
+          window.open(
+            newVal.getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl
+          );
+        }
+        type5ViewUrlTrigger.value = false;
+      }
+    });
     const downModal1 = ref(false);
     const downModal2 = ref(false);
-    const onGetAcquistionRp = (workId: any) => {
-      if (workId == 1) {
-        // notification()
-        downModal1.value = true;
+    const onGetAcquistionRp = (
+      workId: number,
+      companyId: number,
+      type: number
+    ) => {
+      viewUrlParam.value = {
+        ...viewUrlParam.value,
+        companyId: companyId,
+        workId: workId,
+      };
+      viewUrlType.value = type;
+      downModal1.value = true;
+    };
+    const callApiUrl = () => {
+      if (viewUrlType.value === 1) {
+        type1ViewUrlTrigger.value = true;
       }
-      if (workId == 2) {
-        downModal2.value = true;
+      if (viewUrlType.value === 2) {
+        type2ViewUrlTrigger.value = true;
+      }
+      if (viewUrlType.value === 3) {
+        type3ViewUrlTrigger.value = true;
+      }
+      if (viewUrlType.value === 4) {
+        type4ViewUrlTrigger.value = true;
+      }
+      if (viewUrlType.value === 5) {
+        type5ViewUrlTrigger.value = true;
       }
     };
-    const downConfirm1 = () => { };
-    const downConfirm2 = () => {
-      modalStatus2.value = true;
+    const downConfirm1 = () => callApiUrl();
+
+    // ---------------------- DOWN LOAD --------------------
+
+    const urlDownLoad = ref("");
+    const downLoadParam: any = ref();
+    const onDownLoad = (e: any) => {
+      viewUrlType.value = e.type;
+      viewUrlParam.value = {
+        ...viewUrlParam.value,
+        companyId: e.companyId,
+        workId: e.workId,
+      };
+      downModal2.value = true;
+      if (e.type !== 5) {
+        callApiUrl();
+      }
+      downLoadParam.value = e;
     };
-    const onSave = () => { };
+
+    //------------------------ACTION UPDATE TABLE--------------------------------
+
+    //1
+    const {
+      mutate: creation1,
+      onDone: onDone1,
+      onError: onError1,
+    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeAcquisitionData);
+    onDone1(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError1((e: any) => {
+      notification("error", e.message);
+    });
+    //cancel 1
+    const {
+      mutate: cancel1,
+      onDone: onDone12,
+      onError: onError12,
+    } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeAcquisition);
+    onDone12(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError12((e: any) => {
+      notification("error", e.message);
+    });
+    //update 2
+    const {
+      mutate: creation2,
+      onDone: onDone2,
+      onError: onError2,
+    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeLossData);
+    onDone2(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError2((e: any) => {
+      notification("error", e.message);
+    });
+    //cancel 2
+    const {
+      mutate: cancel2,
+      onDone: onDone22,
+      onError: onError22,
+    } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeLoss);
+    onDone22(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError22((e: any) => {
+      notification("error", e.message);
+    });
+    
+    //update 2
+    const {
+      mutate: creation3,
+      onDone: onDone3,
+      onError: onError3,
+    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeSalaryChangeData);
+    onDone3(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError3((e: any) => {
+      notification("error", e.message);
+    });
+    //cancel 3
+    const {
+      mutate: cancel3,
+      onDone: onDone32,
+      onError: onError32,
+    } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeSalaryChange);
+    onDone32(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError32((e: any) => {
+      notification("error", e.message);
+    });
+    //update 4
+    const {
+      mutate: creation4,
+      onDone: onDone4,
+      onError: onError4,
+    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeLeaveOfAbsenceData);
+    onDone4(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError4((e: any) => {
+      notification("error", e.message);
+    });
+    //cancel 4
+    const {
+      mutate: cancel4,
+      onDone: onDone42,
+      onError: onError42,
+    } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeLeaveOfAbsence);
+    onDone42(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError42((e: any) => {
+      notification("error", e.message);
+    });
+    
+    //update 5
+    const {
+      mutate: creation5,
+      onDone: onDone5,
+      onError: onError5,
+    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeReturnToWorkData);
+    onDone5(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError5((e: any) => {
+      notification("error", e.message);
+    });
+    //cancel 5
+    const {
+      mutate: cancel5,
+      onDone: onDone52,
+      onError: onError52,
+    } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeReturnToWork);
+    onDone52(() => {
+      notification("success", Message.getCommonMessage("106").message);
+      emit("closeModal", true);
+    });
+    onError52((e: any) => {
+      notification("error", e.message);
+    });
+
+    const onSave = () => {
+      let formData: any[] = [];
+      filterDsTab3Bf530.value.forEach((item: any) => {
+        if (workIds.value.some((item1: any) => item.workId == item1)) {
+          return formData.push({
+            field: {
+              search: {
+                companyId: item.companyId,
+                imputedYear: globalYear,
+                workId: item.workId,
+              },
+              data: {
+                workingStatus: item.workingStatus,
+                memo: item.memo,
+                acceptedNumber: item.acceptedNumber,
+              },
+            },
+            type: item.type,
+          });
+        }
+      });
+      formData.forEach((item: any) => {
+        if (item.type == 1) {
+          if (item.field.data.workingStatus == 0) {
+            cancel1(item.field.search);
+          } else {
+            creation1(item.field);
+          }
+        }
+        if (item.type == 2) {
+          if (item.field.data.workingStatus == 0) {
+            cancel2(item.field.search);
+          } else {
+            creation2(item.field);
+          }
+        }
+        if (item.type == 3) {
+          if (item.field.data.workingStatus == 0) {
+            cancel3(item.field.search);
+          } else {
+            creation3(item.field);
+          }
+        }
+        if (item.type == 4) {
+          if (item.field.data.workingStatus == 0) {
+            cancel4(item.field.search);
+          } else {
+            creation4(item.field);
+          }
+        }
+        if (item.type == 5) {
+          if (item.field.data.workingStatus == 0) {
+            cancel5(item.field.search);
+          } else {
+            creation5(item.field);
+          }
+        }
+      });
+    };
+
     return {
-      formState, rangeDate,
-      move_column, colomn_resize, dataSource,
-      modalStatus1, modalStatus2,
+      formState,
+      rangeDate,
+      move_column,
+      colomn_resize,
+      dataSource,
+      viewUrlModal,
       selectionChanged,
       formatMonth,
-      searchWithholdingParam,
-      filteredDataSource,
-      reportTypeSelectbox, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox, states1, reportTypeSelectbox2,
-      onOpenPop1, onOpenPop2,
+      filterDsTab3Bf530,
+      reportTypeSelectboxTab3,
+      situationSelectbox,
+      acceptanceStatusSelectbox,
+      healthSelectbox,
+      states1,
+      reportTypeSelectbox2,
       onGetAcquistionRp,
-      onOpenLogs, modalHistory,
+      onOpenLogs,
+      modalHistory,
       onSave,
-      tab1Bf520Ref,
-      downModal1, downConfirm1,
-      downModal2, downConfirm2,
+      tab3Bf520Ref,
+      downModal1,
+      downConfirm1,
+      downModal2,
+      dataType,
+      paramValue,
+      loading1,
+      onDownLoad,
+      downLoadParam,
+      urlDownLoad,
     };
   },
-})
+});
 </script>
 <style lang="scss">
-@import '../../style/style.scss';
+@import "../../style/style.scss";
 </style>

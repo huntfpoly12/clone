@@ -85,8 +85,7 @@
               alt=""
               style="width: 25px; margin-right: 3px"
             />
-            <a-tooltip>
-              <template #title>출력 / 저장</template>
+            <a-tooltip placement="topLeft" title="출력 / 저장">
               <img
                 @click="actionPrint(data.data)"
                 src="@/assets/images/print.svg"

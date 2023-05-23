@@ -1,103 +1,60 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <a-spin :spinning="loading" size="large">
-    <action-header
-      title="계약정보관리&심사"
-      @actionSearch="actionSearch ? searching($event) : changePage($event)"
-      :buttonSearch="true"
-    />
+    <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)"
+      :buttonSearch="true" />
     <div id="bf-310">
       <div class="search-form">
         <a-row :gutter="[24, 8]">
           <a-col>
             <label class="lable-item">서비스종류 :</label>
-            <checkbox-basic
-              v-model:valueCheckbox="listCheckBox.accounting"
-              :disabled="false"
-              :size="'14'"
-              label="회계"
-              style="margin-right: 10px"
-            />
-            <checkbox-basic
-              v-model:valueCheckbox="listCheckBox.withholding"
-              :disabled="false"
-              :size="'14'"
-              label="원천"
-            />
+            <checkbox-basic v-model:valueCheckbox="listCheckBox.accounting" :disabled="false" :size="'14'" label="회계"
+              style="margin-right: 10px" />
+            <checkbox-basic v-model:valueCheckbox="listCheckBox.withholding" :disabled="false" :size="'14'" label="원천" />
           </a-col>
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">심사상태/결과 :</label>
-              <subs-req-status-select-box
-                v-model:valueInput="statuses"
-                placeholder="전체"
-              />
+              <subs-req-status-select-box v-model:valueInput="statuses" placeholder="전체" />
             </div>
           </a-col>
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">영업자 :</label>
-              <list-sales-dropdown
-                width="150px"
-                v-model:valueInput="originData.salesRepresentativeId"
-              />
+              <list-sales-dropdown width="150px" v-model:valueInput="originData.salesRepresentativeId" />
             </div>
           </a-col>
 
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">상호 :</label>
-              <default-text-box
-                width="150px"
-                v-model:valueInput="originData.companyName"
-              />
+              <default-text-box width="150px" v-model:valueInput="originData.companyName" />
             </div>
           </a-col>
 
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">대표자 :</label>
-              <default-text-box
-                width="150px"
-                v-model:valueInput="originData.presidentName"
-              />
+              <default-text-box width="150px" v-model:valueInput="originData.presidentName" />
             </div>
           </a-col>
 
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">신청기간 :</label>
-              <range-date-time-box
-                v-model:valueDate="rangeDate"
-                width="250px"
-                :multi-calendars="true"
-                :placeholder="'시작 날짜 - 종료 날짜'"
-              />
+              <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
+                :placeholder="'시작 날짜 - 종료 날짜'" />
             </div>
           </a-col>
         </a-row>
       </div>
       <div class="page-content">
-        <DxDataGrid
-          id="table-main-bf310"
-          noDataText="내역이 없습니다"
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="id"
-          @exporting="onExporting"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-        >
+        <DxDataGrid id="table-main-bf310" noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
+          :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
+          :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
           <DxPaging :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxSearchPanel
-            :visible="true"
-            :highlight-case-sensitive="true"
-            placeholder="검색"
-          />
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
           <DxExport :enabled="true" />
           <DxToolbar>
             <DxItem name="exportButton" css-class="cell-button-export" />
@@ -106,84 +63,60 @@
           </DxToolbar>
           <template #pagination-table>
             <div v-if="rowTable > originData.rows">
-              <a-pagination
-                v-model:current="originData.page"
-                v-model:page-size="originData.rows"
-                :total="rowTable"
-                show-less-items
-                @change="changePage"
-              />
+              <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
+                show-less-items @change="changePage" />
             </div>
           </template>
 
-          <DxColumn
-            data-field="createdAt"
-            caption="신청일자"
-            cell-template="createdat-cell"
-            data-type="date"
-          />
+          <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
           <template #createdat-cell="{ data }">
             {{ $filters.formatDate(data.value) }}
           </template>
           <DxColumn data-field="code" caption="신청코드" />
-          <DxColumn
-            data-field="status"
-            caption="심사상태"
-            cell-template="grid-cell"
-            css-class="cell-center"
-          />
+          <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
           <template #grid-cell="{ data }">
             <a-tag style="width: 55px" :color="getColorTag(data.value)?.name">{{
               getColorTag(data.value)?.tag_name
             }}</a-tag>
           </template>
-          <DxColumn
-            data-field="companyCode"
-            caption="사업자코드"
-            css-class="cell-center"
-          />
+          <DxColumn data-field="companyCode" caption="사업자코드" css-class="cell-center" />
           <DxColumn data-field="companyName" caption="상호" />
           <DxColumn data-field="companyAddress" caption="주소" />
           <DxColumn data-field="presidentName" caption="대표자" />
-          <DxColumn
-            data-field="compactSalesRepresentative.name"
-            caption="영업자"
-          />
+          <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
           <DxColumn caption="신청서비스" cell-template="acc-service" />
           <template #acc-service="{ data }">
-            <span v-if="data.data.simpleAccountingInfos">
-              <a-popover>
-                <template #content>
-                  <div
-                    v-for="item in data.data.simpleAccountingInfos"
-                    :key="item"
-                  >
-                    <div>
-                      {{ item.name }}:
-                      {{
-                        item.startYearMonth.toString().slice(0, 4) +
-                        "-" +
-                        item.startYearMonth.toString().slice(4, 6)
-                      }}
+            <div style="display: flex; align-items: center;">
+              <div style="width: 45px;">
+                <a-popover v-if="data.data.simpleAccountingInfos">
+                  <template #content>
+                    <div v-for="item in data.data.simpleAccountingInfos" :key="item">
+                      <div>
+                        {{ item.name }}:
+                        {{
+                          item.startYearMonth.toString().slice(0, 4) +
+                          "-" +
+                          item.startYearMonth.toString().slice(4, 6)
+                        }}
+                      </div>
                     </div>
-                  </div>
-                </template>
-                <a-tag>회계</a-tag>
-              </a-popover>
-              <a-tag
-                style="border-radius: 50%"
-                v-if="data.data.simpleAccountingInfos"
-                >{{ data.data.simpleAccountingInfos.length }}
-              </a-tag>
-            </span>
-            <span v-if="data.data.simpleWithholdingInfo">
-              <a-popover>
+                  </template>
+                  <a-tag>회계</a-tag>
+                </a-popover>
+              </div>
+              <div style="width: 28px;">
+                <a-tag style="border-radius: 50%"
+                  v-if="data.data.simpleAccountingInfos && data.data.simpleAccountingInfos">{{
+                    data.data.simpleAccountingInfos.length }}
+                </a-tag>
+              </div>
+              <a-popover v-if="data.data.simpleWithholdingInfo">
                 <template #content>
                   <div>
                     {{
                       data.data.simpleWithholdingInfo.name
-                        ? data.data.simpleWithholdingInfo.name + ":"
-                        : ""
+                      ? data.data.simpleWithholdingInfo.name + ":"
+                      : ""
                     }}
                     {{
                       data.data.simpleWithholdingInfo.startYearMonth
@@ -198,7 +131,7 @@
                 </template>
                 <a-tag color="black">원천</a-tag>
               </a-popover>
-            </span>
+            </div>
           </template>
           <DxColumn :width="80" cell-template="pupop" type="buttons" />
           <template #pupop="{ data }">
@@ -217,28 +150,13 @@
           </template>
         </DxDataGrid>
         <div class="pagination-table" v-if="rowTable > originData.rows">
-          <a-pagination
-            v-model:current="originData.page"
-            v-model:page-size="originData.rows"
-            :total="rowTable"
-            show-less-items
-            @change="changePage"
-          />
+          <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
+            show-less-items @change="changePage" />
         </div>
-        <BF310Popup
-          :modalStatus="modalStatus"
-          @closePopup="modalStatus = false"
-          @onUpdate="onDoneUpdate"
-          :data="idSubRequest"
-        />
-        <HistoryPopup
-          :modalStatus="modalHistoryStatus"
-          @closePopup="modalHistoryStatus = false"
-          :data="popupData"
-          title="변경이력"
-          :idRowEdit="idSubRequest"
-          typeHistory="bf-310"
-        />
+        <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" @onUpdate="onDoneUpdate"
+          :data="idSubRequest" :key="keyRefreshPopup310" />
+        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+          title="변경이력" :idRowEdit="idSubRequest" typeHistory="bf-310" />
       </div>
     </div>
   </a-spin>
@@ -296,6 +214,7 @@ export default defineComponent({
     let modalHistoryStatus = ref<boolean>(false);
     let popupData = ref([]);
     const actionSearch: any = ref<boolean>(true);
+    const keyRefreshPopup310 = ref(0);
     const listCheckBox = ref({
       accounting: true,
       withholding: true,
@@ -399,6 +318,7 @@ export default defineComponent({
 
     const onDoneUpdate = () => {
       setTimeout(() => {
+        keyRefreshPopup310.value++
         trigger.value = true;
       }, 500);
     };
@@ -428,6 +348,7 @@ export default defineComponent({
       trigger,
       onDoneUpdate,
       listCheckBox,
+      keyRefreshPopup310
     };
   },
 });

@@ -7,8 +7,7 @@
     footer=""
     :width="1000"
   >
-    <p class="ac-110-popup-detail-title">물품내역</p>
-    <!-- <a-spin :spinning="loadingSaveStatementOfGoods || loadingDeleteStatementOfGoods" size="large"> -->
+    <p class="ac-110-popup-detail-title">물품내역 {{ indexInputChange }}{{ keyInputChange }}</p>
     <a-spin :spinning="false" size="large">
       <standard-form>
         <DxDataGrid
@@ -89,9 +88,12 @@
             <number-box-money
               v-model:valueInput="data.data.amount"
               :value="
-                data.data.quantity && data.data.unitPrice
+                data.data.quantity && 
+                data.data.unitPrice &&
+                 indexInputChange === data.rowIndex && 
+                 (keyInputChange == 'quantity' || keyInputChange == 'unitPrice')
                   ? data.data.quantity * data.data.unitPrice
-                  : 0
+                  : data.data.amount
               "
               height="26"
               :readOnly="disabled"
@@ -134,8 +136,6 @@
           <div v-html="totalDifference()"></div>
         </div>
         <div class="ac-110-popup-detail-btn">
-          <!-- <button-basic text="반영" type="default" :mode="'contained'" @onClick="submitFormDetail($event)"
-            :disabled="!dataSource.statementOfGoodsItems.length || isDisableBtnSave || disabled" /> -->
           <button-basic
             text="반영"
             type="default"
@@ -188,10 +188,9 @@ import DxButton from "devextreme-vue/button";
 import { DeleteOutlined } from "@ant-design/icons-vue";
 import { Message } from "@/configs/enum";
 import notification from "@/utils/notification";
-import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import queries from "@/graphql/queries/AC/AC1/AC110";
 import { cloneDeep, isEqual } from "lodash";
-import { companyId, makeDataClean } from "@/helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 export default defineComponent({
   props: {
     isModalItemDetail: {
@@ -228,51 +227,21 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    let isModalDelete = ref(false);
-    let isModalConfirmSaveChange = ref(false);
-    let dataSource: any = ref([]);
-    let arrSelectItem: any = ref([]);
-    let arrSelectStandard: any = ref([]);
-    let arrSelectUnit: any = ref([]);
-    let dataSourceCopy: any = ref();
-    let itemDelete: any = ref();
-    let rowKeyfocused: any = ref(null);
+    const isModalDelete = ref(false);
+    const isModalConfirmSaveChange = ref(false);
+    const dataSource: any = ref([]);
+    const arrSelectItem: any = ref([]);
+    const arrSelectStandard: any = ref([]);
+    const arrSelectUnit: any = ref([]);
+    const dataSourceCopy: any = ref();
+    const itemDelete: any = ref();
+    const rowKeyfocused: any = ref(null);
     const triggerSearchStatementOfGoodsItems = ref(false);
     const triggerSearchStatementOfGoodsStandards = ref(false);
     const triggerSearchStatementOfGoodsUnits = ref(false);
-
+    const indexInputChange: any = ref(null);
+    const keyInputChange: any = ref('');
     const isDisableBtnSave = ref(true);
-    // graphql
-    // const {
-    //   mutate: deleteStatementOfGoods,
-    //   onDone: doneDeleteStatementOfGoods,
-    //   onError: errorDeleteStatementOfGoods,
-    //   loading: loadingDeleteStatementOfGoods,
-    // } = useMutation(mutations.deleteStatementOfGoods);
-    // doneDeleteStatementOfGoods((e) => {
-    //   dataSource.value.statementOfGoodsItems = []
-    //   emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
-    //   setData()
-    //   notification('success', Message.getMessage('COMMON', '106').message)
-    // })
-    // errorDeleteStatementOfGoods(e => {
-    //   //notification('error', e.message)
-    // })
-    // const {
-    //   mutate: saveStatementOfGoods,
-    //   onDone: doneSaveStatementOfGoods,
-    //   onError: errorSaveStatementOfGoods,
-    //   loading: loadingSaveStatementOfGoods,
-    // } = useMutation(mutations.saveStatementOfGoods);
-    // doneSaveStatementOfGoods((e) => {
-    //   emit("updateGoodsCount", props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
-    //   emit("closePopup", false)
-    //   setData()
-    //   notification('success', Message.getMessage('COMMON', '106').message)
-    // })
-    // errorSaveStatementOfGoods(e => {
-    //   //notification('error', e.message)
-    // })
     const { onResult: onResultSearchStatementOfGoodsItems } = useQuery(
       queries.searchStatementOfGoodsItems,
       {
@@ -332,6 +301,8 @@ export default defineComponent({
     watch(
       () => props.data,
       (value) => {
+        indexInputChange.value = null
+        keyInputChange.value = ''
         if (!props.isModalItemDetail) return;
         triggerSearchStatementOfGoodsItems.value = true;
         triggerSearchStatementOfGoodsStandards.value = true;
@@ -424,7 +395,6 @@ export default defineComponent({
         }
       });
       const result = spending - total;
-      // isDisableBtnSave.value = result !== 0
       isDisableBtnSave.value =
         result !== 0 && dataSource.value.statementOfGoodsItems.length;
       return `차액: <span style='font-size: 16px !important'>[${formatNumber(
@@ -437,24 +407,9 @@ export default defineComponent({
       isModalDelete.value = true;
     };
     const handleDelete = (status: Boolean) => {
+      indexInputChange.value = null
+      keyInputChange.value = ''
       if (!status) return;
-      // if (
-      //   dataSource.value.statementOfGoodsItems.length === 1
-      //   && !dataSource.value.accountingDocumentId.toString().includes('create')
-      //   && !dataSource.value.statementOfGoodsItems[0].id.toString().includes('create')
-      // ) {
-      //   const payloadRequest = { ...props.payload }
-      //   delete payloadRequest.bankbookDetailDate
-      //   delete payloadRequest.bankbookDetailId
-      //   deleteStatementOfGoods({
-      //     ...payloadRequest,
-      //     transactionDetailDate: dataSource.value.transactionDetailDate,
-      //     accountingDocumentId: dataSource.value.accountingDocumentId
-      //   })
-      // } else {
-      //   dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.filter((item: any) => item.id.toString() !== itemDelete.value.id.toString())
-      // }
-
       dataSource.value.statementOfGoodsItems =
         dataSource.value.statementOfGoodsItems.filter(
           (item: any) => item.id.toString() !== itemDelete.value.id.toString()
@@ -463,7 +418,6 @@ export default defineComponent({
     const submitFormDetail = (event: any) => {
       const res = event.validationGroup.validate();
       if (!res.isValid) return;
-      // const payloadRequest = { ...props.payload }
       const dataTable = dataSource.value.statementOfGoodsItems.map(
         (item: any) => {
           return {
@@ -477,28 +431,14 @@ export default defineComponent({
           };
         }
       );
-
-      ////
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems);
       emit("updateGoodsCount", props.data.accountingDocumentId, dataTable);
       notification("success", "반영되었습니다.");
       emit("closePopup", false);
-
-      // if (!dataSource.value.accountingDocumentId.toString().includes('create')) {
-      //   const payloadClear = makeDataClean({
-      //     ...payloadRequest,
-      //     transactionDetailDate: dataSource.value.transactionDetailDate,
-      //     accountingDocumentId: dataSource.value.accountingDocumentId,
-      //     items: dataTable
-      //   })
-      //   saveStatementOfGoods(payloadClear)
-      // } else {
-      //   setData()
-      //   emit("updateGoodsCount", props.data.accountingDocumentId, dataTable)
-      //   notification('success', Message.getMessage('COMMON', '106').message)
-      // }
     };
     const addNewRow = () => {
+      indexInputChange.value = null
+      keyInputChange.value = ''
       const lengthArr = dataSource.value.statementOfGoodsItems.length;
       let newObj: any = {};
       if (!!dataSource.value.statementOfGoodsItems && lengthArr) {
@@ -530,6 +470,8 @@ export default defineComponent({
       }
     };
     const changeInput = (key: string, index: number) => {
+      indexInputChange.value = index
+      keyInputChange.value = key
       totalValue(key, index);
       totalDifference(key, index);
     };
@@ -547,8 +489,6 @@ export default defineComponent({
       Message,
       handleDelete,
       submitFormDetail,
-      // loadingSaveStatementOfGoods,
-      // loadingDeleteStatementOfGoods,
       addNewRow,
       dataSource,
       arrSelectItem,
@@ -558,6 +498,8 @@ export default defineComponent({
       changeInput,
       rowKeyfocused,
       isDisableBtnSave,
+      indexInputChange,
+      keyInputChange
     };
   },
 });

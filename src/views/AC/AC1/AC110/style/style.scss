@@ -152,4 +152,29 @@
     padding: 7px;
     color: rgba(51, 51, 51, .7);
   }
+  .tag-green-ac110 {
+    color: #ffffff;
+    background-color: #337614;
+    height: 28px;
+    width: 40px;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .tag-red-ac110 {
+    color: #ffffff;
+    background-color: #BB3835;
+    height: 28px;
+    width: 40px;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .mr-5 {
+    margin-right: 5px;
+  }
 }

@@ -131,7 +131,10 @@ import {watch} from 'vue';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
 import {useMutation, useQuery} from "@vue/apollo-composable";
 import {accountSubject, companyId} from "@/helpers/commonFunction";
+import notification from "@/utils/notification";
+import {Message} from "@/configs/enum";
 
+const emit = defineEmits(['closePopup'])
 const arrSelectOccupation: any = []
 const occupationRef = ref()
 const formRef = ref()
@@ -158,10 +161,15 @@ console.log('accountSubject', accountSubject)
 // create mutation useQuery
 const {mutate, onDone, loading, onError} = useMutation(mutations.saveEmployeePayTable)
 onDone(({data}) => {
-  console.log('onDone', data)
+  if (data) {
+    emit('closePopup', true)
+    notification('success', Message.getCommonMessage('101').message)
+  }
 })
 onError((error) => {
   console.log('onError', error)
+  notification('error', error.message)
+
 })
 const handleSaving = (e: SavingEvent) => {
   const res = formRef.value.validate();

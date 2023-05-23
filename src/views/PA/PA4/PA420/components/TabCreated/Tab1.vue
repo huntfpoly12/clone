@@ -321,7 +321,7 @@ let paymentYearAndMonth = ref(`${ProcessKey.value.paymentYear}${filters.formatMo
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const incomeCalculationInputCur = computed(() => store.getters['common/getIncomeCalculationInput'])
 const incomeCalculationInputOld = computed(() => store.getters['common/getIncomeCalculationInputOld'])
-
+const employeeIdCreated = computed(() => store.getters['common/getEmployeeIdCreated'])
 const startDate = computed(() => dayjs(`${paymentYearAndMonth.value}`).startOf('month').toDate());
 const finishDate = computed(() => dayjs(`${paymentYearAndMonth.value}`).endOf('month').toDate());
 // get employee list
@@ -337,8 +337,8 @@ const {
 }));
 const employeeList = computed(() => {
   if (!resultEmployee.value) return []
-  const isJoinedBeforeSelectedMonth = (item: any) => +item.joinedAt.toString().slice(4, 6) <= selectMonthColumn.value.imputedMonth;
-  const isLeavedAfterSelectedMonth = (item: any) => +item.leavedAt.toString().slice(4, 6) >= selectMonthColumn.value.imputedMonth;
+  const isJoinedBeforeSelectedMonth = (item: any) => +item.joinedAt.toString().slice(4, 6) <= selectMonthColumn.value.imputedMonth && !employeeIdCreated.value.includes(item.employeeId);
+  const isLeavedAfterSelectedMonth = (item: any) => +item.leavedAt.toString().slice(4, 6) >= selectMonthColumn.value.imputedMonth && !employeeIdCreated.value.includes(item.employeeId);
   if (props.retirementIncome === EmployeeWageType.WAGE) { // 10
     if (props.retirementType === 1) { // 1 is leaved
       return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWages.filter(isLeavedAfterSelectedMonth)

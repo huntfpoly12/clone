@@ -1,6 +1,7 @@
 export interface Budget {
   index: number
   employeeSalaryTable: number | null;
+  budgetType?: 4 | 5
 }
 
 export enum StepCreateBudget {

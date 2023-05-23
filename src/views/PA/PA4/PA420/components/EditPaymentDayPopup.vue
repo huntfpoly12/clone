@@ -69,8 +69,8 @@ const {result: resultConfig, refetch} = useQuery(
     fetchPolicy: "no-cache",
   })
 );
-watch(() => [resultConfig.value, props.processKey], ([valConfig, processKey]) => {
-  if (valConfig) {
+watch(() => [resultConfig.value, props.processKey, props.modalStatus], ([valConfig, processKey, status]) => {
+  if (valConfig && status) {
     const payment_day = valConfig.getWithholdingConfig.paymentDay
     if(payment_day === 0 || payment_day > +dayjs(finishDate.value).format('DD')) {
       dayValue.value = dayjs(`${processKey.paymentYear}-${processKey.paymentMonth.toString().padStart(2, '0')}-${dayjs(finishDate.value).format('DD').toString().padStart(2, '0')}`).toDate()

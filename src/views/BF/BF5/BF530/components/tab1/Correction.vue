@@ -129,7 +129,6 @@ export default defineComponent({
           companyId: props.companyIdParam,
           input
         })
-        console.log(`output->input`, input);
       }, 10)
     };
     // onDone tab 1

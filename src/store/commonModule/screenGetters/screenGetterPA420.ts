@@ -9,10 +9,7 @@ const screenGetterPA420 = {
   getInterimPaymentTab1: (state: any) => state.interimPaymentTab1,
   getTaxCalculationInput: (state: any) => state.taxCalculationInput,
   getDefinedRetirementBenefits: (state: any) => state.definedRetirementBenefits,
-  getIsDisableBtnTab1: (state: any) => state.isDisableBtnTab1,
-  getIsDisableBtnTab3: (state: any) => state.isDisableBtnTab3,
   getIsDisableCreate: (state: any) => state.isDisableBtnTab1 || state.isDisableBtnTab2 || state.isDisableBtnTab3,
-  getInputTab1: (state: any) => state.inputTab1,
   getAllData: (state: any) => {
     return {
       processKey: state.selectMonthColumn,
@@ -35,6 +32,7 @@ const screenGetterPA420 = {
   },
   getIsChangeForm: (state: any) => state.isChangeForm.tab1 || state.isChangeForm.tab2 || state.isChangeForm.tab3,
   getEmployeeEdit: (state: any) => state.employee,
+  getEmployeeIdCreated: (state: any) => state.employeeIdCreated,
 };
 
 export default screenGetterPA420;
