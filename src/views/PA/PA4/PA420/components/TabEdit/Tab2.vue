@@ -114,6 +114,11 @@ watchEffect(() => {
 // watch definedRetirementBenefits to set value to store
 watchEffect(() => {
   store.commit('common/setDefinedRetirementBenefits', definedRetirementBenefits.value)
+  if(!definedRetirementBenefits.value) store.commit('common/setIsDisableBtnTab2', true) 
+  else {
+    if(definedRetirementBenefits.value && !isEqual(dataFormIncomeCalculation, dataFormOld)) store.commit('common/setIsDisableBtnTab2', true)
+    else store.commit('common/setIsDisableBtnTab2', false)
+  }
 })
 const trigger = ref(false)
 const formRef = ref()

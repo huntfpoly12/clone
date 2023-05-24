@@ -13,7 +13,7 @@
     >
       <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
-                 :use-icons="true"
+                 :use-icons="true" new-row-position="pageBottom"
       />
       <DxPaging :page-size="0"/>
       <DxToolbar>
@@ -98,38 +98,26 @@
 
 <script lang="ts" setup>
 import {
+  DxButton as DxButtonGrid,
   DxColumn,
   DxDataGrid,
   DxEditing,
-  DxGroupItem,
-  DxToolbar,
   DxItem,
   DxLookup,
+  DxPaging,
   DxRequiredRule,
   DxRowDragging,
   DxSummary,
-  DxTotalItem,
-  DxPaging,
-  DxButton as DxButtonGrid
+  DxToolbar,
+  DxTotalItem
 } from 'devextreme-vue/data-grid';
-import {DeleteOutlined, EditOutlined} from '@ant-design/icons-vue';
-import DxButton from 'devextreme-vue/button';
 
-import {computed, defineComponent, ref} from 'vue'
+import {computed, reactive, ref, watch} from 'vue'
 import {useStore} from "vuex";
-import deletePopup from "@/utils/deletePopup";
-import {
-  RowDraggingReorderEvent,
-  RowPreparedEvent,
-  RowRemovingEvent,
-  SavingEvent,
-  InitNewRowEvent
-} from "devextreme/ui/data_grid";
-import {reactive} from 'vue';
+import {InitNewRowEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
-import {watch} from 'vue';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
-import {useMutation, useQuery} from "@vue/apollo-composable";
+import {useMutation} from "@vue/apollo-composable";
 import {accountSubject, companyId} from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
@@ -189,7 +177,7 @@ const handleSaving = (e: SavingEvent) => {
       accounSubjectOrder: accountSubject[0].theOrder,
       inputs
     }
-    console.log('result', result)
+    // console.log('result', result)
     mutate(result)
   }
   e.cancel = true
@@ -363,21 +351,7 @@ const initNewRow = (e: InitNewRowEvent) => {
   // })
   // console.log('init new row', e)
 }
-// create function random string have length = 4
-const randomString = () => {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
-  const length = 4;
-  let str = '';
-  for (let i = 0; i < length; i++) {
-    str += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return str;
-}
-// const addRow = () => {
-//   dataSource.value.store().insert({ name: randomString(), classification: 1 }).then((result) => {
-//     dataSource.value.reload()
-//   })
-// }
+
 function calculateSalary(data: any) {
   const salary = +data.data.salary || 0;
   const allowance = +data.data.allowance || 0;

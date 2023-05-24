@@ -129,6 +129,7 @@ export default defineComponent({
     doneAddBankbookDetailProof((e) => {
       emit("updateAddBankbookDetailProof", bankbookDetailIdEditting.value);
       notification("success", Message.getMessage("COMMON", "106").message);
+      emit('progressingFiles', false);
     });
     errorAddBankbookDetailProof((e) => {
       const index = listFileStorageId.value.length - 1;
@@ -138,6 +139,7 @@ export default defineComponent({
       fileList.value[index].status = "error";
       fileList.value[index].error = e.message;
       fileList.value[index].response = undefined;
+      emit('progressingFiles', false);
       //notification('error', e.message)
     });
 
@@ -152,15 +154,19 @@ export default defineComponent({
       listFileStorageId.value.splice(indexImgRemove.value, 1);
       emit("updateremoveBankbookDetailProof", bankbookDetailIdEditting.value);
       notification("success", Message.getMessage("COMMON", "402").message);
+      emit('progressingFiles', false);
     });
     errorRemoveBankbookDetailProof((e) => {
+      emit('progressingFiles', false);
       //notification('error', e.message)
     });
     // watch
     watch(
       () => payload.value,
       (value) => {
-        if (value.bankbookDetailDate) {
+        fileList.value = [];
+        listFileStorageId.value = [];
+        if (!!value?.bankbookDetailId && !!value?.bankbookDetailDate) {
           triggerBankbookDetailProofs.value = true;
         }
       },
@@ -184,20 +190,6 @@ export default defineComponent({
       fileList.value = [...listFileStorageId.value];
       triggerBankbookDetailProofs.value = false;
     });
-
-    watch(
-      () => props.payLoadProofs,
-      (value) => {
-        fileList.value = [];
-        listFileStorageId.value = [];
-        if (!!value?.bankbookDetailId && !!value?.bankbookDetailDate) {
-          triggerBankbookDetailProofs.value = true;
-        }
-      },
-      {
-        deep: true,
-      }
-    );
 
     const getBase64 = (file: File) => {
       return new Promise((resolve, reject) => {
@@ -253,6 +245,7 @@ export default defineComponent({
         e.onError("");
         return;
       }
+      emit('progressingFiles', true);
       const config = {
         onUploadProgress: (progressEvent: any) => {
           e.onProgress({ percent: Math.round((progressEvent.loaded * 100) / progressEvent.total) });
@@ -286,6 +279,7 @@ export default defineComponent({
             ...fileList.value[fileList.value.length - 1],
             fileStorageId: null,
           });
+          emit('progressingFiles', false);
         });
     };
     const remove = (e: any) => {
@@ -304,9 +298,11 @@ export default defineComponent({
     };
 
     const handleDelete = (status: boolean) => {
+      emit('progressingFiles', true);
       if (status) {
         if (!listFileStorageId.value[indexImgRemove.value].fileStorageId) {
           isModalDelete.value = false;
+          emit('progressingFiles', false);
           return;
         }
         bankbookDetailIdEditting.value = cloneDeep(props.bankbookDetailId);

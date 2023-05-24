@@ -14,14 +14,13 @@
       <div class="ac-110__main-main">
         <a-spin :spinning="loadingGetBankbookDetails || loadingSyncBankbookDetails" size="large">
           <DxDataGrid id="DxDataGridMainAc110" ref="refDxDataGridMainAc110" key-expr="bankbookDetailId"
-            :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-            v-model:selected-row-keys="selectedRowKeys" :show-borders="true" :allow-column-reordering="move_column"
-            v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true" :allow-column-resizing="colomn_resize"
-            :column-auto-width="true" @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging"
-            @row-click="onRowClick" noDataText="내역이 없습니다">
+            :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+            :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true"
+            :allow-column-resizing="colomn_resize" :column-auto-width="true" @focused-row-changing="onFocusedRowChanging"
+            @row-click="onRowClick"
+            :noDataText="loadingGetBankbookDetails || loadingSyncBankbookDetails ? '' : '내역이 없습니다'">
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
-            <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="always" :deferred="false" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
             <DxExport :enabled="true" />
             <DxToolbar>
@@ -59,6 +58,22 @@
                   <template #title>통장내역 변경이력</template>
                   <HistoryOutlined style="font-size: 18px; margin-left: 5px" @click="modalHistory" />
                 </a-tooltip>
+              </div>
+            </template>
+            <DxColumn header-cell-template="title-header-checkbox" cell-template="checkbox" width="70"
+              alignment="center" />
+            <template #title-header-checkbox="{ data }">
+              <div class="ac-110-checkboxAll" :class="{ 'ac-110-checkboxAll-disable': !listItemAllowedChoose.length }"
+                @mousedown="selectionChanged(null)">
+                <DxCheckBox :value="isSelectAll" iconSize="18" :readOnly="true" />
+              </div>
+            </template>
+            <template #checkbox="{ data }">
+              <div class="ac-110-checkbox"
+                :class="{ 'ac-110-checkbox-disable': !listItemAllowedChoose.includes(data.data.bankbookDetailId) }"
+                @mousedown="selectionChanged(data.data.bankbookDetailId)">
+                <DxCheckBox :value="selectedRowKeys.includes(data.data.bankbookDetailId)" iconSize="18"
+                  :readOnly="true" />
               </div>
             </template>
             <DxColumn caption="통장" cell-template="nickName" data-field="bankbook.bankbookNickname" />
@@ -106,12 +121,13 @@
                 <div class="mr-5" :class="data.data.documentRegistered ? 'tag-green-ac110' : 'tag-red-ac110'">{{
                   data.data.documentRegistered ? 'O' : 'X' }}</div>
                 <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="data.data.documentRegistered ? 'outlined' : 'contained'
-                  " @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails" />
+                  " @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails"
+                  :style="!data.data.documentRegistered ? 'border: 1px solid #fff;' : ''" />
               </div>
             </template>
           </DxDataGrid>
           <div class="DxDataGridMain-ac-110-sumary">
-            <div v-html="`통장내역수: <span style='font-size: 16px !important'>[${dataSource.length}]</span>`
+            <div v-html="`<span style='font-size: 13px !important'>통장내역수:</span> <span style='font-size: 15px !important'>[${dataSource.length}]</span>`
               "></div>
             <div v-html="totalDeposits()"></div>
             <div v-html="totalWithdrawal()"></div>
@@ -335,7 +351,8 @@
           <div class="ac-110__main-detail-detail2-upload">
             <UploadPreviewImage width="295" :payLoadProofs="payloadGetTransactionDetails"
               @updateAddBankbookDetailProof="updateAddBankbookDetailProof" :bankbookDetailId="rowKeyfocused"
-              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" :disabled="isRegistered" :limit="10" />
+              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" @progressingFiles="progressingFiles"
+              :disabled="isRegistered" :limit="10" />
           </div>
         </div>
       </div>
@@ -385,7 +402,6 @@ import {
   DxDataGrid,
   DxColumn,
   DxScrolling,
-  DxSelection,
   DxSummary,
   DxTotalItem,
   DxToolbar,
@@ -426,6 +442,7 @@ import {
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import dayjs from "dayjs";
 import { cloneDeep, isEqual } from "lodash";
+import DxCheckBox from 'devextreme-vue/check-box';
 
 export default defineComponent({
   components: {
@@ -435,7 +452,6 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxScrolling,
-    DxSelection,
     DxSummary,
     DxTotalItem,
     PopupSlipCancellation,
@@ -456,6 +472,7 @@ export default defineComponent({
     DxPaging,
     DxSearchPanel,
     SelectAccountCode,
+    DxCheckBox
   },
   setup() {
     const store = useStore();
@@ -571,6 +588,22 @@ export default defineComponent({
         !!bankbookSelected.value?.documentRegistered
       );
     });
+    let isSelectAll = computed(() => {
+      const valueSelect = selectedRowKeys.value.length
+      const valueDataSource = dataSource.value.length
+      if (valueSelect === valueDataSource && !!valueSelect) {
+        return true
+      } else if (valueSelect === 0) {
+        return false
+      } else {
+        return null
+      }
+    })
+    const listItemAllowedChoose = computed(() => {
+      return dataSource.value.filter((items: any) => items.normalTransactionDetails && !items.documentRegistered).map((items: any) => items.bankbookDetailId) || []
+    })
+
+    const isProgressingFiles = ref(false)
     // -------------- GRAPHQL --------------
     // queries
     const {
@@ -809,6 +842,7 @@ export default defineComponent({
         ) ||
         !rowKeyfocused.value
       ) {
+        selectedRowKeys.value = []
         dataSourceTransactionDetails.value.transactionDetails = [];
         listTransactionDetailsOrigin.value = [];
         rowKeyfocused.value = null;
@@ -830,22 +864,31 @@ export default defineComponent({
       }
     );
     // Grid Main
-    const selectionChanged = (event: any) => {
-      const listItemDisable: any = [];
-      dataSource.value.forEach((items: any) => {
-        if (items.normalTransactionDetails && !items.documentRegistered) {
-        } else {
-          listItemDisable.push(items.bankbookDetailId);
+    let isClickColunmSelect = false
+    const selectionChanged = (value: any) => {
+      if (!!value) {
+        isClickColunmSelect = true
+        if (listItemAllowedChoose.value.includes(value)) {
+          if (selectedRowKeys.value.includes(value)) {
+            const index = selectedRowKeys.value.findIndex((items: any) => items === value)
+            selectedRowKeys.value.splice(index, 1);
+          } else {
+            selectedRowKeys.value.push(value)
+          }
         }
-      });
-      const indexItemDisable = selectedRowKeys.value.findIndex((items: any) =>
-        listItemDisable.includes(items)
-      );
-      if (indexItemDisable >= 0) {
-        selectedRowKeys.value.splice(indexItemDisable, 1);
+      } else {
+        if (selectedRowKeys.value.length) {
+          selectedRowKeys.value = []
+        } else {
+          selectedRowKeys.value = [...listItemAllowedChoose.value]
+        }
       }
     };
     const onFocusedRowChanging = (event: any) => {
+      if (isClickColunmSelect || isProgressingFiles.value) {
+        event.cancel = true;
+        return
+      }
       if (isRegisterTransaction.value) {
         isRegisterTransaction.value = false;
         selectedRowKeys.value = [];
@@ -870,6 +913,10 @@ export default defineComponent({
       event.cancel = true;
     };
     const onRowClick = (event: any) => {
+      if (isClickColunmSelect || isProgressingFiles.value) {
+        isClickColunmSelect = false
+        return
+      }
       if (!event?.data) return;
       const item = event.data;
       if (rowKeyfocused.value === item.bankbookDetailId) return;
@@ -920,7 +967,7 @@ export default defineComponent({
       dataSource.value.forEach((item) => {
         total += item.deposit;
       });
-      return `입금액 합계: <span style='font-size: 16px !important'>[${formatNumber(
+      return `<span style='font-size: 13px !important'>입금액 합계:</span> <span style='font-size: 15px !important'>[${formatNumber(
         total
       )}]</span>`;
     };
@@ -929,7 +976,7 @@ export default defineComponent({
       dataSource.value.forEach((item) => {
         total += item.withdraw;
       });
-      return `출금액 합계: <span style='font-size: 16px !important'>[${formatNumber(
+      return `<span style='font-size: 13px !important'>출금액 합계:</span> <span style='font-size: 15px !important'>[${formatNumber(
         total
       )}]</span>`;
     };
@@ -943,7 +990,7 @@ export default defineComponent({
           totalCancellation++;
         }
       });
-      return `전표등록 여부 <span style='font-size: 16px !important'>[O: ${totalRegistration}, X: ${totalCancellation}]</span>`;
+      return `<span style='font-size: 13px !important'>전표등록 여부:</span> <span style='font-size: 15px !important'>[O: ${totalRegistration}, X: ${totalCancellation}]</span>`;
     };
     // ---------------Grid detail----------------
     const totalTransactions = () => {
@@ -1180,6 +1227,11 @@ export default defineComponent({
       );
       dataSource.value[indexSelected].proofCount--;
     };
+
+    const progressingFiles = (value: boolean) => {
+      isProgressingFiles.value = value
+    }
+
     const focusInputIncomeSpending = (data: any, key: string) => {
       if (key === "income") {
         if (!data.data.income) {
@@ -1299,6 +1351,8 @@ export default defineComponent({
       colomn_resize,
       acYear,
       selectedRowKeys,
+      listItemAllowedChoose,
+      isSelectAll,
       selectionChanged,
       onFocusedRowChanging,
       onRowClick,
@@ -1361,6 +1415,7 @@ export default defineComponent({
       listAccountingProcesses,
       updateremoveBankbookDetailProof,
       updateAddBankbookDetailProof,
+      progressingFiles,
       refGridDetailAc110,
       fundingSource,
       letterOfApprovalType,
@@ -1386,5 +1441,62 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
+}
+</style>
+<style lang="scss" scoped>
+#DxDataGridMainAc110 {
+  height: calc(100vh - 540px);
+
+  :deep .dx-freespace-row {
+    display: none !important;
+  }
+
+  :deep #dx-col-1 {
+    padding: 0;
+  }
+
+  :deep td[aria-describedby="dx-col-1"] {
+    padding: 0;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .ac-110-checkboxAll {
+    cursor: pointer;
+    width: 70px;
+    text-align: center;
+    justify-content: center;
+    height: 26px;
+    padding-top: 2px;
+
+    :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
+      border-color: #c7c7c7;
+      cursor: pointer;
+    }
+
+    &-disable {
+      pointer-events: none;
+      opacity: 0.2;
+    }
+  }
+
+  .ac-110-checkbox {
+    cursor: pointer;
+    width: 70px;
+    height: 36px;
+    justify-content: center;
+    padding-top: 8px;
+    pointer-events: auto;
+
+    :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
+      border-color: #c7c7c7;
+      cursor: pointer;
+    }
+
+    &-disable {
+      pointer-events: none;
+      opacity: 0.2;
+    }
+  }
 }
 </style>

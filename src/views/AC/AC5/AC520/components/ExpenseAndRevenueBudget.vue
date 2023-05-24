@@ -207,14 +207,14 @@ import updateBudget from "@/graphql/mutations/AC/AC5/AC520/updateBudget";
 import {Message} from "@/configs/enum";
 import notification from "@/utils/notification";
 
+const emit = defineEmits(['close-popup'])
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
 const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters["common/getDataBudget"]);
-const typePopup: ComputedRef<boolean> = computed(() => store.getters['common/getTypeCreateBudget'])
 const acYear = computed<number>(() => (parseInt(sessionStorage.getItem("acYear") ?? '0')))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
-const summaryFundingSource = computed(() => +formState.value?.fundingSource1 + +formState.value?.fundingSource2 + +formState.value?.fundingSource3 + +formState.value?.fundingSource4)
+const summaryFundingSource = computed(() => (+formState.value?.fundingSource1 || 0) + (+formState.value?.fundingSource2 || 0) + (+formState.value?.fundingSource3 || 0) + (+formState.value?.fundingSource4 || 0))
 const dataBudgetPreYear = computed(() => store.getters["common/getDataBudgetPreYear"])
 const facilityBizTypeToNumber = computed(() => {
   switch (globalFacilityBizId.value) {
@@ -251,7 +251,9 @@ const previousRowData = ref();
 
 const dataSource = ref()
 const codes = accountSubject?.[0]?.codes
-
+// console.log('codes revenueBudgetSum', codes)
+const triggerQueryBudgetPreYear = computed(() => !!dataBudgetPreYear.value?.index)
+const triggerQueryBudget = computed(() => (dataBudget.value?.revenueBudgetSum !== null && dataBudget.value?.budgetType === 4) || dataBudget.value?.budgetType === 5)
 // create function find code in codes array
 const findCode = (code: string, value: string) => {
   return codes?.find((item: any) => item[code] === value)
@@ -270,6 +272,7 @@ const query = {
 }
 const {onResult, onError} = useQuery(queries.getBudget, query, () => ({
   fetchPolicy: "no-cache",
+  enabled: triggerQueryBudget.value
 }))
 
 onResult(({data}) => {
@@ -283,7 +286,7 @@ onResult(({data}) => {
     })
   }
 })
-const triggerQueryBudgetPreYear = computed(() => !!dataBudgetPreYear.value?.index)
+
 const {onResult: onResultPreYear, onError: onErrorPreYear} = useQuery(queries.getBudget, {
   ...query,
   fiscalYear: acYear.value - 1,
@@ -324,6 +327,7 @@ onDoneUpdateBudget(({data}) => {
   if (data) {
     dataSource.value.reload()
     notification('success', Message.getCommonMessage('101').message)
+    emit('close-popup', true)
   }
 })
 onErrorUpdateBudget((error) => {
@@ -335,6 +339,31 @@ watch(() => formState.value, (val: any) => {
     formState.value.amount = 4
   }
 })
+// watch triggerQueryBudget
+watch(() => triggerQueryBudget.value, (val: any) => {
+    if (!val) {
+      const budgets = codes.filter((i: any) => i.classification === dataBudget.value?.budgetType)
+      dataSource.value =  new DataSource({
+        store: {
+          type: "array",
+          key: "code",
+          data: budgets?.map((item: any) => ({
+            code: item.code,
+            code1: item.code1,
+            code2: item.code2,
+            code3: item.code3,
+            amount: 0,
+            remark: null,
+            fundingSource1: null,
+            fundingSource2: null,
+            fundingSource3: null,
+            details: null,
+            codeName: item.name
+          })) || []
+        },
+      })
+    }
+}, {deep: true, immediate: true})
 const handleOpenCalPopup = () => {
   state.isPopupCalculateVisible = true
 }
@@ -351,14 +380,17 @@ const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
   previousRowData.value = cloneDeep(e.row?.data);
 }
 const handleSubmit = () => {
-  console.log('dataSource.value', dataSource.value.items())
+  const result = dataSource.value.items()?.map((item: any) => {
+    const {codeName, ...rest} = item
+    return rest
+  })
   mutate({
     companyId,
     fiscalYear: acYear.value,
     facilityBusinessId: globalFacilityBizId.value,
     index: dataBudget.value?.index,
     type: dataBudget.value?.budgetType,
-    inputs: dataSource.value.items()
+    inputs: result
   })
 }
 const fillFundingSource  = (field: string) => {
