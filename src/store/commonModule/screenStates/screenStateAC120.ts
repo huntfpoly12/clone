@@ -14,7 +14,7 @@ let statesAC120 = {
         resetDataAccountingProcesses: 0,
         resetDataAccountingDocumentProofs: 0,
 
-        statusFormAdd: false,
+        // statusFormAdd: false,
         // dataRowFocus: {},
         arrResolutionType: [],
         arrLetterOfApprovalType: [],
@@ -26,7 +26,8 @@ let statesAC120 = {
         clearCheckCkick: 0,
         // monthSelected: dayjs().month() + 1,
         selectedRowKeys: [],
-        statusKeppRow: false
+        statusKeppRow: false,
+        statusNoData: true,
     }
 };
 

@@ -46,24 +46,24 @@
     // .main {
     // margin-top: 15px;
 
-    :deep .dx-data-row .custom-column {
-        padding: 0;
+    // :deep .dx-data-row .custom-column {
+    //     padding: 0;
 
-        .main-row {
-            height: 40px;
-            padding: 10px 4px;
-            width: 100%;
-            border-bottom: 1px solid #ddd;
+    //     .main-row {
+    //         height: 40px;
+    //         padding: 10px 4px;
+    //         width: 100%;
+    //         border-bottom: 1px solid #ddd;
 
-            &:hover {
-                background-color: blue;
-            }
-        }
+    //         &:hover {
+    //             background-color: blue;
+    //         }
+    //     }
 
-        .last {
-            border-bottom: none;
-        }
-    }
+    //     // .last {
+    //     //     border-bottom: none;
+    //     // }
+    // }
 
 
 
@@ -140,7 +140,7 @@
             width: 307px;
             display: flex;
             justify-content: flex-end;
-            padding-right: 20px;
+            padding-right: 12px;
         }
         
         .text-align-center {
@@ -220,4 +220,8 @@
 :deep .dx-datagrid-text-content span {
     font-size: 15px;
     font-weight: bold;
+}
+
+:deep .dx-datagrid-content.dx-sortable {
+    border-bottom: 1px solid #ddd;
 }

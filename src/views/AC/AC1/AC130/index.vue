@@ -10,8 +10,8 @@
         </div>
       </div>
       <div class="ac-130__top-status">
-        <ProcessStatus v-if="accountingProcessesSelected?.status || 0"
-          :valueStatus="accountingProcessesSelected?.status || 0" @checkConfirmRowTable="changeStatusAccountingProcess"/>
+        <ProcessStatus v-if="accountingProcessesSelected?.status || 0" :preventChange="isPreventChangeProcessStatus"
+          :valueStatus="accountingProcessesSelected?.status || 0" @checkConfirmRowTable="changeStatusAccountingProcess" />
         <button-basic v-else mode="contained" height="30" style="width: 90px" :disabled="true">
         </button-basic>
         <a-tooltip color="black" placement="top">
@@ -28,9 +28,9 @@
               <b>체크사항</b>
             </div>
             <div class="ac-130__main-content-check-checklist">
-              <a-collapse v-model:activeKey="activeKey" expandIconPosition="right" >
+              <a-collapse v-model:activeKey="activeKey" expandIconPosition="right">
                 <template #expandIcon="{ isActive }">
-                  <DoubleRightOutlined :rotate="isActive ? 90 : 0" />
+                  <DoubleRightOutlined :rotate="isActive ? -90 : 90" />
                 </template>
                 <a-collapse-panel key="1">
                   <template #header>
@@ -42,8 +42,8 @@
                       <span class="ac-130__main-content-check-checklist-header-title">현금출납부 잔액</span>
                     </div>
                   </template>
-                  <TableCashRegisterSummary v-if="Object.keys(dataSource).length" :data="dataSource.cashRegisterSummary" :year="acYear"
-                    :month="monthSelected" />
+                  <TableCashRegisterSummary :data="dataSource?.cashRegisterSummary"
+                    :year="acYear" :month="monthSelected" />
                 </a-collapse-panel>
                 <a-collapse-panel key="2">
                   <template #header>
@@ -84,7 +84,7 @@
             <ReloadOutlined class="ac-130__main-content-manager-title-btnReload" @click="refreshFormChat" />
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChat ref="formChat" :payload="payload" :disabled="accountingProcessesSelected?.status === 20"/>
+            <FormChat ref="formChat" :payload="payload" :disabled="accountingProcessesSelected?.status === 20" />
           </div>
         </div>
       </a-col>
@@ -109,6 +109,7 @@ import FormChat from "./components/FormChat.vue"
 import { Message } from "@/configs/enum"
 import DxButton from "devextreme-vue/button";
 import dayjs from "dayjs";
+import notification from "@/utils/notification";
 
 export default defineComponent({
   components: {
@@ -142,7 +143,7 @@ export default defineComponent({
     let dataSource = ref<any>({})
     let monthSelected = ref(dayjs().month() + 1)
     let listAccountingProcesses = ref<any[]>([])
-    const activeKey = ref(['1'])
+    const activeKey = ref<string[]>([])
     const formChat = ref()
     //trigger
     let triggerAccountingProcesses = ref<boolean>(true)
@@ -150,6 +151,13 @@ export default defineComponent({
 
     const accountingProcessesSelected: any = computed(() => {
       return listAccountingProcesses.value.find((item: any) => item.month === monthSelected.value) || null
+    })
+
+    const isPreventChangeProcessStatus = computed(() => {
+      const statusTable1 = getStatusCashRegisterSummary()
+      const statusTable2 = getStatusExpenditureBudgetSummary()
+      const statusTable3 = getStatusRevenueBudgetSummary()
+      return !statusTable1 || !statusTable2 || !statusTable3
     })
 
     // COMPUTED
@@ -185,6 +193,7 @@ export default defineComponent({
     /// getAccountingClosingCheckItems
     const {
       onResult: onResAccountingClosingCheckItems,
+      onError: onErrorAccountingClosingCheckItems,
       loading: loadinggetAccountingClosingCheckItems,
     } = useQuery(queries.getAccountingClosingCheckItems, payload,
       () => ({
@@ -193,6 +202,12 @@ export default defineComponent({
       }))
     onResAccountingClosingCheckItems((data) => {
       dataSource.value = data.data.getAccountingClosingCheckItems
+      activeKey.value = ['1', '2', '3']
+      triggerAccountingClosingCheckItems.value = false
+    })
+    onErrorAccountingClosingCheckItems(() => {
+      dataSource.value = {}
+      activeKey.value = ['1', '2', '3']
       triggerAccountingClosingCheckItems.value = false
     })
     ///// mutations
@@ -212,17 +227,20 @@ export default defineComponent({
     // METHODS
     const selectedMonth = (month: number) => {
       if(monthSelected.value === month) return
-      activeKey.value = ['1']
       monthSelected.value = month
       payload.month = month
       triggerAccountingClosingCheckItems.value = true
     }
 
     const changeStatusAccountingProcess = (value: any) => {
-      changeAccountingProcessStatus({
-        ...payload,
-        status: parseInt(value.status)
-      })
+      if (isPreventChangeProcessStatus.value) {
+        notification("error", Message.getMessage("AC130", "001").message);
+      } else {
+        changeAccountingProcessStatus({
+          ...payload,
+          status: parseInt(value.status)
+        })
+      }
     }
 
     const totalDeposits = () => {
@@ -265,11 +283,11 @@ export default defineComponent({
     }
 
     const refreshFormChat = () => {
-      if(formChat.value) {
+      if (formChat.value) {
         formChat.value.refreshForm()
       }
     }
-    
+
     return {
       activeKey,
       dataSource,
@@ -290,7 +308,8 @@ export default defineComponent({
       accountingProcessesSelected,
       changeStatusAccountingProcess,
       formChat,
-      refreshFormChat
+      refreshFormChat,
+      isPreventChangeProcessStatus
     };
   },
 });

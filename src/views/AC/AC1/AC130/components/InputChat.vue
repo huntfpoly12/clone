@@ -244,13 +244,15 @@ export default defineComponent({
       outline: none;
       resize: none;
       width: 100%;
-      min-height: 40px;
+      min-height: 38px;
       max-height: 200px;
       padding: 7px 75px 7px 10px;
-      font-size: 15px;
+      font-size: 14px;
       border: 1px solid #b3b5b6;
+      border-radius: 5px;
       &:placeholder-shown {
         font-style: italic;
+        font-size: 14px;
       }
     }
 
