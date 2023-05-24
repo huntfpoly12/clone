@@ -6,7 +6,7 @@
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820|| loadingPA840_1|| loadingPA840_2||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
-                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingPA870 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments || loadingAC570 || loadingPA860">
+                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingPA870 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments || loadingAC520 || loadingAC570 || loadingPA860">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" :keyExpr="keyExpr ? keyExpr : 'ts'" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -103,6 +103,7 @@ export default defineComponent({
         let triggerAC610 = ref<boolean>(false);
         let triggerCM121 = ref<boolean>(false);
         let triggerAC620 = ref<boolean>(false);
+        let triggerAC520 = ref<boolean>(false);
         let triggerAC570 = ref<boolean>(false);
         let triggerAC110BankbookDetailLogs = ref<boolean>(false);
         let triggerAC110AccountingProcessLogs = ref<boolean>(false);
@@ -475,6 +476,14 @@ export default defineComponent({
                             triggerAC620.value = true;
                             // refetchAC620();
                             break;
+                        case 'ac-520':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                fiscalYear: globalYear,
+                                facilityBusinessId: globalFacilityBizId.value,
+                            };
+                            triggerAC520.value = true;
+                            break;
                         case 'ac-570':
                             dataQuery.value = {
                                 companyId: companyId,
@@ -522,6 +531,7 @@ export default defineComponent({
                     triggerAC610.value = false;
                     triggerCM121.value = false;
                     triggerAC620.value = false;
+                    triggerAC520.value = false;
                     triggerAC570.value = false;
                     triggerAC110BankbookDetailLogs.value = false;
                     triggerAC110AccountingProcessLogs.value = false;
@@ -921,7 +931,7 @@ export default defineComponent({
             dataTableShow.value = value.getMajorInsuranceCompanyEmployeeAcquisitionLogs;
           }
         });
-        
+
         // get getMajorInsuranceCompanyEmployeeSalaryChangeLogs pa-830
         const { result: resultPA830, loading: loadingPA830, refetch: refetchPA830 } = useQuery(
             queries.getMajorInsuranceCompanyEmployeeSalaryChangeLogs,
@@ -1131,6 +1141,22 @@ export default defineComponent({
             }
         });
 
+        // ac520
+        const { result: resultAC520, loading: loadingAC520 } = useQuery(
+            queries.getBudgetsLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerAC520.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultAC520, (value) => {
+            triggerAC520.value = false;
+            if (value) {
+                dataTableShow.value = value.getBudgetsLogs;
+            }
+        });
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -1181,6 +1207,7 @@ export default defineComponent({
             loadingAC610,
             loadingCM121,
             loadingAC620,
+            loadingAC520,
             loadingAC570,
             loadingAC110BankbookLogs,
             loadingAC110AccountingProcessLogs,
