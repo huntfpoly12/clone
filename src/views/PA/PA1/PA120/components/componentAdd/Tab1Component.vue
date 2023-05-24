@@ -349,9 +349,12 @@ export default defineComponent({
         deductionTrigger.value = false;
       }
     });
-    const { mutate } = useMutation(
+    const { mutate, onDone: onDoneSaveEmployee } = useMutation(
       mutations.saveEmployeeWagePayDeductionReduction
     );
+    onDoneSaveEmployee(()=>{
+      store.commit("common/actionFormDonePA120");
+    })
 
     // getResponsibilities
     const { onError: errorResponsibility, result: resResponsibility } =
@@ -401,8 +404,8 @@ export default defineComponent({
     onDoneAdd((res: any) => {
       let employeeId = res.data.createEmployeeWage.employeeId;
       if (initFormStateTabPA120.value.president) {
-        dataDefaultTab2.value.nationalPensionDeduction = false;
-        dataDefaultTab2.value.healthInsuranceDeduction = false;
+        dataDefaultTab2.value.nationalPensionDeduction = true;
+        dataDefaultTab2.value.healthInsuranceDeduction = true;
         dataDefaultTab2.value.employeementInsuranceDeduction = false;
       } else {
         dataDefaultTab2.value.nationalPensionDeduction = true;
@@ -417,7 +420,6 @@ export default defineComponent({
       })
       emit("setTabsStatus", false);
       notification("success", messageCreate);
-      store.commit("common/actionFormDonePA120");
       store.state.common.isNewRowPA120 = false;
       store.commit("common/editRowPA120", initFormStateTabPA120.value);
       initFormStateTabPA120.value.employeeId = employeeId;

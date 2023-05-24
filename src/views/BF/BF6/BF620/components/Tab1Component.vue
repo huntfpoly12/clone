@@ -87,7 +87,7 @@
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"
           width="120" />
-        <DxColumn caption="제작현황" cell-template="productionStatus"  />
+        <DxColumn caption="제작현황" cell-template="productionStatus" />
         <template #productionStatus=" { data }: any ">
           <div class="d-flex-center">
             <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
@@ -101,24 +101,42 @@
           <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
         </DxSummary> -->
       </DxDataGrid>
-      <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
+      <a-row class="fs-14 summary-ctn">
+        <a-col span="8">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 60.2%;">
+            전체
+            <span style="font-size: 16px;">[{{ filteredDataSource.length }}]</span>
+          </div>
+        </a-col>
+        <a-col span="3" class="sum-item">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" reportTypeSummary() ">
+          </div>
+        </a-col>
+        <a-col span="3" class="sum-item">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" afterDeadlineSummary() "></div>
+        </a-col>
+        <a-col span="10" class="sum-item">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
+        </a-col>
+      </a-row>
+      <!-- <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
         <div style="width: 250px; margin-left: 70px;">
           <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-            전체 
+            전체
             <span style="font-size: 16px;">[{{ filteredDataSource.length }}]</span>
           </div>
         </div>
         <div style=" margin-left: 18%;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="reportTypeSummary()">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" reportTypeSummary() ">
           </div>
         </div>
         <div style=" margin-left: 15px;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="afterDeadlineSummary()"></div>
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" afterDeadlineSummary() "></div>
         </div>
         <div style=" margin-left: 19.8%;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="productStatusSummary()"></div>
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
         </div>
-      </div>
+      </div> -->
     </div>
     <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1"
       @cancel=" onRequestDone " />
