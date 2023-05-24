@@ -98,7 +98,7 @@
             caption="신고구분"
             data-field="type"
             alignment="center"
-            :format="reportTypeText"
+            :format="reportTypeTextTab3"
           />
           <DxColumn caption="업체명" data-field="companyName" />
           <DxColumn caption="사업장관리번호" data-field="paymentYearMonth" />
@@ -153,17 +153,18 @@
             cell-template="completedAt"
           />
           <template #completedAt="{ data }">
-            <div
-              v-if="
-                data.data.workingStatus == 0 || data.data.workingStatus == 10
-              "
-            >
-              {{ dayjs(data.data.completedAt).format("YYYY-MM-DD") }}
+            <div>
+              {{
+                completedAtFormat(
+                  data.data.completedAt,
+                  data.data.workingStatus
+                )
+              }}
             </div>
           </template>
           <DxColumn
             caption="접수번호"
-            width="155px"
+            width="135px"
             cell-template="acceptedNumber"
           />
           <template #acceptedNumber="{ data }: any">
@@ -347,13 +348,13 @@ import {
   dataTableTab1,
   states1,
   reportTypeSelectbox2,
-  reportTypeText,
+  reportTypeTextTab3,
+  completedAtFormat,
 } from "../../utils/index";
 import dayjs from "dayjs";
 import Download from "./Download.vue";
 import History from "./History.vue";
 import SelectBoxCT from "./../SelectBoxCT.vue";
-import { Action } from "rxjs/internal/scheduler/Action";
 export default defineComponent({
   components: {
     DxButton,
@@ -533,15 +534,16 @@ export default defineComponent({
     });
     watch(type1ViewUrlResult, (newVal) => {
       if (newVal) {
-        if (downModal2.value) {
+        if (typeViewUrl.value === 2) {
           downLoadParam.value.url =
             newVal.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl;
+          viewUrlModal.value = true;
         } else {
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl
           );
-          cancelWhenViewUrl();
         }
+        cancelWhenViewUrl();
         type1ViewUrlTrigger.value = false;
       }
     });
@@ -560,15 +562,16 @@ export default defineComponent({
     });
     watch(type2ViewUrlResult, (newVal) => {
       if (newVal) {
-        if (downModal2.value) {
+        if (typeViewUrl.value === 2) {
           downLoadParam.value.url =
             newVal.getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl;
+          viewUrlModal.value = true;
         } else {
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl
           );
-          cancelWhenViewUrl();
         }
+        cancelWhenViewUrl();
         type2ViewUrlTrigger.value = false;
       }
     });
@@ -587,15 +590,16 @@ export default defineComponent({
     });
     watch(type3ViewUrlResult, (newVal) => {
       if (newVal) {
-        if (downModal2.value) {
+        if (typeViewUrl.value === 2) {
           downLoadParam.value.url =
             newVal.getMajorInsuranceCompanyEmployeeSalaryChangeFaxFilingReportViewUrl;
+          viewUrlModal.value = true;
         } else {
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeSalaryChangeFaxFilingReportViewUrl
           );
-          cancelWhenViewUrl();
         }
+        cancelWhenViewUrl();
         type3ViewUrlTrigger.value = false;
       }
     });
@@ -614,15 +618,16 @@ export default defineComponent({
     });
     watch(type4ViewUrlResult, (newVal) => {
       if (newVal) {
-        if (downModal2.value) {
+        if (typeViewUrl.value === 2) {
           downLoadParam.value.url =
             newVal.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl;
+          viewUrlModal.value = true;
         } else {
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl
           );
-          cancelWhenViewUrl();
         }
+        cancelWhenViewUrl();
         type4ViewUrlTrigger.value = false;
       }
     });
@@ -641,20 +646,22 @@ export default defineComponent({
     });
     watch(type5ViewUrlResult, (newVal) => {
       if (newVal) {
-        if (downModal2.value) {
+        if (typeViewUrl.value === 2) {
           downLoadParam.value.url =
             newVal.getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl;
+          viewUrlModal.value = true;
         } else {
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl
           );
-          cancelWhenViewUrl();
         }
+        cancelWhenViewUrl();
         type5ViewUrlTrigger.value = false;
       }
     });
     const downModal1 = ref(false);
     const downModal2 = ref(false);
+    const typeViewUrl = ref(1);
     const onGetAcquistionRp = (
       workId: number,
       companyId: number,
@@ -685,28 +692,48 @@ export default defineComponent({
         type5ViewUrlTrigger.value = true;
       }
     };
-    const downConfirm1 = () => callApiUrl();
-    const downConfirm2 = (e: any) => {
+    const downConfirm1 = (e: any) => {
       if (e) {
-        viewUrlModal.value = true;
-        cancelWhenViewUrl();
+        typeViewUrl.value = 1;
+        callApiUrl();
+        console.log(
+          `output->viewUrlType.value`,
+          viewUrlType.value,
+          viewUrlParam
+        );
       }
     };
+
     const cancelWhenViewUrl = () => {
       if (viewUrlType.value == 1) {
-        cancel1(viewUrlParam.value);
+        create1({
+          search: { ...viewUrlParam.value },
+          data: { workingStatus: 10 },
+        });
       }
       if (viewUrlType.value == 2) {
-        cancel2(viewUrlParam.value);
+        create2({
+          search: { ...viewUrlParam.value },
+          data: { workingStatus: 10 },
+        });
       }
       if (viewUrlType.value == 3) {
-        cancel3(viewUrlParam.value);
+        create3({
+          search: { ...viewUrlParam.value },
+          data: { workingStatus: 10 },
+        });
       }
       if (viewUrlType.value == 4) {
-        cancel4(viewUrlParam.value);
+        create4({
+          search: { ...viewUrlParam.value },
+          data: { workingStatus: 10 },
+        });
       }
       if (viewUrlType.value == 5) {
-        cancel5(viewUrlParam.value);
+        create5({
+          search: { ...viewUrlParam.value },
+          data: { workingStatus: 10 },
+        });
       }
     };
 
@@ -722,17 +749,27 @@ export default defineComponent({
         workId: data.workId,
       };
       downModal2.value = true;
-      if (data.type !== 5) {
-        callApiUrl();
-      }
       downLoadParam.value = data;
+    };
+    const downConfirm2 = (e: any) => {
+      if (e) {
+        console.log(
+          `output->viewUrlType.value`,
+          viewUrlType.value,
+          viewUrlParam
+        );
+        typeViewUrl.value = 2;
+        if (viewUrlType.value !== 5) {
+          callApiUrl();
+        }
+      }
     };
 
     //------------------------ACTION UPDATE TABLE--------------------------------
 
     //1
     const {
-      mutate: creation1,
+      mutate: create1,
       onDone: onDone1,
       onError: onError1,
     } = useMutation(
@@ -741,6 +778,9 @@ export default defineComponent({
     onDone1(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError1((e: any) => {
       notification("error", e.message);
@@ -754,22 +794,22 @@ export default defineComponent({
     onDone12(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
-      if (!employeeRequestListTrigger.value) {
-        employeeRequestListTrigger.value = true;
-      }
     });
     onError12((e: any) => {
       notification("error", e.message);
     });
     //update 2
     const {
-      mutate: creation2,
+      mutate: create2,
       onDone: onDone2,
       onError: onError2,
     } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeLossData);
     onDone2(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError2((e: any) => {
       notification("error", e.message);
@@ -783,9 +823,6 @@ export default defineComponent({
     onDone22(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
-      if (!employeeRequestListTrigger.value) {
-        employeeRequestListTrigger.value = true;
-      }
     });
     onError22((e: any) => {
       notification("error", e.message);
@@ -793,7 +830,7 @@ export default defineComponent({
 
     //update 2
     const {
-      mutate: creation3,
+      mutate: create3,
       onDone: onDone3,
       onError: onError3,
     } = useMutation(
@@ -802,6 +839,9 @@ export default defineComponent({
     onDone3(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError3((e: any) => {
       notification("error", e.message);
@@ -815,16 +855,13 @@ export default defineComponent({
     onDone32(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
-      if (!employeeRequestListTrigger.value) {
-        employeeRequestListTrigger.value = true;
-      }
     });
     onError32((e: any) => {
       notification("error", e.message);
     });
     //update 4
     const {
-      mutate: creation4,
+      mutate: create4,
       onDone: onDone4,
       onError: onError4,
     } = useMutation(
@@ -835,6 +872,9 @@ export default defineComponent({
       emit("closeModal", true);
     });
     onError4((e: any) => {
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
       notification("error", e.message);
     });
     //cancel 4
@@ -848,9 +888,6 @@ export default defineComponent({
     onDone42(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
-      if (!employeeRequestListTrigger.value) {
-        employeeRequestListTrigger.value = true;
-      }
     });
     onError42((e: any) => {
       notification("error", e.message);
@@ -858,7 +895,7 @@ export default defineComponent({
 
     //update 5
     const {
-      mutate: creation5,
+      mutate: create5,
       onDone: onDone5,
       onError: onError5,
     } = useMutation(
@@ -867,6 +904,9 @@ export default defineComponent({
     onDone5(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError5((e: any) => {
       notification("error", e.message);
@@ -880,9 +920,6 @@ export default defineComponent({
     onDone52(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
-      if (!employeeRequestListTrigger.value) {
-        employeeRequestListTrigger.value = true;
-      }
     });
     onError52((e: any) => {
       notification("error", e.message);
@@ -901,8 +938,6 @@ export default defineComponent({
               },
               data: {
                 workingStatus: item.workingStatus,
-                memo: item.memo,
-                acceptedNumber: item.acceptedNumber,
               },
             },
             type: item.type,
@@ -914,35 +949,35 @@ export default defineComponent({
           if (item.field.data.workingStatus == 0) {
             cancel1(item.field.search);
           } else {
-            creation1(item.field);
+            create1(item.field);
           }
         }
         if (item.type == 2) {
           if (item.field.data.workingStatus == 0) {
             cancel2(item.field.search);
           } else {
-            creation2(item.field);
+            create2(item.field);
           }
         }
         if (item.type == 3) {
           if (item.field.data.workingStatus == 0) {
             cancel3(item.field.search);
           } else {
-            creation3(item.field);
+            create3(item.field);
           }
         }
         if (item.type == 4) {
           if (item.field.data.workingStatus == 0) {
             cancel4(item.field.search);
           } else {
-            creation4(item.field);
+            create4(item.field);
           }
         }
         if (item.type == 5) {
           if (item.field.data.workingStatus == 0) {
             cancel5(item.field.search);
           } else {
-            creation5(item.field);
+            create5(item.field);
           }
         }
       });
@@ -978,9 +1013,10 @@ export default defineComponent({
       onDownLoad,
       downLoadParam,
       urlDownLoad,
-      reportTypeText,
+      reportTypeTextTab3,
       dayjs,
       downConfirm2,
+      completedAtFormat,
     };
   },
 });
