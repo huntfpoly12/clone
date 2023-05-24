@@ -283,12 +283,8 @@
             cell-template="completedAt"
           />
           <template #completedAt="{ data }">
-            <div
-              v-if="
-                data.data.workingStatus == 0 || data.data.workingStatus == 10
-              "
-            >
-              {{ dayjs(data.data.completedAt).format("YYYY-MM-DD") }}
+            <div>
+              {{ completedAtFormat(data.data.completedAt, data.data.workingStatus) }}
             </div>
           </template>
           <DxColumn caption="팩스발송" cell-template="downD" width="100px" />
@@ -388,6 +384,7 @@ import {
   formatMonth,
   dataTableTab1,
   states1,
+completedAtFormat,
 } from "../../utils/index";
 import dayjs from "dayjs";
 import Correction from "./Correction.vue";
@@ -735,6 +732,7 @@ export default defineComponent({
       adminConsignStatusTrigger,
       onGetAcquistionRp,
       dayjs,
+      completedAtFormat,
     };
   },
 });

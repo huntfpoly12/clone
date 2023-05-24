@@ -29,15 +29,23 @@
             :allowEditing="false"
             alignment="center"
           />
-          <DxColumn caption="신고대상" data-field="subject" alignment="center"/>
-          <DxColumn caption="사무위탁" data-field="consignment" alignment="center" />
+          <DxColumn
+            caption="신고대상"
+            data-field="subject"
+            alignment="center"
+          />
+          <DxColumn
+            caption="사무위탁"
+            data-field="consignment"
+            alignment="center"
+          />
           <DxColumn
             caption="다운로드"
             cell-template="name1"
             alignment="center"
           />
           <template #name1="{ data }">
-            <div v-if="!data.data.url" style="padding: 5px">취득신고</div>
+            <div v-if="!data.data.url" style="padding: 5px">{{data.data.nameBtn}}</div>
             <button-basic
               v-else
               text="받기"
@@ -83,15 +91,31 @@ export default defineComponent({
         subject: "",
         consignment: "",
         url: "",
+        nameBtn: "취득신고",
       },
-      { typeId: 4, typeName: "휴직", subject: "", consignment: "", url: "" },
-      { typeId: 2, typeName: "상실", subject: "", consignment: "", url: "" },
+      {
+        typeId: 4,
+        typeName: "휴직",
+        subject: "",
+        consignment: "",
+        url: "",
+        nameBtn: "휴직신고",
+      },
+      {
+        typeId: 2,
+        typeName: "상실",
+        subject: "",
+        consignment: "",
+        url: "",
+        nameBtn: "상실신고",
+      },
       {
         typeId: 3,
         typeName: "급여변경",
         subject: "",
         consignment: "",
         url: "",
+        nameBtn: "급여변경 신고",
       },
     ]);
     watch(

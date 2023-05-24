@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const formatMonth = (month: number) => {
   if (month < 10) {
     return "0" + month;
@@ -102,6 +104,23 @@ export const reportTypeText = (id: number | string) => {
   if (id === undefined || id === null) {
     return "";
   }
+  text = reportTypeSelectbox.filter((item: any) => item.id == id)[0]?.text;
+  return text ? text : id;
+};
+export const reportTypeTextTab3 = (id: number | string) => {
+  let text: string;
+  if (id === undefined || id === null) {
+    return "";
+  }
   text = reportTypeSelectboxTab3.filter((item: any) => item.id == id)[0]?.text;
   return text ? text : id;
 };
+export const completedAtFormat = (time: any, workingStatus: any) => {
+  if(time === null || time === undefined){
+    return '';
+  }
+  if([0,10,-1].includes(workingStatus)){
+    return dayjs(time).format('YYYY-MM-DD');
+  }
+  return '';
+}
