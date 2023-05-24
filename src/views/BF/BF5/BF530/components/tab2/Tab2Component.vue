@@ -101,7 +101,12 @@
             data-field="companyId"
             alignment="left"
           />
-          <DxColumn caption="신고구분" data-field="type" alignment="left" :format="reportTypeText"/>
+          <DxColumn
+            caption="신고구분"
+            data-field="type"
+            alignment="left"
+            :format="reportTypeText"
+          />
           <DxColumn caption="업체명" data-field="companyName" />
           <DxColumn
             caption="사업장관리번호"
@@ -153,9 +158,14 @@
             data-type="date"
             cell-template="completedAt"
           />
-          <template #completedAt="{data}">
-            <div v-if="data.data.workingStatus == 0 || data.data.workingStatus == 10">
-              {{ dayjs(data.data.completedAt).format('YYYY-MM-DD') }}
+          <template #completedAt="{ data }">
+            <div>
+              {{
+                completedAtFormat(
+                  data.data.completedAt,
+                  data.data.workingStatus
+                )
+              }}
             </div>
           </template>
           <DxColumn
@@ -172,7 +182,7 @@
           <DxColumn caption="메모" width="135px" cell-template="memo" />
           <template #memo="{ data }: any">
             <a-tooltip zIndex="9999999" placement="top" color="black">
-              <template #title> {{data.data.memo}} </template>
+              <template #title> {{ data.data.memo }} </template>
               <div></div>
               <default-text-box
                 :width="120"
@@ -302,7 +312,8 @@ import {
   dataTableTab1,
   states1,
   reportTypeSelectbox2,
-reportTypeText,
+  reportTypeText,
+  completedAtFormat,
 } from "../../utils/index";
 import dayjs from "dayjs";
 import History from "./History.vue";
@@ -646,6 +657,7 @@ export default defineComponent({
       paramValue,
       reportTypeText,
       dayjs,
+      completedAtFormat,
     };
   },
 });
