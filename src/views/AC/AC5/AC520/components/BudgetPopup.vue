@@ -52,11 +52,12 @@
 </template>
 
 <script lang="ts">
-import {computed, ComputedRef, defineComponent, PropType, ref, watchEffect} from 'vue'
-import {Budget, ComponentCreateBudget, StepCreateBudget} from "@/views/AC/AC5/AC520/type";
+import {computed, ComputedRef, defineComponent, ref, watch, watchEffect} from 'vue'
+import {ACTION, Budget, ComponentCreateBudget, StepCreateBudget} from "@/views/AC/AC5/AC520/type";
 import EmployeeSalaryTable from "./EmployeeSalaryTable.vue";
 import ExpenseAndRevenueBudget from "./ExpenseAndRevenueBudget.vue";
 import {useStore} from "vuex";
+
 export default defineComponent({
   components: {
     EmployeeSalaryTable,
@@ -90,6 +91,11 @@ export default defineComponent({
     }
     watchEffect(() => {
       if (props.modalStatus) step.value = StepCreateBudget.Step1
+    })
+    watch(dataBudget, (val) => {
+      if (val?.action === ACTION.EDIT) {
+        step.value = StepCreateBudget.Step2
+      }
     })
     const currentComponent = computed(() => {
       if (typePopup.value === ComponentCreateBudget.EmployeeSalaryTable){

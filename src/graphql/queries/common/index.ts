@@ -51,6 +51,7 @@ import getBudgetSubjectTransitionsLogs from './getBudgetSubjectTransitionsLogs';
 import getMajorInsuranceCompanyEmployeeSalaryChangeLogs from './getMajorInsuranceCompanyEmployeeSalaryChangeLogs';
 import getMajorInsuranceConsignStatusLogs from "./getMajorInsuranceConsignStatusLogs";
 import getMajorInsuranceCompanyJoinLogs from "./getMajorInsuranceCompanyJoinLogs";
+import getBudgetsLogs from "./getBudgetsLogs";
 const queries = {
   getMe: getMe,
   getUser: getUser,
@@ -107,6 +108,7 @@ const queries = {
   getMajorInsuranceCompanyEmployeeSalaryChangeLogs: getMajorInsuranceCompanyEmployeeSalaryChangeLogs,
   getMajorInsuranceConsignStatusLogs: getMajorInsuranceConsignStatusLogs,
   getMajorInsuranceCompanyJoinLogs,
+  getBudgetsLogs
 };
 
 export default queries;

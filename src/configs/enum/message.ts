@@ -69,6 +69,12 @@ export class Message extends BaseType {
         '005': { "message" : "이미 사용중인 그룹명입니다", "icon": "iconError"}, // Group name is already in use.
     });
   
+     //계약정보관리&심사
+    public static BF310 = new Message({
+        '001': { "message" : "서비스를 최소 하나 선택하세요", "icon": "iconError"}, // Check more then 1 services
+     
+    });
+          
     //영업자관리
     public static BF340 = new Message({
         '001': { "message" : "영업자명이 이미 사용중입니다.", "icon": "iconError"}, // Sales Representitive Name is already in use.

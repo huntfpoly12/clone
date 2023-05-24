@@ -491,7 +491,7 @@
                         <DxEditing
                           :use-icons="true"
                           :allow-adding="true"
-                          :allow-deleting="true"
+                          :confirmDelete="false"
                           template="button-template"
                           mode="cell"
                           new-row-position="pageBottom"
@@ -512,6 +512,25 @@
                             text="추가"
                             :disabled="!formState.usedAccounting"
                           />
+                        </template>
+                        <DxColumn cell-template="action" width="48" />
+                        <template #action="{ data }: any">
+                          <DxButton
+                            type="ghost"
+                            style="cursor: pointer"
+                            @click="onDelete(data)"
+                          >
+                            <a-tooltip
+                              zIndex="9999999"
+                              placement="top"
+                              color="black"
+                            >
+                              <template #title>
+                                <div>삭제</div>
+                              </template>
+                              <DeleteOutlined style="font-size: 16px" />
+                            </a-tooltip>
+                          </DxButton>
                         </template>
                       </DxDataGrid>
                       <a-row
@@ -814,6 +833,42 @@
         :keyText="keyInfo"
       />
     </a-modal>
+    <a-modal
+      :visible="deleteModal"
+      @cancel="deleteModal = false"
+      :mask-closable="false"
+      class="confirm-md"
+      footer=""
+      :width="500"
+    >
+      <standard-form action="" name="delete-510">
+        <div class="custom-modal-delete">
+          <img
+            src="@/assets/images/icon_delete.png"
+            alt=""
+            style="width: 30px"
+          />
+          <span>{{ contentDelete }}</span>
+        </div>
+        <div class="text-align-center mt-30">
+          <button-basic
+            class="button-form-modal"
+            :text="'아니요'"
+            :type="'default'"
+            :mode="'outlined'"
+            @onClick="deleteModal = false"
+          />
+          <button-basic
+            class="button-form-modal"
+            :text="'네. 삭제합니다'"
+            :width="140"
+            :type="'default'"
+            :mode="'contained'"
+            @onClick="onDelConfirm"
+          />
+        </div>
+      </standard-form>
+    </a-modal>
   </div>
 </template>
 <script lang="ts">
@@ -847,6 +902,8 @@ import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import dayjs from "dayjs";
 import PopupInfo from "./PopupInfo.vue";
 import { DxButton } from "devextreme-vue/button";
+import { Message } from "@/configs/enum";
+import { DeleteOutlined, PlusSquareOutlined, SaveOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
   props: {
     modalStatus: {
@@ -871,6 +928,7 @@ export default defineComponent({
     DxButton,
     DxScrolling,
     PopupInfo,
+    DeleteOutlined
   },
   setup(props, { emit }) {
     // config grid
@@ -907,6 +965,9 @@ export default defineComponent({
     ]);
     const accountingServiceTypes = ref(false);
     const isWatching = ref(false);
+    const deleteModal = ref(false);
+    const rowIndexDelete = ref(0);
+    const contentDelete = Message.getCommonMessage("401").message;
     // event close popup
     const setModalVisible = () => {
       if (
@@ -1259,6 +1320,14 @@ export default defineComponent({
     const onInitRow = (e: any) => {
       e.data = initRow;
     };
+    const onDelete = (data: any) => {
+      deleteModal.value = true;
+      rowIndexDelete.value = data.rowIndex;
+    };
+    const onDelConfirm = () => {
+      gridRefName.value.instance.deleteRow(rowIndexDelete.value);
+      deleteModal.value = false;
+    };
     const onFocusedRowChanged = (e: any) => {
       const data = e.row && e.row.data;
       dataActiveRow.value = data;
@@ -1313,6 +1382,8 @@ export default defineComponent({
       keyInfo,
       arrayRadioCheckSourceServices,
       accountingServiceTypes,
+      onDelConfirm,
+      onDelete, deleteModal, contentDelete,
     };
   },
 });
