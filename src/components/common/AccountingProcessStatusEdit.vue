@@ -1,12 +1,5 @@
 <template>
-    <span v-if="(disabled || status == 20)">
-        <span v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(status == item.id)" :width="100" :text="item.text" :class="item.class"
-                          class="buttonModal disabled">
-            </button-basic>
-        </span>
-    </span>
-  <a-popover v-else trigger="click" v-model:visible="showModal" color="#e6e6e6">
+  <a-popover v-model:visible="visible" :trigger="data.status !== 20 && data.employeePaySum !== null && data.revenueBudgetSum !== null ? 'click' :''" color="#e6e6e6">
     <template #content>
       <div class="mytext">
         <div v-if="status == 30 || status == 40">
@@ -19,47 +12,44 @@
         </div>
         <div class="mt-20">
           <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'"
-                        @onClick="setModalVisible"/>
+                        @onClick="hide"/>
           <button-basic class="button-form-modal" :text="'네, 변경합니다.'" :width="140" :type="'default'"
                         :mode="'contained'" @onClick="submitChangeStatus"/>
-
         </div>
       </div>
     </template>
-    <span v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(status == item.id)" :width="100" :text="item.text" :class="item.class"
-                          class="buttonModal">
-            </button-basic>
-        </span>
+    <div>
+      <button-basic :width="100" :text="textBtn" :class="classBtn" :disabled="data.status === 20"
+                    class="buttonModal">
+      </button-basic>
+    </div>
   </a-popover>
 </template>
 <script lang="ts">
-import {computed, defineComponent, reactive, ref, watch} from "vue";
+import {computed, defineComponent, PropType, reactive, ref, watch} from "vue";
 import {companyId, userType} from "@/helpers/commonFunction";
 import {useMutation} from "@vue/apollo-composable";
 import changeBudgetStatus from "@/graphql/mutations/AC/AC5/AC520/changeBudgetStatus";
 
 export default defineComponent({
   props: {
-    index: {
-      type: Number,
-      required: true
-    },
     disabled: {
       type: Boolean,
       required: false
     },
-    dataRow: {
-      type: Array,
-      required: false
-    },
-    status: {
-      type: Number,
-      required: false
+    data: {
+      type: Object as PropType<{
+        index: number,
+        status: number,
+        revenueBudgetSum: number | null
+        employeePaySum: number | null
+      }>,
+      required: true
     },
   },
   setup(props, {emit}) {
-    const status = ref(props.status);
+    const status = ref(props.data.status);
+    const visible = ref<boolean>(false);
     const showModal = ref(false)
     const arrayRadioUser = ref([
       {id: 10, text: '입력중', class: 'entering'},
@@ -71,19 +61,31 @@ export default defineComponent({
       {id: 30, text: '조정중', class: 'adjusting'},
       {id: 40, text: '조정마감', class: 'adjusted'},
     ])
-
+    const textBtn = computed(() => {
+      if (userType === 'm') {
+        return arrayRadioManager.value.find(item => item.id === status.value)?.text
+      } else {
+        return arrayRadioUser.value.find(item => item.id === status.value)?.text
+      }
+    })
+    const classBtn = computed(() => {
+      if (userType === 'm') {
+        return arrayRadioManager.value.find(item => item.id === status.value)?.class
+      } else {
+        return arrayRadioUser.value.find(item => item.id === status.value)?.class
+      }
+    })
     const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
     const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
     const query = reactive({
       companyId,
       fiscalYear: acYear.value ,// acYear.value
       facilityBusinessId: globalFacilityBizId.value,
-      index: props.index
+      index: props.data.index
     })
     const { mutate, onDone, onError} = useMutation(changeBudgetStatus)
     onDone(({data}) => {
       if (data) {
-        console.log('data', data)
         showModal.value = false;
         emit("closePopup", true);
       }
@@ -91,17 +93,16 @@ export default defineComponent({
     onError((error) => {
       console.log('error', error)
     })
-    const setModalVisible = () => {
-      showModal.value = false;
+    const hide = () => {
+      visible.value = false;
     };
 
     const submitChangeStatus = () => {
-      console.log({...query,
-        status: props.status})
-      console.log()
+      console.log({...query, status: props.data.status})
+      const statusType = userType === 'm' ? status.value : 20
       mutate({
         ...query,
-        status: props.status
+        status: statusType
       })
     }
 
@@ -109,10 +110,13 @@ export default defineComponent({
       status,
       arrayRadioUser,
       arrayRadioManager,
-      setModalVisible,
+      hide,
       showModal,
       userType,
       submitChangeStatus,
+      textBtn,
+      classBtn,
+      visible
     }
   },
 });

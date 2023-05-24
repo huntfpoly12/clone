@@ -3,6 +3,9 @@ import GET_EMPLOYEE_PAY_TABLE_REPORT_VIEW_URL from "@/graphql/queries/AC/AC5/AC5
 import {Ref, UnwrapNestedRefs} from "vue";
 export const initialState = {
   index : 0,
+  employeePaySum: null,
+  revenueBudgetSum: null,
+  createdAt: new Date().getTime()
 }
 // create function get data from useQuery hook
 interface IGetEmployeePayTableReportViewUrl {

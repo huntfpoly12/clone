@@ -34,7 +34,7 @@
       <template #button-template>
         <a-tooltip placement="topLeft" title="예산서 신규 작성">
           <div>
-            <DxButton icon="plus" :disabled="disableAddRow" @click="addRow"/>
+            <DxButton icon="plus" :disabled="disableAddRow || lastRowOfDataIsNotComplete" @click="addRow"/>
           </div>
         </a-tooltip>
       </template>
@@ -52,7 +52,11 @@
       <DxColumn caption="예산총괄표" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="" width="100px" cell-template="action" alignment="center"/>
       <template #action="{data}">
-        <DxButton type="ghost" @click="handleDeleteBudget(data.data.index)">
+        <DxButton type="ghost"
+                  @click="handleDeleteBudget(data.data)"
+                  :disabled="data.data.index !== dataSource?.totalCount() || 0 - 1"
+        >
+
           <DeleteOutlined/>
         </DxButton>
       </template>
@@ -63,7 +67,9 @@
         </div>
       </template>
       <template #status="{data}">
-        <accounting-process-status-edit :index="index" :status="data.data.status"/>
+        <div v-if="data.data?.status">
+          <accounting-process-status-edit :data="data.data" @close-popup="closePopupProcessStatus"/>
+        </div>
       </template>
       <template #employeeSalaryTable="{data}">
         <div v-if="data.data.accounSubjectOrder" class="d-flex-center justify-content-center gap-6">
@@ -79,7 +85,7 @@
         <a-tooltip v-else title="임직원보수일람표 작성. 인건비 관련 세출예산액은 임직원보수일람표의 금액이 반영됩니다.">
           <div>
             <DxButton type="ghost" icon="plus"
-                      @click="openModalBudget({data: data.data, type: ComponentCreateBudget.EmployeeSalaryTable})"/>
+                      @click="openModalBudget({data: {...data.data, columnName: '임직원보수일람표'}, type: ComponentCreateBudget.EmployeeSalaryTable})"/>
           </div>
         </a-tooltip>
       </template>
@@ -96,7 +102,7 @@
         </div>
         <a-tooltip v-else title="세출예산서 작성">
           <div>
-            <DxButton type="ghost" icon="plus"
+            <DxButton type="ghost" icon="plus" :disabled="!data.data.revenueBudgetSum"
                       @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
           </div>
         </a-tooltip>
@@ -114,7 +120,7 @@
         </div>
         <a-tooltip v-else title="세입예산서 작성 234">
           <div>
-            <DxButton type="ghost" icon="plus"
+            <DxButton type="ghost" icon="plus" :disabled="data.data.employeePaySum === null"
                       @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
           </div>
         </a-tooltip>
@@ -188,9 +194,16 @@ const isModalSendMail = reactive({
 const index = ref(0)
 const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 const storeDataSource = computed(() => dataSource.value?.store() as Store);
-// console.log('companyId', companyId)
-// console.log('globalFacilityBizId', globalFacilityBizId.value)
-// console.log('accountSubject', accountSubject)
+const lastRowOfDataIsNotComplete = computed(() => {
+  const data = dataSource.value?.items()
+  if (data) {
+    const lastRow = data[data.length - 1]
+    if (lastRow) {
+      return lastRow.employeePaySum === null || lastRow.revenueBudgetSum === null
+    }
+  }
+  return false
+})
 const {onResult: onResultBudget, refetch: refetchBudget, onError} = useQuery(queries.getBudgets, query, () => ({
   fetchPolicy: "no-cache",
 }))
@@ -199,7 +212,7 @@ onResultBudget(({data}) => {
     store: {
       type: "array",
       key: "createdAt",
-      data: data.getBudgets || [],
+      data: data.getBudgets.reverse() || [],
     },
   });
   // console.log('result', data.getBudgets)
@@ -294,17 +307,28 @@ const closePopupEditEmployeeTable = (e: boolean) => {
 const openHistory = () => {
   modalHistory.value = true
 }
-const handleDeleteBudget = (index: number) => {
+const handleDeleteBudget = (data: any) => {
+  if (disableAddRow.value) {
+    dataSource.value?.store().remove(data.createdAt).then((result) => {
+      dataGridRef.value?.refresh();
+      disableAddRow.value = false
+    })
+    return
+  }
   deletePopup({
     callback: () => {
       deleteBudget({
         ...query,
-        index
+        index: data.index
       })
     },
   });
 }
-
+const closePopupProcessStatus = (e: boolean) => {
+  if (e) {
+    refetchBudget()
+  }
+}
 </script>
 
 <style scoped>

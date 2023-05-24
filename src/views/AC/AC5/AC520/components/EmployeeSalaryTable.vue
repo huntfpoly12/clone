@@ -1,5 +1,4 @@
 <template>
-  <div class="title">임직원보수일람표</div>
   <standard-form ref="formRef">
     <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true"
                 :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
@@ -33,11 +32,11 @@
         <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value"/>
         <DxRequiredRule/>
       </DxColumn>
-      <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right"/>
-      <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right"/>
-      <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right"/>
-      <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right"/>
-      <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right"/>
+      <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right" format="#0,###"/>
+      <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right" format="#0,###"/>
+      <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right" format="#0,###"/>
+      <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right" format="#0,###"/>
+      <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right" format="#0,###"/>
       <DxColumn caption="계" data-field="total" alignment="center" cell-template="total" :allowEditing="false"/>
       <template #total="{ data }">
         <span class="px-7">{{ calculateSalary(data) }}</span>
@@ -52,43 +51,37 @@
         <DxTotalItem show-in-column="name" alignment="center" display-format="간접인건비 계"/>
         <DxTotalItem cssClass="custom" show-in-column="name" alignment="center" display-format="총 인건비 계"/>
 
-        <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => formatSummary.salary1"/>
-        <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => formatSummary.salary2"/>
+        <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.salary1)"/>
+        <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.salary2)"/>
         <DxTotalItem show-in-column="salary" alignment="right"
-                     :customizeText="() => formatSummary.salary1 + formatSummary.salary2" cssClass="custom"/>
+                     :customizeText="() => filters.formatNumber(formatSummary.salary1 + formatSummary.salary2)" cssClass="custom"/>
 
-        <DxTotalItem show-in-column="allowance" alignment="right" :customizeText="() => formatSummary.allowance1"/>
-        <DxTotalItem show-in-column="allowance" alignment="right" :customizeText="() => formatSummary.allowance2"/>
+        <DxTotalItem show-in-column="allowance" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.allowance1)"/>
+        <DxTotalItem show-in-column="allowance" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.allowance2)"/>
         <DxTotalItem show-in-column="allowance" alignment="right"
-                     :customizeText="() => formatSummary.allowance1 + formatSummary.allowance2" cssClass="custom"/>
+                     :customizeText="() => filters.formatNumber(formatSummary.allowance1 + formatSummary.allowance2)" cssClass="custom"/>
 
+        <DxTotalItem show-in-column="dailyAllowance" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance1)"/>
+        <DxTotalItem show-in-column="dailyAllowance" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance2)"/>
         <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                     :customizeText="() => formatSummary.dailyAllowance1"/>
-        <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                     :customizeText="() => formatSummary.dailyAllowance2"/>
-        <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                     :customizeText="() => formatSummary.dailyAllowance1 + formatSummary.dailyAllowance2"
+                     :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance1 + formatSummary.dailyAllowance2)"
                      cssClass="custom"/>
 
+        <DxTotalItem show-in-column="retirementReserve" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.retirementReserve1)"/>
+        <DxTotalItem show-in-column="retirementReserve" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.retirementReserve2)"/>
         <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                     :customizeText="() => formatSummary.retirementReserve1"/>
-        <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                     :customizeText="() => formatSummary.retirementReserve2"/>
-        <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                     :customizeText="() => formatSummary.retirementReserve1 + formatSummary.retirementReserve2"
+                     :customizeText="() => filters.formatNumber(formatSummary.retirementReserve1 + formatSummary.retirementReserve2)"
                      cssClass="custom"/>
 
+        <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy1)"/>
+        <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy2)"/>
         <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                     :customizeText="() => formatSummary.socialInsuranceLevy1"/>
-        <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                     :customizeText="() => formatSummary.socialInsuranceLevy2"/>
-        <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                     :customizeText="() => formatSummary.socialInsuranceLevy1 + formatSummary.socialInsuranceLevy2"
+                     :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy1 + formatSummary.socialInsuranceLevy2)"
                      cssClass="custom"/>
 
-        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total1"/>
-        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total2"/>
-        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => formatSummary.total"
+        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.total1)"/>
+        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.total2)"/>
+        <DxTotalItem show-in-column="total" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.total)"
                      cssClass="custom"/>
       </DxSummary>
     </DxDataGrid>
@@ -121,6 +114,7 @@ import {useMutation} from "@vue/apollo-composable";
 import {accountSubject, companyId} from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
+import filters from "@/helpers/filters";
 
 const emit = defineEmits(['closePopup'])
 const arrSelectOccupation: any = []
@@ -358,7 +352,7 @@ function calculateSalary(data: any) {
   const dailyAllowance = +data.data.dailyAllowance || 0;
   const retirementReserve = +data.data.retirementReserve || 0;
   const socialInsuranceLevy = +data.data.socialInsuranceLevy || 0;
-  return salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy;
+  return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
 }
 </script>
 
