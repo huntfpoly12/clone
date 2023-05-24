@@ -1,5 +1,5 @@
 <template>
-  <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
+  <a-modal class="form-modal" width="65%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
            title="사업장가입신규신청" centered @cancel="closePopup" :footer="null" :mask-closable="false">
     <a-spin :spinning="myCompanyLoading" size="large">
       <standard-form ref="formRef">
@@ -168,13 +168,6 @@
                   <text-number-box v-model:valueInput='formState.directDebitAccountNumber' placeholder="" />
                 </DxField>
               </a-col>
-            </a-row>
-            <a-row>
-              <a-col span="8">
-                <DxField label="예금주명" >
-                  <default-text-box v-model:valueInput='formState.directDebitAccountOwner' placeholder="" />
-                </DxField>
-              </a-col>
               <a-col span="8">
                 <DxField label="예금주주민등록번호" class="field-custom">
                   <id-number-text-box v-model="formState.directDebitAccountOwnerResidentNumber" placeholder="" />
@@ -183,13 +176,18 @@
             </a-row>
             <a-row>
               <a-col span="8">
+                <DxField label="예금주명" >
+                  <default-text-box v-model:valueInput='formState.directDebitAccountOwner' placeholder="" />
+                </DxField>
+              </a-col>
+              <a-col span="8">
                 <DxField label="합산자동이체적용여부" class="field-custom">
                   <radio-group :arrayValue="combinedDirectDebitStatusArr"
                                v-model:valueRadioCheck="formState.combinedDirectDebitStatus" layoutCustom="horizontal"
                                class="mt-1"></radio-group>
                 </DxField>
               </a-col>
-              <a-col span="12">
+              <a-col span="8">
                 <DxField label="이체 희망일" class="field-custom">
                   <radio-group :arrayValue="directDebitDateTypeArr"
                                v-model:valueRadioCheck="formState.directDebitDateType" layoutCustom="horizontal"
@@ -396,8 +394,8 @@
                 </DxField>
               </a-col>
               <a-col span="8" />
-              <a-col span="8" class="pl-25">
-                <DxField label="우선지원대상기업"  class="field-custom-1">
+              <a-col span="8">
+                <DxField label="우선지원대상기업" class="field-custom-1" styleLabel="padding-left: 15px">
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.employeementInsuranceMainWorkplacePrioritySupport"
                                layoutCustom="horizontal" class="mt-1"></radio-group>

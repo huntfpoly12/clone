@@ -14,14 +14,12 @@
       <div class="ac-110__main-main">
         <a-spin :spinning="loadingGetBankbookDetails || loadingSyncBankbookDetails" size="large">
           <DxDataGrid id="DxDataGridMainAc110" ref="refDxDataGridMainAc110" key-expr="bankbookDetailId"
-            :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-            v-model:selected-row-keys="selectedRowKeys" :show-borders="true" :allow-column-reordering="move_column"
-            v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true" :allow-column-resizing="colomn_resize"
-            :column-auto-width="true" @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging"
+            :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+            :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true"
+            :allow-column-resizing="colomn_resize" :column-auto-width="true" @focused-row-changing="onFocusedRowChanging"
             @row-click="onRowClick" noDataText="내역이 없습니다">
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
-            <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="always" :deferred="false" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
             <DxExport :enabled="true" />
             <DxToolbar>
@@ -59,6 +57,22 @@
                   <template #title>통장내역 변경이력</template>
                   <HistoryOutlined style="font-size: 18px; margin-left: 5px" @click="modalHistory" />
                 </a-tooltip>
+              </div>
+            </template>
+            <DxColumn header-cell-template="title-header-checkbox" cell-template="checkbox" width="80"
+              alignment="center" />
+            <template #title-header-checkbox="{ data }">
+              <div class="ac-110-checkboxAll" :class="{ 'ac-110-checkboxAll-disable': !listItemAllowedChoose.length }"
+                @mousedown="selectionChanged(null)">
+                <DxCheckBox :value="isSelectAll" iconSize="18" :readOnly="true" />
+              </div>
+            </template>
+            <template #checkbox="{ data }">
+              <div class="ac-110-checkbox"
+                :class="{ 'ac-110-checkbox-disable': !listItemAllowedChoose.includes(data.data.bankbookDetailId) }"
+                @mousedown="selectionChanged(data.data.bankbookDetailId)">
+                <DxCheckBox :value="selectedRowKeys.includes(data.data.bankbookDetailId)" iconSize="18"
+                  :readOnly="true" />
               </div>
             </template>
             <DxColumn caption="통장" cell-template="nickName" data-field="bankbook.bankbookNickname" />
@@ -385,7 +399,6 @@ import {
   DxDataGrid,
   DxColumn,
   DxScrolling,
-  DxSelection,
   DxSummary,
   DxTotalItem,
   DxToolbar,
@@ -426,6 +439,7 @@ import {
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import dayjs from "dayjs";
 import { cloneDeep, isEqual } from "lodash";
+import DxCheckBox from 'devextreme-vue/check-box';
 
 export default defineComponent({
   components: {
@@ -435,7 +449,6 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxScrolling,
-    DxSelection,
     DxSummary,
     DxTotalItem,
     PopupSlipCancellation,
@@ -456,6 +469,7 @@ export default defineComponent({
     DxPaging,
     DxSearchPanel,
     SelectAccountCode,
+    DxCheckBox
   },
   setup() {
     const store = useStore();
@@ -571,6 +585,20 @@ export default defineComponent({
         !!bankbookSelected.value?.documentRegistered
       );
     });
+    let isSelectAll = computed(() => {
+      const valueSelect = selectedRowKeys.value.length
+      const valueDataSource = dataSource.value.length
+      if (valueSelect === valueDataSource && !!valueSelect) {
+        return true
+      } else if (valueSelect === 0) {
+        return false
+      } else {
+        return null
+      }
+    })
+    const listItemAllowedChoose = computed(() => {
+      return dataSource.value.filter((items: any) => items.normalTransactionDetails && !items.documentRegistered).map((items: any) => items.bankbookDetailId) || []
+    })
     // -------------- GRAPHQL --------------
     // queries
     const {
@@ -809,6 +837,7 @@ export default defineComponent({
         ) ||
         !rowKeyfocused.value
       ) {
+        selectedRowKeys.value = []
         dataSourceTransactionDetails.value.transactionDetails = [];
         listTransactionDetailsOrigin.value = [];
         rowKeyfocused.value = null;
@@ -830,22 +859,31 @@ export default defineComponent({
       }
     );
     // Grid Main
-    const selectionChanged = (event: any) => {
-      const listItemDisable: any = [];
-      dataSource.value.forEach((items: any) => {
-        if (items.normalTransactionDetails && !items.documentRegistered) {
-        } else {
-          listItemDisable.push(items.bankbookDetailId);
+    let isClickColunmSelect = false
+    const selectionChanged = (value: any) => {
+      if (!!value) {
+        isClickColunmSelect = true
+        if (listItemAllowedChoose.value.includes(value)) {
+          if (selectedRowKeys.value.includes(value)) {
+            const index = selectedRowKeys.value.findIndex((items: any) => items === value)
+            selectedRowKeys.value.splice(index, 1);
+          } else {
+            selectedRowKeys.value.push(value)
+          }
         }
-      });
-      const indexItemDisable = selectedRowKeys.value.findIndex((items: any) =>
-        listItemDisable.includes(items)
-      );
-      if (indexItemDisable >= 0) {
-        selectedRowKeys.value.splice(indexItemDisable, 1);
+      } else {
+        if (selectedRowKeys.value.length) {
+          selectedRowKeys.value = []
+        } else {
+          selectedRowKeys.value = [...listItemAllowedChoose.value]
+        }
       }
     };
     const onFocusedRowChanging = (event: any) => {
+      if (isClickColunmSelect) {
+        event.cancel = true;
+        return
+      }
       if (isRegisterTransaction.value) {
         isRegisterTransaction.value = false;
         selectedRowKeys.value = [];
@@ -870,6 +908,10 @@ export default defineComponent({
       event.cancel = true;
     };
     const onRowClick = (event: any) => {
+      if (isClickColunmSelect) {
+        isClickColunmSelect = false
+        return
+      }
       if (!event?.data) return;
       const item = event.data;
       if (rowKeyfocused.value === item.bankbookDetailId) return;
@@ -1299,6 +1341,8 @@ export default defineComponent({
       colomn_resize,
       acYear,
       selectedRowKeys,
+      listItemAllowedChoose,
+      isSelectAll,
       selectionChanged,
       onFocusedRowChanging,
       onRowClick,
@@ -1386,5 +1430,4 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-}
-</style>
+}</style>

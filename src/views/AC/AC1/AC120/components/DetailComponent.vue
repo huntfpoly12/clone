@@ -224,7 +224,7 @@ export default defineComponent({
     const refFormAC120 = ref();
     let statusPopupCopyData = ref<boolean>(false);
     let fileList = ref<any[]>([]);
-    const textButton: any = computed(() => store.state.common.ac120.arrResolutionType.find((element: any) => element.id == 22)?.text);
+    const textButton = ref('여입');
     const textLabelInputSource = ref<string>("수입원");
     const requiredCauseActionDate = ref();
     const arrayRadioCheck = computed(
@@ -319,7 +319,7 @@ export default defineComponent({
             formData.value.resolutionClassification = 2;
             textLabelInputSource.value = "지출원";
             textButton.value = store.state.common.ac120.arrResolutionType.find(
-              (element: any) => element.id == 21
+              (element: any) => element.id == 12
             )?.text;
             formData.value.letterOfApprovalType =
               formData.value.letterOfApprovalType ?? 1;
@@ -332,7 +332,7 @@ export default defineComponent({
             formData.value.clientId = null
             textLabelInputSource.value = "수입원";
             textButton.value = store.state.common.ac120.arrResolutionType.find(
-              (element: any) => element.id == 12
+              (element: any) => element.id == 21
             )?.text;
             formData.value.letterOfApprovalType = null;
             formData.value.causeUsage = null;

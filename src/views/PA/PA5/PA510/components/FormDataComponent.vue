@@ -256,20 +256,20 @@ export default defineComponent({
 		const originDataIncomeWageDaily = {
 			companyId: companyId,
 			incomeId: store.state.common.pa510.incomeId,
-			processKey: store.state.common.pa510.processKeyPA510,
+			processKey: processKey.value,
 		};
 
 		let requiredPaymentDay = ref();
 		const startDate = computed(() =>
 			dayjs(
-				`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`
+				`${paYear.value}-${processKey.value.paymentMonth}`
 			)
 				.startOf("month")
 				.toDate()
 		);
 		const finishDate = computed(() =>
 			dayjs(
-				`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`
+				`${paYear.value}-${processKey.value.paymentMonth}`
 			)
 				.endOf("month")
 				.toDate()
@@ -336,9 +336,9 @@ export default defineComponent({
 		onDoneAdd(async (data: any) => {
 			notification("success", messageAddSuccess);
 			if (store.state.common.pa510.checkClickYear) {
-				store.state.common.pa510.processKeyPA510.imputedYear =
+				processKey.value.imputedYear =
 					store.state.common.pa510.dataYearNew;
-				store.state.common.pa510.processKeyPA510.paymentYear =
+				processKey.value.paymentYear =
 					store.state.common.pa510.dataYearNew;
 				store.state.common.pa510.loadingTableInfo++;
 				await (store.state.settings.paYear =
@@ -376,9 +376,9 @@ export default defineComponent({
 		onerrorAdd(async (e: any) => {
 			//notification('error', e.message)
 			if (store.state.common.pa510.checkClickYear) {
-				store.state.common.pa510.processKeyPA510.imputedYear =
+				processKey.value.imputedYear =
 					store.state.common.pa510.dataYearNew;
-				store.state.common.pa510.processKeyPA510.paymentYear =
+				processKey.value.paymentYear =
 					store.state.common.pa510.dataYearNew;
 				store.state.common.pa510.loadingTableInfo++;
 				await (store.state.settings.paYear =
@@ -390,9 +390,9 @@ export default defineComponent({
 		onDoneUpdate(async (data: any) => {
 			notification("success", messageUpdateSuccess);
 			if (store.state.common.pa510.checkClickYear) {
-				store.state.common.pa510.processKeyPA510.imputedYear =
+				processKey.value.imputedYear =
 					store.state.common.pa510.dataYearNew;
-				store.state.common.pa510.processKeyPA510.paymentYear =
+				processKey.value.paymentYear =
 					store.state.common.pa510.dataYearNew;
 				store.state.common.pa510.loadingTableInfo++;
 				await (store.state.settings.paYear =
@@ -429,9 +429,9 @@ export default defineComponent({
 		onerrorUpdate(async (e: any) => {
 			//notification('error', e.message)
 			if (store.state.common.pa510.checkClickYear) {
-				store.state.common.pa510.processKeyPA510.imputedYear =
+				processKey.value.imputedYear =
 					store.state.common.pa510.dataYearNew;
-				store.state.common.pa510.processKeyPA510.paymentYear =
+				processKey.value.paymentYear =
 					store.state.common.pa510.dataYearNew;
 				store.state.common.pa510.loadingTableInfo++;
 				await (store.state.settings.paYear =
@@ -486,7 +486,7 @@ export default defineComponent({
 			await (dataIncomeWageDaily.value = data);
 			dataIncomeWageDaily.value.paymentDay = parseInt(
 				`${paYear.value}${filters.formatMonth(
-					store.state.common.pa510.processKeyPA510.paymentMonth
+					processKey.value.paymentMonth
 				)}${filters.formatMonth(data.paymentDay)}`
 			);
 			store.state.common.pa510.dataRowOld = { ...data };
@@ -729,15 +729,15 @@ export default defineComponent({
 					sampleDataIncomeWageDaily.paymentDay
 						? parseInt(
 							`${paYear.value}${filters.formatMonth(
-								store.state.common.pa510.processKeyPA510.paymentMonth
+								processKey.value.paymentMonth
 							)}${filters.formatMonth(sampleDataIncomeWageDaily.paymentDay)}`
 						)
 						: parseInt(
 							`${paYear.value}${filters.formatMonth(
-								store.state.common.pa510.processKeyPA510.paymentMonth
+								processKey.value.paymentMonth
 							)}${filters.formatMonth(
 								dayjs(
-									`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`
+									`${paYear.value}-${processKey.value.paymentMonth}`
 								).daysInMonth()
 							)}`
 						);
@@ -760,8 +760,8 @@ export default defineComponent({
 		const resetArrayEmploySelect = () => {
 			arrayEmploySelect.value = [];
 			let data = dataEmployeeWageDailies.value?.filter((data: any) => {
-				let statusJoinedAt = data.joinedAt ? parseInt(data.joinedAt.toString().slice(4, 6)) <= store.state.common.pa510.processKeyPA510.imputedMonth : true
-				let statusLeavedAt = data.leavedAt ? parseInt(data.leavedAt.toString().slice(4, 6)) >= store.state.common.pa510.processKeyPA510.imputedMonth : true
+				let statusJoinedAt = data.joinedAt ? parseInt(data.joinedAt.toString().slice(0, 6)) <= parseInt(processKey.value.imputedYear + '' + filters.formatMonth(processKey.value.imputedMonth)) : true
+				let statusLeavedAt = data.leavedAt ? parseInt(data.leavedAt.toString().slice(0, 6)) >= parseInt(processKey.value.imputedYear + '' + filters.formatMonth(processKey.value.imputedMonth)) : true
 				if (statusJoinedAt && statusLeavedAt) {
 					return data
 				}
@@ -980,15 +980,15 @@ export default defineComponent({
 				sampleDataIncomeWageDaily.paymentDay
 					? parseInt(
 						`${paYear.value}${filters.formatMonth(
-							store.state.common.pa510.processKeyPA510.paymentMonth
+							processKey.value.paymentMonth
 						)}${filters.formatMonth(sampleDataIncomeWageDaily.paymentDay)}`
 					)
 					: parseInt(
 						`${paYear.value}${filters.formatMonth(
-							store.state.common.pa510.processKeyPA510.paymentMonth
+							processKey.value.paymentMonth
 						)}${filters.formatMonth(
 							dayjs(
-								`${paYear.value}-${store.state.common.pa510.processKeyPA510.paymentMonth}`
+								`${paYear.value}-${processKey.value.paymentMonth}`
 							).daysInMonth()
 						)}`
 					);
