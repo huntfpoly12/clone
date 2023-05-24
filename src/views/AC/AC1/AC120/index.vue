@@ -16,8 +16,8 @@
 			<div class="flex">
 				<div class="action">
 					<ProcessStatus
-						v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
-						:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+						v-if="store.state.common.ac120.statusProcess"
+						:valueStatus="store.state.common.ac120.statusProcess"
 						:disabled="true" />
 					<button-basic v-else mode="contained" style="width: 90px" :disabled="true">
 					</button-basic>
@@ -26,13 +26,16 @@
 							<HistoryOutlined style="font-size: 18px" />
 						</a-tooltip>
 					</DxButton>
+					<div class="ml-10">
+						<span style="color: rgb(202, 131, 0);">(주의) 동일한 통장내역 전표는 함께 선택되며, 취소시 함께 취소됩니다.</span>
+					</div>
 				</div>
 				<div class="action">
 					<a-tooltip placement="top" color="black">
 						<template #title>전표 신규 건별 등록</template>
 						<span>
-							<DxButton class="ml-4 custom-button" type="default" :height="$config_styles.HeightInput"
-								@click="actionOpenModalAdd" :width="120" :disabled="store.state.common.ac120.statusFormAdd">
+							<DxButton class="ml-4 custom-button" type="default" :disabled="store.state.common.ac120.statusProcess != 10" :height="$config_styles.HeightInput"
+								@click="actionOpenModalAdd" :width="120">
 								<div class="d-flex-center">
 									<PlusOutlined style="font-size: 14px" />
 									<span class="pl-5">전표 건별 등록</span>
@@ -52,11 +55,12 @@
 							</DxButton>
 						</span>
 					</a-tooltip>
-					<DxButton class="ml-4 mr-4 custom-button-checkbox custom-button" type="default" :width="90"
+					<DxButton class="ml-4 mr-4 custom-button" type="default" :width="90"
+						:disabled="store.state.common.ac120.statusProcess != 10"
 						:height="$config_styles.HeightInput" @click="actionModalDelete">
 						<div class="d-flex-center">
-							<checkbox-basic :valueCheckbox="true" disabled="true" />
-							<span class="pl-5">전표취소</span>
+							<span><checkbox-basic :valueCheckbox="true" disabled="true" /></span>
+							<span>전표취소</span>
 						</div>
 					</DxButton>
 					<DxButton icon="plus" @click="modalHistoryAccountingDocuments">
@@ -84,7 +88,7 @@
 						v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
 						@selection-changed="selectionChanged">
 						<DxRowDragging
-							v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10"
+							v-if="store.state.common.ac120.statusProcess == 10"
 							:allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder" />
 						<DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
 						<DxScrolling mode="standard" show-scrollbar="always" />
@@ -280,7 +284,7 @@
 							<DxButton v-if="store.state.common.ac120.formData.handwriting == true"
 								:focusStateEnabled="false" text="수기" :style="{ backgroundColor: '#BB3835', color: 'white' }"
 								:height="$config_styles.HeightInput" />
-							<div class="ml-20">
+							<div class="ml-24">
 								<a-tooltip v-if="store.state.common.ac120.formData.resolutionNormalStatus == true"
 									placement="top" color="black" title="정상 여부">
 									<DxButton :focusStateEnabled="false" text="O"
@@ -390,12 +394,8 @@ export default defineComponent({
 		const store = useStore();
 		const move_column = computed(() => store.state.settings.move_column);
 		const colomn_resize = computed(() => store.state.settings.colomn_resize);
-		const acYear = ref<number>(
-			parseInt(sessionStorage.getItem("acYear") ?? "0")
-		);
-		const globalFacilityBizId = ref<number>(
-			parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0")
-		);
+		const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? "0"));
+		const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 		const clients = computed(() => store.state.settings.clients);
 		const dataApi = ref<any[]>([]);
 
@@ -420,9 +420,7 @@ export default defineComponent({
 		const dataGetAccountingProcesses = ref<any>([]);
 		const dataSource: any = ref<DataSource>();
 		// get store data
-		const storeDataSource: any = computed(
-			() => dataSource.value?.store() as Store
-		);
+		const storeDataSource: any = computed(() => dataSource.value?.store() as Store);
 		const totalCount = computed(() => dataSource.value?.totalCount());
 		const triggerGetAccountingProcesses = ref<boolean>(true);
 		const triggerGetAccountingDocuments = ref<boolean>(true);
@@ -443,6 +441,7 @@ export default defineComponent({
 		let statusClickAdd = ref<boolean>(false);
 		// let statusClickMonth = ref<boolean>(false)
 		let monthNewClick = ref<number>(0);
+		store.state.common.ac120.statusProcess = computed(() => dataGetAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0)
 
 		// =================== GRAPHQL ===================
 		// query getAccountingProcesses
@@ -503,11 +502,24 @@ export default defineComponent({
 		watch(resGetAccountingProcesses, (value) => {
 			triggerGetAccountingProcesses.value = false;
 			dataGetAccountingProcesses.value = value.getAccountingProcesses;
+			// dataGetAccountingProcesses.value = value.getAccountingProcesses.map((value: any, index: number) => {
+			// 	console.log(value);
+			// 	value.status = index%2 == 0 ? 10 : 20
+			// 	return value
+				
+			// });
+			// console.log(dataGetAccountingProcesses.value);
+			
 		});
 		// 2. getAccountingDocuments
 		watch(resGetAccountingDocuments, async (value) => {
 			triggerGetAccountingDocuments.value = false;
 			dataApi.value = value.getAccountingDocuments?.accountingDocuments;
+			if (dataApi.value.length) {
+				store.state.common.ac120.statusNoData = false
+			} else {
+				store.state.common.ac120.statusNoData = true
+			}
 			await calculateAmount();
 			dataSource.value = new DataSource({
 				store: {
@@ -609,13 +621,20 @@ export default defineComponent({
 				// store.state.common.ac120.statusFormAdd = true
 				// Object.assign(store.state.common.ac120.formData, initialStateFormData)
 				store.state.common.ac120.formData = { ...initialStateFormData };
+				store.state.common.ac120.formData.fundingSource = null;
+				store.state.common.ac120.formData.resolutionType = null;
+				store.state.common.ac120.formData.resolutionClassification = null;
+				store.state.common.ac120.formData.transactionDetailDate = null;
+				store.state.common.ac120.formData.source = null;
+				// store.state.common.ac120.formData = null;
+				// store.state.common.ac120.formData = {};
 				store.state.common.ac120.keyRefreshForm++;
 			}
 			// //console\.log(store.state.common.ac120.selectedRowKeys);
 
 			store.state.common.ac120.focusedRowKey = store.state.common.ac120.formData.accountingDocumentId;
 			formDataOld = { ...store.state.common.ac120.formData };
-			store.state.common.ac120.statusFormAdd = false;
+			// store.state.common.ac120.statusFormAdd = false;
 			// store.state.common.ac120.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
 			store.state.common.ac120.resetDataAccountingDocumentProofs++;
 
@@ -726,8 +745,6 @@ export default defineComponent({
 			delete formDataOldCheck.proofCount;
 			delete formData.proofCount;
 			if (!isEqual(formDataOldCheck, formData)) {
-				//console\.log('1');
-
 				isModalConfirmChangeData.value = true;
 				statusClickAdd.value = true;
 			} else {
@@ -849,6 +866,8 @@ export default defineComponent({
 			let formDataOldCheck: any = { ...formDataOld };
 			delete formDataOldCheck.proofCount;
 			delete formData.proofCount;
+			console.log(formDataOldCheck);
+			console.log(formData);
 			if (!isEqual(formDataOldCheck, formData)) {
 				//console\.log(formDataOldCheck, formData,'ẻtreterte');
 				isModalConfirmChangeData.value = true;
@@ -1014,6 +1033,7 @@ export default defineComponent({
 			gridRefAC120,
 			changeAmountDataGrid,
 			heightDrawer,
+			// statusProcess,
 		};
 	},
 });
