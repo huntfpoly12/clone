@@ -1,7 +1,7 @@
 <template>
     <div id="add-pa-210">
         <a-modal :visible="modalStatus" centered okText="네. 작성합니다" cancelText="아니요" @cancel="setModalVisible()"
-            :mask-closable="false" width="1000px" footer="">
+            :mask-closable="false" width="1000px" footer="">{{ focusedRowKey }}
             <standard-form formName="add-pa-210" class="pt-20">
                 <a-spin tip="Loading..." :spinning="loading">
                     <a-form-item label="지방소득세환급청구서/납부내역서">
@@ -12,12 +12,15 @@
                         :data-source="dataReports" :show-borders="true" key-expr="reportId"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
-                        :onRowClick="onSelectionChanged">
+                        :onRowClick="onSelectionChanged" @row-prepared="onRowPrepared">
                         <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxColumn caption="선택" cell-template="radioCheck" />
                         <template #radioCheck="{ data }">
                             <div class="text-align-center pt-8">
-                                <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.reportId ? true : false"/>
+                                <input type="radio" name="radioCheck" 
+                                :checked="!disableRadio(data.data.imputedYear,data.data.imputedMonth) && focusedRowKey == data.data.reportId ? true : false" 
+                                :disabled="disableRadio(data.data.imputedYear,data.data.imputedMonth)"
+                                />
                             </div>
                         </template>
                         <DxColumn caption="귀속 연월" cell-template="imputed" />
@@ -95,6 +98,8 @@ import { useStore } from "vuex";
 import { getReportType, showTooltipYearMonth } from "../utils/index"
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import notification from "@/utils/notification";
+import { startYearMonth } from "@/helpers/commonFunction";
+import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -207,7 +212,7 @@ export default defineComponent({
             },
         ];
         const afterDeadline = ref(false)
-        const focusedRowKey = ref<Number>(1);
+        const focusedRowKey = ref(null);
         // ===================WATCH==================================
         watch(() => props.dataPopupAdd, (value: any) => {
             loading.value = true;
@@ -305,7 +310,9 @@ export default defineComponent({
                 })
             }
             dataReport.value = dataReports.value.length ? [dataReports.value[0]] : []
-            focusedRowKey.value = dataReports.value.length ? dataReports.value[0].reportId : null
+            // check  tháng để focus row  nếu nó là tháng 1 thì focus row đầu luôn.  nếu mà tháng khác thì trừ 1 đơn vị
+            let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 ? 0 : parseInt(startYearMonth.toString().slice(-2)) - 1
+            focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
             loading.value = false;
         }, { deep: true })
 
@@ -341,17 +348,43 @@ export default defineComponent({
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
         };
+
+        // hàm xử lý việc disable row
+      const onRowPrepared = (e: any) => {
+          
+          if (e.rowType === 'data' && disableRadio(e.data.imputedYear,e.data.imputedMonth)) {
+            e.rowElement.classList.add('disabled-row');
+            e.rowElement.removeEventListener('click', handleRowClick);
+          }
+        };
+
+        const handleRowClick = (event :any) => {
+          // Xử lý sự kiện click trên hàng (row)
+        };
+
+        const disableRadio = (inputedYear: number,inputedMonth : number) => {
+          let month = filters.formatMonth(inputedMonth)
+          let stYMonth = parseInt(inputedYear.toString() + month)
+          return stYMonth < startYearMonth 
+        }
         return {
             globalYear, move_column, colomn_resize, dayjs,
             onSelectionChanged,
             getReportType,
+            disableRadio,
             dataReports, dataReport,
             loading,
             onSubmit,
             setModalVisible,
             reportGridStatus,
-            arrayRadioCheck, afterDeadline,
-            focusedRowKey,resetComponent, showTooltipYearMonth,closeAllPopupAdd,closeAllPopupAddWhenDone
+            arrayRadioCheck,
+            afterDeadline,
+            focusedRowKey,
+            resetComponent,
+            showTooltipYearMonth,
+            closeAllPopupAdd,
+            closeAllPopupAddWhenDone,
+            onRowPrepared
         };
     },
 });
@@ -365,4 +398,5 @@ export default defineComponent({
 ::v-deep .ant-form-item-control-input {
     align-items: flex-end !important;
 }
+
 </style>
