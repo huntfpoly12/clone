@@ -39,13 +39,17 @@
 						</a-form-item>
 					</a-col>
 					<a-col :span="5" class="col-4">
-						<a-form-item label="계정과목" class="red">
-							<account-code-select :key="resetSelectAccount" :classification="classificationAccountCode"
-								v-model:valueInput="formDataAdd.accountCode" width="190px" :required="true" />
-						</a-form-item>
 						<a-form-item class="red" label="자금원천">
 							<FundingSourceSelect placeholder="선택" :width="190" :required="true"
 								v-model:valueInput="formDataAdd.fundingSource" />
+						</a-form-item>
+						<!-- <a-form-item label="계정과목" class="red">
+							<account-code-select :key="resetSelectAccount" :classification="classificationAccountCode"
+								v-model:valueInput="formDataAdd.accountCode" width="190px" :required="true" />
+						</a-form-item> -->
+						<a-form-item label="계정과목">
+							<account-code-select :key="resetSelectAccount" :classification="classificationAccountCode"
+								v-model:valueInput="formDataAdd.accountCode" width="190px" />
 						</a-form-item>
 					</a-col>
 					<a-col :span="7" class="col-1">
