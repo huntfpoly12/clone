@@ -125,3 +125,14 @@
 .fs-14{
   font-size: 14px;
 }
+.summary-ctn {
+  border: 1px solid #ddd;
+  border-top: none;
+  display: flex;
+  padding: 5px 10px;
+  min-height: 57px;
+  .sum-item {
+    text-align: right;
+    flex: 1;
+  }
+}
