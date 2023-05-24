@@ -157,7 +157,6 @@ const dataSource = ref(new DataSource({
   // requireTotalCount: true,
 }))
 const arrSelectClassification = ref([{id: 'test', name: 'test'}])
-console.log('accountSubject', accountSubject)
 // create mutation useQuery
 const {mutate, onDone, loading, onError} = useMutation(mutations.saveEmployeePayTable)
 onDone(({data}) => {

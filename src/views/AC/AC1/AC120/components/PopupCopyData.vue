@@ -140,6 +140,7 @@ import {
   DxScrolling,
   DxSearchPanel,
 } from "devextreme-vue/data-grid";
+import dayjs from "dayjs";
 
 export default defineComponent({
   props: ["modalStatus", "data", "title"],
@@ -174,7 +175,7 @@ export default defineComponent({
       fiscalYear: acYear.value,
       facilityBusinessId: globalFacilityBizId.value,
       year: acYear.value,
-      month: 4,
+      month: dayjs().month() + 1,
     });
 
     const focusedRowKey = ref<Number>(1);

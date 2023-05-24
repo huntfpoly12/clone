@@ -297,6 +297,7 @@ import filters from "@/helpers/filters";
 import ComponentDetail from "./components/ComponentDetail.vue";
 import CopyMonth from "./components/CopyMonth.vue";
 
+const retirementStatus = computed(() => store.getters['common/getRetirementStatus']);
 let statusButton = ref(0)
 let actionSave = ref(0)
 let dataSource: any = ref([]);
@@ -333,7 +334,6 @@ const {
 }));
 resIncomeProcessBusinesses(res => {
   //set status to 10 if data is empty, status will default to 10
-  statusButton.value = 10
   let respon = res.data.getIncomeProcessRetirements
   dataSource.value = [{
     companyId: companyId,
@@ -394,6 +394,8 @@ resIncomeProcessBusinesses(res => {
         })
         //If there is data, then assign the status with the status of the month in focus
         statusButton.value = val.status
+        store.commit('common/setRetirementStatus', val.status)
+        statusButton.value = val.status
       }
 
     })
@@ -409,6 +411,7 @@ errorGetIncomeProcessBusinesses(res => {
 const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any, status: any) => {
   //assign status with the status of the selected month
   statusButton.value = status
+  store.commit('common/setRetirementStatus', status)
   store.commit('common/setSelectMonthColumn', {
     imputedMonth: imputedMonth,
     imputedYear: imputedYear,
@@ -446,11 +449,11 @@ const dataAddIncomeProcess = (data: any) => {
   dataSource.value[0]['month' + data.imputedMonth] = data
   dataSource.value[0]['month' + data.imputedMonth].status = 10
   statusButton.value = 10
+  store.commit('common/setRetirementStatus', 10)
 }
 const actionCopySuccess = () => {
   modalCopy.value = false
 }
-
 const disableAddMonth = (val: any) => {
       let date = dayjs(globalYear.value + '' + val);
       let dateToCompare = dayjs(`${startYearMonth}`, 'YYYYMM')

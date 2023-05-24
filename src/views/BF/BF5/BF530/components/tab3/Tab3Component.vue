@@ -22,7 +22,7 @@
           <a-form-item label="상태">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="situationSelectbox"
+              :arrSelect="workingStatusSelectbox"
               v-model:valueInput="formState.workingStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -94,7 +94,12 @@
             data-field="companyId"
             alignment="center"
           />
-          <DxColumn caption="신고구분" data-field="type" alignment="center" />
+          <DxColumn
+            caption="신고구분"
+            data-field="type"
+            alignment="center"
+            :format="reportTypeText"
+          />
           <DxColumn caption="업체명" data-field="companyName" />
           <DxColumn caption="사업장관리번호" data-field="paymentYearMonth" />
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
@@ -106,7 +111,7 @@
           <template #workingStatus="{ data }: any">
             <SelectBoxCT
               :searchEnabled="true"
-              :arrSelect="situationSelectbox"
+              :arrSelect="workingStatusSelectbox"
               v-model:valueInput="data.data.workingStatus"
               displayeExpr="text"
               valueExpr="id"
@@ -131,22 +136,31 @@
             width="125"
             alignment="center"
             data-type="date"
-            format="yyyy-MM-dd HH:mm"
+            format="yyyy-MM-dd"
           />
           <DxColumn
             caption="접수일"
             data-field="acceptedAt"
             width="125"
             data-type="date"
-            format="yyyy-MM-dd HH:mm"
+            format="yyyy-MM-dd"
           />
           <DxColumn
             caption="완료일"
             data-field="completedAt"
-            width="125"
+            alignment="left"
             data-type="date"
-            format="yyyy-MM-dd HH:mm"
+            cell-template="completedAt"
           />
+          <template #completedAt="{ data }">
+            <div
+              v-if="
+                data.data.workingStatus == 0 || data.data.workingStatus == 10
+              "
+            >
+              {{ dayjs(data.data.completedAt).format("YYYY-MM-DD") }}
+            </div>
+          </template>
           <DxColumn
             caption="접수번호"
             width="155px"
@@ -160,10 +174,14 @@
           </template>
           <DxColumn caption="메모" width="135px" cell-template="memo" />
           <template #memo="{ data }: any">
-            <default-text-box
-              :width="120"
-              v-model:valueInput="data.data.memo"
-            />
+            <a-tooltip zIndex="9999999" placement="top" color="black">
+              <template #title> {{ data.data.memo }} </template>
+              <div></div>
+              <default-text-box
+                :width="120"
+                v-model:valueInput="data.data.memo"
+              />
+            </a-tooltip>
           </template>
           <DxColumn
             caption="신고서다운로드"
@@ -214,9 +232,6 @@
                 zIndex="9999"
               >
                 <template #content>
-                  <span @click="data.data.visible = false" class="btn-close"
-                    >x</span
-                  >
                   <div class="mb-5">아직 제공되지 않는 기능입니다.</div>
                 </template>
                 <a href="#"></a>
@@ -290,7 +305,7 @@
       content=""
       okText="네"
       cancelText="아니오"
-      @checkConfirm="viewUrlModal = true"
+      @checkConfirm="downConfirm2"
       typeModal="confirm"
     />
   </div>
@@ -325,18 +340,20 @@ import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
 import {
   reportTypeSelectboxTab3,
-  situationSelectbox,
-  acceptanceStatusSelectbox,
-  healthSelectbox,
+  workingStatusSelectbox,
+  companyConsignStatusSelectbox,
+  EDIStatusSelectbox,
   formatMonth,
   dataTableTab1,
   states1,
   reportTypeSelectbox2,
+  reportTypeText,
 } from "../../utils/index";
 import dayjs from "dayjs";
 import Download from "./Download.vue";
 import History from "./History.vue";
 import SelectBoxCT from "./../SelectBoxCT.vue";
+import { Action } from "rxjs/internal/scheduler/Action";
 export default defineComponent({
   components: {
     DxButton,
@@ -523,6 +540,7 @@ export default defineComponent({
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl
           );
+          cancelWhenViewUrl();
         }
         type1ViewUrlTrigger.value = false;
       }
@@ -549,6 +567,7 @@ export default defineComponent({
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl
           );
+          cancelWhenViewUrl();
         }
         type2ViewUrlTrigger.value = false;
       }
@@ -575,6 +594,7 @@ export default defineComponent({
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeSalaryChangeFaxFilingReportViewUrl
           );
+          cancelWhenViewUrl();
         }
         type3ViewUrlTrigger.value = false;
       }
@@ -601,6 +621,7 @@ export default defineComponent({
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl
           );
+          cancelWhenViewUrl();
         }
         type4ViewUrlTrigger.value = false;
       }
@@ -627,6 +648,7 @@ export default defineComponent({
           window.open(
             newVal.getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl
           );
+          cancelWhenViewUrl();
         }
         type5ViewUrlTrigger.value = false;
       }
@@ -664,23 +686,46 @@ export default defineComponent({
       }
     };
     const downConfirm1 = () => callApiUrl();
+    const downConfirm2 = (e: any) => {
+      if (e) {
+        viewUrlModal.value = true;
+        cancelWhenViewUrl();
+      }
+    };
+    const cancelWhenViewUrl = () => {
+      if (viewUrlType.value == 1) {
+        cancel1(viewUrlParam.value);
+      }
+      if (viewUrlType.value == 2) {
+        cancel2(viewUrlParam.value);
+      }
+      if (viewUrlType.value == 3) {
+        cancel3(viewUrlParam.value);
+      }
+      if (viewUrlType.value == 4) {
+        cancel4(viewUrlParam.value);
+      }
+      if (viewUrlType.value == 5) {
+        cancel5(viewUrlParam.value);
+      }
+    };
 
     // ---------------------- DOWN LOAD --------------------
 
     const urlDownLoad = ref("");
     const downLoadParam: any = ref();
-    const onDownLoad = (e: any) => {
-      viewUrlType.value = e.type;
+    const onDownLoad = (data: any) => {
+      viewUrlType.value = data.type;
       viewUrlParam.value = {
         ...viewUrlParam.value,
-        companyId: e.companyId,
-        workId: e.workId,
+        companyId: data.companyId,
+        workId: data.workId,
       };
       downModal2.value = true;
-      if (e.type !== 5) {
+      if (data.type !== 5) {
         callApiUrl();
       }
-      downLoadParam.value = e;
+      downLoadParam.value = data;
     };
 
     //------------------------ACTION UPDATE TABLE--------------------------------
@@ -690,7 +735,9 @@ export default defineComponent({
       mutate: creation1,
       onDone: onDone1,
       onError: onError1,
-    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeAcquisitionData);
+    } = useMutation(
+      mutations.updateMajorInsuranceCompanyEmployeeAcquisitionData
+    );
     onDone1(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
@@ -707,6 +754,9 @@ export default defineComponent({
     onDone12(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError12((e: any) => {
       notification("error", e.message);
@@ -733,17 +783,22 @@ export default defineComponent({
     onDone22(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError22((e: any) => {
       notification("error", e.message);
     });
-    
+
     //update 2
     const {
       mutate: creation3,
       onDone: onDone3,
       onError: onError3,
-    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeSalaryChangeData);
+    } = useMutation(
+      mutations.updateMajorInsuranceCompanyEmployeeSalaryChangeData
+    );
     onDone3(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
@@ -760,6 +815,9 @@ export default defineComponent({
     onDone32(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError32((e: any) => {
       notification("error", e.message);
@@ -769,7 +827,9 @@ export default defineComponent({
       mutate: creation4,
       onDone: onDone4,
       onError: onError4,
-    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeLeaveOfAbsenceData);
+    } = useMutation(
+      mutations.updateMajorInsuranceCompanyEmployeeLeaveOfAbsenceData
+    );
     onDone4(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
@@ -782,21 +842,28 @@ export default defineComponent({
       mutate: cancel4,
       onDone: onDone42,
       onError: onError42,
-    } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeLeaveOfAbsence);
+    } = useMutation(
+      mutations.cancelMajorInsuranceCompanyEmployeeLeaveOfAbsence
+    );
     onDone42(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError42((e: any) => {
       notification("error", e.message);
     });
-    
+
     //update 5
     const {
       mutate: creation5,
       onDone: onDone5,
       onError: onError5,
-    } = useMutation(mutations.updateMajorInsuranceCompanyEmployeeReturnToWorkData);
+    } = useMutation(
+      mutations.updateMajorInsuranceCompanyEmployeeReturnToWorkData
+    );
     onDone5(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
@@ -813,6 +880,9 @@ export default defineComponent({
     onDone52(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      if (!employeeRequestListTrigger.value) {
+        employeeRequestListTrigger.value = true;
+      }
     });
     onError52((e: any) => {
       notification("error", e.message);
@@ -889,9 +959,9 @@ export default defineComponent({
       formatMonth,
       filterDsTab3Bf530,
       reportTypeSelectboxTab3,
-      situationSelectbox,
-      acceptanceStatusSelectbox,
-      healthSelectbox,
+      workingStatusSelectbox,
+      companyConsignStatusSelectbox,
+      EDIStatusSelectbox,
       states1,
       reportTypeSelectbox2,
       onGetAcquistionRp,
@@ -908,6 +978,9 @@ export default defineComponent({
       onDownLoad,
       downLoadParam,
       urlDownLoad,
+      reportTypeText,
+      dayjs,
+      downConfirm2,
     };
   },
 });

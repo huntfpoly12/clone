@@ -354,14 +354,14 @@ export default defineComponent({
 		let requiredPaymentDay = ref();
 		const startDate = computed(() =>
 			dayjs(
-				`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`
+				`${paYear.value}-${processKey.value.paymentMonth}`
 			)
 				.startOf("month")
 				.toDate()
 		);
 		const finishDate = computed(() =>
 			dayjs(
-				`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`
+				`${paYear.value}-${processKey.value.paymentMonth}`
 			)
 				.endOf("month")
 				.toDate()
@@ -578,14 +578,14 @@ export default defineComponent({
 
 				// console.log(value.find((item: any) => item.itemCode == 1012).amountNew);
 				// console.log(value.find((item: any) => item.itemCode == 1012).amount);
-
+			if(store.state.common.pa110.statusFormAdd) {
 				localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
 				localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
 				value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
-				calculateTax();
-			},
-			{ deep: true }
-		);
+			}
+				
+			calculateTax();
+		},{ deep: true });
 
 		watch(
 			() => dataConfigPayItems.value,
@@ -629,15 +629,15 @@ export default defineComponent({
 				dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay
 					? parseInt(
 						`${paYear.value}${filters.formatMonth(
-							store.state.common.pa110.processKeyPA110.paymentMonth
+							processKey.value.paymentMonth
 						)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`
 					)
 					: parseInt(
 						`${paYear.value}${filters.formatMonth(
-							store.state.common.pa110.processKeyPA110.paymentMonth
+							processKey.value.paymentMonth
 						)}${filters.formatMonth(
 							dayjs(
-								`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`
+								`${paYear.value}-${processKey.value.paymentMonth}`
 							).daysInMonth()
 						)}`
 					);
@@ -765,7 +765,7 @@ export default defineComponent({
 				dataIW.value.employee.employeeId = data.employee.employeeId;
 				dataIW.value.paymentDay = parseInt(
 					`${paYear.value}${filters.formatMonth(
-						store.state.common.pa110.processKeyPA110.paymentMonth
+						processKey.value.paymentMonth
 					)}${filters.formatMonth(data.paymentDay)}`
 				);
 
@@ -880,8 +880,8 @@ export default defineComponent({
 		const resetArrayEmploySelect = () => {
 			arrayEmploySelect.value = [];
 			let data = dataEmployeeWageDailies.value?.filter((data: any) => {
-				let statusJoinedAt = data.joinedAt ? parseInt(data.joinedAt.toString().slice(4, 6)) <= store.state.common.pa110.processKeyPA110.imputedMonth : true
-				let statusLeavedAt = data.leavedAt ? parseInt(data.leavedAt.toString().slice(4, 6)) >= store.state.common.pa110.processKeyPA110.imputedMonth : true
+				let statusJoinedAt = data.joinedAt ? parseInt(data.joinedAt.toString().slice(0, 6)) <= parseInt(processKey.value.imputedYear +''+ filters.formatMonth(processKey.value.imputedMonth)) : true
+				let statusLeavedAt = data.leavedAt ? parseInt(data.leavedAt.toString().slice(0, 6)) >= parseInt(processKey.value.imputedYear +''+ filters.formatMonth(processKey.value.imputedMonth)) : true
 				if (statusJoinedAt && statusLeavedAt) {
 					return data
 				}
@@ -889,16 +889,13 @@ export default defineComponent({
 			if (store.state.common.pa110.statusFormAdd) {
 				data.map((dataEmployee: any) => {
 					if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
-						if (dataEmployee.leavedAt) {
-							if (
-								parseInt(dataEmployee.leavedAt?.toString().slice(4, 6)) >=
-								store.state.common.pa110.processKeyPA110.imputedMonth
-							) {
-								arrayEmploySelect.value.push(dataEmployee);
-							}
-						} else {
+						// if (dataEmployee.leavedAt) {
+						// 	if (parseInt(dataEmployee.leavedAt?.toString().slice(4, 6)) >= processKey.value.imputedMonth) {
+						// 		arrayEmploySelect.value.push(dataEmployee);
+						// 	}
+						// } else {
 							arrayEmploySelect.value.push(dataEmployee);
-						}
+						// }
 					}
 				});
 			} else {
@@ -1100,15 +1097,15 @@ export default defineComponent({
 			dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay
 				? parseInt(
 					`${paYear.value}${filters.formatMonth(
-						store.state.common.pa110.processKeyPA110.paymentMonth
+						processKey.value.paymentMonth
 					)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`
 				)
 				: parseInt(
 					`${paYear.value}${filters.formatMonth(
-						store.state.common.pa110.processKeyPA110.paymentMonth
+						processKey.value.paymentMonth
 					)}${filters.formatMonth(
 						dayjs(
-							`${paYear.value}-${store.state.common.pa110.processKeyPA110.paymentMonth}`
+							`${paYear.value}-${processKey.value.paymentMonth}`
 						).daysInMonth()
 					)}`
 				);

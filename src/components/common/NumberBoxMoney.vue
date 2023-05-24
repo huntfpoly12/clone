@@ -1,6 +1,6 @@
 
 <template>
-    <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input" @focusIn="onFocusIn"
+    <DxNumberBox v-bind="$props" @valueChanged="updateValue" :width="width" value-change-event="input" @focusIn="onFocusIn"
         :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
         :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange"
         :mode="mode" :style="{ height: $config_styles.HeightInput, textAlign: rtlEnabled ? 'right' : 'left', }"
