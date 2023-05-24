@@ -5,7 +5,7 @@
     :mask-closable="false"
     class="confirm-md ac-110-popup-detail"
     footer=""
-    :width="1100"
+    :width="1110"
   >
     <p class="ac-110-popup-detail-title">물품내역</p>
     <a-spin :spinning="false" size="large">
@@ -325,10 +325,10 @@ export default defineComponent({
       } else {
         dataSource.value.statementOfGoodsItems = [];
       }
-      dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems);
       if(!dataSource.value.statementOfGoodsItems.length) {
         addNewRow()
       }
+      dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems);
     };
 
     const cancel = () => {

@@ -30,9 +30,9 @@
     }
   }
   &__main {
-    margin-top: 30px;
+    margin-top: 10px;
     &-content {
-      height: calc(100vh - 271px);
+      height: calc(100vh - 250px);
       &:first-child {
         padding-right: 5px;
       }
@@ -40,17 +40,19 @@
         padding-left: 5px;
       }
       &-check {   
-        height: calc(100vh - 271px);
+        height: calc(100vh - 250px);
         border: 1px solid #bfbfbf;
         overflow: hidden;
         &-title {
           background-color: #bdd7ee;
           padding: 3px 5px;
           text-align: center;
+          font-size: 16px;
         }
         &-checklist {
           height: calc(100% - 25px);
           overflow-y: auto;
+          padding: 5px;
           &-header {
             display: flex;
             align-items: center;
@@ -73,6 +75,7 @@
           padding: 3px 5px;
           text-align: center;
           position: relative;
+          font-size: 16px;
           &-btnReload {
             position: absolute;
             top: 50%;
@@ -82,7 +85,7 @@
           }
         }
         &-chat {
-          height: calc(100% - 27px);
+          height: calc(100% - 31px);
         }
         :deep(.ant-badge-dot) {
           width: 10px;
@@ -91,9 +94,12 @@
       }
     }
   }
+  :deep .ant-collapse {
+    border: none;
+  }
   :deep .ant-collapse-item {
     background-color: #D9D9D9;
-    border-radius: 0 0 5px 5px;
+    border-radius: 5px;
     .ant-collapse-header {
       padding: 6px 40px 6px 6px;
     }
@@ -105,6 +111,5 @@
   }
   :deep .ant-collapse-item + .ant-collapse-item {
     margin-top: 10px;
-    border-radius: 5px;
   }
 }

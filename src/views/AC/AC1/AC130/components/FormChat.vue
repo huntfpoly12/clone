@@ -172,7 +172,7 @@ export default defineComponent({
     onResGetAccountingClosingMessages((data) => {
       listChat.value = [...data.data.getAccountingClosingMessages.datas.reverse()]
       nextTick(() => {
-        formTimeline.value.scrollTop = 10000000
+        formTimeline.value.scroll({top: 10000000, behavior: "instant",})
       })
       triggerGetAccountingClosingMessages.value = false
     })

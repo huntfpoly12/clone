@@ -17,7 +17,8 @@
             :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" @focused-row-changing="onFocusedRowChanging"
-            @row-click="onRowClick" noDataText="내역이 없습니다">
+            @row-click="onRowClick"
+            :noDataText="loadingGetBankbookDetails || loadingSyncBankbookDetails ? '' : '내역이 없습니다'">
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
@@ -59,7 +60,7 @@
                 </a-tooltip>
               </div>
             </template>
-            <DxColumn header-cell-template="title-header-checkbox" cell-template="checkbox" width="80"
+            <DxColumn header-cell-template="title-header-checkbox" cell-template="checkbox" width="70"
               alignment="center" />
             <template #title-header-checkbox="{ data }">
               <div class="ac-110-checkboxAll" :class="{ 'ac-110-checkboxAll-disable': !listItemAllowedChoose.length }"
@@ -120,12 +121,13 @@
                 <div class="mr-5" :class="data.data.documentRegistered ? 'tag-green-ac110' : 'tag-red-ac110'">{{
                   data.data.documentRegistered ? 'O' : 'X' }}</div>
                 <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="data.data.documentRegistered ? 'outlined' : 'contained'
-                  " @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails" />
+                  " @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails"
+                  :style="!data.data.documentRegistered ? 'border: 1px solid #fff;' : ''" />
               </div>
             </template>
           </DxDataGrid>
           <div class="DxDataGridMain-ac-110-sumary">
-            <div v-html="`통장내역수: <span style='font-size: 16px !important'>[${dataSource.length}]</span>`
+            <div v-html="`<span style='font-size: 13px !important'>통장내역수:</span> <span style='font-size: 15px !important'>[${dataSource.length}]</span>`
               "></div>
             <div v-html="totalDeposits()"></div>
             <div v-html="totalWithdrawal()"></div>
@@ -349,7 +351,8 @@
           <div class="ac-110__main-detail-detail2-upload">
             <UploadPreviewImage width="295" :payLoadProofs="payloadGetTransactionDetails"
               @updateAddBankbookDetailProof="updateAddBankbookDetailProof" :bankbookDetailId="rowKeyfocused"
-              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" :disabled="isRegistered" :limit="10" />
+              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" @progressingFiles="progressingFiles"
+              :disabled="isRegistered" :limit="10" />
           </div>
         </div>
       </div>
@@ -599,6 +602,8 @@ export default defineComponent({
     const listItemAllowedChoose = computed(() => {
       return dataSource.value.filter((items: any) => items.normalTransactionDetails && !items.documentRegistered).map((items: any) => items.bankbookDetailId) || []
     })
+
+    const isProgressingFiles = ref(false)
     // -------------- GRAPHQL --------------
     // queries
     const {
@@ -880,7 +885,7 @@ export default defineComponent({
       }
     };
     const onFocusedRowChanging = (event: any) => {
-      if (isClickColunmSelect) {
+      if (isClickColunmSelect || isProgressingFiles.value) {
         event.cancel = true;
         return
       }
@@ -908,7 +913,7 @@ export default defineComponent({
       event.cancel = true;
     };
     const onRowClick = (event: any) => {
-      if (isClickColunmSelect) {
+      if (isClickColunmSelect || isProgressingFiles.value) {
         isClickColunmSelect = false
         return
       }
@@ -962,7 +967,7 @@ export default defineComponent({
       dataSource.value.forEach((item) => {
         total += item.deposit;
       });
-      return `입금액 합계: <span style='font-size: 16px !important'>[${formatNumber(
+      return `<span style='font-size: 13px !important'>입금액 합계:</span> <span style='font-size: 15px !important'>[${formatNumber(
         total
       )}]</span>`;
     };
@@ -971,7 +976,7 @@ export default defineComponent({
       dataSource.value.forEach((item) => {
         total += item.withdraw;
       });
-      return `출금액 합계: <span style='font-size: 16px !important'>[${formatNumber(
+      return `<span style='font-size: 13px !important'>출금액 합계:</span> <span style='font-size: 15px !important'>[${formatNumber(
         total
       )}]</span>`;
     };
@@ -985,7 +990,7 @@ export default defineComponent({
           totalCancellation++;
         }
       });
-      return `전표등록 여부 <span style='font-size: 16px !important'>[O: ${totalRegistration}, X: ${totalCancellation}]</span>`;
+      return `<span style='font-size: 13px !important'>전표등록 여부:</span> <span style='font-size: 15px !important'>[O: ${totalRegistration}, X: ${totalCancellation}]</span>`;
     };
     // ---------------Grid detail----------------
     const totalTransactions = () => {
@@ -1222,6 +1227,11 @@ export default defineComponent({
       );
       dataSource.value[indexSelected].proofCount--;
     };
+
+    const progressingFiles = (value: boolean) => {
+      isProgressingFiles.value = value
+    }
+
     const focusInputIncomeSpending = (data: any, key: string) => {
       if (key === "income") {
         if (!data.data.income) {
@@ -1405,6 +1415,7 @@ export default defineComponent({
       listAccountingProcesses,
       updateremoveBankbookDetailProof,
       updateAddBankbookDetailProof,
+      progressingFiles,
       refGridDetailAc110,
       fundingSource,
       letterOfApprovalType,
@@ -1430,4 +1441,62 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-}</style>
+}
+</style>
+<style lang="scss" scoped>
+#DxDataGridMainAc110 {
+  height: calc(100vh - 540px);
+
+  :deep .dx-freespace-row {
+    display: none !important;
+  }
+
+  :deep #dx-col-1 {
+    padding: 0;
+  }
+
+  :deep td[aria-describedby="dx-col-1"] {
+    padding: 0;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .ac-110-checkboxAll {
+    cursor: pointer;
+    width: 70px;
+    text-align: center;
+    justify-content: center;
+    height: 26px;
+    padding-top: 2px;
+
+    :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
+      border-color: #c7c7c7;
+      cursor: pointer;
+    }
+
+    &-disable {
+      pointer-events: none;
+      opacity: 0.2;
+    }
+  }
+
+  .ac-110-checkbox {
+    cursor: pointer;
+    width: 70px;
+    height: 36px;
+    justify-content: center;
+    padding-top: 8px;
+    pointer-events: auto;
+
+    :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
+      border-color: #c7c7c7;
+      cursor: pointer;
+    }
+
+    &-disable {
+      pointer-events: none;
+      opacity: 0.2;
+    }
+  }
+}
+</style>

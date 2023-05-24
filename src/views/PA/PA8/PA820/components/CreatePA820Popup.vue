@@ -455,7 +455,7 @@ export default defineComponent({
       if (newVal == 10) {
         employeeArr.value = employeeWages.value.filter((employee: any) => !!employee.leavedAt)
       } else {
-        employeeArr.value = employeeWageDailies.value
+        employeeArr.value = employeeWageDailies.value.filter((employee: any) => !!employee.leavedAt)
       }
     }, { deep: true })
 

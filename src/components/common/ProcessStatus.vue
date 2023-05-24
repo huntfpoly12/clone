@@ -48,6 +48,10 @@ export default defineComponent({
           type: Number,
           default: 30
         },
+        preventChange: {
+            type: Boolean,
+            required: false
+        }
     },
     setup(props, { emit }) {
         const value = ref(props.valueStatus);
@@ -70,8 +74,10 @@ export default defineComponent({
 
         const submit = () => {
             showModal.value = false;
-            currentBt.value = value.value
-            emit("update:valueStatus", value.value);
+            if(!props.preventChange) {
+                currentBt.value = value.value
+                emit("update:valueStatus", value.value);
+            }
             emit("checkConfirmRowTable", {
                 ...props.dataRow,
                 'status': value.value
