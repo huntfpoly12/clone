@@ -3,7 +3,7 @@ import { WithholdingStatusReport } from "@bankda/jangbuda-common";
 import Handsontable from "handsontable";
 import { getObjectWithPositiveValues } from "../../utils";
 const cellValueGreaterThan0 = (query: any, callback: any) => {
-  if ((typeof query == 'number' && query >= 0) || query === null) {
+  if ((typeof query == 'number' && query > 0) || query === null) {
     callback(true)
   } else {
     callback(false)
@@ -332,9 +332,9 @@ export const cellsSetting = [
     { row: 16, col: 6  , className: 'htMiddle htRight gray-cell' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true},
     { row: 16, col: 7  , className: 'htMiddle htRight gray-cell' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true},
     { row: 16, col: 8  , className: 'htMiddle htRight mid-gray-cell',readOnly: true ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },editor:CustomNumberEditor},
-    { row: 16, col: 9  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true},
-    { row: 16, col: 10  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true},
-    { row: 16, col: 11  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true},
+    { row: 16, col: 9  , className: 'htMiddle htRight gray-cell' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true},
+    { row: 16, col: 10  , className: 'htMiddle htRight gray-cell' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true},
+    { row: 16, col: 11  , className: 'htMiddle htRight gray-cell' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true},
     { row: 16, col: 12  , className: 'htMiddle htRight mid-gray-cell',readOnly: true ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
 
     { row: 17, col: 5  , className: 'htMiddle htRight mid-gray-cell',readOnly: true ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },editor:CustomNumberEditor},
@@ -614,52 +614,54 @@ export const clearAllCellValue = (wrapper: any) => {
   // })
 } 
 
-export const setValueDataTable = (wrapper: any,code: string, data: any) => {
+export const setValueDataTable = async (wrapper: any, code: string, data: any) => {
+  
   let hot = wrapper?.value.hotInstance;
   const rowPosition = inputPosition.find(item => item.className == code);
-  if (typeof data.numberOfPeople === "number")
-    hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople, 'setdata');
-  if (typeof data.totalPayment === "number")
-    hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment,'setdata');
-  if (typeof data.collectedIncomeTax === "number")
-    hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax,'setdata');
-  if (typeof data.collectedRuralSpecialTax === "number")
-    hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax,'setdata');
-  if (typeof data.collectedExtraTax === "number")  
-    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax, 'setdata');
 
- 
-  if (typeof data.thisMonthAdjustedRefundTaxAmount === "number")
+  // kiểm tra giá trị của cell truyền vào có là number không hoặc null cũng cho pass để clear cell thành rỗng
+  if (typeof data.numberOfPeople === "number" || data.numberOfPeople === null)
+    hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople, 'setdata');
+  if (typeof data.totalPayment === "number" || data.totalPayment === null)
+    hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment,'setdata');
+  if (typeof data.collectedIncomeTax === "number" || data.collectedIncomeTax === null)
+    hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax,'setdata');
+  if (typeof data.collectedRuralSpecialTax === "number" || data.collectedRuralSpecialTax === null)
+    hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax, 'setdata');
+  if (typeof data.collectedExtraTax === "number" || data.collectedExtraTax === null)  
+    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax, 'setdata');
+  if (typeof data.thisMonthAdjustedRefundTaxAmount === "number" || data.thisMonthAdjustedRefundTaxAmount === null)
     hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount,'setdata');
-  if (typeof data.incomeTaxPaid === "number")
+  if (typeof data.incomeTaxPaid === "number" || data.incomeTaxPaid === null)
     hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid,'setdata');
-  if (typeof data.ruralSpecialTaxPaid === "number")
+  if (typeof data.ruralSpecialTaxPaid === "number" || data.ruralSpecialTaxPaid === null)
     hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid,'setdata');
 
-  if (typeof data.prevMonthNonRefundableTaxAmount === "number")
+  if (typeof data.prevMonthNonRefundableTaxAmount === "number" || data.prevMonthNonRefundableTaxAmount === null)
     hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.prevMonthNonRefundableTaxAmount,'setdata');
-  if (typeof data.preRefundApplicationTaxAmount === "number")
+  if (typeof data.preRefundApplicationTaxAmount === "number" || data.preRefundApplicationTaxAmount === null)
     hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.preRefundApplicationTaxAmount,'setdata');
-  if (typeof data.deductibleBalance === "number")
+  if (typeof data.deductibleBalance === "number" || data.deductibleBalance === null)
     hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.deductibleBalance,'setdata');
-  if (typeof data.thisMonthRefundTaxGeneral === "number")
+  if (typeof data.thisMonthRefundTaxGeneral === "number" || data.thisMonthRefundTaxGeneral === null)
     hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.thisMonthRefundTaxGeneral,'setdata');
-  if (typeof data.thisMonthRefundTaxOtherFinancialCompany === "number")
+  if (typeof data.thisMonthRefundTaxOtherFinancialCompany === "number" || data.thisMonthRefundTaxOtherFinancialCompany === null)
     hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.thisMonthRefundTaxOtherFinancialCompany,'setdata');
-  if (typeof data.thisMonthRefundTaxOtherMerge === "number")
+  if (typeof data.thisMonthRefundTaxOtherMerge === "number" || data.thisMonthRefundTaxOtherMerge === null)
     hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthRefundTaxOtherMerge,'setdata');
-  if (typeof data.refundTaxSubjectToAdjustment === "number")
+  if (typeof data.refundTaxSubjectToAdjustment === "number" || data.refundTaxSubjectToAdjustment === null)
     hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.refundTaxSubjectToAdjustment,'setdata');
-  if (typeof data.thisMonthTotalAdjustedRefundTaxAmount === "number")
+  if (typeof data.thisMonthTotalAdjustedRefundTaxAmount === "number" || data.thisMonthTotalAdjustedRefundTaxAmount === null)
     hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.thisMonthTotalAdjustedRefundTaxAmount,'setdata');
-  if (typeof data.nextMonthRefundTaxAmount === "number")
+  if (typeof data.nextMonthRefundTaxAmount === "number" || data.nextMonthRefundTaxAmount === null)
     hot.setDataAtCell(rowPosition?.value[8][0], rowPosition?.value[8][1], data.nextMonthRefundTaxAmount,'setdata');
-  if (typeof data.refundApplicationAmount === "number")
+  if (typeof data.refundApplicationAmount === "number" || data.refundApplicationAmount === null)
     hot.setDataAtCell(rowPosition?.value[9][0], rowPosition?.value[9][1], data.refundApplicationAmount,'setdata');
 }
 
-export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) => {
+export const calculateWithholdingStatusReport =  async (wrapper: any, data: any = []) => {
   let cellData = Array()
+  const arrRowPass = ['A10','A99']
   if (data.length > 0) {
     cellData = data
   } else {
@@ -672,7 +674,7 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
         // check để lọc hết những row không có dữ liệu ra 
         // nếu là cột A10 và A99 cũng loại vì tất cả các cell đều disable
         if (
-          (arrData[index][4] !== 'A99') && 
+          (!arrRowPass.includes(arrData[index][4])) && 
           (
             typeof arrData[index][5] == 'number' ||
             typeof arrData[index][6] == 'number' ||
@@ -717,33 +719,36 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
     }
   }
   console.log(cellData, 'inputdata');
-  const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
-  clearAllCellValue(wrapper)
-  console.log(output, 'outputdata');
+  let output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
+  await convertZeroData(output).then((res) => {
+    output = res
+  })
+  console.log(output,'outputtttttttttttkkkk');
+  
   // set value to cell after get common result
   if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
-    output.incomeWages.forEach((item) => {
-        setValueDataTable(wrapper,item.code,item)
+    output.incomeWages.forEach( async (item) => {
+      await setValueDataTable(wrapper,item.code,item)
     })
   }
   if (output.incomeRetirements.length > 0) { // 퇴직소득 [연금계좌(A12), 그외(A22), 가감계(A20)]
-    output.incomeRetirements.forEach((item) => {
-      setValueDataTable(wrapper,item.code,item)
+    output.incomeRetirements.forEach(async (item) => {
+      await setValueDataTable(wrapper,item.code,item)
     })
   }
   if (output.incomeBusinesses.length > 0) { // 사업소득 [매월징수(A25), 연말정산(A26), 가감계(A30)]
-    output.incomeBusinesses.forEach((item) => {
-      setValueDataTable(wrapper,item.code,item)
+    output.incomeBusinesses.forEach(async (item) => {
+      await setValueDataTable(wrapper,item.code,item)
     })
   }
   if (output.incomeExtras.length > 0) { // 기타소득 [연금계좌(A41), 종교인소득-매월징수(A43), 종교인소득-연말정산(A44), 그외(A42), 가감계(A40)]
-    output.incomeExtras.forEach((item) => {
-      setValueDataTable(wrapper,item.code,item)
+    output.incomeExtras.forEach(async (item) => {
+      await setValueDataTable(wrapper,item.code,item)
     })
   }
   if (output.incomePensions.length > 0) { // 연금소득 [연금계좌(A48), 공적연금(A45), 연말정산(A46), 가감계(A47)]
-    output.incomePensions.forEach((item) => {
-      setValueDataTable(wrapper,item.code,item)
+    output.incomePensions.forEach(async (item) => {
+      await setValueDataTable(wrapper,item.code,item)
     })
   }
   if (output.incomeInterest) { // 이자소득(A50)
@@ -765,6 +770,54 @@ export const calculateWithholdingStatusReport = (wrapper: any, data: any = []) =
   //r.push(output.summary); // 총합계(A99)
 }
 
+function addMissingFields(arr : any) {
+  const fields = [
+    'collectedExtraTax',
+    'collectedIncomeTax',
+    'collectedRuralSpecialTax',
+    'incomeTaxPaid',
+    'numberOfPeople',
+    'ruralSpecialTaxPaid',
+    'thisMonthAdjustedRefundTaxAmount',
+    'totalPayment'
+  ];
+  if (Array.isArray(arr)) {
+    let newArr: any[] = []
+    arr.forEach((obj : any) => {
+      fields.forEach(field => {
+        if (obj[field] == 0) {
+          obj[field] = null
+        }
+        if (!obj.hasOwnProperty(field)) {
+          obj[field] = null;
+        }
+      });
+      newArr.push(obj)
+    });
+    return newArr;
+  } else if(typeof arr == 'object') {
+    fields.forEach(field => {
+      if (arr[field] == 0) {
+        arr[field] = null
+      }
+      if (!arr.hasOwnProperty(field)) {
+        arr[field] = null;
+      }
+    });
+    return arr;
+  }
+}
+
+// đổi hết data nếu bằng 0 thành null 
+const convertZeroData = async (output : any) => {
+  for (let key in output) {
+    if (key === 'adjustmentOfRefundTaxAmount' || typeof output[key] == 'undefined') {
+      continue;
+    }
+    output[key] = await addMissingFields(output[key])
+  };
+  return output
+}
 export const checkYETaxAdjustment = (output: any) => {
   let checkStatus = false
   const A04 = output.incomeWages.find((el: { code: string; }) =>{
@@ -798,3 +851,4 @@ export const checkYETaxAdjustment = (output: any) => {
   }
   return checkStatus
 }
+

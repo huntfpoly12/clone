@@ -302,12 +302,13 @@ export default defineComponent({
       ) => {
         let hot = wrapper.value.hotInstance;
         if (isValid == false) {
-          hot.setDataAtCell(row, hot.propToCol(prop), 0,"edit");
+          console.log(value,'value');
+          hot.setDataAtCell(row, hot.propToCol(prop),null,"edit");
         }
       },
-      afterChange: (changes: any, source: string) => {
+      afterChange: async (changes: any, source: string) => {
         if (source == "edit" && firstTimeLoad.value) {
-          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReport(wrapper);  
+          dataSource.value[0].yearEndTaxAdjustment = await calculateWithholdingStatusReport(wrapper);  
           store.commit("common/setHasChangedPopupPA210", false);
         } else if (source == "edit") {
           firstTimeLoad.value = true;
@@ -400,9 +401,7 @@ export default defineComponent({
         refetchData();
       }
 
-
       let hot = wrapper.value?.hotInstance;
-
       // fill value to table report
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data: any) => {
         const rowPosition = inputPosition.find(
@@ -568,14 +567,16 @@ export default defineComponent({
         if (
           index >= 4 &&
           index <= 32 &&
-          (arrData[index][5] != "" ||
+          (
+            arrData[index][5] != "" ||
             arrData[index][6] != "" ||
             arrData[index][7] != "" ||
             arrData[index][8] != "" ||
             arrData[index][9] != "" ||
             arrData[index][10] != "" ||
             arrData[index][11] != "" ||
-            arrData[index][12] != "")
+            arrData[index][12] != ""
+          )
         ) {
           statement.push({
             code: arrData[index][4],
