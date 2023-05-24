@@ -307,8 +307,6 @@ export default defineComponent({
 				store.state.common.ac120.arrResolutionType,
 			],
 			(newValue, oldValue) => {
-				console.log(newValue);
-				
 				switch (formData.value.resolutionType) {
 					case 11:
 						classificationAccountCode.value = [4];

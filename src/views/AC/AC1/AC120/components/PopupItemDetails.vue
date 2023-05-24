@@ -200,17 +200,17 @@ export default defineComponent({
 
 		// =================== GRAPHQL ===================
 		// mutation deleteStatementOfGoods
-		// const {
-		// 	mutate: mutateDeleteStatementOfGoods,
-		// 	onDone: doneDeleteStatementOfGoods,
-		// 	onError: errorDeleteStatementOfGoods,
-		// } = useMutation(mutations.deleteStatementOfGoods);
-		// // mutation deleteStatementOfGoods
-		// const {
-		// 	mutate: mutateSaveStatementOfGoods,
-		// 	onDone: doneSaveStatementOfGoods,
-		// 	onError: errorSaveStatementOfGoods,
-		// } = useMutation(mutations.saveStatementOfGoods);
+		const {
+			mutate: mutateDeleteStatementOfGoods,
+			onDone: doneDeleteStatementOfGoods,
+			onError: errorDeleteStatementOfGoods,
+		} = useMutation(mutations.deleteStatementOfGoods);
+		// mutation deleteStatementOfGoods
+		const {
+			mutate: mutateSaveStatementOfGoods,
+			onDone: doneSaveStatementOfGoods,
+			onError: errorSaveStatementOfGoods,
+		} = useMutation(mutations.saveStatementOfGoods);
 
 		const { onResult: onResultSearchStatementOfGoodsItems } = useQuery(
 			queries.searchStatementOfGoodsItems,
@@ -241,26 +241,28 @@ export default defineComponent({
 
 		// ============== ON DONE MUTATION GRAPHQL ===============
 		// DeleteStatementOfGoods
-		// doneDeleteStatementOfGoods((e) => {
-		// 	store.state.common.ac120.statusKeppRow = true;
-		// 	store.state.common.ac120.resetDataTable++;
-		// 	emit("closePopup", false);
-		// 	notification("success", Message.getMessage("COMMON", "106").message);
-		// });
-		// errorDeleteStatementOfGoods((e) => {
-		// 	//notification('error', e.message)
-		// });
+		doneDeleteStatementOfGoods((e) => {
+			store.state.common.ac120.statusKeppRow = true;
+			store.state.common.ac120.resetDataTable++;
+			emit("closePopup", false);
+			notification("success", Message.getMessage("COMMON", "106").message);
+		});
+		errorDeleteStatementOfGoods((e) => {
+			dataSource.value.push(dataDelete.value);
+			dataGridRef.value?.instance.refresh();
+			//notification('error', e.message)
+		});
 
 		// SaveStatementOfGoods
-		// doneSaveStatementOfGoods((e) => {
-		// 	store.state.common.ac120.statusKeppRow = true;
-		// 	notification("success", Message.getMessage("COMMON", "106").message);
-		// 	store.state.common.ac120.resetDataTable++;
-		// 	emit("closePopup", false);
-		// });
-		// errorSaveStatementOfGoods((e) => {
-		// 	//notification('error', e.message)
-		// });
+		doneSaveStatementOfGoods((e) => {
+			store.state.common.ac120.statusKeppRow = true;
+			notification("success", Message.getMessage("COMMON", "106").message);
+			store.state.common.ac120.resetDataTable++;
+			emit("closePopup", false);
+		});
+		errorSaveStatementOfGoods((e) => {
+			//notification('error', e.message)
+		});
 
 		onResultSearchStatementOfGoodsItems((res) => {
 			arrSelectItem.value = res.data.searchStatementOfGoodsItems.map(
@@ -328,23 +330,20 @@ export default defineComponent({
 		};
 		const handleDelete = (status: Boolean) => {
 			if (status) {
-				dataSource.value = dataSource.value.filter(
-					(item: any) => item.id !== dataDelete.value.id
-				);
-				// if (
-				// 	!store.state.common.ac120.statusFormAdd &&
-				// 	dataSource.value.length == 0
-				// ) {
-				// 	// status update = true and 1 data left
-				// 	isModalDelete.value;
-				// 	mutateDeleteStatementOfGoods({
-				// 		companyId: companyId,
-				// 		fiscalYear: acYear.value,
-				// 		facilityBusinessId: globalFacilityBizId.value,
-				// 		transactionDetailDate: formData.value.transactionDetailDate,
-				// 		accountingDocumentId: formData.value.accountingDocumentId,
-				// 	});
-				// }
+				dataSource.value = dataSource.value.filter((item: any) => item.id !== dataDelete.value.id);
+				if (dataSource.value.length == 0) {
+					if (dataDelete.value.id.toString().indexOf("create") !== -1) {
+						return
+					}
+					// status update = true and 1 data left
+					mutateDeleteStatementOfGoods({
+						companyId: companyId,
+						fiscalYear: acYear.value,
+						facilityBusinessId: globalFacilityBizId.value,
+						transactionDetailDate: formData.value.transactionDetailDate,
+						accountingDocumentId: formData.value.accountingDocumentId,
+					});
+				}
 			}
 		};
 		const onSubmit = (e: any) => {
@@ -354,29 +353,29 @@ export default defineComponent({
 			} else {
 				let dataItem = dataSource.value;
 				dataItem.map((value: any) => {
-					// if (!value.remark) {
-					// 	delete value.remark;
-					// }
+					if (!value.remark) {
+						delete value.remark;
+					}
 					delete value.id;
-					// delete value.__typename;
+					delete value.__typename;
 					return value;
 				});
 				// if (!store.state.common.ac120.statusFormAdd) {
-				// 	// status update = true
-				// 	if (dataSource.value.length) {
-				// 		let dataSave = {
-				// 			companyId: companyId,
-				// 			fiscalYear: acYear.value,
-				// 			facilityBusinessId: globalFacilityBizId.value,
-				// 			transactionDetailDate: formData.value.transactionDetailDate,
-				// 			accountingDocumentId: formData.value.accountingDocumentId,
-				// 			items: dataItem,
-				// 		};
-				// 		mutateSaveStatementOfGoods(dataSave);
-				// 	}
+					// status update = true
+					if (dataSource.value.length) {
+						let dataSave = {
+							companyId: companyId,
+							fiscalYear: acYear.value,
+							facilityBusinessId: globalFacilityBizId.value,
+							transactionDetailDate: formData.value.transactionDetailDate,
+							accountingDocumentId: formData.value.accountingDocumentId,
+							items: dataItem,
+						};
+						mutateSaveStatementOfGoods(dataSave);
+					}
 				// } else {
-					formData.value.statementOfGoodsItems = dataItem;
-					emit("closePopup", false);
+				// 	formData.value.statementOfGoodsItems = dataItem;
+				// 	emit("closePopup", false);
 				// }
 			}
 		};
