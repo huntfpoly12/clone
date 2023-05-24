@@ -1171,7 +1171,7 @@ export default defineComponent({
       if (res.data.updateSubscriptionRequest.status == 30) {
         actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
       }
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage("106").message);
       emit("closePopup", false);
       emit("onUpdate", true);
     });

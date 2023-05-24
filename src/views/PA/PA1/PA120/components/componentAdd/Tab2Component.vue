@@ -855,8 +855,8 @@ export default defineComponent({
       () => presidentPA120.value,
       (newValue) => {
         if (newValue) {
-          initFormTab2PA120.value.nationalPensionDeduction = false;
-          initFormTab2PA120.value.healthInsuranceDeduction = false;
+          initFormTab2PA120.value.nationalPensionDeduction = true;
+          initFormTab2PA120.value.healthInsuranceDeduction = true;
           initFormTab2PA120.value.employeementInsuranceDeduction = false;
         } else {
           initFormTab2PA120.value.nationalPensionDeduction = true;
