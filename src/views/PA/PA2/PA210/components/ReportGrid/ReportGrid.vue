@@ -350,12 +350,12 @@ export default defineComponent({
         let hot = wrapper.value.hotInstance;
 
         if (isValid == false) {
-          hot.setDataAtCell(row, hot.propToCol(prop), 0);
+          hot.setDataAtCell(row, hot.propToCol(prop),null,'validateEdit');
         }
       },
-      afterChange: (changes: any, source: string) => {
+      afterChange: async (changes: any, source: string) => {
         if (source == "edit") {
-          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReport(wrapper);
+          dataSource.value[0].yearEndTaxAdjustment = await calculateWithholdingStatusReport(wrapper);
           store.commit("common/setHasChangedPopupPA210", true);
         }
       },

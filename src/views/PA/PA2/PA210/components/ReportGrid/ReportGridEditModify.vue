@@ -293,12 +293,12 @@ export default defineComponent({
       afterValidate: (isValid: boolean, value: any, row: any, prop: any) => {
         let hot = wrapper.value.hotInstance;
         if (isValid == false) {
-          hot.setDataAtCell(row, hot.propToCol(prop), 0);
+          hot.setDataAtCell(row, hot.propToCol(prop),null,'validateEdit');
         }
       },
-      afterChange: (changes: any, source: string) => {
+      afterChange: async (changes: any, source: string) => {
         if (source == "edit") {
-          dataSource.value[0].yearEndTaxAdjustment = calculateWithholdingStatusReportModified(wrapper);
+          dataSource.value[0].yearEndTaxAdjustment = await calculateWithholdingStatusReportModified(wrapper);
           store.commit("common/setHasChangedPopupPA210", false);
         }
       },
@@ -849,7 +849,7 @@ export default defineComponent({
       setModalVisible();
     };
 
-     // update cell settings flow condition
+     // update cell settings flow condition 
      const checkDisableA04A06 = () => {
 
       let hot = wrapper.value.hotInstance;
@@ -863,22 +863,44 @@ export default defineComponent({
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6)
       ) {
+        newCellSetting[147].readOnly = false
+        newCellSetting[147].className = "htMiddle htRight"
         newCellSetting[155].readOnly = false
         newCellSetting[155].className = "htMiddle htRight"
+
+        newCellSetting[148].readOnly = false
+        newCellSetting[148].className = "htMiddle htRight"
         newCellSetting[156].readOnly = false
         newCellSetting[156].className = "htMiddle htRight"
+
+        newCellSetting[181].readOnly = false
+        newCellSetting[181].className = "htMiddle htRight"
         newCellSetting[189].readOnly = false
         newCellSetting[189].className = "htMiddle htRight"
+
+        newCellSetting[183].readOnly = false
+        newCellSetting[183].className = "htMiddle htRight"
         newCellSetting[191].readOnly = false
         newCellSetting[191].className = "htMiddle htRight"
 
       } else {
+        newCellSetting[147].readOnly = true
+        newCellSetting[147].className = "htMiddle htRight disable-cell"
         newCellSetting[155].readOnly = true
         newCellSetting[155].className = "htMiddle htRight disable-cell"
+
+        newCellSetting[148].readOnly = true
+        newCellSetting[148].className = "htMiddle htRight disable-cell"
         newCellSetting[156].readOnly = true
         newCellSetting[156].className = "htMiddle htRight disable-cell"
+
+        newCellSetting[181].readOnly = true
+        newCellSetting[181].className = "htMiddle htRight disable-cell"
         newCellSetting[189].readOnly = true
         newCellSetting[189].className = "htMiddle htRight disable-cell"
+
+        newCellSetting[183].readOnly = true
+        newCellSetting[183].className = "htMiddle htRight disable-cell"
         newCellSetting[191].readOnly = true
         newCellSetting[191].className = "htMiddle htRight disable-cell"
       }
