@@ -522,38 +522,38 @@ export default defineComponent({
         value.isSubscriptionRequestChangeableBizNumber;
     });
     watch(result, (value) => {
-      trigger.value = false;
       if (value && value.getSubscriptionRequest) {
+        let data = value.getSubscriptionRequest;
         // set value license
-        if (value.getSubscriptionRequest.content.company.license) {
-          imageLicenseFile.value = value.getSubscriptionRequest.content.company
+        if (data.content.company.license) {
+          imageLicenseFile.value = data.content.company
             .license.url
-            ? value.getSubscriptionRequest.content.company.license.url
+            ? data.content.company.license.url
             : "";
           licenseFileName.value =
-            value.getSubscriptionRequest.content.company.license.name;
+            data.content.company.license.name;
         }
-        delete value.getSubscriptionRequest.content.company.license;
-        formState.value = value.getSubscriptionRequest;
+        delete data.content.company.license;
+        formState.value = data;
         formState.value.institutionNumber =
-          value.getSubscriptionRequest.content.accounting?.facilityBusinesses
+          data.content.accounting?.facilityBusinesses
             .length > 0
-            ? value.getSubscriptionRequest.content.accounting
+            ? data.content.accounting
               .facilityBusinesses[0].longTermCareInstitutionNumber
             : "";
         // set date list status value
-        dataStatus[0].date = value.getSubscriptionRequest.createdAt;
-        dataStatus[1].date = value.getSubscriptionRequest.createdAt;
-        dataStatus[2].date = value.getSubscriptionRequest.approvedAt
-          ? value.getSubscriptionRequest.approvedAt
-          : value.getSubscriptionRequest.createdAt;
-        dataStatus[3].date = value.getSubscriptionRequest.approvedAt
-          ? value.getSubscriptionRequest.rejectedAt
-          : value.getSubscriptionRequest.createdAt;
+        dataStatus[0].date = data.createdAt;
+        dataStatus[1].date = data.createdAt;
+        dataStatus[2].date = data.approvedAt
+          ? data.approvedAt
+          : data.createdAt;
+        dataStatus[3].date = data.approvedAt
+          ? data.rejectedAt
+          : data.createdAt;
         // set status subcription
         dataQueryCheckPer.value = {
-          id: value.getSubscriptionRequest.id,
-          bizNumber: value.getSubscriptionRequest.companyBizNumber,
+          id: data.id,
+          bizNumber: data.companyBizNumber,
         };
         //set accounting
         dataSource.value =
@@ -570,16 +570,16 @@ export default defineComponent({
           dataActiveRow.value = dataSource.value[0];
           focusedRowKey.value = 0;
         }
-        accountingServiceTypes.value = formState.value?.accounting?.accountingServiceTypes[0];
+        accountingServiceTypes.value = data.content?.accounting?.accountingServiceTypes.length > 0;
 
-        if (value.getSubscriptionRequest.usedAccounting) {
+        if (data.usedAccounting) {
           checkedAccounting.value = 1;
         } else {
           checkedAccounting.value = 2;
         }
-        //set widthholding
-        withholdingServiceTypes.value = formState.value?.accounting?.withholdingServiceTypes[0];
-        if (value.getSubscriptionRequest.usedWithholding) {
+        //set withholding
+        withholdingServiceTypes.value = data.content?.withholding?.withholdingServiceTypes.length > 0;
+        if (data.usedWithholding) {
           checkedSourceService.value = 1;
         } else {
           checkedSourceService.value = 2;
@@ -596,11 +596,11 @@ export default defineComponent({
       setTimeout(() => {
         isWatching.value = true;
       }, 0);
+      trigger.value = false;
     });
     watch(
       () => checkedAccounting.value,
       (value) => {
-        console.log(`output->value`, value)
         if (isWatching.value) {
           if (value == 1) {
             if (dataSource.value.length) {
@@ -625,14 +625,13 @@ export default defineComponent({
       () => checkedSourceService.value,
       (value) => {
         if (isWatching.value) {
-          console.log(value)
           if (value === 2) {
             formState.value.content.withholding = {
               startYearMonth: NaN,
               capacity: 0,
             };
             withholdingServiceTypes.value = false;
-          } 
+          }
           if (value === 1) {
             formState.value.content.withholding = {
               startYearMonth: +dayjs().format("YYYYMM"),
@@ -742,9 +741,10 @@ export default defineComponent({
           return obj;
         };
         const newContent = deleteField(contentData);
-        if (!formState.value.usedAccounting) {
+        if (checkedAccounting.value === 2) {
           newContent.accounting = null;
         } else {
+          newContent.accounting = {};
           let newObj = JSON.parse(JSON.stringify(dataSource.value));
           newObj.map((item: any) => {
             delete item.rowIndex;
@@ -757,16 +757,13 @@ export default defineComponent({
             item.startYearMonth.toString();
             return { item };
           });
-          if (newContent.accounting) {
-            newContent.accounting.facilityBusinesses = [...newObj];
-            newContent.accounting.accountingServiceTypes =
-              accountingServiceTypes.value ? 1 : [];
-          }
+          newContent.accounting.facilityBusinesses = [...newObj];
+          newContent.accounting.accountingServiceTypes = accountingServiceTypes.value ? [1] : [];
         }
         if (checkedSourceService.value === 2) {
           newContent.withholding = null;
         } else {
-          newContent.withholding.withholdingServiceTypes = withholdingServiceTypes.value ? 1: [];
+          newContent.withholding.withholdingServiceTypes = withholdingServiceTypes.value ? [1] : [];
         }
         let variables = {
           id: formState.value.id,
