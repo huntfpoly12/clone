@@ -12,8 +12,7 @@
       <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true"
                   :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
                   :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
-                  @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" @row-removed="logEvent('RowRemoved')"
-                  @row-removing="logEvent('RowRemoving')"
+                  @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared"
                   @saving="handleSaving" @saved="logEvent('Saved')" @editor-preparing="onEditorPreparing"
                   style="height: 70vh"
                   @init-new-row="initNewRow"
@@ -21,13 +20,12 @@
       >
         <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
         <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
-                   :use-icons="true" new-row-position="pageBottom"
+                   :use-icons="true" new-row-position="last"
         />
         <DxPaging :page-size="0"/>
         <DxToolbar>
           <DxItem location="after" name="addRowButton" css-class="cell-button-add"/>
-          <DxItem name="saveButton"/>
-          <DxItem name="revertButton"/>
+          <DxItem name="saveButton" title="Add" />
         </DxToolbar>
         <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
           <DxRequiredRule/>
@@ -56,9 +54,9 @@
         <DxSummary>
           <DxTotalItem cssClass="custom" show-in-column="drag" display-format="소계"/>
 
-          <DxTotalItem show-in-column="name" alignment="center" display-format="직접인건비 계"/>
-          <DxTotalItem show-in-column="name" alignment="center" display-format="간접인건비 계"/>
-          <DxTotalItem cssClass="custom" show-in-column="name" alignment="center" display-format="총 인건비 계"/>
+          <DxTotalItem cssClass="center" show-in-column="name" alignment="center" display-format="직접인건비 계"/>
+          <DxTotalItem cssClass="center" show-in-column="name" alignment="center" display-format="간접인건비 계"/>
+          <DxTotalItem cssClass="custom center" show-in-column="name" alignment="center" display-format="총 인건비 계"/>
 
           <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.salary1)"/>
           <DxTotalItem show-in-column="salary" alignment="right" :customizeText="() => filters.formatNumber(formatSummary.salary2)"/>
@@ -434,6 +432,13 @@ function calculateSalary(data: any) {
 
       .dx-datagrid-text-content {
         text-overflow: inherit;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        &.center {
+          justify-content: center;
+        }
       }
 
       td:last-child {
