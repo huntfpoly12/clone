@@ -17,7 +17,7 @@
             :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" @focused-row-changing="onFocusedRowChanging"
-            @row-click="onRowClick"
+            @row-click="onRowClick" @content-ready="onContentReady"
             :noDataText="loadingGetBankbookDetails || loadingSyncBankbookDetails ? '' : '내역이 없습니다'">
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
@@ -32,6 +32,7 @@
             </DxToolbar>
             <template #status-grid-main>
               <div class="ac-110__top-buttons">
+                {{ listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status }}
                 <ProcessStatus
                   v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
                   :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
@@ -47,13 +48,14 @@
             <template #retrieve-statements>
               <div class="ac-110__top-buttons">
                 <button-basic :text="'통장내역 불러오기'" :type="'default'" :mode="'contained'"
-                  @onClick="openPopupRetrieveStatements" />
+                  @onClick="openPopupRetrieveStatements" :disabled="isReadonlyByAccountingProcessesStatus" />
               </div>
             </template>
             <template #slip-registration-selected>
               <div class="ac-110__top-buttons">
                 <button-basic :text="'☑전표등록'" :type="'default'" :mode="'contained'" style="margin-left: 5px"
-                  @onClick="openPopupSlipRegistrationSelected" :disabled="!selectedRowKeys.length" />
+                  @onClick="openPopupSlipRegistrationSelected"
+                  :disabled="!selectedRowKeys.length || isReadonlyByAccountingProcessesStatus" />
                 <a-tooltip placement="topRight">
                   <template #title>통장내역 변경이력</template>
                   <HistoryOutlined style="font-size: 18px; margin-left: 5px" @click="modalHistory" />
@@ -115,13 +117,14 @@
                   data.data.normalTransactionDetails ? 'O' : 'X' }}</div>
               </div>
             </template>
-            <DxColumn caption="전표등록" cell-template="documentRegistered" width="200" />
+            <DxColumn caption="전표등록" cell-template="documentRegistered" width="150" />
             <template #documentRegistered="{ data }">
               <div class="ac-110__main-main-slipRegistration">
                 <div class="mr-5" :class="data.data.documentRegistered ? 'tag-green-ac110' : 'tag-red-ac110'">{{
                   data.data.documentRegistered ? 'O' : 'X' }}</div>
                 <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="data.data.documentRegistered ? 'outlined' : 'contained'
-                  " @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails"
+                  " @onClick="openPopupRegistration(data.data)"
+                  :disabled="!data.data.normalTransactionDetails || isReadonlyByAccountingProcessesStatus"
                   :style="!data.data.documentRegistered ? 'border: 1px solid #fff;' : ''" />
               </div>
             </template>
@@ -181,7 +184,8 @@
                     </div>
                   </template>
                   <template #button-reset>
-                    <button-basic text="초기화" type="default" :mode="'contained'" :disabled="isRegistered || !rowKeyfocused"
+                    <button-basic text="초기화" type="default" :mode="'contained'"
+                      :disabled="isRegistered || !rowKeyfocused || isReadonlyByAccountingProcessesStatus"
                       @onClick="handleInitializeTransactionDetails" />
                   </template>
                   <template #button-add>
@@ -189,7 +193,7 @@
                       <template #title>신규</template>
                       <div>
                         <DxButton :focusStateEnabled="false" @click="addNewRowTransactionDetails"
-                          :disabled="isRegistered || !rowKeyfocused" size="large"
+                          :disabled="isRegistered || !rowKeyfocused || isReadonlyByAccountingProcessesStatus" size="large"
                           style="background: #337ab7; color: white">
                           <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" />
                           신규
@@ -201,7 +205,8 @@
                     <a-tooltip placement="top">
                       <template #title>신규</template>
                       <DxButton :focusStateEnabled="false" @click="submitTransactionDetails()" size="large"
-                        :disabled="isRegistered || !rowKeyfocused" style="background: #337ab7; color: white">
+                        :disabled="isRegistered || !rowKeyfocused || isReadonlyByAccountingProcessesStatus"
+                        style="background: #337ab7; color: white">
                         <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" />
                         저장
                       </DxButton>
@@ -217,10 +222,11 @@
                       :class="{ 'disable-input-column': !!data.data.spending }">
                       <number-box-money v-if="data.rowIndex === 0" v-model:valueInput="data.data.income" :required="true"
                         :spinButtons="false" :disabled="!!data.data.spending" height="26"
-                        :readOnly="isRegistered || data.rowIndex === 0"
+                        :readOnly="isRegistered || data.rowIndex === 0 || isReadonlyByAccountingProcessesStatus"
                         @focusInput="focusInputIncomeSpending(data, 'income')" />
                       <number-box-money v-else v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
-                        :disabled="!!data.data.spending" height="26" :readOnly="isRegistered"
+                        :disabled="!!data.data.spending" height="26"
+                        :readOnly="isRegistered || isReadonlyByAccountingProcessesStatus"
                         @focusInput="focusInputIncomeSpending(data, 'income')" @changeInput="changeInput()" />
                     </div>
                   </template>
@@ -230,10 +236,11 @@
                       :class="{ 'disable-input-column': !!data.data.income }">
                       <number-box-money v-if="data.rowIndex === 0" v-model:valueInput="data.data.spending"
                         :required="true" :spinButtons="false" :disabled="!!data.data.income" height="26"
-                        :readOnly="isRegistered || data.rowIndex === 0"
+                        :readOnly="isRegistered || data.rowIndex === 0 || isReadonlyByAccountingProcessesStatus"
                         @focusInput="focusInputIncomeSpending(data, 'spending')" />
                       <number-box-money v-else v-model:valueInput="data.data.spending" :required="true"
-                        :spinButtons="false" :disabled="!!data.data.income" height="26" :readOnly="isRegistered"
+                        :spinButtons="false" :disabled="!!data.data.income" height="26"
+                        :readOnly="isRegistered || isReadonlyByAccountingProcessesStatus"
                         @focusInput="focusInputIncomeSpending(data, 'spending')" @changeInput="changeInput()" />
                     </div>
                   </template>
@@ -243,7 +250,7 @@
                       <template #title>{{ data.data.summary }}</template>
                       <div>
                         <default-text-box v-model:valueInput="data.data.summary" :required="true"
-                          :readOnly="isRegistered" />
+                          :readOnly="isRegistered || isReadonlyByAccountingProcessesStatus" />
                       </div>
                     </a-tooltip>
                   </template>
@@ -251,30 +258,30 @@
                   <template #accountCode="{ data }">
                     <div v-if="rowKeyfocused" :key="`accountCode${keyRefreshGridDetailAc}`">
                       <SelectAccountCode v-model:valueInput="data.data.accountCode"
-                        :classification="!!data.data?.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
+                        :classification="!!data.data?.income ? [4] : [5]" :lengthText="10"
+                        :readOnly="isRegistered || isReadonlyByAccountingProcessesStatus" />
                     </div>
                   </template>
                   <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
                   <template #relationCode="{ data }">
                     <div v-if="rowKeyfocused" :key="`relationCode${keyRefreshGridDetailAc}`">
-                      <SelectAccountCode v-model:valueInput="data.data.relationCode" :classification="data.data.resolutionClassification === 2
-                        ? [4]
-                        : [4, 5]
-                        " :readOnly="isRegistered ||
-    data.data.resolutionClassification === 1
-    " :lengthText="10" />
+                      <SelectAccountCode v-model:valueInput="data.data.relationCode" 
+                        :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
+                        :readOnly="isRegistered || data.data.resolutionClassification === 1 || isReadonlyByAccountingProcessesStatus"
+                        :lengthText="10" />
                     </div>
                   </template>
                   <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                   <template #fundingSource="{ data }">
                     <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true"
-                      :readOnly="isRegistered" :dropdownTop="true" :idSelect="`FundingSourceSelect${data.rowIndex}`" />
+                      :readOnly="isRegistered || isReadonlyByAccountingProcessesStatus" :dropdownTop="true"
+                      :idSelect="`FundingSourceSelect${data.rowIndex}`" />
                   </template>
                   <DxColumn caption="거래처" cell-template="clientId" width="150px" />
                   <template #clientId="{ data }">
                     <div>
                       <customer-select v-model:valueInput="data.data.clientId" width="135px" :readOnly="isRegistered ||
-                        data.data.resolutionClassification === 1
+                        data.data.resolutionClassification === 1 || isReadonlyByAccountingProcessesStatus
                         " :search-enabled="true" />
                     </div>
                   </template>
@@ -282,7 +289,7 @@
                   <template #letterOfApprovalType="{ data }">
                     <div>
                       <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType" :readOnly="isRegistered ||
-                        data.data.resolutionClassification === 1
+                        data.data.resolutionClassification === 1 || isReadonlyByAccountingProcessesStatus
                         " :required="data.data.resolutionClassification === 2" />
                     </div>
                   </template>
@@ -352,7 +359,7 @@
             <UploadPreviewImage width="295" :payLoadProofs="payloadGetTransactionDetails"
               @updateAddBankbookDetailProof="updateAddBankbookDetailProof" :bankbookDetailId="rowKeyfocused"
               @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" @progressingFiles="progressingFiles"
-              :disabled="isRegistered" :limit="10" />
+              :disabled="isRegistered || isReadonlyByAccountingProcessesStatus" :limit="10" />
           </div>
         </div>
       </div>
@@ -370,12 +377,14 @@
     <PopupSlipRegistration :isModalSlipRegistrantion="isModalSlipRegistrantion"
       :transactionDetailsCountSelected="transactionDetailsCountSelected" @closePopup="isModalSlipRegistrantion = false"
       @submit="handleSlipRegistration" />
-    <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems" :disabled="isRegistered"
-      :payload="payloadGetTransactionDetails" @closePopup="
+    <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems"
+      :disabled="isRegistered || isReadonlyByAccountingProcessesStatus" :payload="payloadGetTransactionDetails"
+      @closePopup="
         (isModalItemDetail = false), (dataStatementOfGoodsItems = {})
         " @updateGoodsCount="updateGoodsCount" />
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" :transactionSelected="transactionSelected"
-      @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" :disabled="isRegistered" :placeholder="transactionSelected?.key === 'causeUsage'
+      @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue"
+      :disabled="isRegistered || isReadonlyByAccountingProcessesStatus" :placeholder="transactionSelected?.key === 'causeUsage'
         ? '원인/용도 입력 ...'
         : '메모 입력 ...'
         " />
@@ -588,6 +597,14 @@ export default defineComponent({
         !!bankbookSelected.value?.documentRegistered
       );
     });
+    const isReadonlyByAccountingProcessesStatus = computed(() => {
+      const status = listAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0
+      if (status === 20 || status === 30 || status === 40) {
+        return true
+      } else {
+        return false
+      }
+    })
     let isSelectAll = computed(() => {
       const valueSelect = selectedRowKeys.value.length
       const valueDataSource = dataSource.value.length
@@ -865,6 +882,27 @@ export default defineComponent({
     );
     // Grid Main
     let isClickColunmSelect = false
+    const onContentReady = (event: any) => {
+      nextTick(() => {
+        const elCheckBoxAll = event.element.querySelector('.dx-datagrid-headers [aria-colindex="1"]')
+        const elCheckBoxs = event.element.querySelectorAll('.dx-datagrid-rowsview [aria-colindex="1"]')
+        if (elCheckBoxAll) {
+          elCheckBoxAll.style = `
+              padding: 0;
+            `
+        }
+        if (elCheckBoxs && elCheckBoxs.length) {
+          elCheckBoxs.forEach((el: any) => {
+            el.style = `
+              padding: 0;
+              box-sizing: border-box;
+              pointer-events: none;
+            `
+          })
+        }
+      })
+    }
+
     const selectionChanged = (value: any) => {
       if (!!value) {
         isClickColunmSelect = true
@@ -1353,6 +1391,7 @@ export default defineComponent({
       selectedRowKeys,
       listItemAllowedChoose,
       isSelectAll,
+      onContentReady,
       selectionChanged,
       onFocusedRowChanging,
       onRowClick,
@@ -1428,6 +1467,7 @@ export default defineComponent({
       refFormDetailAc110,
       keyRefreshGridDetailAc,
       changeInput,
+      isReadonlyByAccountingProcessesStatus
     };
   },
 });
@@ -1451,15 +1491,15 @@ export default defineComponent({
     display: none !important;
   }
 
-  :deep #dx-col-1 {
-    padding: 0;
-  }
+  // :deep #dx-col-1 {
+  //   padding: 0;
+  // }
 
-  :deep td[aria-describedby="dx-col-1"] {
-    padding: 0;
-    box-sizing: border-box;
-    pointer-events: none;
-  }
+  // :deep td[aria-describedby="dx-col-1"] {
+  //   padding: 0;
+  //   box-sizing: border-box;
+  //   pointer-events: none;
+  // }
 
   .ac-110-checkboxAll {
     cursor: pointer;
@@ -1484,8 +1524,9 @@ export default defineComponent({
     cursor: pointer;
     width: 70px;
     height: 36px;
+    display: flex;
     justify-content: center;
-    padding-top: 8px;
+    align-items: center;
     pointer-events: auto;
 
     :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
@@ -1498,5 +1539,4 @@ export default defineComponent({
       opacity: 0.2;
     }
   }
-}
-</style>
+}</style>

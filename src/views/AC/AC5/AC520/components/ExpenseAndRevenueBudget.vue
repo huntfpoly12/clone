@@ -274,6 +274,7 @@ const triggerQueryBudget = ref(false)
 const triggerQueryBudgetPreYear = computed(() => !!dataBudgetPreYear.value?.index)
 const checkDataNewRow = computed(() => (dataBudget.value?.revenueBudgetSum !== null && dataBudget.value?.budgetType === 4) || dataBudget.value?.budgetType === 5)
 // create function find code in codes array
+console.log('codes', codes)
 const findCode = (code: string, value: string) => {
   return codes?.find((item: any) => item[code] === value)
 }
@@ -300,7 +301,7 @@ onResult(({data}) => {
       store: {
         type: "array",
         key: "code",
-        data: data.getBudget.records?.map((item: any) => ({...item, codeName: findCode('code', item.code).name})) || []
+        data: data.getBudget.records?.map((item: any) => ({...item, codeName: findCode('code', item.code)?.name})) || []
       },
     })
     triggerQueryBudget.value = false
@@ -382,6 +383,19 @@ watch(() => checkDataNewRow.value, (val: any) => {
         })) || []
       },
     })
+    console.log(budgets?.map((item: any) => ({
+      code: item.code,
+      code1: item.code1,
+      code2: item.code2,
+      code3: item.code3,
+      amount: 0,
+      remark: null,
+      fundingSource1: null,
+      fundingSource2: null,
+      fundingSource3: null,
+      details: null,
+      codeName: item.name
+    })))
   } else {
     triggerQueryBudget.value = true
     query.index = dataBudget.value?.index

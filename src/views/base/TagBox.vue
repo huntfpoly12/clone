@@ -43,14 +43,14 @@
                 </td>
 
                 <td>
-                    <pre class="mycode"> &lt;employee-info 
-    idEmployee="JBD00001" 
-    name="계약정보관리&심사" 
-    idCardNumber="800101-1100123" 
+                    <pre class="mycode"> &lt;employee-info
+    idEmployee="JBD00001"
+    name="계약정보관리&심사"
+    idCardNumber="800101-1100123"
     :status="0"
-    :foreigner="true" 
+    :foreigner="true"
     :checkStatus="false"
-    
+
     /&gt;
                     </pre>
                 </td>
@@ -152,7 +152,7 @@
                 <td>
                     <p><b>Accounting Process Status Edit</b></p>
                     {{ status }}
-                    <accounting-process-status-edit v-model:valueStatus="status" style="margin-left: 150px;" />
+<!--                    <accounting-process-status-edit v-model:valueStatus="status" style="margin-left: 150px;" />-->
                 </td>
                 <td>
                     <b>- disabled:</b> Boolean (option)<br/>
@@ -183,7 +183,7 @@ export default defineComponent({
         };
     },
 });
-</script> 
+</script>
 <style lang="scss" scoped>
 #customers {
     font-family: Arial, Helvetica, sans-serif;
