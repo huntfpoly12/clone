@@ -44,49 +44,9 @@
         }
       }
       #DxDataGridMainAc110 {
-        height: calc(100vh - 540px);
+        height: calc(100vh - 450px);
         :deep .dx-freespace-row {
           display: none !important;
-        }
-        :deep #dx-col-1 {
-          padding: 0;
-        }
-        :deep td[aria-describedby="dx-col-1"] {
-          padding: 0;
-          box-sizing: border-box;
-          pointer-events: none;
-        }
-        .ac-110-checkboxAll {
-          cursor: pointer;
-          width: 80px;
-          text-align: center;
-          justify-content: center;
-          height: 26px;
-          padding-top: 2px;
-          :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
-            border-color: #ddd;
-            cursor: pointer;
-          }
-          &-disable {
-            background-color: #dddddd49;
-            pointer-events: none;
-          }
-        }
-        .ac-110-checkbox {
-          cursor: pointer;
-          width: 80px;
-          height: 36px;
-          justify-content: center;
-          padding-top: 8px;
-          pointer-events: auto;
-          :deep .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
-            border-color: #ddd;
-            cursor: pointer;
-          }
-          &-disable {
-            background-color: #dddddd49;
-            pointer-events: none;
-          }
         }
       }
       &-tabUserType {
@@ -97,7 +57,7 @@
       }
     }
     &-detail {
-      height: 278px;
+      height: 195px;
       display: flex;
       margin-top: 15px;
       &-detail1 {
@@ -164,7 +124,7 @@
         }
       }
       #DxDataGridDetailAc110 {
-        height: 242px;
+        height: 160px;
         :deep .dx-freespace-row {
           display: none !important;
         }
@@ -189,8 +149,9 @@
     font-weight: bold;
     border: 1px solid #ddd;
     border-top: none;
-    padding: 7px;
+    padding: 5px;
     color: rgba(51, 51, 51, 0.7);
+    background-color: #F2F5F7;
   }
   .tag-green-ac110 {
     color: #ffffff;

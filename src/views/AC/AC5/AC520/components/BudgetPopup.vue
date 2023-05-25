@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :visible="modalStatus"
-    :title="step === StepCreateBudget.Step1 ? '' : `예산서`"
+    :title="step === StepCreateBudget.Step1 ? '' : `임직원보수일람표`"
     centered
     @cancel="setModalVisible()"
     :mask-closable="false"
@@ -13,13 +13,13 @@
         <span>전년도 최종차수 ${서식명}를 불러와서 작성합니다.</span>
         <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
         <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>
-        <span>{{index}} 를 작성하시겠습니까?</span>
+        <span>{{dataBudget?.columnName}} 를 작성하시겠습니까?</span>
       </div>
       <div v-else class="modal-content">
         <span>직전 최종차수 ${서식명}를 불러와서 작성합니다.</span>
         <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
         <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>
-        <span>{{index}} 를 작성하시겠습니까?</span>
+        <span>{{dataBudget?.columnName}} 를 작성하시겠습니까?</span>
       </div>
     </div>
     <div v-else-if="step === StepCreateBudget.Step2">
@@ -52,11 +52,12 @@
 </template>
 
 <script lang="ts">
-import {computed, ComputedRef, defineComponent, PropType, ref, watchEffect} from 'vue'
-import {Budget, ComponentCreateBudget, StepCreateBudget} from "@/views/AC/AC5/AC520/type";
+import {computed, ComputedRef, defineComponent, ref, watch, watchEffect} from 'vue'
+import {ACTION, Budget, ComponentCreateBudget, StepCreateBudget} from "@/views/AC/AC5/AC520/type";
 import EmployeeSalaryTable from "./EmployeeSalaryTable.vue";
 import ExpenseAndRevenueBudget from "./ExpenseAndRevenueBudget.vue";
 import {useStore} from "vuex";
+
 export default defineComponent({
   components: {
     EmployeeSalaryTable,
@@ -90,6 +91,11 @@ export default defineComponent({
     }
     watchEffect(() => {
       if (props.modalStatus) step.value = StepCreateBudget.Step1
+    })
+    watch(dataBudget, (val) => {
+      if (val?.action === ACTION.EDIT) {
+        step.value = StepCreateBudget.Step2
+      }
     })
     const currentComponent = computed(() => {
       if (typePopup.value === ComponentCreateBudget.EmployeeSalaryTable){

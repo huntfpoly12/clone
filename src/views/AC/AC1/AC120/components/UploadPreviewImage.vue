@@ -3,7 +3,7 @@
         <a-spin :spinning="loadingGetAccountingDocumentProofs" size="large">
             <div class="form-upload-ac120" :class="{ 'ac120-disable-form-upload': false }">
                 <div ref="elementUpload" class="upload-pewview-img-ac-120">
-                    <a-upload :disabled="statusDisabledImg" list-type="picture-card" :multiple="multiple"
+                    <a-upload :disabled="statusDisabledImg || store.state.common.ac120.statusProcess != 10" list-type="picture-card" :multiple="multiple"
                         v-model:file-list="fileList" @preview="handlePreview" :customRequest="customRequest"
                         :before-upload="beforeUpload" @remove="remove" accept="image/png, image/jpeg, image/jpg image/gif">
                         <div v-if="fileList.length <= limit">
@@ -126,7 +126,7 @@ export default defineComponent({
             // store.state.common.ac120.resetDataTable++
             formData.value.proofCount--
             fileList.value.splice(indexImg.value, 1);
-            notification("success", Message.getMessage("COMMON", "106").message);
+            notification("success", Message.getMessage("COMMON", "402").message);
         });
         errorRemoveAccountingDocumentProof((e) => {
             notification("error", e.message);
@@ -134,12 +134,12 @@ export default defineComponent({
 
         // ================== WATCH ================
         watch(() => store.state.common.ac120.resetDataAccountingDocumentProofs, (value) => {
-            if (formData.value.accountingDocumentId && formData.value.accountingDocumentId != 'AC120') {
+            if (formData.value.accountingDocumentId) {
                 statusDisabledImg.value = false;
                 dataGetAccountingDocumentProofs.value.transactionDetailDate = formData.value.transactionDetailDate
                 dataGetAccountingDocumentProofs.value.accountingDocumentId = formData.value.accountingDocumentId
                 triggerAccountingDocumentProofs.value = true;
-            } else if (formData.value.accountingDocumentId == 'AC120') {
+            } else {
                 statusDisabledImg.value = true;
                 fileList.value = []
             }

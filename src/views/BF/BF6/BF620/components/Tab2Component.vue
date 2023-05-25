@@ -96,24 +96,24 @@
           <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
         </DxSummary> -->
       </DxDataGrid>
-      <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
-        <div style="width: 250px; margin-left: 70px;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+      <a-row class="fs-14 summary-ctn">
+        <a-col span="8">
+          <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 60.2%;">
             전체
             <span style="font-size: 16px;">[{{ filteredDataSource.length }}]</span>
           </div>
-        </div>
-        <div style=" margin-left: 18%;">
+        </a-col>
+        <a-col span="3" class="sum-item">
           <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" reportTypeSummary() ">
           </div>
-        </div>
-        <div style=" margin-left: 15px;">
+        </a-col>
+        <a-col span="3" class="sum-item">
           <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" afterDeadlineSummary() "></div>
-        </div>
-        <div style=" margin-left: 19.8%;">
+        </a-col>
+        <a-col span="10" class="sum-item">
           <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
-        </div>
-      </div>
+        </a-col>
+      </a-row>
     </div>
     <RequestFilePopup v-if=" modalStatus " :modalStatus=" modalStatus " :requestFileData=" requestFileData "
       tab-name="tab2" @cancel=" onRequestDone " />

@@ -28,13 +28,13 @@
       </DxToolbar>
       <template #button-history>
         <DxButton >
-          <HistoryOutlined style="font-size: 18px;" @click="modalHistory"/>
+          <HistoryOutlined style="font-size: 18px;" @click="openHistory"/>
         </DxButton>
       </template>
       <template #button-template>
         <a-tooltip placement="topLeft" title="예산서 신규 작성">
           <div>
-            <DxButton icon="plus" :disabled="disableAddRow" @click="addRow"/>
+            <DxButton icon="plus" :disabled="disableAddRow || lastRowOfDataIsNotComplete" @click="addRow"/>
           </div>
         </a-tooltip>
       </template>
@@ -51,8 +51,12 @@
       <DxColumn caption="세입예산서" cell-template="revenueBudget" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="예산총괄표" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="" width="100px" cell-template="action" alignment="center"/>
-      <template #action="{}">
-        <DxButton type="ghost">
+      <template #action="{data}">
+        <DxButton type="ghost"
+                  @click="handleDeleteBudget(data.data)"
+                  :disabled="data.data.index !== dataSource?.totalCount() || 0 - 1"
+        >
+
           <DeleteOutlined/>
         </DxButton>
       </template>
@@ -63,7 +67,9 @@
         </div>
       </template>
       <template #status="{data}">
-        <accounting-process-status-edit :index="index" :status="data.data.status"/>
+        <div v-if="data.data?.status">
+          <accounting-process-status-edit :data="data.data" @close-popup="closePopupProcessStatus"/>
+        </div>
       </template>
       <template #employeeSalaryTable="{data}">
         <div v-if="data.data.accounSubjectOrder" class="d-flex-center justify-content-center gap-6">
@@ -79,22 +85,44 @@
         <a-tooltip v-else title="임직원보수일람표 작성. 인건비 관련 세출예산액은 임직원보수일람표의 금액이 반영됩니다.">
           <div>
             <DxButton type="ghost" icon="plus"
-                      @click="openModalBudget({data: data.data, type: ComponentCreateBudget.EmployeeSalaryTable})"/>
+                      @click="openModalBudget({data: {...data.data, columnName: '임직원보수일람표'}, type: ComponentCreateBudget.EmployeeSalaryTable})"/>
           </div>
         </a-tooltip>
       </template>
       <template #expenseBudget="{data}">
-        <a-tooltip title="세출예산서 작성">
+        <div v-if="data.data.employeePaySum !== null" class="d-flex-center justify-content-center gap-6">
+          <DxButton type="ghost" icon="edit"
+                    @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.EDIT}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
+          <DxButton type="ghost" @click="actionSendMail(data.data)">
+            <img src="@/assets/images/email.svg" alt="" width="18"/>
+          </DxButton>
+          <DxButton type="ghost" @click="actionPrint(data.data)">
+            <img src="@/assets/images/print.svg" alt="" width="18" />
+          </DxButton>
+        </div>
+        <a-tooltip v-else title="세출예산서 작성">
           <div>
-            <DxButton type="ghost" icon="plus"
-                      @click="openModalBudget({data: {...data.data, budgetType: 5}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
+            <DxButton type="ghost" icon="plus" :disabled="!data.data.revenueBudgetSum"
+                      @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
           </div>
         </a-tooltip>
       </template>
       <template #revenueBudget="{data}">
-        <a-tooltip title="세입예산서 작성">
-          <DxButton type="ghost" icon="plus"
-                    @click="openModalBudget({data: {...data.data, budgetType: 4}, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
+        <div v-if="data.data.revenueBudgetSum !== null" class="d-flex-center justify-content-center gap-6">
+          <DxButton type="ghost" icon="edit"
+                    @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.EDIT}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
+          <DxButton type="ghost" @click="actionSendMail(data.data)">
+            <img src="@/assets/images/email.svg" alt="" width="18"/>
+          </DxButton>
+          <DxButton type="ghost" @click="actionPrint(data.data)">
+            <img src="@/assets/images/print.svg" alt="" width="18" />
+          </DxButton>
+        </div>
+        <a-tooltip v-else title="세입예산서 작성 234">
+          <div>
+            <DxButton type="ghost" icon="plus" :disabled="data.data.employeePaySum === null"
+                      @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
+          </div>
         </a-tooltip>
       </template>
     </DxDataGrid>
@@ -115,6 +143,12 @@
       :modal-status="modal.editEmployeeSalaryTable"
       @close-popup="closePopupEditEmployeeTable"
     />
+    <HistoryPopup
+      :modalStatus="modalHistory"
+      @closePopup="modalHistory = false"
+      keyExpr="loggedAt"
+      title="변경이력"
+      typeHistory="ac-520" />
   </div>
 </template>
 
@@ -125,9 +159,9 @@ import {DeleteOutlined, HistoryOutlined} from '@ant-design/icons-vue';
 import {DxColumn, DxDataGrid, DxItem, DxToolbar} from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import BudgetPopup from "@/views/AC/AC5/AC520/components/BudgetPopup.vue";
-import {ComponentCreateBudget} from "@/views/AC/AC5/AC520/type";
+import {ACTION, ComponentCreateBudget} from "@/views/AC/AC5/AC520/type";
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
-import {useQuery} from "@vue/apollo-composable";
+import {useMutation, useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC5/AC520"
 import {companyId} from "@/helpers/commonFunction";
 import {Store} from "devextreme/data";
@@ -135,6 +169,8 @@ import DataSource from "devextreme/data/data_source";
 import {initialState, useGetEmployeePayTableReportViewUrl} from "./utils/index";
 import PopupSendMail from "./components/PopupSendMail.vue";
 import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
+import mutations from "@/graphql/mutations/AC/AC5/AC520";
+import deletePopup from "@/utils/deletePopup";
 
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
@@ -142,6 +178,7 @@ const colomn_resize = computed(() => store.state.settings.colomn_resize);
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const disableAddRow = ref(false)
+const modalHistory = ref(false)
 const gridRef = ref();
 const dataSource = ref<DataSource>()
 const query = reactive({
@@ -156,11 +193,17 @@ const isModalSendMail = reactive({
 })
 const index = ref(0)
 const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
-
 const storeDataSource = computed(() => dataSource.value?.store() as Store);
-// console.log('companyId', companyId)
-// console.log('globalFacilityBizId', globalFacilityBizId.value)
-// console.log('accountSubject', accountSubject)
+const lastRowOfDataIsNotComplete = computed(() => {
+  const data = dataSource.value?.items()
+  if (data) {
+    const lastRow = data[data.length - 1]
+    if (lastRow) {
+      return lastRow.employeePaySum === null || lastRow.revenueBudgetSum === null
+    }
+  }
+  return false
+})
 const {onResult: onResultBudget, refetch: refetchBudget, onError} = useQuery(queries.getBudgets, query, () => ({
   fetchPolicy: "no-cache",
 }))
@@ -169,7 +212,7 @@ onResultBudget(({data}) => {
     store: {
       type: "array",
       key: "createdAt",
-      data: data.getBudgets || [],
+      data: data.getBudgets.reverse() || [],
     },
   });
   // console.log('result', data.getBudgets)
@@ -177,6 +220,17 @@ onResultBudget(({data}) => {
 
 onError((param) => {
   disableAddRow.value = true
+})
+
+// delete budget
+const {mutate: deleteBudget, onDone: onDoneDelete, onError: onErrorDelete} = useMutation(mutations.deleteBudget)
+onDoneDelete((result) => {
+  if (result.data) {
+    refetchBudget()
+  }
+})
+onErrorDelete((error) => {
+  console.log('error', error)
 })
 
 const {onResult: onResultBudgetPreYear, onError: onErrorPreYear} = useQuery(queries.getBudgets,
@@ -214,7 +268,7 @@ const modal = reactive({
 const closePopupBudget = (e: boolean) => {
   if (e){
     query.fiscalYear = acYear.value
-    // refetchBudget()
+    refetchBudget()
     disableAddRow.value = false
   }
   modal.budget = false
@@ -250,8 +304,30 @@ const closePopupEditEmployeeTable = (e: boolean) => {
   }
   modal.editEmployeeSalaryTable = false
 }
-const modalHistory = () => {
-
+const openHistory = () => {
+  modalHistory.value = true
+}
+const handleDeleteBudget = (data: any) => {
+  if (disableAddRow.value) {
+    dataSource.value?.store().remove(data.createdAt).then((result) => {
+      dataGridRef.value?.refresh();
+      disableAddRow.value = false
+    })
+    return
+  }
+  deletePopup({
+    callback: () => {
+      deleteBudget({
+        ...query,
+        index: data.index
+      })
+    },
+  });
+}
+const closePopupProcessStatus = (e: boolean) => {
+  if (e) {
+    refetchBudget()
+  }
 }
 </script>
 

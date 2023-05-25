@@ -1,5 +1,6 @@
 <template>
-  <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated" :show-borders="true"
+  <div class="ac130TableExpenditureBudgetSummary">
+    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated" :show-borders="true"
     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
     <DxScrolling mode="standard" show-scrollbar="always" noDataText="내역이 없습니다"/>
     <DxColumn caption="구분" cell-template="label" />
@@ -12,6 +13,7 @@
     <DxColumn caption="잔액(C-D)" />
     <DxColumn caption="집행율(%)" data-field="executionRate" />
   </DxDataGrid>
+  </div>
 </template>
 
 <script lang="ts">
@@ -55,14 +57,14 @@ export default defineComponent({
         {
           label: '세출(B)',
           amount: checkNumber(value?.expenditureBudgetSummary?.amount),
-          currentMonthExecution: checkNumber(value?.expenditureBudgetSummary.currentMonthExecution),
-          cumulativeTotal: checkNumber(value?.expenditureBudgetSummary.currentMonthExecution),
-          executionRate: checkNumber((value?.expenditureBudgetSummary.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100)
+          currentMonthExecution: checkNumber(value?.expenditureBudgetSummary?.currentMonthExecution),
+          cumulativeTotal: checkNumber(value?.expenditureBudgetSummary?.currentMonthExecution),
+          executionRate: checkNumber((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100)
         },
         {
           label: '차액(A-B)',
-          amount: checkNumber(value?.revenueBudgetSummary?.amount - value?.expenditureBudgetSummary.amount),
-          currentMonthExecution: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary.currentMonthExecution),
+          amount: checkNumber(value?.revenueBudgetSummary?.amount - value?.expenditureBudgetSummary?.amount),
+          currentMonthExecution: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.currentMonthExecution),
           cumulativeTotal: checkNumber(value?.revenueBudgetSummary?.cumulativeTotal - value?.expenditureBudgetSummary?.cumulativeTotal),
           executionRate: checkNumber(((value?.revenueBudgetSummary?.cumulativeTotal / value?.revenueBudgetSummary?.amount) * 100) - ((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100))
         }
@@ -81,11 +83,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.ac-110-popup-detail {
-  &-btn {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-  }
+.ac130TableExpenditureBudgetSummary {
+  padding: 5px;
+  background-color: #fff;
+  border-radius: 5px;
 }
 </style>

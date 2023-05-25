@@ -1,6 +1,6 @@
 <template>
 
-  <a-modal wrapClassName="custom-modal" width="50%" v-bind="$props" @ok="handleOk" @cancel="closePopup"
+  <a-modal wrapClassName="custom-modal" width="900px" v-bind="$props" @ok="handleOk" @cancel="closePopup"
            :mask-closable="false">
     <a-row >
       <a-col span="9">
