@@ -1,7 +1,7 @@
 <template>
     <div id="add-pa-210">
         <a-modal :visible="modalStatus" centered okText="네. 작성합니다" cancelText="아니요" @cancel="setModalVisible()"
-            :mask-closable="false" width="1000px" footer="">{{ focusedRowKey }}
+            :mask-closable="false" width="1000px" footer="">
             <standard-form formName="add-pa-210" class="pt-20">
                 <a-spin tip="Loading..." :spinning="loading">
                     <a-form-item label="지방소득세환급청구서/납부내역서">
