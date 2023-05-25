@@ -16,7 +16,7 @@
                 </p>
                 <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="" />
                 <p class="ant-btn-upload-text">또는</p>
-                <button class="ant-btn-upload-button">파일 선택</button>
+                <button class="ant-btn-upload-button" :style="disabled ? 'opacity: 0.5' : ''">파일 선택</button>
               </div>
             </div>
           </a-upload>

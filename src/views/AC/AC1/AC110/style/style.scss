@@ -128,6 +128,9 @@
         :deep .dx-freespace-row {
           display: none !important;
         }
+        :deep .dx-datagrid-rowsview {
+          border: none;
+        }
         :deep .dx-datagrid-focus-overlay {
           visibility: hidden !important;
         }
