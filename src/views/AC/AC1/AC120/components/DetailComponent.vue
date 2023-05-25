@@ -188,7 +188,7 @@
 				</div>
 			</a-col>
 			<a-col class="upload detail2">
-				<UploadPreviewImage v-model:list-image-file="fileList" />
+				<UploadPreviewImage v-model:list-image-file="fileList" :statusProcess="statusProcess"/>
 			</a-col>
 		</a-row>
 	</div>
@@ -237,6 +237,12 @@ export default defineComponent({
 		FullscreenOutlined,
 		FullscreenExitOutlined,
 	},
+	props: {
+		statusProcess: {
+			type: Number,
+			default: 0,
+		},
+	},
 	setup(props, { emit }) {
 		const store = useStore();
 		const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? "0"));
@@ -260,7 +266,7 @@ export default defineComponent({
 		const isModalChange = ref<boolean>(false);
 		let dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? "[]");
 		const keyResetPopupCopy = ref<number>(0)
-		const statusProcess = computed(() => store.state.common.ac120.statusProcess)
+		const statusProcess = computed(() => props.statusProcess)
 		// =================== GRAPHQL ===================
 		// mutation updateAccountingDocument
 		const {

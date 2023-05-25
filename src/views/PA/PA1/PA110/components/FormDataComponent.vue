@@ -198,9 +198,9 @@
 						</a-spin>
 					</a-col>
 				</a-row>
-				<a-row class="mt-20 mb-10">
-					<a-col :offset="4" style="text-align: center">
-						<div class="text-align-center" style="display: flex; justify-content: center">
+				<!-- <a-row class="mt-20 mb-10"> -->
+					<!-- <a-col style="text-align: center"> -->
+						<div class="text-align-center mt-20 mb-10" style="display: flex; justify-content: center">
 							<a-tooltip placement="top" :overlayStyle="{ maxWidth: '500px' }">
 								<template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
 								<div>
@@ -218,7 +218,7 @@
 										text="4대보험 EDI 조회/적용" />
 								</div>
 							</a-tooltip>
-							<a-tooltip placement="top">
+							<!-- <a-tooltip placement="top">
 								<template #title>중도퇴사자 연말정산 반영</template>
 								<div>
 									<button-basic :disabled="store.state.common.pa110.statusDisabledStatus ||
@@ -238,12 +238,12 @@
 			: ''
 		" mode="contained" type="default" text="중도정산 삭제" />
 								</div>
-							</a-tooltip>
+							</a-tooltip> -->
 							<button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px"
 								@onClick="onSubmitForm" mode="contained" type="default" text="저장" />
 						</div>
-					</a-col>
-				</a-row>
+					<!-- </a-col> -->
+				<!-- </a-row> -->
 			</StandardForm>
 		</a-spin>
 		<DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" :data="dataConfigDeductions"
