@@ -24,12 +24,12 @@
           <DxColumn caption="관" data-field="code1" cell-template="code1"/>
           <DxColumn caption="항" data-field="code2" cell-template="code2"/>
           <DxColumn caption="목" data-field="code3" cell-template="code3"/>
-          <DxColumn caption="세목" data-field="codeName" />
-          <DxColumn caption="세목코드" data-field="code" />
-          <DxColumn :caption="dataBudget?.index ? `전년도` :`{해당차수}차 추경`" data-field="amount1"/>
-          <DxColumn :caption="dataBudget?.index ? `당해년도` :`{해당차수}차 추경`" data-field="amount"/>
+          <DxColumn caption="세목" data-field="codeName"/>
+          <DxColumn caption="세목코드" data-field="code"/>
+          <DxColumn :caption="dataBudget?.index > 0 ? `${dataBudget?.index - 1}차 추경` : `전년도`" data-field="amount1"/>
+          <DxColumn :caption="dataBudget?.index > 0 ? `${dataBudget?.index}차 추경` : `당해년도`" data-field="amount"/>
           <DxColumn caption="증감액" cell-template="calculateAmount"/>
-          <template #calculateAmount="{data}">{{data.data.amount}}</template>
+          <template #calculateAmount="{data}">{{ data.data.amount }}</template>
 
           <DxColumn caption="증감비율" data-field="Twelve"/>
           <DxColumn caption="자금원천" cell-template="sourceOfFunding" width="120px"/>
@@ -37,13 +37,13 @@
           <DxColumn caption="비고" data-field="Five"/>
 
           <template #code1="{data}">
-            <div>{{findCode('code1', data.data.code1).name1}}</div>
+            <div>{{ findCode('code1', data.data.code1).name1 }}</div>
           </template>
           <template #code2="{data}">
-            <div>{{findCode('code2', data.data.code2).name2}}</div>
+            <div>{{ findCode('code2', data.data.code2).name2 }}</div>
           </template>
           <template #code3="{data}">
-            <div>{{findCode('code3', data.data.code3).name3}}</div>
+            <div>{{ findCode('code3', data.data.code3).name3 }}</div>
           </template>
           <template #sourceOfFunding="{data}">
             <tag-funding-source
@@ -66,113 +66,130 @@
       </a-col>
       <a-col span="8">
         <standard-form ref="formRef">
-          <DxField :label="dataBudget?.index ? `${dataBudget?.index - 1} 차 추경` : `전년도`">
+          <DxField label="계정과목">
             <default-text-box
               placeholder="${세목명} (${세목코드)}"
-              :value="`${formState?.code}`"
+              :value="`${formState?.codeName} ${formState?.code}`"
               disabled
-              width="120px"
+              width="200px"
             />
           </DxField>
-          <DxField :label="dataBudget?.index ? `${dataBudget?.index - 1} 차 추경` : `당해년도`">
+          <DxField :label="dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index - 1} 차 추경`">
             <div class="d-flex">
               <div class="d-flex-center">
                 <number-box-money
                   class="flex-1 mr-5"
                   :min="0"
-                  width="120px"
+                  width="200px"
+                  v-model:valueInput="state.amountPreYear"
                 />
                 <a-tag v-if="formState.code2 === '501010000'">임직원보수일람표 반영</a-tag>
               </div>
-          </div>
+            </div>
           </DxField>
-          <DxField :label="dataBudget?.index === 0 ? `전년도` : `${dataBudget?.index || 0 - 1}차 추경`">
+          <DxField :label="dataBudget?.index === 0 ? `전년도` : `${dataBudget?.index || 0 - 1} 차 추경`">
             <div class="d-flex">
               <div class="d-flex-center">
                 <number-box-money
                   class="flex-1 mr-5"
                   v-model:valueInput="formState.amount"
-                  width="120px"
+                  :width="formState.code2 === '501010000' ? `50px` : `200px`"
                   format="#0,###"
                   :disabled="formState.code2 === '501010000'"
                 />
                 <div class="mr-10" v-if="formState.code2 === '501010000'">
-                  <a-tag color="black">인건비비율: {{ formState.amount ? filters.formatNumber(state.totalLaborCost * 100 / formState.amount) : 0 }}%</a-tag>
+                  <a-tag color="black">인건비비율:
+                    {{ formState.amount ? filters.formatNumber(state.totalLaborCost * 100 / formState.amount, 2) : 0 }}%
+                  </a-tag>
                   <span>(권장: {{ facilityBizTypeToNumber }}%)</span>
                 </div>
                 <a-tag v-if="formState.code2 === '501010000'">임직원보수일람표 반영</a-tag>
-                <info-tool-tip v-if="formState.code2 === '501010000'">인건비 관련 예산액은 [임직원보수일람표]의 금액이 반영되며, 수정불가입니다.</info-tool-tip>
+                <info-tool-tip v-if="formState.code2 === '501010000'">인건비 관련 예산액은 [임직원보수일람표]의 금액이 반영되며, 수정불가입니다.
+                </info-tool-tip>
               </div>
             </div>
 
           </DxField>
           <DxField label="증감액">
-            <number-box-money :value="formState.amount - state.amountPreYear" format="#0,###" disabled width="120px"/>
+            <number-box-money :value="formState.amount - state.amountPreYear" format="#0,###" disabled width="200px"/>
           </DxField>
           <DxField label="증감비율(%)">
-            <number-box-money :value="state.amountPreYear ? (formState.amount - state.amountPreYear)/state.amountPreYear : 0" disabled width="120px" format="#0,###"/>
+            <number-box-money
+              :value="state.amountPreYear ? (formState.amount - state.amountPreYear) * 100/state.amountPreYear : 0" disabled
+              width="200px" format="#0,###"/>
           </DxField>
           <DxField label="산출내역">
             <div class="d-flex">
               <div class="d-flex-center gap-10">
-                <default-text-box :value="formState?.details?.length > 0 ? formState.details.map((i:any) => `${i.detail} ${i.amount}`).join('; ') : '' " disabled class="flex-1" width="120px"/>
+                <default-text-box
+                  :value="formState?.details?.length > 0 ? formState.details.map((i:any) => `${i.detail} ${i.amount}`).join('; ') : '' "
+                  disabled class="flex-1" width="200px"/>
                 <DxButton type="ghost" @click="handleOpenCalPopup">
                   <EditOutlined/>
                 </DxButton>
-                <InfoToolTip>산출내역 입력시 계산된 금액이 ${현예산}에 자동 반영됩니다</InfoToolTip>
+                <InfoToolTip>
+                  <div v-if="formState.code2 === '501010000'">인건비 관련 예산액은 산출내역 입력시 계산된 금액과는 별개로, [임직원보수일람표] 의 금액이 반영됩니다.</div>
+                  <div v-else>{{ dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index - 1} 차 추경` }} 산출내역 입력시 계산된 금액이 ${현예산}에 자동 반영됩니다</div>
+                </InfoToolTip>
               </div>
             </div>
           </DxField>
-          <div class="title d-flex-center" v-if="formState.code !== '0'">
-            <div class="mr-10">자금원천 (계: {{ summaryFundingSource }}) </div>
-            <DxButton :focusStateEnabled="false" :text="summaryFundingSource === formState.amount ? 'O' : 'X'"
-                  :style="{
-                    backgroundColor: summaryFundingSource === formState.amount
-                      ? '#337614'
-                      : '#BB3835',
-                    color: 'white',
-                    padding: '0px 5px',
-                  }"/>
-          </div>
+
+          <DxField>
+            <div class="title d-flex-center">
+              <div class="mr-10">자금원천 (계: {{ summaryFundingSource }})</div>
+              <DxButton :focusStateEnabled="false" :text="summaryFundingSource === formState.amount ? 'O' : 'X'"
+                        :style="{
+                        backgroundColor: summaryFundingSource === formState.amount
+                          ? '#337614'
+                          : '#BB3835',
+                        color: 'white',
+                        padding: '0px 5px',
+                      }"/>
+            </div>
+          </DxField>
           <DxField label="자부담">
             <div class="d-flex-center gap-10">
-              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource1"/>
-              <DxButton icon="back" type="default" text="${현예산} 예산액 입력"
-
-                @click="fillFundingSource('fundingSource1')"
+              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource1" width="200px"/>
+              <DxButton icon="back" type="default"
+                        :text="`${dataBudget&& dataBudget.index > 0 ? `${dataBudget.index - 1} 차 추경` : `당해년도` } 예산액 입력`"
+                        @click="fillFundingSource('fundingSource1')"
               />
             </div>
           </DxField>
           <DxField label="수익사업">
             <div class="d-flex-center gap-10">
-              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource2"/>
-              <DxButton icon="back" type="default" text="${현예산} 예산액 입력"
-
-                @click="fillFundingSource('fundingSource2')"
+              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource2" width="200px"/>
+              <DxButton icon="back" type="default"
+                        :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index - 1} 차 추경` : `당해년도` } 예산액 입력`"
+                        @click="fillFundingSource('fundingSource2')"
               />
             </div>
           </DxField>
           <DxField label="보조금">
             <div class="d-flex-center gap-10">
-              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource3"/>
-              <DxButton icon="back" type="default" text="${현예산} 예산액 입력"
-
-                @click="fillFundingSource('fundingSource3')"
+              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource3" width="200px"/>
+              <DxButton icon="back" type="default"
+                        :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index - 1} 차 추경` : `당해년도` } 예산액 입력`"
+                        @click="fillFundingSource('fundingSource3')"
               />
             </div>
           </DxField>
           <DxField label="후원금">
             <div class="d-flex-center gap-10">
-              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource4"/>
-              <DxButton icon="back" type="default" text="${현예산} 예산액 입력"
-                @click="fillFundingSource('fundingSource4')"
-
+              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource4" width="200px"/>
+              <DxButton icon="back" type="default"
+                        :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index - 1} 차 추경` : `당해년도` } 예산액 입력`"
+                        @click="fillFundingSource('fundingSource4')"
               />
             </div>
           </DxField>
-          <div class="wf-100 text-center mt-20" v-if="formState.code !== '0'">
-            <DxButton type="default" :disabled="summaryFundingSource !== formState.amount" @click="handleSubmit" text="산출내역 저장"/>
-          </div>
+          <DxField>
+            <div class="wf-100 text-center mt-20">
+              <DxButton type="default" :disabled="summaryFundingSource !== formState.amount" @click="handleSubmit"
+                        text="산출내역 저장"/>
+            </div>
+          </DxField>
         </standard-form>
 
       </a-col>
@@ -211,7 +228,7 @@ const emit = defineEmits(['close-popup'])
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
-const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters["common/getDataBudget"]);
+const dataBudget = computed<any>(() => store.getters["common/getDataBudget"]);
 const acYear = computed<number>(() => (parseInt(sessionStorage.getItem("acYear") ?? '0')))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 const summaryFundingSource = computed(() => (+formState.value?.fundingSource1 || 0) + (+formState.value?.fundingSource2 || 0) + (+formState.value?.fundingSource3 || 0) + (+formState.value?.fundingSource4 || 0))
@@ -246,15 +263,18 @@ const formState = ref({
   fundingSource3: 0,
   fundingSource4: 0,
   details: [],
+  codeName: ''
 });
 const previousRowData = ref();
 
 const dataSource = ref()
 const codes = accountSubject?.[0]?.codes
+const triggerQueryBudget = ref(false)
 // console.log('codes revenueBudgetSum', codes)
 const triggerQueryBudgetPreYear = computed(() => !!dataBudgetPreYear.value?.index)
-const triggerQueryBudget = computed(() => (dataBudget.value?.revenueBudgetSum !== null && dataBudget.value?.budgetType === 4) || dataBudget.value?.budgetType === 5)
+const checkDataNewRow = computed(() => (dataBudget.value?.revenueBudgetSum !== null && dataBudget.value?.budgetType === 4) || dataBudget.value?.budgetType === 5)
 // create function find code in codes array
+console.log('codes', codes)
 const findCode = (code: string, value: string) => {
   return codes?.find((item: any) => item[code] === value)
 }
@@ -277,13 +297,14 @@ const {onResult, onError} = useQuery(queries.getBudget, query, () => ({
 
 onResult(({data}) => {
   if (data?.getBudget) {
-    dataSource.value =  new DataSource({
+    dataSource.value = new DataSource({
       store: {
         type: "array",
         key: "code",
-        data: data.getBudget.records?.map((item: any) => ({...item, codeName: findCode('code', item.code).name})) || []
+        data: data.getBudget.records?.map((item: any) => ({...item, codeName: findCode('code', item.code)?.name})) || []
       },
     })
+    triggerQueryBudget.value = false
   }
 })
 
@@ -300,19 +321,19 @@ onResultPreYear(({data}) => {
 })
 
 onErrorPreYear((error) => {
-  if(error.message.includes('예산서가 존재하지 않습니다')) {
+  if (error.message.includes('예산서가 존재하지 않습니다')) {
     console.log('error', error.message)
     state.amountPreYear = 0
   }
 })
 
 // query onResultEmployeePayTable
-const {onResult: onResultEmployeePayTable ,  onError: onErrorEmployeePayTable} = useQuery(queries.getEmployeePayTable, {
+const {onResult: onResultEmployeePayTable, onError: onErrorEmployeePayTable} = useQuery(queries.getEmployeePayTable, {
   companyId,
-  fiscalYear: acYear.value ,
+  fiscalYear: acYear.value,
   facilityBusinessId: globalFacilityBizId.value,
   index: dataBudget.value?.index
-},  () => ({
+}, () => ({
   fetchPolicy: "no-cache"
 }))
 onResultEmployeePayTable(({data}) => {
@@ -335,35 +356,53 @@ onErrorUpdateBudget((error) => {
 })
 // watch code2
 watch(() => formState.value, (val: any) => {
-  if(val.code2 !== '501010000') {
+  if (val.code2 !== '501010000') {
     formState.value.amount = 4
   }
 })
 // watch triggerQueryBudget
-watch(() => triggerQueryBudget.value, (val: any) => {
-    if (!val) {
-      const budgets = codes.filter((i: any) => i.classification === dataBudget.value?.budgetType)
-      dataSource.value =  new DataSource({
-        store: {
-          type: "array",
-          key: "code",
-          data: budgets?.map((item: any) => ({
-            code: item.code,
-            code1: item.code1,
-            code2: item.code2,
-            code3: item.code3,
-            amount: 0,
-            remark: null,
-            fundingSource1: null,
-            fundingSource2: null,
-            fundingSource3: null,
-            details: null,
-            codeName: item.name
-          })) || []
-        },
-      })
-    }
+watch(() => checkDataNewRow.value, (val: any) => {
+  if (!val) {
+    const budgets = codes.filter((i: any) => i.classification === dataBudget.value?.budgetType)
+    dataSource.value = new DataSource({
+      store: {
+        type: "array",
+        key: "code",
+        data: budgets?.map((item: any) => ({
+          code: item.code,
+          code1: item.code1,
+          code2: item.code2,
+          code3: item.code3,
+          amount: 0,
+          remark: null,
+          fundingSource1: null,
+          fundingSource2: null,
+          fundingSource3: null,
+          details: null,
+          codeName: item.name
+        })) || []
+      },
+    })
+    console.log(budgets?.map((item: any) => ({
+      code: item.code,
+      code1: item.code1,
+      code2: item.code2,
+      code3: item.code3,
+      amount: 0,
+      remark: null,
+      fundingSource1: null,
+      fundingSource2: null,
+      fundingSource3: null,
+      details: null,
+      codeName: item.name
+    })))
+  } else {
+    triggerQueryBudget.value = true
+    query.index = dataBudget.value?.index
+    query.type = dataBudget.value?.budgetType
+  }
 }, {deep: true, immediate: true})
+
 const handleOpenCalPopup = () => {
   state.isPopupCalculateVisible = true
 }
@@ -393,7 +432,7 @@ const handleSubmit = () => {
     inputs: result
   })
 }
-const fillFundingSource  = (field: string) => {
+const fillFundingSource = (field: string) => {
   switch (field) {
     case 'fundingSource1':
       return formState.value.fundingSource1 = formState.value.amount

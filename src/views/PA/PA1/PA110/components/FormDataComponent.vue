@@ -174,11 +174,9 @@
 											" :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
 									</span>
 									<div>
-										<a-tooltip color="black" :class="item.itemCode == 1012 && localIncomeBoo ? 'red' : ''
-											" placement="top" zIndex="9999" :title="item.itemCode == 1012 && localIncomeBoo
-		? '소액징수부면제 적용' + localReal
-		: ''
-		">
+										<a-tooltip v-if="store.state.common.pa110.statusFormAdd" color="black" placement="top" zIndex="9999"
+											:class="item.itemCode == 1012 && localIncomeBoo ? 'red' : ''"
+											:title="item.itemCode == 1012 && localIncomeBoo ? '소액징수부면제 적용' + localReal : ''">
 											<!-- <template #title>
                                             소액징수부면제 적용 {{ localReal }}
                                         </template> -->
@@ -189,9 +187,10 @@
 														" format="#0,###" />
 											</span>
 										</a-tooltip>
-										<!-- <number-box-money v-else :disabled="store.state.common.pa110.statusDisabledStatus" width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false" :rtlEnabled="true"
-                                        v-model:valueInput="item.amount" :min="0">
-                                    </number-box-money> -->
+										<number-box-money v-else :disabled="store.state.common.pa110.statusDisabledStatus"
+											width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false"
+											:rtlEnabled="true" v-model:valueInput="item.amount" format="#0,###">
+										</number-box-money>
 										<span class="pl-5">원</span>
 									</div>
 								</div>
@@ -464,7 +463,7 @@ export default defineComponent({
 			if (value) {
 				dataConfigDeductions.value = [];
 				value.data.getWithholdingConfigDeductionItems.map((item: any) => {
-					if ([1001, 1002, 1003, 1004, 1011, 1012].includes(item.itemCode)) {
+					if ([1001, 1002, 1003, 1004, 1011, 1012, 1031, 1032].includes(item.itemCode)) {
 						let amount = 0;
 						dataConfigDeductions.value.push({
 							itemCode: item.itemCode,
@@ -574,18 +573,18 @@ export default defineComponent({
 		);
 
 		watch(() => dataConfigDeductions.value, (value) => {
-				// store.state.common.pa110.statusChangeFormEdit = true;
+			// store.state.common.pa110.statusChangeFormEdit = true;
 
-				// console.log(value.find((item: any) => item.itemCode == 1012).amountNew);
-				// console.log(value.find((item: any) => item.itemCode == 1012).amount);
-			if(store.state.common.pa110.statusFormAdd) {
+			// console.log(value.find((item: any) => item.itemCode == 1012).amountNew);
+			// console.log(value.find((item: any) => item.itemCode == 1012).amount);
+			if (store.state.common.pa110.statusFormAdd) {
 				localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
 				localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
 				value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
 			}
-				
+
 			calculateTax();
-		},{ deep: true });
+		}, { deep: true });
 
 		watch(
 			() => dataConfigPayItems.value,
@@ -617,6 +616,7 @@ export default defineComponent({
 		watch(
 			() => store.state.common.pa110.addRow,
 			(newVal) => {
+				localReal.value = 0
 				store.state.common.pa110.statusClickButtonAdd = false;
 				store.state.common.pa110.dataTaxPayInfo =
 					store.state.common.pa110.dataTaxPayInfo.concat(
@@ -880,8 +880,8 @@ export default defineComponent({
 		const resetArrayEmploySelect = () => {
 			arrayEmploySelect.value = [];
 			let data = dataEmployeeWageDailies.value?.filter((data: any) => {
-				let statusJoinedAt = data.joinedAt ? parseInt(data.joinedAt.toString().slice(0, 6)) <= parseInt(processKey.value.imputedYear +''+ filters.formatMonth(processKey.value.imputedMonth)) : true
-				let statusLeavedAt = data.leavedAt ? parseInt(data.leavedAt.toString().slice(0, 6)) >= parseInt(processKey.value.imputedYear +''+ filters.formatMonth(processKey.value.imputedMonth)) : true
+				let statusJoinedAt = data.joinedAt ? parseInt(data.joinedAt.toString().slice(0, 6)) <= parseInt(processKey.value.imputedYear + '' + filters.formatMonth(processKey.value.imputedMonth)) : true
+				let statusLeavedAt = data.leavedAt ? parseInt(data.leavedAt.toString().slice(0, 6)) >= parseInt(processKey.value.imputedYear + '' + filters.formatMonth(processKey.value.imputedMonth)) : true
 				if (statusJoinedAt && statusLeavedAt) {
 					return data
 				}
@@ -894,7 +894,7 @@ export default defineComponent({
 						// 		arrayEmploySelect.value.push(dataEmployee);
 						// 	}
 						// } else {
-							arrayEmploySelect.value.push(dataEmployee);
+						arrayEmploySelect.value.push(dataEmployee);
 						// }
 					}
 				});
@@ -1077,7 +1077,7 @@ export default defineComponent({
 		};
 		const updateDataDeduction = async () => {
 			await dataConfigDeductions.value?.forEach((val: any, index: number) => {
-				if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
+				if ([1001, 1002, 1003, 1004, 1011, 1012, 1031, 1032].includes(val.itemCode))
 					val.amount = val.amountNew;
 			});
 			store.state.common.pa110.statusChangeFormPrice = false;
