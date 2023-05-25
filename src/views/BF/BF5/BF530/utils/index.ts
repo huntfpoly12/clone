@@ -119,7 +119,7 @@ export const completedAtFormat = (time: any, workingStatus: any) => {
   if(time === null || time === undefined){
     return '';
   }
-  if([0,10,-1].includes(workingStatus)){
+  if([1,2,0,10,-1,].includes(workingStatus)){
     return dayjs(time).format('YYYY-MM-DD');
   }
   return '';

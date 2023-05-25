@@ -121,6 +121,7 @@
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
         >
+          <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection
@@ -190,7 +191,7 @@
           <DxColumn caption="메모" width="135" cell-template="memo" />
           <template #memo="{ data }: any">
             <a-tooltip zIndex="9999999" placement="top" color="black">
-              <template #title> {{data.data.memo}} </template>
+              <template #title> {{ data.data.memo }} </template>
               <div></div>
               <default-text-box
                 :width="120"
@@ -284,7 +285,12 @@
           />
           <template #completedAt="{ data }">
             <div>
-              {{ completedAtFormat(data.data.completedAt, data.data.workingStatus) }}
+              {{
+                completedAtFormat(
+                  data.data.completedAt,
+                  data.data.workingStatus
+                )
+              }}
             </div>
           </template>
           <DxColumn caption="팩스발송" cell-template="downD" width="100px" />
@@ -367,13 +373,14 @@ import {
   DxScrolling,
   DxSelection,
   DxLoadPanel,
+  DxKeyboardNavigation,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
   SaveOutlined,
   HistoryOutlined,
 } from "@ant-design/icons-vue";
-import { DxTextBox, DxTooltip } from 'devextreme-vue';
+import { DxTextBox, DxTooltip } from "devextreme-vue";
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
 import {
@@ -384,7 +391,7 @@ import {
   formatMonth,
   dataTableTab1,
   states1,
-completedAtFormat,
+  completedAtFormat,
 } from "../../utils/index";
 import dayjs from "dayjs";
 import Correction from "./Correction.vue";
@@ -407,8 +414,9 @@ export default defineComponent({
     DownloadOutlined,
     SelectBoxCT,
     HistoryOutlined,
-    DxTextBox, DxTooltip
-
+    DxTextBox,
+    DxTooltip,
+    DxKeyboardNavigation,
   },
   props: {
     search: {
@@ -673,9 +681,8 @@ export default defineComponent({
             companyId: item.field.companyId,
             imputedYear: globalYear,
           });
-        } else {
-          creationConsignStatus(item.field);
         }
+        creationConsignStatus(item.field);
       });
       let formConsignMemo: any[] = [];
       filterDsTab1Bf530.value.forEach((item: any) => {

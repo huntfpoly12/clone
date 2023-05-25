@@ -89,6 +89,7 @@
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
         >
+          <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection
@@ -295,6 +296,7 @@ import {
   DxEditing,
   DxLookup,
   DxColumnFixing,
+DxKeyboardNavigation,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -336,7 +338,8 @@ export default defineComponent({
     DxColumnFixing,
     SelectBoxCT,
     HistoryOutlined,
-  },
+    DxKeyboardNavigation
+},
   props: {
     search: {
       type: Number,
@@ -619,16 +622,14 @@ export default defineComponent({
         if (item.type == 1) {
           if (item.field.data.workingStatus == 0) {
             cancelCompanyJoin(item.field.search);
-          } else {
-            creationCompanyJoinData(item.field);
           }
+          creationCompanyJoinData(item.field);
         }
         if (item.type == 2) {
           if (item.field.data.workingStatus == 0) {
             cancelCompanyOut(item.field.search);
-          } else {
-            creationCompanyOutData(item.field);
           }
+          creationCompanyOutData(item.field);
         }
       });
     };

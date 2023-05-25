@@ -37,13 +37,13 @@
           <DxColumn caption="비고" data-field="Five"/>
 
           <template #code1="{data}">
-            <div>{{ findCode('code1', data.data.code1).name1 }}</div>
+            <div>{{ findCode('code1', data.data.code1)?.name1 }}</div>
           </template>
           <template #code2="{data}">
-            <div>{{ findCode('code2', data.data.code2).name2 }}</div>
+            <div>{{ findCode('code2', data.data.code2)?.name2 }}</div>
           </template>
           <template #code3="{data}">
-            <div>{{ findCode('code3', data.data.code3).name3 }}</div>
+            <div>{{ findCode('code3', data.data.code3)?.name3 }}</div>
           </template>
           <template #sourceOfFunding="{data}">
             <tag-funding-source
@@ -268,13 +268,12 @@ const formState = ref({
 const previousRowData = ref();
 
 const dataSource = ref()
-const codes = accountSubject?.[0]?.codes
+const codes = JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0]?.codes
 const triggerQueryBudget = ref(false)
 // console.log('codes revenueBudgetSum', codes)
 const triggerQueryBudgetPreYear = computed(() => !!dataBudgetPreYear.value?.index)
 const checkDataNewRow = computed(() => (dataBudget.value?.revenueBudgetSum !== null && dataBudget.value?.budgetType === 4) || dataBudget.value?.budgetType === 5)
 // create function find code in codes array
-console.log('codes', codes)
 const findCode = (code: string, value: string) => {
   return codes?.find((item: any) => item[code] === value)
 }
@@ -363,7 +362,7 @@ watch(() => formState.value, (val: any) => {
 // watch triggerQueryBudget
 watch(() => checkDataNewRow.value, (val: any) => {
   if (!val) {
-    const budgets = codes.filter((i: any) => i.classification === dataBudget.value?.budgetType)
+    const budgets = codes?.filter((i: any) => i.classification === dataBudget.value?.budgetType)
     dataSource.value = new DataSource({
       store: {
         type: "array",
@@ -383,19 +382,6 @@ watch(() => checkDataNewRow.value, (val: any) => {
         })) || []
       },
     })
-    console.log(budgets?.map((item: any) => ({
-      code: item.code,
-      code1: item.code1,
-      code2: item.code2,
-      code3: item.code3,
-      amount: 0,
-      remark: null,
-      fundingSource1: null,
-      fundingSource2: null,
-      fundingSource3: null,
-      details: null,
-      codeName: item.name
-    })))
   } else {
     triggerQueryBudget.value = true
     query.index = dataBudget.value?.index
