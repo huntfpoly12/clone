@@ -81,6 +81,7 @@
           ref="tab3Bf520Ref"
           noDataText="내역이 없습니다"
         >
+          <DxKeyboardNavigation :enabled="false" />
           <DxPaging :page-size="1000" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection
@@ -331,6 +332,7 @@ import {
   DxLookup,
   DxColumnFixing,
   DxPaging,
+DxKeyboardNavigation,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -375,7 +377,8 @@ export default defineComponent({
     SelectBoxCT,
     HistoryOutlined,
     DxPaging,
-  },
+    DxKeyboardNavigation
+},
   props: {
     search: {
       type: Number,
@@ -948,37 +951,32 @@ export default defineComponent({
         if (item.type == 1) {
           if (item.field.data.workingStatus == 0) {
             cancel1(item.field.search);
-          } else {
-            create1(item.field);
           }
+          create1(item.field);
         }
         if (item.type == 2) {
           if (item.field.data.workingStatus == 0) {
             cancel2(item.field.search);
-          } else {
-            create2(item.field);
           }
+          create2(item.field);
         }
         if (item.type == 3) {
           if (item.field.data.workingStatus == 0) {
             cancel3(item.field.search);
-          } else {
-            create3(item.field);
           }
+          create3(item.field);
         }
         if (item.type == 4) {
           if (item.field.data.workingStatus == 0) {
             cancel4(item.field.search);
-          } else {
-            create4(item.field);
           }
+          create4(item.field);
         }
         if (item.type == 5) {
           if (item.field.data.workingStatus == 0) {
             cancel5(item.field.search);
-          } else {
-            create5(item.field);
           }
+          create5(item.field);
         }
       });
     };
