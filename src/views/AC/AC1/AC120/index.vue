@@ -15,8 +15,10 @@
 			</a-spin>
 			<div class="flex">
 				<div class="action">
-					<ProcessStatus v-if="store.state.common.ac120.statusProcess"
-						:valueStatus="store.state.common.ac120.statusProcess" :disabled="true" />
+					<ProcessStatus
+						v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
+						:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
+						:disabled="true" />
 					<button-basic v-else mode="contained" style="width: 90px" :disabled="true">
 					</button-basic>
 					<DxButton icon="plus" class="ml-4" @click="modalHistoryAccountingProcess">
@@ -33,7 +35,7 @@
 						<template #title>전표 신규 건별 등록</template>
 						<span>
 							<DxButton class="ml-4 custom-button" type="default"
-								:disabled="store.state.common.ac120.statusProcess != 10"
+								:disabled="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status != 10"
 								:height="$config_styles.HeightInput" @click="actionOpenModalAdd" :width="120">
 								<div class="d-flex-center">
 									<PlusOutlined style="font-size: 14px" />
@@ -55,8 +57,8 @@
 						</span>
 					</a-tooltip>
 					<DxButton class="ml-4 mr-4 custom-button" type="default" :width="90"
-						:disabled="store.state.common.ac120.statusProcess != 10" :height="$config_styles.HeightInput"
-						@click="actionModalDelete">
+						:disabled="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status != 10"
+						:height="$config_styles.HeightInput" @click="actionModalDelete">
 						<div class="d-flex-center">
 							<span><checkbox-basic :valueCheckbox="true" disabled="true" /></span>
 							<span>전표취소</span>
@@ -73,7 +75,8 @@
 		<DxDrawer :opened-state-mode="'shrink'" :position="'bottom'" :reveal-mode="'expand'"
 			v-model:opened="store.state.common.ac120.statusShowFull" :height="'100%'" template="listMenu">
 			<template #listMenu="{ data }">
-				<DetailComponent @changeAmountDataGrid="changeAmountDataGrid" />
+				<DetailComponent @changeAmountDataGrid="changeAmountDataGrid"
+					:statusProcess="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status" />
 			</template>
 			<div id="content" class="dx-theme-background-color">
 				<a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
@@ -86,45 +89,55 @@
 						@focused-row-changing="onFocusedRowChanging" :column-auto-width="true"
 						v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
 						@selection-changed="selectionChanged">
-						<DxRowDragging v-if="store.state.common.ac120.statusProcess == 10" :allow-reordering="true"
-							:show-drag-icons="true" :on-reorder="onReorder" />
+						<DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder" />
 						<DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
 						<DxScrolling mode="standard" show-scrollbar="always" />
 						<DxPaging :enabled="false" />
 						<DxColumn caption="일자" :allow-sorting="false" cell-template="transactionDetailDate"
 							data-field="transactionDetailDate" width="85" />
 						<template #transactionDetailDate="{ data }">
-							{{ $filters.formatDate(data.value) }}
+							<span :title="$filters.formatDate(data.value)">{{ $filters.formatDate(data.value) }}</span>
 						</template>
 
 						<DxColumn caption="순번" :allow-sorting="false" data-field="documentOrderByDate" width="45" />
 
 						<DxColumn caption="결의번호" :allow-sorting="false" data-field="resolutionNumber" width="68" />
 
-						<DxColumn caption="통장" :allow-sorting="false" cell-template="bankbook" data-field="bankbook" width="80" />
+						<DxColumn caption="통장" :allow-sorting="false" cell-template="bankbook" data-field="bankbook"
+							width="80" />
 						<template #bankbook="{ data }">
 							<a-tooltip placement="top"
 								:title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
-								<span>{{ data.data.bankbook?.bankbookNickname }}</span>
+								<span :title="data.data.bankbook?.bankbookNickname">{{ data.data.bankbook?.bankbookNickname
+								}}</span>
 							</a-tooltip>
 						</template>
 
-						<DxColumn caption="결의 구분" :allow-sorting="false" data-field="resolutionClassification"
-							cell-template="resolutionClassification" width="75" />
+						<DxColumn caption="결의 구분" css-class="cell-left" :allow-sorting="false"
+							data-field="resolutionClassification" cell-template="resolutionClassification" width="75" />
 						<template #resolutionClassification="{ data }">
-							{{ store.state.common.ac120.arrResolutionClassification.find((item: any) =>
-								data.data.resolutionClassification == item.id)?.text
-							}}
+							<span :title="store.state.common.ac120.arrResolutionClassification.find((item: any) =>
+								data.data.resolutionClassification == item.id)?.text">
+								{{ store.state.common.ac120.arrResolutionClassification.find((item: any) =>
+									data.data.resolutionClassification == item.id)?.text
+								}}</span>
 						</template>
 
-						<DxColumn caption="수입액" :allow-sorting="false" css-class="cell-right" cell-template="amountCustom1" width="80" />
+						<DxColumn caption="수입액" :allow-sorting="false" css-class="cell-right" cell-template="amountCustom1"
+							width="80" />
 						<template #amountCustom1="{ data }">
-							{{ data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
+							<span
+								:title="data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0">
+								{{ data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
+							</span>
 						</template>
 
-						<DxColumn caption="지출액" :allow-sorting="false" css-class="cell-right" cell-template="amountCustom2" width="80" />
+						<DxColumn caption="지출액" :allow-sorting="false" css-class="cell-right" cell-template="amountCustom2"
+							width="80" />
 						<template #amountCustom2="{ data }">
-							{{ data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
+							<span :title="data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0">
+								{{ data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
+							</span>
 						</template>
 
 						<DxColumn caption="잔액" :allow-sorting="false" data-field="balance" width="90" format="fixedPoint" />
@@ -136,32 +149,34 @@
 						<DxColumn caption="계정과목" :allow-sorting="false" data-field="accountCode" cell-template="accountCode"
 							width="150" />
 						<template #accountCode="{ data }">
-							<account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
+							<span :title="data.data.accountCode">
+								<account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
+							</span>
 						</template>
 
 						<DxColumn caption="상대계정" :allow-sorting="false" data-field="relationCode"
 							cell-template="relationCode" width="150" />
 						<template #relationCode="{ data }">
-							<account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
+							<span :title="data.data.relationCode">
+								<account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
+								</span>
 						</template>
 
 						<DxColumn caption="자금원천" :allow-sorting="false" data-field="fundingSource" css-class="cell-left"
 							cell-template="fundingSource" width="75" />
 						<template #fundingSource="{ data }">
-							{{
-								store.state.common.ac120.arrFundingSource.find(
-									(item: any) => data.data.fundingSource == item.id
-								)?.text
-							}}
+							<span
+								:title="store.state.common.ac120.arrFundingSource.find((item: any) => data.data.fundingSource == item.id)?.text">
+								{{ store.state.common.ac120.arrFundingSource.find((item: any) => data.data.fundingSource ==	item.id)?.text }}
+							</span>
 						</template>
 
 						<DxColumn caption="거래처" css-class="cell-left" :allow-sorting="false" data-field="clientId"
 							cell-template="clientId" width="75" />
 						<template #clientId="{ data }">
-							{{
-								clients.find((item: any) => item.value == data.data.clientId)
-									?.label
-							}}
+							<span :title="clients.find((item: any) => item.value == data.data.clientId)?.label">
+								{{ clients.find((item: any) => item.value == data.data.clientId)?.label }}
+							</span>
 						</template>
 
 						<DxColumn caption="증빙" :allow-sorting="false" data-field="proofCount" width="50" />
@@ -404,7 +419,14 @@ export default defineComponent({
 		const monthSelected = ref(dayjs().month() + 1);
 		const lastBalance = ref<number>(0);
 		const dataGetAccountingProcesses = ref<any>([]);
-		const dataSource: any = ref<DataSource>();
+		const dataSource: any = ref(new DataSource({
+			store: {
+				type: "array",
+				key: "accountingDocumentId",
+				data: dataApi.value,
+			},
+			requireTotalCount: true,
+		}));
 		// get store data
 		const storeDataSource: any = computed(() => dataSource.value?.store() as Store);
 		const totalCount = computed(() => dataSource.value?.totalCount());
@@ -427,7 +449,7 @@ export default defineComponent({
 		let statusClickAdd = ref<boolean>(false);
 		// let statusClickMonth = ref<boolean>(false)
 		let monthNewClick = ref<number>(0);
-		store.state.common.ac120.statusProcess = computed(() => dataGetAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0)
+		// store.state.common.ac120.statusProcess = computed(() => dataGetAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0)
 
 		// =================== GRAPHQL ===================
 		// query getAccountingProcesses
@@ -738,7 +760,7 @@ export default defineComponent({
 		};
 
 		const actionPopupItemDetail = (data: any) => {
-			if (store.state.common.ac120.statusProcess == 10) {
+			if (dataGetAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status == 10) {
 				statusModalItemDetail.value = true;
 			}
 		};
