@@ -21,7 +21,7 @@
       </div>
     </div>
     <a-row class="ac-130__main">
-      <a-col span="12" class="ac-130__main-content">
+      <a-col span="14" class="ac-130__main-content">
         <a-spin :spinning="loadinggetAccountingClosingCheckItems" size="large">
           <div class="ac-130__main-content-check">
             <div class="ac-130__main-content-check-title">
@@ -77,7 +77,7 @@
           </div>
         </a-spin>
       </a-col>
-      <a-col span="12" class="ac-130__main-content">
+      <a-col span="10" class="ac-130__main-content">
         <div class="ac-130__main-content-manager">
           <div class="ac-130__main-content-manager-title">
             <b>회계마감 관리사항</b>

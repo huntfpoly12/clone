@@ -1,7 +1,5 @@
 <template>
-
-  <a-modal wrapClassName="custom-modal" width="50%" v-bind="$props" @ok="handleOk" @cancel="closePopup"
-           :mask-closable="false">
+  <a-modal wrapClassName="custom-modal" width="900px" v-bind="$props" @ok="handleOk" @cancel="closePopup">
     <a-row >
       <a-col span="9">
         <dx-field label="산출내역">

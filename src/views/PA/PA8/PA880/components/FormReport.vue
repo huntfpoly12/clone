@@ -111,7 +111,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="연금건강" label-align="right">
-                  <checkbox-basic size="14" label="휴업" class="mr-10 mx-10" v-model:valueCheckbox="formState.isShutdown" />
+                  <checkbox-basic size="14" label="휴업" class="mr-10" v-model:valueCheckbox="formState.isShutdown" />
                   <checkbox-basic size="14" label="근로자없음" class="mr-10" v-model:valueCheckbox="formState.isNoWorker" />
                 </a-form-item>
               </a-col>

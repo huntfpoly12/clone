@@ -7,3 +7,7 @@
 .pt-20 {
     padding-top: 20px;
 }
+:deep .disabled-row {
+  pointer-events: none;
+  opacity: 0.5;
+}

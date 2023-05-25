@@ -1,6 +1,6 @@
 <template>
   <div :class="computedClass" :style="style">
-    <div :class="dxFieldLabel" :title="showTitle ? label : ``" :style="styleLabel">{{ label }}:</div>
+    <div v-if="label" :class="dxFieldLabel" :title="showTitle ? label : ' '" :style="styleLabel">{{ label }}:</div>
     <div class="dx-field-value">
       <slot />
     </div>

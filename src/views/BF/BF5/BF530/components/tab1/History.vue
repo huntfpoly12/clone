@@ -6,7 +6,7 @@
     class="confirm-md"
     footer=""
     :width="'80%'"
-    title="4대보험업무관리"
+    title="변경이력"
   >
     <section class="mt-20">
       <a-spin :spinning="loading1">

@@ -302,8 +302,8 @@ export default defineComponent({
       ) => {
         let hot = wrapper.value.hotInstance;
         if (isValid == false) {
-          console.log(value,'value');
-          hot.setDataAtCell(row, hot.propToCol(prop),null,"edit");
+          console.log(value,'value afterValidate');
+          hot.setDataAtCell(row, hot.propToCol(prop),null,'validateEdit');
         }
       },
       afterChange: async (changes: any, source: string) => {

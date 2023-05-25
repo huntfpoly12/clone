@@ -494,7 +494,7 @@ export default defineComponent({
       () => initFormStateTabPA120.value.president,
       (newValue) => {
         store.commit("common/presidentPA120", newValue);
-      }
+      },{immediate: true}
     );
     const onFocusOut = (emitVal: any) => {
       initFormStateTabPA120.value.employeeId = employeeId.value;
