@@ -280,6 +280,7 @@ export default defineComponent({
     const confirmStatus = ref<boolean>(false);
     const confirmLoadNewStatus = ref<boolean>(false);
     const firstTimeLoad = ref<boolean>(false);
+    const cellNegativeNumber = [[5,7],[9,7],[31,7]]
     // The above code is setting up the hot table.
     const hotSettings = {
       comments: true,
@@ -288,8 +289,14 @@ export default defineComponent({
       height: 740,
       fixedRowsTop: 4,
       beforeKeyDown: (e: any) => {
+        let hot = wrapper.value.hotInstance;
+        const selection = hot.getSelected();
         var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
-        if (!reg.test(e.key) && e.key != "Backspace" && e.key != "-") {
+        if (
+          !cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
+          !reg.test(e.key) && 
+          e.key != "Backspace"
+        ) {
           e.preventDefault();
         }
       },

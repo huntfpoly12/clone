@@ -278,21 +278,14 @@ export default defineComponent({
       beforeKeyDown: (e: any) => {
         let hot = wrapper.value.hotInstance;
         const selection = hot.getSelected();
-        var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._-]/g;
+        var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
         // check nếu edit ở một số cell được phép nhập số âm thì cho nhập
-        if (cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1])) {
-          reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
-        }
-
-        if (!reg.test(e.key) && e.key != "Backspace" && e.key != "-") {
-          console.log(reg.test(e.key));
-          console.log(reg);
-        
-          e.preventDefault();
-        } else {
-          console.log(reg.test(e.key));
-          console.log(reg,e.key);
-        
+        if (
+          !cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
+          !reg.test(e.key) && 
+          e.key != "Backspace"
+        ){
+            e.preventDefault();
         }
       },
       afterValidate: (isValid: boolean, value: any, row: any, prop: any) => {

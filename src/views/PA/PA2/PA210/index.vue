@@ -305,7 +305,7 @@
           fixedPosition="right"
         />
         <template #add="{ data }">
-          <a-tooltip >
+          <a-tooltip v-if="checkModify(data.data)">
             <template #title
               >본 신고서에 대한 수정신고서를 작성합니다.</template
             >

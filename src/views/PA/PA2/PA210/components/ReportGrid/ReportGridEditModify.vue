@@ -278,6 +278,7 @@ export default defineComponent({
     const wrapper = ref<any>(null);
     const confirmStatus = ref<boolean>(false);
     const confirmLoadNewStatus = ref<boolean>(false);
+    const cellNegativeNumber = [[7,7],[15,7],[59,7]]
     const hotSettings = {
       comments: true,
       fillHandle: true,
@@ -285,10 +286,17 @@ export default defineComponent({
       height: 740,
       fixedRowsTop: 4,
       beforeKeyDown: (e: any) => {
+        let hot = wrapper.value.hotInstance;
+        const selection = hot.getSelected();
         var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
-        if (!reg.test(e.key) && e.key != "Backspace" && e.key != "-") {
-          e.preventDefault();
-        }
+        // check nếu edit ở một số cell được phép nhập số âm thì cho nhập
+        if (
+            !cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
+            !reg.test(e.key) && 
+            e.key != "Backspace"
+          ){
+              e.preventDefault();
+          }
       },
       afterValidate: (isValid: boolean, value: any, row: any, prop: any) => {
         let hot = wrapper.value.hotInstance;

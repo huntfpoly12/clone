@@ -323,7 +323,7 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
+    const cellNegativeNumber = [[5,7],[9,7],[31,7]]
     const wrapper = ref<any>(null);
     const confirmLoadNewStatus = ref<boolean>(false);
 
@@ -335,8 +335,14 @@ export default defineComponent({
       height: 740,
       fixedRowsTop: 4,
       beforeKeyDown: (e: any) => {
+        let hot = wrapper.value.hotInstance;
+        const selection = hot.getSelected();
         var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
-        if (!reg.test(e.key) && e.key != "Backspace" && e.key != "-") {
+        if (
+          !cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
+          !reg.test(e.key) && 
+          e.key != "Backspace"
+        ) {
           e.preventDefault();
         }
       },
