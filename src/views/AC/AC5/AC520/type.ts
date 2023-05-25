@@ -4,6 +4,7 @@ export interface Budget {
   budgetType?: 4 | 5,
   revenueBudgetSum: number | null;
   action: ACTION;
+  columnName?: string
 }
 
 export enum StepCreateBudget {

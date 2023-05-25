@@ -71,9 +71,9 @@ const filters = {
       }
       return input;
     },
-    formatNumber(input: number) {
-      if (input) {
-        return input.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    formatNumber(input: number, decimal: number = 0) {
+      if (!isNaN(input)) {
+        return input.toLocaleString('en-US', { minimumFractionDigits: decimal, maximumFractionDigits: decimal })
       }
     }
 }
