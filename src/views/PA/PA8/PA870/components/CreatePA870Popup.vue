@@ -275,19 +275,19 @@
             <a-row>
               <a-col span="8">
                 <DxField label="근로자수" :required="formState.nationalPensionReport">
-                  <number-box v-model:valueInput='formState.nationalPensionEmployeeCount' placeholder=""
-                              :required="formState.nationalPensionReport" />
+                  <number-box v-model:valueInput='formState.nationalPensionEmployeeCount' :min="0"
+                              :required="formState.nationalPensionReport" :disabled="!formState.nationalPensionReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="가입대상자수" :required="formState.nationalPensionReport" class="field-custom">
-                  <number-box v-model:valueInput='formState.nationalPensionEmployeeTargetNumber' placeholder=""
-                              :required="formState.nationalPensionReport" />
+                  <number-box v-model:valueInput='formState.nationalPensionEmployeeTargetNumber' :min="0"
+                              :required="formState.nationalPensionReport" :disabled="!formState.nationalPensionReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="적용연월일" :required="formState.nationalPensionReport" >
-                  <date-time-box :clearable="false" placeholder="" :required="formState.nationalPensionApplyDate" />
+                  <date-time-box :clearable="false" placeholder="" :required="formState.nationalPensionApplyDate" :disabled="!formState.nationalPensionReport" />
                 </DxField>
               </a-col>
             </a-row>
@@ -297,14 +297,16 @@
                   <div class="d-flex gap-20">
                     <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                  v-model:valueRadioCheck="formState.nationalPensionSeparatelySiteStatus" layoutCustom="horizontal"
-                                 class="mt-1" required></radio-group>
+                                 class="mt-1" required
+                                 :disabled="!formState.nationalPensionReport"
+                    />
                   </div>
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="본점사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.nationalPensionSeparatelySiteManageNumber'
-                                   placeholder="" />
+                                   placeholder="" :disabled="!formState.nationalPensionReport" />
                 </DxField>
               </a-col>
             </a-row>
@@ -314,20 +316,20 @@
             <a-row>
               <a-col span="8">
                 <DxField label="적용대상자수" :required="formState.healthInsuranceReport">
-                  <number-box v-model:valueInput='formState.healthInsuranceEmployeeTargetNumber' placeholder=""
-                              :required="formState.healthInsuranceReport" />
+                  <number-box v-model:valueInput='formState.healthInsuranceEmployeeTargetNumber' :min="0"
+                              :required="formState.healthInsuranceReport" :disabled="!formState.healthInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="적용연월일" :required="formState.healthInsuranceReport" class="field-custom">
                   <date-time-box :clearable="false" v-model:valueDate="formState.healthInsuranceApplyDate"
-                                 placeholder="" :required="formState.healthInsuranceReport" />
+                                 placeholder="" :required="formState.healthInsuranceReport" :disabled="!formState.healthInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="본점사업장관리번호" class="field-custom-auto">
                   <text-number-box v-model:valueInput='formState.healthInsuranceHeadOfficeManageNumber'
-                                   placeholder="" />
+                                   :min="0" :disabled="!formState.healthInsuranceReport" />
                 </DxField>
               </a-col>
             </a-row>
@@ -335,7 +337,7 @@
             <a-row>
               <a-col span="8">
                 <DxField label="사업장특성부호">
-                  <default-text-box v-model:valueInput='formState.healthInsuranceSpecificCode' placeholder="" />
+                  <default-text-box v-model:valueInput='formState.healthInsuranceSpecificCode' :disabled="!formState.healthInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="16">
@@ -343,15 +345,15 @@
                   <div class="d-flex-center justify-content-around">
                     <a-space :size="8">
                       <span>1</span>
-                      <default-text-box v-model:valueInput='formState.adding' placeholder="" width="80px" />
+                      <default-text-box v-model:valueInput='formState.adding' :disabled="!formState.healthInsuranceReport" width="80px" />
                     </a-space>
                     <a-space :size="8">
                       <span>2</span>
-                      <default-text-box v-model:valueInput='formState.adding' placeholder="" width="80px" />
+                      <default-text-box v-model:valueInput='formState.adding' :disabled="!formState.healthInsuranceReport" width="80px" />
                     </a-space>
                     <a-space :size="8">
                       <span>3</span>
-                      <default-text-box v-model:valueInput='formState.adding' placeholder="" width="80px" />
+                      <default-text-box v-model:valueInput='formState.adding' :disabled="!formState.healthInsuranceReport" width="80px" />
                     </a-space>
                   </div>
                 </DxField>
@@ -363,19 +365,21 @@
             <a-row>
               <a-col span="8">
                 <DxField label="상시근로자수" :required="formState.employeementInsuranceReport">
-                  <number-box v-model:valueInput='formState.employeementInsuranceFulltimeWorkerCount' placeholder=""
-                              :required="formState.employeementInsuranceReport" />
+                  <number-box v-model:valueInput='formState.employeementInsuranceFulltimeWorkerCount' :min="0"
+                              :required="formState.employeementInsuranceReport" :disabled="!formState.employeementInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="피보험자수" :required="formState.employeementInsuranceReport" class="field-custom">
-                  <number-box v-model:valueInput='formState.employeementInsuranceEmployeeTargetNumber' placeholder=""
-                              :required="formState.employeementInsuranceReport" />
+                  <number-box v-model:valueInput='formState.employeementInsuranceEmployeeTargetNumber' :min="0"
+                              :required="formState.employeementInsuranceReport" :disabled="!formState.employeementInsuranceReport"/>
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="성립일" :required="formState.employeementInsuranceReport">
-                  <date-time-box :clearable="false" placeholder="" :required="formState.employeementInsuranceApplyDate" />
+                  <date-time-box :clearable="false" placeholder="" :required="formState.employeementInsuranceApplyDate"
+                                 :disabled="!formState.employeementInsuranceReport"
+                  />
                 </DxField>
               </a-col>
             </a-row>
@@ -384,13 +388,13 @@
               <a-col span="8" class="">
                 <DxField label="명칭" class="" styleLabel="padding-left: 15px">
                   <default-text-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceName'
-                                    placeholder="" />
+                                    :disabled="!formState.employeementInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="사업자등록번호" class="field-custom">
                   <biz-number-text-box v-model:valueInput="formState.employeementInsuranceMainWorkplaceBizNumber"
-                                       placeholder="" />
+                                       :disabled="!formState.employeementInsuranceReport" />
                 </DxField>
               </a-col>
               <a-col span="8" />
@@ -398,13 +402,15 @@
                 <DxField label="우선지원대상기업" class="field-custom-1" styleLabel="padding-left: 15px">
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.employeementInsuranceMainWorkplacePrioritySupport"
-                               layoutCustom="horizontal" class="mt-1"></radio-group>
+                               layoutCustom="horizontal" class="mt-1"
+                               :disabled="!formState.employeementInsuranceReport"
+                  />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="주된사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceManageNumber'
-                                   placeholder="" />
+                                   :disabled="!formState.employeementInsuranceReport" />
                 </DxField>
               </a-col>
             </a-row>
@@ -415,26 +421,32 @@
               <a-col span="8">
                 <DxField label="상시근로자수" :required="formState.industrialAccidentInsuranceReport">
                   <number-box v-model:valueInput='formState.industrialAccidentInsuranceFulltimeWokerCount' placeholder=""
-                              :required="formState.industrialAccidentInsuranceReport" />
+                              :required="formState.industrialAccidentInsuranceReport" :disabled="!formState.industrialAccidentInsuranceReport"/>
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="성립일" class="field-custom" :required="formState.industrialAccidentInsuranceReport">
                   <date-time-box :clearable="false" v-model:valueDate="formState.industrialAccidentInsuranceApplyDate"
-                                 placeholder="" :required="formState.industrialAccidentInsuranceReport" />
+                                 placeholder="" :required="formState.industrialAccidentInsuranceReport"
+                                 :disabled="!formState.industrialAccidentInsuranceReport"
+                    />
                 </DxField>
               </a-col>
               <a-col span="6">
                 <DxField label="사업종류코드" >
                   <default-text-box v-model:valueInput='formState.industrialAccidentInsuranceBusinessTypeCode'
-                                    placeholder="" />
+                                    placeholder=""
+                                    :disabled="!formState.industrialAccidentInsuranceReport"
+                  />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="사업의형태"  :required="formState.industrialAccidentInsuranceReport">
                   <radio-group :arrayValue="industrialAccidentInsuranceBusinessTypeArr"
                                v-model:valueRadioCheck="formState.industrialAccidentInsuranceBusinessType" layoutCustom="horizontal"
-                               class="mt-1"></radio-group>
+                               class="mt-1"
+                               :disabled="!formState.industrialAccidentInsuranceReport"
+                  />
                 </DxField>
               </a-col>
               <a-col span="10">
@@ -442,26 +454,31 @@
                          class="field-custom">
                   <radio-group :arrayValue="industrialAccidentInsuranceOccurrenceArr"
                                v-model:valueRadioCheck="formState.industrialAccidentInsuranceOccurrence" layoutCustom="horizontal"
-                               class="mt-1"></radio-group>
+                               class="mt-1"
+                               :disabled="!formState.industrialAccidentInsuranceReport"
+                  />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="주된사업장여부" >
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.industrialAccidentInsuranceMainWorkplace" layoutCustom="horizontal"
-                               class="mt-1"></radio-group>
+                               class="mt-1"
+                               :disabled="!formState.industrialAccidentInsuranceReport"
+                  />
                 </DxField>
               </a-col>
               <a-col span="8">
                 <DxField label="주된사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.industrialAccidentInsuranceMainWorkplaceBizNumber'
-                                   placeholder="" />
+                                   :disabled="!formState.industrialAccidentInsuranceReport" />
                 </DxField>
               </a-col>
-              <a-col span="24">
-                <DxField label="원사업주 사업장관리번호 또는 사업개시번호 (사내하도급 수급사업주인 경우만 적습니다)" class="field-custom-auto">
+              <a-col span="16">
+                <DxField label="원사업주 사업장관리번호 또는 사업개시번호 (사내하도급 수급사업주인 경우만 적습니다)" class="field-custom-auto justify-content-around">
                   <text-number-box v-model:valueInput='formState.industrialAccidentMainWorkplaceManageNumber'
-                                   placeholder="" />
+                                   :disabled="!formState.industrialAccidentInsuranceReport"
+                  />
                 </DxField>
               </a-col>
             </a-row>

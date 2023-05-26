@@ -64,7 +64,7 @@
       />
     </a-row>
     <div class="content-grid">
-      <a-spin :spinning="loading1">
+      <a-spin :spinning="loading1 || loadingDataSource">
         <DxDataGrid
           id="tab3-bf530"
           :show-row-lines="true"
@@ -89,7 +89,7 @@
             :show-check-boxes-mode="'onClick'"
             mode="multiple"
           />
-          <DxLoadPanel :enabled="true" :showPane="true" />
+          <DxLoadPanel :enabled="false" :showPane="true" />
           <DxColumn
             caption="일련번호"
             data-field="companyId"
@@ -332,7 +332,7 @@ import {
   DxLookup,
   DxColumnFixing,
   DxPaging,
-DxKeyboardNavigation,
+  DxKeyboardNavigation,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -377,8 +377,8 @@ export default defineComponent({
     SelectBoxCT,
     HistoryOutlined,
     DxPaging,
-    DxKeyboardNavigation
-},
+    DxKeyboardNavigation,
+  },
   props: {
     search: {
       type: Number,
@@ -421,6 +421,7 @@ export default defineComponent({
     const workIds = ref<any[]>([]);
     const dataType = ref(1);
     const globalYear = dayjs().year();
+    const loadingDataSource = ref(false);
 
     //-----------------------Fcn common-----------------------------------------
 
@@ -450,6 +451,7 @@ export default defineComponent({
       })
     );
     watch(employeeRequestListResult, (newVal) => {
+      loadingDataSource.value = true;
       let dataArr = newVal.getMajorInsuranceAdminCompanyEmployeeRequestList.map(
         (item: any) => {
           return {
@@ -476,6 +478,7 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
+        loadingDataSource.value = true;
         let arr = dataSource.value.filter((item: any) => {
           return Object.keys(formState).every((key: any) => {
             if (formState[key]) {
@@ -488,6 +491,9 @@ export default defineComponent({
           });
         });
         store.commit("common/filterDsTab3Bf530", arr);
+        setTimeout(() => {
+          loadingDataSource.value = false;
+        }, 50);
       },
       { deep: true }
     );
@@ -1015,6 +1021,7 @@ export default defineComponent({
       dayjs,
       downConfirm2,
       completedAtFormat,
+      loadingDataSource,
     };
   },
 });
