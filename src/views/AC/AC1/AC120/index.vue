@@ -89,7 +89,7 @@
 						@focused-row-changing="onFocusedRowChanging" :column-auto-width="true"
 						v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
 						@selection-changed="selectionChanged">
-						<DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder" />
+						<DxRowDragging :allow-reordering="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10" :show-drag-icons="true" :on-reorder="onReorder" />
 						<DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
 						<DxScrolling mode="standard" show-scrollbar="always" />
 						<DxPaging :enabled="false" />
@@ -149,16 +149,18 @@
 						<DxColumn caption="계정과목" :allow-sorting="false" data-field="accountCode" cell-template="accountCode"
 							width="150" />
 						<template #accountCode="{ data }">
-							<span :title="data.data.accountCode">
-								<account-code-select :valueInput="data.data.accountCode" :readOnly="true" />
+							<span :title="accountSubjects.find((item: any) => item.code == data.data.accountCode)?.name">
+								<!-- <account-code-select :valueInput="data.data.accountCode" :readOnly="true" /> -->
+								{{ accountSubjects.find((item: any) => item.code == data.data.accountCode)?.name }}
 							</span>
 						</template>
 
 						<DxColumn caption="상대계정" :allow-sorting="false" data-field="relationCode"
 							cell-template="relationCode" width="150" />
 						<template #relationCode="{ data }">
-							<span :title="data.data.relationCode">
-								<account-code-select :valueInput="data.data.relationCode" :readOnly="true" />
+							<span :title="accountSubjects.find((item: any) => item.code == data.data.relationCode)?.name">
+								<!-- <account-code-select :valueInput="data.data.relationCode" :readOnly="true" /> -->
+								{{ accountSubjects.find((item: any) => item.code == data.data.relationCode)?.name }}
 								</span>
 						</template>
 
@@ -363,6 +365,7 @@ import notification from "@/utils/notification";
 import DataSource from "devextreme/data/data_source";
 import { Store } from "devextreme/data";
 import { cloneDeep, isEqual } from "lodash";
+import { data } from "@/views/BF/BF6/BF630/utils";
 // import {
 // 	FullscreenOutlined,
 // 	FullscreenExitOutlined,
@@ -397,6 +400,13 @@ export default defineComponent({
 		const colomn_resize = computed(() => store.state.settings.colomn_resize);
 		const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? "0"));
 		const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
+		const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
+		const accountSubjects = Array()
+		dataAccountSubject.value.map((value: any) => {
+			value.codes.map((code: any) => {
+				accountSubjects.push(code) 
+			})
+		})
 		const clients = computed(() => store.state.settings.clients);
 		const dataApi = ref<any[]>([]);
 
@@ -998,6 +1008,7 @@ export default defineComponent({
 		return {
 			dataGetAccountingProcesses,
 			dataSource,
+			accountSubjects,
 			// totalCount,
 			monthSelected,
 			loadingGetAccountingProcesses,
