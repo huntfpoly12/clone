@@ -71,7 +71,7 @@
         </div>
       </template>
       <template #employeeSalaryTable="{data}">
-        <div v-if="data.data.accounSubjectOrder" class="d-flex-center justify-content-center gap-6">
+        <div v-if="data.data.employeePaySum !== null" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
                     @click="openModalEditEmployeeTable(data.data.index)"/>
           <DxButton type="ghost" @click="actionSendMail(data.data)">
@@ -89,7 +89,7 @@
         </a-tooltip>
       </template>
       <template #expenseBudget="{data}">
-        <div v-if="data.data.employeePaySum !== null" class="d-flex-center justify-content-center gap-6">
+        <div v-if="data.data.employeePaySum !== null || data.data.expenditureBudgetSum !== null" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
                     @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.EDIT}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
           <DxButton type="ghost" @click="actionSendMail(data.data)">
@@ -101,7 +101,7 @@
         </div>
         <a-tooltip v-else title="세출예산서 작성">
           <div>
-            <DxButton type="ghost" icon="plus" :disabled="!data.data.revenueBudgetSum"
+            <DxButton type="ghost" icon="plus"
                       @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
           </div>
         </a-tooltip>
@@ -119,7 +119,7 @@
         </div>
         <a-tooltip v-else title="세입예산서 작성 234">
           <div>
-            <DxButton type="ghost" icon="plus" :disabled="data.data.employeePaySum === null"
+            <DxButton type="ghost" icon="plus"
                       @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
           </div>
         </a-tooltip>
@@ -278,6 +278,7 @@ const closePopupBudget = (e: boolean) => {
   modal.budget = false
 };
 const openModalBudget = (data: any) => {
+  console.log('data', data)
   modal.budget = true;
   store.dispatch('common/setDataBudget', data)
 }

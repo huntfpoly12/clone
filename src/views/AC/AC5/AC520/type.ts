@@ -3,8 +3,11 @@ export interface Budget {
   employeeSalaryTable: number | null;
   budgetType?: 4 | 5,
   revenueBudgetSum: number | null;
+  employeePaySum: number | null;
   action: ACTION;
-  columnName?: string
+  columnName?: string;
+  expenditureBudgetSum: number | null;
+  type: ComponentCreateBudget
 }
 
 export enum StepCreateBudget {

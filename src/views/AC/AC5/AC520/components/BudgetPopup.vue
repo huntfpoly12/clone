@@ -23,9 +23,12 @@
       </div>
     </div>
     <div v-else-if="step === StepCreateBudget.Step2">
-      <keep-alive>
-        <component v-bind:is="currentComponent" @closePopup="closePopup" />
-      </keep-alive>
+      <div v-if="typePopup === ComponentCreateBudget.EmployeeSalaryTable">
+        <EmployeeSalaryTable @closePopup="closePopup"/>
+      </div>
+      <div v-else>
+        <ExpenseAndRevenueBudget @closePopup="closePopup"/>
+      </div>
     </div>
     <div v-else>
 
@@ -57,6 +60,7 @@ import {ACTION, Budget, ComponentCreateBudget, StepCreateBudget} from "@/views/A
 import EmployeeSalaryTable from "./EmployeeSalaryTable.vue";
 import ExpenseAndRevenueBudget from "./ExpenseAndRevenueBudget.vue";
 import {useStore} from "vuex";
+import deletePopup from "@/utils/deletePopup";
 
 export default defineComponent({
   components: {
@@ -79,7 +83,18 @@ export default defineComponent({
     const step = ref<StepCreateBudget>(StepCreateBudget.Step1)
     const typePopup = computed(() => store.getters['common/getTypeCreateBudget'])
     const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters['common/getDataBudget'])
-    const setModalVisible = () => {emit('closePopup', false)};
+    const isChangedFormAc520 = computed(() => store.getters['common/getIsChangedFormAc520'])
+    const setModalVisible = () => {
+      if (!isChangedFormAc520.value) {
+        emit('closePopup', false)
+      } else {
+        deletePopup({
+          callback: () => {
+            emit('closePopup', false)
+          },
+        })
+      }
+    };
     const onConfirm = () => {
       if (step.value === StepCreateBudget.Step1) {
         step.value = StepCreateBudget.Step2
@@ -97,13 +112,6 @@ export default defineComponent({
         step.value = StepCreateBudget.Step2
       }
     })
-    const currentComponent = computed(() => {
-      if (typePopup.value === ComponentCreateBudget.EmployeeSalaryTable){
-        return ComponentCreateBudget.EmployeeSalaryTable
-      } else {
-        return ComponentCreateBudget.ExpenseAndRevenueBudget
-      }
-    })
     const closePopup = (e: boolean) => {
       if (e) {
         emit('closePopup', true)
@@ -114,9 +122,10 @@ export default defineComponent({
       onConfirm,
       step,
       StepCreateBudget,
-      currentComponent,
       dataBudget,
-      closePopup
+      closePopup,
+      typePopup,
+      ComponentCreateBudget
     }
   }
 })
