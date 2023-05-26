@@ -339,21 +339,21 @@ export default defineComponent({
         const selection = hot.getSelected();
         var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
         if (
-          !cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
+          !cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1]) && // kiểm tra xem có p phải thuộc ô được phép điền số âm không
           !reg.test(e.key) && 
           e.key != "Backspace"
         ) {
-          hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit');
+          if(e.key == 'Process') hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit'); // kiểm tra xem có phải kí tự hangul không nếu là hanggul thì key sẽ trẻ về là process
           e.preventDefault();
         }
         // nêu đang nhập ở các ô đặc biệt đươc nhập số âm thì check như sau
         if (
-          cellNegativeNumber.some((item: any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
+          cellNegativeNumber.some((item: any) => item[0] === selection[0][0] && item[1] === selection[0][1]) && 
           !reg.test(e.key) &&
           e.key != "Backspace" &&
           e.key != "-"
         ) {
-          hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit');
+          if(e.key == 'Process') hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit');
           e.preventDefault();
         }
       },
