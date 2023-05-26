@@ -252,7 +252,7 @@ export default defineComponent({
       border-radius: 5px;
       &:placeholder-shown {
         font-style: italic;
-        font-size: 14px;
+        font-size: 13px;
       }
     }
 

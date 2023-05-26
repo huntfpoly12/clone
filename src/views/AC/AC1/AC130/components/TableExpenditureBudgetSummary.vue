@@ -7,11 +7,11 @@
     <template #label="{ data }">
       <b style="color: #7F7F7F;">{{ data.data.label }}</b>
     </template>
-    <DxColumn caption="연예산(C)" data-field="amount" />
-    <DxColumn caption="당월집행" data-field="currentMonthExecution" />
-    <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" />
-    <DxColumn caption="잔액(C-D)" />
-    <DxColumn caption="집행율(%)" data-field="executionRate" />
+    <DxColumn caption="연예산(C)" data-field="amount" format="fixedPoint" alignment="end"/>
+    <DxColumn caption="당월집행" data-field="currentMonthExecution" format="fixedPoint" alignment="end"/>
+    <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" format="fixedPoint" alignment="end"/>
+    <DxColumn caption="잔액(C-D)" data-field="balance" format="fixedPoint" alignment="end"/>
+    <DxColumn caption="집행율(%)" data-field="executionRate" format="fixedPoint" alignment="end"/>
   </DxDataGrid>
   </div>
 </template>
@@ -41,7 +41,7 @@ export default defineComponent({
       if (Number.isInteger(value)) {
         return value
       } else {
-        return null
+        return 0
       }
     }
 
@@ -52,6 +52,7 @@ export default defineComponent({
           amount: checkNumber(value?.revenueBudgetSummary?.amount),
           currentMonthExecution: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution),
           cumulativeTotal: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution),
+          balance: checkNumber(value?.revenueBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution),
           executionRate: checkNumber((value?.revenueBudgetSummary?.cumulativeTotal / value?.revenueBudgetSummary?.amount) * 100)
         },
         {
@@ -59,6 +60,7 @@ export default defineComponent({
           amount: checkNumber(value?.expenditureBudgetSummary?.amount),
           currentMonthExecution: checkNumber(value?.expenditureBudgetSummary?.currentMonthExecution),
           cumulativeTotal: checkNumber(value?.expenditureBudgetSummary?.currentMonthExecution),
+          balance: checkNumber(value?.expenditureBudgetSummary?.amount - value?.expenditureBudgetSummary?.currentMonthExecution),
           executionRate: checkNumber((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100)
         },
         {
@@ -66,6 +68,7 @@ export default defineComponent({
           amount: checkNumber(value?.revenueBudgetSummary?.amount - value?.expenditureBudgetSummary?.amount),
           currentMonthExecution: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.currentMonthExecution),
           cumulativeTotal: checkNumber(value?.revenueBudgetSummary?.cumulativeTotal - value?.expenditureBudgetSummary?.cumulativeTotal),
+          balance: checkNumber(value?.revenueBudgetSummary?.amount - value?.expenditureBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.currentMonthExecution),
           executionRate: checkNumber(((value?.revenueBudgetSummary?.cumulativeTotal / value?.revenueBudgetSummary?.amount) * 100) - ((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100))
         }
       ]
@@ -76,7 +79,7 @@ export default defineComponent({
     return {
       move_column,
       colomn_resize,
-      dataCalculated
+      dataCalculated,
     }
   },
 })

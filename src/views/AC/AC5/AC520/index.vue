@@ -54,9 +54,8 @@
       <template #action="{data}">
         <DxButton type="ghost"
                   @click="handleDeleteBudget(data.data)"
-                  :disabled="data.data.index !== dataSource?.totalCount() || 0 - 1"
+                  :disabled="data.data.index !== (dataSource?.totalCount() || 0) - 1"
         >
-
           <DeleteOutlined/>
         </DxButton>
       </template>
@@ -171,7 +170,7 @@ import PopupSendMail from "./components/PopupSendMail.vue";
 import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
 import mutations from "@/graphql/mutations/AC/AC5/AC520";
 import deletePopup from "@/utils/deletePopup";
-
+import AccountingProcessStatusEdit from "./components/AccountingProcessStatusEdit.vue"
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -199,11 +198,16 @@ const lastRowOfDataIsNotComplete = computed(() => {
   if (data) {
     const lastRow = data[data.length - 1]
     if (lastRow) {
-      return lastRow.employeePaySum === null || lastRow.revenueBudgetSum === null
+      return lastRow.employeePaySum === null || lastRow.revenueBudgetSum === null || lastRow.status === 10
     }
   }
   return false
 })
+const codes = sessionStorage.getItem("accountSubject")
+if (!codes) {
+  store.dispatch("settings/getAccountSubject", {companyId: companyId, fiscalYear: acYear.value, facilityBizType: globalFacilityBizId.value})
+}
+
 const {onResult: onResultBudget, refetch: refetchBudget, onError} = useQuery(queries.getBudgets, query, () => ({
   fetchPolicy: "no-cache",
 }))
@@ -277,7 +281,8 @@ const openModalBudget = (data: any) => {
   modal.budget = true;
   store.dispatch('common/setDataBudget', data)
 }
-const openModalEditEmployeeTable = (index: any) => {
+const openModalEditEmployeeTable = (i: number) => {
+  index.value = i
   modal.editEmployeeSalaryTable = true;
 }
 const actionPrint = (data: any) => {

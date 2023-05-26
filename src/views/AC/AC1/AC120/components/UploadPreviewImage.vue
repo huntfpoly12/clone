@@ -3,7 +3,7 @@
         <a-spin :spinning="loadingGetAccountingDocumentProofs" size="large">
             <div class="form-upload-ac120" :class="{ 'ac120-disable-form-upload': false }">
                 <div ref="elementUpload" class="upload-pewview-img-ac-120">
-                    <a-upload :disabled="statusDisabledImg || store.state.common.ac120.statusProcess != 10" list-type="picture-card" :multiple="multiple"
+                    <a-upload :disabled="statusDisabledImg || statusProcess != 10" list-type="picture-card" :multiple="multiple"
                         v-model:file-list="fileList" @preview="handlePreview" :customRequest="customRequest"
                         :before-upload="beforeUpload" @remove="remove" accept="image/png, image/jpeg, image/jpg image/gif">
                         <div v-if="fileList.length <= limit">
@@ -67,6 +67,10 @@ export default defineComponent({
             type: Object,
             default: () => { },
         },
+        statusProcess: {
+			type: Number,
+			default: 0,
+		},
     },
     setup(props, { emit }) {
         const locale = koKR

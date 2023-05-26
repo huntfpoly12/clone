@@ -6,15 +6,22 @@
       <DxPaging :enabled="false" />
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxColumn caption="계정과목" data-field="name" />
-      <DxColumn caption="연예산(C)" data-field="amount" />
-      <DxColumn caption="월환산예산 (C /12)" data-field="monthlyBudget" />
-      <DxColumn caption="당월집행" data-field="currentMonthExecution" />
-      <DxColumn caption="당월 인건비비율 (%)" data-field="currentMonthlyFeeRate" />
-      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" />
-      <DxColumn caption="잔액(C-D)" data-field="balance" />
-      <DxColumn caption="집행율(%)" data-field="executionRate" />
+      <DxColumn caption="연예산(C)" data-field="amount" format="fixedPoint" alignment="end" />
+      <DxColumn caption="월환산예산 (C /12)" data-field="monthlyBudget" format="fixedPoint" width="130" alignment="end" />
+      <DxColumn caption="당월집행" data-field="currentMonthExecution" format="fixedPoint" alignment="end" />
+      <DxColumn caption="당월 인건비비율 (%)" data-field="currentMonthlyFeeRate" format="fixedPoint" width="140" alignment="end" />
+      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" format="fixedPoint" alignment="end" />
+      <DxColumn caption="잔액(C-D)" data-field="balance" format="fixedPoint" alignment="end" />
+      <DxColumn caption="집행율(%)" data-field="executionRate" format="fixedPoint" alignment="end" />
       <DxSummary>
         <DxTotalItem column="계정과목" summary-type="count" display-format="합계: [{0}]" />
+        <DxTotalItem column="연예산(C)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
+        <DxTotalItem column="월환산예산 (C /12)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
+        <DxTotalItem column="당월집행" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
+        <DxTotalItem column="당월 인건비비율 (%)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
+        <DxTotalItem column="집합누계(D)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
+        <DxTotalItem column="잔액(C-D)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
+        <DxTotalItem column="집행율(%)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
       </DxSummary>
     </DxDataGrid>
   </div>
@@ -46,29 +53,30 @@ export default defineComponent({
       if (Number.isInteger(value)) {
         return value
       } else {
-        return null
+        return 0
       }
     }
 
     watch(() => props.data, (value) => {
       if (value) {
-        dataCalculated.value = value.map((item: any) => ({
+        dataCalculated.value = value.map((item: any) => {
+          return {
           ...item,
-          monthlyBudget: checkNumber(item.amount / 12),
-          currentMonthlyFeeRate: checkNumber(item.currentMonthExecution / (item.amount / 12)),
-          balance: checkNumber(item.amount - item.cumulativeTotal),
-          executionRate: checkNumber(item.cumulativeTotal / item.amount) * 100
-        }))
+          monthlyBudget: checkNumber(item?.amount / 12),
+          currentMonthlyFeeRate: checkNumber(item?.currentMonthExecution / (item?.amount / 12)),
+          balance: checkNumber(item?.amount - item?.cumulativeTotal),
+          executionRate: checkNumber(item?.cumulativeTotal / item?.amount) * 100
+        }
+        })
       }
     }, {
       deep: true,
       immediate: true
     })
-
     return {
       move_column,
       colomn_resize,
-      dataCalculated
+      dataCalculated,
     }
   },
 })
