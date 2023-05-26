@@ -1,7 +1,7 @@
 <template>
   <action-header title="신청내역 리스트" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-880" class="px-10 py-10">
-    <a-spin :spinning="false" size="large">
+    <a-spin :spinning="loading">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef"
@@ -11,7 +11,6 @@
           placeholder="검색" />
         <DxExport :enabled="true" />
         <DxScrolling mode="standard" show-scrollbar="always" />
-        <DxLoadPanel :enabled="true" :showPane="true" />
         <DxToolbar>
           <DxItem name="searchPanel" />
           <DxItem name="exportButton" css-class="cell-button-export" />
@@ -109,7 +108,6 @@ import {
 import { companyId } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA8/PA880/index';
 import mutations from '@/graphql/mutations/PA/PA8/PA880/index';
-import filters from '@/helpers/filters';
 import DxButton from 'devextreme-vue/button';
 // import { formatMonth } from '../utils/index';
 import { Message } from "@/configs/enum";
@@ -128,27 +126,20 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxSelection,
     DxExport,
     DxSearchPanel,
     DxScrolling,
     DxToolbar,
-    DxEditing,
-    DxGrouping,
     DxItem,
-    DxMasterDetail,
-    DxSummary,
-    DxTotalItem,
     DxButton,
     FormReport,
     DeleteOutlined,
     EditOutlined,
     SearchOutlined,
-    DxLoadPanel,
     DownloadOutlined,
     HistoryOutlined
   },
-  setup(props, { emit }) {
+  setup() {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const focusedRowKey = ref();
@@ -162,7 +153,7 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear
     })
-    const { refetch: companyOutsRefetch, result: companyOutsResult, onError: companyOutsError } = useQuery(
+    const { refetch: companyOutsRefetch, result: companyOutsResult, onError: companyOutsError, loading } = useQuery(
       queries.getMajorInsuranceCompanyOuts,
       companyOutsParam,
       () => ({
@@ -277,11 +268,11 @@ export default defineComponent({
     };
     return {
       per_page, move_column, colomn_resize,
-      focusedRowKey, dataSource,
+      focusedRowKey, dataSource, loading,
       modalHistory, workIdHistory, onOpenLogs,
       onCreateModal, actionDelete, onGetFileStorageId, onGetAcquistionRp,
       modalCreate, modalDelete, handleDelete, contentDelete,
-      MajorInsuranceWorkingStatus,
+      MajorInsuranceWorkingStatus, 
       // onDetailData, workId,
     };
   },
