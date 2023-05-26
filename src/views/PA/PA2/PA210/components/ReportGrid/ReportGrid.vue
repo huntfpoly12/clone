@@ -343,6 +343,17 @@ export default defineComponent({
           !reg.test(e.key) && 
           e.key != "Backspace"
         ) {
+          hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit');
+          e.preventDefault();
+        }
+        // nêu đang nhập ở các ô đặc biệt đươc nhập số âm thì check như sau
+        if (
+          cellNegativeNumber.some((item: any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
+          !reg.test(e.key) &&
+          e.key != "Backspace" &&
+          e.key != "-"
+        ) {
+          hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit');
           e.preventDefault();
         }
       },
