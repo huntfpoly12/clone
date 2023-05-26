@@ -416,8 +416,8 @@ export default defineComponent({
       if (!firstLoad) {
         trigger.value = true;
         refetchData();
+        return
       }
-
       let hot = wrapper.value?.hotInstance;
       // fill value to table report
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data: any) => {
