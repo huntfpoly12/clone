@@ -37,10 +37,6 @@ import { companyId, userType } from "@/helpers/commonFunction";
 
 export default defineComponent({
   props: {
-    index: {
-      type: Number,
-      required: true
-    },
     disabled: {
       type: Boolean,
       required: false
@@ -55,7 +51,7 @@ export default defineComponent({
     },
     preventChange: {
       type: Boolean,
-      required: false
+      default: false
     }
   },
   setup(props, { emit }) {
@@ -78,7 +74,6 @@ export default defineComponent({
       companyId,
       fiscalYear: acYear.value,// acYear.value
       facilityBusinessId: globalFacilityBizId.value,
-      index: props.index
     })
 
     const setModalVisible = () => {
