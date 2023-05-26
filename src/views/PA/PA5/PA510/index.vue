@@ -319,8 +319,8 @@
 						<template #tag="{ data }">
 							<div class="custom-action">
 								<employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-									:idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-									:foreigner="data.data.employee.foreigner" :checkStatus="false" />
+									:idCardNumber="data.data.employee.residentId" :status="checkShowTagStatus(data.data.employee)"
+									:foreigner="data.data.employee.foreigner" />
 							</div>
 						</template>
 						<DxColumn width="75" caption="근무일수" cell-template="workingDays" data-field="workingDays" />
@@ -1012,6 +1012,17 @@ export default defineComponent({
 				}
 			}
 		};
+		const checkShowTagStatus = (data: any) => {
+			if (data.status == 0) {
+				if (data.leavedAt?.toString().slice(0, 6) == `${paYear.value}${filters.formatMonth(processKey.value.imputedMonth)}`
+				) {
+					return 0;
+				}
+				return 50;
+			} else {
+				return data.status;
+			}
+		};
 
 		const checkStartYearMonth = (month: number) => {
 			let startYear = ref<any>(startYearMonth?.toString().slice(0, 4));
@@ -1077,6 +1088,7 @@ export default defineComponent({
 			checkStartYearMonth,
 			classObject,
 			classObjectDetail,
+			checkShowTagStatus,
 		};
 	},
 });
