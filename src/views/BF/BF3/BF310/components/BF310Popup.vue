@@ -162,8 +162,6 @@
                 <div style="height: 350px; overflow-y: scroll">
                   <radio-group :arrayValue="arrayRadioCheckSourceServices" v-model:valueRadioCheck="checkedAccounting"
                     :layoutCustom="'horizontal'" />
-                  <!-- <checkbox-basic v-model:valueCheckbox="checkedAccounting" :disabled="false" size="15"
-                    label="회계서비스 신청합니다." /> -->
                   <div>
                     <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                       :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
@@ -197,7 +195,10 @@
                             : ""
                           }}
                         </template>
-                        <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
+                        <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" cell-template="capacity" />
+                        <template #capacity="{ data }">
+                          <div v-if="data.data.capacity > 0">{{ data.data.capacity }}</div>
+                        </template>
                         <DxEditing :use-icons="true" :allow-adding="true" :confirmDelete="false"
                           template="button-template" mode="cell" new-row-position="pageBottom">
                           <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -616,6 +617,10 @@ export default defineComponent({
             formState.value.content.accounting = {};
             accountingServiceTypes.value = false;
           }
+          if (value === checkedSourceService.value && checkedSourceService.value === 2) {
+            notification("error", Message.getMessage('BF310', '001').message);
+            activeKey.value = 4;
+          }
         } else {
           objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
         }
@@ -628,16 +633,20 @@ export default defineComponent({
           if (value === 2) {
             formState.value.content.withholding = {
               startYearMonth: NaN,
-              capacity: 0,
+              capacity: NaN,
             };
             withholdingServiceTypes.value = false;
           }
           if (value === 1) {
             formState.value.content.withholding = {
               startYearMonth: +dayjs().format("YYYYMM"),
-              capacity: 0,
+              capacity: NaN,
             };
             withholdingServiceTypes.value = true;
+          }
+          if (checkedAccounting.value === value && value === 2) {
+            notification("error", Message.getMessage('BF310', '001').message);
+            activeKey.value = 4;
           }
         } else {
           objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
@@ -711,7 +720,7 @@ export default defineComponent({
             activeKey.value = value.key;
           }
         });
-      }
+      } 
       if (checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2) {
         notification("error", Message.getMessage('BF310', '001').message);
         activeKey.value = 4;
@@ -810,7 +819,7 @@ export default defineComponent({
     const gridRefName: any = ref("grid");
     const dataActiveRow: any = ref(dataSource.value[0]);
     const focusedRowKey = ref(0);
-    const initRow = { rowIndex: null };
+    const initRow = { rowIndex: null, capacity: NaN, };
     // A function that is called when a row is clicked.
     const onSelectionClick = (value: any) => {
       dataActiveRow.value = value.data;

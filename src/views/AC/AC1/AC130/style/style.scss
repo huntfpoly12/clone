@@ -27,6 +27,12 @@
       margin-top: 15px;
       display: flex;
       align-items: center;
+      &-btnHistory{
+        margin-left: 5px;
+        :deep .dx-button-content {
+          padding: 4px;
+        }
+      }
     }
   }
   &__main {

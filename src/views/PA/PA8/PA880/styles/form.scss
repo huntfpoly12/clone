@@ -9,7 +9,11 @@
     margin: 15px 0;
 
     :deep .ant-form-item-label>label {
-      min-width: 82px;
+      min-width: 111px;
+    }
+
+    :deep .ant-form-item-control-input-content {
+      padding-right: 27px;
     }
 
     &-title {
