@@ -1,5 +1,5 @@
 <template>
-  <a-modal wrapClassName="custom-modal" width="900px" v-bind="$props" @ok="handleOk" @cancel="closePopup">
+  <a-modal :visible="visible" width="900px"  @ok="handleOk" @cancel="closePopup" :mask-closable="false" :footer="null">
     <a-row >
       <a-col span="9">
         <dx-field label="산출내역">
@@ -114,10 +114,10 @@ const closePopup = () => {
       title: '',
       content: Message.getCommonMessage('501').message,
       onOk() {
-        handleSubmit();
+        emit('closePopup', false)
       },
       onCancel() {
-        emit('closePopup', false)
+        // emit('closePopup', false)
       },
     });
   } else {

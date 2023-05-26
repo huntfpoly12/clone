@@ -196,9 +196,7 @@
     </a-row>
     <CalculationDetailsPopup
       :visible="state.isPopupCalculateVisible"
-      :footer="null"
       @close-popup="handleCloseCalPopup"
-      :handleOpenCalPopup="handleOpenCalPopup"
       @ok="handleCloseCalPopup"
       :data="formState?.details"
     />
