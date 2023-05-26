@@ -2,22 +2,23 @@
   <standard-form ref="formRef">
     <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true"
                 :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
+                :allow-column-resizing="column_resize" :column-auto-width="true" noDataText="내역이 없습니다"
                 @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared"
                 @saving="handleSaving" @saved="logEvent('Saved')" @editor-preparing="onEditorPreparing"
                 style="height: 70vh"
                 @init-new-row="initNewRow"
                 :remote-operations="true"
+                
     >
       <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
                  :use-icons="true" new-row-position="last"
+                 @row-inserting="logEvent('RowInserted')"
       />
       <DxPaging :page-size="0"/>
       <DxToolbar>
         <DxItem location="after" name="addRowButton" css-class="cell-button-add"/>
         <DxItem name="saveButton"/>
-        <DxItem name="revertButton"/>
       </DxToolbar>
       <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
         <DxRequiredRule/>
@@ -122,13 +123,30 @@ const formRef = ref()
 const LaborCostClassificationArray = [{name: '직접', value: 1}, {name: '간접', value: 2}]
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
-const colomn_resize = computed(() => store.state.settings.colomn_resize);
+const column_resize = computed(() => store.state.settings.colomn_resize);
 const dataBudget = computed(() => store.getters['common/getDataBudget']);
 
 const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 
-const data: any = []
+const dataAllRow: any = ref([])
+
+const formatSummary = reactive({
+  salary1: 0,
+  salary2: 0,
+  allowance1: 0,
+  allowance2: 0,
+  dailyAllowance1: 0,
+  dailyAllowance2: 0,
+  retirementReserve1: 0,
+  retirementReserve2: 0,
+  socialInsuranceLevy1: 0,
+  socialInsuranceLevy2: 0,
+  total1: 0,
+  total2: 0,
+  total: 0,
+})
+
 const dataSource = ref(new DataSource({
   store: {
     type: "array",
@@ -151,6 +169,7 @@ onError((error) => {
   notification('error', error.message)
 
 })
+
 const handleSaving = (e: SavingEvent) => {
   const res = formRef.value.validate();
   if (res.isValid) {
@@ -191,23 +210,8 @@ const calculate = (options: any) => {
   calculateOptions(options, 'summarySalary2')
   // console.log('dataSource --- ', options)
 }
-const dataAllRow: any = ref([])
-const formatSummary = reactive({
-  salary1: 0,
-  salary2: 0,
-  allowance1: 0,
-  allowance2: 0,
-  dailyAllowance1: 0,
-  dailyAllowance2: 0,
-  retirementReserve1: 0,
-  retirementReserve2: 0,
-  socialInsuranceLevy1: 0,
-  socialInsuranceLevy2: 0,
-  total1: 0,
-  total2: 0,
-  total: 0,
-})
-watch(() => dataAllRow.value, (val) => {
+
+watch(() => dataAllRow.value, (val: any) => {
   if (val) {
     const initialValue = {
       salary1: 0,
@@ -224,7 +228,7 @@ watch(() => dataAllRow.value, (val) => {
       total2: 0,
       total: 0,
     };
-
+    store.commit('common/setIsChangedFormAc520', val.length > 0)
     const result = val.reduce((acc: any, item: any) => {
       const {
         classification,
@@ -335,6 +339,7 @@ const onRowPrepared = (e: any) => {
   }
 }
 const initNewRow = (e: InitNewRowEvent) => {
+  console.log('init new row', e)
   // dataSource.value.store().insert({name: 'hieu'}).then((result) => {
   //   console.log('result', result)
   //   // dataAllRow.value.push(result)

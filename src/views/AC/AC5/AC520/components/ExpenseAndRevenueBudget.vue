@@ -10,7 +10,7 @@
           :data-source="dataSource"
           key-expr="code"
           :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
+          :allow-column-resizing="column_resize"
           :column-auto-width="true"
           :focused-row-enabled="true"
           :focusedRowIndex="0"
@@ -26,8 +26,8 @@
           <DxColumn caption="목" data-field="code3" cell-template="code3"/>
           <DxColumn caption="세목" data-field="codeName"/>
           <DxColumn caption="세목코드" data-field="code"/>
-          <DxColumn :caption="dataBudget?.index > 0 ? `${dataBudget?.index - 1}차 추경` : `전년도`" data-field="amount1"/>
-          <DxColumn :caption="dataBudget?.index > 0 ? `${dataBudget?.index}차 추경` : `당해년도`" data-field="amount"/>
+          <DxColumn :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index) - 1}차 추경` : `전년도`" data-field="amount1"/>
+          <DxColumn :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index)}차 추경` : `당해년도`" data-field="amount"/>
           <DxColumn caption="증감액" cell-template="calculateAmount"/>
           <template #calculateAmount="{data}">{{ data.data.amount }}</template>
 
@@ -74,7 +74,7 @@
               width="200px"
             />
           </DxField>
-          <DxField :label="dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index - 1} 차 추경`">
+          <DxField :label="dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index || 0 - 1} 차 추경`">
             <div class="d-flex">
               <div class="d-flex-center">
                 <number-box-money
@@ -129,7 +129,7 @@
                 </DxButton>
                 <InfoToolTip>
                   <div v-if="formState.code2 === '501010000'">인건비 관련 예산액은 산출내역 입력시 계산된 금액과는 별개로, [임직원보수일람표] 의 금액이 반영됩니다.</div>
-                  <div v-else>{{ dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index - 1} 차 추경` }} 산출내역 입력시 계산된 금액이 ${현예산}에 자동 반영됩니다</div>
+                  <div v-else>{{ dataBudget?.index === 0 ? `당해년도` : `${Number(dataBudget?.index) - 1} 차 추경` }} 산출내역 입력시 계산된 금액이 ${현예산}에 자동 반영됩니다</div>
                 </InfoToolTip>
               </div>
             </div>
@@ -207,7 +207,7 @@
 import {computed, ComputedRef, reactive, ref, watch} from 'vue'
 import {useStore} from "vuex";
 import {DxColumn, DxDataGrid, DxPaging} from 'devextreme-vue/data-grid';
-import {Budget} from "@/views/AC/AC5/AC520/type";
+import {ACTION, Budget, ComponentCreateBudget} from "@/views/AC/AC5/AC520/type";
 import {EditOutlined} from '@ant-design/icons-vue';
 import DxButton from "devextreme-vue/button";
 import CalculationDetailsPopup from "@/views/AC/AC5/AC520/components/CalculationDetailsPopup.vue";
@@ -218,15 +218,17 @@ import queries from "@/graphql/queries/AC/AC5/AC520";
 import {accountSubject, companyId} from "@/helpers/commonFunction";
 import DataSource from "devextreme/data/data_source";
 import filters from '@/helpers/filters';
-import updateBudget from "@/graphql/mutations/AC/AC5/AC520/updateBudget";
+import mutations from '@/graphql/mutations/AC/AC5/AC520';
 import {Message} from "@/configs/enum";
 import notification from "@/utils/notification";
+import {isEqual} from "lodash";
 
 const emit = defineEmits(['close-popup'])
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
-const colomn_resize = computed(() => store.state.settings.colomn_resize);
-const dataBudget = computed<any>(() => store.getters["common/getDataBudget"]);
+const column_resize = computed(() => store.state.settings.colomn_resize);
+const dataBudget = computed<Budget | null>(() => store.getters["common/getDataBudget"]);
+const typePopup = computed<ComponentCreateBudget>(() => store.getters['common/getTypeCreateBudget'])
 const acYear = computed<number>(() => (parseInt(sessionStorage.getItem("acYear") ?? '0')))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 const summaryFundingSource = computed(() => (+formState.value?.fundingSource1 || 0) + (+formState.value?.fundingSource2 || 0) + (+formState.value?.fundingSource3 || 0) + (+formState.value?.fundingSource4 || 0))
@@ -264,13 +266,13 @@ const formState = ref({
   codeName: ''
 });
 const previousRowData = ref();
-
+const isChangedForm = computed(() => !isEqual(previousRowData.value, formState.value))
 const dataSource = ref()
 const codes = JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0]?.codes
 const triggerQueryBudget = ref(false)
 // console.log('codes revenueBudgetSum', codes)
 const triggerQueryBudgetPreYear = computed(() => !!dataBudgetPreYear.value?.index)
-const checkDataNewRow = computed(() => (dataBudget.value?.revenueBudgetSum !== null && dataBudget.value?.budgetType === 4) || dataBudget.value?.budgetType === 5)
+const checkDataNewRow = computed(() => dataBudget.value?.action === ACTION.ADD && typePopup.value === ComponentCreateBudget.ExpenseAndRevenueBudget)
 // create function find code in codes array
 const findCode = (code: string, value: string) => {
   return codes?.find((item: any) => item[code] === value)
@@ -331,7 +333,8 @@ const {onResult: onResultEmployeePayTable, onError: onErrorEmployeePayTable} = u
   facilityBusinessId: globalFacilityBizId.value,
   index: dataBudget.value?.index
 }, () => ({
-  fetchPolicy: "no-cache"
+  fetchPolicy: "no-cache",
+  enabled: triggerQueryBudget.value
 }))
 onResultEmployeePayTable(({data}) => {
   if (data) {
@@ -339,11 +342,26 @@ onResultEmployeePayTable(({data}) => {
     state.totalLaborCost = data?.getEmployeePayTable?.totalLaborCost
   }
 })
-// mutation
-const {mutate, onDone: onDoneUpdateBudget, onError: onErrorUpdateBudget} = useMutation(updateBudget)
+// create budget
+const {mutate: createBudget, onDone: onDoneCreateBudget, onError: onErrorCreateBudget} = useMutation(mutations.createBudget)
+onDoneCreateBudget(({data}) => {
+  if (data) {
+    // dataSource.value.reload()
+    store.commit('common/setIsChangedFormAc520', false)
+    notification('success', Message.getCommonMessage('101').message)
+    emit('close-popup', true)
+  }
+})
+onErrorCreateBudget((error) => {
+  console.log('error', error)
+})
+
+// update budget
+const {mutate: updateBudget, onDone: onDoneUpdateBudget, onError: onErrorUpdateBudget} = useMutation(mutations.updateBudget)
 onDoneUpdateBudget(({data}) => {
   if (data) {
-    dataSource.value.reload()
+    // dataSource.value.reload()
+    store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
     emit('close-popup', true)
   }
@@ -353,13 +371,13 @@ onErrorUpdateBudget((error) => {
 })
 // watch code2
 watch(() => formState.value, (val: any) => {
-  if (val.code2 !== '501010000') {
+  if (val.code2 !== '501010000' && dataBudget.value?.action === ACTION.ADD) {
     formState.value.amount = 4
   }
 })
 // watch triggerQueryBudget
 watch(() => checkDataNewRow.value, (val: any) => {
-  if (!val) {
+  if (val) {
     const budgets = codes?.filter((i: any) => i.classification === dataBudget.value?.budgetType)
     dataSource.value = new DataSource({
       store: {
@@ -387,6 +405,10 @@ watch(() => checkDataNewRow.value, (val: any) => {
   }
 }, {deep: true, immediate: true})
 
+watch(isChangedForm, (value) => {
+  store.commit('common/setIsChangedFormAc520', value)
+})
+
 const handleOpenCalPopup = () => {
   state.isPopupCalculateVisible = true
 }
@@ -407,14 +429,28 @@ const handleSubmit = () => {
     const {codeName, ...rest} = item
     return rest
   })
-  mutate({
-    companyId,
-    fiscalYear: acYear.value,
-    facilityBusinessId: globalFacilityBizId.value,
-    index: dataBudget.value?.index,
-    type: dataBudget.value?.budgetType,
-    inputs: result
-  })
+  if(dataBudget.value?.action === ACTION.ADD && (dataBudget.value?.expenditureBudgetSum === null && dataBudget.value?.revenueBudgetSum === null)) {
+    createBudget({
+      companyId,
+      fiscalYear: acYear.value,
+      facilityBusinessId: globalFacilityBizId.value,
+      index: dataBudget.value?.index,
+      type: dataBudget.value?.budgetType,
+      accounSubjectOrder: accountSubject[0].theOrder,
+      inputs: result
+    })
+  } else {
+    updateBudget({
+      companyId,
+      fiscalYear: acYear.value,
+      facilityBusinessId: globalFacilityBizId.value,
+      index: dataBudget.value?.index,
+      type: dataBudget.value?.budgetType,
+      inputs: result
+    })
+  }
+  console.log('dataBudget', dataBudget.value)
+ 
 }
 const fillFundingSource = (field: string) => {
   switch (field) {

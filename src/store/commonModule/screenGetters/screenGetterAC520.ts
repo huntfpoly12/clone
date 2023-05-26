@@ -7,6 +7,9 @@ const screenGetterAC520 = {
   },
   getDataBudgetPreYear(state: any) {
     return state.dataBudgetPreYear
+  },
+  getIsChangedFormAc520(state: any) {
+    return state.isChangedFormAc520
   }
 }
 export default screenGetterAC520

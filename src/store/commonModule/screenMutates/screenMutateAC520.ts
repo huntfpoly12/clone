@@ -9,6 +9,9 @@ const screenMutateAC520 = {
   },
   setDataBudgetPreYear(state: any, data: any) {
     state.typeCreateBudget = data
+  },
+  setIsChangedFormAc520(state: any, isChangedForm: boolean) {
+    state.isChangedFormAc520 = isChangedForm
   }
 }
 export default screenMutateAC520
