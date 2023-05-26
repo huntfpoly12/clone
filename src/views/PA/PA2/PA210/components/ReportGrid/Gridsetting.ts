@@ -267,7 +267,7 @@ export const cellsSetting = [
 
     { row: 9, col: 5   , className: 'htMiddle htRight disable-cell',readOnly: true},
     { row: 9, col: 6   , className: 'htMiddle htRight disable-cell',readOnly: true},
-    { row: 9, col: 7  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },validator:cellValueGreaterThan0,},
+    { row: 9, col: 7  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' }},
     { row: 9, col: 8  , className: 'htMiddle htRight mid-gray-cell',readOnly: true ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
     { row: 9, col: 9  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },validator:cellValueGreaterThan0,editor:CustomNumberEditor},
     { row: 9, col: 10  , className: 'htMiddle htRight disable-cell',readOnly: true },
