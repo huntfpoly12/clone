@@ -809,14 +809,15 @@ function addMissingFields(arr : any) {
 }
 
 // đổi hết data nếu bằng 0 thành null 
-const convertZeroData = async (output : any) => {
-  for (let key in output) {
-    if (key === 'adjustmentOfRefundTaxAmount' || typeof output[key] == 'undefined') {
+const convertZeroData = async (output: any) => {
+  const clonedOutput = JSON.parse(JSON.stringify(output));
+  for (let key in clonedOutput) {
+    if (key === 'adjustmentOfRefundTaxAmount' || typeof clonedOutput[key] == 'undefined') {
       continue;
     }
-    output[key] = await addMissingFields(output[key])
+    clonedOutput[key] = await addMissingFields(clonedOutput[key])
   };
-  return output
+  return clonedOutput
 }
 export const checkYETaxAdjustment = (output: any) => {
   let checkStatus = false

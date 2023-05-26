@@ -162,8 +162,6 @@
                 <div style="height: 350px; overflow-y: scroll">
                   <radio-group :arrayValue="arrayRadioCheckSourceServices" v-model:valueRadioCheck="checkedAccounting"
                     :layoutCustom="'horizontal'" />
-                  <!-- <checkbox-basic v-model:valueCheckbox="checkedAccounting" :disabled="false" size="15"
-                    label="회계서비스 신청합니다." /> -->
                   <div>
                     <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                       :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
@@ -722,7 +720,12 @@ export default defineComponent({
             activeKey.value = value.key;
           }
         });
-      } else {
+      } 
+      if (checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2) {
+        notification("error", Message.getMessage('BF310', '001').message);
+        activeKey.value = 4;
+      }
+      else {
         // process data befor handle update
         let contentData: any = { ...formState.value.content };
         const deleteField = (obj: any): any => {

@@ -88,7 +88,7 @@ export default defineComponent({
 });
 </script> 
 <style lang="scss" scoped>
-.dp__disabled {
+:deep .dp__disabled {
   background: #fff;
   border: 1px solid #ddd;
   opacity: .5

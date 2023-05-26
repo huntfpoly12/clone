@@ -1271,7 +1271,7 @@ export const calculateWithholdingStatusReportModified = async (wrapper: any, dat
   } else {
     let hot = wrapper.value.hotInstance;
     const arrData = hot.getData()
-    console.log(arrData,'arrData');
+    console.log(arrData,'arrDatasss');
     
     // format data to perform calculations
     for (let index = 0; index < arrData.length; index++) {
@@ -1405,12 +1405,13 @@ function addMissingFields(arr : any) {
 }
 
 // đổi hết data nếu bằng 0 thành null 
-const convertZeroData = async (output : any) => {
-  for (let key in output) {
-    if (key === 'adjustmentOfRefundTaxAmount' || typeof output[key] == 'undefined') {
+const convertZeroData = async (output: any) => {
+  const clonedOutput = JSON.parse(JSON.stringify(output));
+  for (let key in clonedOutput) {
+    if (key === 'adjustmentOfRefundTaxAmount' || typeof clonedOutput[key] == 'undefined') {
       continue;
     }
-    output[key] = await addMissingFields(output[key])
+    clonedOutput[key] = await addMissingFields(clonedOutput[key])
   };
-  return output
+  return clonedOutput
 }
