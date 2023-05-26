@@ -22,7 +22,7 @@
               <div class="form-chat-timeline-content-background">
                 <div class="form-chat-timeline-content-text">
                   <MarkdownCustom
-                    :options="{ source: items.content, linkify: true, typographer: true, highlight: true }" />
+                    :options="{ source: items.content || '', linkify: true, typographer: true, highlight: true }" />
                 </div>
                 <div v-if="items?.files && items?.files.length" class="form-chat-timeline-content-files">
                   <div class="form-chat-timeline-content-files-preview">
@@ -86,16 +86,12 @@ import ModalPreviewListImage from './ModalPreviewListImage.vue'
 import StatusChat from './StatusChat.vue'
 import InputChat from './InputChat.vue'
 import MarkdownCustom from './MarkdownCustom.vue';
-import { cloneDeep } from "lodash"
+import notification from "@/utils/notification";
 export default defineComponent({
   props: {
     payload: {
       type: Object,
       default: () => { }
-    },
-    data: {
-      type: Array,
-      default: []
     },
     disabled: {
       type: Boolean,
@@ -145,6 +141,9 @@ export default defineComponent({
 
     watch(() => props.payload, (value) => {
       if (Object.keys(value).length) {
+        if(inputChat.value) {
+          inputChat.value.resetInputChat()
+        }
         filter.companyId = value.companyId,
         filter.fiscalYear = value.fiscalYear,
         filter.facilityBusinessId = value.facilityBusinessId,
@@ -194,7 +193,7 @@ export default defineComponent({
     })
     errorCreateAccountingClosingMessage(e => {
       isLoadingUpload.value = false
-      console.log('errorCreateAccountingClosingMessage', e);
+      notification("error", e.message);
     })
 
 
@@ -208,7 +207,7 @@ export default defineComponent({
     }
 
     const submitChat = () => {
-      if (isLoadingUpload.value || !content.value.trim()) return
+      if (isLoadingUpload.value || (!content.value.trim() && !filesUpload.value.length)) return
       isLoadingUpload.value = true
       let fileStorageIds = null
       if (filesUpload.value.length) {
@@ -217,7 +216,7 @@ export default defineComponent({
       createAccountingClosingMessage({
         ...props.payload,
         input: {
-          content: content.value.trim(),
+          content: !!content.value.trim() ? content.value.trim() : null,
           fileStorageIds
         }
       })
