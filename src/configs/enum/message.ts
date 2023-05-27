@@ -44,7 +44,8 @@ export class Message extends BaseType {
         '801': { "message" : "이메일을 발송했습니다"}, // Email has been sent
       // Select
         '901': { "message" : "선택할 내용이 없습니다."}, // No data to select
-      
+       // Upload Image 
+        '1001': { "message" : "파일형식이 유효하지 않습니다"}, // File format is not valid
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
