@@ -92,6 +92,7 @@ export class Message extends BaseType {
   //근로소득-일용직소득  계산   
   public static PA110 = new Message({
         '001': { "message" : "저장하기전에 공제계산해야합니다"}, // Do you want to deduct the change?
+        '002': { "message" : "중도정산 반영된 내역이 있습니다. 중도정산 반영된 내역은 중도정산 삭제해야만 급여삭제가 가능합니다.”, "icon": "iconWarning"},//There are details that reflect the interim settlement. The details reflected in the interim settlement can only be deleted if the interim settlement is deleted.
       });
   
   //퇴직소득자료입력   
