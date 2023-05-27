@@ -142,7 +142,6 @@
               </a-col>
             </a-row>
           </div>
-          {{ formState }}
 
           <div class="item-wrap">
             <span class="item-wrap-title">국민연금</span>

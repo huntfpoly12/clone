@@ -3,7 +3,7 @@
         value-expr="employeeId" display-expr="employeeId"
         :value="valueEmployee" :name="nameInput"
         field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
-        :disabled="disabled">
+        :disabled="disabled" class="custom-select" :dropDownOptions="{ minHeight: '80px' }">
         <template #field-data="{ data }: any">
             <div v-if="data" style="padding-left: 4px">
                 <employee-info :idEmployee="data.employeeId" :idCardNumber="data.residentId"
@@ -147,5 +147,8 @@ export default defineComponent({
 
 .jtf-center {
     justify-content: center;
+}
+:deep .dx-overlay-content{
+  min-height: 100px;
 }
 </style>
