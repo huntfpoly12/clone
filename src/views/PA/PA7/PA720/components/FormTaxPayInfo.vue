@@ -28,7 +28,7 @@
               <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
                 :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
                 :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" />
-              <div v-if="isLoopDayPA720" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+              <div v-if="isLoopDayPA720" class="error-group">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
             </div>
           </a-form-item>
           <div class="input-text">
