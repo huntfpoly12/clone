@@ -218,7 +218,7 @@
 										text="4대보험 EDI 조회/적용" />
 								</div>
 							</a-tooltip>
-							<!-- <a-tooltip placement="top">
+							<a-tooltip placement="top">
 								<template #title>중도퇴사자 연말정산 반영</template>
 								<div>
 									<button-basic :disabled="store.state.common.pa110.statusDisabledStatus ||
@@ -238,7 +238,7 @@
 			: ''
 		" mode="contained" type="default" text="중도정산 삭제" />
 								</div>
-							</a-tooltip> -->
+							</a-tooltip>
 							<button-basic :disabled="store.state.common.pa110.statusDisabledStatus" style="margin: 0px 5px"
 								@onClick="onSubmitForm" mode="contained" type="default" text="저장" />
 						</div>
