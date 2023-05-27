@@ -146,10 +146,11 @@
           <div class="item-wrap">
             <span class="item-wrap-title">국민연금</span>
             <a-row>
-              <a-col :span="8">
+              <a-col :span="10">
                 <a-form-item label="휴업기간" label-align="right">
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" :disabled="!formState.nationalPensionReport"/>
-                  </a-form-item>
+                  <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
+                    :disabled="!formState.nationalPensionReport" />
+                </a-form-item>
               </a-col>
             </a-row>
             <div class="mt-10">통폐합 시 흡수하는 사업장:</div>
@@ -216,7 +217,7 @@
               <a-col :span="10">
                 <a-form-item label="근로자수" label-align="right"
                   :class="{ red: formState.industrialAccidentInsuranceReport }">
-                  <number-box v-model:valueInput="formState.industrialAccidentInsuranceEmployeeNumber"
+                  <number-box :min="0" v-model:valueInput="formState.industrialAccidentInsuranceEmployeeNumber"
                     :required="formState.industrialAccidentInsuranceReport"
                     :disabled="!formState.industrialAccidentInsuranceReport && !formState.employeementInsuranceReport" />
                 </a-form-item>
@@ -243,7 +244,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="계좌번호" label-align="right">
-                  <default-text-box v-model:valueInput="formState.companyRefundAccountNumber"
+                  <number-box v-model:valueInput="formState.companyRefundAccountNumber"
                     :disabled="!formState.industrialAccidentInsuranceReport && !formState.employeementInsuranceReport" />
                 </a-form-item>
               </a-col>
