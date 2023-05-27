@@ -8,7 +8,7 @@
         <div>
           <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
             v-model:valueDate="paymentDayPA720" :clearable="false" />
-          <div v-if="errorDate" class="error-date">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+          <div v-if="errorDate" class="error-group">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
         </div>
         <span class="mt-5">일로 변경하시겠습니까?</span>
       </div>
