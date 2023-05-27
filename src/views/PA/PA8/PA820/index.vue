@@ -46,7 +46,7 @@
         <DxColumn caption="접수번호" data-field="acceptedNumber" width="120px" alignment="left" />
         <DxColumn caption="메모" data-field="memo" width="120px" alignment="left" />
         <DxColumn caption="상실신고서다운로드" cell-template="downA" width="140px" alignment="left" />
-        <template #downA=" { data }: any " class="custom-action">
+        <template #downA=" { data }: any ">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
               <DownloadOutlined :style="{fontSize: 12}"/>

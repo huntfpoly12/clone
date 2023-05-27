@@ -708,7 +708,8 @@ export default defineComponent({
     // A function that is called when a button is clicked.
     const updateSubscriptionRequest = (e: any) => {
       var res = e.validationGroup.validate();
-      if (!res.isValid) {
+      console.log(`output->resbrokenRules`, res?.brokenRules.length)
+      if (!res.isValid || res?.brokenRules.length > 0) {
         // open collapse
         res.brokenRules[0].validator.focus();
         inputInCollapse.map((value: any) => {
@@ -720,68 +721,68 @@ export default defineComponent({
             activeKey.value = value.key;
           }
         });
-      } 
+        return;
+      }
       if (checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2) {
         notification("error", Message.getMessage('BF310', '001').message);
         activeKey.value = 4;
+        return;
       }
-      else {
-        // process data befor handle update
-        let contentData: any = { ...formState.value.content };
-        const deleteField = (obj: any): any => {
-          if (obj === null || obj === undefined) {
-            return obj;
-          }
-
-          if (Array.isArray(obj)) {
-            return obj.map((item) => deleteField(item));
-          }
-
-          if (typeof obj === "object") {
-            const newObj: any = {};
-            Object.keys(obj).forEach((key) => {
-              if (key !== "__typename") {
-                newObj[key] = deleteField(obj[key]);
-              }
-            });
-            return newObj;
-          }
-
+      // process data befor handle update
+      let contentData: any = { ...formState.value.content };
+      const deleteField = (obj: any): any => {
+        if (obj === null || obj === undefined) {
           return obj;
-        };
-        const newContent = deleteField(contentData);
-        if (checkedAccounting.value === 2) {
-          newContent.accounting = null;
-        } else {
-          newContent.accounting = {};
-          let newObj = JSON.parse(JSON.stringify(dataSource.value));
-          newObj.map((item: any) => {
-            delete item.rowIndex;
-            delete item.dataImg;
-            delete item.__typename;
-            delete item.registrationCard;
-            if (item?.registrationCardFileStorageId?.length < 1) {
-              delete item.registrationCardFileStorageId;
+        }
+
+        if (Array.isArray(obj)) {
+          return obj.map((item) => deleteField(item));
+        }
+
+        if (typeof obj === "object") {
+          const newObj: any = {};
+          Object.keys(obj).forEach((key) => {
+            if (key !== "__typename") {
+              newObj[key] = deleteField(obj[key]);
             }
-            item.startYearMonth.toString();
-            return { item };
           });
-          newContent.accounting.facilityBusinesses = [...newObj];
-          newContent.accounting.accountingServiceTypes = accountingServiceTypes.value ? [1] : [];
+          return newObj;
         }
-        if (checkedSourceService.value === 2) {
-          newContent.withholding = null;
-        } else {
-          newContent.withholding.withholdingServiceTypes = withholdingServiceTypes.value ? [1] : [];
-        }
-        let variables = {
-          id: formState.value.id,
-          status: formState.value.status,
-          memo: formState.value.memo,
-          content: newContent,
-        };
-        actionUpdate(variables);
+
+        return obj;
+      };
+      const newContent = deleteField(contentData);
+      if (checkedAccounting.value === 2) {
+        newContent.accounting = null;
+      } else {
+        newContent.accounting = {};
+        let newObj = JSON.parse(JSON.stringify(dataSource.value));
+        newObj.map((item: any) => {
+          delete item.rowIndex;
+          delete item.dataImg;
+          delete item.__typename;
+          delete item.registrationCard;
+          if (item?.registrationCardFileStorageId?.length < 1) {
+            delete item.registrationCardFileStorageId;
+          }
+          item.startYearMonth.toString();
+          return { item };
+        });
+        newContent.accounting.facilityBusinesses = [...newObj];
+        newContent.accounting.accountingServiceTypes = accountingServiceTypes.value ? [1] : [];
       }
+      if (checkedSourceService.value === 2) {
+        newContent.withholding = null;
+      } else {
+        newContent.withholding.withholdingServiceTypes = withholdingServiceTypes.value ? [1] : [];
+      }
+      let variables = {
+        id: formState.value.id,
+        status: formState.value.status,
+        memo: formState.value.memo,
+        content: newContent,
+      };
+      actionUpdate(variables);
     };
     // handle License File upload
     const getUrlLicenseFile = (img: any) => {
@@ -819,7 +820,7 @@ export default defineComponent({
     const gridRefName: any = ref("grid");
     const dataActiveRow: any = ref(dataSource.value[0]);
     const focusedRowKey = ref(0);
-    const initRow = { rowIndex: null, capacity: NaN, };
+    const initRow = { rowIndex: null, capacity: NaN, startYearMonth: dayjs().format('YYYYMM') };
     // A function that is called when a row is clicked.
     const onSelectionClick = (value: any) => {
       dataActiveRow.value = value.data;

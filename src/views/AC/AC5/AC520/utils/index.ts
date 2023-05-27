@@ -4,6 +4,7 @@ import {Ref, UnwrapNestedRefs} from "vue";
 export const initialState = {
   index : 0,
   employeePaySum: null,
+  expenditureBudgetSum: null,
   revenueBudgetSum: null,
   createdAt: new Date().getTime()
 }
