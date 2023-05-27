@@ -21,6 +21,7 @@
       :allow-column-resizing="colomn_resize"
       :column-auto-width="true"
       noDataText="내역이 없습니다"
+      :loadPanel="false"
     >
       <DxToolbar>
         <DxItem location="after" template="button-template" css-class="cell-button-add"/>
@@ -131,7 +132,7 @@
       :index="index"
     />
     <PopupSendMail
-      :isModalSendMail="isModalSendMail.employeeRemunerationList"
+      :isModalSendMail="isModal.employeeRemunerationList"
       @closePopup="handleEmitClosePopup"
       :variable="query"
       :index="index"
@@ -148,6 +149,7 @@
       keyExpr="loggedAt"
       title="변경이력"
       typeHistory="ac-520" />
+    <AddRowPopup :visible="isModal.addRow" @close-popup="handleClosePopupAddRow" :index="dataSource?.totalCount() || 0"/>
   </div>
 </template>
 
@@ -171,6 +173,8 @@ import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
 import mutations from "@/graphql/mutations/AC/AC5/AC520";
 import deletePopup from "@/utils/deletePopup";
 import AccountingProcessStatusEdit from "./components/AccountingProcessStatusEdit.vue"
+import AddRowPopup from "./components/AddRowPopup.vue";
+import { Action } from "rxjs/internal/scheduler/Action";
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -185,10 +189,11 @@ const query = reactive({
   fiscalYear: acYear.value ,// acYear.value
   facilityBusinessId: globalFacilityBizId.value,
 })
-const isModalSendMail = reactive({
+const isModal = reactive({
   employeeRemunerationList: false,
   appropriationStatement: false,
-  revenueBudgetStatement: false
+  revenueBudgetStatement: false,
+  addRow: false
 })
 const index = ref(0)
 const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
@@ -257,13 +262,20 @@ onErrorPreYear((error) => {
 })
 // function add row
 const addRow = () => {
-  if(dataSource.value && (dataSource.value?.totalCount() as number) > 0) {
-    initialState.index = dataSource.value.totalCount() as number
+  isModal.addRow = true
+}
+const handleClosePopupAddRow = (e: boolean | ACTION) => {
+  if(e === ACTION.ADD) {
+    if(dataSource.value && (dataSource.value?.totalCount() as number) > 0) {
+      initialState.index = dataSource.value.totalCount() as number
+    }
+    storeDataSource.value.insert(initialState).then((result) => {
+      dataGridRef.value?.refresh();
+      disableAddRow.value = true
+    });
+  } else {
+    isModal.addRow = false
   }
-  storeDataSource.value.insert(initialState).then((result) => {
-    dataGridRef.value?.refresh();
-    disableAddRow.value = true
-  });
 }
 const modal = reactive({
   budget: false,
@@ -278,7 +290,7 @@ const closePopupBudget = (e: boolean) => {
   modal.budget = false
 };
 const openModalBudget = (data: any) => {
-  console.log('data', data)
+
   modal.budget = true;
   store.dispatch('common/setDataBudget', data)
 }
@@ -297,11 +309,11 @@ const actionPrint = (data: any) => {
 }
 const actionSendMail = (data: any) => {
   index.value = data.index as number
-  isModalSendMail.employeeRemunerationList = true
+  isModal.employeeRemunerationList = true
 }
 const handleEmitClosePopup = (e: boolean) => {
   if (e){
-    isModalSendMail.employeeRemunerationList = false
+    isModal.employeeRemunerationList = false
   }
 }
 const closePopupEditEmployeeTable = (e: boolean) => {
@@ -315,7 +327,7 @@ const openHistory = () => {
 }
 const handleDeleteBudget = (data: any) => {
   if (disableAddRow.value) {
-    dataSource.value?.store().remove(data.createdAt).then((result) => {
+    dataSource.value?.store().remove(data.createdAt).then(() => {
       dataGridRef.value?.refresh();
       disableAddRow.value = false
     })
