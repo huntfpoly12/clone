@@ -165,7 +165,7 @@
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                 :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
-                                 :onRowClick="onSelectionClick"
+                                 :onRowClick="onSelectionClick" @init-new-row="onInitRow" 
                                 :focused-row-enabled="true" key-expr="rowIndex" :focused-row-key="focusedRowKey"
                                 :auto-navigate-to-focused-row="true" noDataText="내역이 없습니다">
                                 <DxScrolling mode="standard" show-scrollbar="always" />
@@ -207,10 +207,10 @@
                                     <a-form-item label="사업분류" class="red">
                                         <select-box-common :arrSelect="facilityBizTypeCommon"
                                             v-model:valueInput="dataActiveRow.facilityBizType" displayeExpr="n"
-                                            valueExpr="v" width="200px" />
+                                            valueExpr="v" width="200px" required/>
                                     </a-form-item>
                                     <a-form-item label="사업명 (중복불가)" class="red">
-                                        <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
+                                        <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" required/>
                                     </a-form-item>
                                     <a-form-item label="서비스 시작년월" class="red">
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
@@ -826,10 +826,14 @@ export default {
                 }
             }
         );
+        const onInitRow = (e: any) => {
+          const initRow = {startYearMonth: dayjs().format('YYYYMM') };
+          e.data = initRow;
+        };
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady,  checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale, isWithholding,checkedAccounting,
+            optionSale, isWithholding,checkedAccounting,onInitRow,
         };
     },
 };

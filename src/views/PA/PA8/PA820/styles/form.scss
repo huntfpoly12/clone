@@ -48,7 +48,7 @@
 
     :deep .dx-template-wrapper {
       width: 100%;
-      padding: 3px;
+      padding: 3px !important;
     }
   }
 
@@ -63,4 +63,7 @@
   .mr-35 {
     margin-right: 35px;
   }
+}
+:deep .dx-scrollable-container{
+  min-height: 400px;
 }
