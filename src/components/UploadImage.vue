@@ -3,10 +3,10 @@
         <a-form-item :label="title" v-if="!customrow" style="position: relative;">
             <div v-if="disabledImg == false">
                 <div class="d-flex">
-                    <input class="custom-file-input" type="file" @change="onFileChange" width="100px" />
+                    <input class="custom-file-input" type="file" @change="onFileChange" width="100px" accept="image/png, image/gif, image/tif, image/jpg, image/jpeg" />
                     <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
-                <p v-if="messageUpload">{{ messageUpload }}</p>
+                <p v-if="messageUpload" class="error-group">{{ messageUpload }}</p>
             </div>
             <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
                 <div class="d-flex">
@@ -22,7 +22,7 @@
                     <input class="custom-file-input" type="file" @change="onFileChange" />
                     <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
-                <p v-if="messageUpload">{{ messageUpload }}</p>
+                <p v-if="messageUpload" class="error-group">{{ messageUpload }}</p>
             </div>
             <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
                 <div class="d-flex">
@@ -61,6 +61,7 @@ import {
     PlusSquareOutlined,
     WarningFilled,
 } from "@ant-design/icons-vue";
+import { Message } from "@/configs/enum";
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
     const reader = new FileReader();
@@ -134,38 +135,45 @@ export default defineComponent({
         };
         let preview = ref<any>("");
         const onFileChange = async (e: { [x: string]: any; target: { files: any[] } }) => { 
-        const file = e.target.files[0];
-        if (file.size > 1024 * 1024 * 5) {
-            e.preventDefault();
-            messageUpload = "File must smaller than 5MB!"; 
+          const file = e.target.files[0];
+          let allowedFormats = ['image/png', 'image/gif','image/tif', 'image/jpg', 'image/jpeg'];
+
+          if (file.size > 1024 * 1024 * 5) {
+              e.preventDefault();
+              messageUpload.value = "File must smaller than 5MB!"; 
+              return;
+          }
+          if (!allowedFormats.includes(file.type)) {
+            messageUpload.value = Message.getCommonMessage('1001').message; 
             return;
-        }
-        const formData = new FormData();
-        formData.append("category", "SubscriptionRequestCompanyLicense");
-        formData.append("file", file);
-        fileName.value = file.name; 
-        // Display the key/value pairs
-        loading.value = true;
-        const data = await uploadRepository.public(formData); 
+          }
+          messageUpload.value = "";
+          const formData = new FormData();
+          formData.append("category", "SubscriptionRequestCompanyLicense");
+          formData.append("file", file);
+          fileName.value = file.name; 
+          // Display the key/value pairs
+          loading.value = true;
+          const data = await uploadRepository.public(formData); 
 
-        getBase64(file, (base64Url: string) => {
-            imageUrl.value = base64Url;
-            loading.value = false;
-            emit('update:imageId', data.data.id)
-            emit('update:imageSource', imageUrl.value)
-            emit("update-img", {
-                url: imageUrl.value,
-                id: data.data.id,
-                fileName: fileName.value,
-                name: fileName.value
-            });
-            emit("update-step", {
-                url: imageUrl.value,
-                id: data.data.id,
-                fileNamestep: fileName.value,
+          getBase64(file, (base64Url: string) => {
+              imageUrl.value = base64Url;
+              loading.value = false;
+              emit('update:imageId', data.data.id)
+              emit('update:imageSource', imageUrl.value)
+              emit("update-img", {
+                  url: imageUrl.value,
+                  id: data.data.id,
+                  fileName: fileName.value,
+                  name: fileName.value
+              });
+              emit("update-step", {
+                  url: imageUrl.value,
+                  id: data.data.id,
+                  fileNamestep: fileName.value,
 
-            });
-        });
+              });
+          });
         
       };
 
@@ -272,7 +280,7 @@ export default defineComponent({
     width: 20px; 
     height: 20px; 
     position: absolute;  
-    top: 50%; 
+    top: 16px; 
     left: 10px;
     transform: translate(0, -50%);
 }
