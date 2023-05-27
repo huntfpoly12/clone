@@ -1271,8 +1271,6 @@ export const calculateWithholdingStatusReportModified = async (wrapper: any, dat
       }
     }
   }
-
-  console.log(cellData, 'inputdata');
   // do the calculation
   let output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
   await convertZeroData(output).then((res) => {

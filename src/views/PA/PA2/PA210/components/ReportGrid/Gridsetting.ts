@@ -759,7 +759,6 @@ export const checkYETaxAdjustment = (output: any) => {
       return el
     }else null
   });
-  console.log(A04 , A05 , A06 , A26, A46);
   if (A04 || A05 || A06 || A26 || A46) {
     checkStatus = true
   }

@@ -58,7 +58,7 @@
         <DxColumn
           caption="귀속 연월"
           cell-template="imputed"
-          sort-order="desc"
+          sort-order="asc"
           data-field="imputedMonth"
           :sort-index="1"
         />
@@ -92,7 +92,7 @@
         <DxColumn
           caption="지급 연월"
           cell-template="payment"
-          sort-order="asc"
+          sort-order="desc"
           data-field="paymentFinishYearMonth"
           :sort-index="0"
         />
