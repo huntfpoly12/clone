@@ -387,10 +387,10 @@ export default defineComponent({
 		watch(
 			() => [
 				formData.value.bankbookId,
-				store.state.common.ac120.arrayBankbooks,
+				store.state.common.ac120.arrayBankbooksForWork,
 			],
 			(newValue, oldValue) => {
-				let data = store.state.common.ac120.arrayBankbooks?.find(
+				let data = store.state.common.ac120.arrayBankbooksForWork?.find(
 					(item: any) => item.value == formData.value.bankbookId
 				);
 				bankbookNickname.value = data?.bankbookNickname;
