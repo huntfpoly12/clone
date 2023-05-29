@@ -6,7 +6,7 @@
     @cancel="setModalVisible"
     :mask-closable="false"
     :footer="false"
-    width="90%"
+    width="1300px"
   >
     <standard-form ref="formRef">
       <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true"
@@ -44,7 +44,7 @@
         <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right" format="#0,###"/>
         <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right" format="#0,###"/>
         <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right" format="#0,###"/>
-        <DxColumn caption="계" data-field="total" alignment="center" cell-template="total" :allowEditing="false"/>
+        <DxColumn caption="계" data-field="total" alignment="right" cell-template="total" :allowEditing="false"/>
         <template #total="{ data }">
           <span class="px-7">{{ calculateSalary(data) }}</span>
         </template>
@@ -223,7 +223,6 @@ const handleSaving = (e: SavingEvent) => {
       accounSubjectOrder: accountSubject[0].theOrder,
       inputs
     }
-    console.log('result', result)
     mutate(result)
   }
   e.cancel = true

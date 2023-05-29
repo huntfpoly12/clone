@@ -2,7 +2,7 @@
   <a-modal :visible="visible" centered @cancel="actionClose()" :mask-closable="btnClose" :footer="false"
     :closable="btnClose">
     <div v-if="step === StepCreateBudget.Step1" class="text-center">
-      {{ dataBudget?.index }} 작성하시겠습니까?
+      {{ index === 0 ? `본예산 작성하시겠습니까?` : `작성하시겠습니까` }}
     </div>
     <div v-else-if="step === StepCreateBudget.Step2">
       <div class="modal-content">
@@ -22,7 +22,7 @@
 
     <div v-if="step !== StepCreateBudget.Step3" class="footer">
       <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'" @onClick="actionClose()" />
-      <button-basic class="button-form-modal" text="네. 작성합니다." :width="140" :type="'default'" :mode="'contained'"
+      <button-basic class="button-form-modal" text="네. 작성합니다" :width="140" :type="'default'" :mode="'contained'"
         @onClick="onConfirm" />
     </div>
   </a-modal>
@@ -61,9 +61,9 @@ export default defineComponent({
       emit('closePopup', false)
     };
     const onConfirm = () => {
-      if (step.value === StepCreateBudget.Step1) {
+      if (step.value === StepCreateBudget.Step1 && props.index === 0) {
         step.value = StepCreateBudget.Step2
-      } else if (step.value === StepCreateBudget.Step2) {
+      } else if (step.value === StepCreateBudget.Step1 && props.index > 0 || step.value === StepCreateBudget.Step2) {
         step.value = StepCreateBudget.Step3
         emit('closePopup', ACTION.ADD)
         btnClose.value = true
