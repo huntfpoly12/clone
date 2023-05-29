@@ -163,7 +163,7 @@
                       v-model:valueSwitch="data.data.refund"
                       :textCheck="'O'"
                       :textUnCheck="'X'"
-                      :disabled="true"
+                      :disabled="disabledRefund"
                       />
                   </div>
               </a-tooltip>
@@ -266,6 +266,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const wrapper = ref<any>(null);
     const confirmStatus = ref<boolean>(false);
+    const disabledRefund = ref<boolean>(false);
     const confirmLoadNewStatus = ref<boolean>(false);
     const firstTimeLoad = ref<boolean>(false);
     const cellNegativeNumber = [[7,7],[15,7],[59,7]]
@@ -667,7 +668,8 @@ export default defineComponent({
           adjustment?.refundApplicationAmountModified,
           "initTable"
         );
-        checkDisableA04A06()
+      checkDisableA04A06()
+      checkDisableRefund()
     };
 
     const {
@@ -889,29 +891,60 @@ export default defineComponent({
         newCellSetting[191].className = "htMiddle htRight"
 
       } else {
-        // newCellSetting[147].readOnly = true
-        // newCellSetting[147].className = "htMiddle htRight disable-cell"
-        // newCellSetting[155].readOnly = true
-        // newCellSetting[155].className = "htMiddle htRight disable-cell"
+        newCellSetting[147].readOnly = true
+        newCellSetting[147].className = "htMiddle htRight disable-cell"
+        newCellSetting[155].readOnly = true
+        newCellSetting[155].className = "htMiddle htRight disable-cell"
 
-        // newCellSetting[148].readOnly = true
-        // newCellSetting[148].className = "htMiddle htRight disable-cell"
-        // newCellSetting[156].readOnly = true
-        // newCellSetting[156].className = "htMiddle htRight disable-cell"
+        newCellSetting[148].readOnly = true
+        newCellSetting[148].className = "htMiddle htRight disable-cell"
+        newCellSetting[156].readOnly = true
+        newCellSetting[156].className = "htMiddle htRight disable-cell"
 
-        // newCellSetting[181].readOnly = true
-        // newCellSetting[181].className = "htMiddle htRight disable-cell"
-        // newCellSetting[189].readOnly = true
-        // newCellSetting[189].className = "htMiddle htRight disable-cell"
+        newCellSetting[181].readOnly = true
+        newCellSetting[181].className = "htMiddle htRight disable-cell"
+        newCellSetting[189].readOnly = true
+        newCellSetting[189].className = "htMiddle htRight disable-cell"
 
-        // newCellSetting[183].readOnly = true
-        // newCellSetting[183].className = "htMiddle htRight disable-cell"
-        // newCellSetting[191].readOnly = true
-        // newCellSetting[191].className = "htMiddle htRight disable-cell"
+        newCellSetting[183].readOnly = true
+        newCellSetting[183].className = "htMiddle htRight disable-cell"
+        newCellSetting[191].readOnly = true
+        newCellSetting[191].className = "htMiddle htRight disable-cell"
       }
       hot.updateSettings({
         cell: newCellSetting
       });
+    }
+    // check disable switch refund
+    const checkDisableRefund = () => {
+      if (
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||
+        (dataSource.value[0].index > 0 && dataSource.value[0].afterDeadline == false)
+      ){
+        dataSource.value[0].refund = false
+        disabledRefund.value = true
+      } 
+
+      if (
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2)
+      ) {
+        dataSource.value[0].refund = true
+        disabledRefund.value = true
+      }
+
+      if (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2)
+      {
+        dataSource.value[0].refund = true
+        disabledRefund.value = false
+      }
+
+      if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
+      {
+        dataSource.value[0].refund = false
+        disabledRefund.value = false
+      }
     }
     return {
       setModalVisible,
@@ -931,6 +964,7 @@ export default defineComponent({
       confirmLoadNewStatus,
       showTooltipYearMonth,
       dataModified,
+      disabledRefund
     };
   },
 });
