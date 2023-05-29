@@ -5,8 +5,11 @@ const screenGetterAC520 = {
   getTypeCreateBudget(state: any) {
     return state.typeCreateBudget
   },
-  getDataBudgetPreYear(state: any) {
-    return state.dataBudgetPreYear
+  getDataPreIndexBudget(state: any) {
+    return state.dataPreIndexBudget
+  },
+  getIsChangedFormAc520(state: any) {
+    return state.isChangedFormAc520
   }
 }
 export default screenGetterAC520

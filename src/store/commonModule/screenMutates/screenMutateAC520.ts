@@ -7,8 +7,11 @@ const screenMutateAC520 = {
   setTypeCreateBudget(state: any, typeCreateBudget: ComponentCreateBudget) {
     state.typeCreateBudget = typeCreateBudget
   },
-  setDataBudgetPreYear(state: any, data: any) {
-    state.typeCreateBudget = data
+  setDataPreIndexBudget(state: any, data: any) {
+    state.dataPreIndexBudget = data
+  },
+  setIsChangedFormAc520(state: any, isChangedForm: boolean) {
+    state.isChangedFormAc520 = isChangedForm
   }
 }
 export default screenMutateAC520

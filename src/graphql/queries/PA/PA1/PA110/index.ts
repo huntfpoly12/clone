@@ -8,6 +8,7 @@ import getIncomeWage from "./getIncomeWage";
 import getEmployeeWages from "./getEmployeeWages";
 import getWithholdingConfigPayItems from "./getWithholdingConfigPayItems";
 import getWithholdingConfig from "../../../CM/CM130/getWithholdingConfig";
+import calculateMidTermSettlement from "../../../common/calculateMidTermSettlement"
 const queries = {
   getWithholdingConfigDeductionItems: getWithholdingConfigDeductionItems,
   getIncomeWagePayrollRegisterViewUrl: getIncomeWagePayrollRegisterViewUrl,
@@ -19,5 +20,6 @@ const queries = {
   getEmployeeWages: getEmployeeWages,
   getWithholdingConfigPayItems: getWithholdingConfigPayItems,
   getWithholdingConfig: getWithholdingConfig,
+  calculateMidTermSettlement: calculateMidTermSettlement,
 };
 export default queries;

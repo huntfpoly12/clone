@@ -1,8 +1,9 @@
 import { ComponentCreateBudget } from "@/views/AC/AC5/AC520/type";
-let statesAC520 = {
+const statesAC520 = {
   dataBudget: null,
-  dataBudgetPreYear: null,
-  typeCreateBudget: ComponentCreateBudget.EmployeeSalaryTable
+  dataPreIndexBudget: null,
+  typeCreateBudget: ComponentCreateBudget.EmployeeSalaryTable,
+  isChangedFormAc520: false
 };
 
 export default statesAC520;

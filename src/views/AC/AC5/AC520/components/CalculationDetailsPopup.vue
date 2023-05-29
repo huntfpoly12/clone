@@ -1,5 +1,5 @@
 <template>
-  <a-modal wrapClassName="custom-modal" width="900px" v-bind="$props" @ok="handleOk" @cancel="closePopup">
+  <a-modal :visible="visible" width="900px"  @ok="handleOk" @cancel="closePopup" :mask-closable="false" :footer="null">
     <a-row >
       <a-col span="9">
         <dx-field label="산출내역">
@@ -29,7 +29,7 @@
         </standard-form>
       </a-col>
       <div class="wf-100 text-center">
-        <DxButton type="default" :disabled="typeCal === 1" @click="handleCalculate" text="calculate" class="mr-10"/>
+        <DxButton type="default" :disabled="typeCal === 1" @click="handleCalculate" text="계산" class="mr-10"/>
         <DxButton type="default" @click="handleSubmit" text="산출내역 저장"/>
       </div>
     </a-row>
@@ -86,6 +86,7 @@ const handleSubmit = () => {
     emit('ok', details.value.map((item: any) => ({
       ...item,
       type: typeCal.value,
+      calculationResult: item.calculationResult ? item.calculationResult.toString() : '',
     })))
     return;
 }
@@ -114,10 +115,10 @@ const closePopup = () => {
       title: '',
       content: Message.getCommonMessage('501').message,
       onOk() {
-        handleSubmit();
+        emit('closePopup', false)
       },
       onCancel() {
-        emit('closePopup', false)
+        // emit('closePopup', false)
       },
     });
   } else {
@@ -129,9 +130,10 @@ const handleCalculate = () => {
   if(typeCal.value === 2) {
     details.value = details.value.map((item: any) => {
       if(!item.detail) return item;
+      console.log('details.value',typeof eval(item.detail.replace(/[^\d+\-*/().]/g, ""))?.toString() || '')
       return {
         ...item,
-        calculationResult: item.detail ? eval(item.detail.replace(/[^\d+\-*/().]/g, "")).toString() : item.calculationResult,
+        calculationResult: item.detail ? (eval(item.detail.replace(/[^\d+\-*/().]/g, ""))?.toString() || '') : item.calculationResult.toString(),
       }
     })
   }

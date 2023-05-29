@@ -1,27 +1,36 @@
 <template>
   <div class="ac130TableRevenueBudgetSummary">
-    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated" :show-borders="true"
+    <DxDataGrid ref="refAc130TableRevenueBudgetSummary" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       noDataText="내역이 없습니다">
       <DxPaging :enabled="false" />
       <DxScrolling mode="standard" show-scrollbar="always" />
-      <DxColumn caption="계정과목" data-field="name" />
-      <DxColumn caption="연예산(C)" data-field="amount" format="fixedPoint" alignment="end" />
-      <DxColumn caption="월환산예산 (C /12)" data-field="monthlyBudget" format="fixedPoint" width="130" alignment="end" />
-      <DxColumn caption="당월집행" data-field="currentMonthExecution" format="fixedPoint" alignment="end" />
-      <DxColumn caption="당월 인건비비율 (%)" data-field="currentMonthlyFeeRate" format="fixedPoint" width="140" alignment="end" />
-      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" format="fixedPoint" alignment="end" />
-      <DxColumn caption="잔액(C-D)" data-field="balance" format="fixedPoint" alignment="end" />
-      <DxColumn caption="집행율(%)" data-field="executionRate" format="fixedPoint" alignment="end" />
+      <DxColumn caption="계정과목" data-field="name" width="200" />
+      <DxColumn caption="연예산(C)" data-field="amount" alignment="end" :customizeText="customizeTextColumn" />
+      <DxColumn caption="월환산예산 (C /12)" data-field="monthlyBudget" width="130" alignment="end"
+        :customizeText="customizeTextColumn" />
+      <DxColumn caption="당월집행" data-field="currentMonthExecution" alignment="end" :customizeText="customizeTextColumn" />
+      <DxColumn caption="당월 인건비비율 (%)" data-field="currentMonthlyFeeRate" width="140" alignment="end"
+        :customizeText="customizeTextColumn" />
+      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" alignment="end" :customizeText="customizeTextColumn" />
+      <DxColumn caption="잔액(C-D)" data-field="balance" alignment="end" :customizeText="customizeTextColumn" />
+      <DxColumn caption="집행율(%)" data-field="executionRate" alignment="end" :customizeText="customizeTextColumn" />
       <DxSummary>
         <DxTotalItem column="계정과목" summary-type="count" display-format="합계: [{0}]" />
-        <DxTotalItem column="연예산(C)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
-        <DxTotalItem column="월환산예산 (C /12)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
-        <DxTotalItem column="당월집행" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
-        <DxTotalItem column="당월 인건비비율 (%)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
-        <DxTotalItem column="집합누계(D)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
-        <DxTotalItem column="잔액(C-D)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
-        <DxTotalItem column="집행율(%)" summary-type="sum" :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`"/>
+        <DxTotalItem column="연예산(C)" summary-type="sum"
+          :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`" />
+        <DxTotalItem column="월환산예산 (C /12)" summary-type="sum"
+          :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`" />
+        <DxTotalItem column="당월집행" summary-type="sum"
+          :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`" />
+        <DxTotalItem column="당월 인건비비율 (%)" summary-type="sum"
+          :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`" />
+        <DxTotalItem column="집합누계(D)" summary-type="sum"
+          :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`" />
+        <DxTotalItem column="잔액(C-D)" summary-type="sum"
+          :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`" />
+        <DxTotalItem column="집행율(%)" summary-type="sum"
+          :customize-text="(e: any) => `[${$filters.formatCurrency(e.value)}]`" />
       </DxSummary>
     </DxDataGrid>
   </div>
@@ -31,6 +40,7 @@
 import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxPaging, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import filters from '@/helpers/filters'
 export default defineComponent({
   props: {
     data: {
@@ -49,34 +59,53 @@ export default defineComponent({
 
     const dataCalculated: any = ref([])
 
+    const refAc130TableRevenueBudgetSummary = ref()
+
     const checkNumber = (value: any) => {
-      if (Number.isInteger(value)) {
-        return value
-      } else {
-        return 0
+      if (Number.isNaN(Number.parseFloat(value))) {
+        return 0;
       }
+      return value
     }
 
     watch(() => props.data, (value) => {
       if (value) {
         dataCalculated.value = value.map((item: any) => {
           return {
-          ...item,
-          monthlyBudget: checkNumber(item?.amount / 12),
-          currentMonthlyFeeRate: checkNumber(item?.currentMonthExecution / (item?.amount / 12)),
-          balance: checkNumber(item?.amount - item?.cumulativeTotal),
-          executionRate: checkNumber(item?.cumulativeTotal / item?.amount) * 100
-        }
+            ...item,
+            monthlyBudget: checkNumber(item?.amount / 12),
+            currentMonthlyFeeRate: checkNumber(item?.currentMonthExecution / (item?.amount / 12)),
+            balance: checkNumber(item?.amount - item?.cumulativeTotal),
+            executionRate: checkNumber(item?.cumulativeTotal / item?.amount) * 100
+          }
         })
       }
+
     }, {
       deep: true,
       immediate: true
     })
+
+    const customizeTextColumn = (e: any) => {
+      if (e.value) {
+        if (Number.isInteger(e.value)) {
+          return filters.formatCurrency(e.value)
+        } else {
+          return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(e.value).replace('$', '')
+        }
+      }
+      return '0'
+    }
+    const resetTable = () => {
+      refAc130TableRevenueBudgetSummary.value.instance.refresh()
+    }
     return {
       move_column,
       colomn_resize,
       dataCalculated,
+      customizeTextColumn,
+      resetTable,
+      refAc130TableRevenueBudgetSummary
     }
   },
 })
@@ -87,5 +116,14 @@ export default defineComponent({
   padding: 5px;
   background-color: #fff;
   border-radius: 5px;
+
+  :deep .dx-datagrid-scrollable-simulated {
+    padding: 0;
+    
+    td + td {
+      padding: 7px 3px;
+      border-left: 1px solid #ddd;
+    }
+  }
 }
 </style>

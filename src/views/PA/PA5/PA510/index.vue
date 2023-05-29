@@ -319,8 +319,8 @@
 						<template #tag="{ data }">
 							<div class="custom-action">
 								<employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-									:idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-									:foreigner="data.data.employee.foreigner" :checkStatus="false" />
+									:idCardNumber="data.data.employee.residentId" :status="checkShowTagStatus(data.data.employee)"
+									:foreigner="data.data.employee.foreigner" />
 							</div>
 						</template>
 						<DxColumn width="75" caption="근무일수" cell-template="workingDays" data-field="workingDays" />
@@ -896,19 +896,19 @@ export default defineComponent({
 					// store.state.common.pa510.loadingFormData++
 					// return;
 				}
-				if (store.state.common.pa510.checkClickYear) {
-					isRunOnce.value = true;
-					processKey.value.imputedYear =
-						store.state.common.pa510.dataYearNew;
-					processKey.value.paymentYear =
-						store.state.common.pa510.dataYearNew;
-					originData.value.imputedYear = store.state.common.pa510.dataYearNew;
-					trigger.value = true; //reset data table 1
-					await (store.state.settings.paYear =
-						store.state.common.pa510.dataYearNew);
-					await (store.state.common.pa510.checkClickYear = false);
-					return;
-				}
+				// if (store.state.common.pa510.checkClickYear) {
+				// 	isRunOnce.value = true;
+				// 	processKey.value.imputedYear =
+				// 		store.state.common.pa510.dataYearNew;
+				// 	processKey.value.paymentYear =
+				// 		store.state.common.pa510.dataYearNew;
+				// 	originData.value.imputedYear = store.state.common.pa510.dataYearNew;
+				// 	trigger.value = true; //reset data table 1
+				// 	await (store.state.settings.paYear =
+				// 		store.state.common.pa510.dataYearNew);
+				// 	await (store.state.common.pa510.checkClickYear = false);
+				// 	return;
+				// }
 				store.state.common.pa510.incomeId =
 					store.state.common.pa510.dataRowOnActive.incomeId;
 				store.state.common.pa510.loadingFormData++;
@@ -1012,6 +1012,17 @@ export default defineComponent({
 				}
 			}
 		};
+		const checkShowTagStatus = (data: any) => {
+			if (data.status == 0) {
+				if (data.leavedAt?.toString().slice(0, 6) == `${paYear.value}${filters.formatMonth(processKey.value.imputedMonth)}`
+				) {
+					return 0;
+				}
+				return 50;
+			} else {
+				return data.status;
+			}
+		};
 
 		const checkStartYearMonth = (month: number) => {
 			let startYear = ref<any>(startYearMonth?.toString().slice(0, 4));
@@ -1077,6 +1088,7 @@ export default defineComponent({
 			checkStartYearMonth,
 			classObject,
 			classObjectDetail,
+			checkShowTagStatus,
 		};
 	},
 });

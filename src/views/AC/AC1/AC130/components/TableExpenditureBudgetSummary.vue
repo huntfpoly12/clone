@@ -1,18 +1,18 @@
 <template>
   <div class="ac130TableExpenditureBudgetSummary">
-    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated" :show-borders="true"
-    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
-    <DxScrolling mode="standard" show-scrollbar="always" noDataText="내역이 없습니다"/>
-    <DxColumn caption="구분" cell-template="label" />
-    <template #label="{ data }">
-      <b style="color: #7F7F7F;">{{ data.data.label }}</b>
-    </template>
-    <DxColumn caption="연예산(C)" data-field="amount" format="fixedPoint" alignment="end"/>
-    <DxColumn caption="당월집행" data-field="currentMonthExecution" format="fixedPoint" alignment="end"/>
-    <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" format="fixedPoint" alignment="end"/>
-    <DxColumn caption="잔액(C-D)" data-field="balance" format="fixedPoint" alignment="end"/>
-    <DxColumn caption="집행율(%)" data-field="executionRate" format="fixedPoint" alignment="end"/>
-  </DxDataGrid>
+    <DxDataGrid ref="refAc130TableExpenditureBudgetSummary" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated" :show-borders="true"
+      :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+      <DxScrolling mode="standard" show-scrollbar="always" noDataText="내역이 없습니다" />
+      <DxColumn caption="구분" cell-template="label" width="130" />
+      <template #label="{ data }">
+        <b style="color: #7F7F7F;">{{ data.data.label }}</b>
+      </template>
+      <DxColumn caption="연예산(C)" data-field="amount" :customizeText="customizeTextColumn" alignment="end" />
+      <DxColumn caption="당월집행" data-field="currentMonthExecution" :customizeText="customizeTextColumn" alignment="end" />
+      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" :customizeText="customizeTextColumn" alignment="end" />
+      <DxColumn caption="잔액(C-D)" data-field="balance" :customizeText="customizeTextColumn" alignment="end" />
+      <DxColumn caption="집행율(%)" data-field="executionRate" :customizeText="customizeTextColumn" alignment="end" />
+    </DxDataGrid>
   </div>
 </template>
 
@@ -20,6 +20,7 @@
 import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxMasterDetail } from "devextreme-vue/data-grid";
+import filters from '@/helpers/filters'
 export default defineComponent({
   props: {
     data: {
@@ -36,13 +37,26 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataCalculated: any = ref([])
-    
+
+    const refAc130TableExpenditureBudgetSummary = ref()
+
     const checkNumber = (value: any) => {
-      if (Number.isInteger(value)) {
+      if (Number.isNaN(Number.parseFloat(value))) {
+        return 0;
+      }else{
         return value
-      } else {
-        return 0
       }
+    }
+
+    const customizeTextColumn = (e: any) => {
+      if(e.value) {
+        if(Number.isInteger(e.value)){
+          return filters.formatCurrency(e.value)
+        }else{
+          return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(e.value).replace('$', '')
+        }
+      }
+      return '0'
     }
 
     watch(() => props.data, (value) => {
@@ -68,7 +82,7 @@ export default defineComponent({
           amount: checkNumber(value?.revenueBudgetSummary?.amount - value?.expenditureBudgetSummary?.amount),
           currentMonthExecution: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.currentMonthExecution),
           cumulativeTotal: checkNumber(value?.revenueBudgetSummary?.cumulativeTotal - value?.expenditureBudgetSummary?.cumulativeTotal),
-          balance: checkNumber(value?.revenueBudgetSummary?.amount - value?.expenditureBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.currentMonthExecution),
+          balance: checkNumber(value?.revenueBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.amount - value?.expenditureBudgetSummary?.currentMonthExecution),
           executionRate: checkNumber(((value?.revenueBudgetSummary?.cumulativeTotal / value?.revenueBudgetSummary?.amount) * 100) - ((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100))
         }
       ]
@@ -76,10 +90,17 @@ export default defineComponent({
       deep: true,
       immediate: true
     })
+
+    const resetTable = () => {
+      refAc130TableExpenditureBudgetSummary.value.instance.refresh()
+    }
     return {
       move_column,
       colomn_resize,
       dataCalculated,
+      customizeTextColumn,
+      resetTable,
+      refAc130TableExpenditureBudgetSummary
     }
   },
 })

@@ -264,7 +264,7 @@ export default defineComponent({
 
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
-                store.state.common.pa110.checkClickYear = false;
+                // store.state.common.pa110.checkClickYear = false;
                 store.state.common.pa110.actionSubmit++
             } else { 
                 if (store.state.common.pa110.statusRowAdd) { // add row

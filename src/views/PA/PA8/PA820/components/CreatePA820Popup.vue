@@ -100,44 +100,11 @@
                     <span>상실부호</span>
                     <SelectCustomField :dataSource="nationaPersionSelectbox" :disabled="!formState.nationalPensionReport"
                       v-model:valueInput="formState.nationalPensionLossCode" width="357px" />
-                    <!-- <DxSelectBox :search-enabled="false" width="357px" :data-source="nationaPersionSelectbox"
-                      :show-clear-button="false" display-expr="label" value-expr="value"
-                      :disabled="!formState.nationalPensionReport" v-model="formState.nationalPensionLossCode"
-                      placeholder="선택" field-template="field" item-template="item">
-                      <template #field=" { data } : any " style="padding: 4px;display: flex; align-items: center;">
-                        <div v-if=" data " style="padding: 2px;display: flex; align-items: center;">
-                          <a-tag>{{ data?.value }}</a-tag>
-                          <div class="text-overflow">
-                            {{ data.label }}
-                          </div>
-                          <DxTextBox style="display: none;" />
-                        </div>
-                        <div v-else class="pt-5 pl-5">
-                          <span>선택</span>
-                          <DxTextBox style="display: none;" />
-                        </div>
-                      </template>
-                      <template #item=" { data } : any " style="display: flex; align-items: center;">
-                        <div style="display: flex; align-items: center;">
-                          <a-tag>{{ data?.value }}</a-tag>
-                          <div class="text-overflow" style="width: 296px;">
-                            {{ data?.label }}
-                          </div>
-                          <DxTextBox style="display: none;" />
-                        </div>
-                      </template>
-                    </DxSelectBox> -->
                   </div>
-                  <!-- <select-box-common width="357px" :arrSelect="nationaPersionSelectbox" :required="true"
-                    v-model:valueInput="formState.nationalPensionLossCode"
-                    :disabled="!formState.nationalPensionReport" placeholder="선택" /> -->
                   <span class="ml-40">
                     <checkbox-basic size="14" label="취득월 국민연금 납부" v-model:valueCheckbox="showData.acquisitionMonthPayment"
                       :disabled="!formState.nationalPensionReport" />
                   </span>
-                  <!-- <span class="ml-10 notice">
-                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 1월취득은 만근퇴사의 경우 의무납부.
-                  </span> -->
                   <a-tooltip color="black" placement="top">
                     <template #title>1일취득은 만근퇴사의 경우 의무납부</template>
                     <img src="@/assets/images/iconInfo.png" class="img-info" />
@@ -314,7 +281,8 @@ export default defineComponent({
       showData.leavedAt = null;
     }
     // getMajorInsuranceConsignStatus
-    const { infoMajorInsuranceConsignStatus } = useGetMajorInsuranceConsignStatus(companyId)
+    const { infoMajorInsuranceConsignStatus } = useGetMajorInsuranceConsignStatus(companyId);
+
     //-------------------------- get Company-----------------------
 
     const myCompanyParam = reactive({
@@ -449,6 +417,14 @@ export default defineComponent({
           getEmployeeWageDailyTrigger.value = true;
           // return;
         }
+        formState.nationalPensionReport = false;
+        formState.healthInsuranceReport = true;
+        formState.employeementInsuranceReport = true;
+        formState.industrialAccidentInsuranceReport = true;
+        formState.healthInsuranceLossCode = '1';
+        formState.employeementInsuranceLossCode = 0;
+        formState.employeementInsuranceJobChangeReport = false;
+        formState.employeementInsuranceLossDescription = '';
       }
     }, { deep: true })
     watch(() => formState.employeeType, (newVal: any) => {
@@ -460,17 +436,26 @@ export default defineComponent({
     }, { deep: true })
 
     //--------------------------------CHANGE DATA---------------------------------------
-    watch(() => [showData.joinedAt, showData.leavedAt], (value: any) => {
-      const joinedAt: any = showData.joinedAt
-      const leavedAt: any = showData.leavedAt
-      if(!!joinedAt && !!leavedAt) {
-        const joinedAtFomat = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4,6)}-${joinedAt.toString().slice(6)}`
-        const leavedAtFomat = `${leavedAt.toString().slice(0, 4)}-${leavedAt.toString().slice(4,6)}-${leavedAt.toString().slice(6)}`
-        const firstDayInMonth = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4,6)}-01`
-        const lastDayInMonth = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4,6)}-${dayjs(joinedAtFomat).daysInMonth()}`
-        if(joinedAtFomat === firstDayInMonth && leavedAtFomat === lastDayInMonth) {
-          showData.acquisitionMonthPayment = true
+
+    watch(() => [showData.joinedAt, showData.leavedAt, formState.nationalPensionReport], ([newVal1, newVal2, newVal3]: any) => {
+      const joinedAt: any = newVal1;
+      const leavedAt: any = newVal2;
+      if (!!joinedAt && !!leavedAt) {
+        const joinedAtFomat = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4, 6)}-${joinedAt.toString().slice(6)}`
+        const leavedAtFomat = `${leavedAt.toString().slice(0, 4)}-${leavedAt.toString().slice(4, 6)}-${leavedAt.toString().slice(6)}`
+        const firstDayInMonth = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4, 6)}-01`
+        const lastDayInMonth = `${joinedAt.toString().slice(0, 4)}-${joinedAt.toString().slice(4, 6)}-${dayjs(joinedAtFomat).daysInMonth()}`
+        if (joinedAtFomat === firstDayInMonth && leavedAtFomat === lastDayInMonth && newVal3) {
+          showData.acquisitionMonthPayment = true;
+        } else {
+          showData.acquisitionMonthPayment = false;
         }
+      }
+      if (!newVal3) {
+        formState.nationalPensionLossCode = 0;
+        showData.acquisitionMonthPayment = false;
+      } else {
+        formState.nationalPensionLossCode = 3;
       }
     }, {
       deep: true
@@ -489,13 +474,13 @@ export default defineComponent({
       let data = arr.find((item: any) => item.id == id);
       return !!data ? data.name : ''
     }
+
     //---------------------------------DISABLED FIELD--------------------------------
 
     const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
     const isDisabled2 = computed(() => {
-      // if(formState.employeementInsuranceLossCode == 23 || )
-      const arr = [23, 26, 31]
-      let check = arr.includes(formState.employeementInsuranceLossCode)
+      const arr = [23, 26, 31];
+      let check = arr.includes(formState.employeementInsuranceLossCode);
       formState.employeementInsuranceJobChangeReport = check;
       formStateToCompare.value.employeementInsuranceJobChangeReport = check;
       return check;

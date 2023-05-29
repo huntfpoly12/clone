@@ -47,10 +47,6 @@ export default defineComponent({
         heightBtn: {
           type: Number,
           default: 30
-        },
-        preventChange: {
-            type: Boolean,
-            required: false
         }
     },
     setup(props, { emit }) {
@@ -74,10 +70,8 @@ export default defineComponent({
 
         const submit = () => {
             showModal.value = false;
-            if(!props.preventChange) {
-                currentBt.value = value.value
-                emit("update:valueStatus", value.value);
-            }
+            currentBt.value = value.value
+            emit("update:valueStatus", value.value);
             emit("checkConfirmRowTable", {
                 ...props.dataRow,
                 'status': value.value

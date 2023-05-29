@@ -1,7 +1,7 @@
 <template>
   <action-header title="신청내역 리스트" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-880" class="px-10 py-10">
-    <a-spin :spinning="false" size="large">
+    <a-spin :spinning="loading">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef"
@@ -11,7 +11,6 @@
           placeholder="검색" />
         <DxExport :enabled="true" />
         <DxScrolling mode="standard" show-scrollbar="always" />
-        <DxLoadPanel :enabled="true" :showPane="true" />
         <DxToolbar>
           <DxItem name="searchPanel" />
           <DxItem name="exportButton" css-class="cell-button-export" />
@@ -27,19 +26,19 @@
             </div>
           </a-tooltip>
         </template>
-        <DxColumn caption="일련번호" data-field="companyId" alignment="left" width="130" />
-        <DxColumn caption="상태" data-field="workingStatus" alignment="left" width="130" cell-template="workingStatus" />
+        <DxColumn caption="일련번호" data-field="companyId" alignment="center" width="130" />
+        <DxColumn caption="상태" data-field="workingStatus" alignment="center" width="130" cell-template="workingStatus" />
         <template #workingStatus=" {data: dataValue}: any">
           <div>
             {{ MajorInsuranceWorkingStatus[dataValue.value] }}
           </div>
         </template>
-        <DxColumn caption="등록일" data-field="registeredAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
-        <DxColumn caption="접수일" data-field="acceptedAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
-        <DxColumn caption="완료일" data-field="completedAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
-        <DxColumn caption="접수번호" data-field="acceptedNumber" alignment="left" />
-        <DxColumn caption="메모" data-field="memo" alignment="left" />
-        <DxColumn caption="사업장탈퇴신고서다운로드" cell-template="downA" alignment="left" width="180" />
+        <DxColumn caption="등록일" data-field="registeredAt" alignment="center" data-type="date" format="yyyy-MM-dd" />
+        <DxColumn caption="접수일" data-field="acceptedAt" alignment="center" data-type="date" format="yyyy-MM-dd" />
+        <DxColumn caption="완료일" data-field="completedAt" alignment="center" data-type="date" format="yyyy-MM-dd" />
+        <DxColumn caption="접수번호" data-field="acceptedNumber" alignment="center" />
+        <DxColumn caption="메모" data-field="memo" alignment="center" />
+        <DxColumn caption="사업장탈퇴신고서다운로드" cell-template="downA" alignment="center" width="180" />
         <template #downA=" { data }: any " class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
@@ -47,9 +46,9 @@
             </DxButton>
           </div>
         </template>
-        <DxColumn caption="" cell-template="action" width="180" />
+        <DxColumn caption="" cell-template="action" width="100" />
         <template #action=" { data }: any " class="custom-action">
-          <div class="custom-action" style="text-align: center">
+          <div class="custom-action ml-8">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
                 <a-tooltip zIndex="9999999" placement="top" color="black">
@@ -94,22 +93,14 @@ import {
   DxColumn,
   DxPaging,
   DxExport,
-  DxSelection,
   DxSearchPanel,
   DxToolbar,
-  DxEditing,
-  DxGrouping,
   DxScrolling,
   DxItem,
-  DxMasterDetail,
-  DxSummary,
-  DxTotalItem,
-  DxLoadPanel,
 } from 'devextreme-vue/data-grid';
 import { companyId } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA8/PA880/index';
 import mutations from '@/graphql/mutations/PA/PA8/PA880/index';
-import filters from '@/helpers/filters';
 import DxButton from 'devextreme-vue/button';
 // import { formatMonth } from '../utils/index';
 import { Message } from "@/configs/enum";
@@ -128,27 +119,20 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxSelection,
     DxExport,
     DxSearchPanel,
     DxScrolling,
     DxToolbar,
-    DxEditing,
-    DxGrouping,
     DxItem,
-    DxMasterDetail,
-    DxSummary,
-    DxTotalItem,
     DxButton,
     FormReport,
     DeleteOutlined,
     EditOutlined,
     SearchOutlined,
-    DxLoadPanel,
     DownloadOutlined,
     HistoryOutlined
   },
-  setup(props, { emit }) {
+  setup() {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const focusedRowKey = ref();
@@ -162,7 +146,7 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear
     })
-    const { refetch: companyOutsRefetch, result: companyOutsResult, onError: companyOutsError } = useQuery(
+    const { refetch: companyOutsRefetch, result: companyOutsResult, onError: companyOutsError, loading } = useQuery(
       queries.getMajorInsuranceCompanyOuts,
       companyOutsParam,
       () => ({
@@ -277,11 +261,11 @@ export default defineComponent({
     };
     return {
       per_page, move_column, colomn_resize,
-      focusedRowKey, dataSource,
+      focusedRowKey, dataSource, loading,
       modalHistory, workIdHistory, onOpenLogs,
       onCreateModal, actionDelete, onGetFileStorageId, onGetAcquistionRp,
       modalCreate, modalDelete, handleDelete, contentDelete,
-      MajorInsuranceWorkingStatus,
+      MajorInsuranceWorkingStatus, 
       // onDetailData, workId,
     };
   },

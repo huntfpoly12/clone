@@ -162,8 +162,6 @@
                 <div style="height: 350px; overflow-y: scroll">
                   <radio-group :arrayValue="arrayRadioCheckSourceServices" v-model:valueRadioCheck="checkedAccounting"
                     :layoutCustom="'horizontal'" />
-                  <!-- <checkbox-basic v-model:valueCheckbox="checkedAccounting" :disabled="false" size="15"
-                    label="회계서비스 신청합니다." /> -->
                   <div>
                     <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                       :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
@@ -197,7 +195,10 @@
                             : ""
                           }}
                         </template>
-                        <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
+                        <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" cell-template="capacity" />
+                        <template #capacity="{ data }">
+                          <div v-if="data.data.capacity > 0">{{ data.data.capacity }}</div>
+                        </template>
                         <DxEditing :use-icons="true" :allow-adding="true" :confirmDelete="false"
                           template="button-template" mode="cell" new-row-position="pageBottom">
                           <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -616,6 +617,10 @@ export default defineComponent({
             formState.value.content.accounting = {};
             accountingServiceTypes.value = false;
           }
+          if (value === checkedSourceService.value && checkedSourceService.value === 2) {
+            notification("error", Message.getMessage('BF310', '001').message);
+            activeKey.value = 4;
+          }
         } else {
           objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
         }
@@ -628,16 +633,20 @@ export default defineComponent({
           if (value === 2) {
             formState.value.content.withholding = {
               startYearMonth: NaN,
-              capacity: 0,
+              capacity: NaN,
             };
             withholdingServiceTypes.value = false;
           }
           if (value === 1) {
             formState.value.content.withholding = {
               startYearMonth: +dayjs().format("YYYYMM"),
-              capacity: 0,
+              capacity: NaN,
             };
             withholdingServiceTypes.value = true;
+          }
+          if (checkedAccounting.value === value && value === 2) {
+            notification("error", Message.getMessage('BF310', '001').message);
+            activeKey.value = 4;
           }
         } else {
           objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
@@ -699,80 +708,78 @@ export default defineComponent({
     // A function that is called when a button is clicked.
     const updateSubscriptionRequest = (e: any) => {
       var res = e.validationGroup.validate();
-      if (!res.isValid) {
+      if (!res.isValid || res?.brokenRules.length > 0) {
         // open collapse
         res.brokenRules[0].validator.focus();
         inputInCollapse.map((value: any) => {
-          if (
-            value.input_name.indexOf(
-              res.brokenRules[0].validator._validationInfo.result.name
-            ) != -1
-          ) {
+          if (value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1) {
             activeKey.value = value.key;
+          }else{
+            activeKey.value = 4;
           }
         });
+        return;
       }
       if (checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2) {
         notification("error", Message.getMessage('BF310', '001').message);
         activeKey.value = 4;
+        return;
       }
-      else {
-        // process data befor handle update
-        let contentData: any = { ...formState.value.content };
-        const deleteField = (obj: any): any => {
-          if (obj === null || obj === undefined) {
-            return obj;
-          }
-
-          if (Array.isArray(obj)) {
-            return obj.map((item) => deleteField(item));
-          }
-
-          if (typeof obj === "object") {
-            const newObj: any = {};
-            Object.keys(obj).forEach((key) => {
-              if (key !== "__typename") {
-                newObj[key] = deleteField(obj[key]);
-              }
-            });
-            return newObj;
-          }
-
+      // process data befor handle update
+      let contentData: any = { ...formState.value.content };
+      const deleteField = (obj: any): any => {
+        if (obj === null || obj === undefined) {
           return obj;
-        };
-        const newContent = deleteField(contentData);
-        if (checkedAccounting.value === 2) {
-          newContent.accounting = null;
-        } else {
-          newContent.accounting = {};
-          let newObj = JSON.parse(JSON.stringify(dataSource.value));
-          newObj.map((item: any) => {
-            delete item.rowIndex;
-            delete item.dataImg;
-            delete item.__typename;
-            delete item.registrationCard;
-            if (item?.registrationCardFileStorageId?.length < 1) {
-              delete item.registrationCardFileStorageId;
+        }
+
+        if (Array.isArray(obj)) {
+          return obj.map((item) => deleteField(item));
+        }
+
+        if (typeof obj === "object") {
+          const newObj: any = {};
+          Object.keys(obj).forEach((key) => {
+            if (key !== "__typename") {
+              newObj[key] = deleteField(obj[key]);
             }
-            item.startYearMonth.toString();
-            return { item };
           });
-          newContent.accounting.facilityBusinesses = [...newObj];
-          newContent.accounting.accountingServiceTypes = accountingServiceTypes.value ? [1] : [];
+          return newObj;
         }
-        if (checkedSourceService.value === 2) {
-          newContent.withholding = null;
-        } else {
-          newContent.withholding.withholdingServiceTypes = withholdingServiceTypes.value ? [1] : [];
-        }
-        let variables = {
-          id: formState.value.id,
-          status: formState.value.status,
-          memo: formState.value.memo,
-          content: newContent,
-        };
-        actionUpdate(variables);
+
+        return obj;
+      };
+      const newContent = deleteField(contentData);
+      if (checkedAccounting.value === 2) {
+        newContent.accounting = null;
+      } else {
+        newContent.accounting = {};
+        let newObj = JSON.parse(JSON.stringify(dataSource.value));
+        newObj.map((item: any) => {
+          delete item.rowIndex;
+          delete item.dataImg;
+          delete item.__typename;
+          delete item.registrationCard;
+          if (item?.registrationCardFileStorageId?.length < 1) {
+            delete item.registrationCardFileStorageId;
+          }
+          item.startYearMonth.toString();
+          return { item };
+        });
+        newContent.accounting.facilityBusinesses = [...newObj];
+        newContent.accounting.accountingServiceTypes = accountingServiceTypes.value ? [1] : [];
       }
+      if (checkedSourceService.value === 2) {
+        newContent.withholding = null;
+      } else {
+        newContent.withholding.withholdingServiceTypes = withholdingServiceTypes.value ? [1] : [];
+      }
+      let variables = {
+        id: formState.value.id,
+        status: formState.value.status,
+        memo: formState.value.memo,
+        content: newContent,
+      };
+      actionUpdate(variables);
     };
     // handle License File upload
     const getUrlLicenseFile = (img: any) => {
@@ -810,7 +817,7 @@ export default defineComponent({
     const gridRefName: any = ref("grid");
     const dataActiveRow: any = ref(dataSource.value[0]);
     const focusedRowKey = ref(0);
-    const initRow = { rowIndex: null };
+    const initRow = { rowIndex: null, capacity: NaN, startYearMonth: +dayjs().format('YYYYMM') };
     // A function that is called when a row is clicked.
     const onSelectionClick = (value: any) => {
       dataActiveRow.value = value.data;

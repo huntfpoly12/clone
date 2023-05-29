@@ -155,7 +155,7 @@
                                 <span>1. 회계서비스 신청</span>
                                 <div class="list-checkbox  ml-45">
                                     <radio-group :arrayValue="arrayRadioCheckStep3"
-                                        v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
+                                        v-model:valueRadioCheck="checkedAccounting" :layoutCustom="'horizontal'" />
                                 </div>
                             </label>
                             <div class="group-title">
@@ -165,7 +165,7 @@
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                 :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
-                                @selection-changed="onSelectionChanged" :onRowClick="onSelectionClick"
+                                 :onRowClick="onSelectionClick" @init-new-row="onInitRow" 
                                 :focused-row-enabled="true" key-expr="rowIndex" :focused-row-key="focusedRowKey"
                                 :auto-navigate-to-focused-row="true" noDataText="내역이 없습니다">
                                 <DxScrolling mode="standard" show-scrollbar="always" />
@@ -177,7 +177,7 @@
                                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
                                 </DxToolbar>
                                 <template #button-template>
-                                    <DxButton icon="plus" @click="addRow" text="추가" :disabled="valueRadioBox == 2" />
+                                    <DxButton icon="plus" @click="addRow" text="추가" :disabled="checkedAccounting == 2" />
                                 </template>
                                 <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                     cell-template="indexCell" />
@@ -195,7 +195,10 @@
                                             dayjs(data.data.startYearMonth?.toString()).format("YYYY-MM") : ''
                                     }}
                                 </template>
-                                <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
+                                <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" cell-template="capacity" />
+                                <template #capacity="{ data }">
+                                  <div v-if="data.data.capacity > 0">{{ data.data.capacity }}</div>
+                                </template>
                                 <DxColumn cell-template="delete" />
                                 <template #delete="{ data }">
                                     <DeleteOutlined class="fz-14" @click="deleteRow(data.data.rowIndex)" />
@@ -207,18 +210,18 @@
                                     <a-form-item label="사업분류" class="red">
                                         <select-box-common :arrSelect="facilityBizTypeCommon"
                                             v-model:valueInput="dataActiveRow.facilityBizType" displayeExpr="n"
-                                            valueExpr="v" width="200px" />
+                                            valueExpr="v" width="200px" required/>
                                     </a-form-item>
                                     <a-form-item label="사업명 (중복불가)" class="red">
-                                        <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
+                                        <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" required/>
                                     </a-form-item>
                                     <a-form-item label="서비스 시작년월" class="red">
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
                                             width="200px" />
                                     </a-form-item>
                                     <a-form-item label="정원수" class="red">
-                                        <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
-                                            v-model:valueInput="dataActiveRow.capacity" />
+                                        <number-box width="200px" :required="true" :disabled="disableFormVal2"
+                                            v-model:valueInput="dataActiveRow.capacity" :min="1" />
                                     </a-form-item>
                                     <a-form-item label="장기요양기관등록번호" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
@@ -240,7 +243,7 @@
                             <div class="custom-checkbox-location">
                                 <a-form-item label="부가서비스">
                                     <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
-                                        label="회계입력대행서비스" :size="16" :disabled="valueRadioBox === 2"/>
+                                        label="회계입력대행서비스" :size="16" :disabled="checkedAccounting === 2"/>
                                 </a-form-item>
                             </div>
                         </div>
@@ -263,8 +266,8 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">직 원 수:</label>
-                                <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding"
-                                    :disabled="disableFormVal || isWithholding == 2" :min="0" :spinButtons="true" required/>
+                                <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding" 
+                                    :disabled="disableFormVal || isWithholding == 2" :min="1" :spinButtons="true" required/>
                             </div>
                             <div class="form-item">
                                 <label>부가서비스 :</label>
@@ -291,7 +294,7 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자(주민)등록번호 :</label>
-                                <id-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" />
+                                <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" />
                                 <p>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px" /> :
                                     예금주의 사업자등록번호 또는 주민등록번호입니다
@@ -364,6 +367,7 @@ import { useRouter } from "vue-router";
 import { makeDataClean } from "@/helpers/commonFunction"
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3} from "./utils";
 import dayjs from 'dayjs';
+import { Message } from "@/configs/enum";
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
@@ -393,6 +397,7 @@ export default {
         const arrayRadioCheckStep3 = ref([...arrayRadioCheckUtilStep3]);
         const arrayRadioWithdrawDay = ref([...arrayRadioWithdrawDayUtil]);
         const valueRadioBox = ref(1);
+        const checkedAccounting = ref(1);
         const valueAccountingService = ref(1);
         const valueSourceService = ref(1);
         const focusedRowKey = ref(0)
@@ -559,8 +564,12 @@ export default {
                         notification("error", "계속하려면 모든 조건을 수락하십시오!");
                     }
                 } else if (step.value == 2) {
+                  if (checkedAccounting.value === isWithholding.value && isWithholding.value === 2) {
+                    notification("error", Message.getMessage('BF310', '001').message);
+                  }else{
                     step.value++;
                     window.scrollTo(0, 0);
+                  }
                     // if user not choose service
                     // if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
                         // notification("error", "서비스를 최소 하나 이상 선택해야합니다!");
@@ -636,14 +645,38 @@ export default {
             }
         };
         const gridRefName: any = ref("grid");
+        let accountingCustom: any = null;
+        watch(() => checkedAccounting.value,
+            (newVal) => {
+                if (newVal === 2) {
+                  accountingCustom = null;
+                  valueFacilityBusinesses.value = [];
+                  dataActiveRow.value = null;
+                  contractCreacted.accountingServiceTypes = false;
+                  if (isWithholding.value === 2) {
+                    notification("error", Message.getMessage('BF310', '001').message);
+                  }
+                }
+                if(newVal === 1) {
+                  contractCreacted.accountingServiceTypes = true;
+                }
+            }
+        );
         const isWithholding = ref(1);
-        let withholdingCustom: any = null
+        let withholdingCustom: any = null;
         watch(isWithholding, (newVal: any) => {
             if(newVal == 2) {
                 withholdingCustom = null;
                 contractCreacted.startYearMonthHolding = null;
-                contractCreacted.capacityHolding = null;
+                contractCreacted.capacityHolding = '';
                 contractCreacted.withholdingServiceTypes = false;
+                if (checkedAccounting.value === 2) {
+                  notification("error", Message.getMessage('BF310', '001').message);
+                }
+            }
+            if(newVal == 1) {
+              contractCreacted.withholdingServiceTypes = true;
+              contractCreacted.startYearMonthHolding = +dayjs().format('YYYYMM');
             }
         })
         const Create = async () => {
@@ -655,14 +688,19 @@ export default {
                 val.capacity = parseInt(val.capacity)
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
+            if(checkedAccounting.value == 1) {
+                accountingCustom = {
+                  facilityBusinesses: dataFacility,
+                  accountingServiceTypes: contractCreacted.accountingServiceTypes ? [1] : [],
+                };
+            }
             if(isWithholding.value == 1) {
                 withholdingCustom = {
                     startYearMonth: contractCreacted.startYearMonthHolding,
                     capacity: parseInt(contractCreacted.capacityHolding),
-                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? 1 : null,
+                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes ? [1] : [],
                 };
             }
-
             let dataCallCreated: any = {
                 content: {
                     agreements: {
@@ -702,10 +740,7 @@ export default {
                         mobilePhone: contractCreacted.mobilePhone,
                         email: contractCreacted.email,
                     },
-                    accounting: {
-                        facilityBusinesses: dataFacility,
-                        accountingServiceTypes: !!contractCreacted.accountingServiceTypes ? 1 : 0,
-                    },
+                    accounting: accountingCustom,
                     withholding: withholdingCustom,
                     cmsBank: {
                         bankType: contractCreacted.bankType,
@@ -720,17 +755,8 @@ export default {
                     }
                 }
             }
-          if (dataCallCreated) {
-            if(!dataCallCreated.content.accounting.accountingServiceTypes){
-                dataCallCreated.content.accounting = null
-            }
-              await makeDataClean(dataCallCreated, ['buildingName']);
-              mutateCreated(dataCallCreated)
-          }
-               
-        }
-        const onSelectionChanged = (value: any) => {
-            dataActiveRow.value = value.selectedRowsData[0]
+        await makeDataClean(dataCallCreated, ['buildingName']);
+        mutateCreated(dataCallCreated)
         }
         const onSelectionClick = (value: any) => {
             dataActiveRow.value = value.data
@@ -771,11 +797,6 @@ export default {
             (newVal) => {
                 contractCreacted.bizType = newVal;
                 changeTypeCompany(newVal);
-                if (newVal == 2) {
-                  valueFacilityBusinesses.value = Array()
-                  dataActiveRow.value = null
-                  contractCreacted.accountingServiceTypes = 0
-                }
             }
         );
         watch(() => valueAccountingService.value,
@@ -808,10 +829,14 @@ export default {
                 }
             }
         );
+        const onInitRow = (e: any) => {
+          const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM') };
+          e.data = initRow;
+        };
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
-            statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale, isWithholding
+            statusComfirm, deleteRow, contentReady,  checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
+            optionSale, isWithholding,checkedAccounting,onInitRow,
         };
     },
 };

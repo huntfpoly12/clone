@@ -18,6 +18,7 @@ export class Message extends BaseType {
         '105': { "message" : "올바른 형식이 아닙니다."}, // {object} : Incorrect format. example : email, BusinessID, PersonalID, Birthday, etc
         '106': { "message" : "정상처리되었습니다."}, // [Pop-message] Update successful!
         '109': { "message" : "저장이 실패하였습니다. Err : {errorCode}", "icon": "iconError"}, // [Pop-message] Save failure!
+        '110': { "message" : "반영되었습니다."}, // It was reflected
       // SEARCH Button Click
         '201': { "message" : "조회가 완료되었습니다. 결과를 확인하세요.", "icon": "iconInfo"}, // [Pop-message] Search successful! Please check results.
         '202': { "message" : "조회결과가 없습니다. 검색조건을 확인하세요.", "icon": " iconInfo"}, // [Pop-message] No result! Please check your search conditions.
@@ -43,6 +44,8 @@ export class Message extends BaseType {
         '801': { "message" : "이메일을 발송했습니다"}, // Email has been sent
       // Select
         '901': { "message" : "선택할 내용이 없습니다."}, // No data to select
+       // Upload Image 
+        '1001': { "message" : "파일형식이 유효하지 않습니다"}, // File format is not valid
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
@@ -92,6 +95,7 @@ export class Message extends BaseType {
   //근로소득-일용직소득  계산   
   public static PA110 = new Message({
         '001': { "message" : "저장하기전에 공제계산해야합니다"}, // Do you want to deduct the change?
+        '002': { "message" : "중도정산 반영된 내역이 있습니다. 중도정산 반영된 내역은 중도정산 삭제해야만 급여삭제가 가능합니다."},//There are details that reflect the interim settlement. The details reflected in the interim settlement can only be deleted if the interim settlement is deleted.
       });
   
   //퇴직소득자료입력   
@@ -148,7 +152,7 @@ export class Message extends BaseType {
     });
   //과목전용조서
     public static AC570 = new Message({
-        '001': { "message" : "해당 과목전용조서 삭제시 전용일자 이후 등록된 예산서의 예산액이 틀려질 수도 있습니다. 그래도 삭제하시겠습니까?","yes": "네. 삭제합니","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?
+        '001': { "message" : "해당 과목전용조서 삭제시 전용일자 이후 등록된 예산서의 예산액이 틀려질 수도 있습니다. 그래도 삭제하시겠습니까?","yes": "네. 삭제합니다","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?
     });
   
   //후원자 관리

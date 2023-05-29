@@ -322,7 +322,7 @@
                       :clearable="false"
                       :disabled="disabledInput || idDisableNoData"
                     />
-                    <div v-if="isLoopDay" class="error-date">
+                    <div v-if="isLoopDay" class="error-group">
                       동일 소득자의 동일 지급일로 중복 등록 불가합니다.
                     </div>
                   </div>

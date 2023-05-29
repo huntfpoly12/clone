@@ -58,6 +58,7 @@
               v-model:valueDate="rangeDate"
               width="250px"
               :multi-calendars="true"
+              :clearable="false"
             />
           </a-form-item>
         </a-col>
@@ -72,7 +73,7 @@
       />
     </a-row>
     <div class="content-grid">
-      <a-spin :spinning="loading1">
+      <a-spin :spinning="loading1 || loadingDataSource">
         <DxDataGrid
           id="tab2-bf530"
           :show-row-lines="true"
@@ -91,7 +92,7 @@
         >
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxLoadPanel :enabled="true" :showPane="true" />
+          <DxLoadPanel :enabled="false" :showPane="true" />
           <DxSelection
             :select-all-mode="'allPages'"
             :show-check-boxes-mode="'onClick'"
@@ -383,6 +384,7 @@ export default defineComponent({
     const workIds = ref<any[]>([]);
     const dataType = ref(1);
     const globalYear = dayjs().year();
+    const loadingDataSource = ref(false);
 
     //-----------------------Fcn common-----------------------------------------
 
@@ -412,6 +414,7 @@ export default defineComponent({
       })
     );
     watch(companyRequestListResult, (newVal) => {
+      loadingDataSource.value = true;
       let dataArr = newVal.getMajorInsuranceAdminCompanyRequestList.map(
         (item: any) => {
           return {
@@ -438,6 +441,7 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
+        loadingDataSource.value = true;
         let arr = dataSource.value.filter((item: any) => {
           return Object.keys(formState).every((key: any) => {
             if (formState[key]) {
@@ -450,6 +454,9 @@ export default defineComponent({
           });
         });
         store.commit("common/filterDsTab2Bf530", arr);
+        setTimeout(() => {
+          loadingDataSource.value = false;
+        }, 10);
       },
       { deep: true }
     );
@@ -659,6 +666,7 @@ export default defineComponent({
       reportTypeText,
       dayjs,
       completedAtFormat,
+      loadingDataSource,
     };
   },
 });

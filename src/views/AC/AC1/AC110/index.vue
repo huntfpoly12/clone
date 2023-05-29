@@ -32,7 +32,6 @@
             </DxToolbar>
             <template #status-grid-main>
               <div class="ac-110__top-buttons">
-                {{ listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status }}
                 <ProcessStatus
                   v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
                   :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
@@ -184,9 +183,10 @@
                     </div>
                   </template>
                   <template #button-reset>
-                    <button-basic text="초기화" type="default" :mode="'contained'"
-                      :disabled="isRegistered || !rowKeyfocused || isReadonlyByAccountingProcessesStatus"
-                      @onClick="handleInitializeTransactionDetails" />
+                    <DxButton :disabled="isRegistered || !rowKeyfocused || isReadonlyByAccountingProcessesStatus"
+                      type="default" height="29" :focusStateEnabled="false"
+                      style="background: #337ab7; color: white; padding: 9px 0;"
+                      @click="handleInitializeTransactionDetails">신규</DxButton>
                   </template>
                   <template #button-add>
                     <a-tooltip placement="top">
@@ -265,7 +265,7 @@
                   <DxColumn caption="상대계정" cell-template="relationCode" width="175" />
                   <template #relationCode="{ data }">
                     <div v-if="rowKeyfocused" :key="`relationCode${keyRefreshGridDetailAc}`">
-                      <SelectAccountCode v-model:valueInput="data.data.relationCode" 
+                      <SelectAccountCode v-model:valueInput="data.data.relationCode"
                         :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
                         :readOnly="isRegistered || data.data.resolutionClassification === 1 || isReadonlyByAccountingProcessesStatus"
                         :lengthText="10" />
@@ -1539,4 +1539,5 @@ export default defineComponent({
       opacity: 0.2;
     }
   }
-}</style>
+}
+</style>

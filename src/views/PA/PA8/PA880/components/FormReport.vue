@@ -27,39 +27,38 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="명칭" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyName" />
+                  <default-text-box :disabled="true" v-model:valueInput="formState.companyName" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="사업자등록번호" label-align="right" class="red">
-                  <biz-number-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyBizNuber" />
+                  <biz-number-text-box :disabled="true" v-model:valueInput="formState.companyBizNuber" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="전화번호" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyTel" />
+                  <default-text-box :disabled="true" v-model:valueInput="formState.companyTel" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="mt-10">
-              <a-col :span="24">
+              <a-col :span="16">
                 <a-form-item label="소재지" label-align="right" class="red">
-                  <default-text-box width="550px" :disabled="true" v-model:valueInput="formState.companyAddress"
-                    :required="true" />
+                  <default-text-box :disabled="true" v-model:valueInput="formState.companyAddress" :required="true" />
                 </a-form-item>
+              </a-col>
+              <a-col :span="8">
               </a-col>
             </a-row>
             <a-row class="mt-10">
               <a-col :span="8">
                 <a-form-item label="우편번호" label-align="right">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyPostNumber"
-                    />
+                  <default-text-box :disabled="true" v-model:valueInput="formState.companyPostNumber" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="법인등록번호" label-align="right">
-                  <id-number-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyCorpRegNuber"
-                    />
+                  <id-number-text-box :disabled="true" v-model:valueInput="formState.companyCorpRegNuber" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -70,31 +69,30 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="성명" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
-                    :required="true" />
+                  <default-text-box :disabled="true" v-model:valueInput="formState.presidentName" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="주민등록번호" label-align="right" class="red">
-                  <id-number-text-box width="200px" :disabled="myCompanyResult?.getMyCompany?.bizType == 2"
+                  <id-number-text-box :disabled="myCompanyResult?.getMyCompany?.bizType == 2"
                     v-model:valueInput="formState.presidentResidentNumber" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="전화번호" label-align="right">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentTel" />
+                  <default-text-box :disabled="true" v-model:valueInput="formState.presidentTel" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="mt-10">
-              <a-col :span="16" class="pr-10">
+              <a-col :span="16">
                 <a-form-item label="주소" label-align="right" class="red">
                   <default-text-box :disabled="true" v-model:valueInput="formState.presidentAddress" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="우편번호" label-align="right">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyPostNumber" />
+                  <default-text-box :disabled="true" v-model:valueInput="formState.companyPostNumber" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -125,19 +123,21 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="사유발생일" label-align="right" class="red">
-                  <date-time-box text="지" v-model:valueDate="formState.issueDate" bgColor="white" :clearable="false" width="200px" />
+                  <date-time-box width="98%" text="지" v-model:valueDate="formState.issueDate" bgColor="white"
+                    :clearable="false" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="mt-10">
-              <a-col :span="16" class="pr-10">
+              <a-col :span="16">
                 <a-form-item label="탈퇴후 우편물 수령지" label-align="right">
                   <default-text-box v-model:valueInput="formState.afterReportPostAddress" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="우편번호" label-align="right">
-                  <default-text-box :lengthFixed="5" :maxCharacter="5" :lengthFixMsg="lenFixedMsg"  width="200px" v-model:valueInput="formState.afterReportPostNumber" />
+                  <default-text-box :mask="'00000'" :mask-invalid-message="lenFixedMsg"
+                    v-model:valueInput="formState.afterReportPostNumber" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -146,27 +146,30 @@
           <div class="item-wrap">
             <span class="item-wrap-title">국민연금</span>
             <a-row>
-              <a-col :span="8">
+              <a-col :span="10">
                 <a-form-item label="휴업기간" label-align="right">
-                  <default-text-box width="200px" v-model:valueInput="formState.nationalPensionClosingPeriod" />
+                  <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
+                    :disabled="!formState.nationalPensionReport" />
                 </a-form-item>
               </a-col>
             </a-row>
             <div class="mt-10">통폐합 시 흡수하는 사업장:</div>
             <a-row class="mt-10 ml-40" :justify="'space-between'">
-              <a-col span="15" >
+              <a-col span="15">
                 <a-form-item label="명칭" label-align="right">
-                  <default-text-box width="200px" v-model:valueInput="formState.nationalPensionIntegrasionCompanyName" />
+                  <default-text-box v-model:valueInput="formState.nationalPensionIntegrasionCompanyName"
+                    :disabled="!formState.nationalPensionReport" />
                 </a-form-item>
               </a-col>
-              <a-col span="9"  class="">
+              <a-col span="9" class="">
                 <a-form-item label="사업장관리번호" label-align="right">
-                  <ManageIdTextBox width="200px" v-model:valueInput="formState.manageId"/>
+                  <ManageIdTextBox v-model:valueInput="formState.manageId" :disabled="!formState.nationalPensionReport" />
                 </a-form-item>
               </a-col>
-              <a-col  span="23" class="mt-15">
-                <a-form-item label="소재지" label-align="right" class="pr-10">
-                  <default-text-box v-model:valueInput="formState.nationalPensionIntegrasionCompanyAddress" />
+              <a-col span="24" class="mt-10">
+                <a-form-item label="소재지" label-align="right">
+                  <default-text-box v-model:valueInput="formState.nationalPensionIntegrasionCompanyAddress"
+                    :disabled="!formState.nationalPensionReport" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -176,9 +179,9 @@
             <span class="item-wrap-title">건강보험</span>
             <a-row>
               <a-col :span="8">
-                <a-form-item label="근로자수" label-align="right" :class="{ red: formState.healthInsuranceReport }">
-                  <number-box width="200px" v-model:valueInput="formState.healthInsuranceEmployeeNumber"
-                    :required="formState.healthInsuranceReport"/>
+                <a-form-item label="근로자수" label-align="right" :class="{ 'red': formState.healthInsuranceReport }">
+                  <number-box v-model:valueInput="formState.healthInsuranceEmployeeNumber"
+                    :required="formState.healthInsuranceReport" :disabled="!formState.healthInsuranceReport" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -193,18 +196,20 @@
               </a-col>
               <a-col :span="10">
                 <a-form-item label="근로자수" label-align="right" :class="{ red: formState.employeementInsuranceReport }">
-                  <number-box width="200px" v-model:valueInput="formState.employeementInsuranceEmployeeNumber"
-                    :required="formState.employeementInsuranceReport" />
+                  <number-box v-model:valueInput="formState.employeementInsuranceEmployeeNumber"
+                    :required="formState.employeementInsuranceReport"
+                    :disabled="!formState.industrialAccidentInsuranceReport && !formState.employeementInsuranceReport" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="소멸일" label-align="right" :class="{ red: formState.employeementInsuranceReport }">
-                  <date-time-box width="200px" text="지" v-model:valueDate="formState.employeementInsuranceCloseDate"
-                    bgColor="white" :clearable="false" />
+                  <date-time-box width="98%" text="지" v-model:valueDate="formState.employeementInsuranceCloseDate"
+                    bgColor="white" :clearable="false"
+                    :disabled="!formState.industrialAccidentInsuranceReport && !formState.employeementInsuranceReport" />
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row>
+            <a-row class="mt-10">
               <a-col :span="6">
                 <a-form-item label="산재보험" label-align="right">
                 </a-form-item>
@@ -212,31 +217,35 @@
               <a-col :span="10">
                 <a-form-item label="근로자수" label-align="right"
                   :class="{ red: formState.industrialAccidentInsuranceReport }">
-                  <number-box width="200px" v-model:valueInput="formState.industrialAccidentInsuranceEmployeeNumber"
-                    :required="formState.industrialAccidentInsuranceReport" />
+                  <number-box :min="0" v-model:valueInput="formState.industrialAccidentInsuranceEmployeeNumber"
+                    :required="formState.industrialAccidentInsuranceReport"
+                    :disabled="!formState.industrialAccidentInsuranceReport && !formState.employeementInsuranceReport" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="소멸일" label-align="right"
                   :class="{ red: formState.industrialAccidentInsuranceReport }">
-                  <date-time-box width="200px" text="지" v-model:valueDate="formState.industrialAccidentInsuranceCloseDate"
-                    bgColor="white" :clearable="false" />
+                  <date-time-box width="98%" text="지" v-model:valueDate="formState.industrialAccidentInsuranceCloseDate"
+                    bgColor="white" :clearable="false"
+                    :disabled="!formState.industrialAccidentInsuranceReport && !formState.employeementInsuranceReport" />
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row>
+            <a-row class="mt-10">
               <a-col :span="6">
                 <a-form-item label="보험료정산반환 계좌" label-align="right">
                 </a-form-item>
               </a-col>
               <a-col :span="10">
                 <a-form-item label="은행명" label-align="right">
-                  <default-text-box width="200px" v-model:valueInput="formState.companyRefundBankName" />
+                  <default-text-box v-model:valueInput="formState.companyRefundBankName"
+                    :disabled="!formState.industrialAccidentInsuranceReport && !formState.employeementInsuranceReport" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="계좌번호" label-align="right">
-                  <default-text-box width="202px" v-model:valueInput="formState.companyRefundAccountNumber" />
+                  <number-box v-model:valueInput="formState.companyRefundAccountNumber"
+                    :disabled="!formState.industrialAccidentInsuranceReport && !formState.employeementInsuranceReport" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -281,6 +290,7 @@ import {
 } from "vue";
 import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import { computed } from "vue";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -336,9 +346,15 @@ export default defineComponent({
       employeementInsuranceReport: true,
       industrialAccidentInsuranceReport: true,
       reportDate: +dayjs().format('YYYYMMDD'),
-      manageId:'',
+      manageId: '',
     })
     const formStateToCompare = ref({ ...formState });
+    const rangeDate: any = ref(
+      [
+        parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
+        parseInt(dayjs().format("YYYYMMDD")),
+      ]
+    )
 
     //-------------------------- get Company-----------------------
 
@@ -407,7 +423,32 @@ export default defineComponent({
         formState.industrialAccidentInsuranceCloseDate = NaN;
       }
     }, { immediate: true })
-    
+
+    //----------------------------CLEAR DATA WHEN DISABLED----------------------------------
+
+    watch(() => formState.nationalPensionReport, (newVal: boolean) => {
+      if (!newVal) {
+        formState.nationalPensionClosingPeriod = '';
+        formState.nationalPensionIntegrasionCompanyName = '';
+        formState.nationalPensionIntegrasionCompanyAddress = '';
+      }
+    })
+    watch(() => formState.healthInsuranceReport, (newVal: boolean) => {
+      if (!newVal) {
+        formState.healthInsuranceEmployeeNumber = '';
+      }
+    })
+    watch(() => [formState.employeementInsuranceReport, formState.industrialAccidentInsuranceReport], ([newVal1, newVal2]: boolean[]) => {
+      if (!newVal1 && !newVal2) {
+        formState.employeementInsuranceEmployeeNumber = '';
+        formState.employeementInsuranceCloseDate = NaN;
+        formState.industrialAccidentInsuranceEmployeeNumber = '';
+        formState.industrialAccidentInsuranceCloseDate = NaN;
+        formState.companyRefundBankName = '';
+        formState.companyRefundAccountNumber = '';
+      }
+    })
+
     //-----------------------------API CREATE && FORM ACTION--------------------------------
 
     const messageCreate = messages.getCommonMessage('101').message;
@@ -424,7 +465,8 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        let {manageId,...formatData} = formState
+        formState.nationalPensionClosingPeriod = rangeDate.value ? rangeDate.value.join('-') : '';
+        let { manageId, ...formatData } = formState;
         makeDataClean(formatData, ['presidentResidentNumber']);
         createCompanyOutMutate({ companyId: companyId, imputedYear: globalYear.value, input: formatData });
       }
@@ -446,6 +488,7 @@ export default defineComponent({
       // isDisabled1, isDisabled2,
       onCanCelModal, myCompanyLoading, myCompanyResult,
       lenFixedMsg,
+      rangeDate,
     };
   },
 });

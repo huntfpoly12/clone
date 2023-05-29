@@ -38,7 +38,7 @@
 </template>
   
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed, nextTick } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, FileTextOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
 import ModalPreviewListImage from './ModalPreviewListImage.vue'
@@ -126,7 +126,7 @@ export default defineComponent({
       filesUpload.value = []
       inputChat.value.style.overflowY = "hidden"
       inputChat.value.style.height = "40px"
-      inputChat.value.focus()
+      focus()
       emit('cancel')
     }
 
@@ -204,7 +204,9 @@ export default defineComponent({
     }
 
     const focus = () => {
-      inputChat.value.focus()
+      nextTick(() => {
+        inputChat.value.focus()
+      })
     }
 
     return {
@@ -246,13 +248,14 @@ export default defineComponent({
       width: 100%;
       min-height: 38px;
       max-height: 200px;
-      padding: 7px 75px 7px 10px;
+      padding: 7px 10px;
       font-size: 14px;
       border: 1px solid #b3b5b6;
       border-radius: 5px;
       &:placeholder-shown {
         font-style: italic;
         font-size: 13px;
+        padding: 8px 10px;
       }
     }
 

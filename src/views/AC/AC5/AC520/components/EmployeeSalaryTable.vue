@@ -2,12 +2,12 @@
   <standard-form ref="formRef">
     <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true"
                 :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
+                :allow-column-resizing="column_resize" :column-auto-width="true" noDataText="내역이 없습니다"
                 @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared"
-                @saving="handleSaving" @saved="logEvent('Saved')" @editor-preparing="onEditorPreparing"
+                @saving="handleSaving" @editor-preparing="onEditorPreparing"
                 style="height: 70vh"
-                @init-new-row="initNewRow"
                 :remote-operations="true"
+                
     >
       <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
@@ -17,13 +17,13 @@
       <DxToolbar>
         <DxItem location="after" name="addRowButton" css-class="cell-button-add"/>
         <DxItem name="saveButton"/>
-        <DxItem name="revertButton"/>
       </DxToolbar>
       <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
         <DxRequiredRule/>
       </DxColumn>
-      <DxColumn ref="occupationRef" caption="직종" data-field="occupation" :editor-options="{ placeholder: '선택 또는 직접입력' }"
+      <DxColumn caption="직종" data-field="occupation" :editor-options="{ placeholder: '선택 또는 직접입력' }"
                 css-class="text-red p-0" width="165" alignment="center">
+        <DxLookup :data-source="arrSelectOccupation" display-expr="name" value-expr="value" />
         <DxRequiredRule/>
       </DxColumn>
       <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
@@ -36,7 +36,7 @@
       <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right" format="#0,###"/>
       <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right" format="#0,###"/>
       <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right" format="#0,###"/>
-      <DxColumn caption="계" data-field="total" alignment="center" cell-template="total" :allowEditing="false"/>
+      <DxColumn caption="계" data-field="total" alignment="right" cell-template="total" :allowEditing="false"/>
       <template #total="{ data }">
         <span class="px-7">{{ calculateSalary(data) }}</span>
       </template>
@@ -84,7 +84,7 @@
                      cssClass="custom"/>
       </DxSummary>
     </DxDataGrid>
-    <div style="display: none"> {{ formatSummary }}</div>
+    <div style="display: none"> {{ formatSummary }} {{ arrSelectOccupation }}</div>
   </standard-form>
 </template>
 
@@ -109,26 +109,43 @@ import {useStore} from "vuex";
 import {InitNewRowEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
-import {useMutation} from "@vue/apollo-composable";
+import {useMutation, useQuery} from "@vue/apollo-composable";
 import {accountSubject, companyId} from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
 import filters from "@/helpers/filters";
+import searchEmployeeOccupations from '@/graphql/queries/AC/AC5/AC520/searchEmployeeOccupations';
 
 const emit = defineEmits(['closePopup'])
-const arrSelectOccupation: any = []
-const occupationRef = ref()
+const arrSelectOccupation: any = ref([])
 const formRef = ref()
 const LaborCostClassificationArray = [{name: '직접', value: 1}, {name: '간접', value: 2}]
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
-const colomn_resize = computed(() => store.state.settings.colomn_resize);
+const column_resize = computed(() => store.state.settings.colomn_resize);
 const dataBudget = computed(() => store.getters['common/getDataBudget']);
 
 const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 
-const data: any = []
+const dataAllRow: any = ref([])
+
+const formatSummary = reactive({
+  salary1: 0,
+  salary2: 0,
+  allowance1: 0,
+  allowance2: 0,
+  dailyAllowance1: 0,
+  dailyAllowance2: 0,
+  retirementReserve1: 0,
+  retirementReserve2: 0,
+  socialInsuranceLevy1: 0,
+  socialInsuranceLevy2: 0,
+  total1: 0,
+  total2: 0,
+  total: 0,
+})
+
 const dataSource = ref(new DataSource({
   store: {
     type: "array",
@@ -137,7 +154,19 @@ const dataSource = ref(new DataSource({
   },
   // requireTotalCount: true,
 }))
-const arrSelectClassification = ref([{id: 'test', name: 'test'}])
+// get searchEmployeeOccupations
+const querySearchEmployeeOccupations = reactive({
+  companyId
+})
+// query
+const { onResult: onResultSearch, onError: onErrorSearch } = useQuery(searchEmployeeOccupations, querySearchEmployeeOccupations, () => ({
+  fetchPolicy: "no-cache"
+}))
+onResultSearch(({ data }) => {
+  if (data) {
+    arrSelectOccupation.value = data?.searchEmployeeOccupations.map((i:any) => ({name: i, value: i})) ?? []
+  }
+})
 // create mutation useQuery
 const {mutate, onDone, loading, onError} = useMutation(mutations.saveEmployeePayTable)
 onDone(({data}) => {
@@ -151,6 +180,7 @@ onError((error) => {
   notification('error', error.message)
 
 })
+
 const handleSaving = (e: SavingEvent) => {
   const res = formRef.value.validate();
   if (res.isValid) {
@@ -170,44 +200,12 @@ const handleSaving = (e: SavingEvent) => {
       accounSubjectOrder: accountSubject[0].theOrder,
       inputs
     }
-    // console.log('result', result)
     mutate(result)
   }
   e.cancel = true
 }
 
-function calculateOptions(options: any, name: string) {
-  if (options.name === name) {
-    if (options.summaryProcess === 'start') {
-      options.totalValue = 0;
-    } else if (options.summaryProcess === 'calculate') {
-      options.totalValue += options.value.salary ?? 0;
-    }
-  }
-}
-
-const calculate = (options: any) => {
-  calculateOptions(options, 'summarySalary1')
-  calculateOptions(options, 'summarySalary2')
-  // console.log('dataSource --- ', options)
-}
-const dataAllRow: any = ref([])
-const formatSummary = reactive({
-  salary1: 0,
-  salary2: 0,
-  allowance1: 0,
-  allowance2: 0,
-  dailyAllowance1: 0,
-  dailyAllowance2: 0,
-  retirementReserve1: 0,
-  retirementReserve2: 0,
-  socialInsuranceLevy1: 0,
-  socialInsuranceLevy2: 0,
-  total1: 0,
-  total2: 0,
-  total: 0,
-})
-watch(() => dataAllRow.value, (val) => {
+watch(() => dataAllRow.value, (val: any) => {
   if (val) {
     const initialValue = {
       salary1: 0,
@@ -224,7 +222,7 @@ watch(() => dataAllRow.value, (val) => {
       total2: 0,
       total: 0,
     };
-
+    store.commit('common/setIsChangedFormAc520', val.length > 0)
     const result = val.reduce((acc: any, item: any) => {
       const {
         classification,
@@ -257,25 +255,19 @@ watch(() => dataAllRow.value, (val) => {
   }
 }, {deep: true})
 const onEditorPreparing = (e: any) => {
-  if (e.dataField == "classification" && e.parentType === "dataRow") {
-
-    // const defaultValueChangeHandler = e.editorOptions.onValueChanged;
-    // // console.log(e.lookup)
-    // e.editorElement.onkeyup = function (keyEvent: KeyboardEvent) {
-    //   e.editorOptions.searchEnabled = false
-    //   if (keyEvent.key === 'Enter') {
-    //     if (keyEvent.target.value && !arrSelectClassification.value.some((item: any) => item.id === keyEvent.target.value)) {
-    //       arrSelectClassification.value.push({
-    //         id: keyEvent.target.value,
-    //         name: keyEvent.target.value
-    //       })
-    //       e.editorOptions.searchEnabled = true
-    //     }
-    //     console.log('keyEvent', keyEvent.target)
-    //     // e.setCellValue(keyEvent.target.value, keyEvent.target.value)
-    //   }
-    // }
-
+  if (e.dataField == "occupation" && e.parentType === "dataRow") {
+    e.editorElement.onkeyup = function (keyEvent: any) {
+      if (keyEvent.key === 'Enter') {
+        if (keyEvent.target.value && !arrSelectOccupation.value.some((item: any) => item.value === keyEvent.target.value)) {
+          arrSelectOccupation.value.push({
+            name: keyEvent.target.value,
+            value: keyEvent.target.value
+          })
+          e.setValue(keyEvent.target.value, 'occupation')
+          
+        }
+      }
+    }
   }
 }
 const deleteRow = (e: any) => {
@@ -283,15 +275,6 @@ const deleteRow = (e: any) => {
   const rowIndex = e?.row.rowIndex as string
   e.component.deleteRow(rowIndex)
   dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== key_row)
-}
-const logEvent = (e: any) => {
-  console.log('log event', e)
-}
-
-const customize = (data: any) => {
-  // console.log('data row', dataAllRow.value)
-  // console.log('data customize', data)
-  // return data?.classification === 1 ? data?. : '간접'
 }
 
 const onCellPrepared = (e: any) => {
@@ -305,9 +288,6 @@ const onCellPrepared = (e: any) => {
   if (getElementCustom('4')) {
     e.cellElement.style.display = 'none'
   }
-  // if(e.rowType === "data" && e.column.cellTemplate === "total" && isEmpty(e.data)) {
-  //   console.log(e.data)
-  // }
 }
 const onRowPrepared = (e: any) => {
   if (!e.isEditing && e.rowType === 'data') {
@@ -317,7 +297,6 @@ const onRowPrepared = (e: any) => {
       const isRowExits = dataAllRow.value.find((item: any) => item.key === e.key)
       if (!isRowExits) dataAllRow.value.push({...e.data, key: e.key})
       else {
-        // console.log(e?.removed)
         if (e?.removed) dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== e.key)
         else dataAllRow.value = dataAllRow.value.map((item: any) => item.key === e.key ? {...item, ...e.data} : {...item})
       }
@@ -333,16 +312,6 @@ const onRowPrepared = (e: any) => {
     text.innerText = '소계'
     rowDrag && rowDrag.appendChild(text)
   }
-}
-const initNewRow = (e: InitNewRowEvent) => {
-  // dataSource.value.store().insert({name: 'hieu'}).then((result) => {
-  //   console.log('result', result)
-  //   // dataAllRow.value.push(result)
-  //   console.log('result', dataSource.value)
-  //   dataSource.value.reload()
-
-  // })
-  // console.log('init new row', e)
 }
 
 function calculateSalary(data: any) {
