@@ -154,27 +154,26 @@
 </template>
 
 <script setup lang="ts">
-import {computed, reactive, ref} from "vue";
-import {useStore} from "vuex";
-import {DeleteOutlined, HistoryOutlined} from '@ant-design/icons-vue';
-import {DxColumn, DxDataGrid, DxItem, DxToolbar} from 'devextreme-vue/data-grid';
-import DxButton from 'devextreme-vue/button';
-import BudgetPopup from "@/views/AC/AC5/AC520/components/BudgetPopup.vue";
-import {ACTION, ComponentCreateBudget} from "@/views/AC/AC5/AC520/type";
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
-import {useMutation, useQuery} from "@vue/apollo-composable";
-import queries from "@/graphql/queries/AC/AC5/AC520"
-import {companyId} from "@/helpers/commonFunction";
-import {Store} from "devextreme/data";
-import DataSource from "devextreme/data/data_source";
-import {initialState, useGetEmployeePayTableReportViewUrl} from "./utils/index";
-import PopupSendMail from "./components/PopupSendMail.vue";
-import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
 import mutations from "@/graphql/mutations/AC/AC5/AC520";
+import queries from "@/graphql/queries/AC/AC5/AC520";
+import { companyId } from "@/helpers/commonFunction";
 import deletePopup from "@/utils/deletePopup";
-import AccountingProcessStatusEdit from "./components/AccountingProcessStatusEdit.vue"
+import BudgetPopup from "@/views/AC/AC5/AC520/components/BudgetPopup.vue";
+import { ACTION, ComponentCreateBudget } from "@/views/AC/AC5/AC520/type";
+import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import DxButton from 'devextreme-vue/button';
+import { DxColumn, DxDataGrid, DxItem, DxToolbar } from 'devextreme-vue/data-grid';
+import { Store } from "devextreme/data";
+import DataSource from "devextreme/data/data_source";
+import { computed, reactive, ref } from "vue";
+import { useStore } from "vuex";
+import AccountingProcessStatusEdit from "./components/AccountingProcessStatusEdit.vue";
 import AddRowPopup from "./components/AddRowPopup.vue";
-import { Action } from "rxjs/internal/scheduler/Action";
+import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
+import PopupSendMail from "./components/PopupSendMail.vue";
+import { initialState, useGetEmployeePayTableReportViewUrl } from "./utils/index";
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -189,6 +188,7 @@ const query = reactive({
   fiscalYear: acYear.value ,// acYear.value
   facilityBusinessId: globalFacilityBizId.value,
 })
+const triggerBudgetPreIndex = ref(false) // trigger to get budget pre index
 const isModal = reactive({
   employeeRemunerationList: false,
   appropriationStatement: false,
@@ -217,6 +217,10 @@ const {onResult: onResultBudget, refetch: refetchBudget, onError} = useQuery(que
   fetchPolicy: "no-cache",
 }))
 onResultBudget(({data}) => {
+  triggerBudgetPreIndex.value = data.getBudgets.length === 0 && acYear.value > 2023
+  if(data.getBudgets.length >  0) {
+    store.commit('common/setDataPreIndexBudget', data.getBudgets[0])
+  }
   dataSource.value = new DataSource({
     store: {
       type: "array",
@@ -242,23 +246,24 @@ onErrorDelete((error) => {
   console.log('error', error)
 })
 
+// if index === 0 then get budgets of previous year and take last index
 const {onResult: onResultBudgetPreYear, onError: onErrorPreYear} = useQuery(queries.getBudgets,
   {...query, fiscalYear: acYear.value - 1},
   () => ({
     fetchPolicy: "no-cache",
+    enabled: triggerBudgetPreIndex.value
   })
 )
-// get previous year budgets
 onResultBudgetPreYear(({data}) => {
   if (data.getBudgets.length) {
-    store.commit('common/setDataBudgetPreYear', data.getBudgets[data.getBudgets.length - 1])
+    store.commit('common/setDataPreIndexBudget', data.getBudgets[0])
   } else {
-    store.commit('common/setDataBudgetPreYear', null)
+    store.commit('common/setDataPreIndexBudget', null)
   }
 })
 onErrorPreYear((error) => {
   console.log('error', error)
-  store.commit('common/setDataBudgetPreYear', null)
+  store.commit('common/setDataPreIndexBudget', null)
 })
 // function add row
 const addRow = () => {
@@ -288,9 +293,9 @@ const closePopupBudget = (e: boolean) => {
     disableAddRow.value = false
   }
   modal.budget = false
+  store.commit('common/setIsChangedFormAc520', false)
 };
 const openModalBudget = (data: any) => {
-
   modal.budget = true;
   store.dispatch('common/setDataBudget', data)
 }
@@ -340,6 +345,7 @@ const handleDeleteBudget = (data: any) => {
         index: data.index
       })
     },
+    message: `해당 예산서(임직원보수일람표 포함)를 삭제하시겠습니까?`
   });
 }
 const closePopupProcessStatus = (e: boolean) => {

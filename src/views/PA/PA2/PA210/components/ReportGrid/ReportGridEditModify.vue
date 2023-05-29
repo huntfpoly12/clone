@@ -317,7 +317,7 @@ export default defineComponent({
       afterChange: async (changes: any, source: string) => {
         if (source == "edit") {
           dataSource.value[0].yearEndTaxAdjustment = await calculateWithholdingStatusReportModified(wrapper);
-          store.commit("common/setHasChangedPopupPA210", false);
+          store.commit("common/setHasChangedPopupPA210", true);
         }
       },
       hotRef: null,
