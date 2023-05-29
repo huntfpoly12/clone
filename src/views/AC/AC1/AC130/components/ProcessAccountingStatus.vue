@@ -2,7 +2,7 @@
   <span v-if="(disabled || status == 20)">
     <span v-for="item in arrayRadioManager" :key="item.id">
       <button-basic v-if="(status == item.id)" :width="100" :text="item.text" :class="item.class"
-        class="buttonModal disabled">
+        class="buttonModal ProcessAccountingStatus-disabled">
       </button-basic>
     </span>
   </span>
@@ -146,7 +146,7 @@ export default defineComponent({
   border-radius: 6px;
 }
 
-.disabled {
+.ProcessAccountingStatus-disabled {
   cursor: no-drop;
 }
 

@@ -3,15 +3,15 @@
     <div class="ac130TableCashRegisterSummary-header">
       <span class="ac130TableCashRegisterSummary-header-label">기간:</span>
       {{ year }}-01 ~ {{ year }}-{{ parseInt(month.toString()) < 10 ? '0' + month : month }}</div>
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="[dataCalculated]" :show-borders="true"
+        <DxDataGrid ref="refAc130TableCashRegisterSummary" :show-row-lines="true" :hoverStateEnabled="true" :data-source="[dataCalculated]" :show-borders="true"
           :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
           noDataText="내역이 없습니다">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="총수입(A)" data-field="totalIncome" format="fixedPoint"  alignment="end"/>
-          <DxColumn caption="총지출(B)" data-field="totalSpending" format="fixedPoint"  alignment="end"/>
-          <DxColumn caption="장부잔액(A-B)" data-field="bookBalance" format="fixedPoint"  alignment="end"/>
-          <DxColumn caption="통장잔액(C)" data-field="bankbookBalance" format="fixedPoint"  alignment="end"/>
-          <DxColumn caption="차액(C-(A-B))" data-field="difference" format="fixedPoint"  alignment="end"/>
+          <DxColumn caption="총수입(A)" data-field="totalIncome" format="fixedPoint" alignment="end" />
+          <DxColumn caption="총지출(B)" data-field="totalSpending" format="fixedPoint" alignment="end" />
+          <DxColumn caption="장부잔액(A-B)" data-field="bookBalance" format="fixedPoint" alignment="end" />
+          <DxColumn caption="통장잔액(C)" data-field="bankbookBalance" format="fixedPoint" alignment="end" />
+          <DxColumn caption="차액(C-(A-B))" data-field="difference" format="fixedPoint" alignment="end" />
         </DxDataGrid>
     </div>
 </template>
@@ -46,14 +46,15 @@ export default defineComponent({
 
     const dataCalculated: any = ref({})
 
-    const checkNumber = (value: any) => {
-      if (Number.isInteger(value)) {
-        return value
-      } else {
-        return 0
-      }
-    }
+    const refAc130TableCashRegisterSummary = ref()
 
+    const checkNumber = (value: any) => {
+      if (Number.isNaN(Number.parseFloat(value))) {
+        return 0;
+      }
+      return value
+    }
+    
     watch(() => props.data, (value) => {
       dataCalculated.value = {
         ...value,
@@ -66,10 +67,17 @@ export default defineComponent({
       deep: true,
       immediate: true
     })
+
+    const resetTable = () => {
+      refAc130TableCashRegisterSummary.value.instance.refresh()
+    }
+    
     return {
       move_column,
       colomn_resize,
-      dataCalculated
+      dataCalculated,
+      refAc130TableCashRegisterSummary,
+      resetTable
     }
   },
 })

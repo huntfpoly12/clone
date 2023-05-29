@@ -136,7 +136,6 @@ export default defineComponent({
 
     const triggerGetAccountingClosingMessages = ref(false)
 
-    const disabledChatByStatus20 = ref(false)
     let filter: any = {}
 
     watch(() => props.payload, (value) => {
