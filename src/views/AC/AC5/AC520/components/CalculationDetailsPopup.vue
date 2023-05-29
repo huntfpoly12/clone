@@ -29,7 +29,7 @@
         </standard-form>
       </a-col>
       <div class="wf-100 text-center">
-        <DxButton type="default" :disabled="typeCal === 1" @click="handleCalculate" text="calculate" class="mr-10"/>
+        <DxButton type="default" :disabled="typeCal === 1" @click="handleCalculate" text="계산" class="mr-10"/>
         <DxButton type="default" @click="handleSubmit" text="산출내역 저장"/>
       </div>
     </a-row>
