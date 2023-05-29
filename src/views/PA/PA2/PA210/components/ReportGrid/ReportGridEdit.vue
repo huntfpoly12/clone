@@ -747,6 +747,25 @@ export default defineComponent({
       }
     }
 
+    // theo dõi refund status thay đổi trạng thái call 12 và 13
+    watch(()=>dataSource.value[0].refund, (newVal) => {
+      let hot = wrapper.value.hotInstance;
+      let newCellSetting = [...cellsSetting]
+      if (newVal) {
+        newCellSetting[331].readOnly = false
+        newCellSetting[331].className = "htMiddle htRight"
+        newCellSetting[332].readOnly = false
+        newCellSetting[332].className = "htMiddle htRight"
+      } else {
+        newCellSetting[331].readOnly = true
+        newCellSetting[331].className = "htMiddle htRight gray-cell"
+        newCellSetting[332].readOnly = true
+        newCellSetting[332].className = "htMiddle htRight disable-cell"
+      }
+      hot.updateSettings({
+        cell: newCellSetting
+      });
+    })
     // The above code is creating a function called actionConfirmDelete. This function is setting the value
     // of confirmStatus.value to true.
     const actionConfirmDelete = () => {

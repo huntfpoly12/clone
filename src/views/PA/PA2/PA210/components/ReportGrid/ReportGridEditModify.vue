@@ -959,6 +959,26 @@ export default defineComponent({
         disabledRefund.value = false
       }
     }
+
+    // theo dõi refund status thay đổi trạng thái call 12 và 13
+    watch(()=>dataSource.value[0].refund, (newVal) => {
+      let hot = wrapper.value.hotInstance;
+      let newCellSetting = [...cellsSettingModified]
+      if (newVal) {
+        newCellSetting[574].readOnly = false
+        newCellSetting[574].className = "htMiddle htRight"
+        newCellSetting[575].readOnly = false
+        newCellSetting[575].className = "htMiddle htRight"
+      } else {
+        newCellSetting[574].readOnly = true
+        newCellSetting[574].className = "htMiddle htRight gray-cell"
+        newCellSetting[575].readOnly = true
+        newCellSetting[575].className = "htMiddle htRight disable-cell"
+      }
+      hot.updateSettings({
+        cell: newCellSetting
+      });
+    })
     return {
       setModalVisible,
       hotSettings,
