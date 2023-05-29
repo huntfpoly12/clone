@@ -335,17 +335,17 @@ export default defineComponent({
 		// ===================DONE GRAPQL==================================
 		onDoneAdd(async (data: any) => {
 			notification("success", messageAddSuccess);
-			if (store.state.common.pa510.checkClickYear) {
-				processKey.value.imputedYear =
-					store.state.common.pa510.dataYearNew;
-				processKey.value.paymentYear =
-					store.state.common.pa510.dataYearNew;
-				store.state.common.pa510.loadingTableInfo++;
-				await (store.state.settings.paYear =
-					store.state.common.pa510.dataYearNew);
-				await (store.state.common.pa510.checkClickYear = false);
-				return;
-			}
+			// if (store.state.common.pa510.checkClickYear) {
+			// 	processKey.value.imputedYear =
+			// 		store.state.common.pa510.dataYearNew;
+			// 	processKey.value.paymentYear =
+			// 		store.state.common.pa510.dataYearNew;
+			// 	store.state.common.pa510.loadingTableInfo++;
+			// 	await (store.state.settings.paYear =
+			// 		store.state.common.pa510.dataYearNew);
+			// 	await (store.state.common.pa510.checkClickYear = false);
+			// 	return;
+			// }
 			await store.state.common.pa510.loadingTableInfo++;
 			if (
 				store.state.common.pa510.statusClickButtonAdd &&
@@ -375,31 +375,31 @@ export default defineComponent({
 		});
 		onerrorAdd(async (e: any) => {
 			//notification('error', e.message)
-			if (store.state.common.pa510.checkClickYear) {
-				processKey.value.imputedYear =
-					store.state.common.pa510.dataYearNew;
-				processKey.value.paymentYear =
-					store.state.common.pa510.dataYearNew;
-				store.state.common.pa510.loadingTableInfo++;
-				await (store.state.settings.paYear =
-					store.state.common.pa510.dataYearNew);
-				await (store.state.common.pa510.checkClickYear = false);
-				return;
-			}
+			// if (store.state.common.pa510.checkClickYear) {
+			// 	processKey.value.imputedYear =
+			// 		store.state.common.pa510.dataYearNew;
+			// 	processKey.value.paymentYear =
+			// 		store.state.common.pa510.dataYearNew;
+			// 	store.state.common.pa510.loadingTableInfo++;
+			// 	await (store.state.settings.paYear =
+			// 		store.state.common.pa510.dataYearNew);
+			// 	await (store.state.common.pa510.checkClickYear = false);
+			// 	return;
+			// }
 		});
 		onDoneUpdate(async (data: any) => {
 			notification("success", messageUpdateSuccess);
-			if (store.state.common.pa510.checkClickYear) {
-				processKey.value.imputedYear =
-					store.state.common.pa510.dataYearNew;
-				processKey.value.paymentYear =
-					store.state.common.pa510.dataYearNew;
-				store.state.common.pa510.loadingTableInfo++;
-				await (store.state.settings.paYear =
-					store.state.common.pa510.dataYearNew);
-				await (store.state.common.pa510.checkClickYear = false);
-				return;
-			}
+			// if (store.state.common.pa510.checkClickYear) {
+			// 	processKey.value.imputedYear =
+			// 		store.state.common.pa510.dataYearNew;
+			// 	processKey.value.paymentYear =
+			// 		store.state.common.pa510.dataYearNew;
+			// 	store.state.common.pa510.loadingTableInfo++;
+			// 	await (store.state.settings.paYear =
+			// 		store.state.common.pa510.dataYearNew);
+			// 	await (store.state.common.pa510.checkClickYear = false);
+			// 	return;
+			// }
 			await store.state.common.pa510.loadingTableInfo++;
 			if (
 				store.state.common.pa510.statusClickButtonAdd &&
@@ -428,17 +428,17 @@ export default defineComponent({
 		});
 		onerrorUpdate(async (e: any) => {
 			//notification('error', e.message)
-			if (store.state.common.pa510.checkClickYear) {
-				processKey.value.imputedYear =
-					store.state.common.pa510.dataYearNew;
-				processKey.value.paymentYear =
-					store.state.common.pa510.dataYearNew;
-				store.state.common.pa510.loadingTableInfo++;
-				await (store.state.settings.paYear =
-					store.state.common.pa510.dataYearNew);
-				await (store.state.common.pa510.checkClickYear = false);
-				return;
-			}
+			// if (store.state.common.pa510.checkClickYear) {
+			// 	processKey.value.imputedYear =
+			// 		store.state.common.pa510.dataYearNew;
+			// 	processKey.value.paymentYear =
+			// 		store.state.common.pa510.dataYearNew;
+			// 	store.state.common.pa510.loadingTableInfo++;
+			// 	await (store.state.settings.paYear =
+			// 		store.state.common.pa510.dataYearNew);
+			// 	await (store.state.common.pa510.checkClickYear = false);
+			// 	return;
+			// }
 		});
 
 		resEmployeeWage((value) => {
@@ -886,7 +886,7 @@ export default defineComponent({
 		const pa510FormRef = ref();
 		const onSubmitForm = () => {
 			store.state.common.pa510.statusClickButtonSave = true;
-			store.state.common.pa510.checkClickYear = false;
+			// store.state.common.pa510.checkClickYear = false;
 			submitForm();
 		};
 		const submitForm = () => {
@@ -897,9 +897,9 @@ export default defineComponent({
 					requiredPaymentDay.value.validate(true);
 				}
 				store.state.common.pa510.refreshDataGridRef++;
-				store.state.common.pa510.checkClickYear
-					? (store.state.common.pa510.checkClickYear = false)
-					: "";
+				// store.state.common.pa510.checkClickYear
+				// 	? (store.state.common.pa510.checkClickYear = false)
+				// 	: "";
 				store.state.common.pa510.statusClickEditItem
 					? (store.state.common.pa510.statusClickEditItem = false)
 					: "";

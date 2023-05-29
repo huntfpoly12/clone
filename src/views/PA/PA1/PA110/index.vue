@@ -1005,19 +1005,19 @@ export default defineComponent({
 					// store.state.common.pa110.loadingFormData++
 					// return;
 				}
-				if (store.state.common.pa110.checkClickYear) {
-					isRunOnce.value = true;
-					store.state.common.pa110.processKeyPA510.imputedYear =
-						store.state.common.pa110.dataYearNew;
-					store.state.common.pa110.processKeyPA510.paymentYear =
-						store.state.common.pa110.dataYearNew;
-					originData.value.imputedYear = store.state.common.pa110.dataYearNew;
-					trigger.value = true; //reset data table 1
-					await (store.state.settings.paYear =
-						store.state.common.pa110.dataYearNew);
-					await (store.state.common.pa110.checkClickYear = false);
-					return;
-				}
+				// if (store.state.common.pa110.checkClickYear) {
+				// 	isRunOnce.value = true;
+				// 	store.state.common.pa110.processKeyPA510.imputedYear =
+				// 		store.state.common.pa110.dataYearNew;
+				// 	store.state.common.pa110.processKeyPA510.paymentYear =
+				// 		store.state.common.pa110.dataYearNew;
+				// 	originData.value.imputedYear = store.state.common.pa110.dataYearNew;
+				// 	trigger.value = true; //reset data table 1
+				// 	await (store.state.settings.paYear =
+				// 		store.state.common.pa110.dataYearNew);
+				// 	await (store.state.common.pa110.checkClickYear = false);
+				// 	return;
+				// }
 				store.state.common.pa110.incomeId =
 					store.state.common.pa110.dataRowOnActive.incomeId;
 				store.state.common.pa110.loadingFormData++;
