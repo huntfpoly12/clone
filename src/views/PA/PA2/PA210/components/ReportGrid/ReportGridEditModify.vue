@@ -166,7 +166,7 @@
                       v-model:valueSwitch="data.data.refund"
                       :textCheck="'O'"
                       :textUnCheck="'X'"
-                      :disabled="true"
+                      :disabled="disabledRefund"
                       />
                   </div>
               </a-tooltip>
@@ -277,6 +277,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const wrapper = ref<any>(null);
     const confirmStatus = ref<boolean>(false);
+    const disabledRefund = ref<boolean>(false);
     const confirmLoadNewStatus = ref<boolean>(false);
     const cellNegativeNumber = [[7,7],[15,7],[59,7]]
     const hotSettings = {
@@ -680,6 +681,7 @@ export default defineComponent({
           "initTable"
         );
       checkDisableA04A06()
+      checkDisableRefund()
     };
 
     const {
@@ -867,9 +869,8 @@ export default defineComponent({
       setModalVisible();
     };
 
-     // update cell settings flow condition 
-     const checkDisableA04A06 = () => {
-
+    // update cell settings flow condition 
+    const checkDisableA04A06 = () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...cellsSettingModified]
       if (
@@ -926,6 +927,38 @@ export default defineComponent({
         cell: newCellSetting
       });
     }
+
+    // check disable switch refund
+    const checkDisableRefund = () => {
+      if (
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||
+        (dataSource.value[0].index > 0 && dataSource.value[0].afterDeadline == false)
+      ){
+        dataSource.value[0].refund = false
+        disabledRefund.value = true
+      } 
+
+      if (
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2)
+      ) {
+        dataSource.value[0].refund = true
+        disabledRefund.value = true
+      }
+
+      if (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2)
+      {
+        dataSource.value[0].refund = true
+        disabledRefund.value = false
+      }
+
+      if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
+      {
+        dataSource.value[0].refund = false
+        disabledRefund.value = false
+      }
+    }
     return {
       setModalVisible,
       hotSettings,
@@ -944,6 +977,7 @@ export default defineComponent({
       confirmLoadNewStatus,
       showTooltipYearMonth,
       dataModified,
+      disabledRefund
     };
   },
 });
