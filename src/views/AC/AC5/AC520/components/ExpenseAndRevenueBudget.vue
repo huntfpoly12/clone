@@ -442,6 +442,10 @@ const handleOpenCalPopup = () => {
 const handleCloseCalPopup = (value: any) => {
   if (value) {
     formState.value.details = value
+    if(formState.value.code2 !== '501010000')
+    formState.value.amount = value.reduce((acc: any, cur: any) => {
+      return acc + +cur.calculationResult || 0
+    }, 0)
   }
   state.isPopupCalculateVisible = false
 }
