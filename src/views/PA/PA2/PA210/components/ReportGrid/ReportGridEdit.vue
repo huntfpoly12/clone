@@ -169,7 +169,7 @@
                       v-model:valueSwitch="data.data.refund"
                       :textCheck="'O'"
                       :textUnCheck="'X'"
-                      :disabled="true"
+                      :disabled="disabledRefund"
                       />
                   </div>
                 </a-tooltip>
@@ -278,6 +278,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const wrapper = ref<any>(null);
     const confirmStatus = ref<boolean>(false);
+    const disabledRefund = ref<boolean>(false);
     const confirmLoadNewStatus = ref<boolean>(false);
     const firstTimeLoad = ref<boolean>(false);
     const cellNegativeNumber = [[5,7],[9,7],[31,7]]
@@ -351,7 +352,7 @@ export default defineComponent({
     };
 
     watch(
-      () => props.dataReport,
+      () => dataSource.value,
       (newValue: any) => {
         dataSource.value = newValue;
       }
@@ -556,7 +557,8 @@ export default defineComponent({
           adjustment?.refundApplicationAmount,
           "initTable"
         );
-        checkDisableA04A06()
+      checkDisableA04A06()
+      checkDisableRefund()
     };
 
     const {
@@ -712,6 +714,39 @@ export default defineComponent({
         cell: newCellSetting
       });
     }
+
+    // check disable switch refund
+    const checkDisableRefund = () => {
+      if (
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||
+        (dataSource.value[0].index > 0 && dataSource.value[0].afterDeadline == false)
+      ){
+        dataSource.value[0].refund = false
+        disabledRefund.value = true
+      } 
+
+      if (
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2)
+      ) {
+        dataSource.value[0].refund = true
+        disabledRefund.value = true
+      }
+
+      if (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2)
+      {
+        dataSource.value[0].refund = true
+        disabledRefund.value = false
+      }
+
+      if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
+      {
+        dataSource.value[0].refund = false
+        disabledRefund.value = false
+      }
+    }
+
     // The above code is creating a function called actionConfirmDelete. This function is setting the value
     // of confirmStatus.value to true.
     const actionConfirmDelete = () => {
@@ -760,6 +795,7 @@ export default defineComponent({
       confirmStatus,
       showTooltipYearMonth,
       changeStatusRowTable,
+      disabledRefund
     };
   },
 });
