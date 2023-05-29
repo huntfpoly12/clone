@@ -114,11 +114,12 @@ export default defineComponent({
 			// } else {
 			// 	loading.value = false;
 			// 	statusOnCallApiChange.value = true;
+			notification('success', Message.getMessage('COMMON', '106').message)
 			emit("closePopup", false);
 			store.state.common.pa110.onDoneEdit = true;
 			store.state.common.pa110.loadingTableInfo++;
 			// }
-			// notification('success', Message.getMessage('COMMON', '106').message)
+			
 			// emit("closePopup", false)
 
 			// store.state.common.pa110.loadingFormData++

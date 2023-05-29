@@ -260,7 +260,7 @@ export default defineComponent({
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
                 store.state.common.pa510.statusClickButtonSave = false
-                store.state.common.pa510.checkClickYear = false;
+                // store.state.common.pa510.checkClickYear = false;
                 store.state.common.pa510.actionSubmit++
             } else { // reset form
                 if (store.state.common.pa510.statusRowAdd) {
