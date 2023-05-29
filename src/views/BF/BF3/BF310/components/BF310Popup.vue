@@ -708,17 +708,14 @@ export default defineComponent({
     // A function that is called when a button is clicked.
     const updateSubscriptionRequest = (e: any) => {
       var res = e.validationGroup.validate();
-      console.log(`output->resbrokenRules`, res?.brokenRules.length)
       if (!res.isValid || res?.brokenRules.length > 0) {
         // open collapse
         res.brokenRules[0].validator.focus();
         inputInCollapse.map((value: any) => {
-          if (
-            value.input_name.indexOf(
-              res.brokenRules[0].validator._validationInfo.result.name
-            ) != -1
-          ) {
+          if (value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1) {
             activeKey.value = value.key;
+          }else{
+            activeKey.value = 4;
           }
         });
         return;
@@ -820,7 +817,7 @@ export default defineComponent({
     const gridRefName: any = ref("grid");
     const dataActiveRow: any = ref(dataSource.value[0]);
     const focusedRowKey = ref(0);
-    const initRow = { rowIndex: null, capacity: NaN, startYearMonth: dayjs().format('YYYYMM') };
+    const initRow = { rowIndex: null, capacity: NaN, startYearMonth: +dayjs().format('YYYYMM') };
     // A function that is called when a row is clicked.
     const onSelectionClick = (value: any) => {
       dataActiveRow.value = value.data;
