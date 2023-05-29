@@ -66,7 +66,11 @@ export default defineComponent({
     const onSubmit = (e: any) => {
       let ids: any = [];
       props.data.forEach((val: any) => {
-        ids.push(val.incomeId);
+        if (val.midTermSettlement === true) {
+          notification('error', '중도정산 반영된 내역이 있습니다. 중도정산 반영된 내역은 중도정산 삭제해야만 급여삭제가 가능합니다.')
+        } else {
+          ids.push(val.incomeId);
+        }
       });
       actionDelete({
         companyId: companyId,

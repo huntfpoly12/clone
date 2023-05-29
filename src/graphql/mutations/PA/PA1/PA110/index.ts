@@ -8,7 +8,7 @@ import updateIncomeWage from "./updateIncomeWage";
 import copyIncomeWages from "./copyIncomeWages";
 import findIncomeProcessWageStatViews from "./findIncomeProcessWageStatViews";
 import deleteMidTermSettlement from "./deleteMidTermSettlement";
-
+import saveMidTermSettlement from './saveMidTermSettlement'
 const mutations = {
     changeIncomeProcessWageStatus: changeIncomeProcessWageStatus,
     deleteIncomeWages: deleteIncomeWages,
@@ -20,6 +20,7 @@ const mutations = {
     copyIncomeWages: copyIncomeWages,
     findIncomeProcessWageStatViews: findIncomeProcessWageStatViews,
     deleteMidTermSettlement: deleteMidTermSettlement,
+    saveMidTermSettlement: saveMidTermSettlement,
 };
 
 export default mutations;
