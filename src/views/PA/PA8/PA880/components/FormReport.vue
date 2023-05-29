@@ -349,17 +349,12 @@ export default defineComponent({
       manageId: '',
     })
     const formStateToCompare = ref({ ...formState });
-    const rangeDate: any = computed({
-      get() {
-        return [
-          parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
-          parseInt(dayjs().format("YYYYMMDD")),
-        ];
-      },
-      set(newVal: any) {
-        formState.nationalPensionClosingPeriod = newVal.join('-');
-      },
-    });
+    const rangeDate: any = ref(
+      [
+        parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
+        parseInt(dayjs().format("YYYYMMDD")),
+      ]
+    )
 
     //-------------------------- get Company-----------------------
 
@@ -470,7 +465,8 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        let { manageId, ...formatData } = formState
+        formState.nationalPensionClosingPeriod = rangeDate.value ? rangeDate.value.join('-') : '';
+        let { manageId, ...formatData } = formState;
         makeDataClean(formatData, ['presidentResidentNumber']);
         createCompanyOutMutate({ companyId: companyId, imputedYear: globalYear.value, input: formatData });
       }
@@ -497,4 +493,6 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss" scoped>@import "../styles/form.scss";</style>
+<style lang="scss" scoped>
+@import "../styles/form.scss";
+</style>

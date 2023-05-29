@@ -195,7 +195,10 @@
                                             dayjs(data.data.startYearMonth?.toString()).format("YYYY-MM") : ''
                                     }}
                                 </template>
-                                <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
+                                <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" cell-template="capacity" />
+                                <template #capacity="{ data }">
+                                  <div v-if="data.data.capacity > 0">{{ data.data.capacity }}</div>
+                                </template>
                                 <DxColumn cell-template="delete" />
                                 <template #delete="{ data }">
                                     <DeleteOutlined class="fz-14" @click="deleteRow(data.data.rowIndex)" />
@@ -217,8 +220,8 @@
                                             width="200px" />
                                     </a-form-item>
                                     <a-form-item label="정원수" class="red">
-                                        <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
-                                            v-model:valueInput="dataActiveRow.capacity" />
+                                        <number-box width="200px" :required="true" :disabled="disableFormVal2"
+                                            v-model:valueInput="dataActiveRow.capacity" :min="1" />
                                     </a-form-item>
                                     <a-form-item label="장기요양기관등록번호" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
@@ -263,8 +266,8 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">직 원 수:</label>
-                                <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding"
-                                    :disabled="disableFormVal || isWithholding == 2" :min="0" :spinButtons="true" required/>
+                                <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding" 
+                                    :disabled="disableFormVal || isWithholding == 2" :min="1" :spinButtons="true" required/>
                             </div>
                             <div class="form-item">
                                 <label>부가서비스 :</label>
@@ -827,7 +830,7 @@ export default {
             }
         );
         const onInitRow = (e: any) => {
-          const initRow = {startYearMonth: dayjs().format('YYYYMM') };
+          const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM') };
           e.data = initRow;
         };
         return {
