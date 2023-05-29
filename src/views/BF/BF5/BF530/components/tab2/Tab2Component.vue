@@ -58,6 +58,7 @@
               v-model:valueDate="rangeDate"
               width="250px"
               :multi-calendars="true"
+              :clearable="false"
             />
           </a-form-item>
         </a-col>

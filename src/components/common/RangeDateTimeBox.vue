@@ -7,6 +7,7 @@
         :multi-calendars="multiCalendars"
         :teleport="teleport"
         :enable-time-picker="false"
+        v-bind="$props"
     >
     </Datepicker>
 </template>
@@ -70,7 +71,7 @@ export default defineComponent({
               });
               emit("update:valueDate", newDate);
             } else {
-              emit("update:valueDate", date);
+              emit("update:valueDate", date.value);
             }
         };
 

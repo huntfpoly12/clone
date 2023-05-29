@@ -5,6 +5,7 @@ import getBudgetsLogs from './getBudgetsLogs'
 import getBudgetSummaryTableReportViewUrl from './getBudgetSummaryTableReportViewUrl'
 import getEmployeePayTable from './getEmployeePayTable'
 import getEmployeePayTableReportViewUrl from './getEmployeePayTableReportViewUrl'
+import searchEmployeeOccupations from './searchEmployeeOccupations'
 export default {
   getBudget,
   getBudgetReportViewUrl,
@@ -12,5 +13,6 @@ export default {
   getBudgetsLogs,
   getBudgetSummaryTableReportViewUrl,
   getEmployeePayTable,
-  getEmployeePayTableReportViewUrl
+  getEmployeePayTableReportViewUrl,
+  searchEmployeeOccupations
 }

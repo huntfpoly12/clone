@@ -30,7 +30,7 @@
             <div class="ac-130__main-content-check-title">
               <b>체크사항</b>
             </div>
-            <div class="ac-130__main-content-check-checklist">
+            <div ref="refAc130Checklist" class="ac-130__main-content-check-checklist">
               <a-collapse v-model:activeKey="activeKey" expandIconPosition="right">
                 <template #expandIcon="{ isActive }">
                   <DoubleRightOutlined :rotate="isActive ? -90 : 90" />
@@ -45,8 +45,8 @@
                       <span class="ac-130__main-content-check-checklist-header-title">현금출납부 잔액</span>
                     </div>
                   </template>
-                  <TableCashRegisterSummary :data="dataSource?.cashRegisterSummary" :year="acYear"
-                    :month="monthSelected" />
+                  <TableCashRegisterSummary ref="refTableCashRegisterSummary" :data="dataSource?.cashRegisterSummary"
+                    :year="acYear" :month="monthSelected" />
                 </a-collapse-panel>
                 <a-collapse-panel key="2">
                   <template #header>
@@ -58,7 +58,7 @@
                       <span class="ac-130__main-content-check-checklist-header-title">예산서</span>
                     </div>
                   </template>
-                  <TableExpenditureBudgetSummary :data="{
+                  <TableExpenditureBudgetSummary ref="refTableExpenditureBudgetSummary" :data="{
                     expenditureBudgetSummary: dataSource.expenditureBudgetSummary,
                     revenueBudgetSummary: dataSource.revenueBudgetSummary,
                   }" />
@@ -73,7 +73,8 @@
                       <span class="ac-130__main-content-check-checklist-header-title">인건비</span>
                     </div>
                   </template>
-                  <TableRevenueBudgetSummary :data="dataSource.laborCostSubjectSummaries" />
+                  <TableRevenueBudgetSummary ref="refTableRevenueBudgetSummary"
+                    :data="dataSource.laborCostSubjectSummaries" />
                 </a-collapse-panel>
               </a-collapse>
             </div>
@@ -99,7 +100,7 @@
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
-import { defineComponent, ref, reactive, computed, watch } from "vue";
+import { defineComponent, ref, reactive, computed, onMounted } from "vue";
 import ProcessAccountingStatus from "./components/ProcessAccountingStatus.vue"
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC130";
@@ -168,6 +169,20 @@ export default defineComponent({
 
     const isModalHistoryAccountingProcessLogs = ref(false)
 
+    const refAc130Checklist = ref()
+    const refTableCashRegisterSummary = ref()
+    const refTableExpenditureBudgetSummary = ref()
+    const refTableRevenueBudgetSummary = ref()
+
+    onMounted(() => {
+      setTimeout(() => {
+        if (refAc130Checklist.value.offsetHeight < refAc130Checklist.value.scrollHeight) {
+          refTableCashRegisterSummary.value.resetTable()
+          refTableExpenditureBudgetSummary.value.resetTable()
+          refTableRevenueBudgetSummary.value.resetTable()
+        }
+      }, 1000);
+    })
     // COMPUTED
     /// Graphql 
     /// queries
@@ -333,7 +348,11 @@ export default defineComponent({
       formChat,
       refreshFormChat,
       isPreventChangeProcessStatus,
-      isModalHistoryAccountingProcessLogs
+      isModalHistoryAccountingProcessLogs,
+      refAc130Checklist,
+      refTableCashRegisterSummary,
+      refTableExpenditureBudgetSummary,
+      refTableRevenueBudgetSummary,
     };
   },
 });

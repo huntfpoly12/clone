@@ -65,6 +65,10 @@ export default defineComponent({
             type: String,
             default: "",
         },
+        textColor: {
+            type: String,
+            default: "#000000",
+        }
     },
     components: {
         DxCustomRule,
@@ -123,5 +127,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 :deep.dx-numberbox .dx-texteditor-input {
     text-align: right;
+    color: v-bind(textColor);
 }
 </style>

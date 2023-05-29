@@ -38,12 +38,11 @@
               <default-text-box width="150px" v-model:valueInput="originData.presidentName" />
             </div>
           </a-col>
-
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">신청기간 :</label>
               <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
-                :placeholder="'시작 날짜 - 종료 날짜'" />
+                :placeholder="'시작 날짜 - 종료 날짜'" :clearable="false"/>
             </div>
           </a-col>
         </a-row>
@@ -198,7 +197,6 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const rangeDate = ref([
