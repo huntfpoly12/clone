@@ -1,5 +1,5 @@
 <template>
-  <a-modal class="form-modal" width="65%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
+  <a-modal class="form-modal" width="1200px" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
            title="사업장가입신규신청" centered @cancel="closePopup" :footer="null" :mask-closable="false">
     <a-spin :spinning="myCompanyLoading" size="large">
       <standard-form ref="formRef">
@@ -420,7 +420,7 @@
             <a-row>
               <a-col span="8">
                 <DxField label="상시근로자수" :required="formState.industrialAccidentInsuranceReport">
-                  <number-box v-model:valueInput='formState.industrialAccidentInsuranceFulltimeWokerCount' placeholder=""
+                  <number-box v-model:valueInput='formState.industrialAccidentInsuranceFulltimeWokerCount' :min="0"
                               :required="formState.industrialAccidentInsuranceReport" :disabled="!formState.industrialAccidentInsuranceReport"/>
                 </DxField>
               </a-col>
@@ -476,9 +476,10 @@
               </a-col>
               <a-col span="16">
                 <DxField label="원사업주 사업장관리번호 또는 사업개시번호 (사내하도급 수급사업주인 경우만 적습니다)" class="field-custom-auto justify-content-around">
-                  <text-number-box v-model:valueInput='formState.industrialAccidentMainWorkplaceManageNumber'
-                                   :disabled="!formState.industrialAccidentInsuranceReport"
-                  />
+                  <div class="d-flex justify-content-end">
+                    <text-number-box v-model:valueInput='formState.industrialAccidentMainWorkplaceManageNumber'
+                                   :disabled="!formState.industrialAccidentInsuranceReport" width="180px" />
+                  </div>
                 </DxField>
               </a-col>
             </a-row>

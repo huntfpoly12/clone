@@ -86,6 +86,7 @@ const handleSubmit = () => {
     emit('ok', details.value.map((item: any) => ({
       ...item,
       type: typeCal.value,
+      calculationResult: item.calculationResult ? item.calculationResult.toString() : '',
     })))
     return;
 }
@@ -129,9 +130,10 @@ const handleCalculate = () => {
   if(typeCal.value === 2) {
     details.value = details.value.map((item: any) => {
       if(!item.detail) return item;
+      console.log('details.value',typeof eval(item.detail.replace(/[^\d+\-*/().]/g, ""))?.toString() || '')
       return {
         ...item,
-        calculationResult: item.detail ? eval(item.detail.replace(/[^\d+\-*/().]/g, "")).toString() : item.calculationResult,
+        calculationResult: item.detail ? (eval(item.detail.replace(/[^\d+\-*/().]/g, ""))?.toString() || '') : item.calculationResult.toString(),
       }
     })
   }

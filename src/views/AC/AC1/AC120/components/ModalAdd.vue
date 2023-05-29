@@ -24,7 +24,7 @@
 								v-model:valueDate="formDataAdd.transactionDetailDate" />
 						</a-form-item>
 						<a-form-item class="red" label="통장">
-							<select-box-common placeholder="선택" :arrSelect="store.state.common.ac120.arrayBankbooks"
+							<select-box-common placeholder="선택" :arrSelect="store.state.common.ac120.arrayBankbooksForWork"
 								v-model:valueInput="formDataAdd.bankbookId" :required="true" :width="150" />
 						</a-form-item>
 					</a-col>
@@ -156,7 +156,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
-import queries from "@/graphql/queries/CM/CM120";
+import queries from "@/graphql/queries/AC/AC1/AC120";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
 import { companyId } from "@/helpers/commonFunction";
@@ -213,13 +213,14 @@ export default defineComponent({
 		let bankbookNumber = ref<string>("");
 		const textLabelInputSource = ref<string>("수입원");
 		let colorDate = ref();
-		const dataQueryGetBankBooks = ref({
+		const dataQueryGetBankbooksForWork = ref({
 			companyId: companyId,
 			fiscalYear: acYear.value,
+			facilityBusinessId: globalFacilityBizId.value,
 		});
 		let formDataAdd: any = ref({ ...initialStateFormData });
 		const statusShowLetterOfApprovalType = ref(false);
-		const triggerBankbooks = ref<boolean>(true);
+		const triggerBankbooksForWork = ref<boolean>(true);
 		let dataAccountSubject = JSON.parse(
 			sessionStorage.getItem("accountSubject") ?? "[]"
 		);
@@ -231,12 +232,12 @@ export default defineComponent({
 		);
 
 		// =================== GRAPHQL ===================
-		// query getBankbooks
-		const { result: resBankbooks } = useQuery(
-			queries.getBankbooks,
-			dataQueryGetBankBooks.value,
+		// query getBankbooksForWork
+		const { result: resBankbooksForWork } = useQuery(
+			queries.getBankbooksForWork,
+			dataQueryGetBankbooksForWork.value,
 			() => ({
-				enabled: triggerBankbooks.value,
+				enabled: triggerBankbooksForWork.value,
 				fetchPolicy: "no-cache",
 			})
 		);
@@ -262,19 +263,19 @@ export default defineComponent({
 		});
 
 		// ================== WATCH ================
-		// 1. getBankbooks
-		watch(resBankbooks, (value) => {
-			triggerBankbooks.value = false;
+		// 1. getBankbooksForWork
+		watch(resBankbooksForWork, (value) => {
+			triggerBankbooksForWork.value = false;
 			// arraySelectBox.value = []
-			store.state.common.ac120.arrayBankbooks = [];
-			if (value.getBankbooks) {
-				value.getBankbooks.map((value: any) => {
-					if (value.facilityBusinessId == globalFacilityBizId.value) {
-						store.state.common.ac120.arrayBankbooks.push({
-							label: value.bankbookNickname,
-							value: value.bankbookId,
-							bankbookNumber: value.bankbookNumber,
-							bankbookNickname: value.bankbookNickname,
+			store.state.common.ac120.arrayBankbooksForWork = [];
+			if (value.getBankbooksForWork) {
+				value.getBankbooksForWork.map((item: any) => {
+					if (item.facilityBusinessId == globalFacilityBizId.value) {
+						store.state.common.ac120.arrayBankbooksForWork.push({
+							label: item.bankbookNickname,
+							value: item.bankbookId,
+							bankbookNumber: item.bankbookNumber,
+							bankbookNickname: item.bankbookNickname,
 						});
 					}
 				});
