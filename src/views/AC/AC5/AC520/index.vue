@@ -50,16 +50,21 @@
       <DxColumn caption="임직원보수일람표" cell-template="employeeSalaryTable" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="세출예산서" cell-template="expenseBudget" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="세입예산서" cell-template="revenueBudget" alignment="center" :allow-sorting="false"/>
-      <DxColumn caption="예산총괄표" alignment="center" :allow-sorting="false"/>
+      <DxColumn caption="예산총괄표" alignment="center" :allow-sorting="false" cell-template="mailPrint"/>
       <DxColumn caption="" width="100px" cell-template="action" alignment="center"/>
       <template #action="{data}">
-        <DxButton type="ghost"
-                  @click="handleDeleteBudget(data.data)"
-                  :disabled="data.data.index !== (dataSource?.totalCount() || 0) - 1"
-        >
-          <DeleteOutlined/>
-        </DxButton>
+        <a-tooltip title="삭제">
+          <div>
+            <DxButton type="ghost"
+              @click="handleDeleteBudget(data.data)"
+              :disabled="data.data.index !== (dataSource?.totalCount() || 0) - 1 && data.data.status !== 10"
+              >
+              <DeleteOutlined/>
+            </DxButton>
+          </div>
+        </a-tooltip>
       </template>
+
       <template #budget="{data}">
         <div class="d-flex-center">
           <a-tag :color="!data.data.index ? `black` : `gray`">{{ !data.data.index ? "본예산" : "추경" }}</a-tag>
@@ -75,10 +80,10 @@
         <div v-if="data.data.employeePaySum !== null" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
                     @click="openModalEditEmployeeTable(data.data.index)"/>
-          <DxButton type="ghost" @click="actionSendMail(data.data)">
+          <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.EmployeePayTable)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
-          <DxButton type="ghost" @click="actionPrint(data.data)">
+          <DxButton type="ghost" @click="actionPrint(data.data, TypeMail.EmployeePayTable)">
             <img src="@/assets/images/print.svg" alt="" width="18" />
           </DxButton>
         </div>
@@ -93,10 +98,10 @@
         <div v-if="data.data.employeePaySum !== null || data.data.expenditureBudgetSum !== null" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
                     @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.EDIT}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
-          <DxButton type="ghost" @click="actionSendMail(data.data)">
+          <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.Budget)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
-          <DxButton type="ghost" @click="actionPrint(data.data)">
+          <DxButton type="ghost" @click="actionPrint({...data.data, budgetType: 5}, TypeMail.Budget)">
             <img src="@/assets/images/print.svg" alt="" width="18" />
           </DxButton>
         </div>
@@ -111,19 +116,29 @@
         <div v-if="data.data.revenueBudgetSum !== null" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
                     @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.EDIT}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
-          <DxButton type="ghost" @click="actionSendMail(data.data)">
+          <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.Budget)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
-          <DxButton type="ghost" @click="actionPrint(data.data)">
+          <DxButton type="ghost" @click="actionPrint({...data.data, budgetType: 4}, TypeMail.Budget)">
             <img src="@/assets/images/print.svg" alt="" width="18" />
           </DxButton>
         </div>
-        <a-tooltip v-else title="세입예산서 작성 234">
+        <a-tooltip v-else title="세입예산서 작성">
           <div>
             <DxButton type="ghost" icon="plus"
                       @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
           </div>
         </a-tooltip>
+      </template>
+      <template #mailPrint="{data}">
+        <div v-if="data.data.status" class="d-flex-center justify-content-center gap-6">
+          <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.BudgetSummaryTable)">
+            <img src="@/assets/images/email.svg" alt="" width="18"/>
+          </DxButton>
+          <DxButton type="ghost" @click="actionPrint(data.data, TypeMail.BudgetSummaryTable)">
+            <img src="@/assets/images/print.svg" alt="" width="18" />
+          </DxButton>
+        </div>
       </template>
     </DxDataGrid>
     <BudgetPopup
@@ -132,10 +147,13 @@
       :index="index"
     />
     <PopupSendMail
+      v-if="isModal.employeeRemunerationList"
       :isModalSendMail="isModal.employeeRemunerationList"
       @closePopup="handleEmitClosePopup"
       :variable="query"
       :index="index"
+      :typeMail="stateMail.typeMail"
+      :type="stateMail.type"
     />
     <EditEmployeeSalaryTable
       v-if="modal.editEmployeeSalaryTable"
@@ -160,7 +178,7 @@ import queries from "@/graphql/queries/AC/AC5/AC520";
 import { companyId } from "@/helpers/commonFunction";
 import deletePopup from "@/utils/deletePopup";
 import BudgetPopup from "@/views/AC/AC5/AC520/components/BudgetPopup.vue";
-import { ACTION, ComponentCreateBudget } from "@/views/AC/AC5/AC520/type";
+import { ACTION, ComponentCreateBudget, TypeMail } from "@/views/AC/AC5/AC520/type";
 import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import DxButton from 'devextreme-vue/button';
@@ -173,7 +191,7 @@ import AccountingProcessStatusEdit from "./components/AccountingProcessStatusEdi
 import AddRowPopup from "./components/AddRowPopup.vue";
 import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
 import PopupSendMail from "./components/PopupSendMail.vue";
-import { initialState, useGetEmployeePayTableReportViewUrl } from "./utils/index";
+import { initialState, useGetEmployeePayTableReportViewUrl, useGetBudgetSummaryTableReportViewUrl, useGetBudgetReportViewUrl } from "./utils/index";
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -196,6 +214,10 @@ const isModal = reactive({
   addRow: false
 })
 const index = ref(0)
+const stateMail = reactive({
+  type: 10,
+  typeMail: TypeMail.Budget,
+})
 const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 const storeDataSource = computed(() => dataSource.value?.store() as Store);
 const lastRowOfDataIsNotComplete = computed(() => {
@@ -219,7 +241,11 @@ const {onResult: onResultBudget, refetch: refetchBudget, onError} = useQuery(que
 onResultBudget(({data}) => {
   triggerBudgetPreIndex.value = data.getBudgets.length === 0 && acYear.value > 2023
   if(data.getBudgets.length >  0) {
-    store.commit('common/setDataPreIndexBudget', data.getBudgets[0])
+    if(data.getBudgets[0].index && data.getBudgets[0].createdBy) {
+      store.commit('common/setDataPreIndexBudget', data.getBudgets[1])
+    } else {
+      store.commit('common/setDataPreIndexBudget', data.getBudgets[0])
+    }
   }
   dataSource.value = new DataSource({
     store: {
@@ -303,17 +329,40 @@ const openModalEditEmployeeTable = (i: number) => {
   index.value = i
   modal.editEmployeeSalaryTable = true;
 }
-const actionPrint = (data: any) => {
-  const {onResult} = useGetEmployeePayTableReportViewUrl({
-    ...query,
-    index: data.index
-  })
-  onResult(({data}) => {
-    window.open(data.getEmployeePayTableReportViewUrl, '_blank')
-  })
+const actionPrint = (data: any, type: TypeMail) => {
+  
+  if(type === TypeMail.EmployeePayTable) {
+    const {onResult} = useGetEmployeePayTableReportViewUrl({
+      ...query,
+      index: data.index
+    })
+    onResult(({data}) => {
+      window.open(data.getEmployeePayTableReportViewUrl, '_blank')
+    })
+  } else if(type === TypeMail.BudgetSummaryTable) {
+    const {onResult} = useGetBudgetSummaryTableReportViewUrl({
+      ...query,
+      index: data.index,
+    })
+    onResult(({data}) => {
+      window.open(data.getBudgetSummaryTableReportViewUrl, '_blank')
+    })
+  } else {
+    const {onResult} = useGetBudgetReportViewUrl({
+      ...query,
+      index: data.index,
+      displayCode: true,
+      type: data.budgetType
+    })
+    onResult(({data}) => {
+      window.open(data.getBudgetReportViewUrl, '_blank')
+    })
+  }
 }
-const actionSendMail = (data: any) => {
+const actionSendMail = (data: any, type: TypeMail) => {
   index.value = data.index as number
+  stateMail.type = 4
+  stateMail.typeMail = type
   isModal.employeeRemunerationList = true
 }
 const handleEmitClosePopup = (e: boolean) => {
