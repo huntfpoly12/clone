@@ -22,7 +22,6 @@
           :column-auto-width="true"
         >
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxEditing :allow-updating="true" mode="cell" />
           <DxColumn
             caption="신고종류"
             data-field="typeName"

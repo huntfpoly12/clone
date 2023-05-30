@@ -20,6 +20,7 @@ export default gql`
       registeredAt
       acceptedAt
       completedAt
+      memo
       createdAt
       createdBy
       updatedAt

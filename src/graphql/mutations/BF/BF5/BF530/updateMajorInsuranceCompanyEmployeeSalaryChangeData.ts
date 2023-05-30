@@ -12,6 +12,27 @@ export default gql`
       type
       imputedYear
       workId
+      memo
+      # employeeType
+      # employeeId
+      # name
+      # nationalPensionReport
+      # healthInsuranceReport
+      # employeementInsuranceReport
+      # industrialAccidentInsuranceReport
+      # workingStatus
+      # registeredAt
+      # acceptedAt
+      # completedAt
+      # acceptedNumber
+      # createdAt
+      # createdBy
+      # updatedAt
+      # updatedBy
+      # ip
+      # active
+      # # company
+      # residentIdks
     }
   }
 `;
