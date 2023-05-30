@@ -29,7 +29,7 @@
                   <div class="form-chat-timeline-content-files-preview-images">
                     <img v-for="(file, indexFile) in items.files.filter((file: any) => isImgLink(file.url))"
                       :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
-                      alt="" @click="previewImage(items.files, indexFile)">
+                      alt="" @click="previewImage(items.files.filter((file: any) => isImgLink(file.url)), indexFile)">
                   </div>
                   <div v-for="(file, indexFile) in items.files.filter((file: any) => !isImgLink(file.url))"
                     :key="indexFile" class="form-chat-timeline-content-files-preview-filetext"
