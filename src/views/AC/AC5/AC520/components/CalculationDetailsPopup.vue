@@ -113,13 +113,15 @@ const closePopup = () => {
   if (isFormChange.value) {
     Modal.confirm({
       title: '',
-      content: Message.getCommonMessage('501').message,
+      content: Message.getCommonMessage('301').message,
       onOk() {
         emit('closePopup', false)
       },
       onCancel() {
         // emit('closePopup', false)
       },
+      okText: '네',
+      cancelText: '아니요',
     });
   } else {
     emit('closePopup', false)

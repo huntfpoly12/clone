@@ -860,7 +860,7 @@ export default defineComponent({
     // update cell settings flow condition
     const checkDisableA04A06 = () => {
       let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...cellsSettingModified]
+      let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
       if (
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
@@ -918,7 +918,7 @@ export default defineComponent({
     // check disable switch refund
     const checkDisableRefund = () => {
       let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...cellsSettingModified]
+      let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
       if (
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||

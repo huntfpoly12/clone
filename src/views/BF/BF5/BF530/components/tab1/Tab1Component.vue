@@ -486,6 +486,7 @@ export default defineComponent({
       result: adminConsignStatusResult,
       onError: adminConsignStatusError,
       loading: loading1,
+      refetch,
     } = useQuery(
       queries.getMajorInsuranceAdminConsignStatus,
       adminConsignStatusParam,
@@ -659,6 +660,7 @@ export default defineComponent({
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
       adminConsignStatusTrigger.value = true;
+      refetch();
     });
     onErrorConsignWorkingStatus2((e: any) => {
       notification("error", e.message);
@@ -742,7 +744,6 @@ export default defineComponent({
       dataTest,
       companyIdParam,
       loading1,
-      adminConsignStatusTrigger,
       onGetAcquistionRp,
       dayjs,
       completedAtFormat,

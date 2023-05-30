@@ -19,14 +19,14 @@
       </div>
     </template>
     <div>
-      <button-basic :width="100" :text="textBtn" :class="classBtn" 
+      <button-basic :width="100" :text="textBtn" :class="classBtn"
                     class="buttonModal">
       </button-basic>
     </div>
   </a-popover>
 </template>
 <script lang="ts">
-import {computed, defineComponent, PropType, reactive, ref, watch} from "vue";
+import {computed, defineComponent, PropType, reactive, ref} from "vue";
 import {companyId, userType} from "@/helpers/commonFunction";
 import {useMutation} from "@vue/apollo-composable";
 import changeBudgetStatus from "@/graphql/mutations/AC/AC5/AC520/changeBudgetStatus";

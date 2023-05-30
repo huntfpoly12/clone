@@ -16,10 +16,7 @@ export default (callback: Function) => {
         onCancel() { status = false },
         cancelText: "취소",
         okText: "네",
-        style: `.ant-modal-confirm-body svg {
-            font-size: 50px;
-          }`
-
+        wrapClassName: 'confirmPopup',
     });
 
     return status;

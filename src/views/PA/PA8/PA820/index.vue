@@ -11,7 +11,7 @@
           placeholder="검색" />
         <DxExport :enabled="true" />
         <DxScrolling mode="standard" show-scrollbar="always" />
-        <DxColumn caption="일련번호" data-field="workId" width="80" alignment="left" />
+        <DxColumn caption="일련번호" data-field="workId" width="80" alignment="center" />
         <DxToolbar>
           <DxItem name="searchPanel" />
           <DxItem name="exportButton" css-class="cell-button-export" />
@@ -27,25 +27,25 @@
             </div>
           </a-tooltip>
         </template>
-        <DxColumn caption="성명" data-field="name" width="130" alignment="left" />
-        <DxColumn caption="생년월일" alignment="left" cell-template="residentId" />
+        <DxColumn caption="성명" data-field="name" width="130" alignment="center" />
+        <DxColumn caption="생년월일" alignment="center" cell-template="residentId" />
         <template #residentId="{data}: any">
           <div>
             {{ convertBirthDayKorea(data.data.residentId || '')}}
           </div>
         </template>
-        <DxColumn caption="상태" data-field="workingStatus" width="80" alignment="left" cell-template="workingStatus" />
+        <DxColumn caption="상태" data-field="workingStatus" width="80" alignment="center" cell-template="workingStatus" />
         <template #workingStatus=" { data: dataValue }: any ">
           <div>
             {{ MajorInsuranceWorkingStatus[dataValue.value] }}
           </div>
         </template>
-        <DxColumn caption="등록일" data-field="registeredAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
-        <DxColumn caption="접수일" data-field="acceptedAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
-        <DxColumn caption="완료일" data-field="completedAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
-        <DxColumn caption="접수번호" data-field="acceptedNumber" width="120px" alignment="left" />
-        <DxColumn caption="메모" data-field="memo" width="120px" alignment="left" />
-        <DxColumn caption="상실신고서다운로드" cell-template="downA" width="140px" alignment="left" />
+        <DxColumn caption="등록일" data-field="registeredAt" alignment="center" data-type="date" format="yyyy-MM-dd" />
+        <DxColumn caption="접수일" data-field="acceptedAt" alignment="center" data-type="date" format="yyyy-MM-dd" />
+        <DxColumn caption="완료일" data-field="completedAt" alignment="center" data-type="date" format="yyyy-MM-dd" />
+        <DxColumn caption="접수번호" data-field="acceptedNumber" width="120px" alignment="center" />
+        <DxColumn caption="메모" data-field="memo" width="120px" alignment="center" />
+        <DxColumn caption="상실신고서다운로드" cell-template="downA" width="140px" alignment="center" />
         <template #downA=" { data }: any ">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
@@ -53,9 +53,9 @@
             </DxButton>
           </div>
         </template>
-        <DxColumn caption="" cell-template="action" width="150px" />
+        <DxColumn caption="" cell-template="action" width="120px" />
         <template #action=" { data }: any ">
-          <div class="custom-action" style="margin-left: 40px;">
+          <div class="custom-action" style="margin-left: 20px;">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
                 <a-tooltip zIndex="9999999" placement="top" color="black">

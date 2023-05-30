@@ -260,12 +260,12 @@
                                     layoutCustom="horizontal" />
                             </div> -->
                             <div class="form-item" style="margin-bottom: 10px">
-                                <label class="red">서비스 시작년월 :</label>
+                                <label :class="{'red':isWithholding == 1}">서비스 시작년월 :</label>
                                 <month-picker-box width="170px" :disabled="disableFormVal || isWithholding == 2"
                                     v-model:valueDate="contractCreacted.startYearMonthHolding" required />
                             </div>
                             <div class="form-item">
-                                <label class="red">직 원 수:</label>
+                                <label :class="{'red':isWithholding == 1}">직 원 수:</label>
                                 <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding" 
                                     :disabled="disableFormVal || isWithholding == 2" :min="1" :spinButtons="true" required/>
                             </div>
@@ -668,7 +668,7 @@ export default {
             if(newVal == 2) {
                 withholdingCustom = null;
                 contractCreacted.startYearMonthHolding = null;
-                contractCreacted.capacityHolding = '';
+                contractCreacted.capacityHolding = NaN;
                 contractCreacted.withholdingServiceTypes = false;
                 if (checkedAccounting.value === 2) {
                   notification("error", Message.getMessage('BF310', '001').message);
