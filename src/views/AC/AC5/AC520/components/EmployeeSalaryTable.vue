@@ -15,8 +15,26 @@
       />
       <DxPaging :page-size="0"/>
       <DxToolbar>
-        <DxItem location="after" name="addRowButton" css-class="cell-button-add"/>
-        <DxItem name="saveButton"/>
+        <DxItem location="after" name="addRowButton" css-class="cell-button-add">
+          <a-tooltip title="임직원보수등록">
+            <div>
+              <DxButton size="large" @click="addRow" style="background: #337ab7; color: white">
+                <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" />
+                신규
+              </DxButton>
+            </div>
+          </a-tooltip>
+        </DxItem>
+        <DxItem name="saveButton">
+          <a-tooltip title="저장">
+            <div>
+              <DxButton style="background: #337ab7; color: white" :disabled="dataAllRow.length === 0" @click="actionSave">
+                <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" />
+                저장
+              </DxButton>
+            </div>
+          </a-tooltip>
+        </DxItem>
       </DxToolbar>
       <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
         <DxRequiredRule/>
@@ -155,8 +173,11 @@ import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
 import filters from "@/helpers/filters";
 import searchEmployeeOccupations from '@/graphql/queries/AC/AC5/AC520/searchEmployeeOccupations';
+import DxButton from "devextreme-vue/button";
+import {PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
 
 const emit = defineEmits(['closePopup'])
+const gridRef = ref()
 const arrSelectOccupation: any = ref([])
 const formRef = ref()
 const LaborCostClassificationArray = [{name: '직접', value: 1}, {name: '간접', value: 2}]
@@ -372,6 +393,12 @@ function calculateSalary(data: any) {
   const retirementReserve = +data.data.retirementReserve || 0;
   const socialInsuranceLevy = +data.data.socialInsuranceLevy || 0;
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
+}
+const addRow = () => {
+  gridRef.value?.instance.addRow()
+}
+const actionSave = () => {
+  gridRef.value?.instance.saveEditData()
 }
 </script>
 

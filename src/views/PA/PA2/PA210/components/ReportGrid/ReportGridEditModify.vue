@@ -872,7 +872,7 @@ export default defineComponent({
     // update cell settings flow condition 
     const checkDisableA04A06 = () => {
       let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...cellsSettingModified]
+      let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
       if (
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
@@ -963,7 +963,7 @@ export default defineComponent({
     // theo dõi refund status thay đổi trạng thái call 12 và 13
     watch(()=>dataSource.value[0].refund, (newVal) => {
       let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...cellsSettingModified]
+      let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
       if (newVal) {
         newCellSetting[574].readOnly = false
         newCellSetting[574].className = "htMiddle htRight"
