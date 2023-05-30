@@ -1,6 +1,6 @@
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC5/AC520";
-import {Ref, UnwrapNestedRefs} from "vue";
+
 export const initialState = {
   index : 0,
   employeePaySum: null,
@@ -15,9 +15,7 @@ interface IGetEmployeePayTableReportViewUrl {
   facilityBusinessId: number
   index: number
 }
-interface IGetBudgetSummaryTableReportViewUrl extends IGetEmployeePayTableReportViewUrl {
-  
-}
+interface IGetBudgetSummaryTableReportViewUrl extends IGetEmployeePayTableReportViewUrl {}
 interface IGetBudgetReportViewUrl extends IGetEmployeePayTableReportViewUrl {
   displayCode: boolean
   type: number

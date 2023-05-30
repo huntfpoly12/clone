@@ -154,19 +154,19 @@
               </a-col>
             </a-row>
             <div class="mt-10">통폐합 시 흡수하는 사업장:</div>
-            <a-row class="mt-10 ml-40" :justify="'space-between'">
-              <a-col span="15">
+            <a-row class="mt-10" :justify="'space-between'">
+              <a-col span="16" class="pl-40">
                 <a-form-item label="명칭" label-align="right">
                   <default-text-box v-model:valueInput="formState.nationalPensionIntegrasionCompanyName"
                     :disabled="!formState.nationalPensionReport" />
                 </a-form-item>
               </a-col>
-              <a-col span="9" class="">
+              <a-col span="8" class="">
                 <a-form-item label="사업장관리번호" label-align="right">
                   <ManageIdTextBox v-model:valueInput="formState.manageId" :disabled="!formState.nationalPensionReport" />
                 </a-form-item>
               </a-col>
-              <a-col span="24" class="mt-10">
+              <a-col span="24" class="mt-10 pl-40">
                 <a-form-item label="소재지" label-align="right">
                   <default-text-box v-model:valueInput="formState.nationalPensionIntegrasionCompanyAddress"
                     :disabled="!formState.nationalPensionReport" />

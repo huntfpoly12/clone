@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="text-align-center mt-40">
-            <button-basic class="button-form-modal" :text="'적용'" :width="140" :type="'default'" :mode="'contained'"
+            <button-basic class="button-form-modal" :text="'반용'" :width="140" :type="'default'" :mode="'contained'"
                 @onClick="onSubmit" />
         </div>
     </a-modal>

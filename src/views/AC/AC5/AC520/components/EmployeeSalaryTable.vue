@@ -7,7 +7,7 @@
                 @saving="handleSaving" @editor-preparing="onEditorPreparing"
                 style="height: 70vh"
                 :remote-operations="true"
-                
+
     >
       <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
@@ -264,7 +264,7 @@ const onEditorPreparing = (e: any) => {
             value: keyEvent.target.value
           })
           e.setValue(keyEvent.target.value, 'occupation')
-          
+
         }
       }
     }
@@ -278,6 +278,17 @@ const deleteRow = (e: any) => {
 }
 
 const onCellPrepared = (e: any) => {
+  if (e.rowType === 'data' && e.column.dataField === 'classification') {
+    if (!dataAllRow.value.length) {
+      dataAllRow.value.push({ ...e.data, key: e.key })
+    } else {
+      const isRowExits = dataAllRow.value.find((item: any) => item.key === e.key)
+      if (!isRowExits) dataAllRow.value.push({ ...e.data, key: e.key })
+      else {
+        dataAllRow.value = dataAllRow.value.map((item: any) => item.key === e.key ? { ...item, ...e.data } : { ...item })
+      }
+    }
+  }
   const getElementCustom = (index: string) => !e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' && e.cellElement.getAttribute('aria-colindex') === index
   if (getElementCustom('2')) {
     e.cellElement.colSpan = 3

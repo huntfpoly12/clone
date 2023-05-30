@@ -74,7 +74,7 @@
             caption="산재FAX"
             data-field="industrialAccidentInsuranceFax"
           />
-          <DxColumn caption="메모" data-field="memo" />
+          <DxColumn caption="메모" data-field="memo" width="100"/>
           <DxColumn caption="IP" data-field="ip" />
           <DxColumn caption="수정ID" data-field="updatedBy" />
         </DxDataGrid>

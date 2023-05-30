@@ -22,7 +22,7 @@
         <EmployeeSalaryTable @closePopup="closePopup" />
       </div>
       <div v-else>
-        <ExpenseAndRevenueBudget @closePopup="closePopup" :index="index" />
+        <ExpenseAndRevenueBudget @closePopup="closePopup" />
       </div>
     </div>
     <div v-else>
@@ -57,10 +57,6 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-    index: {
-      type: Number,
-      required: true
-    }
   },
   emits: ['closePopup'],
   setup(props, { emit }) {

@@ -79,7 +79,7 @@
       <template #employeeSalaryTable="{data}">
         <div v-if="data.data.employeePaySum !== null" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
-                    @click="openModalEditEmployeeTable(data.data.index)"/>
+                    @click="openModalEditEmployeeTable(data.data)"/>
           <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.EmployeePayTable)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
@@ -144,7 +144,6 @@
     <BudgetPopup
       :modal-status="modal.budget"
       @close-popup="closePopupBudget"
-      :index="index"
     />
     <PopupSendMail
       v-if="isModal.employeeRemunerationList"
@@ -242,7 +241,7 @@ onResultBudget(({data}) => {
   triggerBudgetPreIndex.value = data.getBudgets.length === 0 && acYear.value > 2023
   if(data.getBudgets.length >  0) {
     if(data.getBudgets[0].index && data.getBudgets[0].createdBy) {
-      store.commit('common/setDataPreIndexBudget', data.getBudgets[1])
+      store.commit('common/setDataPreIndexBudget', data.getBudgets[data.getBudgets.length - 1])
     } else {
       store.commit('common/setDataPreIndexBudget', data.getBudgets[0])
     }
@@ -325,12 +324,13 @@ const openModalBudget = (data: any) => {
   modal.budget = true;
   store.dispatch('common/setDataBudget', data)
 }
-const openModalEditEmployeeTable = (i: number) => {
-  index.value = i
+const openModalEditEmployeeTable = (data: any) => {
+  index.value = data.index
   modal.editEmployeeSalaryTable = true;
+  store.commit('common/setDataBudget', data)
 }
 const actionPrint = (data: any, type: TypeMail) => {
-  
+
   if(type === TypeMail.EmployeePayTable) {
     const {onResult} = useGetEmployeePayTableReportViewUrl({
       ...query,
