@@ -1,5 +1,5 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.pa110.statusDisabledStatus || (store.state.common.pa110.statusChangeFormAdd&&store.state.common.pa110.statusFormAdd)">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.pa110.statusDisabledStatus || (store.state.common.pa110.statusChangeFormAdd&&store.state.common.pa110.statusFormAdd) || store.state.common.pa110.statusMidTermSettlement2">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.pa110.statusDisabledStatus" />
