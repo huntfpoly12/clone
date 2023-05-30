@@ -117,7 +117,7 @@
               </a-col>
               <a-col span="8">
                 <DxField label="환급계좌번호">
-                  <default-text-box v-model:valueInput='formState.companyRefundAccountNumber' placeholder="" />
+                  <number-box v-model:valueInput='formState.companyRefundAccountNumber' placeholder="" />
                 </DxField>
               </a-col>
               <a-col span="8">
@@ -265,7 +265,7 @@
           <box-title title="연금(고용)보험료지원신청">
             <p class="px-10">[국민연금법] 제100조의3 또는 [국민보험 및 산업재해보상보험의 보험료징수 등에 관한 법률] 제21조에 따라
                 아래와 같이연금(고용)보험료 지원을 신청합니다.(근로자수가 10명 미만인 사업장만 해당합니다.) </p>
-            <div class="d-flex-center justify-content-around">
+            <div class="d-flex-center justify-content-around" style="width: 200px; margin-left: 110px">
                 <checkbox-basic label="국민연금" v-model:valueCheckbox="formState.nationalPensionSupport" />
                 <checkbox-basic label="고용보험" v-model:valueCheckbox="formState.employeementInsuranceSupport" />
             </div>
@@ -399,7 +399,7 @@
               </a-col>
               <a-col span="8" />
               <a-col span="8">
-                <DxField label="우선지원대상기업" class="field-custom-1" styleLabel="padding-left: 15px">
+                <DxField label="우선지원대상기업" class="field-custom" styleLabel="padding-left: 15px">
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.employeementInsuranceMainWorkplacePrioritySupport"
                                layoutCustom="horizontal" class="mt-1"
@@ -513,9 +513,10 @@ import notification from '@/utils/notification';
 import { getCurrentInstance } from 'vue';
 import dayjs from "dayjs";
 import cloneDeep from "lodash/cloneDeep";
+import NumberBox from "@/components/common/NumberBox.vue";
 
 export default defineComponent({
-  components: {},
+  components: {NumberBox},
   props: {
     isOpenModalCreate: {
       type: Boolean,
