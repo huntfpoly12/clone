@@ -1,5 +1,5 @@
 <template>
-  <a-popover v-model:visible="visible" :trigger="data.status !== 20 && data.employeePaySum !== null && data.revenueBudgetSum !== null ? 'click' :''" color="#e6e6e6">
+  <a-popover v-model:visible="visible" :trigger="data.status !== 20 &&  data.revenueBudgetSum !== null ? 'click' :''" color="#e6e6e6">
     <template #content>
       <div class="mytext">
         <div v-if="status == 30 || status == 40">
@@ -19,7 +19,7 @@
       </div>
     </template>
     <div>
-      <button-basic :width="100" :text="textBtn" :class="classBtn" :disabled="data.status === 20"
+      <button-basic :width="100" :text="textBtn" :class="classBtn" 
                     class="buttonModal">
       </button-basic>
     </div>

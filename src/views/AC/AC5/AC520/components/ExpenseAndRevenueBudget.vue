@@ -34,13 +34,13 @@
           <DxColumn caption="비고" data-field="Five" />
 
           <template #code1="{ data }">
-            <span>{{ findCode('code1', data.data.code1)?.name1 }}</span>
+            <span :title="findCode('code1', data.data.code1)?.name1">{{ findCode('code1', data.data.code1)?.name1 }}</span>
           </template>
           <template #code2="{ data }">
-            <span>{{ findCode('code2', data.data.code2)?.name2 }}</span>
+            <span :title="findCode('code2', data.data.code2)?.name2">{{ findCode('code2', data.data.code2)?.name2 }}</span>
           </template>
           <template #code3="{ data }">
-            <span>{{ findCode('code3', data.data.code3)?.name3 }}</span>
+            <span :title="findCode('code3', data.data.code3)?.name3">{{ findCode('code3', data.data.code3)?.name3 }}</span>
           </template>
           <template #sourceOfFunding="{ data }">
             <tag-funding-source :fundingSource1="data.data.fundingSource1" :fundingSource2="data.data.fundingSource2"
@@ -147,7 +147,7 @@
             <div class="d-flex-center gap-10">
               <number-box-money placeholder="" v-model:valueInput="formState.fundingSource1" width="200px" />
               <DxButton icon="back" type="default"
-                :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index - 1} 차 추경` : `당해년도`} 예산액 입력`"
+                :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource1')" />
             </div>
           </DxField>
@@ -155,7 +155,7 @@
             <div class="d-flex-center gap-10">
               <number-box-money placeholder="" v-model:valueInput="formState.fundingSource2" width="200px" />
               <DxButton icon="back" type="default"
-                :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index - 1} 차 추경` : `당해년도`} 예산액 입력`"
+                :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource2')" />
             </div>
           </DxField>
@@ -163,7 +163,7 @@
             <div class="d-flex-center gap-10">
               <number-box-money placeholder="" v-model:valueInput="formState.fundingSource3" width="200px" />
               <DxButton icon="back" type="default"
-                :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index - 1} 차 추경` : `당해년도`} 예산액 입력`"
+                :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource3')" />
             </div>
           </DxField>
@@ -171,7 +171,7 @@
             <div class="d-flex-center gap-10">
               <number-box-money placeholder="" v-model:valueInput="formState.fundingSource4" width="200px" />
               <DxButton icon="back" type="default"
-                :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index - 1} 차 추경` : `당해년도`} 예산액 입력`"
+                :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource4')" />
             </div>
           </DxField>
