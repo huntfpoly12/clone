@@ -18,12 +18,12 @@
         <DxColumn caption="성명" data-field="name" alignment="center" />
         <DxColumn caption="생년월일" cell-template="convertBirthday" width="100" alignment="center" />
         <DxColumn caption="신고구분" data-field="type" width="100" alignment="center" cell-template="type" />
-        <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="center" cell-template="workingStatus" />
+        <DxColumn caption="상태" data-field="workingStatus" alignment="center" cell-template="workingStatus" />
         <!--        <DxColumn caption="주민등록증" data-field="residentId" width="150" alignment="center"/>-->
         <DxColumn caption="등록일" data-field="registeredAt" width="100" :format="dateFormat" alignment="center" />
         <DxColumn caption="접수일" data-field="acceptedAt" width="100" :format="dateFormat" alignment="center" />
         <DxColumn caption="완료일" data-field="completedAt" width="100" :format="dateFormat" alignment="center" />
-        <DxColumn caption="접수번호" data-field="acceptedNumber" width="70" alignment="center" />
+        <DxColumn caption="접수번호" data-field="acceptedNumber" alignment="center" />
         <!--        <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/>-->
         <DxColumn caption="메모" data-field="memo" alignment="center" />
         <!--        <DxScrolling column-rendering-mode="virtual"/>-->

@@ -159,7 +159,7 @@
                                 </div>
                             </label>
                             <div class="group-title">
-                                <p class="red" id="title-table-step3">⁙ 운영사업</p>
+                                <p :class="{'red':checkedAccounting == 1}" id="title-table-step3">⁙ 운영사업</p>
                             </div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
@@ -260,12 +260,12 @@
                                     layoutCustom="horizontal" />
                             </div> -->
                             <div class="form-item" style="margin-bottom: 10px">
-                                <label class="red">서비스 시작년월 :</label>
+                                <label :class="{'red':isWithholding == 1}">서비스 시작년월 :</label>
                                 <month-picker-box width="170px" :disabled="disableFormVal || isWithholding == 2"
                                     v-model:valueDate="contractCreacted.startYearMonthHolding" required />
                             </div>
                             <div class="form-item">
-                                <label class="red">직 원 수:</label>
+                                <label :class="{'red':isWithholding == 1}">직 원 수:</label>
                                 <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding" 
                                     :disabled="disableFormVal || isWithholding == 2" :min="1" :spinButtons="true" required/>
                             </div>
@@ -296,8 +296,9 @@
                                 <label class="red">사업자(주민)등록번호 :</label>
                                 <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" />
                                 <p>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px" /> :
+                                  <info-tool-tip>
                                     예금주의 사업자등록번호 또는 주민등록번호입니다
+                                  </info-tool-tip>
                                 </p>
                             </div>
                             <div class="form-item">
@@ -566,6 +567,8 @@ export default {
                 } else if (step.value == 2) {
                   if (checkedAccounting.value === isWithholding.value && isWithholding.value === 2) {
                     notification("error", Message.getMessage('BF310', '001').message);
+                  }else if(checkedAccounting.value === 1 && valueFacilityBusinesses.value.length === 0){
+                    notification("error", Message.getMessage('COMMON', '102').message);
                   }else{
                     step.value++;
                     window.scrollTo(0, 0);
@@ -668,7 +671,7 @@ export default {
             if(newVal == 2) {
                 withholdingCustom = null;
                 contractCreacted.startYearMonthHolding = null;
-                contractCreacted.capacityHolding = '';
+                contractCreacted.capacityHolding = NaN;
                 contractCreacted.withholdingServiceTypes = false;
                 if (checkedAccounting.value === 2) {
                   notification("error", Message.getMessage('BF310', '001').message);

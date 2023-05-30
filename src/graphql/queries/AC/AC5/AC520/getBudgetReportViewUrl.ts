@@ -7,7 +7,7 @@ export default gql`
         $facilityBusinessId: Int!,
         $index: Int!,
         $type: Int!,
-        $displayCode: Boolean
+        $displayCode: Boolean!
     ) {
         getBudgetReportViewUrl(
             companyId: $companyId,

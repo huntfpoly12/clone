@@ -1,36 +1,17 @@
 <template>
-  <a-modal
-    :visible="modalStatus"
-    @cancel="setModalVisible"
-    :mask-closable="false"
-    class="confirm-md"
-    footer=""
-    :width="500"
-  >
+  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
+    :width="500">
     <standard-form action="" name="delete-510">
       <div class="custom-modal-delete">
         <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px" />
-        <span
-          >선택된 내역({{ data.length }}건) 삭제합니다. 그래도
-          진행하시겠습니까?</span
-        >
+        <span>선택된 내역({{ data.length }}건) 삭제합니다. 그래도
+          진행하시겠습니까?</span>
       </div>
       <div class="text-align-center mt-30">
-        <button-basic
-          class="button-form-modal"
-          :text="'아니요'"
-          :type="'default'"
-          :mode="'outlined'"
-          @onClick="setModalVisible"
-        />
-        <button-basic
-          class="button-form-modal"
-          :text="'네. 삭제합니다'"
-          :width="140"
-          :type="'default'"
-          :mode="'contained'"
-          @onClick="onSubmit"
-        />
+        <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+          @onClick="setModalVisible" />
+        <button-basic class="button-form-modal" :text="'네. 삭제합니다'" :width="140" :type="'default'" :mode="'contained'"
+          @onClick="onSubmit" />
       </div>
     </standard-form>
   </a-modal>
@@ -72,11 +53,14 @@ export default defineComponent({
           ids.push(val.incomeId);
         }
       });
-      actionDelete({
-        companyId: companyId,
-        processKey: { ...processKey.value },
-        incomeIds: ids,
-      });
+      if (ids.length) {
+        actionDelete({
+          companyId: companyId,
+          processKey: { ...processKey.value },
+          incomeIds: ids,
+        });
+      }
+
     };
     const {
       mutate: actionDelete,

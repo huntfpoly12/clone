@@ -282,10 +282,8 @@
 			<a-row :class="{ disabledBlock: statusDisabledBlock }">
 				<a-col :span="12" class="custom-layout custom-layout-table" :class="{
 					'ele-opacity':
-						(store.state.common.pa110.statusChangeFormEdit &&
-							!store.state.common.pa110.statusFormAdd) ||
-						(store.state.common.pa110.statusChangeFormAdd &&
-							store.state.common.pa110.statusFormAdd),
+						(store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) ||
+						(store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd),
 				}">
 					<a-spin :spinning="loadingTaxPayInfo" size="large">
 						<DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
@@ -317,15 +315,8 @@
 							<template #total-deduction="{ data }">
 								<a-tooltip placement="top">
 									<template #title>소득세
-										{{
-											$filters.formatCurrency(data.data.withholdingIncomeTax)
-										}}
-										/ 지방소득세
-										{{
-											$filters.formatCurrency(
-												data.data.withholdingLocalIncomeTax
-											)
-										}}
+										{{ $filters.formatCurrency(data.data.withholdingIncomeTax) }}/ 지방소득세
+										{{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}
 									</template>
 									<span>
 										{{ $filters.formatCurrency(data.data.totalDeduction) }}
@@ -345,9 +336,8 @@
 										:typeTag="4" :typeValue="1" />
 									<four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent"
 										:typeTag="6" :ratio="data.data.employee.nationalPensionSupportPercent" />
-									<four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent
-										" :typeTag="7" :ratio="data.data.employee.employeementInsuranceSupportPercent
-		" />
+									<four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent"
+										:typeTag="7" :ratio="data.data.employee.employeementInsuranceSupportPercent" />
 									<four-major-insurance v-if="data.data.employee.employeementReductionRatePercent"
 										:typeTag="8" :ratio="data.data.employee.employeementReductionRatePercent" />
 									<four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
@@ -357,38 +347,16 @@
 							<DxColumn css-class="cell-center" width="52" caption="지급일" data-field="paymentDay"
 								cell-template="paymentDay" />
 							<template #paymentDay="{ data }">
-								{{
-									$filters
-										.formatMonth(data.data.paymentDay)
-										?.toString()
-										.slice(-2)
-								}}
+								{{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
 							</template>
-							<!-- <DxSummary v-if="store.state.common.pa110.dataTaxPayInfo.length">
-                                <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
-                                <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}"
-                                    value-format="#,###" />
-                                <DxTotalItem column="totalDeduction" summary-type="sum" display-format="공제합계: {0}"
-                                    value-format="#,###" />
-                                <DxTotalItem column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}"
-                                    value-format="#,###" />
-                            </DxSummary> -->
 						</DxDataGrid>
 						<!-- <div v-if="store.state.common.pa110.dataTaxPayInfo.length" -->
-						<div style="
-                border: 1px solid #ddd;
-                border-top: none;
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                padding: 5px 20px;
-              " class="fs-14">
+						<div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+							class="fs-14">
 							<div style="margin-left: 70px">
 								<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 									<div>
-										사원수<span>[{{
-											store.state.common.pa110.dataTaxPayInfo.length
-										}}]</span>
+										사원수<span>[{{ store.state.common.pa110.dataTaxPayInfo.length }}]</span>
 									</div>
 								</div>
 							</div>
@@ -407,25 +375,16 @@
 						</div>
 					</a-spin>
 				</a-col>
-				<a-col :span="12" class="custom-layout custom-form-data" style="padding-right: 0px" :class="{
-					disabledBlock: !store.state.common.pa110.dataTaxPayInfo.length,
-				}">
+				<a-col :span="12" class="custom-layout custom-form-data" style="padding-right: 0px"
+					:class="{ disabledBlock: !store.state.common.pa110.dataTaxPayInfo.length }">
 					<FormDataComponent />
 				</a-col>
 				<PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
 					:title="Message.getMessage('COMMON', '501').message" content=""
 					:okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
 					@checkConfirm="statusComfirmChange" />
-				<!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false"
-                    typeModal="confirm" :title="Message.getMessage('PA110', '001').message" content=""
-                    :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no"
-                    @checkConfirm="statusComfirmChangePrice" /> -->
-				<CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint" @closePopup="
-								            {
-					modalCopy = false;
-					hoverColClick = 0;
-				}
-					" @dataAddIncomeProcess="dataAddIncomeProcess" />
+				<CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
+					@closePopup=" { modalCopy = false; hoverColClick = 0; }" @dataAddIncomeProcess="dataAddIncomeProcess" />
 			</a-row>
 		</div>
 	</div>
@@ -489,9 +448,7 @@ export default defineComponent({
 	},
 	setup() {
 		const store = useStore();
-		const paYear = ref<number>(
-			parseInt(sessionStorage.getItem("paYear") ?? "0")
-		);
+		const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? "0"));
 		const per_page = computed(() => store.state.settings.per_page);
 		const move_column = computed(() => store.state.settings.move_column);
 		const colomn_resize = computed(() => store.state.settings.colomn_resize);

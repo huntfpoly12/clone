@@ -297,7 +297,7 @@ import {
   DxEditing,
   DxLookup,
   DxColumnFixing,
-DxKeyboardNavigation,
+  DxKeyboardNavigation,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -339,8 +339,8 @@ export default defineComponent({
     DxColumnFixing,
     SelectBoxCT,
     HistoryOutlined,
-    DxKeyboardNavigation
-},
+    DxKeyboardNavigation,
+  },
   props: {
     search: {
       type: Number,
@@ -405,6 +405,7 @@ export default defineComponent({
       result: companyRequestListResult,
       onError: companyRequestListError,
       loading: loading1,
+      refetch: companyRequestListRefetch,
     } = useQuery(
       queries.getMajorInsuranceAdminCompanyRequestList,
       companyRequestListParam,
@@ -549,7 +550,7 @@ export default defineComponent({
 
     //------------------------ACTION UPDATE TABLE--------------------------------
 
-    //CompanyJoinData
+    //update CompanyJoinData
     const {
       mutate: creationCompanyJoinData,
       onDone: onDoneCompanyJoinData,
@@ -558,11 +559,13 @@ export default defineComponent({
     onDoneCompanyJoinData(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      companyRequestListTrigger.value = true;
+      companyRequestListRefetch();
     });
     onErrorCompanyJoinData((e: any) => {
       notification("error", e.message);
     });
-    //cancel CompanyOut
+    //cancel CompanyJoinData
     const {
       mutate: cancelCompanyJoin,
       onDone: onDoneCompanyJoin2,
@@ -571,7 +574,6 @@ export default defineComponent({
     onDoneCompanyJoin2(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
-      companyRequestListTrigger.value = true;
     });
     onErrorCompanyJoin2((e: any) => {
       notification("error", e.message);
@@ -585,11 +587,13 @@ export default defineComponent({
     onDoneCompanyOutData(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      companyRequestListTrigger.value = true;
+      companyRequestListRefetch();
     });
     onErrorCompanyOutData((e: any) => {
       notification("error", e.message);
     });
-    //cancel CompanyOut
+    //cancel CompanyOutData
     const {
       mutate: cancelCompanyOut,
       onDone: onDoneCompanyOut2,
@@ -598,7 +602,6 @@ export default defineComponent({
     onDoneCompanyOut2(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
-      companyRequestListTrigger.value = true;
     });
     onErrorCompanyOut2((e: any) => {
       notification("error", e.message);

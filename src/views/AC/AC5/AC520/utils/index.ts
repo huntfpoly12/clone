@@ -1,6 +1,6 @@
 import {useQuery} from "@vue/apollo-composable";
-import GET_EMPLOYEE_PAY_TABLE_REPORT_VIEW_URL from "@/graphql/queries/AC/AC5/AC520/getEmployeePayTableReportViewUrl";
-import {Ref, UnwrapNestedRefs} from "vue";
+import queries from "@/graphql/queries/AC/AC5/AC520";
+
 export const initialState = {
   index : 0,
   employeePaySum: null,
@@ -15,9 +15,34 @@ interface IGetEmployeePayTableReportViewUrl {
   facilityBusinessId: number
   index: number
 }
+interface IGetBudgetSummaryTableReportViewUrl extends IGetEmployeePayTableReportViewUrl {}
+interface IGetBudgetReportViewUrl extends IGetEmployeePayTableReportViewUrl {
+  displayCode: boolean
+  type: number
+}
+// v3
 export const useGetEmployeePayTableReportViewUrl = (dataQuery: IGetEmployeePayTableReportViewUrl) => {
-  const { result , loading, error, onResult } = useQuery(GET_EMPLOYEE_PAY_TABLE_REPORT_VIEW_URL,
+  const { result , loading, error, onResult } = useQuery(queries.getEmployeePayTableReportViewUrl,
     dataQuery,
+    () => ({
+      fetchPolicy: "no-cache",
+    }));
+  return { result, loading, error, onResult };
+}
+// v2
+export const useGetBudgetSummaryTableReportViewUrl = (dataQuery: IGetBudgetSummaryTableReportViewUrl) => {
+  const { result , loading, error, onResult } = useQuery(queries.getBudgetSummaryTableReportViewUrl,
+    dataQuery,
+    () => ({
+      fetchPolicy: "no-cache",
+    }));
+  return { result, loading, error, onResult };
+}
+
+export const useGetBudgetReportViewUrl = (dataQuery: IGetBudgetReportViewUrl) => {
+  console.log('dataQuery', dataQuery)
+  const { result , loading, error, onResult } = useQuery(queries.getBudgetReportViewUrl,
+    {...dataQuery},
     () => ({
       fetchPolicy: "no-cache",
     }));

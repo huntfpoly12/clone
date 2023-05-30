@@ -166,7 +166,7 @@ $lenght: 50;
   text-align: center !important;
 }
 
-::v-deep .red {
+:deep .red {
   label {
     color: red;
   }
@@ -275,4 +275,14 @@ $lenght: 50;
   border-radius: 4px;
   max-width: 200px;
   width: auto;
+}
+.confirmPopup {
+  .ant-modal-confirm-title{
+    font-size: 13px;
+  }
+  .ant-modal-confirm-btns {
+    display: inline-flex;
+    margin-left: 62px;
+    margin-top: 14px;
+  }
 }

@@ -23,6 +23,10 @@ import {useMutation} from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
 import sendEmployeePayTableReportEmail from "@/graphql/mutations/AC/AC5/AC520/sendEmployeePayTableReportEmail"
+import sendBudgetReportEmail from "@/graphql/mutations/AC/AC5/AC520/sendBudgetReportEmail"
+import sendBudgetSummaryTableReportEmail from "@/graphql/mutations/AC/AC5/AC520/sendBudgetSummaryTableReportEmail"
+import { TypeMail } from "../type";
+
 export default defineComponent({
   props: {
     isModalSendMail: {
@@ -38,13 +42,34 @@ export default defineComponent({
     index: {
       type: Number,
       required: true
+    },
+    typeMail: {
+      type: Object as () => TypeMail,
+      required: true
+    },
+    type: {
+      type: Number,
+      required: true
     }
   },
   setup(props, { emit }) {
     const email = ref()
     const store = useStore();
     const userInfo = computed(() => store.state.auth.userInfor);
-    const {mutate, onError, onDone} = useMutation(sendEmployeePayTableReportEmail)
+    const getType = computed(() => {
+      switch (props.typeMail) {
+        case TypeMail.BudgetSummaryTable: // E2
+          return sendBudgetSummaryTableReportEmail
+        case TypeMail.Budget: // E1
+          return sendBudgetReportEmail
+        case TypeMail.EmployeePayTable: // E3
+          return sendEmployeePayTableReportEmail
+        default:
+          return sendBudgetSummaryTableReportEmail
+      }
+    })
+    console.log('getType', getType.value)
+    const {mutate, onError, onDone} = useMutation(getType.value)
     onDone(() => {
       notification('success', Message.getCommonMessage('801').message)
       emit('closePopup', true)
@@ -64,7 +89,8 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
         return
       }
-      const input = {
+      console.log(props)
+      const input: any = {
         ...props.variable,
         index: props.index,
         emailInput: {
@@ -72,6 +98,10 @@ export default defineComponent({
           receiverAddress: email.value,
           senderName: userInfo.value?.username || '',
         }
+      }
+      if(props.typeMail === TypeMail.Budget) {
+        input.type = props.type
+        input.displayCode = true
       }
       mutate(input)
     }

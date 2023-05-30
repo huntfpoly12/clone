@@ -6,7 +6,6 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           key-expr="code" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" :sorting="false">
-          <DxLoadPanel :enabled="true" :showPane="true" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxEditing :allow-updating="true" mode="cell" />
           <DxColumn caption="보험명" data-field="code" :allowEditing="false" />
@@ -148,5 +147,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 :deep .dx-datagrid-content .dx-datagrid-table .dx-row>td {
   height: 34px;
+}
+:deep .dx-overlay-wrapper.dx-datagrid-revert-tooltip {
+    display: none;
 }
 </style>

@@ -1,7 +1,8 @@
 <template>
   <div class="ac130TableExpenditureBudgetSummary">
-    <DxDataGrid ref="refAc130TableExpenditureBudgetSummary" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated" :show-borders="true"
-      :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+    <DxDataGrid ref="refAc130TableExpenditureBudgetSummary" :show-row-lines="true" :hoverStateEnabled="true"
+      :data-source="dataCalculated" :show-borders="true" :allow-column-reordering="move_column"
+      :allow-column-resizing="colomn_resize" :column-auto-width="true">
       <DxScrolling mode="standard" show-scrollbar="always" noDataText="내역이 없습니다" />
       <DxColumn caption="구분" cell-template="label" width="130" />
       <template #label="{ data }">
@@ -43,16 +44,16 @@ export default defineComponent({
     const checkNumber = (value: any) => {
       if (Number.isNaN(Number.parseFloat(value))) {
         return 0;
-      }else{
+      } else {
         return value
       }
     }
 
     const customizeTextColumn = (e: any) => {
-      if(e.value) {
-        if(Number.isInteger(e.value)){
+      if (e.value) {
+        if (Number.isInteger(e.value)) {
           return filters.formatCurrency(e.value)
-        }else{
+        } else {
           return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(e.value).replace('$', '')
         }
       }
@@ -60,30 +61,48 @@ export default defineComponent({
     }
 
     watch(() => props.data, (value) => {
+      // A
+      const amountA = checkNumber(value?.revenueBudgetSummary?.amount)
+      const currentMonthExecutionA = checkNumber(value?.revenueBudgetSummary?.currentMonthExecution)
+      const cumulativeTotalA = checkNumber(value?.revenueBudgetSummary?.currentMonthExecution)
+      const balanceA = checkNumber(value?.revenueBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution)
+      const executionRateA = checkNumber((value?.revenueBudgetSummary?.cumulativeTotal / value?.revenueBudgetSummary?.amount) * 100)
+      //B
+      const amountB = checkNumber(value?.expenditureBudgetSummary?.amount)
+      const currentMonthExecutionB = checkNumber(value?.expenditureBudgetSummary?.currentMonthExecution)
+      const cumulativeTotalB = checkNumber(value?.expenditureBudgetSummary?.currentMonthExecution)
+      const balanceB = checkNumber(value?.expenditureBudgetSummary?.amount - value?.expenditureBudgetSummary?.currentMonthExecution)
+      const executionRateB = checkNumber((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100)
+      // A - B
+      const amountAB = checkNumber(amountA - amountB)
+      const currentMonthExecutionAB = checkNumber(currentMonthExecutionA - currentMonthExecutionB)
+      const cumulativeTotalAB = checkNumber(cumulativeTotalA - cumulativeTotalB)
+      const balanceAB = checkNumber(balanceA - balanceB)
+      const executionRateAB = checkNumber((cumulativeTotalAB / amountAB) * 100)
       dataCalculated.value = [
         {
           label: '세입(A)',
-          amount: checkNumber(value?.revenueBudgetSummary?.amount),
-          currentMonthExecution: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution),
-          cumulativeTotal: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution),
-          balance: checkNumber(value?.revenueBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution),
-          executionRate: checkNumber((value?.revenueBudgetSummary?.cumulativeTotal / value?.revenueBudgetSummary?.amount) * 100)
+          amount: amountA,
+          currentMonthExecution: currentMonthExecutionA,
+          cumulativeTotal: cumulativeTotalA,
+          balance: balanceA,
+          executionRate: executionRateA
         },
         {
           label: '세출(B)',
-          amount: checkNumber(value?.expenditureBudgetSummary?.amount),
-          currentMonthExecution: checkNumber(value?.expenditureBudgetSummary?.currentMonthExecution),
-          cumulativeTotal: checkNumber(value?.expenditureBudgetSummary?.currentMonthExecution),
-          balance: checkNumber(value?.expenditureBudgetSummary?.amount - value?.expenditureBudgetSummary?.currentMonthExecution),
-          executionRate: checkNumber((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100)
+          amount: amountB,
+          currentMonthExecution: currentMonthExecutionB,
+          cumulativeTotal: cumulativeTotalB,
+          balance: balanceB,
+          executionRate: executionRateB
         },
         {
           label: '차액(A-B)',
-          amount: checkNumber(value?.revenueBudgetSummary?.amount - value?.expenditureBudgetSummary?.amount),
-          currentMonthExecution: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.currentMonthExecution),
-          cumulativeTotal: checkNumber(value?.revenueBudgetSummary?.cumulativeTotal - value?.expenditureBudgetSummary?.cumulativeTotal),
-          balance: checkNumber(value?.revenueBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.amount - value?.expenditureBudgetSummary?.currentMonthExecution),
-          executionRate: checkNumber(((value?.revenueBudgetSummary?.cumulativeTotal / value?.revenueBudgetSummary?.amount) * 100) - ((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100))
+          amount: amountAB,
+          currentMonthExecution: currentMonthExecutionAB,
+          cumulativeTotal: cumulativeTotalAB,
+          balance: balanceAB,
+          executionRate: executionRateAB
         }
       ]
     }, {

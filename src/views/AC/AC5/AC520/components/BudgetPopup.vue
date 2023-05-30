@@ -1,20 +1,21 @@
 <template>
-  <a-modal :visible="modalStatus" :title="step === StepCreateBudget.Step1 ? ' ' : ` `" centered
+  <a-modal :visible="modalStatus" centered
+           :title="typePopup === ComponentCreateBudget.EmployeeSalaryTable && `임직원보수일람표`"
     @cancel="setModalVisible()" :mask-closable="false"
     :width="step === StepCreateBudget.Step2 ? typePopup === ComponentCreateBudget.EmployeeSalaryTable ? '1300px' : '90%' : 500"
-    :footer="false" v-if="modalStatus" :class="step === StepCreateBudget.Step2 && `clear-border-header`">
+    :footer="false" v-if="modalStatus" :class="step === StepCreateBudget.Step1 && `clear-border-header`">
     <div v-if="step === StepCreateBudget.Step1">
       <div v-if="dataBudget?.index" class="modal-content">
-        <span>전년도 최종차수 ${서식명}를 불러와서 작성합니다.</span>
-        <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
-        <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>
-        <span>{{ dataBudget?.columnName }} 를 작성하시겠습니까?</span>
+        <span>전년도 최종차수 {{ dataBudget?.columnName }}를 불러와서 작성합니다.</span>
+        <span>(단, 과목전용조서 전용액은 불러오지 않습니다.) 상기의</span>
+        <span>내역들이 없으면 초기상태로 작성합니다. </span>
+        <span>{{ dataBudget?.columnName }}를 작성하시겠습니까?</span>
       </div>
       <div v-else class="modal-content">
-        <span>직전 최종차수 ${서식명}를 불러와서 작성합니다.</span>
-        <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
-        <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>
-        <span>{{ dataBudget?.columnName }} 를 작성하시겠습니까?</span>
+        <span>직전 최종차수 {{ dataBudget?.columnName }}를 불러와서 작성합니다.</span>
+        <span>(단, 과목전용조서 전용액은 불러오지 않습니다.) 상기의</span>
+        <span>내역들이 없으면 초기상태로 작성합니다.</span>
+        <span>{{ dataBudget?.columnName }}를 작성하시겠습니까?</span>
       </div>
     </div>
     <div v-else-if="step === StepCreateBudget.Step2">
@@ -22,7 +23,7 @@
         <EmployeeSalaryTable @closePopup="closePopup" />
       </div>
       <div v-else>
-        <ExpenseAndRevenueBudget @closePopup="closePopup" :index="index" />
+        <ExpenseAndRevenueBudget @closePopup="closePopup" />
       </div>
     </div>
     <div v-else>
@@ -32,7 +33,7 @@
     <div v-if="step === StepCreateBudget.Step1" class="footer">
       <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'"
         @onClick="setModalVisible()" />
-      <button-basic class="button-form-modal" text="네. 작성합니다." :width="140" :type="'default'" :mode="'contained'"
+      <button-basic class="button-form-modal" text="네. 작성합니다" :width="140" :type="'default'" :mode="'contained'"
         @onClick="onConfirm" />
     </div>
   </a-modal>
@@ -57,10 +58,6 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-    index: {
-      type: Number,
-      required: true
-    }
   },
   emits: ['closePopup'],
   setup(props, { emit }) {

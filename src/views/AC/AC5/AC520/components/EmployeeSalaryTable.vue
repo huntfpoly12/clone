@@ -7,7 +7,7 @@
                 @saving="handleSaving" @editor-preparing="onEditorPreparing"
                 style="height: 70vh"
                 :remote-operations="true"
-                
+
     >
       <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
@@ -15,8 +15,26 @@
       />
       <DxPaging :page-size="0"/>
       <DxToolbar>
-        <DxItem location="after" name="addRowButton" css-class="cell-button-add"/>
-        <DxItem name="saveButton"/>
+        <DxItem location="after" name="addRowButton" css-class="cell-button-add">
+          <a-tooltip title="임직원보수등록">
+            <div>
+              <DxButton size="large" @click="addRow" style="background: #337ab7; color: white">
+                <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" />
+                신규
+              </DxButton>
+            </div>
+          </a-tooltip>
+        </DxItem>
+        <DxItem name="saveButton">
+          <a-tooltip title="저장">
+            <div>
+              <DxButton style="background: #337ab7; color: white" :disabled="dataAllRow.length === 0" @click="actionSave">
+                <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" />
+                저장
+              </DxButton>
+            </div>
+          </a-tooltip>
+        </DxItem>
       </DxToolbar>
       <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
         <DxRequiredRule/>
@@ -27,10 +45,50 @@
         <DxRequiredRule/>
       </DxColumn>
       <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
-                :editor-options="{ placeholder: '선택' }">
+                :editor-options="{ placeholder: '선택' }"
+                header-cell-template="classification"
+      >
         <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value"/>
         <DxRequiredRule/>
       </DxColumn>
+      <template #classification>
+        <a-tooltip  overlayClassName="custom-tooltip-header">
+          <template #title>
+            <div class="d-flex justify-content-around" >
+              <div>직접비 대상 장기요양요원:</div>
+              <div v-if="globalFacilityBizId === 1">
+                <div>간호(조무)사</div>
+                <div>물리(작업)치료사</div>
+                <div>사회복지사</div>
+                <div>요양보호사</div>
+              </div>
+              <div v-else-if="globalFacilityBizId === 2">
+                <div>사회복지사</div>
+                <div>요양보호사</div>
+              </div>
+              <div v-else-if="globalFacilityBizId === 3">
+                <div>사회복지사</div>
+                <div>요양보호사</div>
+              </div>
+              <div v-else-if="globalFacilityBizId === 4">
+                <div>간호(조무)사간호(조무)사</div>
+                <div>치과위생사</div>
+              </div>
+              <div v-else-if="globalFacilityBizId === 5">
+                <div>요양보호사</div>
+              </div>
+              <div v-else>
+                <div>간호(조무)사</div>
+                <div>물리(작업)</div>
+                <div>사회복지사</div>
+                <div>요양보호사</div>
+              </div>
+            </div>
+          </template>
+          <div style="color: red">인건비구분</div>
+        </a-tooltip>
+      </template>
+
       <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right" format="#0,###"/>
       <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right" format="#0,###"/>
       <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right" format="#0,###"/>
@@ -115,8 +173,11 @@ import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
 import filters from "@/helpers/filters";
 import searchEmployeeOccupations from '@/graphql/queries/AC/AC5/AC520/searchEmployeeOccupations';
+import DxButton from "devextreme-vue/button";
+import {PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
 
 const emit = defineEmits(['closePopup'])
+const gridRef = ref()
 const arrSelectOccupation: any = ref([])
 const formRef = ref()
 const LaborCostClassificationArray = [{name: '직접', value: 1}, {name: '간접', value: 2}]
@@ -264,7 +325,7 @@ const onEditorPreparing = (e: any) => {
             value: keyEvent.target.value
           })
           e.setValue(keyEvent.target.value, 'occupation')
-          
+
         }
       }
     }
@@ -278,6 +339,17 @@ const deleteRow = (e: any) => {
 }
 
 const onCellPrepared = (e: any) => {
+  if (e.rowType === 'data' && e.column.dataField === 'classification') {
+    if (!dataAllRow.value.length) {
+      dataAllRow.value.push({ ...e.data, key: e.key })
+    } else {
+      const isRowExits = dataAllRow.value.find((item: any) => item.key === e.key)
+      if (!isRowExits) dataAllRow.value.push({ ...e.data, key: e.key })
+      else {
+        dataAllRow.value = dataAllRow.value.map((item: any) => item.key === e.key ? { ...item, ...e.data } : { ...item })
+      }
+    }
+  }
   const getElementCustom = (index: string) => !e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' && e.cellElement.getAttribute('aria-colindex') === index
   if (getElementCustom('2')) {
     e.cellElement.colSpan = 3
@@ -321,6 +393,12 @@ function calculateSalary(data: any) {
   const retirementReserve = +data.data.retirementReserve || 0;
   const socialInsuranceLevy = +data.data.socialInsuranceLevy || 0;
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
+}
+const addRow = () => {
+  gridRef.value?.instance.addRow()
+}
+const actionSave = () => {
+  gridRef.value?.instance.saveEditData()
 }
 </script>
 
