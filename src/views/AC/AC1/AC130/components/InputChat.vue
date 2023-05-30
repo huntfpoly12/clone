@@ -1,8 +1,8 @@
 <template>
-  <div class="input-edit-chat">
+  <div class="input-edit-chat" :class="{'input-edit-chat-dragFile': isDragging}" @dragover="dragover" @dragleave="dragleave" @drop="drop">
     <div class="input-edit-chat-input">
       <textarea rows="1" ref="inputChat" :placeholder="placeholder" v-model="contentBinding" @input="changeInput"
-        @keypress.enter.exact.prevent="submitChat" :disabled="disabled" ></textarea>
+        @keypress.enter.exact.prevent="submitChat" :disabled="disabled"></textarea>
     </div>
 
     <div class="input-edit-chat-input-action">
@@ -24,17 +24,13 @@
           <FileOutlined style="margin-right: 10px;" />
           <div class="input-edit-chat-input-files-item-file-info">
             <p class="input-edit-chat-input-files-item-file-info-name">{{ file?.file ? file.file.name : file.name }}</p>
-            <!-- wait BE -->
-            <!-- <p class="input-edit-chat-input-files-item-file-info-size">({{ formatFileSize(file?.file ? file.file.size :
-              file.size) }})
-            </p> -->
           </div>
         </div>
         <DeleteOutlined class="input-edit-chat-input-files-item-delete" @click="removeFile(index)" />
       </div>
     </div>
   </div>
-  <input v-show="false" ref="inputFile" type="file" @change="uploadPreviewFile" />
+  <input v-show="false" ref="inputFile" type="file" multiple @change="uploadPreviewFile" />
 </template>
   
 <script lang="ts">
@@ -47,6 +43,7 @@ import MarkdownCustom from './MarkdownCustom.vue';
 import { companyId } from "@/helpers/commonFunction"
 
 import Repository from "@/repositories";
+import { Message } from "@/configs/enum";
 
 const uploadRepository = Repository.get("upload");
 export default defineComponent({
@@ -95,6 +92,8 @@ export default defineComponent({
       index: 0,
       files: [],
     })
+
+    const isDragging = ref(false)
     const date = new Date()
     const currentTime = date.getFullYear() + '-' + ((date.getMonth() + 1) < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
 
@@ -143,45 +142,49 @@ export default defineComponent({
       inputFile.value.click()
     }
 
-    const uploadPreviewFile = async (e: any) => {
-      const file = e.target.files[0]
-      const isLt10M = file.size / 1024 / 1024 <= 10;
-      if (!isLt10M) {
-        notification('error', 'Image must smaller than 10MB!')
+    const uploadPreviewFile = async (e?: any, files?: any) => {
+      let listFile: any = []
+      if (!!files && files.length) {
+        listFile = Array.from(files)
+      } else {
+        listFile = Array.from(e.target.files)
       }
-      const isDuplicaseName = filesUpload.value.some((items: any) => file.name === items?.file?.name)
-      if (isDuplicaseName) {
-        notification('error', 'Duplicate image are not allowed!')
-      }
-      if (!isLt10M || isDuplicaseName) {
+
+      if ((listFile.length + filesUpload.value.length) > 10) {
+        notification('error', 'send max 10 file!')
         e.target.value = null
         return
       }
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('companyId', companyId);
-      formData.append('fiscalYear', acYear.value);
-      formData.append('facilityBusinessId', globalFacilityBizId.value);
-      uploadRepository.accountingFile(formData).then(async (res: any) => {
-        filesUpload.value.push({
-          id: res.data.id,
-          contentType: file.type,
-          name: file.name,
+      listFile.forEach((file: any) => {
+        const isLt10M = file.size / 1024 / 1024 <= 10;
+        if (!isLt10M) {
+          notification("error", Message.getMessage("AC110", "003").message);
+        }
+        const isDuplicaseName = filesUpload.value.some((items: any) => file.name === items?.file?.name)
+        if (isDuplicaseName) {
+          notification("error", Message.getMessage("AC110", "004").message);
+        }
+        if (!isLt10M || isDuplicaseName) {
+          e.target.value = null
+          return
+        }
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('companyId', companyId);
+        formData.append('fiscalYear', acYear.value);
+        formData.append('facilityBusinessId', globalFacilityBizId.value);
+        uploadRepository.accountingFile(formData).then(async (res: any) => {
+          filesUpload.value.push({
+            id: res.data.id,
+            contentType: file.type,
+            name: file.name,
+          })
+        }).catch((error: any) => {
+          notification('error', error.message)
+        }).finally(() => {
+          e.target.value = null
         })
-      }).catch((error: any) => {
-        console.log('err Upload', error.message);
-      }).finally(() => {
-        e.target.value = null
-      })
-    }
-
-    const getBase64 = (file: File) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
       });
     }
 
@@ -209,6 +212,24 @@ export default defineComponent({
       })
     }
 
+    const dragover = (event: any) => {
+      event.preventDefault();
+      if (props.disabled) return
+      isDragging.value = true;
+    }
+
+    const dragleave = (event: any) => {
+      if (props.disabled) return
+      isDragging.value = false;
+    }
+
+    const drop = (event: any) => {
+      event.preventDefault();
+      if (props.disabled) return
+      uploadPreviewFile(null, event.dataTransfer.files)
+      isDragging.value = false;
+    }
+
     return {
       listChat,
       changeInput,
@@ -228,6 +249,10 @@ export default defineComponent({
       resetInputChat,
       resizeInput,
       focus,
+      dragover,
+      dragleave,
+      drop,
+      isDragging
     }
   },
 })
@@ -235,8 +260,9 @@ export default defineComponent({
   
 <style lang="scss" scoped>
 .input-edit-chat {
-  padding-top: 5px;
-
+  &-dragFile {
+    border: 1px dashed rgb(0, 217, 255);
+  }
   &-input {
     flex-grow: 1;
 
@@ -252,30 +278,11 @@ export default defineComponent({
       font-size: 14px;
       border: 1px solid #b3b5b6;
       border-radius: 5px;
+
       &:placeholder-shown {
         font-style: italic;
         font-size: 13px;
         padding: 8px 10px;
-      }
-    }
-
-    &-reply {
-      border-bottom: 0 !important;
-    }
-
-    &-contentReply {
-      padding: 0 0 0 40px;
-      margin-bottom: 10px;
-      overflow: hidden;
-      border: 1px solid #385D8A;
-      border-top: 0;
-      position: relative;
-
-      &-iconclose {
-        position: absolute;
-        top: 10px;
-        right: 5px;
-        cursor: pointer;
       }
     }
 
@@ -302,16 +309,12 @@ export default defineComponent({
       }
     }
 
-    .active-input-file {
-      border-radius: 0 0 20px 20px;
-      border-top: none;
-    }
-
     &-files {
       width: 100%;
-      background-color: #fff;
 
       &-item {
+        background-color: #f7f7f7;
+        margin-top: 2px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -331,7 +334,6 @@ export default defineComponent({
           &-info {
             p {
               margin: 0;
-              line-height: 15px;
               white-space: nowrap;
             }
 

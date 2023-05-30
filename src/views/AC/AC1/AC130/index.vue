@@ -292,7 +292,7 @@ export default defineComponent({
     const getStatusCashRegisterSummary = () => {
       if (dataSource.value?.cashRegisterSummary) {
         const cashRegisterSummary = dataSource.value.cashRegisterSummary
-        return (cashRegisterSummary.bankbookBalance - cashRegisterSummary.totalIncome - cashRegisterSummary.totalSpending) === 0
+        return (cashRegisterSummary.bankbookBalance - (cashRegisterSummary.totalIncome - cashRegisterSummary.totalSpending)) === 0
       } else {
         return false
       }
