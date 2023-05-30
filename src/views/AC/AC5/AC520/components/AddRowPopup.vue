@@ -1,8 +1,8 @@
 <template>
   <a-modal :visible="visible" centered @cancel="actionClose()" :mask-closable="btnClose" :footer="false"
-    :closable="btnClose">
+    :closable="btnClose" class="clear-border-header">
     <div v-if="step === StepCreateBudget.Step1" class="text-center">
-      {{ index === 0 ? `본예산 작성하시겠습니까?` : `작성하시겠습니까` }}
+      {{ index === 0 ? `본예산 작성하시겠습니까?` : `추경 ${index}차 작성하시겠습니까?` }}
     </div>
     <div v-else-if="step === StepCreateBudget.Step2">
       <div class="modal-content">
@@ -115,5 +115,12 @@ export default defineComponent({
   align-content: center;
   gap: 10px;
   margin-top: 20px;
+}
+</style>
+<style lang="scss">
+.clear-border-header {
+  .ant-modal-header {
+    border-bottom: none;
+  }
 }
 </style>

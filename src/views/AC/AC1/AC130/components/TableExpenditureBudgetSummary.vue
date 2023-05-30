@@ -82,7 +82,7 @@ export default defineComponent({
           amount: checkNumber(value?.revenueBudgetSummary?.amount - value?.expenditureBudgetSummary?.amount),
           currentMonthExecution: checkNumber(value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.currentMonthExecution),
           cumulativeTotal: checkNumber(value?.revenueBudgetSummary?.cumulativeTotal - value?.expenditureBudgetSummary?.cumulativeTotal),
-          balance: checkNumber(value?.revenueBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution - value?.expenditureBudgetSummary?.amount - value?.expenditureBudgetSummary?.currentMonthExecution),
+          balance: checkNumber((value?.revenueBudgetSummary?.amount - value?.revenueBudgetSummary?.currentMonthExecution) - (value?.expenditureBudgetSummary?.amount - value?.expenditureBudgetSummary?.currentMonthExecution)),
           executionRate: checkNumber(((value?.revenueBudgetSummary?.cumulativeTotal / value?.revenueBudgetSummary?.amount) * 100) - ((value?.expenditureBudgetSummary?.cumulativeTotal / value?.expenditureBudgetSummary?.amount) * 100))
         }
       ]

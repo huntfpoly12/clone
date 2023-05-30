@@ -917,6 +917,8 @@ export default defineComponent({
     }
     // check disable switch refund
     const checkDisableRefund = () => {
+      let hot = wrapper.value.hotInstance;
+      let newCellSetting = [...cellsSettingModified]
       if (
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||
@@ -924,6 +926,10 @@ export default defineComponent({
       ){
         dataSource.value[0].refund = false
         disabledRefund.value = true
+        newCellSetting[574].readOnly = true
+        newCellSetting[574].className = "htMiddle htRight gray-cell"
+        newCellSetting[575].readOnly = true
+        newCellSetting[575].className = "htMiddle htRight disable-cell"
       } 
 
       if (
@@ -932,19 +938,34 @@ export default defineComponent({
       ) {
         dataSource.value[0].refund = true
         disabledRefund.value = true
+        newCellSetting[574].readOnly = false
+        newCellSetting[574].className = "htMiddle htRight"
+        newCellSetting[575].readOnly = false
+        newCellSetting[575].className = "htMiddle htRight"
       }
 
       if (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2)
       {
         dataSource.value[0].refund = true
         disabledRefund.value = false
+        newCellSetting[574].readOnly = false
+        newCellSetting[574].className = "htMiddle htRight"
+        newCellSetting[575].readOnly = false
+        newCellSetting[575].className = "htMiddle htRight"
       }
 
       if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
       {
         dataSource.value[0].refund = false
         disabledRefund.value = false
+        newCellSetting[574].readOnly = true
+        newCellSetting[574].className = "htMiddle htRight gray-cell"
+        newCellSetting[575].readOnly = true
+        newCellSetting[575].className = "htMiddle htRight disable-cell"
       }
+      hot.updateSettings({
+        cell: newCellSetting
+      });
     }
     return {
       setModalVisible,

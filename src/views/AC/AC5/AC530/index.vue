@@ -28,7 +28,6 @@
     <div class="ac-530-table">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"
         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
-        <DxScrolling mode="standard" show-scrollbar="always" />
         <DxColumn caption="서식" cell-template="accountingReportType" />
         <template #accountingReportType="{ data }">
           <AccountingReportType v-model:valueSelect="data.data.accountingReportType" :isSelect="false" />

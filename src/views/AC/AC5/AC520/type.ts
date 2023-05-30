@@ -23,3 +23,8 @@ export enum ACTION {
   ADD = "add",
   EDIT = "edit",
 }
+export enum TypeMail {
+  BudgetSummaryTable,
+  Budget,
+  EmployeePayTable
+}
