@@ -1,5 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" centered
+           :title="typePopup === ComponentCreateBudget.EmployeeSalaryTable && `임직원보수일람표`"
     @cancel="setModalVisible()" :mask-closable="false"
     :width="step === StepCreateBudget.Step2 ? typePopup === ComponentCreateBudget.EmployeeSalaryTable ? '1300px' : '90%' : 500"
     :footer="false" v-if="modalStatus" :class="step === StepCreateBudget.Step1 && `clear-border-header`">

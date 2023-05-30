@@ -28,10 +28,49 @@
           <DxRequiredRule />
         </DxColumn>
         <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
-                  :editor-options="{ placeholder: '선택' }">
+                  :editor-options="{ placeholder: '선택' }"
+                  header-cell-template="classification"
+        >
           <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value" />
           <DxRequiredRule />
         </DxColumn>
+        <template #classification>
+          <a-tooltip  overlayClassName="custom-tooltip-header">
+            <template #title>
+              <div class="d-flex justify-content-around" >
+                <div>직접비 대상 장기요양요원:</div>
+                <div v-if="globalFacilityBizId === 1">
+                  <div>간호(조무)사</div>
+                  <div>물리(작업)치료사</div>
+                  <div>사회복지사</div>
+                  <div>요양보호사</div>
+                </div>
+                <div v-else-if="globalFacilityBizId === 2">
+                  <div>사회복지사</div>
+                  <div>요양보호사</div>
+                </div>
+                <div v-else-if="globalFacilityBizId === 3">
+                  <div>사회복지사</div>
+                  <div>요양보호사</div>
+                </div>
+                <div v-else-if="globalFacilityBizId === 4">
+                  <div>간호(조무)사간호(조무)사</div>
+                  <div>치과위생사</div>
+                </div>
+                <div v-else-if="globalFacilityBizId === 5">
+                  <div>요양보호사</div>
+                </div>
+                <div v-else>
+                  <div>간호(조무)사</div>
+                  <div>물리(작업)</div>
+                  <div>사회복지사</div>
+                  <div>요양보호사</div>
+                </div>
+              </div>
+            </template>
+            <div style="color: red">인건비구분</div>
+          </a-tooltip>
+        </template>
         <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right" format="#0,###" />
         <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right" format="#0,###" />
         <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right" format="#0,###" />
@@ -475,3 +514,9 @@ function calculateSalary(data: any) {
 :deep(.dx-freespace-row) {
   display: none !important;
 }</style>
+<style>
+.custom-tooltip-header {
+  max-width: 320px !important;
+  width: 320px !important;
+}
+</style>
