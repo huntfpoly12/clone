@@ -16,8 +16,26 @@
         </DxEditing>
         <DxPaging :page-size="0" />
         <DxToolbar>
-          <DxItem location="after" name="addRowButton" css-class="cell-button-add" />
-          <DxItem name="saveButton" title="Add" />
+          <DxItem location="after" name="addRowButton" css-class="cell-button-add" cell-template="addRow">
+            <a-tooltip title="임직원보수등록">
+              <div>
+                <DxButton size="large" @click="addRow" style="background: #337ab7; color: white">
+                  <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" />
+                  신규
+                </DxButton>
+              </div>
+            </a-tooltip>
+          </DxItem>
+          <DxItem name="saveButton">
+            <a-tooltip title="저장">
+              <div>
+                <DxButton style="background: #337ab7; color: white" @click="actionSave">
+                  <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" />
+                  저장
+                </DxButton>
+              </div>
+            </a-tooltip>
+          </DxItem>
         </DxToolbar>
         <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
           <DxRequiredRule />
@@ -177,6 +195,8 @@ import searchEmployeeOccupations from "@/graphql/queries/AC/AC5/AC520/searchEmpl
 import Guid from "devextreme/core/guid";
 import filters from "@/helpers/filters";
 import isEqual from 'lodash/isEqual';
+import DxButton from "devextreme-vue/button";
+import {PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
 
 const emit = defineEmits(['closePopup'])
 const props = defineProps({
@@ -189,6 +209,7 @@ const props = defineProps({
     required: true
   }
 })
+const gridRef = ref()
 const arrSelectOccupation: any = ref([])
 const formRef = ref()
 const LaborCostClassificationArray = [{ name: '직접', value: 1 }, { name: '간접', value: 2 }]
@@ -445,6 +466,12 @@ function calculateSalary(data: any) {
   const retirementReserve = +data.data?.retirementReserve || 0;
   const socialInsuranceLevy = +data.data?.socialInsuranceLevy || 0;
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
+}
+const addRow = () => {
+  gridRef.value?.instance.addRow()
+}
+const actionSave = () => {
+  gridRef.value?.instance.saveEditData()
 }
 </script>
 
