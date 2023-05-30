@@ -151,7 +151,7 @@ export default defineComponent({
       }
 
       if ((listFile.length + filesUpload.value.length) > 10) {
-        notification('error', 'send max 10 file!')
+        notification("error", Message.getMessage("COMMON", "1005").message);
         e.target.value = null
         return
       }
@@ -159,11 +159,11 @@ export default defineComponent({
       listFile.forEach((file: any) => {
         const isLt10M = file.size / 1024 / 1024 <= 10;
         if (!isLt10M) {
-          notification("error", Message.getMessage("AC110", "003").message);
+          notification("error", Message.getMessage("COMMON", "1003").message);
         }
         const isDuplicaseName = filesUpload.value.some((items: any) => file.name === items?.file?.name)
         if (isDuplicaseName) {
-          notification("error", Message.getMessage("AC110", "004").message);
+          notification("error", Message.getMessage("COMMON", "1004").message);
         }
         if (!isLt10M || isDuplicaseName) {
           e.target.value = null

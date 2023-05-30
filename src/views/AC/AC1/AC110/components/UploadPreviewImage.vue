@@ -224,17 +224,17 @@ export default defineComponent({
         file.type === "image/gif" ||
         file.type === "image/jpg";
       if (!isImage) {
-        notification("error", Message.getMessage("AC110", "002").message);
+        notification("error", Message.getMessage("COMMON", "1002").message);
       }
       const isLt10M = file.size / 1024 / 1024 <= 10;
       if (!isLt10M) {
-        notification("error", Message.getMessage("AC110", "003").message);
+        notification("error", Message.getMessage("COMMON", "1003").message);
       }
       const isDuplicaseName = fileList.value.some(
         (items: any) => file.name === items.name
       );
       if (isDuplicaseName) {
-        notification("error", Message.getMessage("AC110", "004").message);
+        notification("error", Message.getMessage("COMMON", "1004").message);
       }
       isFailUpload.value = isImage && isLt10M && !isDuplicaseName;
     };
