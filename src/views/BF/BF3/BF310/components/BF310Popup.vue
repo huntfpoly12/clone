@@ -164,7 +164,8 @@
                     :layoutCustom="'horizontal'" />
                   <div>
                     <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                      :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
+                      :headStyle="{ padding: '5px', color: checkedAccounting == 1 ? 'red' : '' }"
+                      bodyStyle="padding: 0px 0px">
                     </a-card>
                     <div id="data-grid-demo">
                       <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
@@ -319,7 +320,7 @@
                   :label-col=" labelCol ">
                   <biz-number-text-box width="250px" v-model:valueInput="
                     formState.content.cmsBank.ownerBizNumber
-                  " :required=" true " nameInput="cmsBank-ownerBizNumber"/>
+                  " :required=" true " nameInput="cmsBank-ownerBizNumber" />
                   <div class="noteImage">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px; margin-top: 0px" />
                     <div class="noteText">
@@ -727,8 +728,13 @@ export default defineComponent({
         }
         return;
       }
-      if (checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2) {
+      if ((checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2)) {
         notification("error", Message.getMessage('BF310', '001').message);
+        activeKey.value = 4;
+        return;
+      }
+      if ((checkedAccounting.value === 1 && dataSource.value.length === 0)) {
+        notification("error", Message.getMessage('COMMON', '102').message);
         activeKey.value = 4;
         return;
       }
