@@ -61,7 +61,7 @@ export default defineComponent({
         totalIncome: value?.totalIncome,
         totalSpending: value?.totalSpending,
         bookBalance: checkNumber(value?.totalIncome - value?.totalSpending),
-        difference: checkNumber(value?.bankbookBalance - value?.totalIncome - value?.totalSpending)
+        difference: checkNumber(value?.bankbookBalance - (value?.totalIncome - value?.totalSpending))
       }
     }, {
       deep: true,
