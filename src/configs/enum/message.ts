@@ -46,6 +46,10 @@ export class Message extends BaseType {
         '901': { "message" : "선택할 내용이 없습니다."}, // No data to select
        // Upload Image 
         '1001': { "message" : "파일형식이 유효하지 않습니다"}, // File format is not valid
+        '1002': { "message" : "png, jpg, jpeg, gif 파일만 업로드할 수 있습니다" }, //  You can only upload png, jpg, jpeg, gif file!
+        '1003': { "message" : "파일 크기는 10MB보다 작아야합니다"}, // File must smaller than 10MB! 
+        '1004': { "message" : "중복된 파일은 업로드가 불가합니다" }, // Duplicate file are not allowed 
+        '1005': { "message" : "파일은 최대 10개까지 업로드가능합니다" }, // You can upload up to 10 files
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
@@ -131,9 +135,7 @@ export class Message extends BaseType {
   //통장내역
     public static AC110 = new Message({
         '001': { "message" : "새로운 통장내역이 있는 경우 추가로 불러옵니다. 자주 사용시 시스템 부하를 줄 수 있기에, 제한되는 경우가 있으니 주의하셔서 이용하시기 바랍니다. 그래도 불러오시겠습니까?","yes": "네. 불러옵니다","no":"아니요"}, // If you have a new bank account details, call in addition. Frequent use may cause system load, so please be careful when using it. Will you still invite me?
-        '002': { "message" : "png, jpg, jpeg, gif 파일만 업로드할 수 있습니다" }, //  You can only upload png, jpg, jpeg, gif file!
-        '003': { "message" : "파일 크기는 10MB보다 작아야합니다"}, // File must smaller than 10MB! 
-        '004': { "message" : "중복된 파일은 업로드가 불가합니다" }, // Duplicate file are not allowed 
+      
         '005': { "message" : "물품내역을 삭제하시겠습니까?", "yes": "네. 삭제합니다", "no":"아니요" }, // Do you want to delete item details?
     });
        
