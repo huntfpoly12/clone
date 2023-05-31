@@ -6,8 +6,8 @@
                   :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
                   :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
                   @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" @saving="handleSaving"
-                  @editor-preparing="onEditorPreparing" style="height: 70vh" :remote-operations="true">
-        <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" />
+                  style="height: 70vh" :remote-operations="true">
+        <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
         <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true" :use-icons="true"
                    new-row-position="last">
           <DxTexts add-row="임직원보수등록"/>
@@ -41,17 +41,44 @@
           <DxRequiredRule />
         </DxColumn>
         <DxColumn caption="직종" data-field="occupation" :editor-options="{ placeholder: '선택 또는 직접입력' }"
-                  css-class="text-red p-0" width="165" alignment="center">
-          <DxLookup :data-source="arrSelectOccupation" display-expr="name" value-expr="value" />
+                  css-class="text-red p-0" width="165" alignment="center"
+                  edit-cell-template="selectOccupation"
+        >
           <DxRequiredRule />
         </DxColumn>
+        <template #selectOccupation="{data}">
+          <DxSelectBox
+            :noDataText="Message.getMessage('COMMON', '901').message"
+            :data-source="arrSelectOccupation"
+            placeholder="선택 또는 직접입력"
+            v-model:value="data.value"
+            display-expr="name"
+            value-expr="value"
+            :searchEnabled="true"
+            :searchTimeout="0"
+            @value-changed="setEditedValue($event, data)"
+            @enter-key="onEnterKey($event, data)"
+          />
+        </template>
         <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
                   :editor-options="{ placeholder: '선택' }"
                   header-cell-template="classification"
+                  edit-cell-template="laborCostClassificationArray"
         >
           <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value" />
           <DxRequiredRule />
         </DxColumn>
+        <template #laborCostClassificationArray="{data}">
+          <DxSelectBox
+            :noDataText="Message.getMessage('COMMON', '901').message"
+            :data-source="LaborCostClassificationArray"
+            placeholder="선택 또는 직접입력"
+            v-model:value="data.value"
+            display-expr="name"
+            value-expr="value"
+            @value-changed="setEditedValue($event, data)"
+          />
+        </template>
         <template #classification>
           <a-tooltip  overlayClassName="custom-tooltip-header">
             <template #title>
@@ -101,7 +128,9 @@
           <span class="px-7">{{ calculateSalary(data) }}</span>
         </template>
         <DxColumn type="buttons">
-          <DxButtonGrid name="delete" @click="deleteRow" />
+          <DxButtonGrid name="delete" @click="deleteRow">
+            <DeleteOutlined style="font-size: 16px; cursor: pointer" />
+          </DxButtonGrid>
         </DxColumn>
         <DxSummary>
           <DxTotalItem cssClass="custom" show-in-column="drag" display-format="소계" />
@@ -196,7 +225,9 @@ import Guid from "devextreme/core/guid";
 import filters from "@/helpers/filters";
 import isEqual from 'lodash/isEqual';
 import DxButton from "devextreme-vue/button";
-import {PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
+import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
+import DxSelectBox from "devextreme-vue/select-box";
+import {ValueChangedEvent} from "devextreme/ui/select_box";
 
 const emit = defineEmits(['closePopup'])
 const props = defineProps({
@@ -365,21 +396,7 @@ watch(() => dataAllRow.value, (val) => {
   }, initialValue)
   Object.assign(formatSummary, result)
 }, { deep: true })
-const onEditorPreparing = (e: any) => {
-  if (e.dataField == "occupation" && e.parentType === "dataRow") {
-    e.editorElement.onkeyup = function (keyEvent: any) {
-      if (keyEvent.key === 'Enter') {
-        if (keyEvent.target.value && !arrSelectOccupation.value.some((item: any) => item.value === keyEvent.target.value)) {
-          arrSelectOccupation.value.push({
-            name: keyEvent.target.value,
-            value: keyEvent.target.value
-          })
-          e.setValue(keyEvent.target.value, 'occupation')
-        }
-      }
-    }
-  }
-}
+
 const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
@@ -449,16 +466,6 @@ const onRowPrepared = (e: any) => {
     rowDrag && rowDrag.appendChild(text)
   }
 }
-// create function random string have length = 4
-const randomString = () => {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
-  const length = 4;
-  let str = '';
-  for (let i = 0; i < length; i++) {
-    str += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return str;
-}
 function calculateSalary(data: any) {
   const salary = +data.data?.salary || 0;
   const allowance = +data.data?.allowance || 0;
@@ -472,6 +479,22 @@ const addRow = () => {
 }
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
+}
+const setEditedValue = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
+  cellInfo.setValue(valueChangedEventArg.value);
+}
+const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
+  valueChangedEventArg.element.onkeyup = function (keyEvent: any) {
+    if (keyEvent.keyCode === 13) {
+      if (keyEvent.target.value && !arrSelectOccupation.value.some((item: any) => item.value === keyEvent.target.value)) {
+        arrSelectOccupation.value.push({
+          name: keyEvent.target.value,
+          value: keyEvent.target.value
+        })
+        cellInfo.setValue(keyEvent.target.value);
+      }
+    }
+  }
 }
 </script>
 

@@ -4,7 +4,7 @@
                 :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
                 :allow-column-resizing="column_resize" :column-auto-width="true" noDataText="내역이 없습니다"
                 @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared"
-                @saving="handleSaving" @editor-preparing="onEditorPreparing"
+                @saving="handleSaving"
                 style="height: 70vh"
                 :remote-operations="true"
 
@@ -40,17 +40,44 @@
         <DxRequiredRule/>
       </DxColumn>
       <DxColumn caption="직종" data-field="occupation" :editor-options="{ placeholder: '선택 또는 직접입력' }"
-                css-class="text-red p-0" width="165" alignment="center">
-        <DxLookup :data-source="arrSelectOccupation" display-expr="name" value-expr="value" />
+                css-class="text-red p-0" width="165" alignment="center"
+                edit-cell-template="selectOccupation"
+      >
         <DxRequiredRule/>
       </DxColumn>
+      <template #selectOccupation="{data}">
+        <DxSelectBox
+          :noDataText="Message.getMessage('COMMON', '901').message"
+          :data-source="arrSelectOccupation"
+          placeholder="선택 또는 직접입력"
+          v-model:value="data.value"
+          display-expr="name"
+          value-expr="value"
+          :searchEnabled="true"
+          :searchTimeout="0"
+          @value-changed="setEditedValue($event, data)"
+          @enter-key="onEnterKey($event, data)"
+        />
+      </template>
       <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
                 :editor-options="{ placeholder: '선택' }"
                 header-cell-template="classification"
+                edit-cell-template="laborCostClassificationArray"
       >
         <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value"/>
         <DxRequiredRule/>
       </DxColumn>
+      <template #laborCostClassificationArray="{data}">
+        <DxSelectBox
+          :noDataText="Message.getMessage('COMMON', '901').message"
+          :data-source="LaborCostClassificationArray"
+          placeholder="선택 또는 직접입력"
+          v-model:value="data.value"
+          display-expr="name"
+          value-expr="value"
+          @value-changed="setEditedValue($event, data)"
+        />
+      </template>
       <template #classification>
         <a-tooltip  overlayClassName="custom-tooltip-header">
           <template #title>
@@ -99,7 +126,9 @@
         <span class="px-7">{{ calculateSalary(data) }}</span>
       </template>
       <DxColumn type="buttons">
-        <DxButtonGrid name="delete" @click="deleteRow"/>
+        <DxButtonGrid name="delete" @click="deleteRow">
+          <DeleteOutlined style="font-size: 16px; cursor: pointer" />
+        </DxButtonGrid>
       </DxColumn>
       <DxSummary>
         <DxTotalItem cssClass="custom" show-in-column="drag" display-format="소계"/>
@@ -164,7 +193,7 @@ import {
 
 import {computed, reactive, ref, watch} from 'vue'
 import {useStore} from "vuex";
-import {InitNewRowEvent, SavingEvent} from "devextreme/ui/data_grid";
+import {SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
 import {useMutation, useQuery} from "@vue/apollo-composable";
@@ -174,7 +203,9 @@ import {Message} from "@/configs/enum";
 import filters from "@/helpers/filters";
 import searchEmployeeOccupations from '@/graphql/queries/AC/AC5/AC520/searchEmployeeOccupations';
 import DxButton from "devextreme-vue/button";
-import {PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
+import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
+import DxSelectBox from "devextreme-vue/select-box";
+import {ValueChangedEvent} from "devextreme/ui/select_box";
 
 const emit = defineEmits(['closePopup'])
 const gridRef = ref()
@@ -315,22 +346,6 @@ watch(() => dataAllRow.value, (val: any) => {
     Object.assign(formatSummary, result)
   }
 }, {deep: true})
-const onEditorPreparing = (e: any) => {
-  if (e.dataField == "occupation" && e.parentType === "dataRow") {
-    e.editorElement.onkeyup = function (keyEvent: any) {
-      if (keyEvent.key === 'Enter') {
-        if (keyEvent.target.value && !arrSelectOccupation.value.some((item: any) => item.value === keyEvent.target.value)) {
-          arrSelectOccupation.value.push({
-            name: keyEvent.target.value,
-            value: keyEvent.target.value
-          })
-          e.setValue(keyEvent.target.value, 'occupation')
-
-        }
-      }
-    }
-  }
-}
 const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
@@ -400,7 +415,24 @@ const addRow = () => {
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
 }
+const setEditedValue = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
+  cellInfo.setValue(valueChangedEventArg.value);
+}
+const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
+  valueChangedEventArg.element.onkeyup = function (keyEvent: any) {
+    if (keyEvent.keyCode === 13) {
+      if (keyEvent.target.value && !arrSelectOccupation.value.some((item: any) => item.value === keyEvent.target.value)) {
+        arrSelectOccupation.value.push({
+          name: keyEvent.target.value,
+          value: keyEvent.target.value
+        })
+        cellInfo.setValue(keyEvent.target.value);
+      }
+    }
+  }
+}
 </script>
+
 
 <style scoped lang="scss">
 .title {
