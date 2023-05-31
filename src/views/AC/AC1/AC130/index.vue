@@ -174,15 +174,15 @@ export default defineComponent({
     const refTableExpenditureBudgetSummary = ref()
     const refTableRevenueBudgetSummary = ref()
 
-    onMounted(() => {
-      setTimeout(() => {
-        if (refAc130Checklist.value.offsetHeight < refAc130Checklist.value.scrollHeight) {
-          refTableCashRegisterSummary.value.resetTable()
-          refTableExpenditureBudgetSummary.value.resetTable()
-          refTableRevenueBudgetSummary.value.resetTable()
-        }
-      }, 1000);
-    })
+    // onMounted(() => {
+    //   setTimeout(() => {
+    //     if (refAc130Checklist.value.offsetHeight < refAc130Checklist.value.scrollHeight) {
+    //       refTableCashRegisterSummary.value.resetTable()
+    //       refTableExpenditureBudgetSummary.value.resetTable()
+    //       refTableRevenueBudgetSummary.value.resetTable()
+    //     }
+    //   }, 1000);
+    // })
     // COMPUTED
     /// Graphql 
     /// queries
