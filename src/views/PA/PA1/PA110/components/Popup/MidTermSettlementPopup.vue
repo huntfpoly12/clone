@@ -80,6 +80,8 @@ export default defineComponent({
         successSaveMidTermSettlement((e) => {
             notification("success", Message.getMessage("COMMON", "106").message);
             emit("closePopup", false);
+            store.state.common.pa110.dataIncomeIdBackend = store.state.common.pa110.incomeId
+			store.state.common.pa110.statusClickButtonSave = true;
             store.state.common.pa110.loadingTableInfo++;
         });
 
