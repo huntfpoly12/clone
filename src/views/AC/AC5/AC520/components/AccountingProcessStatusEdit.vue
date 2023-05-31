@@ -1,5 +1,5 @@
 <template>
-  <a-popover v-model:visible="visible" :trigger="data.status !== 20 &&  data.revenueBudgetSum !== null ? 'click' :''" color="#e6e6e6">
+  <a-popover v-model:visible="visible" :trigger="data.status !== 20 && data.revenueBudgetSum !== null && data.expenditureBudgetSum !== null ? 'click' :''" color="#e6e6e6">
     <template #content>
       <div class="mytext">
         <div v-if="status == 30 || status == 40">
@@ -20,7 +20,7 @@
     </template>
     <div>
       <button-basic :width="100" :text="textBtn" :class="classBtn"
-                    class="buttonModal">
+                    class="buttonModal" @onClick="click">
       </button-basic>
     </div>
   </a-popover>
@@ -30,6 +30,7 @@ import {computed, defineComponent, PropType, reactive, ref} from "vue";
 import {companyId, userType} from "@/helpers/commonFunction";
 import {useMutation} from "@vue/apollo-composable";
 import changeBudgetStatus from "@/graphql/mutations/AC/AC5/AC520/changeBudgetStatus";
+import notification from "@/utils/notification";
 
 export default defineComponent({
   props: {
@@ -43,6 +44,7 @@ export default defineComponent({
         status: number,
         revenueBudgetSum: number | null
         employeePaySum: number | null
+        expenditureBudgetSum: number | null
       }>,
       required: true
     },
@@ -105,7 +107,11 @@ export default defineComponent({
         status: statusType
       })
     }
-
+    const click = () => {
+      if (props.data.revenueBudgetSum === null || props.data.expenditureBudgetSum === null) {
+        notification('warning', '세출예산서, 세입예산서 모두 내역이 있어야만 마감상태 변경이 가능합니다.')
+      }
+    }
     return {
       status,
       arrayRadioUser,
@@ -116,7 +122,8 @@ export default defineComponent({
       submitChangeStatus,
       textBtn,
       classBtn,
-      visible
+      visible,
+      click
     }
   },
 });
