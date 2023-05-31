@@ -406,6 +406,7 @@ export default defineComponent({
         };
         if (countGet.value == 1) {
           employeeRequestListTrigger.value = true;
+          employeeRequestListRefetch();
         } else {
           countGet.value = 0;
         }
@@ -443,6 +444,7 @@ export default defineComponent({
       result: employeeRequestListResult,
       onError: employeeRequestListError,
       loading: loading1,
+      refetch: employeeRequestListRefetch,
     } = useQuery(
       queries.getMajorInsuranceAdminCompanyEmployeeRequestList,
       employeeRequestListParam,
@@ -706,11 +708,6 @@ export default defineComponent({
       if (e) {
         typeViewUrl.value = 1;
         callApiUrl();
-        console.log(
-          `output->viewUrlType.value`,
-          viewUrlType.value,
-          viewUrlParam
-        );
       }
     };
 
@@ -763,11 +760,6 @@ export default defineComponent({
     };
     const downConfirm2 = (e: any) => {
       if (e) {
-        console.log(
-          `output->viewUrlType.value`,
-          viewUrlType.value,
-          viewUrlParam
-        );
         typeViewUrl.value = 2;
         if (viewUrlType.value !== 5) {
           callApiUrl();
@@ -819,6 +811,7 @@ export default defineComponent({
       emit("closeModal", true);
       if (!employeeRequestListTrigger.value) {
         employeeRequestListTrigger.value = true;
+        employeeRequestListRefetch();
       }
     });
     onError2((e: any) => {
@@ -851,6 +844,7 @@ export default defineComponent({
       emit("closeModal", true);
       if (!employeeRequestListTrigger.value) {
         employeeRequestListTrigger.value = true;
+        employeeRequestListRefetch();
       }
     });
     onError3((e: any) => {
@@ -884,6 +878,7 @@ export default defineComponent({
     onError4((e: any) => {
       if (!employeeRequestListTrigger.value) {
         employeeRequestListTrigger.value = true;
+        employeeRequestListRefetch();
       }
       notification("error", e.message);
     });
@@ -916,6 +911,7 @@ export default defineComponent({
       emit("closeModal", true);
       if (!employeeRequestListTrigger.value) {
         employeeRequestListTrigger.value = true;
+        employeeRequestListRefetch();
       }
     });
     onError5((e: any) => {
@@ -948,6 +944,8 @@ export default defineComponent({
               },
               data: {
                 workingStatus: item.workingStatus,
+                memo: item.memo,
+                acceptedNumber: item.acceptedNumber,
               },
             },
             type: item.type,
@@ -956,34 +954,34 @@ export default defineComponent({
       });
       formData.forEach((item: any) => {
         if (item.type == 1) {
+          create1(item.field);
           if (item.field.data.workingStatus == 0) {
             cancel1(item.field.search);
           }
-          create1(item.field);
         }
         if (item.type == 2) {
+          create2(item.field);
           if (item.field.data.workingStatus == 0) {
             cancel2(item.field.search);
           }
-          create2(item.field);
         }
         if (item.type == 3) {
+          create3(item.field);
           if (item.field.data.workingStatus == 0) {
             cancel3(item.field.search);
           }
-          create3(item.field);
         }
         if (item.type == 4) {
+          create4(item.field);
           if (item.field.data.workingStatus == 0) {
             cancel4(item.field.search);
           }
-          create4(item.field);
         }
         if (item.type == 5) {
+          create5(item.field);
           if (item.field.data.workingStatus == 0) {
             cancel5(item.field.search);
           }
-          create5(item.field);
         }
       });
     };

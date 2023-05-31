@@ -7,11 +7,11 @@
           :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
           noDataText="내역이 없습니다">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="총수입(A)" data-field="totalIncome" format="fixedPoint" alignment="end" />
-          <DxColumn caption="총지출(B)" data-field="totalSpending" format="fixedPoint" alignment="end" />
-          <DxColumn caption="장부잔액(A-B)" data-field="bookBalance" format="fixedPoint" alignment="end" />
-          <DxColumn caption="통장잔액(C)" data-field="bankbookBalance" format="fixedPoint" alignment="end" />
-          <DxColumn caption="차액(C-(A-B))" data-field="difference" format="fixedPoint" alignment="end" />
+          <DxColumn caption="총수입(A)" data-field="totalIncome" format="fixedPoint" alignment="end" width="20%"/>
+          <DxColumn caption="총지출(B)" data-field="totalSpending" format="fixedPoint" alignment="end" width="20%"/>
+          <DxColumn caption="장부잔액(A-B)" data-field="bookBalance" format="fixedPoint" alignment="end" width="20%"/>
+          <DxColumn caption="통장잔액(C)" data-field="bankbookBalance" format="fixedPoint" alignment="end" width="20%"/>
+          <DxColumn caption="차액(C-(A-B))" data-field="difference" format="fixedPoint" alignment="end" width="20%"/>
         </DxDataGrid>
     </div>
 </template>

@@ -164,7 +164,8 @@
                     :layoutCustom="'horizontal'" />
                   <div>
                     <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                      :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
+                      :headStyle="{ padding: '5px', color: checkedAccounting == 1 ? 'red' : '' }"
+                      bodyStyle="padding: 0px 0px">
                     </a-card>
                     <div id="data-grid-demo">
                       <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
@@ -280,7 +281,8 @@
                   <radio-group :arrayValue=" arrayRadioCheckSourceServices "
                     v-model:valueRadioCheck=" checkedSourceService " :layoutCustom=" 'horizontal' " />
                   <div style="margin-top: 20px">
-                    <a-form-item label="서비스 시작년월" class="clr" label-align="left" :label-col=" labelCol ">
+                    <a-form-item label="서비스 시작년월" :class=" { 'clr': checkedSourceService == 1 } " label-align="left"
+                      :label-col=" labelCol ">
                       <div style="width: 200px">
                         <month-picker-box :required=" true " width="120px" :disabled=" checkedSourceService == 2 "
                           v-model:valueDate="
@@ -288,7 +290,8 @@
                           " :teleport=" true " />
                       </div>
                     </a-form-item>
-                    <a-form-item label="직 원 수" class="clr" label-align="left" :label-col=" labelCol ">
+                    <a-form-item label="직 원 수" :class=" { 'clr': checkedSourceService == 1 } " label-align="left"
+                      :label-col=" labelCol ">
                       <number-box :required=" true " width="120px" :min=" 1 " :spinButtons=" true "
                         v-model:valueInput=" formState.content.withholding.capacity "
                         :disabled=" checkedSourceService == 2 " messRequired="이항목은 필수 입력사항입니다!"
@@ -317,7 +320,7 @@
                   :label-col=" labelCol ">
                   <biz-number-text-box width="250px" v-model:valueInput="
                     formState.content.cmsBank.ownerBizNumber
-                  " :required=" true " />
+                  " :required=" true " nameInput="cmsBank-ownerBizNumber" />
                   <div class="noteImage">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px; margin-top: 0px" />
                     <div class="noteText">
@@ -709,19 +712,29 @@ export default defineComponent({
     const updateSubscriptionRequest = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid || res?.brokenRules.length > 0) {
-        // open collapse
+        let nameInputError = res.brokenRules[0].validator._validationInfo.result.name;
         res.brokenRules[0].validator.focus();
-        inputInCollapse.map((value: any) => {
-          if (value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1) {
-            activeKey.value = value.key;
-          }else{
-            activeKey.value = 4;
+        let keyCollapse = 0;
+        inputInCollapse.forEach((value: any) => {
+          if (value.input_name.filter((item: any) => item == nameInputError).length > 0) {
+            keyCollapse = value.key;
+            return;
           }
         });
+        if (keyCollapse > 0) {
+          activeKey.value = keyCollapse;
+        } else {
+          activeKey.value = 4;
+        }
         return;
       }
-      if (checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2) {
+      if ((checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2)) {
         notification("error", Message.getMessage('BF310', '001').message);
+        activeKey.value = 4;
+        return;
+      }
+      if ((checkedAccounting.value === 1 && dataSource.value.length === 0)) {
+        notification("error", Message.getMessage('COMMON', '102').message);
         activeKey.value = 4;
         return;
       }

@@ -1,58 +1,43 @@
 <template>
   <div class="form-chat">
-      <div v-if="loadinggetGetAccountingClosingMessages" class="form-chat-loading"><a-spin size="large"/></div>
-      <div ref="formTimeline" class="form-chat-timeline">
-        <div v-for="(items, index) in listChat" :key="index" :id="items.createdAt">
-          <div v-if="index > 0" class="form-chat-timeline-line" />
-          <div class="form-chat-timeline-common">
-            <div class="form-chat-timeline-content">
-              <div class="form-chat-timeline-content-info">
-                <div class="form-chat-timeline-content-info-user">
-                  <div class="form-chat-timeline-content-info-user-status">
-                    <StatusChat :valueSelect="items.expresstionType" :isSelect="false" />
-                  </div>
-                  <div class="form-chat-timeline-content-info-user-name"
-                    :class="{ 'form-chat-timeline-content-info-user-name-login': items.writerUser.id === userId }">{{
-                      items.writerUser.name }}
-                  </div>
+    <div v-if="loadinggetGetAccountingClosingMessages" class="form-chat-loading"><a-spin size="large" /></div>
+    <div ref="formTimeline" class="form-chat-timeline">
+      <div v-for="(items, index) in listChat" :key="index" :id="items.createdAt">
+        <div v-if="index > 0" class="form-chat-timeline-line" />
+        <div class="form-chat-timeline-common">
+          <div class="form-chat-timeline-content">
+            <div class="form-chat-timeline-content-info">
+              <div class="form-chat-timeline-content-info-user">
+                <div class="form-chat-timeline-content-info-user-status">
+                  <StatusChat :valueSelect="items.expresstionType" :isSelect="false" />
                 </div>
-                <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
-                <div class="form-chat-timeline-content-info-classification">{{ items.classification }}</div>
+                <div class="form-chat-timeline-content-info-user-name"
+                  :class="{ 'form-chat-timeline-content-info-user-name-login': items.writerUser.id === userId }">{{
+                    items.writerUser.name }}
+                </div>
               </div>
-              <div class="form-chat-timeline-content-background">
-                <div class="form-chat-timeline-content-text">
-                  <MarkdownCustom
-                    :options="{ source: items.content || '', linkify: true, typographer: true, highlight: true }" />
-                </div>
-                <div v-if="items?.files && items?.files.length" class="form-chat-timeline-content-files">
-                  <div class="form-chat-timeline-content-files-preview">
-                    <div class="form-chat-timeline-content-files-preview-images">
-                      <img v-for="(file, indexFile) in items.files" :key="indexFile"
-                        class="form-chat-timeline-content-files-preview-images-image" :src="file.url" alt=""
-                        @click="previewImage(items.files, indexFile)">
-                      <!-- <img
-                      v-for="(file, indexFile) in items.files"
+              <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
+              <div class="form-chat-timeline-content-info-classification">{{ items.classification }}</div>
+            </div>
+            <div class="form-chat-timeline-content-background">
+              <div class="form-chat-timeline-content-text">
+                <MarkdownCustom
+                  :options="{ source: items.content || '', linkify: true, typographer: true, highlight: true }" />
+              </div>
+              <div v-if="items?.files && items?.files.length" class="form-chat-timeline-content-files">
+                <div class="form-chat-timeline-content-files-preview">
+                  <div class="form-chat-timeline-content-files-preview-images">
+                    <img v-for="(file, indexFile) in items.files.filter((file: any) => isImgLink(file.url))"
                       :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
-                      alt=""
-                      @click="previewImage(items.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)"> -->
-                    </div>
-                    <!-- <div class="form-chat-timeline-content-files-preview-images">
-                    <img
-                      v-for="(file, indexFile) in items.files.filter((item: any) => item?.contentType.includes('image/'))"
-                      :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
-                      alt=""
-                      @click="previewImage(items.files.filter((item: any) => item?.contentType.includes('image/')), indexFile)">
+                      alt="" @click="previewImage(items.files.filter((file: any) => isImgLink(file.url)), indexFile)">
                   </div>
-                  <div
-                    v-for="(file, indexFile) in items.files.filter((item: any) => !item?.contentType.includes('image/'))"
+                  <div v-for="(file, indexFile) in items.files.filter((file: any) => !isImgLink(file.url))"
                     :key="indexFile" class="form-chat-timeline-content-files-preview-filetext"
                     @click="openLinkDownFile(file.url)">
                     <FileTextOutlined style="margin-right: 10px; font-size:30px" />
                     <div class="form-chat-timeline-content-files-preview-filetext-info">
                       <p class="form-chat-timeline-content-files-preview-filetext-info-name">{{ file.name }}</p>
-                      <p class="form-chat-timeline-content-files-preview-filetext-info-size">({{ formatFileSize(file.size) }})</p>
                     </div>
-                  </div> -->
                   </div>
                 </div>
               </div>
@@ -60,16 +45,17 @@
           </div>
         </div>
       </div>
-      <div class="form-chat-bottom">
-        <div class="form-chat-bottom-category">
-          <StatusChat with="150" disabled/>
-          <span style="margin: 0 10px;">분류:</span>
-          <span class="form-chat-bottom-category-text">회계-마감-({{ currentTime }})</span>
-        </div>
-        <InputChat ref="inputChat" v-model:content="content" v-model:files="filesUpload" 
-          :placeholder="disabled ? '입력마감 상태에서는 이용할 수 없습니다.' : '댓글을 입력하세요…'" :disabled="isLoadingUpload || disabled" 
-          @submitChat="submitChat" />
+    </div>
+    <div class="form-chat-bottom">
+      <div class="form-chat-bottom-category">
+        <StatusChat with="150" disabled />
+        <span style="margin: 0 10px;">분류:</span>
+        <span class="form-chat-bottom-category-text">회계-마감-({{ currentTime }})</span>
       </div>
+      <InputChat ref="inputChat" v-model:content="content" v-model:files="filesUpload"
+        :placeholder="disabled ? '입력마감 상태에서는 이용할 수 없습니다.' : '댓글을 입력하세요…'" :disabled="isLoadingUpload || disabled"
+        @submitChat="submitChat" />
+    </div>
     <ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
       :listImage="listImagePreview" />
   </div>
@@ -140,17 +126,17 @@ export default defineComponent({
 
     watch(() => props.payload, (value) => {
       if (Object.keys(value).length) {
-        if(inputChat.value) {
+        if (inputChat.value) {
           inputChat.value.resetInputChat()
         }
         filter.companyId = value.companyId,
-        filter.fiscalYear = value.fiscalYear,
-        filter.facilityBusinessId = value.facilityBusinessId,
-        filter.year = value.year,
-        filter.month = value.month,
-        filter.page = page.value,
-        filter.rows = rows.value,
-        triggerGetAccountingClosingMessages.value = true
+          filter.fiscalYear = value.fiscalYear,
+          filter.facilityBusinessId = value.facilityBusinessId,
+          filter.year = value.year,
+          filter.month = value.month,
+          filter.page = page.value,
+          filter.rows = rows.value,
+          triggerGetAccountingClosingMessages.value = true
       }
     }, {
       deep: true,
@@ -170,7 +156,7 @@ export default defineComponent({
     onResGetAccountingClosingMessages((data) => {
       listChat.value = [...data.data.getAccountingClosingMessages.datas.reverse()]
       nextTick(() => {
-        formTimeline.value.scroll({top: 10000000, behavior: "instant",})
+        formTimeline.value.scroll({ top: 10000000, behavior: "instant", })
       })
       triggerGetAccountingClosingMessages.value = false
     })
@@ -247,6 +233,12 @@ export default defineComponent({
     const openLinkDownFile = (link: string) => {
       window.open(link, '_blank')
     }
+
+    const isImgLink = (url: any) => {
+      if (typeof url !== 'string') return false;
+      return (url.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp|webp)(\?(.*))?$/gmi) !== null);
+    }
+
     return {
       userName,
       listChat,
@@ -267,7 +259,8 @@ export default defineComponent({
       formatFileSize,
       openLinkDownFile,
       refreshForm,
-      loadinggetGetAccountingClosingMessages
+      loadinggetGetAccountingClosingMessages,
+      isImgLink
     }
   },
 })
@@ -281,6 +274,7 @@ export default defineComponent({
   justify-content: space-between;
   flex-direction: column;
   position: relative;
+
   &-loading {
     position: absolute;
     top: 0;
@@ -294,6 +288,7 @@ export default defineComponent({
     z-index: 10;
     background-color: rgba(255, 255, 255, 0.568);
   }
+
   &-header {
     text-align: center;
     border-bottom: 1px solid rgba(17, 17, 26, 0.1);
@@ -522,6 +517,7 @@ export default defineComponent({
       display: flex;
       align-items: center;
       margin-bottom: 5px;
+
       &-text {
         color: #bcbcc2ff;
       }

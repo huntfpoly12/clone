@@ -1,5 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" centered
+           :title="typePopup === ComponentCreateBudget.EmployeeSalaryTable && `임직원보수일람표`"
     @cancel="setModalVisible()" :mask-closable="false"
     :width="step === StepCreateBudget.Step2 ? typePopup === ComponentCreateBudget.EmployeeSalaryTable ? '1300px' : '90%' : 500"
     :footer="false" v-if="modalStatus" :class="step === StepCreateBudget.Step1 && `clear-border-header`">
@@ -22,7 +23,7 @@
         <EmployeeSalaryTable @closePopup="closePopup" />
       </div>
       <div v-else>
-        <ExpenseAndRevenueBudget @closePopup="closePopup" :index="index" />
+        <ExpenseAndRevenueBudget @closePopup="closePopup" />
       </div>
     </div>
     <div v-else>
@@ -57,10 +58,6 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-    index: {
-      type: Number,
-      required: true
-    }
   },
   emits: ['closePopup'],
   setup(props, { emit }) {
