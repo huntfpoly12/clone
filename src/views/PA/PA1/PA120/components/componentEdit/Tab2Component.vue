@@ -233,13 +233,13 @@
                     </template>
                     <span>
                       <number-box-money class="red" width="130px" :spinButtons="false" :rtlEnabled="true"
-                        v-model:valueInput="item.value" :min="0" @changeInput="onCalcSumDeduction"
+                        v-model:valueInput="item.value" :min="1000" @changeInput="onCalcSumDeduction"
                         :disabled="disabledDeduction(item.itemCode)" format="#0,###" />
                     </span>
                   </a-tooltip>
-                  <number-box-money v-else :class="{'red': (item.value < 1000 && item.itemCode == 1012) }" width="130px" :spinButtons="false"
-                    :rtlEnabled="true" v-model:valueInput="item.value" :min="1000" @changeInput="onCalcSumDeduction"
-                    :disabled="disabledDeduction(item.itemCode)" format="#0,###" />
+                  <number-box-money v-else :textColor="(item.value < 1000 && item.itemCode == 1012) ? 'red' : ''"
+                    width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :min="0"
+                    @changeInput="onCalcSumDeduction" :disabled="disabledDeduction(item.itemCode)" format="#0,###" @onFocusOut="(e: any)=>handleFocusOut(e, item.itemCode)" />
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -278,7 +278,6 @@ import {
   radioCheckReductioRate,
   radioCheckReductionInput,
   IncomeTaxAppRate,
-  initFormStateTab2,
 } from "../../utils/index";
 import { useStore } from "vuex";
 import {
@@ -898,6 +897,12 @@ export default defineComponent({
       }
       return false;
     };
+    const handleFocusOut = (e: any, item: any) => {
+      let valueInput = e.event.target.value;
+      if(item === 1012 && valueInput < 1000){
+        initFormTab2PA120.value.deductionItems[5].value = 0;
+      }
+    }
     return {
       loading1,
       loading2,
@@ -921,9 +926,6 @@ export default defineComponent({
       onChangeSwitch2,
       editRowTab2PA120,
       initFormTab2PA120,
-      isChangeConfigPayItemsPA120: computed(
-        () => store.state.common.isChangeConfigPayItemsPA120
-      ),
       presidentEditPA120,
       calculateVariables,
       isBtnYellow,
@@ -939,6 +941,7 @@ export default defineComponent({
       modalCalc,
       msgCalc,
       vnode,
+      handleFocusOut,
     };
   },
 });
