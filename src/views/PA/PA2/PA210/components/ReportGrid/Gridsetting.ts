@@ -622,7 +622,6 @@ export const calculateWithholdingStatusReport =  async (wrapper: any, data: any 
   if (data.length > 0) {
     cellData = data
   } else {
-
     const arrData = hot.getData()
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 32) {
@@ -673,14 +672,20 @@ export const calculateWithholdingStatusReport =  async (wrapper: any, data: any 
       }
     }
   }
+  console.log(cellData,'cellData input');
+  
   let output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
   await convertZeroData(output).then((res) => {
     output = res
   })
+  console.log(output,'output output');
   let dataTable = await convertArrData(output)
+  console.log(dataTable,'dataTable output');
   hot.setDataAtCell(dataTable, 'setdata');
+  // phần xử lý vấn đề liên quan đến việc switch refund và YearTaxAdjustment
   let checkYETaxAdj = checkYETaxAdjustment(output)
-  return checkYETaxAdj
+  let cell12 =  hot.getDataAtCell(37,12);
+  return { checkYETaxAdj, cell12 }
   //r.push(output.summary); // 총합계(A99)
 }
 
@@ -733,6 +738,8 @@ const convertZeroData = async (output: any) => {
   };
   return clonedOutput
 }
+
+// hàm kiểm tra nhằm thay đổi trạng thái check hoặc không check của yearEndTaxAdjustment
 export const checkYETaxAdjustment = (output: any) => {
   let checkStatus = false
   const A04 = output.incomeWages.find((el: { code: string; }) =>{
