@@ -4,7 +4,7 @@
         :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
         :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange"
         :mode="mode" :style="{ height: $config_styles.HeightInput, textAlign: rtlEnabled ? 'right' : 'left', }"
-         :format="format" :name="nameInput" :readOnly="readOnly">
+         :format="format" :name="nameInput" :readOnly="readOnly" @focusOut="handleFocusOut">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
             <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
@@ -114,12 +114,16 @@ export default defineComponent({
           const input = e.event.target;
           input.select();
         }
+        const handleFocusOut = (e: any) => {
+          emit("onFocusOut", e);
+        }
         return {
             updateValue,
             value,
             messageRequired,
             onChange,
             onFocusIn,
+            handleFocusOut
         };
     },
 });
