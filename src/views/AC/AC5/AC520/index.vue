@@ -53,16 +53,18 @@
       <DxColumn caption="예산총괄표" alignment="center" :allow-sorting="false" cell-template="mailPrint"/>
       <DxColumn caption="" width="100px" cell-template="action" alignment="center"/>
       <template #action="{data}">
-        <a-tooltip title="삭제">
-          <div>
-            <DxButton type="ghost"
-              @click="handleDeleteBudget(data.data)"
-              :disabled="data.data.index !== (dataSource?.totalCount() || 0) - 1 && data.data.status !== 10"
+        <div class="d-flex justify-content-center">
+          <a-tooltip :trigger="data.data.index !== (dataSource?.totalCount() || 0) - 1 && data.data.status !== 10 ? '' : 'hover'" placement="left" title="예산서 (임직원보수일람표 포함) 삭제">
+            <div >
+              <DxButton type="ghost"
+                        @click="handleDeleteBudget(data.data)"
+                        :disabled="data.data.index !== (dataSource?.totalCount() || 0) - 1 && data.data.status !== 10"
               >
-              <DeleteOutlined/>
-            </DxButton>
-          </div>
-        </a-tooltip>
+                <DeleteOutlined/>
+              </DxButton>
+            </div>
+          </a-tooltip>
+        </div>
       </template>
 
       <template #budget="{data}">
@@ -83,9 +85,13 @@
           <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.EmployeePayTable)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
-          <DxButton type="ghost" @click="actionPrint(data.data, TypeMail.EmployeePayTable)">
-            <img src="@/assets/images/print.svg" alt="" width="18" />
-          </DxButton>
+          <a-tooltip title="출력/저장">
+            <div>
+              <DxButton type="ghost" @click="actionPrint(data.data, TypeMail.EmployeePayTable)">
+                <img src="@/assets/images/print.svg" alt="" width="18" />
+              </DxButton>
+            </div>
+          </a-tooltip>
         </div>
         <a-tooltip v-else title="임직원보수일람표 작성. 인건비 관련 세출예산액은 임직원보수일람표의 금액이 반영됩니다.">
           <div>
@@ -98,17 +104,21 @@
         <div v-if="data.data.employeePaySum !== null || data.data.expenditureBudgetSum !== null" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
                     @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.EDIT}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
-          <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.Budget)">
+          <DxButton type="ghost" @click="actionSendMail({...data.data, budgetType: 5}, TypeMail.Budget)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
-          <DxButton type="ghost" @click="actionPrint({...data.data, budgetType: 5}, TypeMail.Budget)">
-            <img src="@/assets/images/print.svg" alt="" width="18" />
-          </DxButton>
+          <a-tooltip title="출력/저장">
+            <div>
+              <DxButton type="ghost" @click="actionPrint({...data.data, budgetType: 5}, TypeMail.Budget)">
+                <img src="@/assets/images/print.svg" alt="" width="18" />
+              </DxButton>
+            </div>
+          </a-tooltip>
         </div>
         <a-tooltip v-else title="세출예산서 작성">
           <div>
             <DxButton type="ghost" icon="plus"
-                      @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
+                      @click="openModalBudget({data: {...data.data, budgetType: 5, action: ACTION.ADD, columnName: '세출예산서'}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
           </div>
         </a-tooltip>
       </template>
@@ -116,17 +126,21 @@
         <div v-if="data.data.revenueBudgetSum !== null" class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" icon="edit"
                     @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.EDIT}, type: ComponentCreateBudget.ExpenseAndRevenueBudget, })"/>
-          <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.Budget)">
+          <DxButton type="ghost" @click="actionSendMail({...data.data, budgetType: 4}, TypeMail.Budget)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
-          <DxButton type="ghost" @click="actionPrint({...data.data, budgetType: 4}, TypeMail.Budget)">
-            <img src="@/assets/images/print.svg" alt="" width="18" />
-          </DxButton>
+          <a-tooltip title="출력/저장">
+            <div>
+              <DxButton type="ghost" @click="actionPrint({...data.data, budgetType: 4}, TypeMail.Budget)">
+                <img src="@/assets/images/print.svg" alt="" width="18" />
+              </DxButton>
+            </div>
+          </a-tooltip>
         </div>
         <a-tooltip v-else title="세입예산서 작성">
           <div>
             <DxButton type="ghost" icon="plus"
-                      @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.ADD}, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
+                      @click="openModalBudget({data: {...data.data, budgetType: 4, action: ACTION.ADD, columnName: '세입예산서'}, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
           </div>
         </a-tooltip>
       </template>
@@ -135,9 +149,13 @@
           <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.BudgetSummaryTable)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
-          <DxButton type="ghost" @click="actionPrint(data.data, TypeMail.BudgetSummaryTable)">
-            <img src="@/assets/images/print.svg" alt="" width="18" />
-          </DxButton>
+          <a-tooltip title="출력/저장">
+            <div>
+              <DxButton type="ghost" @click="actionPrint(data.data, TypeMail.BudgetSummaryTable)">
+                <img src="@/assets/images/print.svg" alt="" width="18" />
+              </DxButton>
+            </div>
+          </a-tooltip>
         </div>
       </template>
     </DxDataGrid>
@@ -238,19 +256,13 @@ const {onResult: onResultBudget, refetch: refetchBudget, onError} = useQuery(que
   fetchPolicy: "no-cache",
 }))
 onResultBudget(({data}) => {
-  triggerBudgetPreIndex.value = data.getBudgets.length === 0 && acYear.value > 2023
-  if(data.getBudgets.length >  0) {
-    if(data.getBudgets[0].index && data.getBudgets[0].createdBy) {
-      store.commit('common/setDataPreIndexBudget', data.getBudgets[data.getBudgets.length - 1])
-    } else {
-      store.commit('common/setDataPreIndexBudget', data.getBudgets[0])
-    }
-  }
+  const dataBudget = data.getBudgets?.reverse() || []
+  triggerBudgetPreIndex.value = dataBudget.length === 0 && acYear.value > 2023
   dataSource.value = new DataSource({
     store: {
       type: "array",
       key: "createdAt",
-      data: data.getBudgets.reverse() || [],
+      data: dataBudget,
     },
   });
   // console.log('result', data.getBudgets)
@@ -361,7 +373,7 @@ const actionPrint = (data: any, type: TypeMail) => {
 }
 const actionSendMail = (data: any, type: TypeMail) => {
   index.value = data.index as number
-  stateMail.type = 4
+  if(data?.budgetType) stateMail.type = data?.budgetType
   stateMail.typeMail = type
   isModal.employeeRemunerationList = true
 }
