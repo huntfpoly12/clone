@@ -39,7 +39,7 @@
       <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
         <DxRequiredRule/>
       </DxColumn>
-      <DxColumn caption="직종" data-field="occupation" :editor-options="{ placeholder: '선택 또는 직접입력' }"
+      <DxColumn caption="직종" data-field="occupation"
                 css-class="text-red p-0" width="165" alignment="center"
                 edit-cell-template="selectOccupation"
       >
@@ -60,7 +60,6 @@
         />
       </template>
       <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
-                :editor-options="{ placeholder: '선택' }"
                 header-cell-template="classification"
                 edit-cell-template="laborCostClassificationArray"
       >
@@ -71,7 +70,7 @@
         <DxSelectBox
           :noDataText="Message.getMessage('COMMON', '901').message"
           :data-source="LaborCostClassificationArray"
-          placeholder="선택 또는 직접입력"
+          placeholder="선택"
           v-model:value="data.value"
           display-expr="name"
           value-expr="value"

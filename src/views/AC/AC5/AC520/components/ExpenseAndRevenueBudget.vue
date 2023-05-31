@@ -109,7 +109,7 @@
           </DxField>
           <DxField label="증감비율(%)">
             <number-box-money
-              :value="state.amountPreIndexBudget ? (formState.amount - state.amountPreIndexBudget) * 100 / state.amountPreIndexBudget : Number(0).toFixed(2)"
+              :value="state.amountPreIndexBudget ? Number(((formState.amount/state.amountPreIndexBudget) - 1)* 100).toFixed(2)  : Number(0).toFixed(2)"
               disabled width="200px" format="#0,###" :textColor="formState.amount - state.amountPreIndexBudget < 0 ? 'red' : ''" />
           </DxField>
           <DxField label="산출내역">

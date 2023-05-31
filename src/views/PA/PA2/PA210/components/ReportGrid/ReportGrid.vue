@@ -373,7 +373,13 @@ export default defineComponent({
       },
       afterChange: async (changes: any, source: string) => {
         if (source == "edit") {
-          dataSource.value[0].yearEndTaxAdjustment = await calculateWithholdingStatusReport(wrapper);
+          const { checkYETaxAdj, cell12 } = await calculateWithholdingStatusReport(wrapper);
+          // kiểm tra disable refun theo cell 12
+          if (!cell12) {
+            dataSource.value[0].refund = false
+            disabledRefund.value = true
+          }
+          dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
           store.commit("common/setHasChangedPopupPA210", true);
         }
       },
