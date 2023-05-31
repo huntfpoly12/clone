@@ -37,9 +37,9 @@
               <button class="primary" type="submit">로그인</button>
             </a-spin>
           </a-col>
-          <a-col :span="19">
+          <a-col>
             <div style="float: right;padding: 6px 0px 6px 0px;">
-              <router-link to="/request-contract"> 신규고객 서비스가입신청</router-link> / <a @click="openFindUsername">  아이디 찾기 </a>/<a @click="openForgotPassword"> 비밀번호 찾기</a>
+              <router-link to="/request-contract"> 신규 서비스 가입 신청</router-link> / <a @click="openFindUsername">  아이디 찾기 </a>/<a @click="openForgotPassword"> 비밀번호 찾기</a>
             </div>
           </a-col>
         </a-row>
