@@ -25,7 +25,8 @@
                 }
 
                 &-active {
-                    background-color: #D1E1F8;
+                    background-color: #5c95c5;
+                    color: white;
                 }
             }
         }
@@ -42,31 +43,6 @@
             }
         }
     }
-
-    // .main {
-    // margin-top: 15px;
-
-    // :deep .dx-data-row .custom-column {
-    //     padding: 0;
-
-    //     .main-row {
-    //         height: 40px;
-    //         padding: 10px 4px;
-    //         width: 100%;
-    //         border-bottom: 1px solid #ddd;
-
-    //         &:hover {
-    //             background-color: blue;
-    //         }
-    //     }
-
-    //     // .last {
-    //     //     border-bottom: none;
-    //     // }
-    // }
-
-
-
     #content {
         #dataGridAc120 {
             height: calc(100vh - 330px);
@@ -225,3 +201,7 @@
 :deep .dx-datagrid-content.dx-sortable {
     border-bottom: 1px solid #ddd;
 }
+// .month-hover {
+//     background-color: #D1E1F8;
+//     color: black;
+// }
