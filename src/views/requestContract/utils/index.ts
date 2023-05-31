@@ -27,7 +27,7 @@ export const dataDefaultsUtil = {
     bizType: 1,
     residentId: "",
     namePresident: "",
-    birthday: "",
+    birthday: parseInt(dayjs().format('YYYYMMDD')),
     mobilePhone: "",
     email: "",
     longTermCareInstitutionNumber: "",

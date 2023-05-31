@@ -32,14 +32,14 @@
             </div>
             <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload">
         </a-form-item>
-        
-        <a-space :size="10" style="margin-top: 8px">
-            <div class="warring-modal">
-                <span>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</span><br>
-                <span>파일형식 : JPG(JPEG), TIF, GIF, PNG</span><br>
-                <span>파일용량 : 최대 5MB</span>
+
+        <a-form-item :label="' '" :colon="false">
+            <div class="warring-modal mt-10">
+              <span>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</span><br>
+              <span>파일형식 : JPG(JPEG), TIF, GIF, PNG</span><br>
+              <span>파일용량 : 최대 5MB</span>
             </div>
-        </a-space>
+        </a-form-item>
 
     </a-row>
     <a-modal :visible="previewVisible" :title="title" :footer="null" @cancel="handleCancel" :mask-closable="false">
