@@ -94,18 +94,14 @@ const handleSubmit = () => {
 function removeRow(index: number) {
   details.value.splice(index, 1);
 }
-// watch(() => details.value, (val) => {
-//   console.log('val', val)
-//   if(typeCal.value === 2) {
-//     details.value = val.map((item: any) => {
-//       if(!item.detail) return item;
-//       return {
-//         ...item,
-//         calculationResult: item.detail ? eval(item.detail.replace(/[^\d+\-*/().]/g, "")) : item.calculationResult,
-//       }
-//     })
-//   }
-// }, {deep: true})
+watch(() => typeCal.value, (val, oldValue) => {
+  if (val !== oldValue) {
+    details.value = details.value.map((item: any) => ({
+      ...item,
+      calculationResult: '',
+    }))
+  }
+}, {deep: true})
 const handleOk = () => {
 
 }
@@ -133,7 +129,6 @@ const handleCalculate = () => {
   if(typeCal.value === 2) {
     details.value = details.value.map((item: any) => {
       if(!item.detail) return item;
-      console.log('details.value',typeof eval(item.detail.replace(/[^\d+\-*/().]/g, ""))?.toString() || '')
       return {
         ...item,
         calculationResult: item.detail ? (eval(item.detail.replace(/[^\d+\-*/().]/g, ""))?.toString() || '') : item.calculationResult.toString(),

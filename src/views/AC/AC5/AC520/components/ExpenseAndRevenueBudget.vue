@@ -24,11 +24,10 @@
           <DxColumn :allow-sorting="false" caption="세목코드" data-field="code" />
           <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index) - 1}차 추경` : `전년도`"
             cell-template="amountPreBudget" data-field="amount1" alignment="right" />
-            <!-- <DxColumn :allow-sorting="false" caption="Gộp chơi"> -->
-            <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index)}차 추경` : `당해년도`"
-            data-field="amount" alignment="right" />
+          <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index)}차 추경` : `당해년도`"
+                    cell-template="amount" data-field="amount" alignment="right" />
           <DxColumn :allow-sorting="false" caption="증감액" cell-template="calculateAmount" alignment="right" />
-            <!-- </DxColumn> -->
+
           <DxColumn :allow-sorting="false" caption="증감비율(%)" cell-template="changeRate" alignment="right" />
           <DxColumn :allow-sorting="false" caption="자금원천" cell-template="sourceOfFunding" width="120px" />
           <DxColumn :allow-sorting="false" caption="산출내역" data-field="details" cell-template="outputRecord" />
@@ -48,21 +47,27 @@
               :fundingSource3="data.data.fundingSource3" :fundingSource4="data.data.fundingSource4" />
           </template>
           <template #amountPreBudget="{ data }">
-            {{ dataBudgetPreIndex ? filters.formatNumber(dataBudgetPreIndex.find((item: any) => item.code ===
-              data.data.code).amount || 0) : 0 }}
+            <div :class="(!dataBudgetPreIndex || dataBudgetPreIndex?.find((item: any) => item.code === data.data.code).amount <= 0) && `text-red`">
+              {{ dataBudgetPreIndex ? filters.formatNumber(dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) : 0 }}
+            </div>
+          </template>
+          <template #amount="{data}">
+            <div :class="data.data.amount <= 0 && `text-red`">{{data.data.amount}}</div>
           </template>
           <template #calculateAmount="{ data }">
-            {{ dataBudgetPreIndex ? filters.formatNumber(dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0 - Number(data.data.amount)) : (0 - data.data.amount) }}
+            <div :class="((!dataBudgetPreIndex && (0 - data.data.amount) <= 0 ) || (dataBudgetPreIndex?.find((item: any) => item.code === data.data.code).amount || 0) - Number(data.data.amount) <= 0) && `text-red`">
+              {{ dataBudgetPreIndex ? filters.formatNumber((dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) - Number(data.data.amount)) : (0 - data.data.amount) }}
+            </div>
           </template>
 
           <template #changeRate="{ data }">
-            {{ dataBudgetPreIndex ? filters.formatNumber((1 - data.data.amount / dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) * 100, 2) : 0 }}
+            {{ dataBudgetPreIndex && dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount !== 0 ? filters.formatNumber((1 - data.data.amount / dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) * 100, 2) : 0 }}
           </template>
           <template #outputRecord="{ data }">
             <div v-if="data.data && data.data.details?.length > 0">
               <ul>
                 <li v-for="(row, index) in data.data.details" :key="index">
-                  <div class="d-flex">- {{ row.detail }} = {{ filters.formatNumber(+row.calculationResult) }}</div>
+                  {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }}
                 </li>
               </ul>
             </div>
@@ -72,8 +77,7 @@
       <a-col span="8">
         <standard-form ref="formRef">
           <DxField label="계정과목">
-            <default-text-box placeholder="${세목명} (${세목코드)}" :value="`${formState?.codeName} ${formState?.code}`" disabled
-              width="200px" />
+            <default-text-box :value-input="`${formState.codeName} ${formState.code}`" disabled width="200px" />
           </DxField>
           <DxField :label="dataBudget?.index === 0 ? `전년도` : `${(dataBudget?.index || 0) - 1} 차 추경`">
             <div class="d-flex">
@@ -117,7 +121,7 @@
             <div class="d-flex">
               <div class="d-flex-center gap-10">
                 <default-text-box
-                  :value="formState?.details?.length > 0 ? formState.details.map((i: any) => `${i.detail} = ${i.calculationResult}`).join('; ') : ''"
+                  :value-input="formState?.details?.length > 0 ? formState.details.map((i: any) => i.detail).join('; ') : ''"
                   disabled class="flex-1" width="200px" />
                 <DxButton type="ghost" @click="handleOpenCalPopup">
                   <EditOutlined />
@@ -176,10 +180,10 @@
             </div>
           </DxField>
           <DxField>
-            <div class="wf-100 text-center mt-20">
-              <a-tooltip :visible="summaryFundingSource !== formState.amount" placement="bottom" color="white" overlay-class-name="text-tooltip" >
+            <div class="d-flex-center justify-content-center mt-20">
+              <a-tooltip :trigger="summaryFundingSource === formState.amount ? '' : 'hover'" placement="bottom" color="white" overlay-class-name="text-tooltip" >
                 <template #title>
-                  {{ dataBudget?.index == 0 ? `당해년도` : `${dataBudget?.index}차 추경` }} 예산액 {{formState.amount}} 과 자금원천 합계 {{summaryFundingSource}} 는 일치해하지 않기에 저장불가합니다.
+                  {{ dataBudget?.index == 0 ? `당해년도` : `${dataBudget?.index}차 추경` }} 예산액 {{filters.formatNumber(formState.amount)}} 과 자금원천 합계 {{filters.formatNumber(summaryFundingSource)}} 는 일치해하지 않기에 저장불가합니다.
                 </template>
                 <div>
                   <DxButton type="default" :disabled="summaryFundingSource !== formState.amount" @click="handleSubmit"
@@ -322,7 +326,7 @@ onResult(({ data }) => {
 const { onResult: onResultPreIndexBudget, onError: onErrorPreIndexBudget } = useQuery(queries.getBudget, {
   ...query,
   fiscalYear: dataBudget.value?.index ? acYear.value : acYear.value - 1,
-  index: dataPreIndexBudgets.value?.index || 0
+  index: dataBudget.value?.index ? dataBudget.value?.index - 1 : dataBudget.value?.index
 }, () => ({
   fetchPolicy: "no-cache",
   enabled: trigger.queryPreIndexBudget
@@ -370,7 +374,9 @@ onDoneCreateBudget(({ data }) => {
     // dataSource.value.reload()
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    emit('close-popup', true)
+    // emit('close-popup', true)
+    trigger.queryBudget = true
+    dataSource.value.reload()
   }
 })
 onErrorCreateBudget((error) => {
@@ -384,7 +390,9 @@ onDoneUpdateBudget(({ data }) => {
     // dataSource.value.reload()
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    emit('close-popup', true)
+    // emit('close-popup', true)
+    trigger.queryBudget = true
+    dataSource.value.reload()
   }
 })
 onErrorUpdateBudget((error) => {
@@ -411,7 +419,7 @@ watch(() => [formState.value, codesPreIndexBudget.value], ([val, codesVal]) => {
 // watch triggerQueryBudget
 watch(() => checkDataNewRow.value, (val: any) => {
   if (val) {
-    if (dataPreIndexBudgets.value === null) {
+    if (dataPreIndexBudgets.value === null && dataBudget.value?.index === 0) {
       state.amountPreIndexBudget = 0
     } else {
       trigger.queryPreIndexBudget = true
@@ -558,7 +566,7 @@ li {
   :deep(.dx-texteditor-input){
     color: red;
   }
-
+    color: red;
 }
 </style>
 <style lang="scss">

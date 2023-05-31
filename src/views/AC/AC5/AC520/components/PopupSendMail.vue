@@ -53,9 +53,9 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
-    const email = ref()
     const store = useStore();
     const userInfo = computed(() => store.state.auth.userInfor);
+    const email = ref(userInfo.value?.email || '')
     const getType = computed(() => {
       switch (props.typeMail) {
         case TypeMail.BudgetSummaryTable: // E2
@@ -68,7 +68,6 @@ export default defineComponent({
           return sendBudgetSummaryTableReportEmail
       }
     })
-    console.log('getType', getType.value)
     const {mutate, onError, onDone} = useMutation(getType.value)
     onDone(() => {
       notification('success', Message.getCommonMessage('801').message)
@@ -89,7 +88,6 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
         return
       }
-      console.log(props)
       const input: any = {
         ...props.variable,
         index: props.index,

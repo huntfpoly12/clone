@@ -2,7 +2,14 @@
     <div class="img-preview-group"> 
         <div v-if="dataImage && dataImage?.url" class="">
             <a-image v-if="activePreview || activePreview == true" :src="dataImage.url"
-                :style="{ width: width, height: height }" />
+                :style="{ width: width, height: height }">
+                <template #previewMask>
+                    <div>
+                      <EyeOutlined class="mr-5"/>
+                      파일 미리보기
+                    </div>
+                </template>
+              </a-image>
             <img v-else :src="dataImage.url" :style="{ width: width, height: height }" />
         </div>
         <div v-else class="img-preview">
@@ -17,20 +24,27 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import {
-    DeleteOutlined
+    DeleteOutlined,EyeOutlined
 } from "@ant-design/icons-vue";
 export default defineComponent({
     props: ['width', 'height', 'activePreview', 'dataImage', 'name'],
     components: {
-        DeleteOutlined
+        DeleteOutlined,EyeOutlined 
     },
+    
     setup(props, { emit }) {
         const removeImg = () => { 
             emit("deleteImg", props.name)
             emit("deleteImgRqContract", props.dataImage)
         }
+        const renderPreviewMask=() => {
+          return `
+          파일 미리보기
+          `;
+        };
         return {
-            removeImg
+            removeImg,
+            renderPreviewMask
         }
     },
 
