@@ -1386,46 +1386,57 @@ const convertArrData = async (data : any)=>{
     }
   };
   const result: any[] = [];
-  rawArr.forEach((itemRaw: any) => {
-  const rowPosition = inputPositionModified.find(item => item.className == itemRaw.code);
-  // kiểm tra giá trị của cell truyền vào có là number không hoặc null cũng cho pass để clear cell thành rỗng
-  if (typeof data.numberOfPeople === "number" || data.numberOfPeople === null)
-    result.push([rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.numberOfPeople]);
-  if (typeof data.totalPayment === "number" || data.totalPayment === null)
-    result.push([rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.totalPayment]);
-  if (typeof data.collectedIncomeTax === "number" || data.collectedIncomeTax === null)
-    result.push([rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.collectedIncomeTax]);
-  if (typeof data.collectedRuralSpecialTax === "number" || data.collectedRuralSpecialTax === null)
-    result.push([rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.collectedRuralSpecialTax]);
-  if (typeof data.collectedExtraTax === "number" || data.collectedExtraTax === null)
-    result.push([rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.collectedExtraTax]);
-  if (typeof data.thisMonthAdjustedRefundTaxAmount === "number" || data.thisMonthAdjustedRefundTaxAmount === null)
-    result.push([rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthAdjustedRefundTaxAmount]);
-  if (typeof data.incomeTaxPaid === "number" || data.incomeTaxPaid === null)
-    result.push([rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.incomeTaxPaid]);
-  if (typeof data.ruralSpecialTaxPaid === "number" || data.ruralSpecialTaxPaid === null)
-    result.push([rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.ruralSpecialTaxPaid]);
+  inputPositionModified.forEach((position : any) => {
+    const rowData = rawArr.find(item => item.code == position.className);
+    if (rowData) {
+      // kiểm tra giá trị của cell truyền vào có là number không hoặc null cũng cho pass để clear cell thành rỗng
+      if (typeof rowData.numberOfPeople === "number" || rowData.numberOfPeople === null)
+        result.push([position?.value.modifiedPosition[0][0], position?.value.modifiedPosition[0][1], rowData.numberOfPeople]);
+      if (typeof rowData.totalPayment === "number" || rowData.totalPayment === null)
+        result.push([position?.value.modifiedPosition[1][0], position?.value.modifiedPosition[1][1], rowData.totalPayment]);
+      if (typeof rowData.collectedIncomeTax === "number" || rowData.collectedIncomeTax === null)
+        result.push([position?.value.modifiedPosition[2][0], position?.value.modifiedPosition[2][1], rowData.collectedIncomeTax]);
+      if (typeof rowData.collectedRuralSpecialTax === "number" || rowData.collectedRuralSpecialTax === null)
+        result.push([position?.value.modifiedPosition[3][0], position?.value.modifiedPosition[3][1], rowData.collectedRuralSpecialTax]);
+      if (typeof rowData.collectedExtraTax === "number" || rowData.collectedExtraTax === null)
+        result.push([position?.value.modifiedPosition[4][0], position?.value.modifiedPosition[4][1], rowData.collectedExtraTax]);
+      if (typeof rowData.thisMonthAdjustedRefundTaxAmount === "number" || rowData.thisMonthAdjustedRefundTaxAmount === null)
+        result.push([position?.value.modifiedPosition[5][0], position?.value.modifiedPosition[5][1], rowData.thisMonthAdjustedRefundTaxAmount]);
+      if (typeof rowData.incomeTaxPaid === "number" || rowData.incomeTaxPaid === null)
+        result.push([position?.value.modifiedPosition[6][0], position?.value.modifiedPosition[6][1], rowData.incomeTaxPaid]);
+      if (typeof rowData.ruralSpecialTaxPaid === "number" || rowData.ruralSpecialTaxPaid === null)
+        result.push([position?.value.modifiedPosition[7][0], position?.value.modifiedPosition[7][1], rowData.ruralSpecialTaxPaid]);
 
-  if (typeof data.prevMonthNonRefundableTaxAmount === "number" || data.prevMonthNonRefundableTaxAmount === null)
-    result.push([rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.prevMonthNonRefundableTaxAmount]);
-  if (typeof data.preRefundApplicationTaxAmount === "number" || data.preRefundApplicationTaxAmount === null)
-    result.push([rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.preRefundApplicationTaxAmount]);
-  if (typeof data.deductibleBalance === "number" || data.deductibleBalance === null)
-    result.push([rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.deductibleBalance]);
-  if (typeof data.thisMonthRefundTaxGeneral === "number" || data.thisMonthRefundTaxGeneral === null)
-    result.push([rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.thisMonthRefundTaxGeneral]);
-  if (typeof data.thisMonthRefundTaxOtherFinancialCompany === "number" || data.thisMonthRefundTaxOtherFinancialCompany === null)
-    result.push([rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.thisMonthRefundTaxOtherFinancialCompany]);
-  if (typeof data.thisMonthRefundTaxOtherMerge === "number" || data.thisMonthRefundTaxOtherMerge === null)
-    result.push([rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthRefundTaxOtherMerge]);
-  if (typeof data.refundTaxSubjectToAdjustment === "number" || data.refundTaxSubjectToAdjustment === null)
-    result.push([rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.refundTaxSubjectToAdjustment]);
-  if (typeof data.thisMonthTotalAdjustedRefundTaxAmount === "number" || data.thisMonthTotalAdjustedRefundTaxAmount === null)
-    result.push([rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.thisMonthTotalAdjustedRefundTaxAmount]);
-  if (typeof data.nextMonthRefundTaxAmount === "number" || data.nextMonthRefundTaxAmount === null)
-    result.push([rowPosition?.value.modifiedPosition[8][0], rowPosition?.value.modifiedPosition[8][1], data.nextMonthRefundTaxAmount]);
-  if (typeof data.refundApplicationAmount === "number" || data.refundApplicationAmount === null)
-    result.push([rowPosition?.value.modifiedPosition[9][0], rowPosition?.value.modifiedPosition[9][1], data.refundApplicationAmount]);
+      if (typeof rowData.prevMonthNonRefundableTaxAmount === "number" || rowData.prevMonthNonRefundableTaxAmount === null)
+        result.push([position?.value.modifiedPosition[0][0], position?.value.modifiedPosition[0][1], rowData.prevMonthNonRefundableTaxAmount]);
+      if (typeof rowData.preRefundApplicationTaxAmount === "number" || rowData.preRefundApplicationTaxAmount === null)
+        result.push([position?.value.modifiedPosition[1][0], position?.value.modifiedPosition[1][1], rowData.preRefundApplicationTaxAmount]);
+      if (typeof rowData.deductibleBalance === "number" || rowData.deductibleBalance === null)
+        result.push([position?.value.modifiedPosition[2][0], position?.value.modifiedPosition[2][1], rowData.deductibleBalance]);
+      if (typeof rowData.thisMonthRefundTaxGeneral === "number" || rowData.thisMonthRefundTaxGeneral === null)
+        result.push([position?.value.modifiedPosition[3][0], position?.value.modifiedPosition[3][1], rowData.thisMonthRefundTaxGeneral]);
+      if (typeof rowData.thisMonthRefundTaxOtherFinancialCompany === "number" || rowData.thisMonthRefundTaxOtherFinancialCompany === null)
+        result.push([position?.value.modifiedPosition[4][0], position?.value.modifiedPosition[4][1], rowData.thisMonthRefundTaxOtherFinancialCompany]);
+      if (typeof rowData.thisMonthRefundTaxOtherMerge === "number" || rowData.thisMonthRefundTaxOtherMerge === null)
+        result.push([position?.value.modifiedPosition[5][0], position?.value.modifiedPosition[5][1], rowData.thisMonthRefundTaxOtherMerge]);
+      if (typeof rowData.refundTaxSubjectToAdjustment === "number" || rowData.refundTaxSubjectToAdjustment === null)
+        result.push([position?.value.modifiedPosition[6][0], position?.value.modifiedPosition[6][1], rowData.refundTaxSubjectToAdjustment]);
+      if (typeof rowData.thisMonthTotalAdjustedRefundTaxAmount === "number" || rowData.thisMonthTotalAdjustedRefundTaxAmount === null)
+        result.push([position?.value.modifiedPosition[7][0], position?.value.modifiedPosition[7][1], rowData.thisMonthTotalAdjustedRefundTaxAmount]);
+      if (typeof rowData.nextMonthRefundTaxAmount === "number" || rowData.nextMonthRefundTaxAmount === null)
+        result.push([position?.value.modifiedPosition[8][0], position?.value.modifiedPosition[8][1], rowData.nextMonthRefundTaxAmount]);
+      if (typeof rowData.refundApplicationAmount === "number" || rowData.refundApplicationAmount === null)
+        result.push([position?.value.modifiedPosition[9][0], position?.value.modifiedPosition[9][1], rowData.refundApplicationAmount]);
+    } else {
+      result.push([position?.value.modifiedPosition[0][0], position?.value.modifiedPosition[0][1], null]);
+      result.push([position?.value.modifiedPosition[1][0], position?.value.modifiedPosition[1][1], null]);
+      result.push([position?.value.modifiedPosition[2][0], position?.value.modifiedPosition[2][1], null]);
+      result.push([position?.value.modifiedPosition[3][0], position?.value.modifiedPosition[3][1], null]);
+      result.push([position?.value.modifiedPosition[4][0], position?.value.modifiedPosition[4][1], null]);
+      result.push([position?.value.modifiedPosition[5][0], position?.value.modifiedPosition[5][1], null]);
+      result.push([position?.value.modifiedPosition[6][0], position?.value.modifiedPosition[6][1], null]);
+      result.push([position?.value.modifiedPosition[7][0], position?.value.modifiedPosition[7][1], null]);
+    }
   })
   return result;
 }

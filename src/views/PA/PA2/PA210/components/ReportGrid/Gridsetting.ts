@@ -790,45 +790,56 @@ const convertArrData = async (data : any)=>{
     }
   };
   const result: any[] = [];
-  rawArr.forEach((itemRaw : any)=>{
-      const rowPosition = inputPosition.find(item => item.className == itemRaw.code);
-      if (typeof itemRaw.numberOfPeople === "number" || itemRaw.numberOfPeople === null)
-        result.push([rowPosition?.value[0][0], rowPosition?.value[0][1], itemRaw.numberOfPeople]);
-      if (typeof itemRaw.totalPayment === "number" || itemRaw.totalPayment === null)
-        result.push([rowPosition?.value[1][0], rowPosition?.value[1][1], itemRaw.totalPayment]);
-      if (typeof itemRaw.collectedIncomeTax === "number" || itemRaw.collectedIncomeTax === null)
-        result.push([rowPosition?.value[2][0], rowPosition?.value[2][1], itemRaw.collectedIncomeTax]);
-      if (typeof itemRaw.collectedRuralSpecialTax === "number" || itemRaw.collectedRuralSpecialTax === null)
-        result.push([rowPosition?.value[3][0], rowPosition?.value[3][1], itemRaw.collectedRuralSpecialTax]);
-      if (typeof itemRaw.collectedExtraTax === "number" || itemRaw.collectedExtraTax === null)  
-        result.push([rowPosition?.value[4][0], rowPosition?.value[4][1], itemRaw.collectedExtraTax]);
-      if (typeof itemRaw.thisMonthAdjustedRefundTaxAmount === "number" || itemRaw.thisMonthAdjustedRefundTaxAmount === null)
-        result.push([rowPosition?.value[5][0], rowPosition?.value[5][1], itemRaw.thisMonthAdjustedRefundTaxAmount]);
-      if (typeof itemRaw.incomeTaxPaid === "number" || itemRaw.incomeTaxPaid === null)
-        result.push([rowPosition?.value[6][0], rowPosition?.value[6][1], itemRaw.incomeTaxPaid]);
-      if (typeof itemRaw.ruralSpecialTaxPaid === "number" || itemRaw.ruralSpecialTaxPaid === null)
-        result.push([rowPosition?.value[7][0], rowPosition?.value[7][1], itemRaw.ruralSpecialTaxPaid]);
-   
-      if (typeof itemRaw.prevMonthNonRefundableTaxAmount === "number" || itemRaw.prevMonthNonRefundableTaxAmount === null)
-      result.push([rowPosition?.value[0][0], rowPosition?.value[0][1], itemRaw.prevMonthNonRefundableTaxAmount]);
-      if (typeof itemRaw.preRefundApplicationTaxAmount === "number" || itemRaw.preRefundApplicationTaxAmount === null)
-      result.push([rowPosition?.value[1][0], rowPosition?.value[1][1], itemRaw.preRefundApplicationTaxAmount]);
-      if (typeof itemRaw.deductibleBalance === "number" || itemRaw.deductibleBalance === null)
-      result.push([rowPosition?.value[2][0], rowPosition?.value[2][1], itemRaw.deductibleBalance]);
-      if (typeof itemRaw.thisMonthRefundTaxGeneral === "number" || itemRaw.thisMonthRefundTaxGeneral === null)
-      result.push([rowPosition?.value[3][0], rowPosition?.value[3][1], itemRaw.thisMonthRefundTaxGeneral]);
-      if (typeof itemRaw.thisMonthRefundTaxOtherFinancialCompany === "number" || itemRaw.thisMonthRefundTaxOtherFinancialCompany === null)
-      result.push([rowPosition?.value[4][0], rowPosition?.value[4][1], itemRaw.thisMonthRefundTaxOtherFinancialCompany]);
-      if (typeof itemRaw.thisMonthRefundTaxOtherMerge === "number" || itemRaw.thisMonthRefundTaxOtherMerge === null)
-      result.push([rowPosition?.value[5][0], rowPosition?.value[5][1], itemRaw.thisMonthRefundTaxOtherMerge]);
-      if (typeof itemRaw.refundTaxSubjectToAdjustment === "number" || itemRaw.refundTaxSubjectToAdjustment === null)
-      result.push([rowPosition?.value[6][0], rowPosition?.value[6][1], itemRaw.refundTaxSubjectToAdjustment]);
-      if (typeof itemRaw.thisMonthTotalAdjustedRefundTaxAmount === "number" || itemRaw.thisMonthTotalAdjustedRefundTaxAmount === null)
-      result.push([rowPosition?.value[7][0], rowPosition?.value[7][1], itemRaw.thisMonthTotalAdjustedRefundTaxAmount]);
-      if (typeof itemRaw.nextMonthRefundTaxAmount === "number" || itemRaw.nextMonthRefundTaxAmount === null)
-      result.push([rowPosition?.value[8][0], rowPosition?.value[8][1], itemRaw.nextMonthRefundTaxAmount]);
-      if (typeof itemRaw.refundApplicationAmount === "number" || itemRaw.refundApplicationAmount === null)
-      result.push([rowPosition?.value[9][0], rowPosition?.value[9][1], itemRaw.refundApplicationAmount]);
+  inputPosition.forEach((position : any) => {
+    const rowData = rawArr.find(item => item.code == position.className);
+    if (rowData) {
+      if (typeof rowData.numberOfPeople === "number" || rowData.numberOfPeople === null)
+      result.push([position?.value[0][0], position?.value[0][1], rowData.numberOfPeople]);
+      if (typeof rowData.totalPayment === "number" || rowData.totalPayment === null)
+        result.push([position?.value[1][0], position?.value[1][1], rowData.totalPayment]);
+      if (typeof rowData.collectedIncomeTax === "number" || rowData.collectedIncomeTax === null)
+        result.push([position?.value[2][0], position?.value[2][1], rowData.collectedIncomeTax]);
+      if (typeof rowData.collectedRuralSpecialTax === "number" || rowData.collectedRuralSpecialTax === null)
+        result.push([position?.value[3][0], position?.value[3][1], rowData.collectedRuralSpecialTax]);
+      if (typeof rowData.collectedExtraTax === "number" || rowData.collectedExtraTax === null)  
+        result.push([position?.value[4][0], position?.value[4][1], rowData.collectedExtraTax]);
+      if (typeof rowData.thisMonthAdjustedRefundTaxAmount === "number" || rowData.thisMonthAdjustedRefundTaxAmount === null)
+        result.push([position?.value[5][0], position?.value[5][1], rowData.thisMonthAdjustedRefundTaxAmount]);
+      if (typeof rowData.incomeTaxPaid === "number" || rowData.incomeTaxPaid === null)
+        result.push([position?.value[6][0], position?.value[6][1], rowData.incomeTaxPaid]);
+      if (typeof rowData.ruralSpecialTaxPaid === "number" || rowData.ruralSpecialTaxPaid === null)
+        result.push([position?.value[7][0], position?.value[7][1], rowData.ruralSpecialTaxPaid]);
+    
+      if (typeof rowData.prevMonthNonRefundableTaxAmount === "number" || rowData.prevMonthNonRefundableTaxAmount === null)
+      result.push([position?.value[0][0], position?.value[0][1], rowData.prevMonthNonRefundableTaxAmount]);
+      if (typeof rowData.preRefundApplicationTaxAmount === "number" || rowData.preRefundApplicationTaxAmount === null)
+      result.push([position?.value[1][0], position?.value[1][1], rowData.preRefundApplicationTaxAmount]);
+      if (typeof rowData.deductibleBalance === "number" || rowData.deductibleBalance === null)
+      result.push([position?.value[2][0], position?.value[2][1], rowData.deductibleBalance]);
+      if (typeof rowData.thisMonthRefundTaxGeneral === "number" || rowData.thisMonthRefundTaxGeneral === null)
+      result.push([position?.value[3][0], position?.value[3][1], rowData.thisMonthRefundTaxGeneral]);
+      if (typeof rowData.thisMonthRefundTaxOtherFinancialCompany === "number" || rowData.thisMonthRefundTaxOtherFinancialCompany === null)
+      result.push([position?.value[4][0], position?.value[4][1], rowData.thisMonthRefundTaxOtherFinancialCompany]);
+      if (typeof rowData.thisMonthRefundTaxOtherMerge === "number" || rowData.thisMonthRefundTaxOtherMerge === null)
+      result.push([position?.value[5][0], position?.value[5][1], rowData.thisMonthRefundTaxOtherMerge]);
+      if (typeof rowData.refundTaxSubjectToAdjustment === "number" || rowData.refundTaxSubjectToAdjustment === null)
+      result.push([position?.value[6][0], position?.value[6][1], rowData.refundTaxSubjectToAdjustment]);
+      if (typeof rowData.thisMonthTotalAdjustedRefundTaxAmount === "number" || rowData.thisMonthTotalAdjustedRefundTaxAmount === null)
+      result.push([position?.value[7][0], position?.value[7][1], rowData.thisMonthTotalAdjustedRefundTaxAmount]);
+      if (typeof rowData.nextMonthRefundTaxAmount === "number" || rowData.nextMonthRefundTaxAmount === null)
+      result.push([position?.value[8][0], position?.value[8][1], rowData.nextMonthRefundTaxAmount]);
+      if (typeof rowData.refundApplicationAmount === "number" || rowData.refundApplicationAmount === null)
+      result.push([position?.value[9][0], position?.value[9][1], rowData.refundApplicationAmount]);
+    } else {
+      result.push([position?.value[0][0], position?.value[0][1], null]);
+      result.push([position?.value[1][0], position?.value[1][1], null]);
+      result.push([position?.value[2][0], position?.value[2][1], null]);
+      result.push([position?.value[3][0], position?.value[3][1], null]);
+      result.push([position?.value[4][0], position?.value[4][1], null]);
+      result.push([position?.value[5][0], position?.value[5][1], null]);
+      result.push([position?.value[6][0], position?.value[6][1], null]);
+      result.push([position?.value[7][0], position?.value[7][1], null]);
+    }
   })
   return result;
 }
