@@ -120,6 +120,7 @@ const closePopup = () => {
       onCancel() {
         // emit('closePopup', false)
       },
+      width: 450,
       okText: '네',
       cancelText: '아니요',
     });
