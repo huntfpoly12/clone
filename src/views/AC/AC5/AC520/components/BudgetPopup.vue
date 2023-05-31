@@ -1,18 +1,18 @@
 <template>
   <a-modal :visible="modalStatus" centered
-           :title="typePopup === ComponentCreateBudget.EmployeeSalaryTable && `임직원보수일람표`"
+           :title="dataBudget?.index === 0 && step === StepCreateBudget.Step1 ? '' : typePopup === ComponentCreateBudget.EmployeeSalaryTable && `임직원보수일람표`"
     @cancel="setModalVisible()" :mask-closable="false"
     :width="step === StepCreateBudget.Step2 ? typePopup === ComponentCreateBudget.EmployeeSalaryTable ? '1300px' : '90%' : 500"
     :footer="false" v-if="modalStatus" :class="step === StepCreateBudget.Step1 && `clear-border-header`">
     <div v-if="step === StepCreateBudget.Step1">
       <div v-if="dataBudget?.index" class="modal-content">
-        <span>전년도 최종차수 {{ dataBudget?.columnName }}를 불러와서 작성합니다.</span>
+        <span>직전 최종차수 {{ dataBudget?.columnName }}를 불러와서 작성합니다.</span>
         <span>(단, 과목전용조서 전용액은 불러오지 않습니다.) 상기의</span>
         <span>내역들이 없으면 초기상태로 작성합니다. </span>
         <span>{{ dataBudget?.columnName }}를 작성하시겠습니까?</span>
       </div>
       <div v-else class="modal-content">
-        <span>직전 최종차수 {{ dataBudget?.columnName }}를 불러와서 작성합니다.</span>
+        <span>전년도 최종차수 {{ dataBudget?.columnName }}를 불러와서 작성합니다.</span>
         <span>(단, 과목전용조서 전용액은 불러오지 않습니다.) 상기의</span>
         <span>내역들이 없으면 초기상태로 작성합니다.</span>
         <span>{{ dataBudget?.columnName }}를 작성하시겠습니까?</span>
@@ -45,8 +45,8 @@ import { ACTION, Budget, ComponentCreateBudget, StepCreateBudget } from "@/views
 import EmployeeSalaryTable from "./EmployeeSalaryTable.vue";
 import ExpenseAndRevenueBudget from "./ExpenseAndRevenueBudget.vue";
 import { useStore } from "vuex";
-import deletePopup from "@/utils/deletePopup";
 import { Message } from '@/configs/enum';
+import {Modal} from "ant-design-vue";
 
 export default defineComponent({
   components: {
@@ -70,13 +70,16 @@ export default defineComponent({
       if (!isChangedFormAc520.value) {
         emit('closePopup', false)
       } else {
-        deletePopup({
-          callback: () => {
+        Modal.confirm({
+          title: Message.getCommonMessage('301').message,
+          okText: '네',
+          cancelText: '아니요',
+          onOk() {
             emit('closePopup', false)
           },
-          message: Message.getCommonMessage('301').message,
-          okText: '네',
-          cancelText: '아니요'
+          onCancel() {
+            return
+          },
         })
       }
     };

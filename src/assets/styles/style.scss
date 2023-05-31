@@ -276,13 +276,20 @@ $lenght: 50;
   max-width: 200px;
   width: auto;
 }
+.ant-modal-confirm-title{
+  font-size: 13px !important;
+}
 .confirmPopup {
-  .ant-modal-confirm-title{
-    font-size: 13px;
-  }
   .ant-modal-confirm-btns {
     display: inline-flex;
     margin-left: 62px;
     margin-top: 14px;
   }
+  .ant-modal-confirm-body svg {
+    font-size: 40px;
+  }
+}
+
+.policy-group{
+  font-size:13px;font-family:"Malgun Gothic",sans-serif;
 }

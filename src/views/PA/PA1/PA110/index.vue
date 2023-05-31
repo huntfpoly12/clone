@@ -290,7 +290,7 @@
 							:data-source="store.state.common.pa110.dataTaxPayInfo" :show-borders="true"
 							:allow-column-reordering="move_column" :focused-row-enabled="true"
 							:allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
-							id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
+							id="pa-110-gridContainer"
 							@focused-row-changing="onFocusedRowChanging" ref="gridRefPA110"
 							@selection-changed="selectionChanged" v-model:selected-row-keys="store.state.common.pa110.selectedRowKeys
 								" v-model:focused-row-key="store.state.common.pa110.focusedRowKey">
@@ -484,9 +484,8 @@ export default defineComponent({
 			processKey: processKey.value,
 		});
 		const hoverColClick = ref<number>(0);
-		// const modalChangeRowPrice = ref(false)
+		const dataMonthNew: any = ref();
 		const isRunOnce = ref<boolean>(true);
-		const isRunOnceTaxPayInfo = ref<boolean>(true);
 		const statusDisabledBlock = ref<boolean>(true);
 		// call api getIncomeProcessWages for first table
 		const {
@@ -512,11 +511,7 @@ export default defineComponent({
 			arrDataPoint.value = [];
 			if (value) {
 				// set first row in table Income Process Wages
-				dataSource.value = [
-					{
-						companyId: companyId,
-					},
-				];
+				dataSource.value = [{ companyId: companyId }];
 				dataCustomRes.value = JSON.parse(JSON.stringify(initDataCustomRes));
 				value.getIncomeProcessWages.forEach((data: any) => {
 					// create data to copy
@@ -607,10 +602,7 @@ export default defineComponent({
 					};
 				});
 			}
-			const obj =
-				dataSource.value[0][
-				"month" + processKey.value.imputedMonth
-				];
+			const obj = dataSource.value[0]["month" + processKey.value.imputedMonth];
 			if (obj) {
 				statusDisabledBlock.value = false;
 				if (isRunOnce.value) {
@@ -629,7 +621,6 @@ export default defineComponent({
 
 		// get getIncomeWages table
 		const {
-			refetch: refetchDataTaxPayInfo,
 			result: resultTaxPayInfo,
 			onError: errorTaxPayInfo,
 			loading: loadingTaxPayInfo,
@@ -675,38 +666,26 @@ export default defineComponent({
 						!store.state.common.pa110.dataIncomeIdBackend ||
 						store.state.common.pa110.checkClickMonth
 					) {
-						// isRunOnceTaxPayInfo.value = false;
 						store.state.common.pa110.checkClickMonth = false;
-						// store.state.common.pa110.focusedRowKey = value.getIncomeWages[0].incomeId
-						store.state.common.pa110.incomeId =
-							value.getIncomeWages[0].incomeId;
+						store.state.common.pa110.incomeId = value.getIncomeWages[0].incomeId;
 						store.state.common.pa110.dataRowOnActive = value.getIncomeWages[0];
 					} else {
-						if (store.state.common.pa110.statusClickButtonSave) {
-							// if click submit
-							store.state.common.pa110.incomeId =
-								store.state.common.pa110.dataIncomeIdBackend;
-						} else {
-							// click save modal
-							store.state.common.pa110.incomeId =
-								store.state.common.pa110.dataRowOnActive?.incomeId;
+						if (store.state.common.pa110.statusClickButtonSave) { // if click submit
+							store.state.common.pa110.incomeId = store.state.common.pa110.dataIncomeIdBackend;
+						} else { // click save modal
+							store.state.common.pa110.incomeId = store.state.common.pa110.dataRowOnActive?.incomeId;
 						}
 						store.state.common.pa110.dataIncomeIdBackend = null;
 					}
-					// }
 				} else {
 					store.state.common.pa110.statusFormAdd = true;
-					// store.state.common.pa110.focusedRowKey = null;
 					store.state.common.pa110.incomeId = null;
 					store.state.common.pa110.actionResetForm++;
 				}
 				gridRefPA110.value?.instance.deselectAll();
-				store.state.common.pa110.selectedRowKeys = [
-					store.state.common.pa110.incomeId,
-				];
+				store.state.common.pa110.selectedRowKeys = [store.state.common.pa110.incomeId];
 			}
-			store.state.common.pa110.focusedRowKey =
-				store.state.common.pa110.incomeId;
+			store.state.common.pa110.focusedRowKey = store.state.common.pa110.incomeId;
 			if (
 				store.state.common.pa110.statusClickButtonAdd &&
 				!store.state.common.pa110.statusClickButtonSave
@@ -794,34 +773,15 @@ export default defineComponent({
 				dataGridRef.value?.refresh();
 			}
 		);
-		/**
-		 * action edit employ tax pay
-		 */
-		// let rowEdit = ref()
-		const actionEditTaxPay = (data: any) => {
-			// hiện tại bỏ đi
-		};
+
 		const selectionChanged = (data: any) => {
 			dataRows.value = data.selectedRowsData;
-
-			// data.component.getSelectedRowsData().then((rowData: any) => {
-			//     dataRows.value = rowData
-			if (
-				data.selectedRowsData.find(
-					(element: any) => element.incomeId == "PA110" ?? null
-				)
-			) {
+			if (data.selectedRowsData.find((element: any) => element.incomeId == "PA110" ?? null)) {
 				gridRefPA110.value?.instance.deselectAll();
 				dataRows.value = [];
 			}
-			// if ( rowData.length > 1 ) {
-			//     // store.state.common.pa110.incomeId = rowData[0].
-			//     store.state.common.pa110.focusedRowKey = store.state.common.pa110.incomeId
-			// }
-			// })
 		};
-		const dataMonthNew: any = ref();
-		// const checkClickMonth = ref<Boolean>(false)
+		
 		// A function that is called when a user clicks on a month.
 		const showDetailSelected = (month: any) => {
 			if (
@@ -959,22 +919,7 @@ export default defineComponent({
 					store.state.common.pa110.checkClickCopyMonth = false;
 					dataModalCopy.value = monthCopy.value;
 					modalCopy.value = true;
-					// store.state.common.pa110.loadingFormData++
-					// return;
 				}
-				// if (store.state.common.pa110.checkClickYear) {
-				// 	isRunOnce.value = true;
-				// 	store.state.common.pa110.processKeyPA510.imputedYear =
-				// 		store.state.common.pa110.dataYearNew;
-				// 	store.state.common.pa110.processKeyPA510.paymentYear =
-				// 		store.state.common.pa110.dataYearNew;
-				// 	originData.value.imputedYear = store.state.common.pa110.dataYearNew;
-				// 	trigger.value = true; //reset data table 1
-				// 	await (store.state.settings.paYear =
-				// 		store.state.common.pa110.dataYearNew);
-				// 	await (store.state.common.pa110.checkClickYear = false);
-				// 	return;
-				// }
 				store.state.common.pa110.incomeId =
 					store.state.common.pa110.dataRowOnActive.incomeId;
 				store.state.common.pa110.loadingFormData++;
@@ -982,9 +927,7 @@ export default defineComponent({
 		};
 		// Preventing the user from selecting a row by clicking on the select button.
 		const onFocusedRowChanging = (e: any) => {
-			if (
-				!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)
-			) {
+			if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
 				e.cancel = true;
 			} else {
 				const rowElement = e.rowElement[0];
@@ -1112,7 +1055,6 @@ export default defineComponent({
 			loadingTaxPayInfo,
 			dataModalCopy,
 			modalCopy,
-			actionEditTaxPay,
 			selectionChanged,
 			dataRows,
 			statusComfirm,

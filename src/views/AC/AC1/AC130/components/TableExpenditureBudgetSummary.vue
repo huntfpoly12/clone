@@ -4,15 +4,15 @@
       :data-source="dataCalculated" :show-borders="true" :allow-column-reordering="move_column"
       :allow-column-resizing="colomn_resize" :column-auto-width="true">
       <DxScrolling mode="standard" show-scrollbar="always" noDataText="내역이 없습니다" />
-      <DxColumn caption="구분" cell-template="label" width="130" />
+      <DxColumn caption="구분" cell-template="label"  width="15%" />
       <template #label="{ data }">
         <b style="color: #7F7F7F;">{{ data.data.label }}</b>
       </template>
-      <DxColumn caption="연예산(C)" data-field="amount" :customizeText="customizeTextColumn" alignment="end" />
-      <DxColumn caption="당월집행" data-field="currentMonthExecution" :customizeText="customizeTextColumn" alignment="end" />
-      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" :customizeText="customizeTextColumn" alignment="end" />
-      <DxColumn caption="잔액(C-D)" data-field="balance" :customizeText="customizeTextColumn" alignment="end" />
-      <DxColumn caption="집행율(%)" data-field="executionRate" :customizeText="customizeTextColumn" alignment="end" />
+      <DxColumn caption="연예산(C)" data-field="amount" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="당월집행" data-field="currentMonthExecution" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="잔액(C-D)" data-field="balance" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="집행율(%)" data-field="executionRate" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
     </DxDataGrid>
   </div>
 </template>

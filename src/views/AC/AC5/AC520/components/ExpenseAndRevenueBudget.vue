@@ -12,26 +12,27 @@
       <a-col span="16" class="table-left">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"
           key-expr="code" :allow-column-reordering="move_column" :allow-column-resizing="column_resize"
-          :column-auto-width="true" :focused-row-enabled="true" :focusedRowIndex="0"
+          :column-auto-width="true" :focused-row-enabled="true" :focusedRowIndex="0" @cell-prepared="onCellPrepared"
           @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged" noDataText="내역이 없습니다"
           style="max-height: 700px">
           <DxPaging :page-size="0" />
 
-          <DxColumn caption="관" data-field="code1" cell-template="code1" width="100px" />
-          <DxColumn caption="항" data-field="code2" cell-template="code2" width="100px"/>
-          <DxColumn caption="목" data-field="code3" cell-template="code3" width="100px"/>
-          <DxColumn caption="세목" data-field="codeName" width="100px"/>
-          <DxColumn caption="세목코드" data-field="code" />
-          <DxColumn :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index) - 1}차 추경` : `전년도`"
+          <DxColumn :allow-sorting="false" caption="관" data-field="code1" cell-template="code1" width="100px" />
+          <DxColumn :allow-sorting="false" caption="항" data-field="code2" cell-template="code2" width="100px"/>
+          <DxColumn :allow-sorting="false" caption="목" data-field="code3" cell-template="code3" width="100px"/>
+          <DxColumn :allow-sorting="false" caption="세목" data-field="codeName" width="100px"/>
+          <DxColumn :allow-sorting="false" caption="세목코드" data-field="code" />
+          <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index) - 1}차 추경` : `전년도`"
             cell-template="amountPreBudget" data-field="amount1" alignment="right" />
-          <DxColumn :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index)}차 추경` : `당해년도`"
+            <!-- <DxColumn :allow-sorting="false" caption="Gộp chơi"> -->
+            <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index)}차 추경` : `당해년도`"
             data-field="amount" alignment="right" />
-          <DxColumn caption="증감액" cell-template="calculateAmount" alignment="right" />
-
-          <DxColumn caption="증감비율(%)" cell-template="changeRate" alignment="right" />
-          <DxColumn caption="자금원천" cell-template="sourceOfFunding" width="120px" />
-          <DxColumn caption="산출내역" data-field="details" cell-template="outputRecord" />
-          <DxColumn caption="비고" data-field="Five" />
+          <DxColumn :allow-sorting="false" caption="증감액" cell-template="calculateAmount" alignment="right" />
+            <!-- </DxColumn> -->
+          <DxColumn :allow-sorting="false" caption="증감비율(%)" cell-template="changeRate" alignment="right" />
+          <DxColumn :allow-sorting="false" caption="자금원천" cell-template="sourceOfFunding" width="120px" />
+          <DxColumn :allow-sorting="false" caption="산출내역" data-field="details" cell-template="outputRecord" />
+          <DxColumn :allow-sorting="false" caption="비고" data-field="Five" />
 
           <template #code1="{ data }">
             <span :title="findCode('code1', data.data.code1)?.name1">{{ findCode('code1', data.data.code1)?.name1 }}</span>
@@ -109,7 +110,7 @@
           </DxField>
           <DxField label="증감비율(%)">
             <number-box-money
-              :value="state.amountPreIndexBudget ? (formState.amount - state.amountPreIndexBudget) * 100 / state.amountPreIndexBudget : Number(0).toFixed(2)"
+              :value="state.amountPreIndexBudget ? Number(((formState.amount/state.amountPreIndexBudget) - 1)* 100).toFixed(2)  : Number(0).toFixed(2)"
               disabled width="200px" format="#0,###" :textColor="formState.amount - state.amountPreIndexBudget < 0 ? 'red' : ''" />
           </DxField>
           <DxField label="산출내역">
@@ -269,6 +270,7 @@ const trigger = reactive({
   employeeTable: false,
   queryPreIndexBudget: false,
 })
+const arrCode1s = ref<any>([])
 const dataBudgetPreIndex = ref()
 // console.log('codes revenueBudgetSum', codes)
 const checkDataNewRow = computed(() => dataBudget.value?.action === ACTION.ADD && typePopup.value === ComponentCreateBudget.ExpenseAndRevenueBudget)
@@ -302,6 +304,11 @@ const { onResult, onError } = useQuery(queries.getBudget, query, () => ({
 
 onResult(({ data }) => {
   if (data?.getBudget) {
+    arrCode1s.value = []
+    data.getBudget.records?.map((item: any) => {
+      if (!arrCode1s.value.find((row: any) => row == item.code1))
+        arrCode1s.value.push(item.code1)
+    })
     dataSource.value = new DataSource({
       store: {
         type: "array",
@@ -500,6 +507,18 @@ const fillFundingSource = (field: string) => {
       return formState.value.fundingSource3 = formState.value.amount
     case 'fundingSource4':
       return formState.value.fundingSource4 = formState.value.amount
+  }
+}
+const onCellPrepared = (e: any) => {
+  if (e.rowType === 'data' && e.columnIndex === 0) {
+    if (arrCode1s.value.find((item: any) => item === e.value)) {
+      arrCode1s.value = arrCode1s.value.filter((item: any) => item !== e.value);
+      e.cellElement.rowSpan = dataSource.value.items()?.filter((item: any) => item.code1 === e.value).length
+      e.cellElement.style.borderBottom = '1px solid #ddd'
+      e.cellElement.classList.add('dx-focused')
+    } else {
+      e.cellElement.style.display = 'none'
+    }
   }
 }
 </script>

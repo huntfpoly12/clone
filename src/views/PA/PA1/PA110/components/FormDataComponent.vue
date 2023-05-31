@@ -422,6 +422,8 @@ export default defineComponent({
 		// ===================DONE GRAPQL==================================
 		doneMidTermSettlement(() => {
 			notification("success", Message.getMessage("COMMON", "402").message);
+			store.state.common.pa110.dataIncomeIdBackend = dataIW.value.incomeId
+			store.state.common.pa110.statusClickButtonSave = true;
 			store.state.common.pa110.loadingTableInfo++;
 		});
 		errorMidTermSettlement((e: any) => {
@@ -741,7 +743,6 @@ export default defineComponent({
 
 		watch(resultCalculateMidTermSettlement, (data: any) => {
 			triggerCalculateMidTermSettlement.value = false;
-			console.log(data);
 			dataMidTermSettlement.value.data = []
 			dataConfigDeductions.value.map((item: any) => {
 				if ([1031, 1032].includes(item.itemCode)) {
@@ -749,7 +750,7 @@ export default defineComponent({
 						// itemCode: item.itemCode,
 						name: item.name,
 						amount: item.amount,
-						amountNew: data.calculateMidTermSettlement
+						amountNew: item.itemCode == 1031 ? data.calculateMidTermSettlement : 0
 					});
 				}
 			});
