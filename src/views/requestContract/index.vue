@@ -134,7 +134,7 @@
                                 </div>
                                 <div class="form-item">
                                     <label class="red">생년월일 :</label>
-                                    <birth-day-box v-model:valueInput="contractCreacted.birthday" width="200px" />
+                                    <date-time-box width="200px" v-model:valueDate="contractCreacted.birthday" :required="true" :clearable="false"></date-time-box>
                                 </div>
                                 <div class="form-item">
                                     <label class="red">휴대폰번호:</label>
@@ -170,7 +170,7 @@
                                 :auto-navigate-to-focused-row="true" noDataText="내역이 없습니다">
                                 <DxScrolling mode="standard" show-scrollbar="always" />
                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="false"
-                                    template="button-template" mode="cell" new-row-position="pageBottom">
+                                    template="button-template" mode="cell" new-row-position="pageBottom" :confirmDelete="false">
                                     <!-- <DxTexts confirmDeleteMessage="삭제하겠습니까?" cancelRowChanges="123124" /> -->
                                 </DxEditing>
                                 <DxToolbar>
@@ -199,9 +199,20 @@
                                 <template #capacity="{ data }">
                                   <div v-if="data.data.capacity > 0">{{ data.data.capacity }}</div>
                                 </template>
-                                <DxColumn cell-template="delete" />
+                                <!-- <DxColumn cell-template="delete" />
                                 <template #delete="{ data }">
                                     <DeleteOutlined class="fz-14" @click="deleteRow(data.data.rowIndex)" />
+                                </template> -->
+                                <DxColumn cell-template="action" width="48" />
+                                <template #action="{ data }: any">
+                                  <DxButton type="ghost" style="cursor: pointer" @click="onDelete(data)">
+                                    <a-tooltip zIndex="9999999" placement="top" color="black">
+                                      <template #title>
+                                        <div>삭제</div>
+                                      </template>
+                                      <DeleteOutlined style="font-size: 16px" />
+                                    </a-tooltip>
+                                  </DxButton>
                                 </template>
                             </DxDataGrid>
                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
@@ -295,11 +306,9 @@
                             <div class="form-item">
                                 <label class="red">사업자(주민)등록번호 :</label>
                                 <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" />
-                                <p>
-                                  <info-tool-tip>
-                                    예금주의 사업자등록번호 또는 주민등록번호입니다
-                                  </info-tool-tip>
-                                </p>
+                                <info-tool-tip class="mt-5">
+                                  예금주의 사업자등록번호 또는 주민등록번호입니다
+                                </info-tool-tip>
                             </div>
                             <div class="form-item">
                                 <label class="red">자동이체출금일자 :</label>
@@ -349,8 +358,21 @@
             </div>
         </div>
     </a-spin>
-    <popup-message :modalStatus="modalStatus" @closePopup="modalStatus = false" title="삭제하겠습니까?" content="" okText="네"
-        cancelText="아니오" @checkConfirm="statusComfirm" typeModal="confirm" />
+    <a-modal :visible=" deleteModal " @cancel="deleteModal = false" :mask-closable=" false " class="confirm-md" footer=""
+      :width=" 500 ">
+      <standard-form action="" name="delete-510">
+        <div class="custom-modal-delete">
+          <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px" />
+          <span>{{ contentDelete }}</span>
+        </div>
+        <div class="text-align-center mt-30">
+          <button-basic class="button-form-modal" :text=" '아니요' " :type=" 'default' " :mode=" 'outlined' "
+            @onClick="deleteModal = false" />
+          <button-basic class="button-form-modal" :text=" '네. 삭제합니다' " :width=" 140 " :type=" 'default' "
+            :mode=" 'contained' " @onClick=" onDelConfirm " />
+        </div>
+      </standard-form>
+    </a-modal>
 </template>
 <script lang="ts">
 import { reactive, ref, watch, computed } from "vue";
@@ -408,6 +430,9 @@ export default {
         const dataActiveRow: any = ref()
         const isResidentId = ref(false);
         const optionSale = ref();
+        const deleteModal = ref(false);
+        const rowIndexDelete = ref(0);
+        const contentDelete = Message.getCommonMessage("401").message;
         // =================================== GRAPQL ============================================
         const {
             mutate: mutateCreated,
@@ -836,10 +861,18 @@ export default {
           const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM') };
           e.data = initRow;
         };
+        const onDelete = (data: any) => {
+          deleteModal.value = true;
+          rowIndexDelete.value = data.rowIndex;
+        };
+        const onDelConfirm = () => {
+          gridRefName.value.instance.deleteRow(rowIndexDelete.value);
+          deleteModal.value = false;
+        };
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady,  checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale, isWithholding,checkedAccounting,onInitRow,
+            optionSale, isWithholding,checkedAccounting,onInitRow,deleteModal,onDelete,onDelConfirm,contentDelete
         };
     },
 };

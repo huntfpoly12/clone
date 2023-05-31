@@ -70,14 +70,14 @@
                   <a-col :span="24">
                     <a-form-item label="약관동의" label-align="left" :label-col="labelCol">
                       <a-button @click="onOpenPopupInfo(1)" type="link" style="padding: 0px">
-                        서비스약관
+                        서비스약관 동의
                       </a-button>
                       |
-                      <a-button @click="onOpenPopupInfo(2)" type="link" style="padding: 0px">개인정보제공활용동의</a-button>
+                      <a-button @click="onOpenPopupInfo(2)" type="link" style="padding: 0px">개인정보제공 및 활용동의</a-button>
                       |
-                      <a-button @click="onOpenPopupInfo(3)" type="link" style="padding: 0px">회계서비스약관동의</a-button>
+                      <a-button @click="onOpenPopupInfo(3)" type="link" style="padding: 0px">회계서비스약관 동의</a-button>
                       |
-                      <a-button @click="onOpenPopupInfo(4)" type="link" style="padding: 0px">원천서비스약관동의</a-button>
+                      <a-button @click="onOpenPopupInfo(4)" type="link" style="padding: 0px">원천서비스약관 동의</a-button>
                     </a-form-item>
                   </a-col>
                 </a-row>
@@ -145,7 +145,7 @@
                     messRequired="이항목은 필수 입력사항입니다!" nameInput="president-name" />
                 </a-form-item>
                 <a-form-item has-feedback label="생년월일" class="clr" label-align="left" :label-col="labelCol">
-                  <birth-day-box v-model:valueInput="formState.content.president.birthday" width="200px" />
+                  <date-time-box width="200px" v-model:valueDate="formState.content.president.birthday" :required="true" :clearable="false"></date-time-box>
                 </a-form-item>
                 <a-form-item has-feedback label="휴대폰번호" class="clr" label-align="left" :label-col="labelCol">
                   <text-number-box v-model:valueInput="formState.content.president.mobilePhone" :required="true"
@@ -202,7 +202,6 @@
                         </template>
                         <DxEditing :use-icons="true" :allow-adding="true" :confirmDelete="false"
                           template="button-template" mode="cell" new-row-position="pageBottom">
-                          <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                         </DxEditing>
                         <DxToolbar>
                           <DxItem location="after" template="button-template" css-class="cell-button-add" />
