@@ -1,6 +1,7 @@
 import filters from "@/helpers/filters";
 import { WithholdingStatusReport } from "@bankda/jangbuda-common";
 import Handsontable from "handsontable";
+import { getObjectWithPositiveValues } from "../../utils";
 const cellValueGreaterThan0 = (query: any, callback: any) => {
   if ((typeof query == 'number' && query > 0) || query === null) {
     callback(true)
@@ -1278,6 +1279,10 @@ export const calculateWithholdingStatusReportModified = async (wrapper: any, dat
   })
   let dataTable = await convertArrData(output)
   hot.setDataAtCell(dataTable, 'setdata');
+
+  let checkYETaxAdj = checkYETaxAdjustment(output)
+  let cell12 =  hot.getDataAtCell(67,12);
+  return { checkYETaxAdj, cell12 }
   //r.push(output.summary); // 총합계(A99)
 }
 
@@ -1317,6 +1322,40 @@ function addMissingFields(arr : any) {
     });
     return arr;
   }
+}
+
+// hàm kiểm tra nhằm thay đổi trạng thái check hoặc không check của yearEndTaxAdjustment
+export const checkYETaxAdjustment = (output: any) => {
+  let checkStatus = false
+  const A04 = output.incomeWages.find((el: { code: string; }) =>{
+    if (el.code == 'A04' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A05 = output.incomeWages.find((el: { code: string; }) => {
+    if (el.code == 'A05' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A06 = output.incomeWages.find((el: { code: string; }) => {
+    if (el.code == 'A06' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A26 = output.incomeBusinesses.find((el: { code: string; }) => {
+    if (el.code == 'A26' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  const A46 = output.incomePensions.find((el: { code: string; }) => {
+    if (el.code == 'A46' && getObjectWithPositiveValues(el)) {
+      return el
+    }else null
+  });
+  if (A04 || A05 || A06 || A26 || A46) {
+    checkStatus = true
+  }
+  return checkStatus
 }
 
 // đổi hết data nếu bằng 0 thành null 
