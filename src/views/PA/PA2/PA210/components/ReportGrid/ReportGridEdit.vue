@@ -593,29 +593,29 @@ export default defineComponent({
           index >= 4 &&
           index <= 32 &&
           (
-            arrData[index][5] != "" ||
-            arrData[index][6] != "" ||
-            arrData[index][7] != "" ||
-            arrData[index][8] != "" ||
-            arrData[index][9] != "" ||
-            arrData[index][10] != "" ||
-            arrData[index][11] != "" ||
-            arrData[index][12] != ""
+            arrData[index][5] != null ||
+            arrData[index][6] != null ||
+            arrData[index][7] != null ||
+            arrData[index][8] != null ||
+            arrData[index][9] != null ||
+            arrData[index][10] != null ||
+            arrData[index][11] != null ||
+            arrData[index][12] != null
           )
         ) {
           statement.push({
             code: arrData[index][4],
-            numberOfPeople: arrData[index][5] != "" ? arrData[index][5] : 0,
-            totalPayment: arrData[index][6] != "" ? arrData[index][6] : 0,
-            collectedIncomeTax: arrData[index][7] != "" ? arrData[index][7] : 0,
+            numberOfPeople: arrData[index][5] != null ? arrData[index][5] : 0,
+            totalPayment: arrData[index][6] != null ? arrData[index][6] : 0,
+            collectedIncomeTax: arrData[index][7] != null ? arrData[index][7] : 0,
             collectedRuralSpecialTax:
-              arrData[index][8] != "" ? arrData[index][8] : 0,
-            collectedExtraTax: arrData[index][9] != "" ? arrData[index][9] : 0,
+              arrData[index][8] != null ? arrData[index][8] : 0,
+            collectedExtraTax: arrData[index][9] != null ? arrData[index][9] : 0,
             thisMonthAdjustedRefundTaxAmount:
-              arrData[index][10] != "" ? arrData[index][10] : 0,
-            incomeTaxPaid: arrData[index][11] != "" ? arrData[index][11] : 0,
+              arrData[index][10] != null ? arrData[index][10] : 0,
+            incomeTaxPaid: arrData[index][11] != null ? arrData[index][11] : 0,
             ruralSpecialTaxPaid:
-              arrData[index][12] != "" ? arrData[index][12] : 0,
+              arrData[index][12] != null ? arrData[index][12] : 0,
           });
         }
       }

@@ -22,22 +22,16 @@
 					<DxScrolling mode="standard" show-scrollbar="always" />
 					<DxColumn caption="품목" cell-template="item" width="180" />
 					<template #item="{ data }">
-						<!-- <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem"
-                            :required="true" /> -->
 						<SelectSearchEdit v-model:valueInput="data.data.item" v-model:data="arrSelectItem"
 							:required="true" />
 					</template>
 					<DxColumn caption="규격" cell-template="standard" width="181" />
 					<template #standard="{ data }">
-						<!-- <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
-                            :required="true" /> -->
 						<SelectSearchEdit v-model:valueInput="data.data.standard" v-model:data="arrSelectStandard"
 							:required="true" />
 					</template>
 					<DxColumn caption="단위" cell-template="unit" width="181" />
 					<template #unit="{ data }">
-						<!-- <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit"
-                            :required="true" /> -->
 						<SelectSearchEdit v-model:valueInput="data.data.unit" v-model:data="arrSelectUnit"
 							:required="true" />
 					</template>
@@ -143,6 +137,7 @@ import { Message } from "@/configs/enum";
 import { initStatementOfGoods } from "../utils/index";
 import filters from "@/helpers/filters";
 import queries from "@/graphql/queries/AC/AC1/AC120";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
 	props: {
 		modalStatus: {
@@ -194,7 +189,7 @@ export default defineComponent({
 		const triggerSearchStatementOfGoodsItems = ref(false);
 		const triggerSearchStatementOfGoodsStandards = ref(false);
 		const triggerSearchStatementOfGoodsUnits = ref(false);
-
+		const formStateDataSource = ref<any>([]);
 		const amount = ref<number>(0);
 		const formData = computed(() => store.state.common.ac120.formData);
 
@@ -302,18 +297,22 @@ export default defineComponent({
 					if (!dataSource.value?.length) {
 						addNewRow()
 					}
+					formStateDataSource.value = [...dataSource.value]
 				}
 			}
 		);
 
 		// ================ FUNCTION ============================================
 		const cancel = () => {
-			emit("closePopup", false);
+			if (JSON.stringify(formStateDataSource.value) == JSON.stringify(dataSource.value)) {
+				emit("closePopup", false);
+			} else {
+				comfirmClosePopup(() => emit('closePopup', false))
+			}
 		};
 		const addNewRow = async () => {
 			if (dataSource.value?.length) {
-				dataSource.value = [
-					...dataSource.value,
+				dataSource.value = [...dataSource.value,
 					{
 						...initStatementOfGoods,
 						id: dataSource.value[dataSource.value.length - 1].id + "create",

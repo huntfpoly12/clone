@@ -5,7 +5,7 @@
 			<a-spin tip="Loading..." :spinning="loadingGetAccountingProcesses">
 				<div class="grid">
 					<div v-for="(month, index) in 12" :key="index" class="items"
-						:class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
+						:class="{ 'items-active': monthSelected === month, 'column-hover': monthNewClick == month }" @click="selectedMonth(month)">
 						<colorful-badge
 							:value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
 							:year="dataGetAccountingProcesses.find((item: any) => item.month === month)?.year || acYear"
@@ -417,7 +417,6 @@ export default defineComponent({
 		let statusModalItemDetail = ref(false);
 
 		const gridRefAC120 = ref(); // ref of grid
-		// const gridRefAC120Detail = ref(); // ref of grid
 
 		const popupData = ref({});
 		const modalHistoryStatusAccountingProcess = ref<boolean>(false);
@@ -459,7 +458,6 @@ export default defineComponent({
 		let statusClickAdd = ref<boolean>(false);
 		// let statusClickMonth = ref<boolean>(false)
 		let monthNewClick = ref<number>(0);
-		// store.state.common.ac120.statusProcess = computed(() => dataGetAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0)
 
 		// =================== GRAPHQL ===================
 		// query getAccountingProcesses
@@ -727,23 +725,15 @@ export default defineComponent({
 				if (!isEqual(formDataOldCheck, formData)) {
 					isModalConfirmChangeData.value = true;
 					e.cancel = true;
-					idRowFocusedRowNew.value =
-						e.rows[e.newRowIndex]?.data.accountingDocumentId;
+					idRowFocusedRowNew.value = e.rows[e.newRowIndex]?.data.accountingDocumentId;
+					e.rowElement[0]?.classList.add("dx-state-hover-custom");
 				} else {
 					dataRows.value = [];
 					store.state.common.ac120.selectedRowKeys = null;
 					formDataOld = { ...e.rows[e.newRowIndex]?.data };
 					store.state.common.ac120.formData = e.rows[e.newRowIndex]?.data;
-					// Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
-					// store.state.common.ac120.transactionDetailDate = e.rows[e.newRowIndex]?.data.transactionDetailDate
-					// store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)	
-					// //console\.log(store.state.common.ac120.selectedRowKeys);
 
-					// store.state.common.ac120.keyRefreshForm++
 					store.state.common.ac120.resetDataAccountingDocumentProofs++;
-					// if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
-					//     deleteRowAdd()
-					// }
 				}
 			}
 		};
@@ -778,27 +768,16 @@ export default defineComponent({
 		const handleConfirmChange = (status: boolean) => {
 			if (status) {
 				store.state.common.ac120.onSubmitFormUpdate++;
-				// if (monthNewClick.value) { // nếu trước đó ấn tháng mới
-				//     monthSelected.value = monthNewClick.value
-				//     dataQueryGetAccountingDocuments.value.month = monthNewClick.value
-				//     triggerGetAccountingDocuments.value = true;
-				//     store.state.common.ac120.statusKeppRow = false;
-				//     monthNewClick.value = 0
-				// }
 			} else {
-				if (monthNewClick.value) {
-					// nếu trước đó ấn tháng mới
+				if (monthNewClick.value) { // nếu trước đó ấn tháng mới
 					monthSelected.value = monthNewClick.value;
 					dataQueryGetAccountingDocuments.value.month = monthNewClick.value;
 					triggerGetAccountingDocuments.value = true;
 					monthNewClick.value = 0;
-					// return
 				}
-				if (statusClickAdd.value) {
-					// nếu trước đó ấn nút add
+				if (statusClickAdd.value) { // nếu trước đó ấn nút add
 					statusClickAdd.value = false;
 					statusModalAdd.value = true; // mở moldal add
-					// return
 				}
 				storeDataSource.value
 					.update(formDataOld.accountingDocumentId, formDataOld)
@@ -808,16 +787,12 @@ export default defineComponent({
 						storeDataSource.value
 							.byKey(idRowFocusedRowNew.value)
 							.then((value: any) => {
-								// Object.assign(store.state.common.ac120.formData, value);
 								store.state.common.ac120.formData = value;
 								formDataOld = { ...value };
 							});
 						gridRefAC120.value?.instance.refresh();
 					});
 				store.state.common.ac120.selectedRowKeys = [idRowFocusedRowNew.value];
-				// store.state.common.ac120.formData = dataApi.value.find((item: any) => item.accountingDocumentId == idRowFocusedRowNew.value)
-
-				// store.state.common.ac120.focusedRowKey = idRowFocusedRowNew.value
 				idRowFocusedRowNew.value = null;
 				store.state.common.ac120.resetDataAccountingDocumentProofs++;
 			}
@@ -1051,6 +1026,7 @@ export default defineComponent({
 			gridRefAC120,
 			changeAmountDataGrid,
 			heightDrawer,
+			monthNewClick,
 			// statusProcess,
 		};
 	},
