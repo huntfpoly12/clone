@@ -1,20 +1,21 @@
 <template>
   <div class="ac130TableRevenueBudgetSummary">
-    <DxDataGrid ref="refAc130TableRevenueBudgetSummary" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCalculated" :show-borders="true"
-      :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-      noDataText="내역이 없습니다">
+    <DxDataGrid ref="refAc130TableRevenueBudgetSummary" :show-row-lines="true" :hoverStateEnabled="true"
+      :data-source="dataCalculated" :show-borders="true" :allow-column-reordering="move_column"
+      :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다">
       <DxPaging :enabled="false" />
       <DxScrolling mode="standard" show-scrollbar="always" />
-      <DxColumn caption="계정과목" data-field="name" width="200" />
-      <DxColumn caption="연예산(C)" data-field="amount" alignment="end" :customizeText="customizeTextColumn" />
-      <DxColumn caption="월환산예산 (C /12)" data-field="monthlyBudget" width="130" alignment="end"
-        :customizeText="customizeTextColumn" />
-      <DxColumn caption="당월집행" data-field="currentMonthExecution" alignment="end" :customizeText="customizeTextColumn" />
-      <DxColumn caption="당월 인건비비율 (%)" data-field="currentMonthlyFeeRate" width="140" alignment="end"
-        :customizeText="customizeTextColumn" />
-      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" alignment="end" :customizeText="customizeTextColumn" />
-      <DxColumn caption="잔액(C-D)" data-field="balance" alignment="end" :customizeText="customizeTextColumn" />
-      <DxColumn caption="집행율(%)" data-field="executionRate" alignment="end" :customizeText="customizeTextColumn" />
+      <DxColumn caption="계정과목" data-field="name" width="21%" />
+      <DxColumn caption="연예산(C)" data-field="amount" alignment="end" :customizeText="customizeTextColumn" width="11%" />
+      <DxColumn caption="월환산예산 (C /12)" data-field="monthlyBudget" alignment="end" :customizeText="customizeTextColumn"
+        width="13%" />
+      <DxColumn caption="당월집행" data-field="currentMonthExecution" alignment="end" :customizeText="customizeTextColumn"
+        width="11%" />
+      <DxColumn caption="당월 인건비비율 (%)" data-field="currentMonthlyFeeRate" alignment="end"
+        :customizeText="customizeTextColumn" width="14%"/>
+      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" alignment="end" :customizeText="customizeTextColumn" width="11%"/>
+      <DxColumn caption="잔액(C-D)" data-field="balance" alignment="end" :customizeText="customizeTextColumn" width="11%"/>
+      <DxColumn caption="집행율(%)" data-field="executionRate" alignment="end" :customizeText="customizeTextColumn" width="8%"/>
       <DxSummary>
         <DxTotalItem column="계정과목" summary-type="count" display-format="합계: [{0}]" />
         <DxTotalItem column="연예산(C)" summary-type="sum"
@@ -119,8 +120,8 @@ export default defineComponent({
 
   :deep .dx-datagrid-scrollable-simulated {
     padding: 0;
-    
-    td + td {
+
+    td+td {
       padding: 7px 3px;
       border-left: 1px solid #ddd;
     }
