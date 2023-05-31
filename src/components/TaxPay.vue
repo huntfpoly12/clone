@@ -12,7 +12,7 @@
 import { defineComponent, ref,watch } from "vue";
 import type { CascaderProps } from "ant-design-vue";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
-
+import filters from '@/helpers/filters'
 const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
   value: TaxPayItem.all()[index].enumOrdinal + 1,
   label: TaxPayItem.all()[index].name,
@@ -24,9 +24,9 @@ TaxFreePayItem.all().forEach((k, index) => {
   let parseToStringData = JSON.parse(JSON.stringify(data)).props;
   let submission = parseToStringData.submission ? 'O' : 'X'
   if (parseToStringData.monthlyLimit) {
-    arrLabel[index] = data.enumKey +' '+ data.name + ' 월' + parseToStringData.monthlyLimit + ', 제출' + submission
+    arrLabel[index] = data.enumKey +' '+ data.name + ' 월' + filters.formatCurrency(parseToStringData.monthlyLimit) + ', 제출' + submission
   } else if (parseToStringData.annualLimit) {
-    arrLabel[index] = data.enumKey +' '+ data.name + ' 년' + parseToStringData.annualLimit + ', 제출' + submission
+    arrLabel[index] = data.enumKey +' '+ data.name + ' 년' + filters.formatCurrency(parseToStringData.annualLimit) + ', 제출' + submission
   } else {
     arrLabel[index] = data.enumKey +' '+ data.name + ', 제출' + submission
   }

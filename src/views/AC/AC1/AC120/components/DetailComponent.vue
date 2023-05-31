@@ -188,7 +188,7 @@
 				</div>
 			</a-col>
 			<a-col class="upload detail2">
-				<UploadPreviewImage v-model:list-image-file="fileList" :statusProcess="statusProcess"/>
+				<UploadPreviewImage v-model:list-image-file="fileList" :statusProcess="statusProcess" />
 			</a-col>
 		</a-row>
 	</div>
@@ -426,18 +426,9 @@ export default defineComponent({
 					store.state.common.ac120.clearCheckCkick++;
 					return;
 				}
-				// if (formData.value.resolutionClassification == 1) {
-				//     formData.value.letterOfApprovalType = null;
-				//     formData.value.causeUsage = null;
-				//     formData.value.goodsCount = null;
-				// }
 				let theOrder = ref(0);
 				dataAccountSubject.map((row: any) => {
-					if (
-						row.useStartDate <=
-						formData.value.transactionDetailDate <=
-						row.useFinishDate
-					) {
+					if (row.useStartDate <= formData.value.transactionDetailDate <= row.useFinishDate) {
 						theOrder.value = row.theOrder;
 					}
 				});
@@ -452,9 +443,10 @@ export default defineComponent({
 						theOrder: theOrder.value,
 					},
 				};
-				// if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 21) {
-				//     dataSubmit.input.amount = Math.abs(dataSubmit.input.amount)
-				// } else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
+				if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 12) {
+				    dataSubmit.input.statementOfGoodsItems = null;
+				} 
+				// else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
 				//     dataSubmit.input.amount = -dataSubmit.input.amount
 				// }
 				dataSubmit.input.causeUsage = dataSubmit.input.causeUsage?.trim()
