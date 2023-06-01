@@ -295,6 +295,8 @@ const trigger = reactive({
   queryPreIndexBudget: false,
 })
 const arrCode1s = ref<any>([])
+let dataCon = ref([])
+const arrCode2s = ref<any>([])
 const checkDataNewRow = computed(() => dataBudget.value?.action === ACTION.ADD && typePopup.value === ComponentCreateBudget.ExpenseAndRevenueBudget)
 // create function find code in codes array
 const findCode = (code: string, value: string) => {
@@ -523,14 +525,27 @@ const fillFundingSource = (field: string) => {
   }
 }
 const onCellPrepared = (e: any) => {
-  if (e.rowType === 'data' && e.columnIndex === 0) {
-    if (arrCode1s.value.find((item: any) => item === e.value)) {
-      arrCode1s.value = arrCode1s.value.filter((item: any) => item !== e.value);
-      e.cellElement.rowSpan = dataSource.value.items()?.filter((item: any) => item.code1 === e.value).length
-      e.cellElement.style.borderBottom = '1px solid #ddd'
-      e.cellElement.classList.add('dx-focused')
-    } else {
-      e.cellElement.style.display = 'none'
+  if (e.rowType === 'data') {
+    if (e.columnIndex === 0) {
+      if (arrCode1s.value.find((item: any) => item === e.value)) {
+        arrCode1s.value = arrCode1s.value.filter((item: any) => item !== e.value);
+        arrCode2s.value = dataSource.value.items()?.filter((item: any) => item.code1 === e.value)
+        dataCon.value = dataSource.value.items()?.filter((item: any) => item.code1 === e.value)
+        e.cellElement.rowSpan = dataCon.value?.length
+        e.cellElement.style.borderBottom = '1px solid #ddd'
+        e.cellElement.classList.add('dx-focused')
+      } else {
+        e.cellElement.style.display = 'none'
+      }
+    } else if (e.columnIndex === 1) {
+      if (arrCode2s.value.find((item: any) => item.code2 === e.value)) {
+        arrCode2s.value = arrCode2s.value.filter((item: any) => item.code2 !== e.value);
+        e.cellElement.rowSpan = dataCon.value.filter((item: any) => item.code2 === e.value).length
+        e.cellElement.style.borderBottom = '1px solid #ddd'
+        e.cellElement.classList.add('dx-focused')
+      } else {
+        e.cellElement.style.display = 'none'
+      }
     }
   }
 }
