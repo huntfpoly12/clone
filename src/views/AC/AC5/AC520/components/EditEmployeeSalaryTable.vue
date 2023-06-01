@@ -6,7 +6,7 @@
                   :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
                   :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
                   @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" @saving="handleSaving"
-                  style="height: 70vh" :remote-operations="true">
+                  style="height: 70vh" >
         <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" :on-reorder="onReorder"/>
         <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true" :use-icons="true"
                    new-row-position="last">
@@ -131,15 +131,14 @@
             <DeleteOutlined style="font-size: 16px; cursor: pointer" />
           </DxButtonGrid>
         </DxColumn>
-        <DxSummary>
+        <DxSummary :recalculate-while-editing="true">
           <DxTotalItem cssClass="custom" show-in-column="drag" display-format="소계" />
 
           <DxTotalItem cssClass="center" show-in-column="name" alignment="center" display-format="직접인건비 계" />
           <DxTotalItem cssClass="center" show-in-column="name" alignment="center" display-format="간접인건비 계" />
           <DxTotalItem cssClass="custom center" show-in-column="name" alignment="center" display-format="총 인건비 계" />
 
-          <DxTotalItem show-in-column="salary" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.salary1)" />
+          <DxTotalItem show-in-column="salary" alignment="right" summary-type="count"  />
           <DxTotalItem show-in-column="salary" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.salary2)" />
           <DxTotalItem show-in-column="salary" alignment="right"
@@ -186,7 +185,7 @@
                        :customizeText="() => filters.formatNumber(formatSummary.total)" cssClass="custom" />
         </DxSummary>
       </DxDataGrid>
-      <div style="display: none"> {{ formatSummary }} {{ arrSelectOccupation }}</div>
+      <div style="display: none"> {{ formatSummary }}</div>
     </standard-form>
   </a-modal>
 </template>
@@ -211,7 +210,7 @@ import {
 import {computed, reactive, ref, watch} from 'vue'
 import {useStore} from "vuex";
 import deletePopup from "@/utils/deletePopup";
-import {SavingEvent} from "devextreme/ui/data_grid";
+import {RowDraggingReorderEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
 import {useMutation, useQuery} from "@vue/apollo-composable";
@@ -227,6 +226,7 @@ import DxButton from "devextreme-vue/button";
 import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import {ValueChangedEvent} from "devextreme/ui/select_box";
+import cloneDeep from 'lodash/cloneDeep';
 
 const emit = defineEmits(['closePopup'])
 const props = defineProps({
@@ -271,7 +271,7 @@ const { onResult: onResultEmployeePayTable, onError: onErrorEmployeePayTable } =
 onResultEmployeePayTable(({ data }) => {
   if (data) {
     const transformData = data?.getEmployeePayTable?.items.map((item: any) => ({ ...item, key: new Guid().toString() }))
-    dataOld.value = transformData
+    dataOld.value = cloneDeep(transformData)
     dataSource.value = new DataSource({
       store: {
         type: "array",
@@ -310,6 +310,7 @@ onError((error) => {
 
 })
 const handleSaving = (e: SavingEvent) => {
+  console.log('e', e)
   const res = formRef.value.validate();
   if (res.isValid) {
     // remove all key "key" in dataAllRow
@@ -328,7 +329,7 @@ const handleSaving = (e: SavingEvent) => {
       accounSubjectOrder: accountSubject[0].theOrder,
       inputs
     }
-    mutate(result)
+    // mutate(result)
   }
   e.cancel = true
 }
@@ -398,8 +399,18 @@ watch(() => dataAllRow.value, (val) => {
 const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
-  e.component.deleteRow(rowIndex)
+  if(dataOld.value.length) {
+    const rowOld = dataOld.value.find((item: any) => item.key !== key_row)
+    if(rowOld) {
+      dataSource.value.store().remove(key_row).then(() => {
+        dataSource.value.reload()
+      })
+    } else {
+      e.component.deleteRow(rowIndex)
+    }
+  }
   dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== key_row)
+
 }
 
 const setModalVisible = () => {
@@ -419,7 +430,7 @@ const setModalVisible = () => {
 }
 
 const onCellPrepared = (e: any) => {
-  if (e.rowType === 'data' && e.column.dataField === 'classification') {
+  if (e.rowType === 'data' && e.column.dataField === 'classification' && !e.row?.removed) {
     if (!dataAllRow.value.length) {
       dataAllRow.value.push({ ...e.data, key: e.key })
     } else {
@@ -430,15 +441,17 @@ const onCellPrepared = (e: any) => {
       }
     }
   }
-  const getElementCustom = (index: string) => !e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' && e.cellElement.getAttribute('aria-colindex') === index
-  if (getElementCustom('2')) {
-    e.cellElement.colSpan = 3
-  }
-  if (getElementCustom('3')) {
-    e.cellElement.style.display = 'none'
-  }
-  if (getElementCustom('4')) {
-    e.cellElement.style.display = 'none'
+  if(e.rowType === 'totalFooter') {
+    const getElementCustom = (index: string) => !e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' && e.cellElement.getAttribute('aria-colindex') === index
+    if (getElementCustom('2')) {
+      e.cellElement.colSpan = 3
+    }
+    if (getElementCustom('3')) {
+      e.cellElement.style.display = 'none'
+    }
+    if (getElementCustom('4')) {
+      e.cellElement.style.display = 'none'
+    }
   }
 }
 const onRowPrepared = (e: any) => {
@@ -473,7 +486,11 @@ function calculateSalary(data: any) {
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
 }
 const addRow = () => {
-  gridRef.value?.instance.addRow()
+  console.log('instance', gridRef.value?.instance)
+  gridRef.value?.instance.addRow({ name: '1' })
+  // dataSource.value?.store().insert({name: '1'}).then(() => {
+  //   dataSource.value?.reload()
+  // })
 }
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
@@ -490,13 +507,24 @@ const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
           value: keyEvent.target.value
         })
         cellInfo.setValue(keyEvent.target.value);
+        valueChangedEventArg.component.instance().close()
       }
     }
   }
 }
 
-const onReorder = () => {
-  // console.log('e', e)
+const onReorder = (e: RowDraggingReorderEvent) => {
+  const data = dataSource.value?.items()
+  const newTasks = [...data];
+  newTasks.splice(e.fromIndex, 1);
+  newTasks.splice(e.toIndex, 0, e.itemData);
+  dataSource.value = new DataSource({
+      store: {
+        type: "array",
+        key: "key",
+        data: newTasks,
+      },
+    })
 }
 </script>
 
