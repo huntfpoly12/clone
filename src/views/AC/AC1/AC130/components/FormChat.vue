@@ -403,9 +403,12 @@ export default defineComponent({
             cursor: pointer;
             overflow: hidden;
             padding: 10px;
-
             &+& {
               margin-top: 3px;
+            }
+
+            &:last-child {
+              margin-bottom: 10px;
             }
 
             &:hover {
