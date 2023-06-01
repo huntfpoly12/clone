@@ -16,7 +16,10 @@
         <button-basic v-else mode="contained" style="width: 90px" :disabled="true">
         </button-basic>
         <DxButton icon="plus" class="ac-130__top-status-btnHistory" @click="isModalHistoryAccountingProcessLogs = true">
-          <HistoryOutlined style="font-size: 18px" />
+          <a-tooltip placement="top" color="black">
+            <template #title>마감상태 변경이력</template>
+            <HistoryOutlined style="font-size: 18px" />
+          </a-tooltip>
         </DxButton>
         <div class="ml-10">
           <span style="color: rgb(202, 131, 0);">(주의) 마감변경시 [통장내역] 및 [전표]메뉴에 동일하게 반영됩니다.</span>
@@ -94,7 +97,7 @@
       </a-col>
     </a-row>
     <HistoryPopup :modalStatus="isModalHistoryAccountingProcessLogs"
-      @closePopup="isModalHistoryAccountingProcessLogs = false" title="변경이력" typeHistory="ac-110-accounting"
+      @closePopup="isModalHistoryAccountingProcessLogs = false" title="마감상태 변경이력" typeHistory="ac-110-accounting"
       :data="payload" />
   </div>
 </template>
@@ -313,11 +316,24 @@ export default defineComponent({
     const getStatusRevenueBudgetSummary = () => {
       if (dataSource.value?.laborCostSubjectSummaries) {
         const laborCostSubjectSummaries = dataSource.value.laborCostSubjectSummaries
-        const executionRate = (laborCostSubjectSummaries.cumulativeTotal / laborCostSubjectSummaries.amount) * 100
+        let totalCumulativeTotal = 0
+        let totalAmount = 0
+        laborCostSubjectSummaries.forEach((items: any) => {
+          totalCumulativeTotal += checkNumber(items.cumulativeTotal)
+          totalAmount += checkNumber(items.amount)
+        })
+        const executionRate = (totalCumulativeTotal / totalAmount) * 100
         return executionRate === 100
       } else {
         return false
       }
+    }
+
+    const checkNumber = (value: any) => {
+      if (Number.isNaN(Number.parseFloat(value)) || value === Infinity) {
+        return 0;
+      }
+      return value
     }
 
     const refreshFormChat = () => {
