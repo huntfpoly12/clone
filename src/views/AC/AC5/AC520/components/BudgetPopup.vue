@@ -23,7 +23,7 @@
         <EmployeeSalaryTable @closePopup="closePopup" />
       </div>
       <div v-else>
-        <ExpenseAndRevenueBudget @closePopup="closePopup" />
+        <ExpenseAndRevenueBudget />
       </div>
     </div>
     <div v-else>

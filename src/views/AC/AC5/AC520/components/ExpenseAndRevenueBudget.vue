@@ -47,21 +47,21 @@
               :fundingSource3="data.data.fundingSource3" :fundingSource4="data.data.fundingSource4" />
           </template>
           <template #amountPreBudget="{ data }">
-            <div :class="(!dataBudgetPreIndex || dataBudgetPreIndex?.find((item: any) => item.code === data.data.code).amount <= 0) && `text-red`">
-              {{ dataBudgetPreIndex ? filters.formatNumber(dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) : 0 }}
+            <div :class="(!codesPreIndexBudget || codesPreIndexBudget?.find((item: any) => item.code === data.data.code).amount <= 0) && `text-red`">
+              {{ codesPreIndexBudget ? filters.formatNumber(codesPreIndexBudget.find((item: any) => item.code === data.data.code).amount || 0) : 0 }}
             </div>
           </template>
           <template #amount="{data}">
             <div :class="data.data.amount <= 0 && `text-red`">{{data.data.amount}}</div>
           </template>
           <template #calculateAmount="{ data }">
-            <div :class="((!dataBudgetPreIndex && (0 - data.data.amount) <= 0 ) || (dataBudgetPreIndex?.find((item: any) => item.code === data.data.code).amount || 0) - Number(data.data.amount) <= 0) && `text-red`">
-              {{ dataBudgetPreIndex ? filters.formatNumber((dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) - Number(data.data.amount)) : (0 - data.data.amount) }}
+            <div :class="((!codesPreIndexBudget && (0 - data.data.amount) <= 0 ) || (codesPreIndexBudget?.find((item: any) => item.code === data.data.code).amount || 0) - Number(data.data.amount) <= 0) && `text-red`">
+              {{ codesPreIndexBudget ? filters.formatNumber((codesPreIndexBudget.find((item: any) => item.code === data.data.code).amount || 0) - Number(data.data.amount)) : (0 - data.data.amount) }}
             </div>
           </template>
 
           <template #changeRate="{ data }">
-            {{ dataBudgetPreIndex && dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount !== 0 ? filters.formatNumber((1 - data.data.amount / dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) * 100, 2) : 0 }}
+            {{ codesPreIndexBudget && codesPreIndexBudget.find((item: any) => item.code === data.data.code).amount !== 0 ? filters.formatNumber((1 - data.data.amount / codesPreIndexBudget.find((item: any) => item.code === data.data.code).amount || 0) * 100, 2) : 0 }}
           </template>
           <template #outputRecord="{ data }">
             <div v-if="data.data && data.data.details?.length > 0">
@@ -82,8 +82,8 @@
           <DxField :label="dataBudget?.index === 0 ? `전년도` : `${(dataBudget?.index || 0) - 1} 차 추경`">
             <div class="d-flex">
               <div class="d-flex-center">
-                <number-box-money class="flex-1 mr-5" :min="0" width="200px"
-                  v-model:valueInput="state.amountPreIndexBudget" />
+                <number-box-money class="flex-1 mr-5" :min="0" width="200px" format="#0,###"
+                  v-model:valueInput="formState.previousAmount" />
                 <a-tag v-if="formState.code2 === '501010000'">임직원보수일람표 반영</a-tag>
               </div>
             </div>
@@ -109,13 +109,13 @@
             </div>
           </DxField>
           <DxField label="증감액">
-            <number-box-money :value="formState.amount - state.amountPreIndexBudget" format="#0,###" disabled
-              width="200px" :textColor="formState.amount - state.amountPreIndexBudget < 0 ? 'red' : ''"/>
+            <number-box-money :value="formState.amount - formState.previousAmount" format="#0,###" disabled
+              width="200px" :textColor="formState.amount - formState.previousAmount < 0 ? 'red' : ''"/>
           </DxField>
           <DxField label="증감비율(%)">
             <number-box-money
-              :value="state.amountPreIndexBudget ? Number(((formState.amount/state.amountPreIndexBudget) - 1)* 100).toFixed(2)  : Number(0).toFixed(2)"
-              disabled width="200px" format="#0,###" :textColor="formState.amount - state.amountPreIndexBudget < 0 ? 'red' : ''" />
+              :value="formState.previousAmount ? Number(((formState.amount/formState.previousAmount) - 1)* 100).toFixed(2)  : Number(0).toFixed(2)"
+              disabled width="200px" format="#0,###" :textColor="formState.amount - formState.previousAmount < 0 ? 'red' : ''" />
           </DxField>
           <DxField label="산출내역">
             <div class="d-flex">
@@ -221,7 +221,6 @@ import {Message} from "@/configs/enum";
 import notification from "@/utils/notification";
 import {isEqual} from "lodash";
 
-const emit = defineEmits(['close-popup'])
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const column_resize = computed(() => store.state.settings.colomn_resize);
@@ -256,6 +255,7 @@ const formState = ref({
   code2: '0',
   code3: '0',
   amount: 0,
+  previousAmount: 0,
   remark: null,
   fundingSource1: 0,
   fundingSource2: 0,
@@ -275,8 +275,6 @@ const trigger = reactive({
   queryPreIndexBudget: false,
 })
 const arrCode1s = ref<any>([])
-const dataBudgetPreIndex = ref()
-// console.log('codes revenueBudgetSum', codes)
 const checkDataNewRow = computed(() => dataBudget.value?.action === ACTION.ADD && typePopup.value === ComponentCreateBudget.ExpenseAndRevenueBudget)
 // create function find code in codes array
 const findCode = (code: string, value: string) => {
@@ -333,45 +331,26 @@ const { onResult: onResultPreIndexBudget, onError: onErrorPreIndexBudget } = use
 }))
 onResultPreIndexBudget(({ data }) => {
   trigger.queryPreIndexBudget = false
-  codesPreIndexBudget.value = data?.getBudget?.records
   if (data?.getBudget?.records.length > 0) {
     if (formState.value.code2 !== '501010000' && dataBudget.value?.action === ACTION.ADD) {
-      formState.value.amount = data?.getBudget?.records.find((item: any) => item.code === formState.value.code).amount
+      formState.value.amount = data?.getBudget?.records.find((item: any) => item.code === formState.value.code).amount  
     }
-    dataBudgetPreIndex.value = data?.getBudget?.records
+    codesPreIndexBudget.value = data?.getBudget?.records
   }
 })
 
 onErrorPreIndexBudget((error) => {
   if (error.message.includes('예산서가 존재하지 않습니다')) {
     console.log('error', error.message)
-    state.amountPreIndexBudget = 0
+    formState.value.previousAmount = 0
     trigger.queryPreIndexBudget = false
   }
 })
 
-// // query onResultEmployeePayTable
-// const {onResult: onResultEmployeePayTable, onError: onErrorEmployeePayTable} = useQuery(queries.getEmployeePayTable, queryEmployeeTable, () => ({
-//   fetchPolicy: "no-cache",
-//   enabled: trigger.employeeTable
-// }))
-// onResultEmployeePayTable(({data}) => {
-//   if (data) {
-//     console.log('data?.getEmployeePayTable', data?.getEmployeePayTable.items)
-//     // console.log('data?.getEmployeePayTable?.items', data?.getEmployeePayTable)
-//     state.totalLaborCost = data?.getEmployeePayTable?.totalLaborCost
-//     trigger.employeeTable = false
-//   }
-// })
-// onErrorEmployeePayTable((error) => {
-//   console.log('error', error)
-//   trigger.employeeTable = false
-// })
 // create budget
 const { mutate: createBudget, onDone: onDoneCreateBudget, onError: onErrorCreateBudget } = useMutation(mutations.createBudget)
 onDoneCreateBudget(({ data }) => {
   if (data) {
-    // dataSource.value.reload()
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
     // emit('close-popup', true)
@@ -387,7 +366,6 @@ onErrorCreateBudget((error) => {
 const { mutate: updateBudget, onDone: onDoneUpdateBudget, onError: onErrorUpdateBudget } = useMutation(mutations.updateBudget)
 onDoneUpdateBudget(({ data }) => {
   if (data) {
-    // dataSource.value.reload()
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
     // emit('close-popup', true)
@@ -412,15 +390,17 @@ watch(() => formState.value.amount, (value) => {
 watch(() => [formState.value, codesPreIndexBudget.value], ([val, codesVal]) => {
   if (val.code2 === '501010000' && dataBudget.value?.action === ACTION.ADD) {
     formState.value.amount = 0
+  
   } else if (val.code2 !== '501010000' && dataBudget.value?.action === ACTION.ADD) {
     formState.value.amount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
+    formState.value.previousAmount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
   }
 })
 // watch triggerQueryBudget
 watch(() => checkDataNewRow.value, (val: any) => {
   if (val) {
     if (dataPreIndexBudgets.value === null && dataBudget.value?.index === 0) {
-      state.amountPreIndexBudget = 0
+      formState.value.previousAmount = 0
     } else {
       trigger.queryPreIndexBudget = true
     }
@@ -435,6 +415,7 @@ watch(() => checkDataNewRow.value, (val: any) => {
           code2: item.code2,
           code3: item.code3,
           amount: 0,
+          previousAmount: 0,
           remark: null,
           fundingSource1: null,
           fundingSource2: null,
