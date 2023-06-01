@@ -45,7 +45,7 @@
       <DxColumn caption="최종저장아이디" data-field="savedBy"  alignment="center" :allow-sorting="false"/>
       <DxColumn caption="인건비비율 (%)" cell-template="laborCostRadio" alignment="center" />
       <template #laborCostRadio="{ data }">
-        {{ data.data?.spendingBudgetSum ? data.data.employeePaySum / data.data?.spendingBudgetSum * 100 : '' }}
+        {{ data.data?.expenditureBudgetSum ? filters.formatNumber(data.data.employeePaySum / data.data?.expenditureBudgetSum * 100, 2) : Number(0).toFixed(2) }}
       </template>
       <DxColumn caption="임직원보수일람표" cell-template="employeeSalaryTable" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="세출예산서" cell-template="expenseBudget" alignment="center" :allow-sorting="false"/>
@@ -209,6 +209,7 @@ import AddRowPopup from "./components/AddRowPopup.vue";
 import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
 import PopupSendMail from "./components/PopupSendMail.vue";
 import { initialState, useGetEmployeePayTableReportViewUrl, useGetBudgetSummaryTableReportViewUrl, useGetBudgetReportViewUrl } from "./utils/index";
+import filters from "@/helpers/filters";
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);

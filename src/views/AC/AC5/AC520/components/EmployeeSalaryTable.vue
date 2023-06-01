@@ -9,7 +9,7 @@
                 :remote-operations="true"
 
     >
-      <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
+      <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" :on-reorder="onReorder"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
                  :use-icons="true" new-row-position="last"
       />
@@ -192,7 +192,7 @@ import {
 
 import {computed, reactive, ref, watch} from 'vue'
 import {useStore} from "vuex";
-import {SavingEvent} from "devextreme/ui/data_grid";
+import {RowDraggingReorderEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
 import {useMutation, useQuery} from "@vue/apollo-composable";
@@ -348,12 +348,16 @@ watch(() => dataAllRow.value, (val: any) => {
 const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
-  e.component.deleteRow(rowIndex)
+  // e.component.deleteRow(rowIndex)
+  dataSource.value.store().remove(key_row).then(() => {
+    dataSource.value.reload()
+  })
   dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== key_row)
+  console.log('dataAllRow.value', dataAllRow.value)
 }
 
 const onCellPrepared = (e: any) => {
-  if (e.rowType === 'data' && e.column.dataField === 'classification') {
+  if (e.rowType === 'data' && e.column.dataField === 'classification' && !e.row?.removed) {
     if (!dataAllRow.value.length) {
       dataAllRow.value.push({ ...e.data, key: e.key })
     } else {
@@ -409,7 +413,10 @@ function calculateSalary(data: any) {
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
 }
 const addRow = () => {
-  gridRef.value?.instance.addRow()
+  // gridRef.value?.instance.addRow()
+  dataSource.value?.store().insert({}).then(() => {
+    dataSource.value?.reload()
+  })
 }
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
@@ -429,6 +436,20 @@ const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
       }
     }
   }
+}
+
+const onReorder = (e: RowDraggingReorderEvent) => {
+  const data = dataSource.value?.items()
+  const newTasks = [...data];
+  newTasks.splice(e.fromIndex, 1);
+  newTasks.splice(e.toIndex, 0, e.itemData);
+  dataSource.value = new DataSource({
+      store: {
+        type: "array",
+        key: "key",
+        data: newTasks,
+      },
+    })
 }
 </script>
 
