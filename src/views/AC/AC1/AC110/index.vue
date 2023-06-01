@@ -186,7 +186,7 @@
                     <DxButton :disabled="isRegistered || !rowKeyfocused || isReadonlyByAccountingProcessesStatus"
                       type="default" height="29" :focusStateEnabled="false"
                       style="background: #337ab7; color: white; padding: 9px 0;"
-                      @click="handleInitializeTransactionDetails">신규</DxButton>
+                      @click="handleInitializeTransactionDetails">초기화</DxButton>
                   </template>
                   <template #button-add>
                     <a-tooltip placement="top">
