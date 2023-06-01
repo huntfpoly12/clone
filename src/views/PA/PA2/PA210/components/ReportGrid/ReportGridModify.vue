@@ -705,51 +705,53 @@ export default defineComponent({
           index >= 4 &&
           index <= 61 &&
           arrData[index][4] &&
-          (arrData[index + 1][5] != "" ||
-            arrData[index + 1][6] != "" ||
-            arrData[index + 1][7] != "" ||
-            arrData[index + 1][8] != "" ||
-            arrData[index + 1][9] != "" ||
-            arrData[index + 1][10] != "" ||
-            arrData[index + 1][11] != "" ||
-            arrData[index + 1][12] != "")
+          (
+            arrData[index + 1][5] != null ||
+            arrData[index + 1][6] != null ||
+            arrData[index + 1][7] != null ||
+            arrData[index + 1][8] != null ||
+            arrData[index + 1][9] != null ||
+            arrData[index + 1][10] != null ||
+            arrData[index + 1][11] != null ||
+            arrData[index + 1][12] != null
+          )
         ) {
           statement.push({
             code: arrData[index][4],
             numberOfPeopleModified:
-              arrData[index + 1][5] != "" ? arrData[index + 1][5] : 0,
-            numberOfPeople: arrData[index][5] != "" ? arrData[index][5] : 0,
+              arrData[index + 1][5] != null ? arrData[index + 1][5] : 0,
+            numberOfPeople: arrData[index][5] != null ? arrData[index][5] : 0,
 
             totalPaymentModified:
-              arrData[index + 1][6] != "" ? arrData[index + 1][6] : 0,
-            totalPayment: arrData[index][6] != "" ? arrData[index][6] : 0,
+              arrData[index + 1][6] != null ? arrData[index + 1][6] : 0,
+            totalPayment: arrData[index][6] != null ? arrData[index][6] : 0,
 
             collectedIncomeTaxModified:
-              arrData[index + 1][7] != "" ? arrData[index + 1][7] : 0,
-            collectedIncomeTax: arrData[index][7] != "" ? arrData[index][7] : 0,
+              arrData[index + 1][7] != null ? arrData[index + 1][7] : 0,
+            collectedIncomeTax: arrData[index][7] != null ? arrData[index][7] : 0,
 
             collectedRuralSpecialTaxModified:
-              arrData[index + 1][8] != "" ? arrData[index + 1][8] : 0,
+              arrData[index + 1][8] != null ? arrData[index + 1][8] : 0,
             collectedRuralSpecialTax:
-              arrData[index][8] != "" ? arrData[index][8] : 0,
+              arrData[index][8] != null ? arrData[index][8] : 0,
 
             collectedExtraTaxModified:
-              arrData[index + 1][9] != "" ? arrData[index + 1][9] : 0,
-            collectedExtraTax: arrData[index][9] != "" ? arrData[index][9] : 0,
+              arrData[index + 1][9] != null ? arrData[index + 1][9] : 0,
+            collectedExtraTax: arrData[index][9] != null ? arrData[index][9] : 0,
 
             thisMonthAdjustedRefundTaxAmountModified:
-              arrData[index + 1][10] != "" ? arrData[index + 1][10] : 0,
+              arrData[index + 1][10] != null ? arrData[index + 1][10] : 0,
             thisMonthAdjustedRefundTaxAmount:
-              arrData[index][10] != "" ? arrData[index][10] : 0,
+              arrData[index][10] != null ? arrData[index][10] : 0,
 
             incomeTaxPaidModified:
-              arrData[index + 1][11] != "" ? arrData[index + 1][11] : 0,
-            incomeTaxPaid: arrData[index][11] != "" ? arrData[index][11] : 0,
+              arrData[index + 1][11] != null ? arrData[index + 1][11] : 0,
+            incomeTaxPaid: arrData[index][11] != null ? arrData[index][11] : 0,
 
             ruralSpecialTaxPaidModified:
-              arrData[index + 1][12] != "" ? arrData[index + 1][12] : 0,
+              arrData[index + 1][12] != null ? arrData[index + 1][12] : 0,
             ruralSpecialTaxPaid:
-              arrData[index][12] != "" ? arrData[index][12] : 0,
+              arrData[index][12] != null ? arrData[index][12] : 0,
           });
         }
       }
@@ -867,14 +869,15 @@ export default defineComponent({
     const checkDisableA04A06 = () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
+
+      // check các trường hợp để disable A04 A06
       if (
-        (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
-        (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
-        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
-        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
-        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6) ||
-        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) ||
-        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6)
+        (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "매당2") ||
+        (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "매익0") ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "반당0") ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6 && dataSource.value[0].reportClassCode == "반당1") ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "반익0") ||
+        (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6 && dataSource.value[0].reportClassCode == "반익1")
       ) {
         newCellSetting[147].readOnly = false
         newCellSetting[147].className = "htMiddle htRight"
