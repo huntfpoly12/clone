@@ -100,7 +100,6 @@
                     }}
                   </template>
                   <div class="custom-grade-cell">
-                    reportType {{  data.data.reportType }}--paymentType {{  data.data.paymentType }}
                     <DxButton
                       :text="
                         '지 ' +
