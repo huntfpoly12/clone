@@ -930,7 +930,7 @@ export default defineComponent({
 			if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
 				e.cancel = true;
 			} else {
-				const rowElement = e.rowElement[0];
+				// const rowElement = e.rowElement[0];
 				store.state.common.pa110.dataRowOnActive = e.rows[e.newRowIndex]?.data;
 				if (store.state.common.pa110.dataRowOnActive.employeeId) {
 					// if row data (not row add)
@@ -941,7 +941,7 @@ export default defineComponent({
 							store.state.common.pa110.statusFormAdd)
 					) {
 						// if change form data
-						rowElement?.classList.add("dx-state-hover-custom");
+						e.rowElement[0]?.classList.add("dx-state-hover-custom");
 						modalChangeRow.value = true;
 						e.cancel = true;
 					} else {

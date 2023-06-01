@@ -7,7 +7,7 @@
                   :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
                   @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" @saving="handleSaving"
                   style="height: 70vh" :remote-operations="true">
-        <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
+        <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" :on-reorder="onReorder"/>
         <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true" :use-icons="true"
                    new-row-position="last">
           <DxTexts add-row="임직원보수등록"/>
@@ -246,7 +246,6 @@ const LaborCostClassificationArray = [{ name: '직접', value: 1 }, { name: '간
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
-const dataBudget = computed(() => store.getters['common/getDataBudget']);
 
 const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
@@ -494,6 +493,10 @@ const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
       }
     }
   }
+}
+
+const onReorder = () => {
+  // console.log('e', e)
 }
 </script>
 

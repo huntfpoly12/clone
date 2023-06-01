@@ -8,11 +8,11 @@
       <template #label="{ data }">
         <b style="color: #7F7F7F;">{{ data.data.label }}</b>
       </template>
-      <DxColumn caption="연예산(C)" data-field="amount" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
-      <DxColumn caption="당월집행" data-field="currentMonthExecution" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
-      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
-      <DxColumn caption="잔액(C-D)" data-field="balance" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
-      <DxColumn caption="집행율(%)" data-field="executionRate" :customizeText="customizeTextColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="연예산(C)" data-field="amount" :customizeText="handleValueNumberColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="당월집행" data-field="currentMonthExecution" :customizeText="handleValueNumberColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="집합누계(D)" data-field="cumulativeTotal" :customizeText="handleValueNumberColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="잔액(C-D)" data-field="balance" :customizeText="handleValueNumberColumn" alignment="end"  width="17%"/>
+      <DxColumn caption="집행율(%)" data-field="executionRate" :customizeText="handleValueNumberColumn" alignment="end"  width="17%"/>
     </DxDataGrid>
   </div>
 </template>
@@ -42,14 +42,14 @@ export default defineComponent({
     const refAc130TableExpenditureBudgetSummary = ref()
 
     const checkNumber = (value: any) => {
-      if (Number.isNaN(Number.parseFloat(value))) {
+      if (Number.isNaN(Number.parseFloat(value)) || value === Infinity) {
         return 0;
       } else {
         return value
       }
     }
 
-    const customizeTextColumn = (e: any) => {
+    const handleValueNumberColumn = (e: any) => {
       if (e.value) {
         if (Number.isInteger(e.value)) {
           return filters.formatCurrency(e.value)
@@ -117,7 +117,7 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataCalculated,
-      customizeTextColumn,
+      handleValueNumberColumn,
       resetTable,
       refAc130TableExpenditureBudgetSummary
     }

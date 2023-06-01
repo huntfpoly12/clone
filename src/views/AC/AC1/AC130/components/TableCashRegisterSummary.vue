@@ -49,7 +49,7 @@ export default defineComponent({
     const refAc130TableCashRegisterSummary = ref()
 
     const checkNumber = (value: any) => {
-      if (Number.isNaN(Number.parseFloat(value))) {
+      if (Number.isNaN(Number.parseFloat(value)) || value === Infinity) {
         return 0;
       }
       return value
