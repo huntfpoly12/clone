@@ -100,6 +100,7 @@
                     }}
                   </template>
                   <div class="custom-grade-cell">
+                    reportType {{  data.data.reportType }}-{{ data.data.reportClassCode }} -  {{  data.data.paymentType }}
                     <DxButton
                       :text="
                         '지 ' +
@@ -481,6 +482,7 @@ export default defineComponent({
     doneChangeStatus((result: any) => {
       store.state.common.focusedRowKeyPA210 =
         result.data.createTaxWithholdingStatusReport.reportId;
+      store.commit("common/setHasChangedPopupPA210", false);
       notification("success", Message.getMessage("COMMON", "106").message);
       emit("isDoneReport", false);
     });
@@ -560,26 +562,26 @@ export default defineComponent({
           statementAndAmountOfTaxPaids: statement,
           adjustmentOfRefundTaxAmount: {
             prevMonthNonRefundableTaxAmount:
-              arrData[37][0] != "" ? arrData[37][0] : 0,
+              arrData[37][0] != null ? arrData[37][0] : 0,
             preRefundApplicationTaxAmount:
-              arrData[37][2] != "" ? arrData[37][2] : 0,
-            deductibleBalance: arrData[37][3] != "" ? arrData[37][3] : 0,
+              arrData[37][2] != null ? arrData[37][2] : 0,
+            deductibleBalance: arrData[37][3] != null ? arrData[37][3] : 0,
             thisMonthRefundTaxGeneral:
-              arrData[37][5] != "" ? arrData[37][5] : 0,
+              arrData[37][5] != null ? arrData[37][5] : 0,
             thisMonthRefundTaxFiduciaryEstates:
-              arrData[37][6] != "" ? arrData[37][6] : 0,
+              arrData[37][6] != null ? arrData[37][6] : 0,
             thisMonthRefundTaxOtherFinancialCompany:
-              arrData[37][7] != "" ? arrData[37][7] : 0,
+              arrData[37][7] != null ? arrData[37][7] : 0,
             thisMonthRefundTaxOtherMerge:
-              arrData[37][8] != "" ? arrData[37][8] : 0,
+              arrData[37][8] != null ? arrData[37][8] : 0,
             refundTaxSubjectToAdjustment:
-              arrData[37][9] != "" ? arrData[37][9] : 0,
+              arrData[37][9] != null ? arrData[37][9] : 0,
             thisMonthTotalAdjustedRefundTaxAmount:
-              arrData[37][10] != "" ? arrData[37][10] : 0,
+              arrData[37][10] != null ? arrData[37][10] : 0,
             nextMonthRefundTaxAmount:
-              arrData[37][11] != "" ? arrData[37][11] : 0,
+              arrData[37][11] != null ? arrData[37][11] : 0,
             refundApplicationAmount:
-              arrData[37][12] != "" ? arrData[37][12] : 0,
+              arrData[37][12] != null ? arrData[37][12] : 0,
           },
         },
       };
@@ -588,6 +590,8 @@ export default defineComponent({
 
     // update cell settings flow condition
     const checkDisableA04A06 = () => {
+   
+      
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSetting))] 
 
@@ -600,6 +604,7 @@ export default defineComponent({
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "반익0") ||
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6 && dataSource.value[0].reportClassCode == "반익1")
       ) {
+        console.log(dataSource.value,'dataSource.value 444');
         newCellSetting[123].readOnly = false
         newCellSetting[123].className = "htMiddle htRight"
         newCellSetting[124].readOnly = false
@@ -609,6 +614,7 @@ export default defineComponent({
         newCellSetting[143].readOnly = false
         newCellSetting[143].className = "htMiddle htRight"
       } else {   
+        console.log(dataSource.value,'dataSource.value');
         newCellSetting[123].readOnly = true
         newCellSetting[123].className = "htMiddle htRight disable-cell"
         newCellSetting[124].readOnly = true
@@ -659,6 +665,8 @@ export default defineComponent({
     watch(()=>dataSource.value[0].refund, (newVal) => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSetting))]
+      console.log(newCellSetting,'newCellSetting watch');
+      
       if (newVal) {
         newCellSetting[331].readOnly = false
         newCellSetting[331].className = "htMiddle htRight"

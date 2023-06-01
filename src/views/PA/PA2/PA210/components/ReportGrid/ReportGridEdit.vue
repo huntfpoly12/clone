@@ -575,6 +575,7 @@ export default defineComponent({
     doneUpdate((result: any) => {
       store.state.common.focusedRowKeyPA210 =
         result.data.updateTaxWithholdingStatusReport.reportId;
+      store.commit("common/setHasChangedPopupPA210", false);
       notification("success", Message.getMessage("COMMON", "106").message);
       setModalVisible();
     });
@@ -586,6 +587,8 @@ export default defineComponent({
     const updateTaxWithholding = () => {
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData();
+      console.log(arrData);
+      
       // create data of statementAndAmountOfTaxPaids
       let statement = Array();
       for (let index = 0; index < arrData.length; index++) {
@@ -659,26 +662,26 @@ export default defineComponent({
           statementAndAmountOfTaxPaids: statement,
           adjustmentOfRefundTaxAmount: {
             prevMonthNonRefundableTaxAmount:
-              arrData[37][0] != "" ? arrData[37][0] : 0,
+              arrData[37][0] != null ? arrData[37][0] : 0,
             preRefundApplicationTaxAmount:
-              arrData[37][2] != "" ? arrData[37][2] : 0,
-            deductibleBalance: arrData[37][3] != "" ? arrData[37][3] : 0,
+              arrData[37][2] != null ? arrData[37][2] : 0,
+            deductibleBalance: arrData[37][3] != null ? arrData[37][3] : 0,
             thisMonthRefundTaxGeneral:
-              arrData[37][5] != "" ? arrData[37][5] : 0,
+              arrData[37][5] != null ? arrData[37][5] : 0,
             thisMonthRefundTaxFiduciaryEstates:
-              arrData[37][6] != "" ? arrData[37][6] : 0,
+              arrData[37][6] != null ? arrData[37][6] : 0,
             thisMonthRefundTaxOtherFinancialCompany:
-              arrData[37][7] != "" ? arrData[37][7] : 0,
+              arrData[37][7] != null ? arrData[37][7] : 0,
             thisMonthRefundTaxOtherMerge:
-              arrData[37][8] != "" ? arrData[37][8] : 0,
+              arrData[37][8] != null ? arrData[37][8] : 0,
             refundTaxSubjectToAdjustment:
-              arrData[37][9] != "" ? arrData[37][9] : 0,
+              arrData[37][9] != null ? arrData[37][9] : 0,
             thisMonthTotalAdjustedRefundTaxAmount:
-              arrData[37][10] != "" ? arrData[37][10] : 0,
+              arrData[37][10] != null ? arrData[37][10] : 0,
             nextMonthRefundTaxAmount:
-              arrData[37][11] != "" ? arrData[37][11] : 0,
+              arrData[37][11] != null ? arrData[37][11] : 0,
             refundApplicationAmount:
-              arrData[37][12] != "" ? arrData[37][12] : 0,
+              arrData[37][12] != null ? arrData[37][12] : 0,
           },
         },
       };
