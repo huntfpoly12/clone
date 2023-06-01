@@ -383,7 +383,7 @@ export default defineComponent({
       }
     });
     // The above code is used to load the data from the database to the table.
-    const loadNew = () => {
+    const loadNew = async () => {
       clearAllCellValue(wrapper);
       // call api to set modified value
       originData.value = {
@@ -674,8 +674,9 @@ export default defineComponent({
           adjustment?.refundApplicationAmountModified,
           "initTable"
         );
-      checkDisableA04A06()
-      checkDisableRefund()
+      await checkDisableRefund()
+      await checkDisableA04A06()
+    
     };
 
     const {
@@ -867,7 +868,7 @@ export default defineComponent({
     };
 
     // update cell settings flow condition
-    const checkDisableA04A06 = () => {
+    const checkDisableA04A06 = async () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
 
@@ -926,7 +927,7 @@ export default defineComponent({
       });
     }
     // check disable switch refund
-    const checkDisableRefund = () => {
+    const checkDisableRefund = async () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
       if (
