@@ -1,5 +1,5 @@
 <template>
-	<a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1050">
+	<a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1100">
 		<div class="mt-30">
 			<div class="text-align-center">
 				<h2><b>물품내역</b></h2>
@@ -35,12 +35,12 @@
 						<SelectSearchEdit v-model:valueInput="data.data.unit" v-model:data="arrSelectUnit"
 							:required="true" />
 					</template>
-					<DxColumn caption="수량" cell-template="quantity" width="90" />
+					<DxColumn caption="수량" cell-template="quantity" width="115" />
 					<template #quantity="{ data }">
 						<number-box-money v-model:valueInput="data.data.quantity"
 							@changeInput="changeInput('quantity', data.rowIndex)" :required="true" height="26" />
 					</template>
-					<DxColumn caption="단가" cell-template="unitPrice" width="90" />
+					<DxColumn caption="단가" cell-template="unitPrice" width="115" />
 					<template #unitPrice="{ data }">
 						<number-box-money v-model:valueInput="data.data.unitPrice"
 							@changeInput="changeInput('unitPrice', data.rowIndex)" :required="true" height="26" />
