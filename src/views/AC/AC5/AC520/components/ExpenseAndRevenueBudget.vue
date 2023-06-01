@@ -34,7 +34,7 @@
 
           <DxColumn :allow-sorting="false" caption="증감비율(%)" cell-template="changeRate" alignment="right" />
           <DxColumn :allow-sorting="false" caption="자금원천" cell-template="sourceOfFunding" width="120px" />
-          <DxColumn :allow-sorting="false" caption="산출내역" data-field="details" cell-template="outputRecord" />
+          <DxColumn :allow-sorting="false" caption="산출내역" cell-template="outputRecord" />
           <DxColumn :allow-sorting="false" caption="비고" data-field="remark" />
 
           <template #code1="{ data }">
@@ -57,7 +57,7 @@
           </template>
           <template #amount="{data}">
             <div :class="data.data.amount <= 0 && `text-red`">
-              {{data.data.amount}}
+              {{filters.formatNumber(data.data.amount)}}
             </div>
           </template>
           <template #calculateAmount="{ data }">
@@ -73,7 +73,7 @@
             <div v-if="data.data && data.data.details?.length > 0">
               <ul>
                 <li v-for="(row, index) in data.data.details" :key="index">
-                  {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }}
+                  {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }} {{ row.type === 1 ? '' : `= ${ filters.formatNumber(+row.calculationResult)}` }}
                 </li>
               </ul>
             </div>
@@ -94,7 +94,7 @@
               </div>
             </div>
           </DxField>
-          <DxField :label="dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index} 차 추경123`">
+          <DxField :label="dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index} 차 추경`">
             <div class="d-flex">
               <div class="d-flex-center">
                 <number-box-money class="flex-1 mr-5" v-model:valueInput="formState.amount"
@@ -127,7 +127,7 @@
             <div class="d-flex">
               <div class="d-flex-center gap-10">
                 <default-text-box
-                  :value-input="formState?.details?.length > 0 ? formState.details.map((i: any) => i.detail).join('; ') : ''"
+                  :value-input="formState?.details?.length > 0 ? formState.details.map((i: any) => (i.type === 1 ? `${i.detail}`: `${i.detail} = ${ filters.formatNumber(+i.calculationResult)}`)).join('; ') : ''"
                   disabled class="flex-1" width="200px" />
                 <DxButton type="ghost" @click="handleOpenCalPopup">
                   <EditOutlined />
@@ -135,7 +135,7 @@
                 <InfoToolTip>
                   <div v-if="formState.code2 === '501010000'">인건비 관련 예산액은 산출내역 입력시 계산된 금액과는 별개로, [임직원보수일람표] 의 금액이 반영됩니다.
                   </div>
-                  <div v-else>산출내역 입력시 계산된 금액이 {{ dataBudget?.index === 0 ? `당해년도` : `${Number(dataBudget?.index) - 1} 차 추경` }}에 자동 반영됩니다</div>
+                  <div v-else>산출내역 입력시 계산된 금액이 {{ dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index} 차 추경` }}에 자동 반영됩니다</div>
                 </InfoToolTip>
               </div>
             </div>
@@ -221,25 +221,24 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, reactive, ref, watch} from 'vue'
-import {useStore} from "vuex";
-import {DxColumn, DxDataGrid, DxPaging} from 'devextreme-vue/data-grid';
-import {ACTION, Budget, ComponentCreateBudget} from "@/views/AC/AC5/AC520/type";
-import {EditOutlined} from '@ant-design/icons-vue';
-import DxButton from "devextreme-vue/button";
-import CalculationDetailsPopup from "@/views/AC/AC5/AC520/components/CalculationDetailsPopup.vue";
-import {FocusedRowChangedEvent} from "devextreme/ui/data_grid";
-import cloneDeep from "lodash/cloneDeep";
-import {useMutation, useQuery} from "@vue/apollo-composable";
-import queries from "@/graphql/queries/AC/AC5/AC520";
-import {accountSubject, companyId} from "@/helpers/commonFunction";
-import DataSource from "devextreme/data/data_source";
-import filters from '@/helpers/filters';
+import { Message } from "@/configs/enum";
 import mutations from '@/graphql/mutations/AC/AC5/AC520';
-import {Message} from "@/configs/enum";
+import queries from "@/graphql/queries/AC/AC5/AC520";
+import { accountSubject, companyId } from "@/helpers/commonFunction";
+import filters from '@/helpers/filters';
 import notification from "@/utils/notification";
-import {filter, isEqual} from "lodash";
-import { onMounted } from 'vue';
+import CalculationDetailsPopup from "@/views/AC/AC5/AC520/components/CalculationDetailsPopup.vue";
+import { ACTION, Budget, ComponentCreateBudget } from "@/views/AC/AC5/AC520/type";
+import { EditOutlined } from '@ant-design/icons-vue';
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import DxButton from "devextreme-vue/button";
+import { DxColumn, DxDataGrid, DxPaging } from 'devextreme-vue/data-grid';
+import DataSource from "devextreme/data/data_source";
+import { FocusedRowChangedEvent } from "devextreme/ui/data_grid";
+import { isEqual } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import { computed, reactive, ref, watch } from 'vue';
+import { useStore } from "vuex";
 
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
@@ -353,9 +352,18 @@ const { onResult: onResultPreIndexBudget, onError: onErrorPreIndexBudget } = use
 onResultPreIndexBudget(({ data }) => {
   trigger.queryPreIndexBudget = false
   if (data?.getBudget?.records.length > 0) {
-    if (formState.value.code2 !== '501010000' && dataBudget.value?.action === ACTION.ADD) {
-      formState.value.amount = data?.getBudget?.records.find((item: any) => item.code === formState.value.code).amount  
-    }
+      // formState.value.amount = data?.getBudget?.records.find((item: any) => item.code === formState.value.code).amount
+      if(dataBudget.value?.action === ACTION.ADD || dataBudget.value?.action === ACTION.EDIT && dataSource.value) {
+        dataSource.value.items()?.map((item: any) => {
+          const preIndexBudget =  data?.getBudget?.records.find((row: any) => row.code2 === item.code2)
+          if(preIndexBudget){
+            if(item.code2 !== '501010000') {
+              item.amount = preIndexBudget.amount
+            }
+            item.previousAmount = preIndexBudget.amount
+          }
+        })
+      }
     codesPreIndexBudget.value = data?.getBudget?.records
   }
 })
@@ -413,7 +421,7 @@ watch(() => [formState.value, codesPreIndexBudget.value], ([val, codesVal]) => {
     formState.value.amount = 0
   
   } else if (val.code2 !== '501010000' && dataBudget.value?.action === ACTION.ADD) {
-    formState.value.amount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
+    // formState.value.amount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
     // formState.value.previousAmount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
   }
 })
@@ -422,8 +430,6 @@ watch(() => checkDataNewRow.value, (val: any) => {
   if (val) {
     if (dataPreIndexBudgets.value === null && dataBudget.value?.index === 0) {
       formState.value.previousAmount = 0
-    } else {
-      trigger.queryPreIndexBudget = true
     }
     const budgets = codes?.filter((i: any) => i.classification === dataBudget.value?.budgetType)
     dataSource.value = new DataSource({
@@ -556,14 +562,7 @@ const closeModal = () => {
   state.modalFillDataPreIndex = false
 }
 const filled = () => {
-  if(codesPreIndexBudget.value){
-    dataSource.value.items()?.map((item: any) => {
-      const preIndexBudget = codesPreIndexBudget.value?.find((row: any) => row.code === item.code)
-      if(preIndexBudget){
-        item.previousAmount = preIndexBudget.amount
-      }
-    })
-  }
+  trigger.queryPreIndexBudget = true
   state.modalFillDataPreIndex = false
 }
 </script>
