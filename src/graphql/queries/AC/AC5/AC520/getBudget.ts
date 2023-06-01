@@ -18,6 +18,7 @@ export default gql`
                 code2
                 code3
                 amount
+                previousAmount
                 remark
                 fundingSource1
                 fundingSource2

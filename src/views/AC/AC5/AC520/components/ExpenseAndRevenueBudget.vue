@@ -10,11 +10,15 @@
 
     <a-row>
       <a-col span="16" class="table-left">
+        <div class="d-flex-center justify-content-end mb-5">
+          <DxButton type="default" @click="handleFillValuePreIndex" text="전예산액 불러오기" />
+          </div>
+        
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"
           key-expr="code" :allow-column-reordering="move_column" :allow-column-resizing="column_resize"
           :column-auto-width="true" :focused-row-enabled="true" :focusedRowIndex="0" @cell-prepared="onCellPrepared"
           @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged" noDataText="내역이 없습니다"
-          style="max-height: 700px">
+          style="max-height: 670px">
           <DxPaging :page-size="0" />
 
           <DxColumn :allow-sorting="false" caption="관" data-field="code1" cell-template="code1" width="100px" />
@@ -23,15 +27,15 @@
           <DxColumn :allow-sorting="false" caption="세목" data-field="codeName" width="100px"/>
           <DxColumn :allow-sorting="false" caption="세목코드" data-field="code" />
           <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index) - 1}차 추경` : `전년도`"
-            cell-template="amountPreBudget" data-field="amount1" alignment="right" />
+            cell-template="amountPreBudget" alignment="right" />
           <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index)}차 추경` : `당해년도`"
-                    cell-template="amount" data-field="amount" alignment="right" />
+                    cell-template="amount"  alignment="right" />
           <DxColumn :allow-sorting="false" caption="증감액" cell-template="calculateAmount" alignment="right" />
 
           <DxColumn :allow-sorting="false" caption="증감비율(%)" cell-template="changeRate" alignment="right" />
           <DxColumn :allow-sorting="false" caption="자금원천" cell-template="sourceOfFunding" width="120px" />
           <DxColumn :allow-sorting="false" caption="산출내역" data-field="details" cell-template="outputRecord" />
-          <DxColumn :allow-sorting="false" caption="비고" data-field="Five" />
+          <DxColumn :allow-sorting="false" caption="비고" data-field="remark" />
 
           <template #code1="{ data }">
             <span :title="findCode('code1', data.data.code1)?.name1">{{ findCode('code1', data.data.code1)?.name1 }}</span>
@@ -47,21 +51,23 @@
               :fundingSource3="data.data.fundingSource3" :fundingSource4="data.data.fundingSource4" />
           </template>
           <template #amountPreBudget="{ data }">
-            <div :class="(!dataBudgetPreIndex || dataBudgetPreIndex?.find((item: any) => item.code === data.data.code).amount <= 0) && `text-red`">
-              {{ dataBudgetPreIndex ? filters.formatNumber(dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) : 0 }}
+            <div :class="data.data.previousAmount <= 0 && `text-red`">
+            {{ filters.formatNumber(data.data.previousAmount) }}
             </div>
           </template>
           <template #amount="{data}">
-            <div :class="data.data.amount <= 0 && `text-red`">{{data.data.amount}}</div>
+            <div :class="data.data.amount <= 0 && `text-red`">
+              {{data.data.amount}}
+            </div>
           </template>
           <template #calculateAmount="{ data }">
-            <div :class="((!dataBudgetPreIndex && (0 - data.data.amount) <= 0 ) || (dataBudgetPreIndex?.find((item: any) => item.code === data.data.code).amount || 0) - Number(data.data.amount) <= 0) && `text-red`">
-              {{ dataBudgetPreIndex ? filters.formatNumber((dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) - Number(data.data.amount)) : (0 - data.data.amount) }}
+            <div :class="(data.data.previousAmount - data.data.amount <= 0) && `text-red`">
+              {{ filters.formatNumber(data.data.previousAmount - data.data.amount) }}
             </div>
           </template>
 
           <template #changeRate="{ data }">
-            {{ dataBudgetPreIndex && dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount !== 0 ? filters.formatNumber((1 - data.data.amount / dataBudgetPreIndex.find((item: any) => item.code === data.data.code).amount || 0) * 100, 2) : 0 }}
+            {{ filters.formatNumber(data.data.previousAmount ? (1 - data.data.amount/data.data.previousAmount)*100: 0, 2) }}
           </template>
           <template #outputRecord="{ data }">
             <div v-if="data.data && data.data.details?.length > 0">
@@ -82,13 +88,13 @@
           <DxField :label="dataBudget?.index === 0 ? `전년도` : `${(dataBudget?.index || 0) - 1} 차 추경`">
             <div class="d-flex">
               <div class="d-flex-center">
-                <number-box-money class="flex-1 mr-5" :min="0" width="200px"
-                  v-model:valueInput="state.amountPreIndexBudget" />
+                <number-box-money class="flex-1 mr-5" :min="0" width="200px" format="#0,###"
+                  v-model:valueInput="formState.previousAmount" />
                 <a-tag v-if="formState.code2 === '501010000'">임직원보수일람표 반영</a-tag>
               </div>
             </div>
           </DxField>
-          <DxField :label="dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index} 차 추경`">
+          <DxField :label="dataBudget?.index === 0 ? `당해년도` : `${dataBudget?.index} 차 추경123`">
             <div class="d-flex">
               <div class="d-flex-center">
                 <number-box-money class="flex-1 mr-5" v-model:valueInput="formState.amount"
@@ -109,13 +115,13 @@
             </div>
           </DxField>
           <DxField label="증감액">
-            <number-box-money :value="formState.amount - state.amountPreIndexBudget" format="#0,###" disabled
-              width="200px" :textColor="formState.amount - state.amountPreIndexBudget < 0 ? 'red' : ''"/>
+            <number-box-money :value="formState.amount - formState.previousAmount" format="#0,###" disabled
+              width="200px" :textColor="formState.amount - formState.previousAmount < 0 ? 'red' : ''"/>
           </DxField>
           <DxField label="증감비율(%)">
             <number-box-money
-              :value="state.amountPreIndexBudget ? Number(((formState.amount/state.amountPreIndexBudget) - 1)* 100).toFixed(2)  : Number(0).toFixed(2)"
-              disabled width="200px" format="#0,###" :textColor="formState.amount - state.amountPreIndexBudget < 0 ? 'red' : ''" />
+              :value="formState.previousAmount ? Number(((formState.amount/formState.previousAmount) - 1)* 100).toFixed(2)  : Number(0).toFixed(2)"
+              disabled width="200px" format="#0,###" :textColor="formState.amount - formState.previousAmount < 0 ? 'red' : ''" />
           </DxField>
           <DxField label="산출내역">
             <div class="d-flex">
@@ -198,6 +204,19 @@
     </a-row>
     <CalculationDetailsPopup :visible="state.isPopupCalculateVisible" @close-popup="handleCloseCalPopup"
       @ok="handleCloseCalPopup" :data="formState?.details" />
+    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="400">
+      <div>
+        <div>최종차수(본예산인 경우 전년도 최종차수) 예산액을</div>
+        <div>불러옵니다. 이미 입력된 전예산액이 있더라도 새로 불러온</div>
+        <div>전예산액이 입력됩니다. 그래도 불러오겠습니까?</div>
+      </div>
+      <div class="footer">
+        <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'"
+          @onClick="closeModal" />
+        <button-basic class="button-form-modal" text="네. 불러옵니다" :width="140" :type="'default'" :mode="'contained'"
+          @onClick="filled" />
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -219,9 +238,9 @@ import filters from '@/helpers/filters';
 import mutations from '@/graphql/mutations/AC/AC5/AC520';
 import {Message} from "@/configs/enum";
 import notification from "@/utils/notification";
-import {isEqual} from "lodash";
+import {filter, isEqual} from "lodash";
+import { onMounted } from 'vue';
 
-const emit = defineEmits(['close-popup'])
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const column_resize = computed(() => store.state.settings.colomn_resize);
@@ -256,6 +275,7 @@ const formState = ref({
   code2: '0',
   code3: '0',
   amount: 0,
+  previousAmount: 0,
   remark: null,
   fundingSource1: 0,
   fundingSource2: 0,
@@ -275,17 +295,14 @@ const trigger = reactive({
   queryPreIndexBudget: false,
 })
 const arrCode1s = ref<any>([])
-const dataBudgetPreIndex = ref()
-// console.log('codes revenueBudgetSum', codes)
 const checkDataNewRow = computed(() => dataBudget.value?.action === ACTION.ADD && typePopup.value === ComponentCreateBudget.ExpenseAndRevenueBudget)
 // create function find code in codes array
 const findCode = (code: string, value: string) => {
   return codes?.find((item: any) => item[code] === value)
 }
 const state = reactive({
-  totalLaborCost: 0,
-  amountPreIndexBudget: 0,
-  isPopupCalculateVisible: false
+  isPopupCalculateVisible: false,
+  modalFillDataPreIndex: false
 })
 const totalAmount = ref(0)
 const query = {
@@ -333,45 +350,26 @@ const { onResult: onResultPreIndexBudget, onError: onErrorPreIndexBudget } = use
 }))
 onResultPreIndexBudget(({ data }) => {
   trigger.queryPreIndexBudget = false
-  codesPreIndexBudget.value = data?.getBudget?.records
   if (data?.getBudget?.records.length > 0) {
     if (formState.value.code2 !== '501010000' && dataBudget.value?.action === ACTION.ADD) {
-      formState.value.amount = data?.getBudget?.records.find((item: any) => item.code === formState.value.code).amount
+      formState.value.amount = data?.getBudget?.records.find((item: any) => item.code === formState.value.code).amount  
     }
-    dataBudgetPreIndex.value = data?.getBudget?.records
+    codesPreIndexBudget.value = data?.getBudget?.records
   }
 })
 
 onErrorPreIndexBudget((error) => {
   if (error.message.includes('예산서가 존재하지 않습니다')) {
     console.log('error', error.message)
-    state.amountPreIndexBudget = 0
+    formState.value.previousAmount = 0
     trigger.queryPreIndexBudget = false
   }
 })
 
-// // query onResultEmployeePayTable
-// const {onResult: onResultEmployeePayTable, onError: onErrorEmployeePayTable} = useQuery(queries.getEmployeePayTable, queryEmployeeTable, () => ({
-//   fetchPolicy: "no-cache",
-//   enabled: trigger.employeeTable
-// }))
-// onResultEmployeePayTable(({data}) => {
-//   if (data) {
-//     console.log('data?.getEmployeePayTable', data?.getEmployeePayTable.items)
-//     // console.log('data?.getEmployeePayTable?.items', data?.getEmployeePayTable)
-//     state.totalLaborCost = data?.getEmployeePayTable?.totalLaborCost
-//     trigger.employeeTable = false
-//   }
-// })
-// onErrorEmployeePayTable((error) => {
-//   console.log('error', error)
-//   trigger.employeeTable = false
-// })
 // create budget
 const { mutate: createBudget, onDone: onDoneCreateBudget, onError: onErrorCreateBudget } = useMutation(mutations.createBudget)
 onDoneCreateBudget(({ data }) => {
   if (data) {
-    // dataSource.value.reload()
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
     // emit('close-popup', true)
@@ -387,7 +385,6 @@ onErrorCreateBudget((error) => {
 const { mutate: updateBudget, onDone: onDoneUpdateBudget, onError: onErrorUpdateBudget } = useMutation(mutations.updateBudget)
 onDoneUpdateBudget(({ data }) => {
   if (data) {
-    // dataSource.value.reload()
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
     // emit('close-popup', true)
@@ -412,15 +409,17 @@ watch(() => formState.value.amount, (value) => {
 watch(() => [formState.value, codesPreIndexBudget.value], ([val, codesVal]) => {
   if (val.code2 === '501010000' && dataBudget.value?.action === ACTION.ADD) {
     formState.value.amount = 0
+  
   } else if (val.code2 !== '501010000' && dataBudget.value?.action === ACTION.ADD) {
     formState.value.amount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
+    // formState.value.previousAmount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
   }
 })
 // watch triggerQueryBudget
 watch(() => checkDataNewRow.value, (val: any) => {
   if (val) {
     if (dataPreIndexBudgets.value === null && dataBudget.value?.index === 0) {
-      state.amountPreIndexBudget = 0
+      formState.value.previousAmount = 0
     } else {
       trigger.queryPreIndexBudget = true
     }
@@ -435,6 +434,7 @@ watch(() => checkDataNewRow.value, (val: any) => {
           code2: item.code2,
           code3: item.code3,
           amount: 0,
+          previousAmount: 0,
           remark: null,
           fundingSource1: null,
           fundingSource2: null,
@@ -443,6 +443,11 @@ watch(() => checkDataNewRow.value, (val: any) => {
           codeName: item.name
         })) || []
       },
+    })
+    arrCode1s.value = []
+    codes?.map((item: any) => {
+      if (!arrCode1s.value.find((row: any) => row == item.code1))
+        arrCode1s.value.push(item.code1)
     })
   } else {
     query.index = dataBudget.value?.index
@@ -529,13 +534,30 @@ const onCellPrepared = (e: any) => {
     }
   }
 }
+const handleFillValuePreIndex = () => {
+  state.modalFillDataPreIndex = true
+}
+const closeModal = () => {
+  state.modalFillDataPreIndex = false
+}
+const filled = () => {
+  if(codesPreIndexBudget.value){
+    dataSource.value.items()?.map((item: any) => {
+      const preIndexBudget = codesPreIndexBudget.value?.find((row: any) => row.code === item.code)
+      if(preIndexBudget){
+        item.previousAmount = preIndexBudget.amount
+      }
+    })
+  }
+  state.modalFillDataPreIndex = false
+}
 </script>
 
 <style scoped lang="scss">
 .title {
   font-size: 20px;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 20px;
   margin-bottom: 10px;
   padding: 5px 10px;
   background-color: #97c0e1;
@@ -574,5 +596,12 @@ li {
   .ant-tooltip-inner {
     color: red;
   }
+}
+.footer {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 </style>
