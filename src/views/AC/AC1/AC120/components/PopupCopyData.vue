@@ -228,7 +228,7 @@ export default defineComponent({
           dataSelect.value.letterOfApprovalType;
         formData.value.causeUsage = dataSelect.value.causeUsage;
         formData.value.memo =
-          `원본 지출결의서: ` + dataSelect.value.accountingDocumentId;
+          `원본 지출결의서: ` + (dataSelect.value.resolutionNumber ? dataSelect.value.resolutionNumber : '');
 
         formData.value.resolutionType = 22;
         formData.value.amount = -formData.value.amount;
