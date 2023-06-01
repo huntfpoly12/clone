@@ -452,7 +452,7 @@ export default defineComponent({
     };
 
     // A function that is called when the user clicks on the "Load New" button.
-    const loadNew = () => {
+    const loadNew = async () => {
       clearAllCellValue(wrapper);
       originData.value = {
         companyId: companyId,
@@ -469,8 +469,8 @@ export default defineComponent({
       };
       trigger.value = true;
       refetchData();
-      checkDisableA04A06()
-      checkDisableRefund()
+      await checkDisableRefund()
+      await checkDisableA04A06()
     };
 
     const {
@@ -589,9 +589,7 @@ export default defineComponent({
     };
 
     // update cell settings flow condition
-    const checkDisableA04A06 = () => {
-   
-      
+    const checkDisableA04A06 = async () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSetting))] 
 
@@ -604,7 +602,6 @@ export default defineComponent({
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "반익0") ||
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6 && dataSource.value[0].reportClassCode == "반익1")
       ) {
-        console.log(dataSource.value,'dataSource.value 444');
         newCellSetting[123].readOnly = false
         newCellSetting[123].className = "htMiddle htRight"
         newCellSetting[124].readOnly = false
@@ -614,7 +611,6 @@ export default defineComponent({
         newCellSetting[143].readOnly = false
         newCellSetting[143].className = "htMiddle htRight"
       } else {   
-        console.log(dataSource.value,'dataSource.value');
         newCellSetting[123].readOnly = true
         newCellSetting[123].className = "htMiddle htRight disable-cell"
         newCellSetting[124].readOnly = true
@@ -630,7 +626,7 @@ export default defineComponent({
     }
 
     // check disable switch refund
-    const checkDisableRefund = () => {
+    const checkDisableRefund = async () => {
       if (
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||
@@ -665,8 +661,6 @@ export default defineComponent({
     watch(()=>dataSource.value[0].refund, (newVal) => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSetting))]
-      console.log(newCellSetting,'newCellSetting watch');
-      
       if (newVal) {
         newCellSetting[331].readOnly = false
         newCellSetting[331].className = "htMiddle htRight"
