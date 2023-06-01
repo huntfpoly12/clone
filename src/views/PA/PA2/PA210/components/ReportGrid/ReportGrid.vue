@@ -100,6 +100,7 @@
                     }}
                   </template>
                   <div class="custom-grade-cell">
+                    reportType {{  data.data.reportType }}-{{ data.data.reportClassCode }} -  {{  data.data.paymentType }}
                     <DxButton
                       :text="
                         '지 ' +
@@ -451,7 +452,7 @@ export default defineComponent({
     };
 
     // A function that is called when the user clicks on the "Load New" button.
-    const loadNew = () => {
+    const loadNew = async () => {
       clearAllCellValue(wrapper);
       originData.value = {
         companyId: companyId,
@@ -468,8 +469,8 @@ export default defineComponent({
       };
       trigger.value = true;
       refetchData();
-      checkDisableA04A06()
-      checkDisableRefund()
+      await checkDisableRefund()
+      await checkDisableA04A06()
     };
 
     const {
@@ -481,6 +482,7 @@ export default defineComponent({
     doneChangeStatus((result: any) => {
       store.state.common.focusedRowKeyPA210 =
         result.data.createTaxWithholdingStatusReport.reportId;
+      store.commit("common/setHasChangedPopupPA210", false);
       notification("success", Message.getMessage("COMMON", "106").message);
       emit("isDoneReport", false);
     });
@@ -560,26 +562,26 @@ export default defineComponent({
           statementAndAmountOfTaxPaids: statement,
           adjustmentOfRefundTaxAmount: {
             prevMonthNonRefundableTaxAmount:
-              arrData[37][0] != "" ? arrData[37][0] : 0,
+              arrData[37][0] != null ? arrData[37][0] : 0,
             preRefundApplicationTaxAmount:
-              arrData[37][2] != "" ? arrData[37][2] : 0,
-            deductibleBalance: arrData[37][3] != "" ? arrData[37][3] : 0,
+              arrData[37][2] != null ? arrData[37][2] : 0,
+            deductibleBalance: arrData[37][3] != null ? arrData[37][3] : 0,
             thisMonthRefundTaxGeneral:
-              arrData[37][5] != "" ? arrData[37][5] : 0,
+              arrData[37][5] != null ? arrData[37][5] : 0,
             thisMonthRefundTaxFiduciaryEstates:
-              arrData[37][6] != "" ? arrData[37][6] : 0,
+              arrData[37][6] != null ? arrData[37][6] : 0,
             thisMonthRefundTaxOtherFinancialCompany:
-              arrData[37][7] != "" ? arrData[37][7] : 0,
+              arrData[37][7] != null ? arrData[37][7] : 0,
             thisMonthRefundTaxOtherMerge:
-              arrData[37][8] != "" ? arrData[37][8] : 0,
+              arrData[37][8] != null ? arrData[37][8] : 0,
             refundTaxSubjectToAdjustment:
-              arrData[37][9] != "" ? arrData[37][9] : 0,
+              arrData[37][9] != null ? arrData[37][9] : 0,
             thisMonthTotalAdjustedRefundTaxAmount:
-              arrData[37][10] != "" ? arrData[37][10] : 0,
+              arrData[37][10] != null ? arrData[37][10] : 0,
             nextMonthRefundTaxAmount:
-              arrData[37][11] != "" ? arrData[37][11] : 0,
+              arrData[37][11] != null ? arrData[37][11] : 0,
             refundApplicationAmount:
-              arrData[37][12] != "" ? arrData[37][12] : 0,
+              arrData[37][12] != null ? arrData[37][12] : 0,
           },
         },
       };
@@ -587,7 +589,7 @@ export default defineComponent({
     };
 
     // update cell settings flow condition
-    const checkDisableA04A06 = () => {
+    const checkDisableA04A06 = async () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSetting))] 
 
@@ -624,7 +626,7 @@ export default defineComponent({
     }
 
     // check disable switch refund
-    const checkDisableRefund = () => {
+    const checkDisableRefund = async () => {
       if (
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||

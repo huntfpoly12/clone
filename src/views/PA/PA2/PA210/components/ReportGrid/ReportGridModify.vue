@@ -383,7 +383,7 @@ export default defineComponent({
       }
     });
     // The above code is used to load the data from the database to the table.
-    const loadNew = () => {
+    const loadNew = async () => {
       clearAllCellValue(wrapper);
       // call api to set modified value
       originData.value = {
@@ -674,8 +674,9 @@ export default defineComponent({
           adjustment?.refundApplicationAmountModified,
           "initTable"
         );
-      checkDisableA04A06()
-      checkDisableRefund()
+      await checkDisableRefund()
+      await checkDisableA04A06()
+    
     };
 
     const {
@@ -687,6 +688,7 @@ export default defineComponent({
     doneChangeStatus((result: any) => {
       store.state.common.focusedRowKeyPA210 =
         result.data.createTaxWithholdingStatusReport.reportId;
+      store.commit("common/setHasChangedPopupPA210", false);
       notification("success", Message.getMessage("COMMON", "106").message);
       setModalVisible();
     });
@@ -795,58 +797,58 @@ export default defineComponent({
           statementAndAmountOfTaxPaids: statement,
           adjustmentOfRefundTaxAmount: {
             prevMonthNonRefundableTaxAmount:
-              arrData[66][0] != "" ? arrData[66][0] : 0,
+              arrData[66][0] != null ? arrData[66][0] : 0,
             prevMonthNonRefundableTaxAmountModified:
-              arrData[67][0] != "" ? arrData[67][0] : 0,
+              arrData[67][0] != null ? arrData[67][0] : 0,
 
             preRefundApplicationTaxAmount:
-              arrData[66][2] != "" ? arrData[66][2] : 0,
+              arrData[66][2] != null ? arrData[66][2] : 0,
             preRefundApplicationTaxAmountModified:
-              arrData[67][2] != "" ? arrData[67][2] : 0,
+              arrData[67][2] != null ? arrData[67][2] : 0,
 
-            deductibleBalance: arrData[66][4] != "" ? arrData[66][4] : 0,
+            deductibleBalance: arrData[66][4] != null ? arrData[66][4] : 0,
             deductibleBalanceModified:
-              arrData[67][4] != "" ? arrData[67][4] : 0,
+              arrData[67][4] != null ? arrData[67][4] : 0,
 
             thisMonthRefundTaxGeneral:
-              arrData[66][5] != "" ? arrData[66][5] : 0,
+              arrData[66][5] != null ? arrData[66][5] : 0,
             thisMonthRefundTaxGeneralModified:
-              arrData[67][5] != "" ? arrData[67][5] : 0,
+              arrData[67][5] != null ? arrData[67][5] : 0,
 
             thisMonthRefundTaxFiduciaryEstates:
-              arrData[66][6] != "" ? arrData[66][6] : 0,
+              arrData[66][6] != null ? arrData[66][6] : 0,
             thisMonthRefundTaxFiduciaryEstatesModified:
-              arrData[67][6] != "" ? arrData[67][6] : 0,
+              arrData[67][6] != null ? arrData[67][6] : 0,
 
             thisMonthRefundTaxOtherFinancialCompany:
-              arrData[66][7] != "" ? arrData[66][7] : 0,
+              arrData[66][7] != null ? arrData[66][7] : 0,
             thisMonthRefundTaxOtherFinancialCompanyModified:
-              arrData[67][7] != "" ? arrData[67][7] : 0,
+              arrData[67][7] != null ? arrData[67][7] : 0,
 
             thisMonthRefundTaxOtherMerge:
-              arrData[66][8] != "" ? arrData[66][8] : 0,
+              arrData[66][8] != null ? arrData[66][8] : 0,
             thisMonthRefundTaxOtherMergeModified:
-              arrData[67][8] != "" ? arrData[67][8] : 0,
+              arrData[67][8] != null ? arrData[67][8] : 0,
 
             refundTaxSubjectToAdjustment:
-              arrData[66][9] != "" ? arrData[66][9] : 0,
+              arrData[66][9] != null ? arrData[66][9] : 0,
             refundTaxSubjectToAdjustmentModified:
-              arrData[67][9] != "" ? arrData[67][9] : 0,
+              arrData[67][9] != null ? arrData[67][9] : 0,
 
             thisMonthTotalAdjustedRefundTaxAmount:
-              arrData[66][10] != "" ? arrData[66][10] : 0,
+              arrData[66][10] != null ? arrData[66][10] : 0,
             thisMonthTotalAdjustedRefundTaxAmountModified:
-              arrData[67][10] != "" ? arrData[67][10] : 0,
+              arrData[67][10] != null ? arrData[67][10] : 0,
 
             nextMonthRefundTaxAmount:
-              arrData[66][11] != "" ? arrData[66][11] : 0,
+              arrData[66][11] != null ? arrData[66][11] : 0,
             nextMonthRefundTaxAmountModified:
-              arrData[67][11] != "" ? arrData[67][11] : 0,
+              arrData[67][11] != null ? arrData[67][11] : 0,
 
             refundApplicationAmount:
-              arrData[66][12] != "" ? arrData[37][66] : 0,
+              arrData[66][12] != null ? arrData[37][66] : 0,
             refundApplicationAmountModified:
-              arrData[67][12] != "" ? arrData[67][12] : 0,
+              arrData[67][12] != null ? arrData[67][12] : 0,
           },
         },
       };
@@ -866,7 +868,7 @@ export default defineComponent({
     };
 
     // update cell settings flow condition
-    const checkDisableA04A06 = () => {
+    const checkDisableA04A06 = async () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
 
@@ -925,7 +927,7 @@ export default defineComponent({
       });
     }
     // check disable switch refund
-    const checkDisableRefund = () => {
+    const checkDisableRefund = async () => {
       let hot = wrapper.value.hotInstance;
       let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
       if (
