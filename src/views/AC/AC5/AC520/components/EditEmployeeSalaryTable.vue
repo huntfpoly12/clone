@@ -138,9 +138,9 @@
           <DxTotalItem cssClass="center" column="name" alignment="center" display-format="간접인건비 계" />
           <DxTotalItem cssClass="custom center" column="name" alignment="center" display-format="총 인건비 계" />
 
-          <DxTotalItem show-in-column="salary" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.salary1)" />
-          <DxTotalItem show-in-column="salary" alignment="right"
+          <DxTotalItem column="salary" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummary.salary1)" />/>
+          <DxTotalItem column="salary" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.salary2)" />
           <DxTotalItem column="salary" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.salary1 + formatSummary.salary2)"
@@ -210,7 +210,6 @@ import {
 
 import {computed, reactive, ref, watch} from 'vue'
 import {useStore} from "vuex";
-import deletePopup from "@/utils/deletePopup";
 import {RowDraggingReorderEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
@@ -228,6 +227,7 @@ import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons-vue"
 import DxSelectBox from "devextreme-vue/select-box";
 import {ValueChangedEvent} from "devextreme/ui/select_box";
 import cloneDeep from 'lodash/cloneDeep';
+import {Modal} from "ant-design-vue";
 
 const emit = defineEmits(['closePopup'])
 const props = defineProps({
@@ -349,22 +349,23 @@ const formatSummary = reactive({
   total2: 0,
   total: 0,
 })
-watch(() => dataAllRow.value, (val) => {
-  const initialValue = {
-    salary1: 0,
-    salary2: 0,
-    allowance1: 0,
-    allowance2: 0,
-    dailyAllowance1: 0,
-    dailyAllowance2: 0,
-    retirementReserve1: 0,
-    retirementReserve2: 0,
-    socialInsuranceLevy1: 0,
-    socialInsuranceLevy2: 0,
-    total1: 0,
-    total2: 0,
-    total: 0,
-  };
+
+watch(() => dataAllRow.value, (val, oldValue) => {
+    const initialValue = {
+      salary1: 0,
+      salary2: 0,
+      allowance1: 0,
+      allowance2: 0,
+      dailyAllowance1: 0,
+      dailyAllowance2: 0,
+      retirementReserve1: 0,
+      retirementReserve2: 0,
+      socialInsuranceLevy1: 0,
+      socialInsuranceLevy2: 0,
+      total1: 0,
+      total2: 0,
+      total: 0,
+};
   const result = val?.reduce((acc: any, item: any) => {
     const {
       classification,
@@ -400,8 +401,8 @@ const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
   if(dataOld.value.length) {
-    const rowOld = dataOld.value.find((item: any) => item.key !== key_row)
-    if(rowOld) {
+    const rowOld = dataOld.value.find((item: any) => item.key === key_row)
+    if(!rowOld) {
       dataSource.value.store().remove(key_row).then(() => {
         dataSource.value.reload()
       })
@@ -410,18 +411,20 @@ const deleteRow = (e: any) => {
     }
   }
   dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== key_row)
-
 }
 
 const setModalVisible = () => {
   if (!isEqual(dataAllRow.value, dataOld.value)) {
-    deletePopup({
-      callback: () => {
+    Modal.confirm({
+      title: Message.getCommonMessage('301').message,
+      okText: '네',
+      cancelText: '아니요',
+      onOk() {
         emit('closePopup', false)
       },
-      message: Message.getCommonMessage('301').message,
-      okText: '네',
-      cancelText: '아니요'
+      onCancel() {
+        return
+      },
     })
     return
   } else {
@@ -455,17 +458,6 @@ const onCellPrepared = (e: any) => {
   }
 }
 const onRowPrepared = (e: any) => {
-  if (!e.isEditing && e.rowType === 'data' && !e?.removed) {
-    if (!dataAllRow.value.length) {
-      dataAllRow.value.push({ ...e.data, key: e.key })
-    } else {
-      const isRowExits = dataAllRow.value.find((item: any) => item.key === e.key)
-      if (!isRowExits) dataAllRow.value.push({ ...e.data, key: e.key })
-      else {
-        dataAllRow.value = dataAllRow.value.map((item: any) => item.key === e.key ? { ...item, ...e.data } : { ...item })
-      }
-    }
-  }
   // custom text column drag of footer row
   const isFooterRow = e.rowElement.classList.contains('dx-footer-row')
   if (isFooterRow) {

@@ -3,8 +3,6 @@
 }
 
 .modal-note {
-  max-height: 500px;
-  overflow: auto;
 
   .title-note {
     display: flex;
@@ -24,12 +22,15 @@
 :deep img-preview {
   position: relative;
   width: 100%;
+
 }
 
-:deep img {
-  position: relative;
-  width: 270px;
-  height: 345px;
+:deep(.img-preview-group){
+   img {
+    position: relative;
+    width: 270px;
+    height: 345px;
+  }
 }
 
 .anticon {
