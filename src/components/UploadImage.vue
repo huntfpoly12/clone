@@ -1,5 +1,5 @@
 <template>
-    <a-row class="container_upload custom-flex clr" :gutter="[24]">
+    <a-row :class="`container_upload custom-flex ${required ? 'clr' : '' }`" :gutter="[24]">
         <a-form-item :label="title" v-if="!customrow" style="position: relative;">
             <div v-if="disabledImg == false">
                 <div class="d-flex">
@@ -101,6 +101,10 @@ export default defineComponent({
         },
         name: {
             type: String
+        },
+        required: {
+            type: Boolean,
+            default: true
         }
     },
     components: {
