@@ -820,7 +820,6 @@ export default defineComponent({
 					dataIncomeWageDaily.value.dailyWage,
 					dataIncomeWageDaily.value.monthlyWage
 				);
-
 				arrDeduction.value?.map((val: any) => {
 					val.priceNew = 0;
 					// if (val.deductionItemCode == 1001)
@@ -832,9 +831,9 @@ export default defineComponent({
 					if (val.deductionItemCode == 1004) val.priceNew = total4;
 					if (
 						val.deductionItemCode == 1011 &&
-						Number.isInteger(objectData.incomeAmount)
+						Number.isInteger(objectData.incomeTax)
 					)
-						val.priceNew = objectData.incomeAmount;
+						val.priceNew = objectData.incomeTax;
 					if (
 						val.deductionItemCode == 1012 &&
 						Number.isInteger(objectData.localIncomeTax)
