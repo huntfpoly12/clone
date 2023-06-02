@@ -93,14 +93,6 @@ export default defineComponent({
         nameBtn: "취득신고",
       },
       {
-        typeId: 4,
-        typeName: "휴직",
-        subject: "",
-        consignment: "",
-        url: "",
-        nameBtn: "휴직신고",
-      },
-      {
         typeId: 2,
         typeName: "상실",
         subject: "",
@@ -115,6 +107,22 @@ export default defineComponent({
         consignment: "",
         url: "",
         nameBtn: "급여변경 신고",
+      },
+      {
+        typeId: 4,
+        typeName: "휴직",
+        subject: "",
+        consignment: "",
+        url: "",
+        nameBtn: "휴직신고",
+      },
+      {
+        typeId: 5,
+        typeName: "복직",
+        subject: "",
+        consignment: "",
+        url: "",
+        nameBtn: "복직신고",
       },
     ]);
     watch(

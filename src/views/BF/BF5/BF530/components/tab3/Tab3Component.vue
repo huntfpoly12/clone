@@ -761,9 +761,7 @@ export default defineComponent({
     const downConfirm2 = (e: any) => {
       if (e) {
         typeViewUrl.value = 2;
-        if (viewUrlType.value !== 5) {
-          callApiUrl();
-        }
+        callApiUrl();
       }
     };
 

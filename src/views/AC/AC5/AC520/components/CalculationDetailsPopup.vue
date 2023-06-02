@@ -19,7 +19,7 @@
           <div v-for="(data, index) in details" :key="index" class="mb-10">
             <div class="d-flex-center gap-10">
               <default-text-box v-model="data.detail" placeholder="한글, 영문, 숫자, 괄호(), 사칙연산(+, -, *, /)"/>
-              <number-box-money v-model="data.calculationResult" placeholder="계산결과"/>
+              <number-box-money v-model:valueInput="data.calculationResult" placeholder="계산결과" format="#0,###"/>
               <div class="wrap-action">
                 <DxButton @click="removeRow(index)" icon="minus" v-if="index > 0 || details.length > 1 " />
                 <DxButton @click="addRow" icon="plus" v-if="+index === details.length - 1 || details.length === 0  " />
@@ -66,9 +66,9 @@ const props = defineProps<Props>()
 // watch visible
 watch(() => props.visible, (val) => {
   if (val) {
-    details.value =  props.data && props.data.length > 0 ? cloneDeep(props.data) : [{...newDescription}];
-    valueOld.value =  props.data && props.data.length > 0 ? cloneDeep(props.data) : [{...newDescription}];
-    typeCal.value = props.data?.[0]?.type ?? 2; 
+    details.value =  props.data && props.data.length > 0 ? cloneDeep(props.data.map((i:any) => ({...i, calculationResult: Number(i.calculationResult)}))) : [{...newDescription}];
+    valueOld.value =  props.data && props.data.length > 0 ? cloneDeep(props.data.map((i:any) => ({...i, calculationResult: Number(i.calculationResult)}))) : [{...newDescription}];
+    typeCal.value = props.data?.[0]?.type ?? 2;
   }
 }, {deep: true})
 const emit = defineEmits(['closePopup', 'ok'])

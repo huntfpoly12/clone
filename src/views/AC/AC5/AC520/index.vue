@@ -6,7 +6,7 @@
       <info-tool-tip>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</info-tool-tip>
     </a-space>
     <a-space :size="4" align="center">
-      <checkbox-basic class="" label="예산서 (세목까지 출력)" :size="'20'"/>
+      <checkbox-basic v-model:valueCheckbox="displayCode" label="예산서 (세목까지 출력)"  :size="'20'"/>
       <info-tool-tip>선택시 서식에 세목까지 표현됩니다.</info-tool-tip>
     </a-space>
   </a-space>
@@ -218,6 +218,7 @@ const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const disableAddRow = ref(false)
 const modalHistory = ref(false)
 const gridRef = ref();
+const displayCode = ref(false)
 const dataSource = ref<DataSource>()
 const query = reactive({
   companyId,
@@ -325,11 +326,9 @@ const modal = reactive({
   editEmployeeSalaryTable: false
 });
 const closePopupBudget = (e: boolean) => {
-  if (e){
-    query.fiscalYear = acYear.value
-    refetchBudget()
-    disableAddRow.value = false
-  }
+  query.fiscalYear = acYear.value
+  refetchBudget()
+  disableAddRow.value = false
   modal.budget = false
   store.commit('common/setIsChangedFormAc520', false)
 };
@@ -364,7 +363,7 @@ const actionPrint = (data: any, type: TypeMail) => {
     const {onResult} = useGetBudgetReportViewUrl({
       ...query,
       index: data.index,
-      displayCode: true,
+      displayCode: displayCode.value,
       type: data.budgetType
     })
     onResult(({data}) => {

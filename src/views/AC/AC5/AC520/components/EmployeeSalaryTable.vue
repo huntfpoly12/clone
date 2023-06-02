@@ -12,7 +12,12 @@
       <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" :on-reorder="onReorder"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
                  :use-icons="true" new-row-position="last"
-      />
+      >
+        <DxTexts add-row="임직원보수등록"/>
+        <DxTexts save-all-changes="저장"/>
+        <DxTexts delete-row="삭제"/>
+        <DxTexts undelete-row="삭제 취소"/>
+      </DxEditing>
       <DxPaging :page-size="0"/>
       <DxToolbar>
         <DxItem location="after" name="addRowButton" css-class="cell-button-add">
@@ -37,13 +42,13 @@
         </DxItem>
       </DxToolbar>
       <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
-        <DxRequiredRule/>
+        <DxRequiredRule :message="Message.getCommonMessage('102').message"/>
       </DxColumn>
       <DxColumn caption="직종" data-field="occupation"
                 css-class="text-red p-0" width="165" alignment="center"
                 edit-cell-template="selectOccupation"
       >
-        <DxRequiredRule/>
+        <DxRequiredRule :message="Message.getCommonMessage('102').message"/>
       </DxColumn>
       <template #selectOccupation="{data}">
         <DxSelectBox
@@ -64,7 +69,7 @@
                 edit-cell-template="laborCostClassificationArray"
       >
         <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value"/>
-        <DxRequiredRule/>
+        <DxRequiredRule :message="Message.getCommonMessage('102').message"/>
       </DxColumn>
       <template #laborCostClassificationArray="{data}">
         <DxSelectBox
@@ -126,7 +131,7 @@
       </template>
       <DxColumn type="buttons">
         <DxButtonGrid name="delete" @click="deleteRow">
-          <DeleteOutlined style="font-size: 16px; cursor: pointer" />
+          <DeleteOutlined style="font-size: 16px; cursor: pointer" title="삭제" />
         </DxButtonGrid>
       </DxColumn>
       <DxSummary>
@@ -185,7 +190,7 @@ import {
   DxPaging,
   DxRequiredRule,
   DxRowDragging,
-  DxSummary,
+  DxSummary, DxTexts,
   DxToolbar,
   DxTotalItem
 } from 'devextreme-vue/data-grid';
