@@ -10,7 +10,7 @@ export const initialState = {
         longTermCareInstitutionNumber: null,
         facilityBizType: '',
         name: '',
-        startYearMonth: +dayjs().year(),
+        startYearMonth: +dayjs().format('YYYYMM'),
         capacity: NaN,
         registrationCardFileStorageId: null,
         facilityBusinessId: null,
