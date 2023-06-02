@@ -1,19 +1,20 @@
 <template>
   <DxTextBox v-bind="$props" :width="width" value-change-event="input" :show-clear-button="clearButton" :placeholder="placeholder"
-    v-model="value" :disabled="disabled" :maxLength="maxCharacter" :readOnly="readOnly" @input="updateValue(value)"
+    v-model="value" :disabled="disabled" :maxLength="maxCharacter" :readOnly="readOnly" @input="updateValue(value)" 
     :height="$config_styles.HeightInput" @value-changed="valueChanged" :name="nameInput" :rtlEnabled="rtlEnabled"  @focusIn="onFocusIn">
     <DxValidator :name="nameInput" :value="textBoxValue" v-bind="$props">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxStringLengthRule v-if="minCharacter > 0" :min="minCharacter" :message="messageString" />
       <DxStringLengthRule v-if="lengthFixed > 0" :min="lengthFixed" :max="lengthFixed" :message="lengthFixMsg" />
-      <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
+      <DxCustomRule :reevaluate="true" :validation-callback="ruleCustom" :message="messageRuleCustom" />
+      <DxAsyncRule :skip="['pending', 'valid']" v-if="ruleCustomAsnyc" :validation-callback="ruleFunction" :message="messageRuleCustom" :reevaluate="true" />
     </DxValidator>
   </DxTextBox>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
-import { DxValidator, DxRequiredRule, DxStringLengthRule, DxCustomRule } from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule, DxStringLengthRule, DxCustomRule,DxAsyncRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -78,6 +79,9 @@ export default defineComponent({
     select: {
       type: Boolean,
       default: true,
+    },
+    ruleCustomAsnyc:{
+      type: Function,
     }
   },
   components: {
@@ -85,7 +89,8 @@ export default defineComponent({
     DxValidator,
     DxRequiredRule,
     DxStringLengthRule,
-    DxCustomRule
+    DxCustomRule,
+    DxAsyncRule,
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
@@ -119,19 +124,40 @@ export default defineComponent({
       }
       emit("focusInput", e);
     }
+    const ruleFunction = (e: any) => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(props.ruleCustomAsnyc && props.ruleCustomAsnyc());
+        }, 0);
+      });
+    }
     return {
       valueChanged,
       messageString,
       messageRequired,
       updateValue,
       value,
-      onFocusIn
+      onFocusIn,
+      ruleFunction
     };
   },
 });
 </script>
-<style>
+<style scoped lang="scss">
 .dx-placeholder::before {
   padding: 6px 9px 8px;
+}
+.custom-textbox .dx-validationsummary-item {
+  display: none;
+}
+.dx-valid.dx-texteditor {
+  :deep .dx-texteditor-input-container {
+    &::after {
+      display: none;
+    }
+  }
+}
+:deep .dx-pending-indicator.dx-loadindicator {
+  display: none;
 }
 </style>

@@ -103,7 +103,7 @@
                                         </template>
                                     </DxDataGrid>
                                     <DxDataGrid v-else noDataText="내역이 없습니다" id="gridContainer" :show-borders="true" ref="gridRefName"
-                                        disabled="true">
+                                        >
                                         <DxScrolling mode="standard" show-scrollbar="always" />
                                         <DxEditing :use-icons="true" :allow-adding="true">
                                         </DxEditing>
@@ -128,8 +128,7 @@
                                           </DxButton>
                                         </template>
                                     </DxDataGrid>
-                                    <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length"
-                                        :key="resetFormNum">
+                                    <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length" :key="dataActiveRow.rowIndex">
                                         <a-col :span="7">
                                             <div class="custom-money">
                                                 <a-form-item label="사업분류" class="red">
@@ -141,19 +140,22 @@
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="사업명 (중복불가) " class="red">
-                                                    <default-text-box style="float:right" :width="150" :required="true"
-                                                        v-model:valueInput="dataActiveRow.name" />
+                                                    <default-text-box style="float:right" :width="150" :required="true" @onChange = "onChangeName"
+                                                        v-model:valueInput="dataActiveRow.name" :ruleCustomAsnyc="()=>isDuplicateName" messageRuleCustom="다른 사업명과 중복됩니다."/>
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="서비스 시작년월" class="red">
                                                     <month-picker-box style="float:right" width="150px" :required="true"
                                                         v-model:valueDate="dataActiveRow.startYearMonth" />
+                                                        <info-tool-tip class="mt-5">
+                                                          장부다에 입력할 수 있는 서비스 대상 연월을 의미합니다. (예: 서비스 시작 연월: 202304 → 202304 회계자료부터 입력가능(이전은 입력불가))
+                                                        </info-tool-tip>
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="정원수 (명)" class="red">
-                                                    <number-box style="float:right" :width="150" :required="true"
+                                                    <number-box style="float:right" :width="150" :min=" 1 " :required="true"
                                                         v-model:valueInput="dataActiveRow.capacity" />
                                                 </a-form-item>
                                             </div>
@@ -319,6 +321,7 @@
                             </a-table>
                         </a-collapse-panel>
                     </a-collapse>
+                    
                     <div class="footer">
                         <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible" />
                         <button-basic text="저장하고 나가기" type="default" mode="contained"
@@ -402,6 +405,9 @@ export default defineComponent({
         const rowIndexDelete = ref(0);
         const contentDelete = Message.getCommonMessage('401').message;
         const isWatching = ref(false);
+        let inputTimeout: any = null;
+        const isDuplicateName = ref(true);
+        const testValue = ref('true');
         // ============ GRAPQL ===============================
         // get service contract
         const { result } = useQuery(
@@ -540,12 +546,17 @@ export default defineComponent({
         });
 
         watch(() => formState.info.usedAccounting, (value) => {
+          if(isWatching.value){
             if (value) {
                 getTotalAccounting()
             } else {
                 dataSource.value = []
                 formState.info.accountingPrice = 0
             }
+            if(!value && !formState.info.usedWithholding){
+                notification("error", Message.getMessage('BF310', '001').message);
+            }
+          }
         })
         watch(withholdingServiceType, (value) => {
             if(value && formState.info.withholding && isWatching.value){
@@ -570,13 +581,16 @@ export default defineComponent({
                       price: 0,
                     }]
                   }
-                }
-                formState.info.withholdingPrice = formState.info.withholding?.price + (formState.info.withholding?.options[0]?.price??0);
-              } else {
+              }
+              formState.info.withholdingPrice = formState.info.withholding?.price + (formState.info.withholding?.options[0]?.price??0);
+            } else {
                 formState.info.withholding = null;
                 formState.info.withholdingPrice = 0
-              }
             }
+            if(!value && !formState.info.usedAccounting){
+                notification("error", Message.getMessage('BF310', '001').message);
+            }
+          }
         })
         watch(resultMemo, (value) => {
             if (value && value.getServiceContractManageMemos.length > 0) {
@@ -596,9 +610,18 @@ export default defineComponent({
                 trigger.value = false;
             }
         });
+        const onChangeName = () => {
+          if(isWatching.value) {
+              let nameArr = dataSource.value.filter((item: any, key: number)=> {
+                  return item.name === dataActiveRow.value.name;
+              });
+              isDuplicateName.value = nameArr.length === 1;
+          }
+        }
 
         // ============= FUNCTION ==============================
         const setModalVisible = () => {
+            isWatching.value = false;
             if ((JSON.stringify(objDataDefault) != JSON.stringify(formState)) ||
             (JSON.stringify(dataSource.value) != JSON.stringify(dataSourceOld.value)))
                 comfirmClosePopup(() => emit("closePopup", false))
@@ -607,7 +630,7 @@ export default defineComponent({
         };
 
         const handleAdd = () => {
-            formStateMomes.value.unshift({ ...initialFormStateMomes });
+            formStateMomes.value.push({ ...initialFormStateMomes });
         };
         const handleAddMemo = (note: any, mmId: any = null) => {
             if (note !== "" && mmId == null) {
@@ -624,8 +647,12 @@ export default defineComponent({
 
         const actionUpdateServiceContract = (e: any) => {
             var res = e.validationGroup.validate();
+            if(!formState.info.usedAccounting && !formState.info.usedWithholding){
+                notification("error", Message.getMessage('BF310', '001').message);
+            }
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                activeKey.value = [1];
             } else {
                 var variables = JSON.parse(JSON.stringify({ ...formState }));
                 if (variables.info.usedAccounting) {
@@ -797,10 +824,11 @@ export default defineComponent({
             e.data = JSON.parse(JSON.stringify({ ...initialState.info.accounting[0] }));
             dataActiveRow.value = e.data
         }
-
+        const checkDuplicate = () => isDuplicateName.value;
         return {
             handleInputTexService, getImgUrl, checkOption, disableInput, getPriceOption, changeChecked, changeValueInput, getTotalAmount, setModalVisible, removeImg, handleAdd, handleDeleteMemo, handleAddMemo, actionUpdateServiceContract, addRow, onDelConfirm, onFocusedRowChanged, onInitRow,
-            move_column, colomn_resize, loading, activeKey, formState, facilityBizType, formStateMomes, loadingUpdate, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum, onDelete, deleteModal, contentDelete
+            move_column, colomn_resize, loading, activeKey, formState, facilityBizType, formStateMomes, loadingUpdate, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum, onDelete, deleteModal, contentDelete,
+            isDuplicateName,checkDuplicate,onChangeName
         };
     },
 });

@@ -33,7 +33,7 @@
             <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload">
         </a-form-item>
 
-        <a-form-item :label="' '" :colon="false">
+        <a-form-item :label="' '" :colon="false" class="notice-img">
             <div class="warring-modal mt-10">
               <span>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</span><br>
               <span>파일형식 : JPG(JPEG), TIF, GIF, PNG</span><br>
@@ -286,5 +286,10 @@ export default defineComponent({
 }
 .warring-modal span{
     font-size: 12px;
+}
+.notice-img{
+  :deep .ant-form-item-label {
+    flex: 0;
+  }
 }
 </style>
