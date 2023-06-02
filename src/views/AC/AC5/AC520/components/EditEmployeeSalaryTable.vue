@@ -134,54 +134,55 @@
         <DxSummary :recalculate-while-editing="true">
           <DxTotalItem cssClass="custom" show-in-column="drag" display-format="소계" />
 
-          <DxTotalItem cssClass="center" show-in-column="name" alignment="center" display-format="직접인건비 계" />
-          <DxTotalItem cssClass="center" show-in-column="name" alignment="center" display-format="간접인건비 계" />
-          <DxTotalItem cssClass="custom center" show-in-column="name" alignment="center" display-format="총 인건비 계" />
+          <DxTotalItem cssClass="center" column="name" alignment="center" display-format="직접인건비 계" />
+          <DxTotalItem cssClass="center" column="name" alignment="center" display-format="간접인건비 계" />
+          <DxTotalItem cssClass="custom center" column="name" alignment="center" display-format="총 인건비 계" />
 
-          <DxTotalItem show-in-column="salary" alignment="right" summary-type="count"  />
+          <DxTotalItem show-in-column="salary" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummary.salary1)" />
           <DxTotalItem show-in-column="salary" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.salary2)" />
-          <DxTotalItem show-in-column="salary" alignment="right"
+          <DxTotalItem column="salary" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.salary1 + formatSummary.salary2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="allowance" alignment="right"
+          <DxTotalItem column="allowance" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.allowance1)" />
-          <DxTotalItem show-in-column="allowance" alignment="right"
+          <DxTotalItem column="allowance" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.allowance2)" />
-          <DxTotalItem show-in-column="allowance" alignment="right"
+          <DxTotalItem column="allowance" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.allowance1 + formatSummary.allowance2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
+          <DxTotalItem column="dailyAllowance" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance1)" />
-          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
+          <DxTotalItem column="dailyAllowance" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance2)" />
-          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
+          <DxTotalItem column="dailyAllowance" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance1 + formatSummary.dailyAllowance2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="retirementReserve" alignment="right"
+          <DxTotalItem column="retirementReserve" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.retirementReserve1)" />
-          <DxTotalItem show-in-column="retirementReserve" alignment="right"
+          <DxTotalItem column="retirementReserve" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.retirementReserve2)" />
-          <DxTotalItem show-in-column="retirementReserve" alignment="right"
+          <DxTotalItem column="retirementReserve" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.retirementReserve1 + formatSummary.retirementReserve2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
+          <DxTotalItem column="socialInsuranceLevy" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy1)" />
-          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
+          <DxTotalItem column="socialInsuranceLevy" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy2)" />
-          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
+          <DxTotalItem column="socialInsuranceLevy" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy1 + formatSummary.socialInsuranceLevy2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="total" alignment="right"
+          <DxTotalItem column="total" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.total1)" />
-          <DxTotalItem show-in-column="total" alignment="right"
+          <DxTotalItem column="total" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.total2)" />
-          <DxTotalItem show-in-column="total" alignment="right"
+          <DxTotalItem column="total" alignment="right"
                        :customizeText="() => filters.formatNumber(formatSummary.total)" cssClass="custom" />
         </DxSummary>
       </DxDataGrid>
@@ -310,7 +311,6 @@ onError((error) => {
 
 })
 const handleSaving = (e: SavingEvent) => {
-  console.log('e', e)
   const res = formRef.value.validate();
   if (res.isValid) {
     // remove all key "key" in dataAllRow
@@ -329,7 +329,7 @@ const handleSaving = (e: SavingEvent) => {
       accounSubjectOrder: accountSubject[0].theOrder,
       inputs
     }
-    // mutate(result)
+    mutate(result)
   }
   e.cancel = true
 }
@@ -486,11 +486,10 @@ function calculateSalary(data: any) {
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
 }
 const addRow = () => {
-  console.log('instance', gridRef.value?.instance)
-  gridRef.value?.instance.addRow({ name: '1' })
-  // dataSource.value?.store().insert({name: '1'}).then(() => {
-  //   dataSource.value?.reload()
-  // })
+  // gridRef.value?.instance.addRow({ name: '1' })
+  dataSource.value?.store().insert({}).then(() => {
+    dataSource.value?.reload()
+  })
 }
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
