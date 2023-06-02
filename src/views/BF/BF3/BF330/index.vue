@@ -85,7 +85,7 @@
                     </template>
                     <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
-                    <DxColumn :width="80" cell-template="pupop" />
+                    <DxColumn :width="120" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action">
                             <a-space :size="10">
@@ -96,6 +96,13 @@
                                 <a-tooltip  color="black" placement="top">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
+                                </a-tooltip>
+                                <a-tooltip placement="top" color="black">
+                                  <template #title>사용자권한</template>
+                                  <div @mouseenter="data.data.isHover=false" @mouseleave="data.data.isHover=true" style="height: 17px; min-width: 17px;">
+                                    <img v-if="data.data.isHover" class="permission-img" src="@/assets/images/add-permission.png"/>
+                                    <img v-else class="permission-img permission-img-hover" src="@/assets/images/add-permission-hover.png"/>
+                                  </div>
                                 </a-tooltip>
                             </a-space>
                         </div>
@@ -185,7 +192,7 @@ export default defineComponent({
         // process data after call getServiceContracts api
         watch(result, (value: any) => {
             rowTable.value = value.searchServiceContracts.totalCount
-            listServiceContract.value = value.searchServiceContracts.datas
+            listServiceContract.value = value.searchServiceContracts.datas.map((item: any) => ({...item,isHover: true}));
             trigger.value = false;
         });
         const changePage = () => {
