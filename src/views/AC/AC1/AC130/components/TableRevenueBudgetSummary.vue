@@ -21,17 +21,17 @@
         <DxTotalItem column="연예산(C)" summary-type="sum"
           :customize-text="(e: any) => `[${handleValueNumberColumn(e.value)}]`" />
         <DxTotalItem column="월환산예산 (C /12)" summary-type="sum"
-          :customize-text="(e: any) => `[${handleValueNumberColumn(e.value)}]`" />
+          :customize-text="(e: any) => `[${totalMonthlyBudget()}]`" />
         <DxTotalItem column="당월집행" summary-type="sum"
           :customize-text="(e: any) => `[${handleValueNumberColumn(e.value)}]`" />
         <DxTotalItem column="당월 인건비비율 (%)" summary-type="sum"
-          :customize-text="(e: any) => `[${handleValueNumberColumn(e.value)}]`" />
+          :customize-text="(e: any) => `[${totalCurrentMonthlyFeeRate()}]`" />
         <DxTotalItem column="집합누계(D)" summary-type="sum"
           :customize-text="(e: any) => `[${handleValueNumberColumn(e.value)}]`" />
         <DxTotalItem column="잔액(C-D)" summary-type="sum"
           :customize-text="(e: any) => `[${handleValueNumberColumn(e.value)}]`" />
         <DxTotalItem column="집행율(%)" summary-type="sum"
-          :customize-text="(e: any) => `[${handleValueNumberColumn(e.value)}]`" />
+          :customize-text="(e: any) => `[${totalExecutionRate()}]`" />
       </DxSummary>
     </DxDataGrid>
   </div>
@@ -97,6 +97,35 @@ export default defineComponent({
       }
       return '0'
     }
+
+    const totalMonthlyBudget = () => {
+      let totalAmount = 0
+      dataCalculated.value.forEach((items: any) => {
+        totalAmount += checkNumber(items.amount)
+      })
+      return handleValueNumberColumn(totalAmount/12)
+    }
+
+    const totalCurrentMonthlyFeeRate = () => {
+      let totalAmount = 0
+      let totalCurrentMonthExecution = 0
+      dataCalculated.value.forEach((items: any) => {
+        totalCurrentMonthExecution += checkNumber(items.currentMonthExecution)
+        totalAmount += checkNumber(items.amount)
+      })
+
+      return handleValueNumberColumn(totalCurrentMonthExecution/(totalAmount/12))
+    }
+
+    const totalExecutionRate = () => {
+      let totalCumulativeTotal = 0
+      let totalAmount = 0
+      dataCalculated.value.forEach((items: any) => {
+        totalCumulativeTotal += checkNumber(items.cumulativeTotal)
+        totalAmount += checkNumber(items.amount)
+      })
+      return handleValueNumberColumn((totalCumulativeTotal/totalAmount)*100)
+    }
     const resetTable = () => {
       refAc130TableRevenueBudgetSummary.value.instance.refresh()
     }
@@ -105,6 +134,9 @@ export default defineComponent({
       colomn_resize,
       dataCalculated,
       handleValueNumberColumn,
+      totalExecutionRate,
+      totalMonthlyBudget,
+      totalCurrentMonthlyFeeRate,
       resetTable,
       refAc130TableRevenueBudgetSummary
     }
