@@ -894,27 +894,27 @@ export default defineComponent({
 				if (item.itemCode == 1001) {
 					let total1 = dataIW.value.employee.nationalPensionDeduction
 						? calculateNationalPensionEmployee(
-							totalPayItem.value,
+							totalPayItemTaxFree.value,
 							dataIW.value.employee.nationalPensionSupportPercent)
 						: 0;
 					item.amountNew = total1;
 				}
 				if (item.itemCode == 1002) {
 					let total2 = dataIW.value.employee.healthInsuranceDeduction
-						? calculateHealthInsuranceEmployee(totalPayItem.value)
+						? calculateHealthInsuranceEmployee(totalPayItemTaxFree.value)
 						: 0;
 					item.amountNew = total2;
 				}
 				if (item.itemCode == 1003) {
 					let total3 = dataIW.value.employee.healthInsuranceDeduction
-						? calculateLongTermCareInsurance(totalPayItem.value)
+						? calculateLongTermCareInsurance(totalPayItemTaxFree.value)
 						: 0;
 					item.amountNew = total3;
 				}
 				if (item.itemCode == 1004) {
 					let total4 = dataIW.value.employee.employeementInsuranceDeduction
 						? calculateEmployeementInsuranceEmployee(
-							totalPayItem.value,
+							totalPayItemTaxFree.value,
 							dataIW.value.employee.employeementInsuranceSupportPercent)
 						: 0;
 					item.amountNew = total4;

@@ -157,8 +157,7 @@
           <div class="mt-20" style="margin-left: 230px">
             <button-basic
               class="button-form-modal"
-              :text="'저장하고 나가기'"
-              :width="140"
+              :text="'저장'"
               :type="'default'"
               :mode="'contained'"
               @onClick="actionSave"
@@ -240,8 +239,7 @@
           <div class="mt-20" style="margin-left: 230px">
             <button-basic
               class="button-form-modal"
-              :text="'저장하고 나가기'"
-              :width="140"
+              :text="'저장'"
               :type="'default'"
               :mode="'contained'"
               @onClick="actionSave"

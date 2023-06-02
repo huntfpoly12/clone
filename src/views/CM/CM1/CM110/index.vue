@@ -151,8 +151,8 @@
                             <DxItem name="columnChooserButton" />
                         </DxToolbar>
                         <template #button-template>
-                            <a-tooltip color="black" placement="topRight">
-                                <template #title>로그인이력</template>
+                            <a-tooltip color="black" placement="top">
+                                <template #title>신규</template>
                                 <span><DxButton icon="plus" @click="openAddNewModal" /></span>
                             </a-tooltip>
                         </template>
