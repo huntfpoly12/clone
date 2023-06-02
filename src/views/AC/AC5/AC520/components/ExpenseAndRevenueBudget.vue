@@ -13,7 +13,7 @@
         <div class="d-flex-center justify-content-end mb-5">
           <DxButton type="default" @click="handleFillValuePreIndex" text="전예산액 불러오기" />
           </div>
-        
+
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"
           key-expr="code" :allow-column-reordering="move_column" :allow-column-resizing="column_resize"
           :column-auto-width="true" :focused-row-enabled="true" :focusedRowIndex="0" @cell-prepared="onCellPrepared"
@@ -355,7 +355,7 @@ onResultPreIndexBudget(({ data }) => {
       // formState.value.amount = data?.getBudget?.records.find((item: any) => item.code === formState.value.code).amount
       if(dataBudget.value?.action === ACTION.ADD || dataBudget.value?.action === ACTION.EDIT && dataSource.value) {
         dataSource.value.items()?.map((item: any) => {
-          const preIndexBudget =  data?.getBudget?.records.find((row: any) => row.code2 === item.code2)
+          const preIndexBudget =  data?.getBudget?.records.find((row: any) => row.code === item.code)
           if(preIndexBudget){
             if(item.code2 !== '501010000') {
               item.amount = preIndexBudget.amount
@@ -419,7 +419,7 @@ watch(() => formState.value.amount, (value) => {
 watch(() => [formState.value, codesPreIndexBudget.value], ([val, codesVal]) => {
   if (val.code2 === '501010000' && dataBudget.value?.action === ACTION.ADD) {
     formState.value.amount = 0
-  
+
   } else if (val.code2 !== '501010000' && dataBudget.value?.action === ACTION.ADD) {
     // formState.value.amount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
     // formState.value.previousAmount = codesVal?.find((item: any) => item.code === val.code)?.amount || 0
