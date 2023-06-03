@@ -48,6 +48,7 @@
         </a-row>
       </div>
       <div class="page-content">
+        {{ dataSource[0] }}
         <DxDataGrid id="table-main-bf310" noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
           :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
           :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -132,7 +133,7 @@
               </a-popover>
             </div>
           </template>
-          <DxColumn :width="80" cell-template="pupop" type="buttons" />
+          <DxColumn :width="120" cell-template="pupop" type="buttons" />
           <template #pupop="{ data }">
             <div class="custom-action">
               <a-space :size="10">
@@ -143,6 +144,15 @@
                 <a-tooltip placement="top" color="black">
                   <template #title>변경이력</template>
                   <HistoryOutlined @click="modalHistory(data)" />
+                </a-tooltip>
+                <a-tooltip placement="top" color="black">
+                  <template #title>사용자권한</template>
+                  <div @mouseenter="data.data.isHover=false" @mouseleave="data.data.isHover=true" style="height: 17px; min-width: 17px;" 
+                    @click="isCustomerModal = true"
+                  >
+                    <img v-if="data.data.isHover" class="permission-img" src="@/assets/images/add-permission.png"/>
+                    <img v-else class="permission-img permission-img-hover" src="@/assets/images/add-permission-hover.png"/>
+                  </div>
                 </a-tooltip>
               </a-space>
             </div>
@@ -156,6 +166,7 @@
           :data="idSubRequest" :key="keyRefreshPopup310" />
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
           title="변경이력" :idRowEdit="idSubRequest" typeHistory="bf-310" />
+        <EnterCusAccModal v-if="isCustomerModal" :company="{code: 2000, name: 'TOYOTA'}" @closeModal="onHandleCusAcc"/>
       </div>
     </div>
   </a-spin>
@@ -304,7 +315,7 @@ export default defineComponent({
       trigger.value = false;
       if (value) {
         rowTable.value = value.searchSubscriptionRequests.totalCount;
-        dataSource.value = value.searchSubscriptionRequests.datas;
+        dataSource.value = value.searchSubscriptionRequests.datas.map((item: any)=>({...item, isHover: true}));
       }
     });
     // Get api when page is changed
@@ -321,6 +332,14 @@ export default defineComponent({
       }, 500);
     };
 
+    const isCustomerModal = ref(false);
+    const onHandleCusAcc = (emitVal: boolean) => {
+      isCustomerModal.value = false;
+      if(emitVal){
+      }else{
+
+      }
+    }
     return {
       loading,
       move_column,
@@ -346,7 +365,8 @@ export default defineComponent({
       trigger,
       onDoneUpdate,
       listCheckBox,
-      keyRefreshPopup310
+      keyRefreshPopup310,
+      onHandleCusAcc, isCustomerModal,
     };
   },
 });
