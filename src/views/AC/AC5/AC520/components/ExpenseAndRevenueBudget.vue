@@ -61,13 +61,13 @@
             </div>
           </template>
           <template #calculateAmount="{ data }">
-            <div :class="(data.data.previousAmount - data.data.amount <= 0) && `text-red`">
-              {{ filters.formatNumber(data.data.previousAmount - data.data.amount) }}
+            <div :class="( data.data.amount - data.data.previousAmount <= 0) && `text-red`">
+              {{ filters.formatNumber( data.data.amount - data.data.previousAmount) }}
             </div>
           </template>
 
           <template #changeRate="{ data }">
-            {{ filters.formatNumber(data.data.previousAmount ? (1 - data.data.amount/data.data.previousAmount)*100: 0, 2) }}
+            {{ filters.formatNumber(data.data.previousAmount ? (data.data.amount/data.data.previousAmount - 1)*100: 0, 2) }}
           </template>
           <template #outputRecord="{ data }">
             <div v-if="data.data && data.data.details?.length > 0">
