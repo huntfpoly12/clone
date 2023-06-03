@@ -3,13 +3,7 @@
 		<action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false"
 			:buttonPrint="false" />
 		<div id="pa-110" class="page-content">
-			<a-row :class="{
-				'ele-opacity':
-					(store.state.common.pa110.statusChangeFormEdit &&
-						!store.state.common.pa110.statusFormAdd) ||
-					(store.state.common.pa110.statusChangeFormAdd &&
-						store.state.common.pa110.statusFormAdd),
-			}">
+			<a-row :class="{ 'ele-opacity': checkChangeForm }">
 				<a-spin :spinning="loadingIncomeProcessWages" size="large">
 					<DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
 						:data-source="dataSource" key-expr="companyId" :show-borders="true"
@@ -238,14 +232,8 @@
 					</DxDataGrid>
 				</a-spin>
 			</a-row>
-			<a-row :class="{
-				disabledBlock: statusDisabledBlock,
-				'ele-opacity':
-					(store.state.common.pa110.statusChangeFormEdit &&
-						!store.state.common.pa110.statusFormAdd) ||
-					(store.state.common.pa110.statusChangeFormAdd &&
-						store.state.common.pa110.statusFormAdd),
-			}" style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px" justify="space-between">
+			<a-row :class="{ disabledBlock: statusDisabledBlock, 'ele-opacity': checkChangeForm }"
+				style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px" justify="space-between">
 				<a-col>
 					<div v-if="!statusDisabledBlock">
 						<DxButton :text="'귀 ' +
@@ -259,12 +247,7 @@
 							$filters.formatMonth(processKey.paymentMonth)
 							" :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
 						<ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" :disabled="status == 30 ||
-							status == 40 ||
-							(store.state.common.pa110.statusChangeFormEdit &&
-								!store.state.common.pa110.statusFormAdd) ||
-							(store.state.common.pa110.statusChangeFormAdd &&
-								store.state.common.pa110.statusFormAdd)
-							" />
+							status == 40 || checkChangeForm" />
 					</div>
 					<div v-else>
 						<DxButton text="귀" :style="{ color: 'white', backgroundColor: 'gray' }"
@@ -280,18 +263,13 @@
 				</a-col>
 			</a-row>
 			<a-row :class="{ disabledBlock: statusDisabledBlock }">
-				<a-col :span="12" class="custom-layout custom-layout-table" :class="{
-					'ele-opacity':
-						(store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) ||
-						(store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd),
-				}">
+				<a-col :span="12" class="custom-layout custom-layout-table" :class="{ 'ele-opacity': checkChangeForm }">
 					<a-spin :spinning="loadingTaxPayInfo" size="large">
 						<DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
 							:data-source="store.state.common.pa110.dataTaxPayInfo" :show-borders="true"
 							:allow-column-reordering="move_column" :focused-row-enabled="true"
 							:allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
-							id="pa-110-gridContainer"
-							@focused-row-changing="onFocusedRowChanging" ref="gridRefPA110"
+							id="pa-110-gridContainer" @focused-row-changing="onFocusedRowChanging" ref="gridRefPA110"
 							@selection-changed="selectionChanged" v-model:selected-row-keys="store.state.common.pa110.selectedRowKeys
 								" v-model:focused-row-key="store.state.common.pa110.focusedRowKey">
 							<DxScrolling mode="standard" show-scrollbar="always" />
@@ -400,16 +378,8 @@ import {
 	DxDataGrid,
 	DxColumn,
 	DxPaging,
-	DxExport,
 	DxSelection,
-	DxSearchPanel,
-	DxToolbar,
-	DxEditing,
-	DxGrouping,
 	DxScrolling,
-	DxItem,
-	DxSummary,
-	DxTotalItem,
 	DxMasterDetail,
 } from "devextreme-vue/data-grid";
 import SelectActionComponent from "./components/SelectActionComponent.vue";
@@ -431,16 +401,8 @@ export default defineComponent({
 		DxColumn,
 		DxPaging,
 		DxSelection,
-		DxExport,
-		DxSearchPanel,
 		DxScrolling,
-		DxToolbar,
-		DxEditing,
-		DxGrouping,
-		DxItem,
 		DxButton,
-		DxSummary,
-		DxTotalItem,
 		SelectActionComponent,
 		ProcessStatus,
 		FormDataComponent,
@@ -458,9 +420,10 @@ export default defineComponent({
 			paymentYear: paYear.value,
 			paymentMonth: dayjs().month() + 1,
 		};
-		const startYearMonth = getJwtObject(sessionStorage.getItem("token")!)
-			?.withholding?.startYearMonth;
+		const startYearMonth = getJwtObject(sessionStorage.getItem("token")!)?.withholding?.startYearMonth;
 		const processKey = computed(() => store.state.common.pa110.processKeyPA110);
+		const checkChangeForm = computed(() => ((store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) ||
+			(store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd)))
 		const dataSource = ref<any>([]);
 		const dataCustomRes: any = ref<any>([]);
 		const arrDataPoint = ref<any>([]);
@@ -557,39 +520,27 @@ export default defineComponent({
 						...dataAdd,
 					};
 					dataCustomRes.value[4]["month" + data.imputedMonth] = {
-						value: filters.formatCurrency(
-							data.incomeStat?.totalNationalPensionDeduction
-						),
+						value: filters.formatCurrency(data.incomeStat?.totalNationalPensionDeduction),
 						...dataAdd,
 					};
 					dataCustomRes.value[5]["month" + data.imputedMonth] = {
-						value: filters.formatCurrency(
-							data.incomeStat?.totalHealthDeduction
-						),
+						value: filters.formatCurrency(data.incomeStat?.totalHealthDeduction),
 						...dataAdd,
 					};
 					dataCustomRes.value[6]["month" + data.imputedMonth] = {
-						value: filters.formatCurrency(
-							data.incomeStat?.totalLongtermCareDeduction
-						),
+						value: filters.formatCurrency(data.incomeStat?.totalLongtermCareDeduction),
 						...dataAdd,
 					};
 					dataCustomRes.value[7]["month" + data.imputedMonth] = {
-						value: filters.formatCurrency(
-							data.incomeStat?.totalEmploymentDeduction
-						),
+						value: filters.formatCurrency(data.incomeStat?.totalEmploymentDeduction),
 						...dataAdd,
 					};
 					dataCustomRes.value[8]["month" + data.imputedMonth] = {
-						value: filters.formatCurrency(
-							data.incomeStat?.withholdingIncomeTax
-						),
+						value: filters.formatCurrency(data.incomeStat?.withholdingIncomeTax),
 						...dataAdd,
 					};
 					dataCustomRes.value[9]["month" + data.imputedMonth] = {
-						value: filters.formatCurrency(
-							data.incomeStat?.withholdingLocalIncomeTax
-						),
+						value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
 						...dataAdd,
 					};
 					dataCustomRes.value[10]["month" + data.imputedMonth] = {
@@ -640,16 +591,8 @@ export default defineComponent({
 		watch(resultTaxPayInfo, (value) => {
 			triggerDataTaxPayInfo.value = false;
 			if (value) {
-				// debugger
 				store.state.common.pa110.dataTaxPayInfo = value.getIncomeWages;
-				// debugger
-				// if (value.getIncomeWages[0] && !store.state.common.pa110.statusFormAdd) { // if have data
-				if (value.getIncomeWages[0]) {
-					// if have data
-					// if (store.state.common.pa110.incomeId && value.getIncomeWages.find((element: any) => element.incomeId == store.state.common.pa110.incomeId ?? null)) {
-					//     store.state.common.pa110.focusedRowKey = store.state.common.pa110.incomeId
-					//     // store.state.common.pa110.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.pa110.employeeId).incomeId
-					// } else {
+				if (value.getIncomeWages[0]) {// if have data
 					store.state.common.pa110.statusFormAdd = false;
 					if (store.state.common.pa110.onDoneEdit) {
 						// sửa ngày thành công
@@ -686,10 +629,7 @@ export default defineComponent({
 				store.state.common.pa110.selectedRowKeys = [store.state.common.pa110.incomeId];
 			}
 			store.state.common.pa110.focusedRowKey = store.state.common.pa110.incomeId;
-			if (
-				store.state.common.pa110.statusClickButtonAdd &&
-				!store.state.common.pa110.statusClickButtonSave
-			) {
+			if (store.state.common.pa110.statusClickButtonAdd && !store.state.common.pa110.statusClickButtonSave) {
 				// nếu trước đó ấn button add
 				store.state.common.pa110.addRow++; // add row
 				store.state.common.pa110.statusRowAdd = false;
@@ -708,70 +648,48 @@ export default defineComponent({
 			}
 			store.state.common.pa110.resetArrayEmploySelect++;
 		});
-		watch(
-			() => store.state.common.pa110.loadingTableInfo,
-			(newVal) => {
-				originData.value.imputedYear = paYear.value;
-				originDataTaxPayInfo.value.processKey.imputedYear = paYear.value;
-				// refetchDataProcessIncomeWages() //reset data table 1
-				trigger.value = true; //reset data table 1
-				dataGridRef.value?.refresh();
-				// triggerDataTaxPayInfo.value = true; //reset data table 2
-				// refetchDataTaxPayInfo()
-			}
+		watch(() => store.state.common.pa110.loadingTableInfo, (newVal) => {
+			originData.value.imputedYear = paYear.value;
+			originDataTaxPayInfo.value.processKey.imputedYear = paYear.value;
+			trigger.value = true; //reset data table 1
+			dataGridRef.value?.refresh();
+		}
 		);
 
-		watch(
-			() => status.value,
-			(newVal) => {
-				if (userType != "m" && (newVal == 20 || newVal == 30 || newVal == 40)) {
-					store.state.common.pa110.statusDisabledStatus = true;
-				} else {
-					store.state.common.pa110.statusDisabledStatus = false;
+		watch(() => status.value, (newVal) => {
+			if (userType != "m" && (newVal == 20 || newVal == 30 || newVal == 40)) {
+				store.state.common.pa110.statusDisabledStatus = true;
+			} else {
+				store.state.common.pa110.statusDisabledStatus = false;
+			}
+		}
+		);
+		watch(() => store.state.common.pa110.addRow, (newVal) => {
+			gridRefPA110.value?.instance.deselectAll();
+			dataRows.value = [];
+		}
+		);
+		watch(() => store.state.common.activeTab, (newVal) => {
+			if (newVal.id == "pa-110") {
+				if (store.state.common.pa110.statusFormAdd) {
+					return;
+				}
+				if (!(store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd)) {
+					triggerDataTaxPayInfo.value = true; //reset data table 2
+					!store.state.common.pa110.statusRowAdd ? (store.state.common.pa110.statusRowAdd = true) : "";
 				}
 			}
+		}
 		);
-		watch(
-			() => store.state.common.pa110.addRow,
-			(newVal) => {
-				gridRefPA110.value?.instance.deselectAll();
-				dataRows.value = [];
-			}
-		);
-		watch(
-			() => store.state.common.activeTab,
-			(newVal) => {
-				if (newVal.id == "pa-110") {
-					if (store.state.common.pa110.statusFormAdd) {
-						return;
-					}
-					if (
-						!(
-							store.state.common.pa110.statusChangeFormEdit &&
-							!store.state.common.pa110.statusFormAdd
-						)
-					) {
-						triggerDataTaxPayInfo.value = true; //reset data table 2
-						!store.state.common.pa110.statusRowAdd
-							? (store.state.common.pa110.statusRowAdd = true)
-							: "";
-					}
-				}
-			}
-		);
-		watch(
-			() => store.state.common.pa110.openModalCopyMonth,
-			(value) => {
-				dataModalCopy.value = monthCopy.value;
-				modalCopy.value = true;
-			}
+		watch(() => store.state.common.pa110.openModalCopyMonth, (value) => {
+			dataModalCopy.value = monthCopy.value;
+			modalCopy.value = true;
+		}
 		);
 
-		watch(
-			() => store.state.common.pa110.refreshDataGridRef,
-			(value) => {
-				dataGridRef.value?.refresh();
-			}
+		watch(() => store.state.common.pa110.refreshDataGridRef, (value) => {
+			dataGridRef.value?.refresh();
+		}
 		);
 
 		const selectionChanged = (data: any) => {
@@ -781,7 +699,7 @@ export default defineComponent({
 				dataRows.value = [];
 			}
 		};
-		
+
 		// A function that is called when a user clicks on a month.
 		const showDetailSelected = (month: any) => {
 			if (
@@ -818,14 +736,11 @@ export default defineComponent({
 			status.value = month.status;
 			processKey.value.imputedYear = month.imputedYear;
 			processKey.value.paymentYear = month.paymentYear;
-			processKey.value.paymentMonth =
-				month.paymentMonth;
-			processKey.value.imputedMonth =
-				month.imputedMonth;
+			processKey.value.paymentMonth = month.paymentMonth;
+			processKey.value.imputedMonth = month.imputedMonth;
 			triggerDataTaxPayInfo.value = true; //reset data table 2
 			statusDisabledBlock.value = false;
 			store.state.common.pa110.statusRowAdd = true;
-
 			hoverColClick.value = 0;
 			// debugger
 		};
@@ -836,12 +751,7 @@ export default defineComponent({
 		 */
 		const copyMonth = (month: number) => {
 			monthCopy.value = month;
-			if (
-				(store.state.common.pa110.statusChangeFormEdit &&
-					!store.state.common.pa110.statusFormAdd) ||
-				(store.state.common.pa110.statusChangeFormAdd &&
-					store.state.common.pa110.statusFormAdd)
-			) {
+			if (checkChangeForm) {
 				modalChangeRow.value = true;
 				store.state.common.pa110.checkClickCopyMonth = true;
 				hoverColClick.value = month;
@@ -866,8 +776,6 @@ export default defineComponent({
 			dataMonthNew.value.status = status.value;
 			notification("success", Message.getMessage("COMMON", "106").message);
 			originData.value.imputedYear = paYear.value;
-			// isRunOnce.value = true;
-			// refetchDataProcessIncomeWages()
 			trigger.value = true; //reset data table 1
 		});
 
@@ -907,8 +815,7 @@ export default defineComponent({
 							store.state.common.pa110.dataTaxPayInfo.length - 1
 						);
 					store.state.common.pa110.statusRowAdd = true;
-					store.state.common.pa110.focusedRowKey =
-						store.state.common.pa110.incomeId;
+					store.state.common.pa110.focusedRowKey = store.state.common.pa110.incomeId;
 				}
 				if (store.state.common.pa110.checkClickMonth) {
 					activeNewMonth(dataMonthNew.value);
@@ -920,8 +827,7 @@ export default defineComponent({
 					dataModalCopy.value = monthCopy.value;
 					modalCopy.value = true;
 				}
-				store.state.common.pa110.incomeId =
-					store.state.common.pa110.dataRowOnActive.incomeId;
+				store.state.common.pa110.incomeId = store.state.common.pa110.dataRowOnActive.incomeId;
 				store.state.common.pa110.loadingFormData++;
 			}
 		};
@@ -934,12 +840,7 @@ export default defineComponent({
 				store.state.common.pa110.dataRowOnActive = e.rows[e.newRowIndex]?.data;
 				if (store.state.common.pa110.dataRowOnActive.employeeId) {
 					// if row data (not row add)
-					if (
-						(store.state.common.pa110.statusChangeFormEdit &&
-							!store.state.common.pa110.statusFormAdd) ||
-						(store.state.common.pa110.statusChangeFormAdd &&
-							store.state.common.pa110.statusFormAdd)
-					) {
+					if (checkChangeForm.value) {
 						// if change form data
 						e.rowElement[0]?.classList.add("dx-state-hover-custom");
 						modalChangeRow.value = true;
@@ -958,11 +859,8 @@ export default defineComponent({
 								);
 							store.state.common.pa110.statusRowAdd = true;
 						}
-						store.state.common.pa110.incomeId =
-							e.rows[e.newRowIndex]?.data?.incomeId;
-						store.state.common.pa110.selectedRowKeys = [
-							e.rows[e.newRowIndex]?.data.incomeId,
-						];
+						store.state.common.pa110.incomeId = e.rows[e.newRowIndex]?.data?.incomeId;
+						store.state.common.pa110.selectedRowKeys = [e.rows[e.newRowIndex]?.data.incomeId];
 						dataGridRef.value?.refresh();
 						store.state.common.pa110.loadingFormData++;
 						if (store.state.common.pa110.statusRowAdd) {
@@ -987,30 +885,21 @@ export default defineComponent({
 
 		const classObject = (month: number) => {
 			let string = "cell-center";
-			processKey.value.imputedMonth == month
-				? (string += " column-focus")
-				: "";
+			processKey.value.imputedMonth == month ? (string += " column-focus") : "";
 			hoverColClick.value == month ? (string += " column-hover") : "";
 			checkStartYearMonth(month) ? (string += " disabledBlock") : "";
 			return string;
 		};
 		const classObjectDetail = (month: number) => {
 			let string = "";
-			processKey.value.imputedMonth == month
-				? (string += " column-focus")
-				: "";
+			processKey.value.imputedMonth == month ? (string += " column-focus") : "";
 			hoverColClick.value == month ? (string += " column-hover") : "";
 			checkStartYearMonth(month) ? (string += " disabledBlock") : "";
 			return string;
 		};
 		const checkShowTagStatus = (data: any) => {
 			if (data.status == 0) {
-				if (
-					data.leavedAt?.toString().slice(0, 6) ==
-					`${paYear.value}${filters.formatMonth(
-						processKey.value.imputedMonth
-					)}`
-				) {
+				if (data.leavedAt?.toString().slice(0, 6) == `${paYear.value}${filters.formatMonth(processKey.value.imputedMonth)}`) {
 					return 0;
 				}
 				return 50;
@@ -1077,6 +966,7 @@ export default defineComponent({
 			checkShowTagStatus,
 			classObject,
 			classObjectDetail,
+			checkChangeForm,
 		};
 	},
 });
