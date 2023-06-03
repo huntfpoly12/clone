@@ -95,7 +95,7 @@
                     >
                     </default-text-box>
                   </a-form-item>
-                  <a-form-item label="팩 스">
+                  <a-form-item label="팩 스" style="width: 150px;">
                     <default-text-box
                       v-model:valueInput="formState.extendInfoDetailFax"
                       autocomplete="off"
@@ -435,11 +435,11 @@ export default defineComponent({
       //notification('error', e.message)
       refetchMemo();
     });
-    const handleDeleteMemo = (key: any, index: number) => {
-      if (key.active) {
+    const handleDeleteMemo = (text: any, index: number) => {
+      if (text.active) {
         deletePopup({
           callback: () => {
-            actionDeleteMemo({ companyId: formState.id, memoId: key });
+            actionDeleteMemo({ companyId: formState.id, memoId: text.memoId });
             isNewMemo.value = false
           },
         });
