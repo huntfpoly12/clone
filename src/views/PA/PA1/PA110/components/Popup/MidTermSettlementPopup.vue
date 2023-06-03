@@ -28,13 +28,13 @@
                     :onRowPrepared="changeColorRow">
                     <!-- <DxScrolling mode="standard" show-scrollbar="always"/> -->
                     <DxColumn caption="항목" data-field="name" width="200" />
-                    <DxColumn caption="중도퇴사자정산 결과" data-field="amountNew" width="180" format="fixedPoint" />
-                    <DxColumn caption="원본" data-field="amount" width="180" format="fixedPoint" />
+                    <DxColumn caption="중도퇴사자정산 결과" data-field="amountNew" format="fixedPoint" />
+                    <!-- <DxColumn caption="원본" data-field="amount" width="180" format="fixedPoint" /> -->
                 </DxDataGrid>
             </div>
         </div>
         <div class="text-align-center mt-40">
-            <button-basic class="button-form-modal" :text="'반용'" :width="140" :type="'default'" :mode="'contained'"
+            <button-basic class="button-form-modal" :text="'반영'" :width="140" :type="'default'" :mode="'contained'"
                 @onClick="onSubmit" />
         </div>
     </a-modal>
@@ -94,15 +94,15 @@ export default defineComponent({
             actionSaveMidTermSettlement(dataSaveMidTermSettlement)
         };
         const changeColorRow = (e: any) => {
-            if (e.data) {
-                if (e.data.amount == e.data.amountNew) {
-                    e.rowElement.style.color = 'black';
-                } else {
-                    e.rowElement.style.color = 'red';
-                }
-                e.cells[0].cellElement.style.color = 'black';
-                e.cells[2].cellElement.style.color = 'black';
-            }
+            // if (e.data) {
+            //     if (e.data.amount == e.data.amountNew) {
+            //         e.rowElement.style.color = 'black';
+            //     } else {
+            //         e.rowElement.style.color = 'red';
+            //     }
+            //     e.cells[0].cellElement.style.color = 'black';
+            //     e.cells[2].cellElement.style.color = 'black';
+            // }
         }
 
 

@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" centered
-           :title="dataBudget?.index === 0 && step === StepCreateBudget.Step1 ? '' : typePopup === ComponentCreateBudget.EmployeeSalaryTable && `임직원보수일람표`"
+           :title="dataBudget?.index === 0 && step === StepCreateBudget.Step1 ? '' : typePopup === ComponentCreateBudget.EmployeeSalaryTable && step === StepCreateBudget.Step2 && `임직원보수일람표`"
     @cancel="setModalVisible()" :mask-closable="false"
     :width="step === StepCreateBudget.Step2 ? typePopup === ComponentCreateBudget.EmployeeSalaryTable ? '1300px' : '90%' : 500"
     :footer="false" v-if="modalStatus" :class="step === StepCreateBudget.Step1 && `clear-border-header`">
@@ -23,7 +23,7 @@
         <EmployeeSalaryTable @closePopup="closePopup" />
       </div>
       <div v-else>
-        <ExpenseAndRevenueBudget @closePopup="closePopup" />
+        <ExpenseAndRevenueBudget />
       </div>
     </div>
     <div v-else>

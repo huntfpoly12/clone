@@ -18,21 +18,20 @@ export const inputInCollapseUtils = [
     { key: 3, input_name: ['formState-extendInfoCmsBankAccountNumber', 'formState-extendInfoCmsBankOwnerName', 'formState-extendInfoCmsBankOwnerBizNumber'] },
     { key: 4, input_name: ['withholding-capacity'] },
 ]
-export const formStateMomesUtils = [
-    {
-        memoId: null,
-        ownerUserId: 0,
-        ownerName: "",
-        ownerUsername: "",
-        memo: "",
-        createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
-        createdBy: "",
-        updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
-        updatedBy: "",
-        ip: "",
-        active: "",
-    }
-]
+export const formStateMomesUtils = {
+  memoId: null,
+  ownerUserId: 0,
+  ownerName: "",
+  ownerUsername: "",
+  memo: "",
+  createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
+  createdBy: "",
+  updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
+  updatedBy: "",
+  ip: "",
+  active: false,
+}
+
 
 export const dataformStatePopup = {
     id: 0,

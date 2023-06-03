@@ -6,7 +6,7 @@
       <info-tool-tip>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</info-tool-tip>
     </a-space>
     <a-space :size="4" align="center">
-      <checkbox-basic class="" label="예산서 (세목까지 출력)" :size="'20'"/>
+      <checkbox-basic v-model:valueCheckbox="displayCode" label="예산서 (세목까지 출력)"  :size="'20'"/>
       <info-tool-tip>선택시 서식에 세목까지 표현됩니다.</info-tool-tip>
     </a-space>
   </a-space>
@@ -45,7 +45,7 @@
       <DxColumn caption="최종저장아이디" data-field="savedBy"  alignment="center" :allow-sorting="false"/>
       <DxColumn caption="인건비비율 (%)" cell-template="laborCostRadio" alignment="center" />
       <template #laborCostRadio="{ data }">
-        {{ data.data?.spendingBudgetSum ? data.data.employeePaySum / data.data?.spendingBudgetSum * 100 : '' }}
+        {{ data.data?.expenditureBudgetSum ? filters.formatNumber(data.data.employeePaySum / data.data?.expenditureBudgetSum * 100, 2) : Number(0).toFixed(2) }}
       </template>
       <DxColumn caption="임직원보수일람표" cell-template="employeeSalaryTable" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="세출예산서" cell-template="expenseBudget" alignment="center" :allow-sorting="false"/>
@@ -209,6 +209,7 @@ import AddRowPopup from "./components/AddRowPopup.vue";
 import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
 import PopupSendMail from "./components/PopupSendMail.vue";
 import { initialState, useGetEmployeePayTableReportViewUrl, useGetBudgetSummaryTableReportViewUrl, useGetBudgetReportViewUrl } from "./utils/index";
+import filters from "@/helpers/filters";
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -217,6 +218,7 @@ const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const disableAddRow = ref(false)
 const modalHistory = ref(false)
 const gridRef = ref();
+const displayCode = ref(false)
 const dataSource = ref<DataSource>()
 const query = reactive({
   companyId,
@@ -324,11 +326,9 @@ const modal = reactive({
   editEmployeeSalaryTable: false
 });
 const closePopupBudget = (e: boolean) => {
-  if (e){
-    query.fiscalYear = acYear.value
-    refetchBudget()
-    disableAddRow.value = false
-  }
+  query.fiscalYear = acYear.value
+  refetchBudget()
+  disableAddRow.value = false
   modal.budget = false
   store.commit('common/setIsChangedFormAc520', false)
 };
@@ -363,7 +363,7 @@ const actionPrint = (data: any, type: TypeMail) => {
     const {onResult} = useGetBudgetReportViewUrl({
       ...query,
       index: data.index,
-      displayCode: true,
+      displayCode: displayCode.value,
       type: data.budgetType
     })
     onResult(({data}) => {

@@ -95,7 +95,7 @@
                     >
                     </default-text-box>
                   </a-form-item>
-                  <a-form-item label="팩 스" class="clr">
+                  <a-form-item label="팩 스" style="width: 150px;">
                     <default-text-box
                       v-model:valueInput="formState.extendInfoDetailFax"
                       autocomplete="off"
@@ -109,10 +109,11 @@
                     :title="titleModal"
                     @update-img="getImgUrl"
                     style="margin-top: 10px"
+                    :required="false"
                   />
                 </a-col>
                 <a-col :span="9">
-                  <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
+                  <preview-image :dataImage="dataImg" @deleteImg="removeImg" :activePreview="true" />
                 </a-col>
               </a-row>
             </a-collapse-panel>
@@ -133,11 +134,7 @@
                   </default-text-box>
                 </a-form-item>
                 <a-form-item has-feedback label="생년월일" class="clr">
-                  <birth-day-box
-                    v-model:valueInput="formState.extendInfoPresidentBirthday"
-                    width="200px"
-                    :required="true"
-                  />
+                  <date-time-box teleport width="200px" :required="true" v-model:valueDate="formState.extendInfoPresidentBirthday"/>
                 </a-form-item>
                 <a-form-item has-feedback label="휴대폰번호" class="clr">
                   <tel-text-box
@@ -194,9 +191,10 @@
                 </a-form-item>
                 <a-form-item
                   label="사업자(주민)등록번호:"
-                  class="custom-flex clr"
+                  class=" mt-5 clr"
                 >
-                  <id-number-text-box
+                  <div class="d-flex-center">
+                    <id-number-text-box
                     width="250px"
                     checkAllResidentId
                     v-model:valueInput="
@@ -206,14 +204,7 @@
                     nameInput="formState-extendInfoCmsBankOwnerBizNumber"
                   >
                   </id-number-text-box>
-                  <div class="warring-bank">
-                    <img
-                      src="@/assets/images/iconInfo.png"
-                      style="width: 14px; height: 14px; margin-top: 0px"
-                    />
-                    <span class="pl-5"
-                      >예금주의 사업자등록번호 또는 주민등록번호입니다.</span
-                    >
+                  <info-tool-tip>예금주의 사업자등록번호 또는 주민등록번호입니다.</info-tool-tip>
                   </div>
                 </a-form-item>
                 <a-form-item label="자동이체출금일자" class="clr custom-flex">
@@ -229,7 +220,7 @@
             </a-collapse-panel>
             <a-collapse-panel key="4" header="메모" class="modal-note">
               <a-table
-                bordered="false"
+                :bordered="false"
                 :data-source="formStateMomes"
                 :pagination="false"
               >
@@ -237,15 +228,15 @@
                   <div>
                     <div class="title-note">
                       <div>
-                        {{ text.ownerName }} 수정
+                        <a-tooltip :title="text.ownerName">{{ text.ownerName }} 수정</a-tooltip>
                         {{ formarDate(text.updatedAt) }} 게시
                         {{ formarDate(text.createdAt) }}
                       </div>
-                      <div v-if="index == 0">
-                        <PlusSquareOutlined
-                          :style="{ fontSize: '25px' }"
-                          @click="handleAdd"
-                        />
+                      <div v-if="index == 0" class="mb-5">
+                        <DxButton @click="handleAdd" :disabled="isNewMemo">
+                          <PlusSquareOutlined style="font-size: 18px"/>
+                        </DxButton>
+
                       </div>
                     </div>
                     <div>
@@ -256,15 +247,13 @@
                       >
                       </text-area-box>
                     </div>
-                    <a-space :size="8" style="margin-top: 7px">
-                      <SaveOutlined
-                        :style="{ fontSize: '20px' }"
-                        @click="handleAddMemo(text.memo, text.memoId)"
-                      />
-                      <DeleteOutlined
-                        :style="{ fontSize: '20px' }"
-                        @click="handleDeleteMemo(text.memoId)"
-                      />
+                    <a-space :size="8" class="mt-5">
+                      <DxButton @click="handleAddMemo(text.memo, text.memoId)">
+                        <SaveOutlined />
+                      </DxButton>
+                      <DxButton @click="handleDeleteMemo(text, index)">
+                        <DeleteOutlined />
+                      </DxButton>
                     </a-space>
                   </div>
                 </template>
@@ -294,6 +283,7 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
+import DxButton from "devextreme-vue/button";
 import imgUpload from "@/components/UploadImage.vue";
 import queries from "@/graphql/queries/BF/BF3/BF320/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF320/index";
@@ -315,6 +305,7 @@ import {
   arrayRadioWithdrawDayUtils,
 } from "../utils";
 import { isEqual } from "lodash";
+import deletePopup from "@/utils/deletePopup";
 export default defineComponent({
   props: {
     modalStatus: {
@@ -330,6 +321,7 @@ export default defineComponent({
     DeleteOutlined,
     PlusSquareOutlined,
     imgUpload,
+    DxButton
   },
   setup(props, { emit }) {
     const inputInCollapse = [...inputInCollapseUtils];
@@ -347,9 +339,10 @@ export default defineComponent({
     const formState = reactive({
       ...dataformStatePopup,
     });
+    const isNewMemo = ref(false)
     let dataImg = ref();
     let objDataDefault = reactive({});
-    const formStateMomes = ref([...formStateMomesUtils]);
+    const formStateMomes: any = ref([]);
     const labelCol = ref({ style: { width: "150px" } });
     const titleModal = "사업자등록증";
     const removeImg = () => {
@@ -367,21 +360,7 @@ export default defineComponent({
           refetchMemo();
           refetch();
         } else {
-          formStateMomes.value = [
-            {
-              memoId: null,
-              ownerUserId: 0,
-              ownerName: "",
-              ownerUsername: "",
-              memo: "",
-              createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
-              createdBy: "",
-              updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
-              updatedBy: "",
-              ip: "",
-              active: "",
-            },
-          ];
+          formStateMomes.value = [{...formStateMomesUtils}];
           visible.value = newValue;
           trigger.value = false;
         }
@@ -408,6 +387,8 @@ export default defineComponent({
     watch(resultMemo, (value) => {
       if (value && value.getCompanyManageMemos.length > 0) {
         formStateMomes.value = value.getCompanyManageMemos;
+      } else {
+        formStateMomes.value =  [{...formStateMomesUtils}];
       }
     });
     // mutation create memo
@@ -418,6 +399,7 @@ export default defineComponent({
     } = useMutation(mutations.createCompanyManageMemo);
     onCreatedMemo((res) => {
       notification("success", "메모 추가 완료!");
+      isNewMemo.value = false
       refetchMemo();
     });
     creactMemoErr((res) => {
@@ -432,6 +414,7 @@ export default defineComponent({
     } = useMutation(mutations.updateCompanyManageMemo);
     onUpdatedMemo(() => {
       notification("success", "메모 추가 완료!");
+      isNewMemo.value = false
       refetchMemo();
     });
     updateMemoErr((e) => {
@@ -452,26 +435,23 @@ export default defineComponent({
       //notification('error', e.message)
       refetchMemo();
     });
-    const handleDeleteMemo = (key: number) => {
-      if (formStateMomes.value.length > 1) {
-        actionDeleteMemo({ companyId: formState.id, memoId: key });
+    const handleDeleteMemo = (text: any, index: number) => {
+      if (text.active) {
+        deletePopup({
+          callback: () => {
+            actionDeleteMemo({ companyId: formState.id, memoId: text.memoId });
+            isNewMemo.value = false
+          },
+        });
+      } else {
+        formStateMomes.value.splice(index, 1);
+        isNewMemo.value = false
       }
     };
     const handleAdd = () => {
-      const newMemo: any = {
-        memoId: null,
-        ownerUserId: 0,
-        ownerName: "",
-        ownerUsername: "",
-        memo: "",
-        createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
-        createdBy: "",
-        updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
-        updatedBy: "",
-        ip: "",
-        active: "",
-      };
-      formStateMomes.value.unshift(newMemo);
+      const newMemo: any = {...formStateMomesUtils}
+      formStateMomes.value.push(newMemo);
+      isNewMemo.value = true
     };
     const handleAddMemo = (note: any, mmId: any = null) => {
       if (note !== "" && mmId == null) {
@@ -708,6 +688,7 @@ export default defineComponent({
       handleAddMemo,
       updateCompany,
       getImgUrl,
+      isNewMemo
     };
   },
 });

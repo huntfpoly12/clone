@@ -1,5 +1,5 @@
 <template>
-    <a-row class="container_upload custom-flex clr" :gutter="[24]">
+    <a-row :class="`container_upload custom-flex ${required ? 'clr' : '' }`" :gutter="[24]">
         <a-form-item :label="title" v-if="!customrow" style="position: relative;">
             <div v-if="disabledImg == false">
                 <div class="d-flex">
@@ -33,7 +33,7 @@
             <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload">
         </a-form-item>
 
-        <a-form-item :label="' '" :colon="false">
+        <a-form-item :label="' '" :colon="false" class="notice-img">
             <div class="warring-modal mt-10">
               <span>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</span><br>
               <span>파일형식 : JPG(JPEG), TIF, GIF, PNG</span><br>
@@ -101,6 +101,10 @@ export default defineComponent({
         },
         name: {
             type: String
+        },
+        required: {
+            type: Boolean,
+            default: true
         }
     },
     components: {
@@ -286,5 +290,10 @@ export default defineComponent({
 }
 .warring-modal span{
     font-size: 12px;
+}
+.notice-img{
+  :deep .ant-form-item-label {
+    flex: 0;
+  }
 }
 </style>

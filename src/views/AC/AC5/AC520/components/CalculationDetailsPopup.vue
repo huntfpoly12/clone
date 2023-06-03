@@ -8,7 +8,7 @@
             class="d-flex-center"
             required
           >
-            <a-radio :value="1">제목</a-radio>
+            <a-radio :value="1" @click="changeType">제목</a-radio>
             <a-radio :value="2">계산식</a-radio>
           </a-radio-group>
         </dx-field>
@@ -19,7 +19,7 @@
           <div v-for="(data, index) in details" :key="index" class="mb-10">
             <div class="d-flex-center gap-10">
               <default-text-box v-model="data.detail" placeholder="한글, 영문, 숫자, 괄호(), 사칙연산(+, -, *, /)"/>
-              <number-box-money v-model.number="data.calculationResult" placeholder="계산결과"/>
+              <number-box-money v-model:valueInput="data.calculationResult" placeholder="계산결과" format="#0,###"/>
               <div class="wrap-action">
                 <DxButton @click="removeRow(index)" icon="minus" v-if="index > 0 || details.length > 1 " />
                 <DxButton @click="addRow" icon="plus" v-if="+index === details.length - 1 || details.length === 0  " />
@@ -53,29 +53,32 @@ interface Props extends ModalProps {
 interface Description {
   detail: string;
   calculationResult: string | null;
+  type: number
 }
 
 const newDescription = {
   detail: '',
-  calculationResult: null
+  calculationResult: null,
+  type: 2
 }
 
 const props = defineProps<Props>()
 // watch visible
 watch(() => props.visible, (val) => {
   if (val) {
-    details.value =  props.data && props.data.length > 0 ? cloneDeep(props.data) : [{...newDescription}];
-    valueOld.value =  props.data && props.data.length > 0 ? cloneDeep(props.data) : [{...newDescription}];
+    details.value =  props.data && props.data.length > 0 ? cloneDeep(props.data.map((i:any) => ({...i, calculationResult: Number(i.calculationResult)}))) : [{...newDescription}];
+    valueOld.value =  props.data && props.data.length > 0 ? cloneDeep(props.data.map((i:any) => ({...i, calculationResult: Number(i.calculationResult)}))) : [{...newDescription}];
+    typeCal.value = props.data?.[0]?.type ?? 2;
   }
 }, {deep: true})
 const emit = defineEmits(['closePopup', 'ok'])
-
 const typeCal = ref(2);
 const details = ref<Description[]>([]);
 const formRef = ref();
 const valueOld = ref();
 
 const isFormChange = computed(() => {
+
   return !isEqual(details.value, valueOld.value)
 })
 function addRow() {
@@ -94,14 +97,7 @@ const handleSubmit = () => {
 function removeRow(index: number) {
   details.value.splice(index, 1);
 }
-watch(() => typeCal.value, (val, oldValue) => {
-  if (val !== oldValue) {
-    details.value = details.value.map((item: any) => ({
-      ...item,
-      calculationResult: '',
-    }))
-  }
-}, {deep: true})
+
 const handleOk = () => {
 
 }
@@ -113,9 +109,7 @@ const closePopup = () => {
       onOk() {
         emit('closePopup', false)
       },
-      onCancel() {
-        // emit('closePopup', false)
-      },
+      onCancel() {},
       width: 450,
       okText: '네',
       cancelText: '아니요',
@@ -134,6 +128,14 @@ const handleCalculate = () => {
         calculationResult: item.detail ? (eval(item.detail.replace(/[^\d+\-*/().]/g, ""))?.toString() || '') : item.calculationResult.toString(),
       }
     })
+  }
+}
+const changeType = (e: any) => {
+  if(e.target.value == '1' && e.target.value != typeCal.value) {
+    details.value = details.value.map((item: any) => ({
+      ...item,
+      calculationResult: '',
+    }))
   }
 }
 </script>

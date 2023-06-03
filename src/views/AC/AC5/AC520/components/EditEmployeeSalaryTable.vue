@@ -6,13 +6,14 @@
                   :data-source="dataSource" key-expr="key" :allow-column-reordering="move_column"
                   :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
                   @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" @saving="handleSaving"
-                  style="height: 70vh" :remote-operations="true">
+                  style="height: 70vh" >
         <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" :on-reorder="onReorder"/>
         <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true" :use-icons="true"
                    new-row-position="last">
           <DxTexts add-row="임직원보수등록"/>
           <DxTexts save-all-changes="저장"/>
           <DxTexts delete-row="삭제"/>
+          <DxTexts undelete-row="삭제 취소"/>
         </DxEditing>
         <DxPaging :page-size="0" />
         <DxToolbar>
@@ -38,13 +39,13 @@
           </DxItem>
         </DxToolbar>
         <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
-          <DxRequiredRule />
+          <DxRequiredRule :message="Message.getCommonMessage('102').message"/>
         </DxColumn>
         <DxColumn caption="직종" data-field="occupation"
                   css-class="text-red p-0" width="165" alignment="center"
                   edit-cell-template="selectOccupation"
         >
-          <DxRequiredRule />
+          <DxRequiredRule :message="Message.getCommonMessage('102').message"/>
         </DxColumn>
         <template #selectOccupation="{data}">
           <DxSelectBox
@@ -65,7 +66,7 @@
                   edit-cell-template="laborCostClassificationArray"
         >
           <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value" />
-          <DxRequiredRule />
+          <DxRequiredRule :message="Message.getCommonMessage('102').message" />
         </DxColumn>
         <template #laborCostClassificationArray="{data}">
           <DxSelectBox
@@ -128,65 +129,65 @@
         </template>
         <DxColumn type="buttons">
           <DxButtonGrid name="delete" @click="deleteRow">
-            <DeleteOutlined style="font-size: 16px; cursor: pointer" />
+            <DeleteOutlined style="font-size: 16px; cursor: pointer" title="삭제"/>
           </DxButtonGrid>
         </DxColumn>
-        <DxSummary>
+        <DxSummary :recalculate-while-editing="true">
           <DxTotalItem cssClass="custom" show-in-column="drag" display-format="소계" />
 
-          <DxTotalItem cssClass="center" show-in-column="name" alignment="center" display-format="직접인건비 계" />
-          <DxTotalItem cssClass="center" show-in-column="name" alignment="center" display-format="간접인건비 계" />
-          <DxTotalItem cssClass="custom center" show-in-column="name" alignment="center" display-format="총 인건비 계" />
+          <DxTotalItem cssClass="center" column="name" alignment="center" display-format="직접인건비 계" />
+          <DxTotalItem cssClass="center" column="name" alignment="center" display-format="간접인건비 계" />
+          <DxTotalItem cssClass="custom center" column="name" alignment="center" display-format="총 인건비 계" />
 
-          <DxTotalItem show-in-column="salary" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.salary1)" />
-          <DxTotalItem show-in-column="salary" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.salary2)" />
-          <DxTotalItem show-in-column="salary" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.salary1 + formatSummary.salary2)"
+          <DxTotalItem column="salary" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.salary1)" />/>
+          <DxTotalItem column="salary" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.salary2)" />
+          <DxTotalItem column="salary" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.salary1 + formatSummaryCustom.salary2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="allowance" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.allowance1)" />
-          <DxTotalItem show-in-column="allowance" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.allowance2)" />
-          <DxTotalItem show-in-column="allowance" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.allowance1 + formatSummary.allowance2)"
+          <DxTotalItem column="allowance" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.allowance1)" />
+          <DxTotalItem column="allowance" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.allowance2)" />
+          <DxTotalItem column="allowance" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.allowance1 + formatSummaryCustom.allowance2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance1)" />
-          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance2)" />
-          <DxTotalItem show-in-column="dailyAllowance" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.dailyAllowance1 + formatSummary.dailyAllowance2)"
+          <DxTotalItem column="dailyAllowance" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.dailyAllowance1)" />
+          <DxTotalItem column="dailyAllowance" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.dailyAllowance2)" />
+          <DxTotalItem column="dailyAllowance" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.dailyAllowance1 + formatSummaryCustom.dailyAllowance2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.retirementReserve1)" />
-          <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.retirementReserve2)" />
-          <DxTotalItem show-in-column="retirementReserve" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.retirementReserve1 + formatSummary.retirementReserve2)"
+          <DxTotalItem column="retirementReserve" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.retirementReserve1)" />
+          <DxTotalItem column="retirementReserve" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.retirementReserve2)" />
+          <DxTotalItem column="retirementReserve" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.retirementReserve1 + formatSummaryCustom.retirementReserve2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy1)" />
-          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy2)" />
-          <DxTotalItem show-in-column="socialInsuranceLevy" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.socialInsuranceLevy1 + formatSummary.socialInsuranceLevy2)"
+          <DxTotalItem column="socialInsuranceLevy" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.socialInsuranceLevy1)" />
+          <DxTotalItem column="socialInsuranceLevy" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.socialInsuranceLevy2)" />
+          <DxTotalItem column="socialInsuranceLevy" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.socialInsuranceLevy1 + formatSummaryCustom.socialInsuranceLevy2)"
                        cssClass="custom" />
 
-          <DxTotalItem show-in-column="total" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.total1)" />
-          <DxTotalItem show-in-column="total" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.total2)" />
-          <DxTotalItem show-in-column="total" alignment="right"
-                       :customizeText="() => filters.formatNumber(formatSummary.total)" cssClass="custom" />
+          <DxTotalItem column="total" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.total1)" />
+          <DxTotalItem column="total" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.total2)" />
+          <DxTotalItem column="total" alignment="right"
+                       :customizeText="() => filters.formatNumber(formatSummaryCustom.total)" cssClass="custom" />
         </DxSummary>
       </DxDataGrid>
-      <div style="display: none"> {{ formatSummary }} {{ arrSelectOccupation }}</div>
+      <div style="display: none"> {{ formatSummaryCustom }}</div>
     </standard-form>
   </a-modal>
 </template>
@@ -210,8 +211,7 @@ import {
 
 import {computed, reactive, ref, watch} from 'vue'
 import {useStore} from "vuex";
-import deletePopup from "@/utils/deletePopup";
-import {SavingEvent} from "devextreme/ui/data_grid";
+import {RowDraggingReorderEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
 import {useMutation, useQuery} from "@vue/apollo-composable";
@@ -227,6 +227,8 @@ import DxButton from "devextreme-vue/button";
 import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import {ValueChangedEvent} from "devextreme/ui/select_box";
+import cloneDeep from 'lodash/cloneDeep';
+import {Modal} from "ant-design-vue";
 
 const emit = defineEmits(['closePopup'])
 const props = defineProps({
@@ -271,7 +273,7 @@ const { onResult: onResultEmployeePayTable, onError: onErrorEmployeePayTable } =
 onResultEmployeePayTable(({ data }) => {
   if (data) {
     const transformData = data?.getEmployeePayTable?.items.map((item: any) => ({ ...item, key: new Guid().toString() }))
-    dataOld.value = transformData
+    dataOld.value = cloneDeep(transformData)
     dataSource.value = new DataSource({
       store: {
         type: "array",
@@ -322,9 +324,9 @@ const handleSaving = (e: SavingEvent) => {
       facilityBusinessId: globalFacilityBizId.value,
       fiscalYear: acYear.value,
       index: props.index ?? 0,
-      totalLaborCost: formatSummary.total,
-      totalDirectLaborCost: formatSummary.total1,
-      totalIndirectLaborCost: formatSummary.total2,
+      totalLaborCost: formatSummaryCustom.total,
+      totalDirectLaborCost: formatSummaryCustom.total1,
+      totalIndirectLaborCost: formatSummaryCustom.total2,
       accounSubjectOrder: accountSubject[0].theOrder,
       inputs
     }
@@ -333,7 +335,7 @@ const handleSaving = (e: SavingEvent) => {
   e.cancel = true
 }
 const dataAllRow: any = ref([])
-const formatSummary = reactive({
+const formatSummaryCustom = reactive({
   salary1: 0,
   salary2: 0,
   allowance1: 0,
@@ -348,7 +350,8 @@ const formatSummary = reactive({
   total2: 0,
   total: 0,
 })
-watch(() => dataAllRow.value, (val) => {
+
+watch(() => dataAllRow.value, (val, oldValue) => {
   const initialValue = {
     salary1: 0,
     salary2: 0,
@@ -392,25 +395,37 @@ watch(() => dataAllRow.value, (val) => {
     acc.total = acc.total1 + acc.total2;
     return acc;
   }, initialValue)
-  Object.assign(formatSummary, result)
+  Object.assign(formatSummaryCustom, result)
 }, { deep: true })
 
 const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
-  e.component.deleteRow(rowIndex)
+  if(dataOld.value.length) {
+    const rowOld = dataOld.value.find((item: any) => item.key === key_row)
+    if(!rowOld) {
+      dataSource.value.store().remove(key_row).then(() => {
+        dataSource.value.reload()
+      })
+    } else {
+      e.component.deleteRow(rowIndex)
+    }
+  }
   dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== key_row)
 }
 
 const setModalVisible = () => {
   if (!isEqual(dataAllRow.value, dataOld.value)) {
-    deletePopup({
-      callback: () => {
+    Modal.confirm({
+      title: Message.getCommonMessage('301').message,
+      okText: '네',
+      cancelText: '아니요',
+      onOk() {
         emit('closePopup', false)
       },
-      message: Message.getCommonMessage('301').message,
-      okText: '네',
-      cancelText: '아니요'
+      onCancel() {
+        return
+      },
     })
     return
   } else {
@@ -419,7 +434,7 @@ const setModalVisible = () => {
 }
 
 const onCellPrepared = (e: any) => {
-  if (e.rowType === 'data' && e.column.dataField === 'classification') {
+  if (e.rowType === 'data' && e.column.dataField === 'classification' && !e.row?.removed) {
     if (!dataAllRow.value.length) {
       dataAllRow.value.push({ ...e.data, key: e.key })
     } else {
@@ -430,29 +445,20 @@ const onCellPrepared = (e: any) => {
       }
     }
   }
-  const getElementCustom = (index: string) => !e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' && e.cellElement.getAttribute('aria-colindex') === index
-  if (getElementCustom('2')) {
-    e.cellElement.colSpan = 3
-  }
-  if (getElementCustom('3')) {
-    e.cellElement.style.display = 'none'
-  }
-  if (getElementCustom('4')) {
-    e.cellElement.style.display = 'none'
+  if(e.rowType === 'totalFooter') {
+    const getElementCustom = (index: string) => !e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' && e.cellElement.getAttribute('aria-colindex') === index
+    if (getElementCustom('2')) {
+      e.cellElement.colSpan = 3
+    }
+    if (getElementCustom('3')) {
+      e.cellElement.style.display = 'none'
+    }
+    if (getElementCustom('4')) {
+      e.cellElement.style.display = 'none'
+    }
   }
 }
 const onRowPrepared = (e: any) => {
-  if (!e.isEditing && e.rowType === 'data' && !e?.removed) {
-    if (!dataAllRow.value.length) {
-      dataAllRow.value.push({ ...e.data, key: e.key })
-    } else {
-      const isRowExits = dataAllRow.value.find((item: any) => item.key === e.key)
-      if (!isRowExits) dataAllRow.value.push({ ...e.data, key: e.key })
-      else {
-        dataAllRow.value = dataAllRow.value.map((item: any) => item.key === e.key ? { ...item, ...e.data } : { ...item })
-      }
-    }
-  }
   // custom text column drag of footer row
   const isFooterRow = e.rowElement.classList.contains('dx-footer-row')
   if (isFooterRow) {
@@ -473,7 +479,10 @@ function calculateSalary(data: any) {
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
 }
 const addRow = () => {
-  gridRef.value?.instance.addRow()
+  // gridRef.value?.instance.addRow({ name: '1' })
+  dataSource.value?.store().insert({}).then(() => {
+    dataSource.value?.reload()
+  })
 }
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
@@ -490,13 +499,29 @@ const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
           value: keyEvent.target.value
         })
         cellInfo.setValue(keyEvent.target.value);
+        valueChangedEventArg.component.instance().close()
       }
     }
   }
 }
 
-const onReorder = () => {
-  // console.log('e', e)
+const onReorder = (e: RowDraggingReorderEvent) => {
+  const data = dataSource.value?.items()
+  const dataAll = [...dataAllRow.value]
+  const newTasks = [...data];
+  newTasks.splice(e.fromIndex, 1);
+  newTasks.splice(e.toIndex, 0, e.itemData);
+  dataAll.splice(e.fromIndex, 1);
+  dataAll.splice(e.toIndex, 0, e.itemData);
+
+  dataAllRow.value = dataAll
+  dataSource.value = new DataSource({
+    store: {
+      type: "array",
+      key: "key",
+      data: newTasks,
+    },
+  })
 }
 </script>
 

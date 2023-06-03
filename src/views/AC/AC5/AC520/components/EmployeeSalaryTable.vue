@@ -9,10 +9,15 @@
                 :remote-operations="true"
 
     >
-      <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag"/>
+      <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" :on-reorder="onReorder"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
                  :use-icons="true" new-row-position="last"
-      />
+      >
+        <DxTexts add-row="임직원보수등록"/>
+        <DxTexts save-all-changes="저장"/>
+        <DxTexts delete-row="삭제"/>
+        <DxTexts undelete-row="삭제 취소"/>
+      </DxEditing>
       <DxPaging :page-size="0"/>
       <DxToolbar>
         <DxItem location="after" name="addRowButton" css-class="cell-button-add">
@@ -37,13 +42,13 @@
         </DxItem>
       </DxToolbar>
       <DxColumn caption="성명" data-field="name" alignment="center" css-class="text-red">
-        <DxRequiredRule/>
+        <DxRequiredRule :message="Message.getCommonMessage('102').message"/>
       </DxColumn>
       <DxColumn caption="직종" data-field="occupation"
                 css-class="text-red p-0" width="165" alignment="center"
                 edit-cell-template="selectOccupation"
       >
-        <DxRequiredRule/>
+        <DxRequiredRule :message="Message.getCommonMessage('102').message"/>
       </DxColumn>
       <template #selectOccupation="{data}">
         <DxSelectBox
@@ -64,7 +69,7 @@
                 edit-cell-template="laborCostClassificationArray"
       >
         <DxLookup :data-source="LaborCostClassificationArray" display-expr="name" value-expr="value"/>
-        <DxRequiredRule/>
+        <DxRequiredRule :message="Message.getCommonMessage('102').message"/>
       </DxColumn>
       <template #laborCostClassificationArray="{data}">
         <DxSelectBox
@@ -126,7 +131,7 @@
       </template>
       <DxColumn type="buttons">
         <DxButtonGrid name="delete" @click="deleteRow">
-          <DeleteOutlined style="font-size: 16px; cursor: pointer" />
+          <DeleteOutlined style="font-size: 16px; cursor: pointer" title="삭제" />
         </DxButtonGrid>
       </DxColumn>
       <DxSummary>
@@ -185,14 +190,14 @@ import {
   DxPaging,
   DxRequiredRule,
   DxRowDragging,
-  DxSummary,
+  DxSummary, DxTexts,
   DxToolbar,
   DxTotalItem
 } from 'devextreme-vue/data-grid';
 
 import {computed, reactive, ref, watch} from 'vue'
 import {useStore} from "vuex";
-import {SavingEvent} from "devextreme/ui/data_grid";
+import {RowDraggingReorderEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
 import {useMutation, useQuery} from "@vue/apollo-composable";
@@ -348,12 +353,16 @@ watch(() => dataAllRow.value, (val: any) => {
 const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
-  e.component.deleteRow(rowIndex)
+  // e.component.deleteRow(rowIndex)
+  dataSource.value.store().remove(key_row).then(() => {
+    dataSource.value.reload()
+  })
   dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== key_row)
+  console.log('dataAllRow.value', dataAllRow.value)
 }
 
 const onCellPrepared = (e: any) => {
-  if (e.rowType === 'data' && e.column.dataField === 'classification') {
+  if (e.rowType === 'data' && e.column.dataField === 'classification' && !e.row?.removed) {
     if (!dataAllRow.value.length) {
       dataAllRow.value.push({ ...e.data, key: e.key })
     } else {
@@ -409,7 +418,10 @@ function calculateSalary(data: any) {
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
 }
 const addRow = () => {
-  gridRef.value?.instance.addRow()
+  // gridRef.value?.instance.addRow()
+  dataSource.value?.store().insert({}).then(() => {
+    dataSource.value?.reload()
+  })
 }
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
@@ -429,6 +441,20 @@ const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
       }
     }
   }
+}
+
+const onReorder = (e: RowDraggingReorderEvent) => {
+  const data = dataSource.value?.items()
+  const newTasks = [...data];
+  newTasks.splice(e.fromIndex, 1);
+  newTasks.splice(e.toIndex, 0, e.itemData);
+  dataSource.value = new DataSource({
+      store: {
+        type: "array",
+        key: "key",
+        data: newTasks,
+      },
+    })
 }
 </script>
 
