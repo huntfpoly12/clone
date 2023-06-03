@@ -940,6 +940,8 @@ export default defineComponent({
 
     // check disable switch refund
     const checkDisableRefund = async () => {
+      let hot = wrapper.value.hotInstance;
+      let cell12 =  hot.getDataAtCell(67,12);
       if (
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||
@@ -959,13 +961,13 @@ export default defineComponent({
 
       if (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2)
       {
-        dataSource.value[0].refund = true
+        dataSource.value[0].refund = cell12 ? true : false
         disabledRefund.value = false
       }
 
       if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
       {
-        dataSource.value[0].refund = false
+        dataSource.value[0].refund = cell12 ? true : false
         disabledRefund.value = false
       }
     }
