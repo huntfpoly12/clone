@@ -1,6 +1,5 @@
 <template>
   <div id="tab2-pa120">
-    <!-- {{ initFormTab2PA120.deductionItems }} -->
     <!-- {{ initFormTab2PA120.payItems }} -->
     <!-- {{ editRowTab2PA120.payItems }}w<br />
     {{ initFormTab2PA120.payItems }}w -->
@@ -721,16 +720,15 @@ export default defineComponent({
         editRowData.employeementInsuranceDeduction = presidentEditPA120.value
           ? false
           : data.employeementInsuranceDeduction;
-        editRowData.insuranceSupport =
-          data.length == 0
-            ? isDisableInsuranceSupport.value
-            : data.insuranceSupport;
+        editRowData.insuranceSupport = data.insuranceSupport;
         if (
           data?.nationalPensionSupportPercent >= 0 &&
           editRowData.insuranceSupport
         ) {
           editRowData.nationalPensionSupportPercent =
             data.nationalPensionSupportPercent ?? 0;
+        } else {
+          delete initFormTab2PA120.value.nationalPensionSupportPercent;
         }
         if (
           data?.employeementInsuranceSupportPercent >= 0 &&
@@ -738,6 +736,8 @@ export default defineComponent({
         ) {
           editRowData.employeementInsuranceSupportPercent =
             data.employeementInsuranceSupportPercent ?? 0;
+        } else {
+          delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
         }
         if (data?.employeementReductionStartDate) {
           editRowData.employeementReductionStartDate =
@@ -759,10 +759,14 @@ export default defineComponent({
         if (data?.employeementReductionRatePercent) {
           editRowData.employeementReductionRatePercent =
             data.employeementReductionRatePercent;
+        } else {
+          delete initFormTab2PA120.value.employeementReductionRatePercent;
         }
         if (data?.employeementReductionInput) {
           editRowData.employeementReductionInput =
             data.employeementReductionInput;
+        } else {
+          delete initFormTab2PA120.value.employeementReductionInput;
         }
         editRowData.payItems = [];
         editRowData.deductionItems = [];
@@ -873,7 +877,7 @@ export default defineComponent({
     const calcPension = () => {
       initFormTab2PA120.value.deductionItems?.map((item: any) => {
         if (item.itemCode == 1001) {
-          let total1 = initFormTab2PA120.value.nationalPensionDeduction
+          let total1 = initFormTab2PA120.value.nationalPensionDeduction && initFormTab2PA120.value.nationalPensionSupportPercent
             ? calculateNationalPensionEmployee(
                 calculateVariables.totalTaxPay,
                 initFormTab2PA120.value.nationalPensionSupportPercent
@@ -907,7 +911,7 @@ export default defineComponent({
         }
         if (item.itemCode == 1004) {
           let total4 =
-            initFormTab2PA120.value.employeementInsuranceDeduction == true
+            initFormTab2PA120.value.employeementInsuranceDeduction == true && initFormTab2PA120.value.employeementInsuranceSupportPercent
               ? calculateEmployeementInsuranceEmployee(
                   calculateVariables.totalTaxPay,
                   initFormTab2PA120.value.employeementInsuranceSupportPercent
