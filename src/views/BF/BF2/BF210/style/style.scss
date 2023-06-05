@@ -62,3 +62,6 @@
     display: flex;
     align-items: center;
 }
+:deep(.dx-freespace-row) {
+  display: none !important;
+}

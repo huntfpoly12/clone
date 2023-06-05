@@ -71,8 +71,8 @@ const filters = {
       }
       return input;
     },
-    formatNumber(input: number, decimal: number = 0) {
-      if (!isNaN(input)) {
+    formatNumber(input: number | string, decimal: number = 0) {
+      if (!isNaN(+input)) {
         return input.toLocaleString('en-US', { minimumFractionDigits: decimal, maximumFractionDigits: decimal })
       }
     }

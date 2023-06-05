@@ -52,8 +52,7 @@
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: calc(100vh - 180px)">
                     <DxPaging :page-size="0" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
@@ -136,7 +135,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
@@ -158,7 +157,6 @@ export default defineComponent({
         DxButton,
         DxPaging,
         DxExport,
-        DxScrolling,
         DxSearchPanel,
         EditOutlined,
         HistoryOutlined,

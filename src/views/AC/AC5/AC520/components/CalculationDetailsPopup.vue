@@ -125,7 +125,7 @@ const handleCalculate = () => {
       if(!item.detail) return item;
       return {
         ...item,
-        calculationResult: item.detail ? (eval(item.detail.replace(/[^\d+\-*/().]/g, ""))?.toString() || '') : item.calculationResult.toString(),
+        calculationResult: item.detail ? Number(eval(item.detail.replace(/[^\d+\-*/().]/g, "")) || '') : Number(item.calculationResult),
       }
     })
   }

@@ -68,6 +68,11 @@
     width: 150px;
   }
 }
+:deep .label-custom {
+  label {
+    width: 150px;
+  }
+}
 
 .clr-text {
   color: red;

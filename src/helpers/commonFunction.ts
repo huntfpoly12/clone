@@ -221,6 +221,18 @@ const calcSummary = (arr: any[], property1: string,) => {
   return filters.formatCurrency(sum);
 }
 
+const setNewUserToken = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+    if (token) {
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('tabsCached', 'Example');
+      const url = window.location.href;
+      const baseUrl = url.split('?')[0];
+      window.location.assign(baseUrl);
+    }
+}
+
 export {
     companyId,
     openTab,
@@ -240,6 +252,7 @@ export {
     startYearMonth,
     convertResidentId,
     accountSubject,
-    calcSummary
+    calcSummary,
+    setNewUserToken,
 }
 

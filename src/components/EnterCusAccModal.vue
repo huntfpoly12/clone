@@ -8,7 +8,7 @@
   >
   <template #cancelText>취소</template>
   <template #okText>네</template>
-    <div style="font-weight: 600;">{{company.code  }} {{company.name}}</div>
+    <div style="font-weight: 600;">{{companyInfo.code  }} {{companyInfo.name}}</div>
     <div>
       위 회사의 대표자 아이디로 로그인된 새로운 브라우저 창이 열립니다.<br/>
       계속 진행하시겠습니까?
@@ -17,11 +17,10 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import filters from "@/helpers/filters";
 
 export default defineComponent({
   props: {
-    company: {
+    companyInfo: {
       type: Object,
       required: true,
     },

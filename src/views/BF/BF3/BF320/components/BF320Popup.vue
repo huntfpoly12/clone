@@ -95,7 +95,7 @@
                     >
                     </default-text-box>
                   </a-form-item>
-                  <a-form-item label="팩 스" style="width: 150px;">
+                  <a-form-item label="팩 스" class="label-custom">
                     <default-text-box
                       v-model:valueInput="formState.extendInfoDetailFax"
                       autocomplete="off"

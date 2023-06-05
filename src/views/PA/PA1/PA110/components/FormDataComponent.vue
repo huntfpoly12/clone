@@ -745,18 +745,24 @@ export default defineComponent({
 			triggerCalculateMidTermSettlement.value = false;
 			dataMidTermSettlement.value.data = []
 			dataConfigDeductions.value.map((item: any) => {
-				if ([1031, 1032].includes(item.itemCode)) {
+				if ([1031].includes(item.itemCode)) {
 					dataMidTermSettlement.value.data.push({
-						// itemCode: item.itemCode,
 						name: item.name,
 						amount: item.amount,
-						amountNew: item.itemCode == 1031 ? data.calculateMidTermSettlement : 0
+						amountNew: data.calculateMidTermSettlement?.deductibleIncomeTaxAmount
+					});
+				}
+				if ([1032].includes(item.itemCode)) {
+					dataMidTermSettlement.value.data.push({
+						name: item.name,
+						amount: item.amount,
+						amountNew: data.calculateMidTermSettlement?.deductibleLocalIncomeTaxAmount
 					});
 				}
 			});
 			dataMidTermSettlement.value.employeeId = dataIW.value.employee.employeeId
-			dataMidTermSettlement.value.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1,
-				modalMidTermSettlement.value = true
+			dataMidTermSettlement.value.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1
+			modalMidTermSettlement.value = true
 
 		})
 		// ======================= FUNCTION ================================

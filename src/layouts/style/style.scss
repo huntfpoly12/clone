@@ -18,10 +18,10 @@
 .ant-layout-header {
 	display: flex;
 	justify-content: space-between;
-	background: v-bind('styles.main');
-	color: #fff;
-	height: 50px;
-	line-height: 50px;
+	background: v-bind('styles.main') !important;
+	color: #fff !important;
+	height: 50px !important;
+	line-height: 50px !important;
 }
 
 .ant-layout-header a {

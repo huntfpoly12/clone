@@ -11,10 +11,6 @@
 								:activeType20="false" width="270px" />
 						</a-form-item>
 						<a-form-item label="지급일" class="red">
-							<!-- <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay"
-                                :max="31" :spinButtons="true"
-                                :disabled="!store.state.common.pa510.statusFormAdd || store.state.common.pa510.statusDisabledStatus"
-                                :isFormat="true" width="270px" /> -->
 							<date-time-box-custom ref="requiredPaymentDay" width="270px" :required="true"
 								:startDate="startDate" :finishDate="finishDate"
 								v-model:valueDate="dataIncomeWageDaily.paymentDay" :disabled="!store.state.common.pa510.statusFormAdd ||
@@ -220,14 +216,11 @@ export default defineComponent({
 		const arrayEmploySelect: any = ref([]);
 		const dataEmployeeWageDailies: any = ref([]);
 		const arrDeduction: any = ref([]);
-		// const totalDeduction = ref(0)
-		// const triggerCalculateIncome = ref<boolean>(false)
 		const triggerWithholdingConfigDeductionItems = ref<boolean>(true);
 		const triggerEmployeeWageDailies = ref<boolean>(true);
 		const triggerIncomeWageDaily = ref<boolean>(false);
 		const countKey: any = ref(0);
 		const employeeWageDailyTrigger = ref<boolean>(false);
-		// const showErrorButton = ref(false)
 		const triggerWithholdingConfig = ref<boolean>(true);
 		const dataQuery = ref({ companyId: companyId, imputedYear: paYear });
 		const insuranceSupport = ref<boolean>(false);
@@ -247,12 +240,6 @@ export default defineComponent({
 		};
 		const employeementInsuranceDeduction = ref<boolean>(false);
 		const employeementInsuranceSupportPercent = ref<number>(0);
-		// const originDataCalculateIncome = ref({
-		//     companyId: companyId,
-		//     imputedYear: paYear.value,
-		//     totalTaxPay: 10,
-		//     dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
-		// })
 		const originDataIncomeWageDaily = {
 			companyId: companyId,
 			incomeId: store.state.common.pa510.incomeId,
@@ -260,20 +247,8 @@ export default defineComponent({
 		};
 
 		let requiredPaymentDay = ref();
-		const startDate = computed(() =>
-			dayjs(
-				`${paYear.value}-${processKey.value.paymentMonth}`
-			)
-				.startOf("month")
-				.toDate()
-		);
-		const finishDate = computed(() =>
-			dayjs(
-				`${paYear.value}-${processKey.value.paymentMonth}`
-			)
-				.endOf("month")
-				.toDate()
-		);
+		const startDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).startOf("month").toDate());
+		const finishDate = computed(() =>dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).endOf("month").toDate());
 
 		// ============ GRAPQL ===============================
 		const {
@@ -297,13 +272,6 @@ export default defineComponent({
 				enabled: triggerIncomeWageDaily.value,
 				fetchPolicy: "no-cache",
 			}));
-		// const {
-		//     loading: loadingCalculateIncome,
-		//     onResult: resCalculateIncome,
-		// } = useQuery(queries.calculateIncomeWageTax, originDataCalculateIncome, () => ({
-		//     enabled: triggerCalculateIncome.value,
-		//     fetchPolicy: "no-cache",
-		// }))
 		const {
 			mutate: mutateAdd,
 			onDone: onDoneAdd,
@@ -335,17 +303,6 @@ export default defineComponent({
 		// ===================DONE GRAPQL==================================
 		onDoneAdd(async (data: any) => {
 			notification("success", messageAddSuccess);
-			// if (store.state.common.pa510.checkClickYear) {
-			// 	processKey.value.imputedYear =
-			// 		store.state.common.pa510.dataYearNew;
-			// 	processKey.value.paymentYear =
-			// 		store.state.common.pa510.dataYearNew;
-			// 	store.state.common.pa510.loadingTableInfo++;
-			// 	await (store.state.settings.paYear =
-			// 		store.state.common.pa510.dataYearNew);
-			// 	await (store.state.common.pa510.checkClickYear = false);
-			// 	return;
-			// }
 			await store.state.common.pa510.loadingTableInfo++;
 			if (
 				store.state.common.pa510.statusClickButtonAdd &&
@@ -375,31 +332,9 @@ export default defineComponent({
 		});
 		onerrorAdd(async (e: any) => {
 			//notification('error', e.message)
-			// if (store.state.common.pa510.checkClickYear) {
-			// 	processKey.value.imputedYear =
-			// 		store.state.common.pa510.dataYearNew;
-			// 	processKey.value.paymentYear =
-			// 		store.state.common.pa510.dataYearNew;
-			// 	store.state.common.pa510.loadingTableInfo++;
-			// 	await (store.state.settings.paYear =
-			// 		store.state.common.pa510.dataYearNew);
-			// 	await (store.state.common.pa510.checkClickYear = false);
-			// 	return;
-			// }
 		});
 		onDoneUpdate(async (data: any) => {
 			notification("success", messageUpdateSuccess);
-			// if (store.state.common.pa510.checkClickYear) {
-			// 	processKey.value.imputedYear =
-			// 		store.state.common.pa510.dataYearNew;
-			// 	processKey.value.paymentYear =
-			// 		store.state.common.pa510.dataYearNew;
-			// 	store.state.common.pa510.loadingTableInfo++;
-			// 	await (store.state.settings.paYear =
-			// 		store.state.common.pa510.dataYearNew);
-			// 	await (store.state.common.pa510.checkClickYear = false);
-			// 	return;
-			// }
 			await store.state.common.pa510.loadingTableInfo++;
 			if (
 				store.state.common.pa510.statusClickButtonAdd &&
@@ -428,38 +363,12 @@ export default defineComponent({
 		});
 		onerrorUpdate(async (e: any) => {
 			//notification('error', e.message)
-			// if (store.state.common.pa510.checkClickYear) {
-			// 	processKey.value.imputedYear =
-			// 		store.state.common.pa510.dataYearNew;
-			// 	processKey.value.paymentYear =
-			// 		store.state.common.pa510.dataYearNew;
-			// 	store.state.common.pa510.loadingTableInfo++;
-			// 	await (store.state.settings.paYear =
-			// 		store.state.common.pa510.dataYearNew);
-			// 	await (store.state.common.pa510.checkClickYear = false);
-			// 	return;
-			// }
 		});
 
 		resEmployeeWage((value) => {
 			triggerEmployeeWageDailies.value = false;
 			dataEmployeeWageDailies.value = value.data.getEmployeeWageDailies;
 			resetArrayEmploySelect()
-			// arrayEmploySelect.value = [];
-			// if (store.state.common.pa510.statusFormAdd) {
-			//   dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
-			//     if (
-			//       !store.state.common.pa510.dataTaxPayInfo.find(
-			//         (dataTaxPay: any) =>
-			//           dataTaxPay.employeeId == dataEmployee.employeeId
-			//       )
-			//     ) {
-			//       arrayEmploySelect.value.push(dataEmployee);
-			//     }
-			//   });
-			// } else {
-			//   arrayEmploySelect.value = dataEmployeeWageDailies.value;
-			// }
 		});
 		resWithholdingConfigPayItems((res) => {
 			arrDeduction.value = [];
@@ -503,7 +412,6 @@ export default defineComponent({
 
 			store.state.common.pa510.statusChangeFormAdd = false;
 			store.state.common.pa510.statusChangeFormEdit = false;
-			// store.state.common.pa510.statusChangeFormPrice = false;
 			// Incrementing the value of onEditItem by 1.
 			if (store.state.common.pa510.statusClickEditItem) {
 				store.state.common.pa510.onEditItem++;
@@ -534,11 +442,6 @@ export default defineComponent({
 				}
 			}
 		);
-		// watch(paYear, (newVal) => {
-		//     // originData.value.imputedYear = newVal
-		//     triggerEmployeeWageDailies.value = true;
-		//     triggerWithholdingConfigDeductionItems.value = true;
-		// })
 		// Watching the value of the store.state.common.pa510.statusFormAdd and if it is true, it will do
 		// some stuff.
 		watch(
@@ -550,25 +453,9 @@ export default defineComponent({
 					arrDeduction.value?.map((data: any) => {
 						data.price = 0;
 					});
-					// arrayEmploySelect.value = [];
-					// dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
-					//   if (
-					//     !store.state.common.pa510.dataTaxPayInfo.find(
-					//       (dataTaxPay: any) =>
-					//         dataTaxPay.employeeId == dataEmployee.employeeId
-					//     )
-					//   ) {
-					//     arrayEmploySelect.value.push(dataEmployee);
-					//   }
-					// });
-					// setTimeout(() => {
 					store.state.common.pa510.statusChangeFormPrice = false;
-					// }, 500);
 				}
 				resetArrayEmploySelect()
-				// else {
-				//   arrayEmploySelect.value = dataEmployeeWageDailies.value;
-				// }
 			}
 		);
 		watch(
@@ -593,11 +480,6 @@ export default defineComponent({
 						JSON.stringify(dataIncomeWageDaily.value)
 					) {
 						store.state.common.pa510.statusChangeFormAdd = true;
-						// store.state.common.pa510.statusChangeFormPrice = true;
-						// if (!store.state.common.pa510.statusRowAdd) {
-						//     store.state.common.pa510.statusChangeFormEdit = true
-						//     store.state.common.pa510.statusChangeFormPrice = true;
-						// }
 					} else {
 						store.state.common.pa510.statusChangeFormAdd = false;
 						store.state.common.pa510.statusChangeFormPrice = false;
@@ -606,26 +488,6 @@ export default defineComponent({
 			},
 			{ deep: true }
 		);
-
-		// watch(() => store.state.common.pa510.statusChangeFormPrice, (value) => {
-		//     if (!value) {
-		//         showErrorButton.value = false
-		//     }
-		// })
-
-		// Watching the store.state.common.pa510.incomeId and if it is not equal to 'PA510' then it will set
-		// the originDataIncomeWageDaily.value.incomeId to the value of store.state.common.pa510.incomeId and
-		// then triggerIncomeWageDaily.value to true.
-		// watch(() => store.state.common.pa510.incomeId, async (value) => {
-		//     if (value && value != 'PA510') {
-		//         originDataIncomeWageDaily.incomeId = value
-		//         triggerIncomeWageDaily.value = true;
-		//     } else {
-		//         if (!store.state.common.pa510.statusFormAdd) {
-		//             onResetForm()
-		//         }
-		//     }
-		// })
 
 		// Watching the value of actionSubmit and if it is true, it will execute the code inside the if
 		// statement.
@@ -914,15 +776,6 @@ export default defineComponent({
 					requiredPaymentDay.value.validate(true);
 					return;
 				}
-				// if (store.state.common.pa510.statusChangeFormPrice) {
-				//     store.state.common.pa510.refreshDataGridRef++
-				//     store.state.common.pa510.dataRowOnActive = dataIncomeWageDaily.value
-				//     store.state.common.pa510.checkClickYear ? store.state.common.pa510.checkClickYear = false : '';
-				//     store.state.common.pa510.statusClickEditItem ? store.state.common.pa510.statusClickEditItem = false : '';
-				//     store.state.common.pa510.checkClickCopyMonth ? store.state.common.pa510.checkClickCopyMonth = false : '';
-				//     store.state.common.pa510.checkClickMonth ? store.state.common.pa510.checkClickMonth = false : '';
-				//     showErrorButton.value = true;
-				// } else {
 				let arrDeductionItems: any = [];
 				arrDeduction.value.forEach((value: any) => {
 					arrDeductionItems.push({
@@ -965,7 +818,6 @@ export default defineComponent({
 						input: input,
 					});
 				}
-				// }
 			}
 		};
 		// Resetting the form.
@@ -991,7 +843,6 @@ export default defineComponent({
 							).daysInMonth()
 						)}`
 					);
-			// dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
 			await arrDeduction.value?.map((data: any) => {
 				data.price = 0;
 			});
@@ -1034,7 +885,6 @@ export default defineComponent({
 			actionDedution,
 			actionInsurance,
 			updateDataDeduction,
-			// totalDeduction,
 			onChange,
 			loading,
 			loadingIncomeWageDaily,
@@ -1042,7 +892,6 @@ export default defineComponent({
 			countKey,
 			submitForm,
 			onSubmitForm,
-			// showErrorButton,
 			showDailyWage,
 			showMonthlyWage,
 			onChangeInputDeduction,
