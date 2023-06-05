@@ -2,7 +2,7 @@
 	<action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false" />
 	<div class="ac-120">
 		<div class="top">
-			<a-spin tip="Loading..." :spinning="loadingGetAccountingProcesses">
+			<a-spin :spinning="loadingGetAccountingProcesses">
 				<div class="grid">
 					<div v-for="(month, index) in 12" :key="index" class="items"
 						:class="{ 'items-active': monthSelected === month, 'column-hover': monthNewClick == month }" @click="selectedMonth(month)">
@@ -79,7 +79,7 @@
 					:statusProcess="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status" />
 			</template>
 			<div id="content" class="dx-theme-background-color">
-				<a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
+				<a-spin :spinning="loadingGetAccountingDocuments">
 					<DxDataGrid noDataText="내역이 없습니다" id="dataGridAc120"
 						:class="store.state.common.ac120.statusShowFull ? 'hiddenTable' : ''"
 						key-expr="accountingDocumentId" :show-row-lines="true" :hoverStateEnabled="true"

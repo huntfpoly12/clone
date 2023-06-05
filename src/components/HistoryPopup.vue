@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="로딩 중..."
+            <a-spin
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820|| loadingPA840_1|| loadingPA840_2||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
@@ -208,7 +208,7 @@ export default defineComponent({
                                 companyId: companyId
                             };
                             trigger130.value = true;
-                            refetchCM130();
+                            // refetchCM130();
                             break;
                         case 'cm-deduction-130':
                             dataQuery.value = {
@@ -216,7 +216,7 @@ export default defineComponent({
                                 companyId: companyId
                             };
                             triggerDeduction130.value = true;
-                            refetchCMDeduction130();
+                            // refetchCMDeduction130();
                             break;
                         case 'pa-710':
                             dataQuery.value = {
@@ -680,30 +680,32 @@ export default defineComponent({
         });
 
         // get getWithholdingConfigPayItemsLogs cm-130
-        const { result: resultCM130, loading: loadingCM130, refetch: refetchCMDeduction130 } = useQuery(
+        const { result: resultCM130, loading: loadingCM130 } = useQuery(
             queries.getWithholdingConfigPayItemsLogs,
-            dataQuery,
-            () => ({
-                enabled: triggerDeduction130.value,
-                fetchPolicy: "no-cache",
-            })
-        );
-        watch(resultCM130, (value) => {
-            if (value && value.getWithholdingConfigPayItemsLogs) {
-                dataTableShow.value = value.getWithholdingConfigPayItemsLogs;
-            }
-        });
-
-        // get getWithholdingConfigDeductionItemsLogs cm-130
-        const { result: resultCMDeduction130, loading: loadingCMDeduction130, refetch: refetchCM130 } = useQuery(
-            queries.getWithholdingConfigDeductionItemsLogs,
             dataQuery,
             () => ({
                 enabled: trigger130.value,
                 fetchPolicy: "no-cache",
             })
         );
+        watch(resultCM130, (value) => {
+            trigger130.value = false
+            if (value && value.getWithholdingConfigPayItemsLogs) {
+                dataTableShow.value = value.getWithholdingConfigPayItemsLogs;
+            }
+        });
+
+        // get getWithholdingConfigDeductionItemsLogs cm-130
+        const { result: resultCMDeduction130, loading: loadingCMDeduction130 } = useQuery(
+            queries.getWithholdingConfigDeductionItemsLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerDeduction130.value,
+                fetchPolicy: "no-cache",
+            })
+        );
         watch(resultCMDeduction130, (value) => {
+            triggerDeduction130.value = false
             if (value && value.getWithholdingConfigDeductionItemsLogs) {
                 dataTableShow.value = value.getWithholdingConfigDeductionItemsLogs;
             }

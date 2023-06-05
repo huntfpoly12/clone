@@ -3,7 +3,7 @@
         <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기"
             cancelText="그냥 나가기" @cancel="setModalVisible()" width="80%">
             <standard-form :wrapper-col="{ span: 14 }">
-                <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
+                <a-spin :spinning="loading || loadingUpdate">
                     <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
                         <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
                             <div style="height: 60vh;overflow-y: scroll;">
