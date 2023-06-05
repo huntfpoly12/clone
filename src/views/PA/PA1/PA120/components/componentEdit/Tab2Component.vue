@@ -228,13 +228,13 @@
             </a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"
               ><span>{{
-                $filters.formatCurrency(calculateVariables.totalTaxPay)
+                $filters.formatCurrency(totalPayItemTaxAll)
               }}</span>
               원</a-col
             >
             <a-col class="ml-15" :span="12">수당 과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"
-              ><span>{{ $filters.formatCurrency(totalPayItemTaxAll) }}</span>
+              ><span>{{ $filters.formatCurrency(calculateVariables.totalTaxPay) }}</span>
               원</a-col
             >
             <a-col class="ml-15" :span="12">수당 비과세 합계:</a-col>
@@ -877,7 +877,7 @@ export default defineComponent({
     const calcPension = () => {
       initFormTab2PA120.value.deductionItems?.map((item: any) => {
         if (item.itemCode == 1001) {
-          let total1 = initFormTab2PA120.value.nationalPensionDeduction && initFormTab2PA120.value.nationalPensionSupportPercent
+          let total1 = initFormTab2PA120.value.nationalPensionDeduction
             ? calculateNationalPensionEmployee(
                 calculateVariables.totalTaxPay,
                 initFormTab2PA120.value.nationalPensionSupportPercent
@@ -911,7 +911,7 @@ export default defineComponent({
         }
         if (item.itemCode == 1004) {
           let total4 =
-            initFormTab2PA120.value.employeementInsuranceDeduction == true && initFormTab2PA120.value.employeementInsuranceSupportPercent
+            initFormTab2PA120.value.employeementInsuranceDeduction == true
               ? calculateEmployeementInsuranceEmployee(
                   calculateVariables.totalTaxPay,
                   initFormTab2PA120.value.employeementInsuranceSupportPercent

@@ -405,9 +405,7 @@ export default defineComponent({
         const rowIndexDelete = ref(0);
         const contentDelete = Message.getCommonMessage('401').message;
         const isWatching = ref(false);
-        let inputTimeout: any = null;
         const isDuplicateName = ref(true);
-        const testValue = ref('true');
         // ============ GRAPQL ===============================
         // get service contract
         const { result } = useQuery(
@@ -458,6 +456,7 @@ export default defineComponent({
             notification('error', res.message)
         })
         onDeleteMemo(() => {
+            notification("success", "메모가 삭제되었습니다.");
             refetchMemo();
         });
         // Update Service Contract for info
@@ -554,6 +553,7 @@ export default defineComponent({
                 formState.info.accountingPrice = 0
             }
             if(!value && !formState.info.usedWithholding){
+              console.log(`output-`,)
                 notification("error", Message.getMessage('BF310', '001').message);
             }
           }
@@ -588,6 +588,7 @@ export default defineComponent({
                 formState.info.withholdingPrice = 0
             }
             if(!value && !formState.info.usedAccounting){
+              console.log(`output-`,)
                 notification("error", Message.getMessage('BF310', '001').message);
             }
           }
@@ -595,12 +596,14 @@ export default defineComponent({
         watch(resultMemo, (value) => {
             if (value && value.getServiceContractManageMemos.length > 0) {
                 formStateMomes.value = value.getServiceContractManageMemos;
+            }else{
+              formStateMomes.value = [{ ...initialFormStateMomes }];
             }
         });
         watch(() => props.modalStatus, (newValue) => {
-            trigger.value = true;
+          trigger.value = true;
+          isWatching.value = false;
             if (newValue) {
-                isWatching.value = false;
                 dataQuery.value = { id: props.idRowEdit };
                 dataQueryMemos.value = { companyId: props.idRowEdit };
                 refetchMemo();
@@ -640,7 +643,7 @@ export default defineComponent({
             }
         };
         const handleDeleteMemo = (key: number) => {
-            if (formStateMomes.value.length > 1) {
+            if (key) {
                 actionDeleteMemo({ companyId: formState.id, memoId: key });
             }
         };
@@ -648,6 +651,7 @@ export default defineComponent({
         const actionUpdateServiceContract = (e: any) => {
             var res = e.validationGroup.validate();
             if(!formState.info.usedAccounting && !formState.info.usedWithholding){
+              console.log(`output-`,)
                 notification("error", Message.getMessage('BF310', '001').message);
             }
             if (!res.isValid) {
