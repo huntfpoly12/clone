@@ -41,9 +41,10 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid noDataText="내역이 없습니다" :data-source="listServiceContract" :show-borders="true" key-expr="id"
+                <DxDataGrid id="table-main-bf330" noDataText="내역이 없습니다" :data-source="listServiceContract" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :show-row-lines="true"  :hoverStateEnabled="true">
+                    <DxPaging :enabled="false" />
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
@@ -159,7 +160,6 @@ export default defineComponent({
     setup() {
         // config grid
         const store = useStore();
-        const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const idRowEdit = ref(0)
@@ -174,7 +174,7 @@ export default defineComponent({
         const originData = ref({
             filter: {
                 page: 1,
-                rows: per_page,
+                rows: 1000,
                 code: null,
                 name: null,
                 presidentName: null,
