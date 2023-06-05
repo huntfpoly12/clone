@@ -48,7 +48,6 @@
         </a-row>
       </div>
       <div class="page-content">
-        {{ dataSource[0] }}
         <DxDataGrid id="table-main-bf310" noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
           :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
           :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -148,7 +147,7 @@
                 <a-tooltip placement="top" color="black">
                   <template #title>사용자권한</template>
                   <div @mouseenter="data.data.isHover=false" @mouseleave="data.data.isHover=true" style="height: 17px; min-width: 17px;" 
-                    @click="isCustomerModal = true"
+                    @click="onEnterUser(data.data)"
                   >
                     <img v-if="data.data.isHover" class="permission-img" src="@/assets/images/add-permission.png"/>
                     <img v-else class="permission-img permission-img-hover" src="@/assets/images/add-permission-hover.png"/>
@@ -166,7 +165,7 @@
           :data="idSubRequest" :key="keyRefreshPopup310" />
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
           title="변경이력" :idRowEdit="idSubRequest" typeHistory="bf-310" />
-        <EnterCusAccModal v-if="isCustomerModal" :company="{code: 2000, name: 'TOYOTA'}" @closeModal="onHandleCusAcc"/>
+        <EnterCusAccModal v-if="isCustomerModal" :companyInfo="companyInfo" @closeModal="onHandleCusAcc"/>
       </div>
     </div>
   </a-spin>
@@ -174,7 +173,7 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
-import { useQuery } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import { EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
 import {
@@ -189,9 +188,12 @@ import {
 } from "devextreme-vue/data-grid";
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index";
+import mutations from "@/graphql/mutations/AddToken/index";
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
+import { getJwtObject,AdminScreenRole  } from "@bankda/jangbuda-common";
+
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -332,14 +334,43 @@ export default defineComponent({
       }, 500);
     };
 
+
+    
+    const companyInfo = reactive({
+      code: NaN,
+      name: '',
+      companyId: NaN,
+    })
+    const userToken = ref();
+    function cloneWebsite() {
+      const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
+      const currentUrl = window.location.origin.replace(/\/$/, '');
+      if(userToken.value){
+        window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}`, '_blank', windowFeatures);
+      }
+    }
+    const {mutate, onDone, onError: customerLoginError } = useMutation(mutations.customerWorkLogin);
     const isCustomerModal = ref(false);
+    const onEnterUser = (data: any) => {
+      companyInfo.code = data.code;
+      companyInfo.name = data.companyName;
+      companyInfo.companyId = data.id;
+      isCustomerModal.value = true;
+    }
     const onHandleCusAcc = (emitVal: boolean) => {
       isCustomerModal.value = false;
       if(emitVal){
+        mutate({companyId:companyInfo.companyId})
       }else{
 
       }
     }
+    onDone((result: any) => {
+      userToken.value = result.data.customerWorkLogin;
+      cloneWebsite();
+    })
     return {
       loading,
       move_column,
@@ -366,7 +397,7 @@ export default defineComponent({
       onDoneUpdate,
       listCheckBox,
       keyRefreshPopup310,
-      onHandleCusAcc, isCustomerModal,
+      onHandleCusAcc, isCustomerModal,companyInfo,onEnterUser,
     };
   },
 });

@@ -519,6 +519,12 @@ export default defineComponent({
     let tabRemove = ref();
     let isClickArrowTab = ref(false)
     const token = sessionStorage.getItem("token");
+
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const newUserToken = urlParams.get('token');
+    // if (newUserToken) {
+    //   sessionStorage.setItem('userToken', token);
+    // }
     // this code process if refresh token expr then open popup
     const now = ref(dayjs().valueOf())
     const loginExprTime = ref(parseInt(sessionStorage.getItem("loginExpr")));
@@ -528,7 +534,7 @@ export default defineComponent({
       loginExprTime.value = parseInt(sessionStorage.getItem("loginExpr"))
       const remainingLogout = now.value - loginExprTime.value;
       const diffInHours = remainingLogout / 3600000;
-      if(diffInHours >= 8) statusLogin.value = true
+      if(diffInHours >= 8) statusLogin.value = true;
     }, 1000);
     const logout = ()=>{
       router.push("/login");

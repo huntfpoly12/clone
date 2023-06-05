@@ -11,6 +11,9 @@ export default gql`
         processKey: $processKey
         paymentDay: $paymentDay
         employeeId: $employeeId
-    )
+    ) {
+      deductibleIncomeTaxAmount
+      deductibleLocalIncomeTaxAmount
+    }
   }
 `;
