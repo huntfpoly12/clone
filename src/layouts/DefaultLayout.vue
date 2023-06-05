@@ -519,12 +519,6 @@ export default defineComponent({
     let tabRemove = ref();
     let isClickArrowTab = ref(false)
     const token = sessionStorage.getItem("token");
-
-    // const urlParams = new URLSearchParams(window.location.search);
-    // const newUserToken = urlParams.get('token');
-    // if (newUserToken) {
-    //   sessionStorage.setItem('userToken', token);
-    // }
     // this code process if refresh token expr then open popup
     const now = ref(dayjs().valueOf())
     const loginExprTime = ref(parseInt(sessionStorage.getItem("loginExpr")));

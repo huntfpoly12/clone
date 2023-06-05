@@ -12,7 +12,7 @@ export interface Props {
   displayeExpr: string,
   required: boolean,
   valueInput: string | number,
-  // ?: boolean,
+  isShowId?: boolean,
 }
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   valueExpr: 'id',
   displayeExpr: 'name',
   required: false,
+  isShowId: true,
   // labels: () => ['one', 'two']
 })
 const emit = defineEmits(['update:valueInput']);
@@ -41,19 +42,19 @@ const widthCustom = computed<string>(() => {
 const messageRequired = Message.getCommonMessage('102').message;
 </script>
 <template>
-  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="false" :width="widthCustom" :data-source="props.dataSource"
+  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="widthCustom" :data-source="props.dataSource"
     :height="$config_styles.HeightInput" :display-expr="props.displayeExpr" :value-expr="props.valueExpr"
     :disabled="props.disabled" v-model="selectedValue" :placeholder="props.placeholder" field-template="field"
     item-template="item" validation-message-position="bottom">
     <template #field=" { data } : any ">
       <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
-        <div class="SelectCustomField-tag">{{ data[props.valueExpr] }}</div>
+        <div v-if="props.isShowId" class="SelectCustomField-tag">{{ data[props?.valueExpr] }}</div>
         <a-tooltip zIndex="9999" placement="top" color="black">
-          <template #title v-if=" data[props.displayeExpr].length > 10 ">
-            <div>{{data[props.displayeExpr]}}</div>
+          <template #title v-if=" data[props?.displayeExpr].length > 10 ">
+            <div>{{data[props?.displayeExpr]}}</div>
           </template>
           <div class="text-overflow" :style=" { width: `calc(${widthCustom} - 75px)` } ">
-            {{ data[props.displayeExpr] }}
+            {{ data[props?.displayeExpr] }}
             <DxTextBox style="display: none;" />
           </div>
         </a-tooltip>
@@ -65,13 +66,13 @@ const messageRequired = Message.getCommonMessage('102').message;
     </template>
     <template #item=" { data } : any ">
       <div style="display: flex; align-items: center;">
-        <div class="SelectCustomField-tag">{{ data[props.valueExpr] }}</div>
+        <div v-if="props.isShowId" class="SelectCustomField-tag">{{ data[props?.valueExpr] }}</div>
         <a-tooltip zIndex="9999" placement="top" color="black">
-          <template #title v-if=" data[props.displayeExpr].length > 10 ">
-            <div>{{ data[props.displayeExpr] }}</div>
+          <template #title v-if=" data[props?.displayeExpr].length > 10 ">
+            <div>{{ data[props?.displayeExpr] }}</div>
           </template>
           <div class="text-overflow">
-            {{ data[props.displayeExpr] }}
+            {{ data[props?.displayeExpr] }}
             <DxTextBox style="display: none;" />
           </div>
         </a-tooltip>
@@ -90,5 +91,10 @@ const messageRequired = Message.getCommonMessage('102').message;
   padding: 0 2px;
   text-align: center;
   margin-right: 5px;
+}
+:deep .dx-template-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-left: 6px !important;
 }
 </style>
