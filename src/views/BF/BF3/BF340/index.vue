@@ -122,10 +122,10 @@
           <DxColumn caption="연락처" data-field="phone" />
           <DxColumn caption="휴대폰" data-field="mobilePhone" />
           <DxColumn caption="가입일자" cell-template="registerDate" />
-          <template #registerDate="{ data }">
+          <template #registerDate="{ data }" data-field="registerDate">
             {{ $filters.formatDate(data.data.registerDate) }}
           </template>
-          <DxColumn caption="해지일자" cell-template="cancelDate" />
+          <DxColumn caption="해지일자" cell-template="cancelDate" data-field="cancelDate"/>
           <template #cancelDate="{ data }">
             {{
               data.data.cancelDate
