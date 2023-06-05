@@ -14,6 +14,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { client } from "./ApolloClient.d";
 import { Message } from "./configs/enum";
 import globalDirectives from './directives'
+import { setNewUserToken } from "./helpers/commonFunction";
 
 declare module 'vue' {
   interface ComponentCustomProperties {
@@ -40,7 +41,6 @@ Object.entries(requireBaseComponent).forEach((fileComponent) => {
 })
 
 const requireComponent = import.meta.glob('./components/*.vue')
-
 Object.entries(requireComponent).forEach((fileComponent) => {
   let nameFile = fileComponent[0]?.split('/')?.pop()?.replace(/\.\w+$/, '');
   let componentImport : any = fileComponent[1];
@@ -48,6 +48,7 @@ Object.entries(requireComponent).forEach((fileComponent) => {
   // Register component globally
   app.component(componentName,defineAsyncComponent(componentImport))
 })
+setNewUserToken()
 
 app.config.globalProperties.$messages = Message;
 app.config.globalProperties.$filters = filters;
