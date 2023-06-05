@@ -450,6 +450,14 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const newUserToken = urlParams.get('token');
+  // if (newUserToken) {
+  //   sessionStorage.setItem('userToken', newUserToken);
+  //   next()
+  //   return;
+  // }
+  // console.log(`output->newUserToken`,newUserToken)
   const requiresAuth = to.meta.needAuth
   const roles = isEmpty(to.meta.roles) ? null : to.meta.roles as string[]
   const token = sessionStorage.getItem("token");
