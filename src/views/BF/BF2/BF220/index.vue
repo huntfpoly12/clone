@@ -38,7 +38,14 @@
                         <DxItem name="columnChooserButton" />
                     </DxToolbar>
                     <template #button-template>
-                        <DxButton icon="plus" @click="openAddNewModal" />
+                      <a-tooltip placement="top" class="custom-tooltip">
+                        <template #title>
+                          신규
+                        </template>
+                        <div style="text-align: center;">
+                          <DxButton icon="plus" @click="openAddNewModal" />
+                        </div>
+                      </a-tooltip>
                     </template>
                     <template #pagination-table>
                         <div v-if="totalRow > dataSearch.rows">
