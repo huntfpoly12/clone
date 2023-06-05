@@ -1,102 +1,97 @@
-import {
-  createHttpLink,
-  ApolloClient,
-  InMemoryCache,
-} from "@apollo/client/core";
-import mutations from "@/graphql/mutations/index";
-import { setContext } from '@apollo/client/link/context';
-import { onError } from '@apollo/client/link/error';
-import { getJwtObject } from "@bankda/jangbuda-common";
-import store from '@/store'
-import { Observable } from 'rxjs';
+import { ApolloClient, ApolloLink, createHttpLink, from, InMemoryCache } from "@apollo/client/core";
+import {getJwtObject} from "@bankda/jangbuda-common";
+
 const baseURL = import.meta.env.VITE_GRAPHQL_ENDPOINT;
 const httpLink = createHttpLink({
   uri: baseURL,
 });
 
-const authLink = setContext(async (_, { headers }) => {
-  // get the authentication token from localstorage if it exists
-  const accessToken = sessionStorage.getItem('token');
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: accessToken ? `Bearer ${accessToken}` : null,
-    },
-  };
-});
-const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }) => {
-  if (graphQLErrors) {
-    for (let err of graphQLErrors) {
-      if (err.message == "인증토큰이 만료되었습니다.") {
-        switch (err.extensions?.code) {
-          case 'UNAUTHENTICATED':
-            // get the new token from your server
-            const accessToken = sessionStorage.getItem('token');
-            const refreshToken = sessionStorage.getItem('refreshToken');
+let isTokenRefreshing = false; // Flag to indicate if the token is being refreshed
+let refreshPromise: Promise<any> | null = null; // Hold the refresh token promise
+const connections: { [key: string]: any } = {}; // Hold the controller for each connection
 
-            // call the mutation to refresh token
-            return new Observable((observer) => {
-              // const jwtObject = getJwtObject(accessToken);
-              // if (jwtObject.isExpired()) {
-                client.mutate({
-                  mutation: mutations.refreshLogin,
-                  variables: {
-                    accessToken: accessToken,
-                    refreshToken: refreshToken
-                  },
-                })
-                  .then(({ data }) => {
-                    // console.log(data)
-                    // save the new tokens
-                    sessionStorage.setItem('token', data.refreshLogin.accessToken);
-                    sessionStorage.setItem('refreshToken', data.refreshLogin.refreshToken);
-                    // update the headers with the new token
-                    const oldHeaders = operation.getContext().headers;
-                    operation.setContext({
-                      headers: {
-                        ...oldHeaders,
-                        authorization: `Bearer ${data.refreshLogin.accessToken}`,
-                      },
-                    });
-                    // retry the request, returning the new observable
-                    const subscriber = {
-                      next: observer.next.bind(observer),
-                      error: observer.error.bind(observer),
-                      complete: observer.complete.bind(observer),
-                    };
-                    return forward(operation).subscribe(subscriber);
-                  })
-                  .catch((error) => {
-                    // handle error
-                    console.log(error);
-                  });
-              // } else {
-              //    // if toke not expired 
-              //    const oldHeaders = operation.getContext().headers;
-              //    operation.setContext({
-              //      headers: {
-              //        ...oldHeaders,
-              //        authorization: `Bearer ${accessToken}`,
-              //      },
-              //    });
-              //    return forward(operation)
-              // }
-            });
-        }
-      } else {
-        // set open popup if has error
-        store.commit('common/setApiErrorData', err)
-        store.commit('common/setApiErrorStatus', true)
-      }
+const authMiddleware = new ApolloLink((operation, forward) => {
+  const accessToken = sessionStorage.getItem('token');
+  // Check if the token is expired
+  const isTokenExpired = accessToken ? getJwtObject(accessToken).isExpired() : false;
+  if (isTokenExpired) {
+    if (!isTokenRefreshing) {
+      isTokenRefreshing = true;
+
+      // Token has expired, make a refresh login API request
+      refreshPromise = refreshLogin().finally(() => {
+        isTokenRefreshing = false;
+        refreshPromise = null;
+      });
     }
+
+    return new Promise((resolve) => {
+      refreshPromise!.then(() => {
+        const newAccessToken = sessionStorage.getItem('token');
+        operation.setContext({
+          headers: {
+            authorization: `Bearer ${newAccessToken}`,
+          },
+        });
+        resolve(forward(operation));
+      });
+    });
   }
-  if (networkError) {
-    console.log(`[Network error]: ${networkError}`);
-  }
+
+  operation.setContext({
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return forward(operation);
 });
 
 export const client = new ApolloClient({
-  link: refreshLink.concat(authLink.concat(httpLink)),
+  link: from([authMiddleware, httpLink, refreshLink]),
   cache: new InMemoryCache(),
 });
+
+async function refreshLogin() {
+  try {
+    // Make the API request to refresh the token
+    const response = await fetch(baseURL, {
+      method: "POST",
+      // Add any required parameters for the refresh login API
+      body: JSON.stringify({
+        query: `
+          mutation refreshLogin($accessToken: String! , $refreshToken: String!) {
+            refreshLogin(accessToken: $accessToken, refreshToken: $refreshToken) {
+              accessToken
+              refreshToken
+            }
+          }`,
+        variables: {
+          accessToken: sessionStorage.getItem("token"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+        }
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to refresh login");
+    }
+
+    // Extract the new access token from the response
+    const data = await response.json();
+    // Update the access token and expiration time in session storage
+    sessionStorage.setItem("token", data.data.refreshLogin.accessToken);
+    sessionStorage.setItem('refreshToken', data.data.refreshLogin.refreshToken);
+
+    Object.values(connections).forEach((controller: AbortController) => {
+      controller.abort(); // Cancel all pending requests
+    });
+    return;
+  } catch (error) {
+    console.error("Failed to refresh login", error);
+    return Promise.reject(error);
+  }
+}
