@@ -175,7 +175,6 @@
                      cssClass="custom"/>
       </DxSummary>
     </DxDataGrid>
-    <div style="display: none"> {{ formatSummary }} {{ arrSelectOccupation }}</div>
   </standard-form>
 </template>
 
@@ -348,6 +347,27 @@ watch(() => dataAllRow.value, (val: any) => {
       return acc;
     }, initialValue)
     Object.assign(formatSummary, result)
+    const listCellFooter = document.querySelectorAll('.dx-datagrid-summary-item.dx-datagrid-text-content') 
+    if(listCellFooter.length > 19) {
+      listCellFooter[3].innerHTML = filters.formatNumber(result.salary1) || '0'
+      listCellFooter[4].innerHTML = filters.formatNumber(result.salary2) || '0'
+      listCellFooter[5].innerHTML = filters.formatNumber(result.salary1 + result.salary2) || '0'
+      listCellFooter[6].innerHTML = filters.formatNumber(result.allowance1) || '0'
+      listCellFooter[7].innerHTML = filters.formatNumber(result.allowance2) || '0'
+      listCellFooter[8].innerHTML = filters.formatNumber(result.allowance1 + result.allowance2) || '0'
+      listCellFooter[9].innerHTML = filters.formatNumber(result.dailyAllowance1) || '0'
+      listCellFooter[10].innerHTML = filters.formatNumber(result.dailyAllowance2) || '0'
+      listCellFooter[11].innerHTML = filters.formatNumber(result.dailyAllowance1 + result.dailyAllowance2) || '0'
+      listCellFooter[12].innerHTML = filters.formatNumber(result.retirementReserve1) || '0'
+      listCellFooter[13].innerHTML = filters.formatNumber(result.retirementReserve2) || '0'
+      listCellFooter[14].innerHTML = filters.formatNumber(result.retirementReserve1 + result.retirementReserve2) || '0'
+      listCellFooter[15].innerHTML = filters.formatNumber(result.socialInsuranceLevy1) || '0'
+      listCellFooter[16].innerHTML = filters.formatNumber(result.socialInsuranceLevy2) || '0'
+      listCellFooter[17].innerHTML = filters.formatNumber(result.socialInsuranceLevy1 + result.socialInsuranceLevy2) || '0'
+      listCellFooter[18].innerHTML = filters.formatNumber(result.total1) || '0'
+      listCellFooter[19].innerHTML = filters.formatNumber(result.total2) || '0'
+      listCellFooter[20].innerHTML = filters.formatNumber(result.total) || '0'
+    }
   }
 }, {deep: true})
 const deleteRow = (e: any) => {
