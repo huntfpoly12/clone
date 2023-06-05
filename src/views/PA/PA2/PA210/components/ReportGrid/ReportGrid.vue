@@ -57,6 +57,11 @@
                 css-class="cell-center"
               />
               <template #imputedYear-imputedMonth="{ data }">
+                {{data.data.index}}
+                {{data.data.reportType}}
+                {{data.data.paymentType}}
+                {{data.data.imputedMonth }}
+                {{data.data.paymentMonth}}
                 <a-tooltip>
                   <template #title>
                     귀속기간{{
@@ -147,7 +152,7 @@
                 :width="80"
                 css-class="cell-center"
               />
-              <template #refund="{ data }">
+              <template #refund="{ data }">{{ disabledRefund }} {{ data.data.refund }}
                 <a-tooltip  :title="'환급신청여부'">
                   <div>
                     <switch-basic
@@ -327,7 +332,7 @@ export default defineComponent({
     const cellNegativeNumber = [[5,7],[9,7],[31,7]]
     const wrapper = ref<any>(null);
     const confirmLoadNewStatus = ref<boolean>(false);
-
+    const firstTimeLoad = ref<boolean>(false);
     // The above code is setting up the hot table.
     const hotSettings = {
       comments: true,
@@ -372,7 +377,7 @@ export default defineComponent({
         }
       },
       afterChange: async (changes: any, source: string) => {
-        if (source == "edit") {
+        if (source == "edit" && firstTimeLoad.value) {
           const { checkYETaxAdj, cell12 } = await calculateWithholdingStatusReport(wrapper);
           // kiểm tra disable refun theo cell 12
           if (!cell12) {
@@ -381,6 +386,8 @@ export default defineComponent({
           }
           dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
           store.commit("common/setHasChangedPopupPA210", true);
+        } else if (source == "edit") {
+          firstTimeLoad.value = true;
         }
       },
 
