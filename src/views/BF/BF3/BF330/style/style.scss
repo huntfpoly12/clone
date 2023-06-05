@@ -32,7 +32,7 @@
     display: flex;
     align-items: center;
 }
-::v-deep .dx-toolbar-after {
+:deep .dx-toolbar-after {
     display: flex;
     .dx-toolbar-item {
         &:first-child {
@@ -62,4 +62,11 @@
 .permission-img{
   height: 17px;
   width: auto;
+}
+#table-main-bf330 {
+  height: calc(100vh - 225px) !important;
+
+  :deep .dx-freespace-row {
+    display: none !important;
+  }
 }

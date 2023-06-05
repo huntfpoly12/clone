@@ -3,6 +3,8 @@
 </template>
 
 <script lang="ts">
+// import { setNewUserToken } from './helpers/commonFunction';
+
 export default {
   name: "App",
    data() {
@@ -10,6 +12,9 @@ export default {
       layout: `div`,
     };
   },
+  // mounted() {
+  //   setNewUserToken();
+  // }
 
 };
 </script>
