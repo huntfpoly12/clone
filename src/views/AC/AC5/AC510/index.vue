@@ -7,7 +7,7 @@
   />
   <div id="ac-510">
     <div class="top">
-      <a-spin tip="Loading..." :spinning="loadingGetAccountingProcesses">
+      <a-spin :spinning="loadingGetAccountingProcesses">
         <div class="grid">
           <div
             v-for="(month, index) in 12"

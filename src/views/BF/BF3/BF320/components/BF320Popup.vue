@@ -9,7 +9,7 @@
       width="1200px"
       @cancel="setModalVisible()"
     >
-      <a-spin tip="Loading..." :spinning="loading">
+      <a-spin :spinning="loading">
         <standard-form action="your-action" name="edit-page-320">
           <a-collapse v-model:activeKey="activeKey" accordion>
             <a-collapse-panel key="1" header="사업자정보">
