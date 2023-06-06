@@ -8,7 +8,7 @@
         <div class="text-align-center mt-30">
             <button-basic class="button-form-modal" :text="contentNo" :type="'default'" :mode="'outlined'"
                 @onClick="setModalVisible" />
-            <button-basic class="button-form-modal" :text="contentYes" :width="140" :type="'default'" :mode="'contained'"
+            <button-basic class="button-form-modal" :text="contentYes" :type="'default'" :mode="'contained'"
                 @onClick="onDeleteConfirm" />
         </div>
     </a-modal>

@@ -2,7 +2,7 @@
   <div id="modal-detail-bf-310">
     <a-modal :mask-closable="false" :visible="modalStatus" title="계약정보관리&심사 " centered @cancel="setModalVisible()"
       width="1200px" :bodyStyle="{ height: '800px' }" footer="">
-      <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
+      <a-spin :spinning="loading || loadingUpdate">
         <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
           <div class="collapse-content">
             <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
@@ -321,10 +321,9 @@
                     formState.content.cmsBank.ownerBizNumber
                   " :required=" true " nameInput="cmsBank-ownerBizNumber" />
                   <div class="noteImage">
-                    <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px; margin-top: 0px" />
-                    <div class="noteText">
-                      <p>예금주의 사업자등록번호 또는 주민등록번호입니다.</p>
-                    </div>
+                    <info-tool-tip>
+                      예금주의 사업자등록번호 또는 주민등록번호입니다.
+                    </info-tool-tip>
                   </div>
                 </a-form-item>
                 <a-form-item label="자동이체출금일자" class="clr" label-align="left" :label-col=" labelCol ">

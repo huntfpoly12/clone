@@ -8,7 +8,7 @@
     width="1368px"
     :bodyStyle="{ height: '890px', padding: '8px' }"
   > 
-    <a-spin tip="Loading..." :spinning="false">
+    <a-spin :spinning="false">
       <div class="report-grid">
         <div class="header-report">
           <div class="header-1">원천세신고서</div>
