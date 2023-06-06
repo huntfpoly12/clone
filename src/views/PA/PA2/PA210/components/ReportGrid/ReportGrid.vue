@@ -57,11 +57,6 @@
                 css-class="cell-center"
               />
               <template #imputedYear-imputedMonth="{ data }">
-                {{data.data.index}}
-                {{data.data.reportType}}
-                {{data.data.paymentType}}
-                {{data.data.imputedMonth }}
-                {{data.data.paymentMonth}}
                 <a-tooltip>
                   <template #title>
                     귀속기간{{
@@ -152,7 +147,7 @@
                 :width="80"
                 css-class="cell-center"
               />
-              <template #refund="{ data }">{{ disabledRefund }} {{ data.data.refund }}
+              <template #refund="{ data }">
                 <a-tooltip  :title="'환급신청여부'">
                   <div>
                     <switch-basic
@@ -333,6 +328,7 @@ export default defineComponent({
     const wrapper = ref<any>(null);
     const confirmLoadNewStatus = ref<boolean>(false);
     const firstTimeLoad = ref<boolean>(false);
+    const cellPageSettings = ref<any>(cellsSetting);
     // The above code is setting up the hot table.
     const hotSettings = {
       comments: true,
@@ -382,7 +378,12 @@ export default defineComponent({
           // kiểm tra disable refun theo cell 12
           if (!cell12) {
             dataSource.value[0].refund = false
-            disabledRefund.value = true
+            //[thanh toán 6 tháng 1, tháng 1-2] [EDIT] ô (21)=0 thì switch refund vẫn enable (enable và false)
+            if (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) {
+              disabledRefund.value = false
+            } else {
+              disabledRefund.value = true
+            }
           }
           dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
           store.commit("common/setHasChangedPopupPA210", true);
@@ -394,7 +395,7 @@ export default defineComponent({
       hotRef: null,
       data: [...dataInit],
       mergeCells: mergeCells,
-      cell: [...cellsSetting],
+      cell: [...cellPageSettings.value],
       width: "auto",
       licenseKey: "non-commercial-and-evaluation",
     };
@@ -597,8 +598,6 @@ export default defineComponent({
     // update cell settings flow condition
     const checkDisableA04A06 = async () => {
       let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...JSON.parse(JSON.stringify(cellsSetting))] 
-
       // check các trường hợp để disable A04 A06
       if (
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "매당2") ||
@@ -608,26 +607,26 @@ export default defineComponent({
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "반익0") ||
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6 && dataSource.value[0].reportClassCode == "반익1")
       ) {
-        newCellSetting[123].readOnly = false
-        newCellSetting[123].className = "htMiddle htRight"
-        newCellSetting[124].readOnly = false
-        newCellSetting[124].className = "htMiddle htRight"
-        newCellSetting[141].readOnly = false
-        newCellSetting[141].className = "htMiddle htRight"
-        newCellSetting[143].readOnly = false
-        newCellSetting[143].className = "htMiddle htRight"
+        cellPageSettings.value[123].readOnly = false
+        cellPageSettings.value[123].className = "htMiddle htRight"
+        cellPageSettings.value[124].readOnly = false
+        cellPageSettings.value[124].className = "htMiddle htRight"
+        cellPageSettings.value[141].readOnly = false
+        cellPageSettings.value[141].className = "htMiddle htRight"
+        cellPageSettings.value[143].readOnly = false
+        cellPageSettings.value[143].className = "htMiddle htRight"
       } else {   
-        newCellSetting[123].readOnly = true
-        newCellSetting[123].className = "htMiddle htRight disable-cell"
-        newCellSetting[124].readOnly = true
-        newCellSetting[124].className = "htMiddle htRight disable-cell"
-        newCellSetting[141].readOnly = true
-        newCellSetting[141].className = "htMiddle htRight disable-cell"
-        newCellSetting[143].readOnly = true
-        newCellSetting[143].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[123].readOnly = true
+        cellPageSettings.value[123].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[124].readOnly = true
+        cellPageSettings.value[124].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[141].readOnly = true
+        cellPageSettings.value[141].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[143].readOnly = true
+        cellPageSettings.value[143].className = "htMiddle htRight disable-cell"
       }
       hot.updateSettings({
-        cell: newCellSetting
+        cell: cellPageSettings.value
       });
     }
 
@@ -668,20 +667,19 @@ export default defineComponent({
     // theo dõi refund status thay đổi trạng thái call 12 và 13
     watch(()=>dataSource.value[0].refund, (newVal) => {
       let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...JSON.parse(JSON.stringify(cellsSetting))]
       if (newVal) {
-        newCellSetting[331].readOnly = false
-        newCellSetting[331].className = "htMiddle htRight"
-        newCellSetting[332].readOnly = false
-        newCellSetting[332].className = "htMiddle htRight"
+        cellPageSettings.value[331].readOnly = false
+        cellPageSettings.value[331].className = "htMiddle htRight"
+        cellPageSettings.value[332].readOnly = false
+        cellPageSettings.value[332].className = "htMiddle htRight"
       } else {
-        newCellSetting[331].readOnly = true
-        newCellSetting[331].className = "htMiddle htRight gray-cell"
-        newCellSetting[332].readOnly = true
-        newCellSetting[332].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[331].readOnly = true
+        cellPageSettings.value[331].className = "htMiddle htRight gray-cell"
+        cellPageSettings.value[332].readOnly = true
+        cellPageSettings.value[332].className = "htMiddle htRight disable-cell"
       }
       hot.updateSettings({
-        cell: newCellSetting
+        cell: cellPageSettings.value
       });
     })
     return {
