@@ -898,7 +898,7 @@ export default defineComponent({
 		const actionDedution = () => {
 			dataConfigDeductions.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
-					let total1 = (dataIW.value.employee.nationalPensionDeduction && dataIW.value.employee.nationalPensionSupportPercent !== null)
+					let total1 = dataIW.value.employee.nationalPensionDeduction 
 						? calculateNationalPensionEmployee(
 							totalPayItemTaxFree.value,
 							dataIW.value.employee.nationalPensionSupportPercent)
@@ -918,7 +918,7 @@ export default defineComponent({
 					item.amountNew = total3;
 				}
 				if (item.itemCode == 1004) {
-					let total4 = (dataIW.value.employee.employeementInsuranceDeduction && dataIW.value.employee.employeementInsuranceSupportPercent !== null)
+					let total4 = dataIW.value.employee.employeementInsuranceDeduction
 						? calculateEmployeementInsuranceEmployee(
 							totalPayItemTaxFree.value,
 							dataIW.value.employee.employeementInsuranceSupportPercent)

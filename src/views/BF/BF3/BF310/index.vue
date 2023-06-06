@@ -15,7 +15,7 @@
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">심사상태/결과 :</label>
-              <subs-req-status-select-box v-model:valueInput="statuses" placeholder="전체" />
+              <SelectCustomField v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
             </div>
           </a-col>
           <a-col>
@@ -42,7 +42,7 @@
             <div class="dflex custom-flex">
               <label class="lable-item">신청기간 :</label>
               <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
-                :placeholder="'시작 날짜 - 종료 날짜'" :clearable="false"/>
+                :placeholder="'시작 날짜 - 종료 날짜'" :clearable="false" :maxRange="365"/>
             </div>
           </a-col>
         </a-row>
@@ -78,7 +78,10 @@
               getColorTag(data.value)?.tag_name
             }}</a-tag>
           </template>
-          <DxColumn data-field="companyCode" caption="사업자코드" css-class="cell-center" />
+          <DxColumn data-field="companyCode" caption="사업자코드" css-class="cell-center" cell-template="companyCode" />
+          <template #companyCode="{data}">
+            <div style="color: #096dd9;">{{ data.data.companyCode }}</div>
+          </template>
           <DxColumn data-field="companyName" caption="상호" />
           <DxColumn data-field="companyAddress" caption="주소" />
           <DxColumn data-field="presidentName" caption="대표자" />
@@ -191,8 +194,10 @@ import queries from "@/graphql/queries/BF/BF3/BF310/index";
 import mutations from "@/graphql/mutations/AddToken/index";
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction";
-import notification from "@/utils/notification";
-import { getJwtObject,AdminScreenRole  } from "@bankda/jangbuda-common";
+import {
+    SubscriptionRequestStatus,
+    enum2Entries,
+} from "@bankda/jangbuda-common";
 
 export default defineComponent({
   components: {
@@ -236,6 +241,16 @@ export default defineComponent({
       startDate: rangeDate.value[0],
       finishDate: rangeDate.value[1],
     });
+    const subReqStatus: any = computed(() => {
+            let slGrade: any = enum2Entries(SubscriptionRequestStatus).map(
+                (value) => ({
+                    id: value[1],
+                    name: value[0],
+                })
+            );
+            // slGrade.unshift({ value: null, label: "전체" });
+            return slGrade;
+        });
 
     watch(
       () => listCheckBox.value,
@@ -398,6 +413,7 @@ export default defineComponent({
       listCheckBox,
       keyRefreshPopup310,
       onHandleCusAcc, isCustomerModal,companyInfo,onEnterUser,
+      subReqStatus,
     };
   },
 });

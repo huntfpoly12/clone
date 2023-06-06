@@ -122,7 +122,7 @@ const closePopup = () => {
 const handleCalculate = () => {
   if(typeCal.value === 2) {
     details.value = details.value.map((item: any) => {
-      if(!item.detail) return item;
+      if(!item.detail) return {...item, calculationResult: ''}
       return {
         ...item,
         calculationResult: item.detail ? Number(eval(item.detail.replace(/[^\d+\-*/().]/g, "")) || '') : Number(item.calculationResult),

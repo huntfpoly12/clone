@@ -228,13 +228,13 @@
             </a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"
               ><span>{{
-                $filters.formatCurrency(calculateVariables.totalTaxPay)
+                $filters.formatCurrency(totalPayItemTaxAll)
               }}</span>
               원</a-col
             >
             <a-col class="ml-15" :span="12">수당 과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"
-              ><span>{{ $filters.formatCurrency(totalPayItemTaxAll) }}</span>
+              ><span>{{ $filters.formatCurrency(calculateVariables.totalTaxPay) }}</span>
               원</a-col
             >
             <a-col class="ml-15" :span="12">수당 비과세 합계:</a-col>
@@ -399,6 +399,9 @@
                     </template>
                     <span>
                       <number-box-money
+                        :textColor="
+                          localIncomeBoo && item.itemCode == 1012 ? 'red' : ''
+                        "
                         class="red"
                         width="130px"
                         :spinButtons="false"
@@ -517,6 +520,7 @@ export default defineComponent({
     modalStatus: Boolean,
   },
   setup(props, { emit }) {
+    const store = useStore();
     const employeeId = ref(props.idRowEdit);
     const totalPayItemTaxFree = ref(0);
     const totalPayItemTaxAll = ref(0);
@@ -524,9 +528,8 @@ export default defineComponent({
     const subPayment = computed(
       () => totalPayItemTaxAll.value - totalDeduction.value
     );
-
     const rangeDate = ref<RangeValue>([null, null]);
-    const store = useStore();
+    const deductionDependentCountPA120 = computed(()=>store.state.common.deductionDependentCountPA120);
     const dataConfigPayItems = ref<any>([]);
     const dataConfigDeduction = ref<any>([]);
     const triggerDetail = ref<boolean>(false);
@@ -729,6 +732,7 @@ export default defineComponent({
             data.nationalPensionSupportPercent ?? 0;
         } else {
           delete initFormTab2PA120.value.nationalPensionSupportPercent;
+          delete editRowTab2PA120.value.nationalPensionSupportPercent;
         }
         if (
           data?.employeementInsuranceSupportPercent >= 0 &&
@@ -738,6 +742,7 @@ export default defineComponent({
             data.employeementInsuranceSupportPercent ?? 0;
         } else {
           delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
+          delete editRowTab2PA120.value.employeementInsuranceSupportPercent;
         }
         if (data?.employeementReductionStartDate) {
           editRowData.employeementReductionStartDate =
@@ -793,8 +798,6 @@ export default defineComponent({
             editRowTab2PA120.value.deductionItems[key] = { ...item1, value };
           });
         }
-        calculateVariables.dependentCount =
-          data.dependents.length > 0 ? data.dependents.length : 1;
         calculateVariables.totalTaxPay =
           initFormTab2PA120.value.payItems.reduce(
             (accumulator: any, object: any) => {
@@ -830,7 +833,7 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear.value,
       totalTaxPay: -1,
-      dependentCount: 1,
+      dependentCount: deductionDependentCountPA120.value,
     });
     const triggerCalcIncomeWageTax = ref(false);
     const {
@@ -877,7 +880,7 @@ export default defineComponent({
     const calcPension = () => {
       initFormTab2PA120.value.deductionItems?.map((item: any) => {
         if (item.itemCode == 1001) {
-          let total1 = initFormTab2PA120.value.nationalPensionDeduction && initFormTab2PA120.value.nationalPensionSupportPercent
+          let total1 = initFormTab2PA120.value.nationalPensionDeduction
             ? calculateNationalPensionEmployee(
                 calculateVariables.totalTaxPay,
                 initFormTab2PA120.value.nationalPensionSupportPercent
@@ -911,7 +914,7 @@ export default defineComponent({
         }
         if (item.itemCode == 1004) {
           let total4 =
-            initFormTab2PA120.value.employeementInsuranceDeduction == true && initFormTab2PA120.value.employeementInsuranceSupportPercent
+            initFormTab2PA120.value.employeementInsuranceDeduction == true
               ? calculateEmployeementInsuranceEmployee(
                   calculateVariables.totalTaxPay,
                   initFormTab2PA120.value.employeementInsuranceSupportPercent
@@ -997,6 +1000,7 @@ export default defineComponent({
         payItems: pa2,
         ...rest2
       } = editRowTab2PA120.value;
+      console.log(`output->rest2`,rest2,rest)
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {
