@@ -107,8 +107,8 @@
       </div>
       <a-row :gutter="16">
         <a-col :span="24"
-          ><b>차인지급액</b>
-          <b
+          ><b>차인지급액 </b>
+           <b
             >{{
               $filters.formatCurrency(
                 originDataUpdate.input.monthlyWage - totalDeduction
