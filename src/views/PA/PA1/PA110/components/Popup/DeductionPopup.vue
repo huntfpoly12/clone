@@ -45,7 +45,7 @@ export default defineComponent({
             emit("closePopup", false)
         };
         const onSubmit = (e: any) => {
-            emit("updateDate", true)
+            emit("updateData", true)
             emit("closePopup", false)
         };
         const changeColorRow = (e: any) => {

@@ -164,7 +164,7 @@
 	</standard-form>
 
 	<DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" :data="arrDeduction"
-		@updateDate="updateDataDeduction" />
+		@updateData="updateDataDeduction" />
 	<InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
 </template>
 <script lang="ts">
@@ -668,9 +668,7 @@ export default defineComponent({
 		const updateDataDeduction = () => {
 			let total = 0;
 			arrDeduction.value?.map((val: any) => {
-				if (
-					[1001, 1002, 1003, 1004, 1011, 1012].includes(val.deductionItemCode)
-				)
+				if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.deductionItemCode))
 					val.price = val.priceNew;
 				total += val.priceNew;
 			});

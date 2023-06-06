@@ -245,7 +245,7 @@
 			</StandardForm>
 		</a-spin>
 		<DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" :data="dataConfigDeductions"
-			@updateDate="updateDataDeduction" />
+			@updateData="updateDataDeduction" />
 		<InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
 		<MidTermSettlementPopup :modalStatus="modalMidTermSettlement" @closePopup="modalMidTermSettlement = false"
 			:data="dataMidTermSettlement" />
@@ -697,27 +697,17 @@ export default defineComponent({
 		watch(resultEmployeeWage, async (newVal: any) => {
 			triggerEmployeeWage.value = false;
 			if (statusFormAdd.value) {
-				await (dataIW.value.employee.name = newVal.getEmployeeWage.name);
-				await (dataIW.value.employee.status = newVal.getEmployeeWage.status);
-				await (dataIW.value.employee.foreigner =
-					newVal.getEmployeeWage.foreigner);
-
-				await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
-
-				await (dataIW.value.employee.nationalPensionDeduction =
-					newVal.getEmployeeWage.nationalPensionDeduction);
-				await (dataIW.value.employee.healthInsuranceDeduction =
-					newVal.getEmployeeWage.healthInsuranceDeduction);
-				await (dataIW.value.employee.employeementInsuranceDeduction =
-					newVal.getEmployeeWage.employeementInsuranceDeduction);
-				await (dataIW.value.employee.nationalPensionSupportPercent =
-					newVal.getEmployeeWage.nationalPensionSupportPercent);
-				await (dataIW.value.employee.employeementInsuranceSupportPercent =
-					newVal.getEmployeeWage.employeementInsuranceSupportPercent);
-				await (dataIW.value.employee.employeementReductionRatePercent =
-					newVal.getEmployeeWage.employeementReductionRatePercent);
-				await (dataIW.value.employee.incomeTaxMagnification =
-					newVal.getEmployeeWage.incomeTaxMagnification);
+				dataIW.value.employee.name = newVal.getEmployeeWage.name;
+				dataIW.value.employee.status = newVal.getEmployeeWage.status;
+				dataIW.value.employee.foreigner = newVal.getEmployeeWage.foreigner;
+				dataIW.value.totalPay = newVal.getEmployeeWage.totalPay;
+				dataIW.value.employee.nationalPensionDeduction = newVal.getEmployeeWage.nationalPensionDeduction;
+				dataIW.value.employee.healthInsuranceDeduction = newVal.getEmployeeWage.healthInsuranceDeduction;
+				dataIW.value.employee.employeementInsuranceDeduction = newVal.getEmployeeWage.employeementInsuranceDeduction;
+				dataIW.value.employee.nationalPensionSupportPercent = newVal.getEmployeeWage.nationalPensionSupportPercent;
+				dataIW.value.employee.employeementInsuranceSupportPercent = newVal.getEmployeeWage.employeementInsuranceSupportPercent;
+				dataIW.value.employee.employeementReductionRatePercent = newVal.getEmployeeWage.employeementReductionRatePercent;
+				dataIW.value.employee.incomeTaxMagnification = newVal.getEmployeeWage.incomeTaxMagnification;
 				dataConfigPayItems.value?.map((row: any) => {
 					row.amount = 0;
 					newVal.getEmployeeWage.payItems?.map((item: any) => {
@@ -898,7 +888,7 @@ export default defineComponent({
 		const actionDedution = () => {
 			dataConfigDeductions.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
-					let total1 = dataIW.value.employee.nationalPensionDeduction 
+					let total1 = dataIW.value.employee.nationalPensionDeduction
 						? calculateNationalPensionEmployee(
 							totalPayItemTaxFree.value,
 							dataIW.value.employee.nationalPensionSupportPercent)
