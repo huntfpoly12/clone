@@ -12,6 +12,7 @@ const statesPA120 = {
   isDisableInsuranceSupport: false,
   yearPA120: +dayjs().format("YYYY"),
   notDatasourcePA120:false,
+  deductionDependentCountPA120: 1,
   initFormStateTabPA120: {
     name: null,
     foreigner: false,

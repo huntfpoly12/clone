@@ -397,7 +397,9 @@
                     </template>
                     <span>
                       <number-box-money
-                        class="red"
+                        :textColor="
+                          localIncomeBoo && item.itemCode == 1012 ? 'red' : ''
+                        " 
                         width="130px"
                         :spinButtons="false"
                         :rtlEnabled="true"
@@ -426,11 +428,6 @@
                   />
                   <span class="pl-5">원</span>
                 </div>
-              <!-- <div>
-                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                  :min="0" @changeInput="onCalcSum" :disabled="disabledDeduction(item.itemCode)" format="#0,###" />
-                <span class="pl-5">원</span>
-              </div> -->
             </div>
           </div>
         </a-spin>
@@ -484,7 +481,6 @@ import {
   radioCheckReductioRate,
   radioCheckReductionInput,
   IncomeTaxAppRate,
-  initFormStateTab2,
 } from "../../utils/index";
 import { useStore } from "vuex";
 import {
@@ -517,6 +513,7 @@ export default defineComponent({
     modalStatus: Boolean,
   },
   setup(props, { emit }) {
+    const store = useStore();
     const totalPayItemTaxFree = ref(0);
     const totalPayItemTax = ref(0);
     const totalPayItem = ref(0);
@@ -524,9 +521,8 @@ export default defineComponent({
     const subPayment = computed(
       () => totalPayItem.value - totalDeduction.value
     );
-
+    const deductionDependentCountPA120 = computed(()=>store.state.common.deductionDependentCountPA120);
     const rangeDate = ref<RangeValue>([null, null]);
-    const store = useStore();
     const globalYear = ref<number>(
       parseInt(sessionStorage.getItem("paYear") ?? "0")
     );
@@ -547,7 +543,7 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear.value,
       totalTaxPay: totalPayItemTax,
-      dependentCount: 1,
+      dependentCount: deductionDependentCountPA120.value,
     });
     const modalCalc = ref(false);
     const msgCalc = Message.getMessage("PA120", "004");
@@ -719,7 +715,7 @@ export default defineComponent({
             100
         );
         let itemValue12 = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
-        localIncomeBoo.value = itemValue12 < 1000;
+        localIncomeBoo.value = (itemValue12 < 1000);
         localReal.value = itemValue12;
         initFormTab2PA120.value.deductionItems.map((item: any) => {
           if (item.itemCode == 1011) {

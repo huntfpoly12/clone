@@ -339,6 +339,7 @@ export default defineComponent({
         relationAll.value = value.getEmployeeWage.dependents.map((item: any) => ({
           value: item.relation
         }))
+        store.state.common.deductionDependentCountPA120 = value.getEmployeeWage.deductionDependentCount;
         relationSummary.value =
           dataSource.value.some((item: { relation: string | number }) => {
             return item.relation == 0;
