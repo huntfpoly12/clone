@@ -11,8 +11,13 @@
                                 <default-text-box width="200px" :disabled="true" />
                             </a-form-item>
                             <a-form-item label="영업자명" class="red"  >
+                              <div  :class="isDuplicate ? 'company-name':''" :style="{ width: '202px' }">
                                 <default-text-box v-model:valueInput="formState.name" width="200px"
-                                    placeholder="중복불가(2~20자)" :maxCharacter="20" :minCharacter="2" :required="true" />
+                                    placeholder="중복불가(2~20자)" :maxCharacter="20" :minCharacter="2" :required="true"/>
+                                <div v-if="isDuplicate" class="message-error">
+                                  <span>이미 이용중입니다.</span>
+                                </div>
+                              </div>
                             </a-form-item>
                             <a-form-item label="사업자유형" class="red"  >
                                 <biz-type-select-box v-model:valueInput="formState.bizType" width="200px"
@@ -168,21 +173,25 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, reactive } from 'vue'
+import { ref, defineComponent, watch, reactive, computed } from 'vue'
 import { useMutation } from "@vue/apollo-composable";
 import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { initialFormState } from '../utils';
 import mutations from "@/graphql/mutations/BF/BF3/BF340/index";
 import { makeDataClean } from '@/helpers/commonFunction';
+import { useStore } from 'vuex';
 export default defineComponent({
     props: {
         modalStatus: Boolean,
     },
   setup(props, { emit }) {
+        const store = useStore();
+        const arrNameCompany = computed(() => store.getters['common/listNameCompanyBF340']);
         const formAddBF340 = ref()
         const registerDate = ref();
         const visible = ref<boolean>(false);
+        const isDuplicate = ref<boolean>(false);
         const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>("");
@@ -236,7 +245,8 @@ export default defineComponent({
             formState.addressDetail.sigunguCode = data.sigunguCode;
             formState.addressDetail.zonecode = data.zonecode;
         };
-        const createSale = (e: any) => {
+    const createSale = (e: any) => {
+            if(isDuplicate.value) return
             if (!formState.registerDate) {
               registerDate.value.validate(true)
               return
@@ -263,6 +273,15 @@ export default defineComponent({
         watch(() => formState.taxInvoice, (newValue) => {
             receiptOrNot.value = newValue;
         });
+        
+        watch(() => formState.name, (newValue) => {
+          if (arrNameCompany.value.includes(newValue)) {
+            isDuplicate.value = true
+          } else {
+            isDuplicate.value = false
+          };
+            
+        });
         return {
             labelCol,
             formAddBF340,
@@ -277,7 +296,8 @@ export default defineComponent({
             setModalVisible,
             createSale,
             isResidentId,
-            registerDate
+            registerDate,
+            isDuplicate
         };
     }
 })

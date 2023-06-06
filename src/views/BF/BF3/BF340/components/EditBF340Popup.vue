@@ -21,15 +21,20 @@
                 />
               </a-form-item>
               <a-form-item label="영업자명" class="red">
-                <default-text-box
-                  v-model:valueInput="formState.name"
-                  width="200px"
-                  :disabled="!canChangeCompanyName"
-                  placeholder="중복불가(2~20자)"
-                  :maxCharacter="20"
-                  :minCharacter="2"
-                  :required="true"
-                />
+                <div  :class="isDuplicate ? 'company-name':''" :style="{ width: '202px' }">
+                    <default-text-box 
+                    v-model:valueInput="formState.name" 
+                    width="200px"
+                    :disabled="!canChangeCompanyName || formState.name === '본사'"
+                    placeholder="중복불가(2~20자)" 
+                    :maxCharacter="20" 
+                    :minCharacter="2" 
+                    :required="true"
+                    />
+                    <div v-if="isDuplicate" class="message-error">
+                        <span>이미 이용중입니다.</span>
+                    </div>
+                </div>
               </a-form-item>
               <a-form-item label="사업자유형" class="red">
                 <biz-type-select-box
@@ -265,7 +270,7 @@
   </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch } from "vue";
+import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import notification from "@/utils/notification";
@@ -275,10 +280,13 @@ import mutations from "@/graphql/mutations/BF/BF3/BF340/index";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import filters from "@/helpers/filters";
 import { makeDataClean } from "@/helpers/commonFunction";
+import { useStore } from "vuex";
 export default defineComponent({
   props: ["modalStatus", "data", "idSaleEdit"],
   setup(props, { emit }) {
     const formEditBF340 = ref();
+    const store = useStore();
+    const arrNameCompany = computed(() => store.getters['common/listNameCompanyBF340']);
     const registerDate = ref();
     const code = ref();
     const id = ref();
@@ -286,6 +294,7 @@ export default defineComponent({
     let trigger = ref<boolean>(true);
     let triggerCheckPer = ref<boolean>(false);
     const isResidentId = ref<boolean>(true);
+    const isDuplicate = ref<boolean>(false);
     const dataQueryCheckPer = ref({});
     let canChangeCompanyName = ref<boolean>(false);
     const visible = ref<boolean>(false);
@@ -395,6 +404,8 @@ export default defineComponent({
         refetchCheckPer();
         dataDefault = JSON.stringify(formState);
         fistLoad.value = false;
+        let newArrNameCompany = arrNameCompany.value.filter((name: string) => name !== formState.name)
+        store.commit('common/setListNameCompanyBF340', newArrNameCompany)
       }
     });
     // update sale representative
@@ -485,6 +496,14 @@ export default defineComponent({
         receiptOrNot.value = newValue;
       }
     );
+
+    watch(() => formState.name, (newValue) => { 
+      if (arrNameCompany.value.includes(newValue)) {
+        isDuplicate.value = true
+      } else {
+        isDuplicate.value = false
+      };   
+    });
     return {
       code,
       formEditBF340,
@@ -499,6 +518,7 @@ export default defineComponent({
       setModalVisible,
       isResidentId,
       registerDate,
+      isDuplicate
     };
   },
 });

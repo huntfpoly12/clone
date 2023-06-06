@@ -160,9 +160,7 @@ import {
 import { DxRadioGroup } from "devextreme-vue/radio-group";
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
 import { useQuery } from "@vue/apollo-composable";
-import notification from "@/utils/notification";
 import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
-import { VueDatePicker } from "@vuepic/vue-datepicker"
 
 export default defineComponent({
   components: {

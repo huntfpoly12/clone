@@ -70,3 +70,19 @@
 .dx-texteditor.dx-state-readonly {
   border-style: groove;
 }
+
+.company-name {
+  border: 1px #d9534f;
+  border-radius: 5px;
+  border-style: solid;
+  height: 30px;
+  .message-error{
+    position: absolute;
+    border-radius: 5px;
+    background: #d9534f;
+    padding: 5px 20px;
+    color: white;
+    z-index: 999999;
+    width: auto;
+  }
+}
