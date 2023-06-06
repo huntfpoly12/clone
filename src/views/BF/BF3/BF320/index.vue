@@ -54,17 +54,14 @@
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="responApiSearchCompanies"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: calc(100vh - 180px)" >
                     <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxPaging :page-size="0" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem name="exportButton" css-class="cell-button-export" />
-                        <DxItem template="pagination-table" />
                         <DxItem name="searchPanel" />
-                        <!-- <DxItem name="groupPanel" />
-                                <DxItem name="addRowButton" show-text="always" />
-                                <DxItem name="columnChooserButton" /> -->
                     </DxToolbar>
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">
@@ -105,21 +102,26 @@
                     </template>
                 </DxDataGrid>
             </a-spin>
-            <div class="pagination-table" v-if="rowTable > originData.rows">
-                <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
-                    show-less-items @change="searching" />
-            </div>
             <BF320Popup :modalStatus="modalStatus" @closePopup="handleClosePopup" :idRowEdit="idRowEdit"
                 :data="popupData" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                 title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
         </div>
 </div>
-</template> 
+</template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxExport, DxSearchPanel, DxToolbar, DxScrolling, DxItem } from 'devextreme-vue/data-grid';
+import {
+  DxDataGrid,
+  DxColumn,
+  DxExport,
+  DxSearchPanel,
+  DxToolbar,
+  DxScrolling,
+  DxItem,
+  DxPaging
+} from 'devextreme-vue/data-grid';
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
@@ -132,6 +134,7 @@ import notification from '@/utils/notification';
 import dayjs from "dayjs";
 export default defineComponent({
     components: {
+        DxPaging,
         DxDataGrid, DxColumn, DxButton, DxExport, DxSearchPanel, DxToolbar, DxItem, DxScrolling,
         BF320Popup, HistoryPopup,
         EditOutlined, HistoryOutlined
@@ -139,7 +142,6 @@ export default defineComponent({
     setup() {
         // config grid
         const store = useStore();
-        const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref()
@@ -151,7 +153,7 @@ export default defineComponent({
         var responApiSearchCompanies = ref([])
         const originData = ref({
             ...dataSearchIndex,
-            rows: per_page,
+            rows: 10000,
         })
         const { refetch: refetchData, result, loading, onError } = useQuery(queries.searchCompanies, originData.value, () => ({
             enabled: trigger.value,
