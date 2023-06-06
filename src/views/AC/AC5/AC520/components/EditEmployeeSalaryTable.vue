@@ -20,7 +20,7 @@
           <DxItem location="after" name="addRowButton" css-class="cell-button-add" cell-template="addRow">
             <a-tooltip title="임직원보수등록">
               <div>
-                <DxButton size="large" @click="addRow" style="background: #337ab7; color: white">
+                <DxButton size="large" @click="addRow" style="background: #337ab7; color: white" :disabled="dataBudget.status !== 10">
                   <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" />
                   신규
                 </DxButton>
@@ -30,7 +30,7 @@
           <DxItem name="saveButton">
             <a-tooltip title="저장">
               <div>
-                <DxButton style="background: #337ab7; color: white" @click="actionSave">
+                <DxButton style="background: #337ab7; color: white" @click="actionSave" :disabled="dataBudget.status !== 10">
                   <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" />
                   저장
                 </DxButton>
@@ -250,6 +250,7 @@ const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
 const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
+const dataBudget = computed(() => store.getters['common/getDataBudget']);
 
 const dataOld: any = ref([])
 const dataSource = ref(new DataSource({
@@ -395,7 +396,7 @@ watch(() => dataAllRow.value, (val, oldValue) => {
     return acc;
   }, initialValue)
   Object.assign(formatSummaryCustom, result)
-  const listCellFooter = document.querySelectorAll('.dx-datagrid-summary-item.dx-datagrid-text-content') 
+  const listCellFooter = document.querySelectorAll('.dx-datagrid-summary-item.dx-datagrid-text-content')
   if(listCellFooter.length > 19) {
     listCellFooter[3].innerHTML = filters.formatNumber(result.salary1) || '0'
     listCellFooter[4].innerHTML = filters.formatNumber(result.salary2) || '0'

@@ -729,6 +729,7 @@ export default defineComponent({
             data.nationalPensionSupportPercent ?? 0;
         } else {
           delete initFormTab2PA120.value.nationalPensionSupportPercent;
+          delete editRowTab2PA120.value.nationalPensionSupportPercent;
         }
         if (
           data?.employeementInsuranceSupportPercent >= 0 &&
@@ -738,6 +739,7 @@ export default defineComponent({
             data.employeementInsuranceSupportPercent ?? 0;
         } else {
           delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
+          delete editRowTab2PA120.value.employeementInsuranceSupportPercent;
         }
         if (data?.employeementReductionStartDate) {
           editRowData.employeementReductionStartDate =
@@ -997,6 +999,7 @@ export default defineComponent({
         payItems: pa2,
         ...rest2
       } = editRowTab2PA120.value;
+      console.log(`output->rest2`,rest2,rest)
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {

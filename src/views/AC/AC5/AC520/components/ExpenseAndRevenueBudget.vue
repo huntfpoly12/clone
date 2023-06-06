@@ -11,7 +11,7 @@
     <a-row>
       <a-col span="16" class="table-left">
         <div class="d-flex-center justify-content-end mb-5">
-          <DxButton type="default" @click="handleFillValuePreIndex" text="전예산액 불러오기" />
+          <DxButton type="default" @click="handleFillValuePreIndex" :disabled="dataBudget?.status !== 10" text="전예산액 불러오기" />
           </div>
 
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"

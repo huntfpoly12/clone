@@ -125,3 +125,6 @@
 .dx-checkbox-icon {
   border: 1px solid #d9d9d9
 }
+:deep(.dx-freespace-row) {
+  display: none !important;
+}

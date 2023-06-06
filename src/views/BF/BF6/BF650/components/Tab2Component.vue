@@ -15,6 +15,7 @@
             v-model:valueDate="rangeDate"
             width="250px"
             :multi-calendars="true"
+            :textInput="false"
           />
         </a-form-item>
       </a-col>
@@ -161,6 +162,8 @@ import queries from "@/graphql/queries/BF/BF6/BF650/index";
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
+import { VueDatePicker } from "@vuepic/vue-datepicker"
+
 export default defineComponent({
   components: {
     DxTotalItem,
@@ -188,10 +191,12 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
     const rangeDate = ref([
       parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
       parseInt(dayjs().format("YYYYMMDD")),
     ]);
+    const datepicker = ref(null);
     let trigger = ref(true);
     let dataModalDetail: any = ref({});
     // ================== GRAPHQL=================
@@ -250,6 +255,7 @@ export default defineComponent({
       move_column,
       modalDetail,
       openPopupDetail,
+      datepicker,
     };
   },
 });
