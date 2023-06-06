@@ -287,6 +287,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    const store = useStore();
     const trigger = ref<boolean>(true);
     const globalYear = ref<number>(
       parseInt(sessionStorage.getItem("paYear") ?? "0")
@@ -301,6 +302,7 @@ export default defineComponent({
     );
     const ageCount = ref<any>(convertAge(props.dependentItem?.residentId));
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
+    const deductionDependentCountPA120 = computed(()=>store.state.common.deductionDependentCountPA120);
     const itemSelected = ref<any>([...props.relationAll]);
     const setModalVisible = () => {
       if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
