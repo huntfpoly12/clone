@@ -73,7 +73,7 @@
             <div v-if="data.data && data.data.details?.length > 0">
               <ul>
                 <li v-for="(row, index) in data.data.details" :key="index">
-                  {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }} {{ row.type === 1 ? '' : `= ${ filters.formatNumber(+row.calculationResult)}` }}
+                  {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }} {{ row.type === 1 ? '' : (row.calculationResult !== '' ? `= ${ filters.formatNumber(+row.calculationResult)}` : '') }}
                 </li>
               </ul>
             </div>
@@ -127,7 +127,7 @@
             <div class="d-flex">
               <div class="d-flex-center gap-10">
                 <default-text-box
-                  :value-input="formState?.details?.length > 0 ? formState.details.map((i: any) => (i.type === 1 ? `${i.detail}`: `${i.detail} = ${ filters.formatNumber(+i.calculationResult)}`)).join('; ') : ''"
+                  :value-input="formState?.details?.length > 0 ? formState.details.map((i: any) => (i.type === 1 ? `${i.detail}`: `${i.detail} ${i.calculationResult === '' ? '' : `= ${ filters.formatNumber(+i.calculationResult)}`} `)).join('; ') : ''"
                   disabled class="flex-1" width="200px" />
                 <DxButton type="ghost" @click="handleOpenCalPopup">
                   <EditOutlined />

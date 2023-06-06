@@ -672,15 +672,12 @@ export const calculateWithholdingStatusReport =  async (wrapper: any, data: any 
       }
     }
   }
-  //console.log(cellData,'cellData input');
-  
+
   let output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
   await convertZeroData(output).then((res) => {
     output = res
   })
-  //console.log(output,'output output');
   let dataTable = await convertArrData(output)
-  //console.log(dataTable,'dataTable output');
   hot.setDataAtCell(dataTable, 'setdata');
   // phần xử lý vấn đề liên quan đến việc switch refund và YearTaxAdjustment
   let checkYETaxAdj = checkYETaxAdjustment(output)

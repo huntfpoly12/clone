@@ -399,6 +399,9 @@
                     </template>
                     <span>
                       <number-box-money
+                        :textColor="
+                          localIncomeBoo && item.itemCode == 1012 ? 'red' : ''
+                        "
                         class="red"
                         width="130px"
                         :spinButtons="false"
@@ -517,6 +520,7 @@ export default defineComponent({
     modalStatus: Boolean,
   },
   setup(props, { emit }) {
+    const store = useStore();
     const employeeId = ref(props.idRowEdit);
     const totalPayItemTaxFree = ref(0);
     const totalPayItemTaxAll = ref(0);
@@ -524,9 +528,8 @@ export default defineComponent({
     const subPayment = computed(
       () => totalPayItemTaxAll.value - totalDeduction.value
     );
-
     const rangeDate = ref<RangeValue>([null, null]);
-    const store = useStore();
+    const deductionDependentCountPA120 = computed(()=>store.state.common.deductionDependentCountPA120);
     const dataConfigPayItems = ref<any>([]);
     const dataConfigDeduction = ref<any>([]);
     const triggerDetail = ref<boolean>(false);
@@ -795,8 +798,6 @@ export default defineComponent({
             editRowTab2PA120.value.deductionItems[key] = { ...item1, value };
           });
         }
-        calculateVariables.dependentCount =
-          data.dependents.length > 0 ? data.dependents.length : 1;
         calculateVariables.totalTaxPay =
           initFormTab2PA120.value.payItems.reduce(
             (accumulator: any, object: any) => {
@@ -832,7 +833,7 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear.value,
       totalTaxPay: -1,
-      dependentCount: 1,
+      dependentCount: deductionDependentCountPA120.value,
     });
     const triggerCalcIncomeWageTax = ref(false);
     const {
