@@ -23,7 +23,7 @@
         <DxItem location="after" name="addRowButton" css-class="cell-button-add">
           <a-tooltip title="임직원보수등록">
             <div>
-              <DxButton size="large" @click="addRow" style="background: #337ab7; color: white" :disabled="dataBudget.status !== 10">
+              <DxButton size="large" @click="addRow" style="background: #337ab7; color: white">
                 <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" />
                 신규
               </DxButton>
@@ -33,7 +33,7 @@
         <DxItem name="saveButton">
           <a-tooltip title="저장">
             <div>
-              <DxButton style="background: #337ab7; color: white" :disabled="dataAllRow.length === 0 || dataBudget.status !== 10" @click="actionSave">
+              <DxButton style="background: #337ab7; color: white" :disabled="dataAllRow.length === 0" @click="actionSave">
                 <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" />
                 저장
               </DxButton>
