@@ -1,5 +1,5 @@
 <template>
-	<div id="pa-110">
+	<div id="pa-110-detail">
 		<a-spin :key="countKey" :spinning="loading || loadingGetEmployeeWage" size="large">
 			<StandardForm formName="pa-110-form" ref="pa110FormRef">
 				<a-row class="row-1">
@@ -208,7 +208,7 @@
 						<div>
 							<button-tooltip-error
 								:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"
-								:statusChange="store.state.common.pa110.statusChangeFormPrice
+								:statusChange="statusChangeFormPrice
 									" @onClick="actionDedution" />
 						</div>
 					</a-tooltip>
@@ -359,10 +359,11 @@ export default defineComponent({
 
 		let statusMidTermSettlement1 = ref<boolean>(true);
 		const statusMidTermSettlement2 = computed(() => store.state.common.pa110.statusMidTermSettlement2);
-		// let statusMidTermSettlement2 = ref<boolean>(true);
 		let requiredPaymentDay = ref();
 		const startDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).startOf("month").toDate());
 		const finishDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).endOf("month").toDate());
+		const statusChangeFormPrice = ref<boolean>(false);
+		const incomeTaxMagnification = ref<number>(0);
 		// ============ GRAPQL ===============================
 		// get employeewage
 		const { loading: loadingEmployeeWage, onResult: resEmployeeWage
@@ -529,8 +530,6 @@ export default defineComponent({
 		}, { deep: true });
 
 		watch(() => dataConfigPayItems.value, (value) => {
-			// store.state.common.pa110.statusChangeFormEdit = true;
-			// store.state.common.pa110.statusChangeFormPrice = true;
 			calculateTax();
 		}, { deep: true });
 
@@ -571,10 +570,10 @@ export default defineComponent({
 				dataConfigPayItems.value.map((data: any) => {
 					data.amount = 0;
 				});
-				setTimeout(() => {
-					store.state.common.pa110.statusChangeFormPrice = false;
-					store.state.common.pa110.statusChangeFormAdd = false;
-				}, 500);
+				// setTimeout(() => {
+				statusChangeFormPrice.value = false;
+				store.state.common.pa110.statusChangeFormAdd = false;
+				// }, 500);
 				statusMidTermSettlement1.value = false;
 				store.state.common.pa110.statusMidTermSettlement2 = false;
 			} else {
@@ -671,28 +670,28 @@ export default defineComponent({
 				dataIW.value.employee.employeementInsuranceSupportPercent =
 					data.employee.employeementInsuranceSupportPercent;
 
+				incomeTaxMagnification.value = data.employee.incomeTaxMagnification
+				calculateVariables.dependentCount = data.employee.deductionDependentCount
 				store.state.common.pa110.dataRowOld = { ...dataIW.value };
 				store.state.common.pa110.focusedRowKey = data.incomeId;
 			}
 			// localIncomeBoo.value = false;
 			store.state.common.pa110.statusChangeFormAdd = false;
 			store.state.common.pa110.statusChangeFormEdit = false;
-			// store.state.common.pa110.statusChangeFormPrice = false;
 			if (store.state.common.pa110.statusClickEditItem) {
 				store.state.common.pa110.onEditItem++;
 			}
 			store.state.common.pa110.refreshDataGridRef++;
+			statusChangeFormPrice.value = false
 		});
 		watch(resCalcIncomeWageTax, (value) => {
 			triggerCalcIncome.value = false;
 			if (value) {
-				dataConfigDeductions.value.find(
-					(item: any) => item.itemCode == 1011
-				).amountNew = value.calculateIncomeWageTax;
-				dataConfigDeductions.value.find(
-					(item: any) => item.itemCode == 1012
-				).amountNew = Math.floor(value.calculateIncomeWageTax / 100) * 10;
+				let data = value.calculateIncomeWageTax * incomeTaxMagnification.value
+				dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = data;
+				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(data / 100) * 10;
 			}
+			modalDeductions.value = true;
 		});
 
 		watch(resultEmployeeWage, async (newVal: any) => {
@@ -738,7 +737,8 @@ export default defineComponent({
 				await calculateTax();
 			}
 			calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount;
-			// await (store.state.common.pa110.statusChangeFormPrice = false)
+			incomeTaxMagnification.value = newVal.getEmployeeWage.incomeTaxMagnification
+			// statusChangeFormPrice.value = false
 		});
 
 		watch(resultCalculateMidTermSettlement, (data: any) => {
@@ -794,7 +794,7 @@ export default defineComponent({
 			}
 		};
 		const onChangeInputPayItem = () => {
-			store.state.common.pa110.statusChangeFormPrice = true;
+			statusChangeFormPrice.value = true;
 			if (statusFormAdd.value) {
 				store.state.common.pa110.statusChangeFormAdd = true;
 			} else {
@@ -928,7 +928,6 @@ export default defineComponent({
 				calculateVariables.totalTaxPay = totalPayItemTaxFree.value;
 				triggerCalcIncome.value = true;
 			});
-			modalDeductions.value = true;
 		};
 		const actionCalculateMTS = () => {
 			originCalculateMidTermSettlement.value.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1
@@ -940,7 +939,7 @@ export default defineComponent({
 				if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
 					val.amount = val.amountNew;
 			});
-			store.state.common.pa110.statusChangeFormPrice = false;
+			statusChangeFormPrice.value = false;
 		};
 
 		const onUpdateValue = (employeeId: any) => {
@@ -976,7 +975,7 @@ export default defineComponent({
 			await (store.state.common.pa110.statusChangeFormEdit = false);
 			await (store.state.common.pa110.statusChangeFormAdd = false);
 			await (store.state.common.pa110.statusFormAdd = true); // trạng thái form add
-			await (store.state.common.pa110.statusChangeFormPrice = false);
+			await (statusChangeFormPrice.value = false);
 		};
 
 		const confirmDeleteMidTermSettlement = () => {
@@ -1031,6 +1030,7 @@ export default defineComponent({
 			confirmDeleteMidTermSettlement,
 			dataMidTermSettlement,
 			statusFormAdd,
+			statusChangeFormPrice,
 		};
 	},
 });
