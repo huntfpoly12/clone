@@ -21,7 +21,7 @@ const statesPA510 = {
         // paymentDayCopy: 1,
         statusDisabledStatus: true,
         resetArrayEmploySelect: 1,
-        statusChangeFormPrice: false,
+        // statusChangeFormPrice: false,
         actionResetForm: 0,
         // actionCopy: 1,
         loadingFormData: 1,
