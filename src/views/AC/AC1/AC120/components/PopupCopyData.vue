@@ -32,7 +32,7 @@
             <button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'"
                 @onClick="onSearch" />
         </div> -->
-    <a-spin tip="Loading..." :spinning="loadingSearchSpendingAccountingDocuments">
+    <a-spin :spinning="loadingSearchSpendingAccountingDocuments">
       <div style="margin: 5px 0 48px 0">
         <DxDataGrid noDataText="내역이 없습니다" id="formItemAC120" :show-row-lines="true" :hoverStateEnabled="true"
           :data-source="dataSource" :show-borders="true" key-expr="accountingDocumentId"

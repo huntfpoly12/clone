@@ -19,7 +19,7 @@
 				</StandardForm>
 				<button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'" @onClick="onSearch"/>
 			</div>
-			<a-spin tip="Loading..." :spinning="loading">
+			<a-spin :spinning="loading">
 				<div style="margin: 48px 0">
 					<DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="bcode"
 					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">

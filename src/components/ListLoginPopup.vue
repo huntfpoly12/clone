@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" :title="title" centered @cancel="setModalVisible()" :mask-closable="false"
             width="50%">
-            <a-spin tip="Loading..." :spinning="loadingCM110">
+            <a-spin :spinning="loadingCM110">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>

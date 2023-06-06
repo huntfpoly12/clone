@@ -596,10 +596,10 @@ export default defineComponent({
   text-align: center;
 }
 
-:deep .dx-template-wrapper {
+/* :deep .dx-template-wrapper {
   width: 100%;
   padding: 3px;
-}
+} */
 
 :deep .dx-state-disabled input {
   color: #999 !important;
