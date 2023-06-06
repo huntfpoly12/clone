@@ -279,7 +279,8 @@ export default defineComponent({
     const confirmStatus = ref<boolean>(false);
     const disabledRefund = ref<boolean>(false);
     const confirmLoadNewStatus = ref<boolean>(false);
-    const cellNegativeNumber = [[7,7],[15,7],[59,7]]
+    const cellNegativeNumber = [[7, 7], [15, 7], [59, 7]]
+    const cellPageSettings = ref<any>(cellsSettingModified);
     const hotSettings = {
       comments: true,
       fillHandle: true,
@@ -321,7 +322,12 @@ export default defineComponent({
           // kiểm tra disable refun theo cell 12
           if (!cell12) {
             dataSource.value[0].refund = false
-            disabledRefund.value = true
+            //[thanh toán 6 tháng 1, tháng 1-2] [EDIT] ô (21)=0 thì switch refund vẫn enable (enable và false)
+            if (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) {
+              disabledRefund.value = false
+            } else {
+              disabledRefund.value = true
+            }
           }
           dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
           store.commit("common/setHasChangedPopupPA210", true);
@@ -881,8 +887,6 @@ export default defineComponent({
     // update cell settings flow condition 
     const checkDisableA04A06 = async () => {
       let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
-      
       // check các trường hợp để disable A04 A06
       if (
         (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "매당2") ||
@@ -892,49 +896,49 @@ export default defineComponent({
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2 && dataSource.value[0].reportClassCode == "반익0") ||
         (dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 6 && dataSource.value[0].reportClassCode == "반익1")
       ) {
-        newCellSetting[147].readOnly = false
-        newCellSetting[147].className = "htMiddle htRight"
-        newCellSetting[155].readOnly = false
-        newCellSetting[155].className = "htMiddle htRight"
+        cellPageSettings.value[147].readOnly = false
+        cellPageSettings.value[147].className = "htMiddle htRight"
+        cellPageSettings.value[155].readOnly = false
+        cellPageSettings.value[155].className = "htMiddle htRight"
 
-        newCellSetting[148].readOnly = false
-        newCellSetting[148].className = "htMiddle htRight"
-        newCellSetting[156].readOnly = false
-        newCellSetting[156].className = "htMiddle htRight"
+        cellPageSettings.value[148].readOnly = false
+        cellPageSettings.value[148].className = "htMiddle htRight"
+        cellPageSettings.value[156].readOnly = false
+        cellPageSettings.value[156].className = "htMiddle htRight"
 
-        newCellSetting[181].readOnly = false
-        newCellSetting[181].className = "htMiddle htRight"
-        newCellSetting[189].readOnly = false
-        newCellSetting[189].className = "htMiddle htRight"
+        cellPageSettings.value[181].readOnly = false
+        cellPageSettings.value[181].className = "htMiddle htRight"
+        cellPageSettings.value[189].readOnly = false
+        cellPageSettings.value[189].className = "htMiddle htRight"
 
-        newCellSetting[183].readOnly = false
-        newCellSetting[183].className = "htMiddle htRight"
-        newCellSetting[191].readOnly = false
-        newCellSetting[191].className = "htMiddle htRight"
+        cellPageSettings.value[183].readOnly = false
+        cellPageSettings.value[183].className = "htMiddle htRight"
+        cellPageSettings.value[191].readOnly = false
+        cellPageSettings.value[191].className = "htMiddle htRight"
 
       } else {
-        newCellSetting[147].readOnly = true
-        newCellSetting[147].className = "htMiddle htRight disable-cell"
-        newCellSetting[155].readOnly = true
-        newCellSetting[155].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[147].readOnly = true
+        cellPageSettings.value[147].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[155].readOnly = true
+        cellPageSettings.value[155].className = "htMiddle htRight disable-cell"
 
-        newCellSetting[148].readOnly = true
-        newCellSetting[148].className = "htMiddle htRight disable-cell"
-        newCellSetting[156].readOnly = true
-        newCellSetting[156].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[148].readOnly = true
+        cellPageSettings.value[148].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[156].readOnly = true
+        cellPageSettings.value[156].className = "htMiddle htRight disable-cell"
 
-        newCellSetting[181].readOnly = true
-        newCellSetting[181].className = "htMiddle htRight disable-cell"
-        newCellSetting[189].readOnly = true
-        newCellSetting[189].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[181].readOnly = true
+        cellPageSettings.value[181].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[189].readOnly = true
+        cellPageSettings.value[189].className = "htMiddle htRight disable-cell"
 
-        newCellSetting[183].readOnly = true
-        newCellSetting[183].className = "htMiddle htRight disable-cell"
-        newCellSetting[191].readOnly = true
-        newCellSetting[191].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[183].readOnly = true
+        cellPageSettings.value[183].className = "htMiddle htRight disable-cell"
+        cellPageSettings.value[191].readOnly = true
+        cellPageSettings.value[191].className = "htMiddle htRight disable-cell"
       }
       hot.updateSettings({
-        cell: newCellSetting
+        cell: cellPageSettings.value
       });
     }
 
@@ -942,6 +946,7 @@ export default defineComponent({
     const checkDisableRefund = async () => {
       let hot = wrapper.value.hotInstance;
       let cell12 =  hot.getDataAtCell(67,12);
+
       if (
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||
@@ -949,6 +954,10 @@ export default defineComponent({
       ){
         dataSource.value[0].refund = false
         disabledRefund.value = true
+        cellPageSettings.value[574].readOnly = true
+        cellPageSettings.value[574].className = "htMiddle htRight gray-cell"
+        cellPageSettings.value[575].readOnly = true
+        cellPageSettings.value[575].className = "htMiddle htRight disable-cell"
       } 
 
       if (
@@ -957,40 +966,55 @@ export default defineComponent({
       ) {
         dataSource.value[0].refund = true
         disabledRefund.value = true
+        cellPageSettings.value[574].readOnly = false
+        cellPageSettings.value[574].className = "htMiddle htRight"
+        cellPageSettings.value[575].readOnly = false
+        cellPageSettings.value[575].className = "htMiddle htRight"
       }
 
       if (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2)
       {
         dataSource.value[0].refund = cell12 ? true : false
         disabledRefund.value = false
+        cellPageSettings.value[574].readOnly = false
+        cellPageSettings.value[574].className = "htMiddle htRight"
+        cellPageSettings.value[575].readOnly = false
+        cellPageSettings.value[575].className = "htMiddle htRight"
       }
 
       if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
       {
         dataSource.value[0].refund = cell12 ? true : false
         disabledRefund.value = false
+        cellPageSettings.value[574].readOnly = true
+        cellPageSettings.value[574].className = "htMiddle htRight gray-cell"
+        cellPageSettings.value[575].readOnly = true
+        cellPageSettings.value[575].className = "htMiddle htRight disable-cell"
       }
+      hot.updateSettings({
+        cell: cellPageSettings.value
+      });
     }
 
     // theo dõi refund status thay đổi trạng thái call 12 và 13
-    watch(()=>dataSource.value[0].refund, (newVal) => {
-      let hot = wrapper.value.hotInstance;
-      let newCellSetting = [...JSON.parse(JSON.stringify(cellsSettingModified))]
-      if (newVal) {
-        newCellSetting[574].readOnly = false
-        newCellSetting[574].className = "htMiddle htRight"
-        newCellSetting[575].readOnly = false
-        newCellSetting[575].className = "htMiddle htRight"
-      } else {
-        newCellSetting[574].readOnly = true
-        newCellSetting[574].className = "htMiddle htRight gray-cell"
-        newCellSetting[575].readOnly = true
-        newCellSetting[575].className = "htMiddle htRight disable-cell"
-      }
-      hot.updateSettings({
-        cell: newCellSetting
-      });
-    })
+    // watch(()=>dataSource.value[0].refund, (newVal) => {
+    //   let hot = wrapper.value.hotInstance;
+  
+    //   if (newVal) {
+    //     cellPageSettings.value[574].readOnly = false
+    //     cellPageSettings.value[574].className = "htMiddle htRight"
+    //     cellPageSettings.value[575].readOnly = false
+    //     cellPageSettings.value[575].className = "htMiddle htRight"
+    //   } else {
+    //     cellPageSettings.value[574].readOnly = true
+    //     cellPageSettings.value[574].className = "htMiddle htRight gray-cell"
+    //     cellPageSettings.value[575].readOnly = true
+    //     cellPageSettings.value[575].className = "htMiddle htRight disable-cell"
+    //   }
+    //   hot.updateSettings({
+    //     cell: cellPageSettings.value
+    //   });
+    // })
     return {
       setModalVisible,
       hotSettings,
