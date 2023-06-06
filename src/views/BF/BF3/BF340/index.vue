@@ -83,7 +83,12 @@
             <DxItem name="columnChooserButton" />
           </DxToolbar>
           <template #button-template>
-            <DxButton icon="plus" @click="openAddNewModal" />
+            <a-tooltip placement="topLeft">
+									<template #title>신규</template>
+									<div>
+                      <DxButton icon="plus" @click="openAddNewModal" />
+                  </div>
+            </a-tooltip>
           </template>
           <template #pagination-table>
             <div v-if="rowTable > originData.rows">
@@ -142,7 +147,7 @@
           <template #grid-number="{ data }">
             {{ $filters.formatCurrency(data.value) }}
           </template>
-          <DxColumn :width="80" cell-template="pupop" />
+          <DxColumn :width="80" cell-template="pupop"  css-class="cell-center" />
           <template #pupop="{ data }" class="custom-action">
             <div class="custom-action">
               <a-space :size="10">
@@ -297,6 +302,13 @@ export default defineComponent({
       if (value) {
         rowTable.value = value.searchSalesRepresentatives.totalCount;
         dataSource.value = value.searchSalesRepresentatives.datas;
+        let arrNameCompany: any = []
+        if (value.searchSalesRepresentatives.datas) {
+          value.searchSalesRepresentatives.datas.forEach((company : any) => {
+            arrNameCompany.push(company.name)
+          });
+        }
+        store.commit('common/setListNameCompanyBF340', arrNameCompany)
         trigger.value = false;
       }
     });
