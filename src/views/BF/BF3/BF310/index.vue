@@ -15,7 +15,7 @@
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">심사상태/결과 :</label>
-              <SelectCustomField v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false"/>
+              <SelectCustomField v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
             </div>
           </a-col>
           <a-col>
@@ -80,7 +80,7 @@
           </template>
           <DxColumn data-field="companyCode" caption="사업자코드" css-class="cell-center" cell-template="companyCode" />
           <template #companyCode="{data}">
-            <div class="ant-tag-green" style="background-color: #ffffff;">{{ data.data.companyCode }}</div>
+            <div style="color: #096dd9;">{{ data.data.companyCode }}</div>
           </template>
           <DxColumn data-field="companyName" caption="상호" />
           <DxColumn data-field="companyAddress" caption="주소" />

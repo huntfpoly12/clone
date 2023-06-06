@@ -44,7 +44,7 @@ const messageRequired = Message.getCommonMessage('102').message;
 <template>
   <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="widthCustom" :data-source="props.dataSource"
     :height="$config_styles.HeightInput" :display-expr="props.displayeExpr" :value-expr="props.valueExpr"
-    :disabled="props.disabled" v-model="selectedValue" :placeholder="props.placeholder" field-template="field"
+    :disabled="props.disabled" v-model="selectedValue" field-template="field"
     item-template="item" validation-message-position="bottom">
     <template #field=" { data } : any ">
       <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
@@ -60,7 +60,7 @@ const messageRequired = Message.getCommonMessage('102').message;
         </a-tooltip>
       </div>
       <div v-else class="pt-5 pl-5">
-        <span>선택</span>
+        <span>{{ props.placeholder }}</span>
         <DxTextBox style="display: none;" />
       </div>
     </template>
