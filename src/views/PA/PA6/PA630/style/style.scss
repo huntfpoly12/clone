@@ -1,27 +1,15 @@
-.dflex {
-    display: flex;
-}
-
 #gridContainerPA630 {
     height: calc(100vh - 260px);
 }
+
 :deep .dx-freespace-row {
     display: none !important;
 }
 
 .custom-flex {
+    display: flex;
     align-items: flex-start;
     align-items: center;
-}
-
-.format-settings {
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-
-    .format-settings-text {
-        padding-left: 18px;
-    }
 }
 
 .created-date {
@@ -34,10 +22,8 @@
     margin-top: 6px;
 }
 
-:deep .custom-mail-group {
-    .dx-button-content {
-        padding: 1px;
-    }
+:deep(.dx-button-content) {
+    padding: 3px;
 }
 
 .custom-action {
@@ -63,6 +49,7 @@
         background-color: black;
     }
 }
+
 :deep .dx-datagrid-text-content span {
     font-size: 15px;
     font-weight: bold;
