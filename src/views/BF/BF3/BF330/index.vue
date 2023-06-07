@@ -19,8 +19,8 @@
                         </a-col>
                         <a-col>
                             <label class="lable-item">해지:</label>
-                            <switch-basic v-model:valueSwitch="originData.filter.excludeCancel" :textCheck="'포함'"
-                                :textUnCheck="'제외'" />
+                            <switch-basic v-model:valueSwitch="originData.filter.excludeCancel" :textCheck="'제외'"
+                                :textUnCheck="'포함'" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">주소 :</label>
