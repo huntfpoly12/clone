@@ -210,3 +210,14 @@
   border-radius: 5px;
   padding: 1px 10px;
 }
+.summary-ctn {
+  border: 1px solid #ddd;
+  border-top: none;
+  display: flex;
+  padding: 5px 10px;
+  min-height: 35px;
+  .sum-item {
+    text-align: right;
+    flex: 1;
+  }
+}
