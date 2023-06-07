@@ -19,7 +19,7 @@
         <a-form-item :label="title" v-if="customrow" style="position: relative;">
             <div v-if="disabledImg == false">
                 <div class="d-flex">
-                    <input class="custom-file-input" type="file" @change="onFileChange" />
+                    <input class="custom-file-input" type="file" @change="onFileChange" accept="image/png, image/gif, image/tif, image/jpg, image/jpeg" />
                     <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
                 <p v-if="messageUpload" class="error-group">{{ messageUpload }}</p>

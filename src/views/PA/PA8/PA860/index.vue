@@ -196,7 +196,6 @@ export default defineComponent({
           e.cellElement.style.display = 'block';
         }
         if (e.key == 1) {
-          console.log(`output->e.key`, e)
           // e.cellElement.rowSpan="5r"
           e.cellElement.style.display = 'block';
         }

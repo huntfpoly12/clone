@@ -7,7 +7,7 @@
           <a-col :span="22">
             <a-row :gutter="[24, 8]">
               <a-col>
-                <div class="dflex custom-flex global-year">
+                <div class="custom-flex global-year">
                   <label class="lable-item">귀속연도 :</label>
                   <a-tag color="#a3a2a0">귀 {{ paYear }}</a-tag>
                 </div>
@@ -20,7 +20,7 @@
         <a-row class="header-group">
           <a-col :span="12">
             <a-form-item label="서식 설정">
-              <div class="dflex custom-flex">
+              <div class="custom-flex">
                 <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자 보관용'"
                   :textUnCheck="'발행자 보관용'" />
                 <a-tooltip color="black" placement="top">
@@ -37,13 +37,6 @@
             </div>
           </a-col>
         </a-row>
-        <!-- <a-row>
-          <a-col :span="24">
-            <strong class="lable-item">소득자보관용: </strong>
-            <switch-basic style="width: 120px" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
-              :textUnCheck="'발행자보관용'" />
-          </a-col>
-        </a-row> -->
         <DxDataGrid id="gridContainerPA730" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
           :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" ref="gridRef" :column-auto-width="true"
@@ -55,32 +48,25 @@
             <DxItem template="send-group-print" />
           </DxToolbar>
           <template #send-group-mail>
-            <div class="custom-mail-group">
               <DxButton @click="actionOpenPopupEmailGroup">
                 <img src="@/assets/images/emailGroup.png" alt=""
                   style="width: 28px; margin-right: 3px; cursor: pointer" />
               </DxButton>
-            </div>
           </template>
           <template #send-group-print>
-            <div class="custom-mail-group">
               <DxButton @click="onPrintGroup">
-                <a-tooltip>
-                  <template #title>출력 / 저장</template>
+                <a-tooltip title="출력 / 저장" placement="topLeft">
                   <img src="@/assets/images/printGroup.png" alt=""
                     style="width: 28px; margin-right: 3px; cursor: pointer" />
                 </a-tooltip>
               </DxButton>
-            </div>
           </template>
           <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
           <DxColumn caption="성명 (상호)" css-class="cell-left" cell-template="tag" width="200" data-field="employee.employeeId"/>
           <template #tag="{ data }">
-            <div class="custom-action">
               <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                 :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
-            </div>
           </template>
           <DxColumn caption="주민등록번호" :width="130" cell-template="residentId" data-field="employee.residentId" />
           <template #residentId="{ data }">
@@ -92,40 +78,25 @@
             </income-type>
           </template>
           <DxColumn caption="지급총액" data-field="paymentAmount" format="fixedPoint" width="100" />
-          <DxColumn caption="비과세소득" cell-template="show0" width="100" class="text-right" data-type="number" />
+          <DxColumn caption="비과세소득" cell-template="show0" width="100" format="fixedPoint" data-type="number" />
           <template #show0>0</template>
           <DxColumn caption="필요경비" data-field="requiredExpenses" format="fixedPoint" width="100" />
           <DxColumn caption="소득금액" data-field="incomePayment" format="fixedPoint" width="100" />
 
           <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" format="fixedPoint" width="150" />
-          <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" format="fixedPoint" width="150" />
+          <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" format="fixedPoint" />
           <DxColumn caption="원천징수세액 농어촌특별세" cell-template="show0" width="150" data-type="number" />
           <DxColumn caption="원천징수세액계합계" cell-template="sumWithholding" data-field="total" width="150" data-type="number" />
           <template #sumWithholding="{ data }">
             {{ $filters.formatCurrency(data.data.total) }}
           </template>
-          <!-- <DxSummary v-if="dataSource.length">
-            <DxTotalItem show-in-column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem column="paymentAmount" summary-type="sum" display-format="지급총액합계: {0}" value-format="#,###" />
-            <DxTotalItem show-in-column="비과세소득" summary-type="sum" display-format="비과세소득합계: 0" value-format="#,###" />
-            <DxTotalItem column="requiredExpenses" summary-type="sum" display-format="필요경비합계: {0}" value-format="#,###" />
-            <DxTotalItem column="incomePayment" summary-type="sum" display-format="소득금액합계: {0}" value-format="#,###" />
-            <DxTotalItem column="withholdingIncomeTax" summary-type="sum" display-format="원천징수세액 소득세합계: {0}"
-              value-format="#,###" />
-            <DxTotalItem column="withholdingLocalIncomeTax" summary-type="sum" display-format="원천징수세액 지방소득세합계: {0}"
-              value-format="#,###" />
-            <DxTotalItem show-in-column="원천징수세액 농어촌특별세" summary-type="sum" display-format="원천징수세액 지방소득세합계: 0"
-              value-format="#,###" />
-            <DxTotalItem column="원천징수세액계합계" :customize-text="customTextSummary" value-format="#,###" />
-          </DxSummary> -->
           
-          <DxColumn cell-template="pupop" />
+          <DxColumn cell-template="pupop" :width="80"/>
           <template #pupop="{ data }">
-            <div class="custom-action" style="text-align: center">
+            <div style="text-align: center">
               <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                 style="width: 25px; margin-right: 3px; cursor: pointer" />
-              <a-tooltip>
-                <template #title>출력 / 저장</template>
+              <a-tooltip title="출력 / 저장" placement="topLeft">
                 <img @click="onPrint(data.data)" src="@/assets/images/print.svg" alt="" style="width: 25px" />
               </a-tooltip>
             </div>
@@ -244,7 +215,6 @@ export default defineComponent({
       },
     });
     const {
-      refetch: refetchData,
       result,
       loading,
     } = useQuery(queries.searchIncomeExtraWithholdingReceipts, originData, () => ({
@@ -328,7 +298,6 @@ export default defineComponent({
 
     const searching = () => {
       trigger.value = true;
-      refetchData();
     };
     // print area
     const receiptReportViewUrlTrigger = ref<boolean>(false);
@@ -346,7 +315,6 @@ export default defineComponent({
     });
     const {
       result: resultReceiptReportViewUrl,
-      refetch: refetchReceiptViewUrl,
       loading: loadingReceiptViewUrl,
     } = useQuery(queries.getIncomeExtraWithholdingReceiptReportViewUrl, receiptReportViewUrlParam, () => ({
       enabled: receiptReportViewUrlTrigger.value,
