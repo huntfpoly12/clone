@@ -157,6 +157,11 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
+        if(!newValue) {
+          errorCurrentType.value = 0
+        } else {
+          validateId();
+        }
         let isValid = validatorRef.value?.instance._validationInfo.result;
         let msgDefault = residentRef.value.instance._$validationMessage;
         if (isValid?.brokenRule?.type == 'custom') {
@@ -178,9 +183,10 @@ export default defineComponent({
         return false
       };
     }
+    
     const checkAllID = () => {
-      if (!value.value) return true
-      return validResidentId(value.value);
+      if (!props.valueInput) return true
+      return validResidentId(props.valueInput);
     }
 
     const checkIdNotForeigner = () => {

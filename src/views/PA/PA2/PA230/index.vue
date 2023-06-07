@@ -176,6 +176,7 @@
             data-field="employee.status"
             cell-template="status"
             width="100"
+            alignment="left"
           />
           <template #status="{ data }">
             <span class="status-blue" v-if="data.data.employee.status != 0"
@@ -505,7 +506,7 @@ const printFunc = (val: any) => {
   } else {
     // Print multi row
     if (selectedItemKeys.value.length == 0) {
-      notification("error", "항목을 1개 이상 선택해야합니다");
+      notification("error", "항목을 2개 이상 선택해야합니다");
       return;
     } else dataPrint.value.employeeIds = selectedItemKeys.value;
     if (dataPrint.value) refetchPrint();

@@ -26,8 +26,8 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">해지:</label>
-                        <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'포함'"
-                            :textUnCheck="'제외'" />
+                        <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'제외'"
+                            :textUnCheck="'포함'" />
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
