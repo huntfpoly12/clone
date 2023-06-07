@@ -308,12 +308,13 @@ export default defineComponent({
                         })
                     }
                 })
-            }
-            dataReport.value = dataReports.value.length ? [dataReports.value[0]] : []
-            // check  tháng để focus row  nếu nó là tháng 1 thì focus row đầu luôn.  nếu mà tháng khác thì trừ 1 đơn vị
-            let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 ? 0 : parseInt(startYearMonth.toString().slice(-2)) - 1
-            focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
-            loading.value = false;
+          }
+          
+          dataReport.value = dataReports.value.length ? [dataReports.value[0]] : []
+          // check  tháng để focus row  nếu nó là tháng 1 thì focus row đầu luôn.  nếu mà tháng khác thì trừ 1 đơn vị
+          let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 || parseInt(startYearMonth.toString().slice(-2)) == 12 ? 0 : parseInt(startYearMonth.toString().slice(-2)) - 1
+          focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
+          loading.value = false;
         }, { deep: true })
 
         // ===================FUNCTION===============================
