@@ -162,6 +162,7 @@
     <BudgetPopup
       :modal-status="modal.budget"
       @close-popup="closePopupBudget"
+      @reload="reload"
     />
     <PopupSendMail
       v-if="isModal.employeeRemunerationList"
@@ -171,6 +172,7 @@
       :index="index"
       :typeMail="stateMail.typeMail"
       :type="stateMail.type"
+      :displayCode="displayCode"
     />
     <EditEmployeeSalaryTable
       v-if="modal.editEmployeeSalaryTable"
@@ -210,6 +212,8 @@ import EditEmployeeSalaryTable from "./components/EditEmployeeSalaryTable.vue";
 import PopupSendMail from "./components/PopupSendMail.vue";
 import { initialState, useGetEmployeePayTableReportViewUrl, useGetBudgetSummaryTableReportViewUrl, useGetBudgetReportViewUrl } from "./utils/index";
 import filters from "@/helpers/filters";
+import notification from "@/utils/notification";
+import { Message } from "@/configs/enum";
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -254,7 +258,7 @@ if (!codes) {
   store.dispatch("settings/getAccountSubject", {companyId: companyId, fiscalYear: acYear.value, facilityBizType: globalFacilityBizId.value})
 }
 
-const {onResult: onResultBudget, refetch: refetchBudget, onError} = useQuery(queries.getBudgets, query, () => ({
+const {onResult: onResultBudget, refetch: refetchBudgets, onError} = useQuery(queries.getBudgets, query, () => ({
   fetchPolicy: "no-cache",
 }))
 onResultBudget(({data}) => {
@@ -278,7 +282,8 @@ onError((param) => {
 const {mutate: deleteBudget, onDone: onDoneDelete, onError: onErrorDelete} = useMutation(mutations.deleteBudget)
 onDoneDelete((result) => {
   if (result.data) {
-    refetchBudget()
+    refetchBudgets()
+    notification("success", Message.getCommonMessage('402').message);
   }
 })
 onErrorDelete((error) => {
@@ -327,7 +332,7 @@ const modal = reactive({
 });
 const closePopupBudget = (e: boolean) => {
   query.fiscalYear = acYear.value
-  refetchBudget()
+  if(e) refetchBudgets()
   disableAddRow.value = false
   modal.budget = false
   store.commit('common/setIsChangedFormAc520', false)
@@ -384,7 +389,7 @@ const handleEmitClosePopup = (e: boolean) => {
 }
 const closePopupEditEmployeeTable = (e: boolean) => {
   if (e){
-    refetchBudget()
+    refetchBudgets()
   }
   modal.editEmployeeSalaryTable = false
 }
@@ -406,13 +411,17 @@ const handleDeleteBudget = (data: any) => {
         index: data.index
       })
     },
-    message: `해당 예산서(임직원보수일람표 포함)를 삭제하시겠습니까?`
+    message: `해당 예산서(임직원보수일람표 포함)를 삭제하시겠습니까?`,
+    width: 480
   });
 }
 const closePopupProcessStatus = (e: boolean) => {
   if (e) {
-    refetchBudget()
+    refetchBudgets()
   }
+}
+const reload = () => {
+  refetchBudgets()
 }
 </script>
 
