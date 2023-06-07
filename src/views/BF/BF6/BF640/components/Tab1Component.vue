@@ -5,103 +5,59 @@
     <a-row gutter="24" class="search-form-step-1">
       <a-col>
         <a-form-item label="지급연도" label-align="left">
-          <year-picker-box-custom
-            v-model:valueDate="dataSearch.paymentYear"
-            width="65px"
-            class="mr-5"
-            text="지"
-          />
+          <year-picker-box-custom v-model:valueDate="dataSearch.paymentYear" width="65px" class="mr-5" text="지" />
         </a-form-item>
         <a-form-item label="제출대상구분" label-align="left">
-          <radio-group
-            :arrayValue="checkBoxSearch"
-            layoutCustom="horizontal"
-            v-model:valueRadioCheck="dataSearch.paymentHalfYear"
-          />
+          <radio-group :arrayValue="checkBoxSearch" layoutCustom="horizontal"
+            v-model:valueRadioCheck="dataSearch.paymentHalfYear" />
         </a-form-item>
       </a-col>
       <a-col class="ml-30">
         <a-form-item label="제작요청상태" label-align="left">
           <div class="custom-note d-flex-center">
-            <switch-basic
-              v-model:valueSwitch="setBefore"
-              textCheck="제작요청후"
-              textUnCheck="제작요청전"
-            />
+            <switch-basic v-model:valueSwitch="setBefore" textCheck="제작요청후" textUnCheck="제작요청전" />
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 제작전은 제작요청되지 않은 상태입니다.
               </template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
         <div class="mt-5 production-check">
-          <CheckboxGroup
-            :disabled="dataSearch.beforeProduction"
-            :options="productionStatusesCheckbox"
-            v-model:valueCheckbox="dataSearch.productionStatuses"
-            size="18"
-          >
+          <CheckboxGroup :disabled="dataSearch.beforeProduction" :options="productionStatusesCheckbox"
+            v-model:valueCheckbox="dataSearch.productionStatuses" size="18">
           </CheckboxGroup>
         </div>
       </a-col>
       <a-col class="search-company">
-        <a-form-item
-          label="사업자코드"
-          label-align="left"
-          class="fix-width-label"
-        >
+        <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
           <default-text-box v-model:valueInput="dataSearch.companyCode" />
         </a-form-item>
         <a-form-item label="상호" label-align="left" class="fix-width-label">
           <default-text-box v-model:valueInput="dataSearch.companyName" />
         </a-form-item>
-        <a-form-item
-          label="매니저리스트"
-          label-align="left"
-          class="fix-width-label"
-        >
+        <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
           <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
         </a-form-item>
-        <a-form-item
-          label="영업자리스트"
-          label-align="left"
-          class="fix-width-label"
-        >
-          <list-sales-dropdown
-            v-model:valueInput="dataSearch.salesRepresentativeId"
-          />
+        <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
+          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" />
         </a-form-item>
       </a-col>
       <a-col class="search-4">
-        <switch-basic
-          textCheck="해지제외"
-          textUnCheck="해지포함"
-          v-model:valueSwitch="dataSearch.active"
-        />
+        <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.active" />
       </a-col>
     </a-row>
     <div class="title-table d-flex">
       <a-form-item label="파일 제작 설정" label-align="left">
         <div class="custom-note d-flex-center">
-          <switch-basic
-            v-model:valueSwitch="valueDefaultSwitch"
-            textCheck="세무대리인신고"
-            textUnCheck="납세자자진신고"
-            :disabled="true"
-          />
+          <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고"
+            :disabled="true" />
           <span class="d-flex-center">
             <img src="@/assets/images/iconInfo.png" style="width: 16px" />
-            <span class="pl-5"
-              >본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span
-            >
+            <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
           </span>
         </div>
       </a-form-item>
@@ -120,62 +76,37 @@
     </div>
     <div class="form-table">
       <a-spin :spinning="loadingTable">
-        <DxDataGrid
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="filteredDataSource"
-          :show-borders="true"
-          key-expr="companyId"
-          class="mt-10"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-          @selection-changed="selectionChanged"
-          id="tab1-bf640"
-          noDataText="내역이 없습니다"
-        >
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
+          :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
+          id="tab1-bf640" noDataText="내역이 없습니다">
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection mode="multiple" :fixed="true" />
-          <DxColumn
-            caption="사업자코드"
-            data-field="code"
-            cell-template="company-code"
-          />
+          <DxColumn caption="사업자코드" data-field="code" cell-template="company-code" />
           <template #company-code="{ data }: any">
             {{ data.data.companyCode }}
             {{ data.data.active ? "" : "해지" }}
           </template>
           <DxColumn caption="상호 주소" cell-template="상호" />
-          <template #상호="{ data }: any">
+          <template #상호=" { data }: any ">
             {{ data.data.companyName }} -
             {{ data.data.address }}
           </template>
           <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
-          <template #bizNumber="{ data }: any">
+          <template #bizNumber=" { data }: any ">
             <span>
               {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
-                data.data.bizNumber.toString().slice(3, 5)
+              data.data.bizNumber.toString().slice(3, 5)
               }}-{{ data.data.bizNumber.toString().slice(5, 10) }}
             </span>
           </template>
-          <DxColumn
-            caption="최종제작요청일시"
-            data-field="lastProductionRequestedAt"
-            data-type="date"
-            format="yyyy-MM-dd HH:mm"
-          />
+          <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
+            format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="제작현황" cell-template="제작현황" width="360" />
-          <template #제작현황="{ data }: any">
+          <template #제작현황=" { data }: any ">
             <!-- <div class="d-flex-center justify-content-center"> -->
-            <GetStatusTable
-              :dataProcduct="data.data"
-              :message="data.data.causeOfProductionFailure"
-            />
-            <span
-              class="before-production-tag"
-              v-if="data.data.beforeProduction"
-              >제작요청전</span
-            >
+            <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
+            <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
             <!-- </div> -->
           </template>
           <!-- <DxSummary>
@@ -183,39 +114,41 @@
             <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
           </DxSummary> -->
         </DxDataGrid>
-        <div
-          style="
+        <a-row class="fs-14 summary-ctn">
+          <a-col span="8">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 60.2%;">
+              전체
+              <span style="font-size: 16px;">[{{ filteredDataSource.length }}]</span>
+            </div>
+          </a-col>
+          <a-col span="3" class="sum-item">
+          </a-col>
+          <a-col span="3" class="sum-item">
+          </a-col>
+          <a-col span="10" class="sum-item">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
+          </a-col>
+        </a-row>
+        <!-- <div style="
             border: 1px solid #ddd;
             border-top: none;
             width: 100%;
             display: flex;
             padding: 5px 0;
-          "
-          class="fs-14"
-        >
+          " class="fs-14">
           <div style="width: 250px; margin-left: 70px">
             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
               전체
-              <span style="font-size: 16px"
-                >[{{ filteredDataSource.length }}]</span
-              >
+              <span style="font-size: 16px">[{{ filteredDataSource.length }}]</span>
             </div>
           </div>
           <div style="margin-left: 56%">
-            <div
-              class="dx-datagrid-summary-item dx-datagrid-text-content"
-              v-html="productStatusSummary()"
-            ></div>
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
           </div>
-        </div>
+        </div> -->
       </a-spin>
     </div>
-    <RequestFilePopup
-      v-if="modalStatus"
-      :requestFileData="requestFileData"
-      tab-name="tab1"
-      @cancel="onRequestDone"
-    />
+    <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1" @cancel=" onRequestDone " />
   </div>
 </template>
 <script lang="ts">
@@ -271,7 +204,7 @@ export default defineComponent({
     },
     onSearch: {
       type: Function,
-      default: () => {},
+      default: () => { },
     },
   },
   setup(props, { emit }) {
@@ -459,7 +392,7 @@ export default defineComponent({
       let count = arr.reduce((acc: any, crr: any) => {
         let item =
           typeof crr[propertyCompare] == "boolean" &&
-          crr[propertyCompare] == type
+            crr[propertyCompare] == type
             ? 0
             : crr[propertyCompare];
         acc[item] = acc[item] ? acc[item] + 1 : 1;
@@ -513,8 +446,8 @@ export default defineComponent({
               //error search main reason is
               return compareObj.productionStatuses.length > 0
                 ? compareObj.productionStatuses.findIndex(
-                    (status: any) => status === item.productionStatus
-                  ) > -1
+                  (status: any) => status === item.productionStatus
+                ) > -1
                 : true;
             }
             if (compareObj[key]) {
