@@ -16,7 +16,7 @@
 
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"
           key-expr="code" :allow-column-reordering="move_column" :allow-column-resizing="column_resize"
-          :column-auto-width="true" :focused-row-enabled="true" :focusedRowIndex="0" @cell-prepared="onCellPrepared"
+          :column-auto-width="true" :focused-row-enabled="true" :focusedRowIndex="state.rowIndex" @cell-prepared="onCellPrepared"
           @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged" noDataText="내역이 없습니다"
           style="max-height: 670px">
           <DxPaging :page-size="0" />
@@ -304,7 +304,11 @@ const findCode = (code: string, value: string) => {
 }
 const state = reactive({
   isPopupCalculateVisible: false,
-  modalFillDataPreIndex: false
+  modalFillDataPreIndex: false,
+  rowKey: '',
+  rowIndex: 0,
+  rowIndexSave: 0,
+
 })
 const totalAmount = ref(0)
 const query = {
@@ -339,6 +343,9 @@ onResult(({ data }) => {
         data: data.getBudget.records?.map((item: any) => ({ ...item, codeName: findCode('code', item.code)?.name })) || []
       },
     })
+    if(state.rowIndex === -1) {
+      state.rowIndex = state.rowIndexSave
+    }
     trigger.queryBudget = false
   }
 })
@@ -400,7 +407,8 @@ onDoneUpdateBudget(({ data }) => {
     notification('success', Message.getCommonMessage('101').message)
     emit('reload')
     trigger.queryBudget = true
-    dataSource.value.reload()
+    dataSource.value?.reload()
+    state.rowIndex = -1 
   }
 })
 onErrorUpdateBudget((error) => {
@@ -490,8 +498,12 @@ const handleCloseCalPopup = (value: any) => {
 const onFocusedRowChanging = () => {
 }
 const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
-  formState.value = e.row?.data;
-  previousRowData.value = cloneDeep(e.row?.data);
+  state.rowIndex = e.rowIndex
+  if(e.row?.data) {
+    formState.value = e.row?.data;
+    previousRowData.value = cloneDeep(e.row?.data);
+    state.rowIndexSave = e.rowIndex
+  }
 }
 const handleSubmit = () => {
   const result = dataSource.value.items()?.map((item: any) => {
