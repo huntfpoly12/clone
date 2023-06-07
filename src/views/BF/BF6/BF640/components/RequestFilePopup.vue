@@ -107,7 +107,6 @@ export default defineComponent({
               .value.filter.beforeProduction
               ? null
               : dataRequestFile.value.filter.productionStatuses;
-            console.log(`output->dataRequestFile`, dataRequestFile);
             creationLocalTab2(dataRequestFile.value);
             break;
           default:

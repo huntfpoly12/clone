@@ -305,7 +305,10 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자(주민)등록번호 :</label>
-                                <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" />
+                                <text-number-box width="170px" :required=" true "
+                                  v-model:valueInput=" contractCreacted.ownerBizNumber " nameInput="cmsBank-accountNumber" :ruleCustom="() => checkBizNumberLen"
+                                  :messageRuleCustom="lenFixedMsg"  />
+                                <!-- <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" /> -->
                                 <info-tool-tip class="mt-5">
                                   예금주의 사업자등록번호 또는 주민등록번호입니다
                                 </info-tool-tip>
@@ -871,10 +874,23 @@ export default {
           gridRefName.value.instance.deleteRow(rowIndexDelete.value);
           deleteModal.value = false;
         };
+
+        
+
+        const lenFixedMsg = Message.getCommonMessage('105').message;
+        const checkBizNumberLen = ref(false)
+        watch(()=>contractCreacted.ownerBizNumber,(newVal: any)=>{
+          if(newVal.length !== 10 && newVal.length !==13){
+            checkBizNumberLen.value = false;
+          }else{
+            checkBizNumberLen.value = true;
+          }
+        },{deep : true});
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady,  checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale, isWithholding,checkedAccounting,onInitRow,deleteModal,onDelete,onDelConfirm,contentDelete
+            optionSale, isWithholding,checkedAccounting,onInitRow,deleteModal,onDelete,onDelConfirm,contentDelete,
+            checkBizNumberLen,lenFixedMsg,
         };
     },
 };
