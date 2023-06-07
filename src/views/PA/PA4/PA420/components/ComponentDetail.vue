@@ -134,19 +134,23 @@
           caption="구분"
           data-field="retirementType"
           cell-template="retirementType"
+          alignment="center"
         />
         <template #retirementType="{ data }">
-          <div v-if="data.data.retirementType == 1" class="retirementType-1">
-            퇴직
-          </div>
-          <div v-if="data.data.retirementType == 2" class="retirementType-2">
-            중간
+          <div class="d-flex-center justify-content-center">
+            <div v-if="data.data.retirementType == 1" class="retirementType-1">
+              퇴직
+            </div>
+            <div v-if="data.data.retirementType == 2" class="retirementType-2">
+              중간
+            </div>
           </div>
         </template>
         <DxColumn
           caption="입사일 (정산시작일)"
           data-field="specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate"
           cell-template="joinedAt"
+          alignment="center"
         />
         <template #joinedAt="{ data }">
           <div>
@@ -165,6 +169,7 @@
           caption="퇴사일 (정산종료일)"
           data-field="specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate"
           cell-template="leavedAt"
+          alignment="center"
         />
         <template #leavedAt="{ data }">
           <div>
@@ -468,7 +473,7 @@ const {
 }));
 resTableDetail((res) => {
   dataSourceDetail.value = res.data.getIncomeRetirements;
-  store.commit('common/setEmployeeIdCreated', res.data.getIncomeRetirements?.map((item: any) => item.employeeId) || [])
+  store.commit('common/setEmployeeIdCreated', res.data.getIncomeRetirements?.map((item: any) => ({employeeId:item.employeeId, employeeType: item.employeeType})) || [])
   const listEmployee: any = [];
   // create array id already exist
   res.data.getIncomeRetirements.map((item: any) => {
