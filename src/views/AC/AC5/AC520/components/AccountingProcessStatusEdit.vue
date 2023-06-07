@@ -109,7 +109,7 @@ export default defineComponent({
     }
     const click = () => {
       if (props.data.revenueBudgetSum === null || props.data.expenditureBudgetSum === null) {
-        notification('warning', '세출예산서, 세입예산서 모두 내역이 있어야만 마감상태 변경이 가능합니다.')
+        notification('warning', '세출예산서, 세입예산서 모두 내역이 있어야만 마감상태 변경이 가능합니다')
       }
     }
     return {

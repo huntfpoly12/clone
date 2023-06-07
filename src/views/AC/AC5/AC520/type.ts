@@ -8,6 +8,7 @@ export interface Budget {
   columnName?: string;
   expenditureBudgetSum: number | null;
   type: ComponentCreateBudget
+  status: 10 | 20 | 30 | 40
 }
 
 export enum StepCreateBudget {

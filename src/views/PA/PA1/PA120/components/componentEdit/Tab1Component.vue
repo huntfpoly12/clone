@@ -319,14 +319,7 @@ export default defineComponent({
         labelResidebId.value = "주민등록번호";
       }
     });
-    // const residentId = ref('');
-    // watch(residentId, (newValue: any) => {
-    //   initFormStateTabPA120.value.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
-    // });
     const employeeId = ref(null);
-    // watch(employeeId, (newValue: any) => {
-    //   formStateTab1.employeeId = parseInt(newValue);
-    // });
 
     const originData = ref({
       companyId: companyId,
@@ -346,9 +339,6 @@ export default defineComponent({
 
     watch(resDepartments, (value: any) => {
       if (value) {
-        // arrDepartments.value = value.getDepartments.map((val: any, index: any) => {
-        //   return { id: index, value: val.department };
-        // });
         arrDepartments.value = value.getDepartments.map((item: any) => ({
           value: item.department,
         }));
@@ -368,9 +358,6 @@ export default defineComponent({
 
     watch(resResponsibility, (value: any) => {
       if (value) {
-        // arrResponsibility.value = value.getResponsibilities.map((val: any, index: any) => {
-        //   return { id: index, value: val.responsibility };
-        // });
         arrResponsibility.value = value.getResponsibilities.map(
           (item: any) => ({ value: item.responsibility })
         );
@@ -394,6 +381,7 @@ export default defineComponent({
     watch(getValueDefault, (value: any) => {
       let data = value.getEmployeeWage;
       let editRowData: any = {};
+      store.state.common.deductionDependentCountPA120 = data?.deductionDependentCount || 1;
       editRowData.name = data.name.toUpperCase();
       editRowData.foreigner = data.foreigner;
       editRowData.president = data.president;

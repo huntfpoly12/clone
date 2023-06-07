@@ -119,24 +119,6 @@
           <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
         </a-col>
       </a-row>
-      <!-- <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
-        <div style="width: 250px; margin-left: 70px;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-            전체
-            <span style="font-size: 16px;">[{{ filteredDataSource.length }}]</span>
-          </div>
-        </div>
-        <div style=" margin-left: 18%;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" reportTypeSummary() ">
-          </div>
-        </div>
-        <div style=" margin-left: 15px;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" afterDeadlineSummary() "></div>
-        </div>
-        <div style=" margin-left: 19.8%;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html=" productStatusSummary() "></div>
-        </div>
-      </div> -->
     </div>
     <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1"
       @cancel=" onRequestDone " />

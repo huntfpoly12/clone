@@ -347,7 +347,7 @@ watch(() => dataAllRow.value, (val: any) => {
       return acc;
     }, initialValue)
     Object.assign(formatSummary, result)
-    const listCellFooter = document.querySelectorAll('.dx-datagrid-summary-item.dx-datagrid-text-content') 
+    const listCellFooter = document.querySelectorAll('.dx-datagrid-summary-item.dx-datagrid-text-content')
     if(listCellFooter.length > 19) {
       listCellFooter[3].innerHTML = filters.formatNumber(result.salary1) || '0'
       listCellFooter[4].innerHTML = filters.formatNumber(result.salary2) || '0'

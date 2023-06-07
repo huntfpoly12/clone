@@ -54,17 +54,14 @@
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="responApiSearchCompanies"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: calc(100vh - 180px)" >
                     <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxPaging :page-size="0" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem name="exportButton" css-class="cell-button-export" />
-                        <DxItem template="pagination-table" />
                         <DxItem name="searchPanel" />
-                        <!-- <DxItem name="groupPanel" />
-                                <DxItem name="addRowButton" show-text="always" />
-                                <DxItem name="columnChooserButton" /> -->
                     </DxToolbar>
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">
@@ -88,7 +85,7 @@
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn data-field="servicePrice" caption="이용료" format="fixedPoint" data-type="number" />
-                    <DxColumn :width="80" cell-template="pupop" />
+                    <DxColumn :width="120" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action">
                             <a-space :size="10">
@@ -100,38 +97,54 @@
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
+                                <a-tooltip placement="top" color="black">
+                                  <template #title>사용자권한</template>
+                                  <div style="height: 17px; min-width: 17px;" @click="onEnterUser(data.data)" class="permission-img">
+                                    <!-- <img v-if="data.data.isHover" class="permission-img" src="@/assets/images/add-permission.png"/>
+                                    <img v-else class="permission-img permission-img-hover" src="@/assets/images/add-permission-hover.png"/> -->
+                                  </div>
+                                </a-tooltip>
                             </a-space>
                         </div>
                     </template>
                 </DxDataGrid>
             </a-spin>
-            <div class="pagination-table" v-if="rowTable > originData.rows">
-                <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
-                    show-less-items @change="searching" />
-            </div>
             <BF320Popup :modalStatus="modalStatus" @closePopup="handleClosePopup" :idRowEdit="idRowEdit"
                 :data="popupData" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                 title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
+            <EnterCusAccModal v-if="isCustomerModal" :companyInfo="companyInfo" @closeModal="onHandleCusAcc"/>
         </div>
 </div>
-</template> 
+</template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxExport, DxSearchPanel, DxToolbar, DxScrolling, DxItem } from 'devextreme-vue/data-grid';
+import {
+  DxDataGrid,
+  DxColumn,
+  DxExport,
+  DxSearchPanel,
+  DxToolbar,
+  DxScrolling,
+  DxItem,
+  DxPaging
+} from 'devextreme-vue/data-grid';
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
-import { useQuery } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
 import dayjs from "dayjs";
+import { reactive } from 'vue';
+import mutations from "@/graphql/mutations/AddToken/index";
 export default defineComponent({
     components: {
+        DxPaging,
         DxDataGrid, DxColumn, DxButton, DxExport, DxSearchPanel, DxToolbar, DxItem, DxScrolling,
         BF320Popup, HistoryPopup,
         EditOutlined, HistoryOutlined
@@ -139,7 +152,6 @@ export default defineComponent({
     setup() {
         // config grid
         const store = useStore();
-        const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref()
@@ -151,7 +163,7 @@ export default defineComponent({
         var responApiSearchCompanies = ref([])
         const originData = ref({
             ...dataSearchIndex,
-            rows: per_page,
+            rows: 10000,
         })
         const { refetch: refetchData, result, loading, onError } = useQuery(queries.searchCompanies, originData.value, () => ({
             enabled: trigger.value,
@@ -189,6 +201,44 @@ export default defineComponent({
                 responApiSearchCompanies.value = value.searchCompanies.datas
             }
         });
+
+
+    
+        const companyInfo = reactive({
+          code: NaN,
+          name: '',
+          companyId: NaN,
+        })
+        const userToken = ref();
+        function cloneWebsite() {
+          const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+          const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+          const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
+          const currentUrl = window.location.origin.replace(/\/$/, '');
+          if(userToken.value){
+            window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}`, '_blank', windowFeatures);
+          }
+        }
+        const {mutate, onDone, onError: customerLoginError } = useMutation(mutations.customerWorkLogin);
+        const isCustomerModal = ref(false);
+        const onEnterUser = (data: any) => {
+          companyInfo.code = data.code;
+          companyInfo.name = data.companyName;
+          companyInfo.companyId = data.id;
+          isCustomerModal.value = true;
+        }
+        const onHandleCusAcc = (emitVal: boolean) => {
+          isCustomerModal.value = false;
+          if(emitVal){
+            mutate({companyId:companyInfo.companyId})
+          }else{
+
+          }
+        }
+        onDone((result: any) => {
+          userToken.value = result.data.customerWorkLogin;
+          cloneWebsite();
+        })
         return {
             trigger,
             move_column,
@@ -207,6 +257,7 @@ export default defineComponent({
             setModalVisible,
             modalHistory,
             dayjs,
+            onHandleCusAcc, isCustomerModal,companyInfo,onEnterUser,
         }
     },
 });

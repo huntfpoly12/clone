@@ -391,6 +391,7 @@ import { makeDataClean } from "@/helpers/commonFunction"
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3} from "./utils";
 import dayjs from 'dayjs';
 import { Message } from "@/configs/enum";
+import { onMounted } from "vue";
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
@@ -415,7 +416,6 @@ export default {
             applicationService: 1,
         });
         var visibleModal = ref(false);
-        const valueFacilityBusinesses: any = ref([]);
         const arrayRadioCheck = ref([...arrayRadioCheckUtil]);
         const arrayRadioCheckStep3 = ref([...arrayRadioCheckUtilStep3]);
         const arrayRadioWithdrawDay = ref([...arrayRadioWithdrawDayUtil]);
@@ -423,11 +423,13 @@ export default {
         const checkedAccounting = ref(1);
         const valueAccountingService = ref(1);
         const valueSourceService = ref(1);
-        const focusedRowKey = ref(0)
+        const focusedRowKey = ref(1)
         let dataImg = ref();
         let dataImgStep3 = ref();
         let valueRadioWithdrawDay = ref("5일");
-        const dataActiveRow: any = ref()
+        const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM') };
+        const dataActiveRow: any = ref({rowIndex:1,...initRow})
+        const valueFacilityBusinesses: any = ref([dataActiveRow.value]);
         const isResidentId = ref(false);
         const optionSale = ref();
         const deleteModal = ref(false);
@@ -687,6 +689,7 @@ export default {
                 }
                 if(newVal === 1) {
                   contractCreacted.accountingServiceTypes = true;
+                  addRow();
                 }
             }
         );
@@ -858,7 +861,6 @@ export default {
             }
         );
         const onInitRow = (e: any) => {
-          const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM') };
           e.data = initRow;
         };
         const onDelete = (data: any) => {

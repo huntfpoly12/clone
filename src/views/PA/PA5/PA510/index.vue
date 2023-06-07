@@ -344,20 +344,12 @@
 							{{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
 						</template>
 					</DxDataGrid>
-					<div style="
-              border: 1px solid #ddd;
-              border-top: none;
-              width: 100%;
-              display: flex;
-              justify-content: space-between;
-              padding: 5px 20px;
-            " class="fs-14">
+					<div style="border: 1px solid #ddd; border-top: none;  width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+						class="fs-14">
 						<div style="margin-left: 70px">
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 								<div>
-									사원수<span>[{{
-										store.state.common.pa510.dataTaxPayInfo.length
-									}}]</span>
+									사원수<span>[{{ store.state.common.pa510.dataTaxPayInfo.length }}]</span>
 								</div>
 							</div>
 						</div>
@@ -376,9 +368,8 @@
 					</div>
 				</a-spin>
 			</a-col>
-			<a-col :span="10" class="custom-layout custom-form-data" style="padding-right: 0px" :class="{
-				disabledBlock: !store.state.common.pa510.dataTaxPayInfo.length,
-			}">
+			<a-col :span="10" class="custom-layout custom-form-data" style="padding-right: 0px"
+				:class="{ disabledBlock: !store.state.common.pa510.dataTaxPayInfo.length }">
 				<FormDataComponent />
 			</a-col>
 		</a-row>
@@ -388,12 +379,8 @@
 			@checkConfirm="statusComfirmChange" />
 		<!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false" typeModal="confirm"
             :title="Message.getMessage('PA110', '001').message" content="" :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no" @checkConfirm="statusComfirmChangePrice" /> -->
-		<CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="
-																																								        {
-			modalCopy = false;
-			hoverColClick = 0;
-		}
-			" @dataAddIncomeProcess="dataAddIncomeProcess" />
+		<CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="{ modalCopy = false; hoverColClick = 0; }"
+			@dataAddIncomeProcess="dataAddIncomeProcess" />
 	</div>
 </template>
 <script lang="ts">

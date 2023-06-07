@@ -402,7 +402,8 @@ export default defineComponent({
     } = useMutation(mutations.createEmployeeWage);
 
     onDoneAdd((res: any) => {
-      let employeeId = res.data.createEmployeeWage.employeeId;
+      let {employeeId,deductionDependentCount} = res.data.createEmployeeWage;
+      store.state.common.deductionDependentCountPA120 = deductionDependentCount;
       if (initFormStateTabPA120.value.president) {
         dataDefaultTab2.value.nationalPensionDeduction = true;
         dataDefaultTab2.value.healthInsuranceDeduction = true;
