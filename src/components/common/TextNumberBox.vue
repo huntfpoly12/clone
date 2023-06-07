@@ -13,6 +13,7 @@
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule, DxCustomRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
+import { Message } from "@/configs/enum";
 export default defineComponent({
   props: {
     required: {
@@ -48,7 +49,7 @@ export default defineComponent({
     },
     messageRuleCustom: {
       type: String,
-      default: "",
+      default: Message.getCommonMessage('104').message,
     },
     rtlEnabled: {
       type: Boolean,
