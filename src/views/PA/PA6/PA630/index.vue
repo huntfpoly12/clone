@@ -7,7 +7,7 @@
                     <a-col :span="22">
                         <a-row :gutter="[24, 8]">
                             <a-col>
-                                <div class="dflex custom-flex global-year">
+                                <div class="custom-flex global-year">
                                     <label class="lable-item">귀속연도 :</label>
                                     <a-tag color="#a3a2a0">귀 {{ paYear }}</a-tag>
                                 </div>
@@ -20,7 +20,7 @@
                 <a-row class="header-group">
                     <a-col :span="12">
                         <a-form-item label="서식 설정">
-                            <div class="dflex custom-flex">
+                            <div class="custom-flex">
                                 <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자 보관용'"
                                     :textUnCheck="'발행자 보관용'" />
                                 <a-tooltip color="black" placement="top">
@@ -38,13 +38,6 @@
                         </div>
                     </a-col>
                 </a-row>
-                <!-- <a-row>
-                    <a-col :span="24">
-                        <label class="lable-item">소득자보관용</label>
-                        <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
-                            :textUnCheck="'발행자보관용'" />
-                    </a-col>
-                </a-row> -->
                 <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA630" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -57,31 +50,24 @@
                         <DxItem template="send-group-print" />
                     </DxToolbar>
                     <template #send-group-mail>
-                        <div class="custom-mail-group">
                             <DxButton @click="actionOpenPopupEmailMulti">
                                 <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
                             </DxButton>
-                        </div>
                     </template>
                     <template #send-group-print>
-                        <div class="custom-mail-group">
                             <DxButton @click="onPrintGroup">
-                                <a-tooltip>
-                                    <template #title>출력 / 저장</template>
+                                <a-tooltip title="출력 / 저장" placement="topLeft">
                                     <img src="@/assets/images/printGroup.png" alt=""
                                         style="width: 28px; margin-right: 3px; cursor: pointer" /> 
                                 </a-tooltip>
                             </DxButton>
-                        </div>
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                     <DxColumn :width="250" caption="성명 (상호)" css-class="cell-left" cell-template="tag" data-field="employee.employeeId"/>
                     <template #tag="{ data }">
-                        <div class="custom-action">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                                 :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
                                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
-                        </div>
                     </template>
                     <DxColumn caption="주민등록번호" cell-template="residentId" data-field="employee.residentId" />
                     <template #residentId="{ data }">
@@ -99,23 +85,12 @@
                     <template #sumWithholdingRuralSpecialTax="{ data }" >
                         {{ $filters.formatCurrency(data.data.total) }}
                     </template>
-                    <!-- <DxSummary v-if="dataSource.length">
-                        <DxTotalItem column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
-                        <DxTotalItem column="지급총액" summary-type="sum" display-format="지급총액합계: {0}"
-                            value-format="#,###" />
-                        <DxTotalItem column="원천징수세액 소득세" summary-type="sum" display-format="원천징수세액 소득세합계: {0}"
-                            value-format="#,###" />
-                        <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="원천징수세액 지방소득세합계: {0}"
-                            value-format="#,###" />
-                        <DxTotalItem column="원천징수세액 계" :customize-text="customTextSummaryWRST"/>
-                    </DxSummary> -->
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
-                        <div class="custom-action" style="text-align: center;">
+                        <div class="custom-action">
                             <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px;" />
-                            <a-tooltip>
-                                <template #title>출력 / 저장</template>
+                            <a-tooltip title="출력 / 저장" placement="topLeft">
                                 <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
                                 style="width: 25px;" />
                             </a-tooltip>
@@ -230,7 +205,6 @@ export default defineComponent({
             employeeIds: [null]
         });
         const {
-            refetch: refetchData,
             result,
             loading,
         } = useQuery(queries.searchIncomeBusinessWithholdingReceipts, originData, () => ({
@@ -238,7 +212,6 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         const {
-            refetch,
             result: resultPrint
         } = useQuery(queries.getIncomeBusinessWithholdingReceiptReportViewUrl, valueDefaultIncomeBusiness, () => ({
             enabled: triggerPrint.value,
@@ -344,7 +317,6 @@ export default defineComponent({
 
         const searching = () => {
             trigger.value = true;
-            refetchData();
         };
 
         const actionPrint = (data: any) => {

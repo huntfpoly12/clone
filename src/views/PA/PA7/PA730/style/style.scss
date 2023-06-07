@@ -5,36 +5,11 @@
   :deep .dx-freespace-row {
     display: none !important;
   }
-  .dflex {
-    display: flex;
-  }
 
   .custom-flex {
+    display: flex;
     align-items: flex-start;
     align-items: center;
-  }
-
-  .format-settings {
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-
-    .format-settings-text {
-      padding-left: 18px;
-      font-size: 12px;
-      color: rgb(127, 127, 127);
-      margin-left: 5px;
-      display: flex;
-      align-items: center;
-
-      img {
-        margin-right: 3px;
-      }
-    }
-  }
-
-  .tax-select {
-    padding-top: 15px;
   }
 
   .created-date {
@@ -51,24 +26,8 @@
     margin-top: 6px;
   }
 
-  :deep .custom-mail-group {
-    .dx-button-content {
-      padding: 1px;
-    }
-  }
-
-  .group-mail-730 {
-    cursor: pointer;
-    margin: 0px 0px;
-  }
-
-  .mail-730 {
-    margin-right: 10px;
-  }
-
-  .custom-action-icon {
-    display: flex;
-    justify-content: center;
+  :deep(.dx-button-content){
+    padding: 3px;
   }
 
   .lable-item {
@@ -94,9 +53,6 @@
   :deep .dx-datagrid-text-content {
     white-space: break-spaces;
     text-align: left !important;
-  }
-  .text-right {
-    text-align: right !important;
   }
   :deep .dx-datagrid-text-content span {
     font-size: 15px;

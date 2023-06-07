@@ -2,23 +2,21 @@
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
     :width="562">
     <standard-form action="" name="email-single-730">
-      
       <div class="custom-modal-send-email">
         <img src="@/assets/images/emailGroup.png" alt="" style="width: 50px" />
         <div>
-          <span>개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서
-          </span>
+          <span>개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서</span>
           <div style="display: flex; align-items: center">
             <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"
-              placeholder="abc@example.com"></mail-text-box>
+              placeholder="abc@example.com"/>
             <span>로 메일을 발송하시겠습니까?</span>
           </div>
         </div>
       </div>
-      <div class="text-align-center mt-50">
-        <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+      <div class="textcenter mt-50">
+        <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
           @onClick="setModalVisible()" />
-        <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
+        <button-basic class="ml-5" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
           @onClick="onSubmit" />
       </div>
     </standard-form>
@@ -112,17 +110,5 @@ export default defineComponent({
   span {
     padding-left: 5px;
   }
-}
-
-.mt-50 {
-  margin-top: 50px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
 }
 </style>
