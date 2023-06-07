@@ -109,7 +109,7 @@
           <DxField v-if="formState.code2 === '501010000'">
             <div style="margin-left: 110px" >
               <a-tag color="black">인건비비율:
-                {{ totalAmount ? filters.formatNumber( formState.amount * 100 / totalAmount, 2) : 0 }}%
+                {{ totalAmount ? filters.formatNumber( formState.amount * 100 / totalAmount, 1) : 0 }}%
               </a-tag>
               <span>(권장: {{ facilityBizTypeToNumber }}%)</span>
             </div>

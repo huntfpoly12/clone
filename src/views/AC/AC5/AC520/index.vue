@@ -45,7 +45,7 @@
       <DxColumn caption="최종저장아이디" data-field="savedBy"  alignment="center" :allow-sorting="false"/>
       <DxColumn caption="인건비비율 (%)" cell-template="laborCostRadio" alignment="center" />
       <template #laborCostRadio="{ data }">
-        {{ data.data?.expenditureBudgetSum ? filters.formatNumber(data.data.employeePaySum / data.data?.expenditureBudgetSum * 100, 2) : Number(0).toFixed(2) }}
+        {{ data.data?.expenditureBudgetSum ? filters.formatNumber(data.data.employeePaySum / data.data?.expenditureBudgetSum * 100, 1) : Number(0).toFixed(2) }}
       </template>
       <DxColumn caption="임직원보수일람표" cell-template="employeeSalaryTable" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="세출예산서" cell-template="expenseBudget" alignment="center" :allow-sorting="false"/>
@@ -145,7 +145,7 @@
         </a-tooltip>
       </template>
       <template #mailPrint="{data}">
-        <div v-if="data.data.status" class="d-flex-center justify-content-center gap-6">
+        <div v-if="data.data.status && data.data.employeePaySum !== null &&  data.data.employeePaySum !== null " class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.BudgetSummaryTable)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>
