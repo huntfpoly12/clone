@@ -8,7 +8,7 @@ export default (callback: Function) => {
     let status = false
     const message = Message.getCommonMessage('301').message;
     Modal.confirm({
-        title: message,
+        content: message,
         icon: createVNode(ExclamationCircleOutlined),
         onOk() {
             callback();

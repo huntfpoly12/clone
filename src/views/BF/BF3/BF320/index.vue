@@ -26,8 +26,8 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">해지:</label>
-                        <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'포함'"
-                            :textUnCheck="'제외'" />
+                        <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'제외'"
+                            :textUnCheck="'포함'" />
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
@@ -85,7 +85,7 @@
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn data-field="servicePrice" caption="이용료" format="fixedPoint" data-type="number" />
-                    <DxColumn :width="80" cell-template="pupop" />
+                    <DxColumn :width="120" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action">
                             <a-space :size="10">
@@ -97,6 +97,13 @@
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
+                                <a-tooltip placement="top" color="black">
+                                  <template #title>사용자권한</template>
+                                  <div style="height: 17px; min-width: 17px;" @click="onEnterUser(data.data)" class="permission-img">
+                                    <!-- <img v-if="data.data.isHover" class="permission-img" src="@/assets/images/add-permission.png"/>
+                                    <img v-else class="permission-img permission-img-hover" src="@/assets/images/add-permission-hover.png"/> -->
+                                  </div>
+                                </a-tooltip>
                             </a-space>
                         </div>
                     </template>
@@ -106,6 +113,7 @@
                 :data="popupData" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                 title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
+            <EnterCusAccModal v-if="isCustomerModal" :companyInfo="companyInfo" @closeModal="onHandleCusAcc"/>
         </div>
 </div>
 </template>
@@ -126,12 +134,14 @@ import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
-import { useQuery } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
 import dayjs from "dayjs";
+import { reactive } from 'vue';
+import mutations from "@/graphql/mutations/AddToken/index";
 export default defineComponent({
     components: {
         DxPaging,
@@ -191,6 +201,44 @@ export default defineComponent({
                 responApiSearchCompanies.value = value.searchCompanies.datas
             }
         });
+
+
+    
+        const companyInfo = reactive({
+          code: NaN,
+          name: '',
+          companyId: NaN,
+        })
+        const userToken = ref();
+        function cloneWebsite() {
+          const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+          const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+          const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
+          const currentUrl = window.location.origin.replace(/\/$/, '');
+          if(userToken.value){
+            window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}`, '_blank', windowFeatures);
+          }
+        }
+        const {mutate, onDone, onError: customerLoginError } = useMutation(mutations.customerWorkLogin);
+        const isCustomerModal = ref(false);
+        const onEnterUser = (data: any) => {
+          companyInfo.code = data.code;
+          companyInfo.name = data.companyName;
+          companyInfo.companyId = data.id;
+          isCustomerModal.value = true;
+        }
+        const onHandleCusAcc = (emitVal: boolean) => {
+          isCustomerModal.value = false;
+          if(emitVal){
+            mutate({companyId:companyInfo.companyId})
+          }else{
+
+          }
+        }
+        onDone((result: any) => {
+          userToken.value = result.data.customerWorkLogin;
+          cloneWebsite();
+        })
         return {
             trigger,
             move_column,
@@ -209,6 +257,7 @@ export default defineComponent({
             setModalVisible,
             modalHistory,
             dayjs,
+            onHandleCusAcc, isCustomerModal,companyInfo,onEnterUser,
         }
     },
 });

@@ -5,6 +5,7 @@
       <a-spin :spinning="loading || loadingUpdate">
         <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
           <div class="collapse-content">
+            {{ formState.status }}
             <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
               <a-collapse-panel key="1" header="심사정보">
                 <a-row>
@@ -372,6 +373,16 @@
         </div>
       </standard-form>
     </a-modal>
+    <PopupMessage
+      :modalStatus="isStatusApproved"
+      @closePopup="isStatusApproved = false"
+      :typeModal="'confirm'"
+      :title="''"
+      :content=" `승인된 사업자등록번호(${formState.content.company.bizNumber})는 수정불가합니다. 그래도 승인하시겠습니까?`"
+      :okText="'승인'"
+      cancelText="아니오"
+      @checkConfirm="onRowChangeComfirm"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -610,6 +621,7 @@ export default defineComponent({
               focusedRowKey.value = 0;
               accountingServiceTypes.value = true;
             }
+            addRow();
           }
           if (value == 2) {
             dataSource.value = [];
@@ -707,35 +719,14 @@ export default defineComponent({
       //notification('error', error.message)
     });
     // A function that is called when a button is clicked.
-    const updateSubscriptionRequest = (e: any) => {
-      var res = e.validationGroup.validate();
-      if (!res.isValid || res?.brokenRules.length > 0) {
-        let nameInputError = res.brokenRules[0].validator._validationInfo.result.name;
-        res.brokenRules[0].validator.focus();
-        let keyCollapse = 0;
-        inputInCollapse.forEach((value: any) => {
-          if (value.input_name.filter((item: any) => item == nameInputError).length > 0) {
-            keyCollapse = value.key;
-            return;
-          }
-        });
-        if (keyCollapse > 0) {
-          activeKey.value = keyCollapse;
-        } else {
-          activeKey.value = 4;
-        }
-        return;
+    const isStatusApproved = ref(false);
+    const onRowChangeComfirm = (e:any) => {
+      if(e){
+        onSave();
       }
-      if ((checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2)) {
-        notification("error", Message.getMessage('BF310', '001').message);
-        activeKey.value = 4;
-        return;
-      }
-      if ((checkedAccounting.value === 1 && dataSource.value.length === 0)) {
-        notification("error", Message.getMessage('COMMON', '102').message);
-        activeKey.value = 4;
-        return;
-      }
+      isStatusApproved.value = false;
+    }
+    const onSave = () => {
       // process data befor handle update
       let contentData: any = { ...formState.value.content };
       const deleteField = (obj: any): any => {
@@ -791,6 +782,41 @@ export default defineComponent({
         content: newContent,
       };
       actionUpdate(variables);
+    }
+    const updateSubscriptionRequest = (e: any) => {
+      var res = e.validationGroup.validate();
+      if (!res.isValid || res?.brokenRules.length > 0) {
+        let nameInputError = res.brokenRules[0].validator._validationInfo.result.name;
+        res.brokenRules[0].validator.focus();
+        let keyCollapse = 0;
+        inputInCollapse.forEach((value: any) => {
+          if (value.input_name.filter((item: any) => item == nameInputError).length > 0) {
+            keyCollapse = value.key;
+            return;
+          }
+        });
+        if (keyCollapse > 0) {
+          activeKey.value = keyCollapse;
+        } else {
+          activeKey.value = 4;
+        }
+        return;
+      }
+      if ((checkedAccounting.value === checkedSourceService.value && checkedSourceService.value === 2)) {
+        notification("error", Message.getMessage('BF310', '001').message);
+        activeKey.value = 4;
+        return;
+      }
+      if ((checkedAccounting.value === 1 && dataSource.value.length === 0)) {
+        notification("error", Message.getMessage('COMMON', '102').message);
+        activeKey.value = 4;
+        return;
+      }
+      if(formState.value.status == 30){
+        isStatusApproved.value = true;
+        return;
+      }
+      onSave();
     };
     // handle License File upload
     const getUrlLicenseFile = (img: any) => {
@@ -920,6 +946,7 @@ export default defineComponent({
       onDelete, deleteModal, contentDelete,
       checkedAccounting,
       withholdingServiceTypes,
+      isStatusApproved,onRowChangeComfirm,
     };
   },
 });

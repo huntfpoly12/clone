@@ -14,6 +14,7 @@
           </a-col>
           <a-col>
             <div class="dflex custom-flex">
+              {{ statuses }}
               <label class="lable-item">심사상태/결과 :</label>
               <SelectCustomField v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
             </div>
@@ -147,15 +148,6 @@
                   <template #title>변경이력</template>
                   <HistoryOutlined @click="modalHistory(data)" />
                 </a-tooltip>
-                <a-tooltip placement="top" color="black">
-                  <template #title>사용자권한</template>
-                  <div @mouseenter="data.data.isHover=false" @mouseleave="data.data.isHover=true" style="height: 17px; min-width: 17px;" 
-                    @click="onEnterUser(data.data)"
-                  >
-                    <img v-if="data.data.isHover" class="permission-img" src="@/assets/images/add-permission.png"/>
-                    <img v-else class="permission-img permission-img-hover" src="@/assets/images/add-permission-hover.png"/>
-                  </div>
-                </a-tooltip>
               </a-space>
             </div>
           </template>
@@ -168,7 +160,6 @@
           :data="idSubRequest" :key="keyRefreshPopup310" />
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
           title="변경이력" :idRowEdit="idSubRequest" typeHistory="bf-310" />
-        <EnterCusAccModal v-if="isCustomerModal" :companyInfo="companyInfo" @closeModal="onHandleCusAcc"/>
       </div>
     </div>
   </a-spin>
@@ -191,7 +182,6 @@ import {
 } from "devextreme-vue/data-grid";
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index";
-import mutations from "@/graphql/mutations/AddToken/index";
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction";
 import {
@@ -241,16 +231,13 @@ export default defineComponent({
       startDate: rangeDate.value[0],
       finishDate: rangeDate.value[1],
     });
-    const subReqStatus: any = computed(() => {
-            let slGrade: any = enum2Entries(SubscriptionRequestStatus).map(
+    const subReqStatus: any = enum2Entries(SubscriptionRequestStatus).map(
                 (value) => ({
                     id: value[1],
                     name: value[0],
                 })
             );
-            // slGrade.unshift({ value: null, label: "전체" });
-            return slGrade;
-        });
+    subReqStatus.unshift({ id: 0, name: "전체" });
 
     watch(
       () => listCheckBox.value,
@@ -332,7 +319,7 @@ export default defineComponent({
       trigger.value = false;
       if (value) {
         rowTable.value = value.searchSubscriptionRequests.totalCount;
-        dataSource.value = value.searchSubscriptionRequests.datas.map((item: any)=>({...item, isHover: true}));
+        dataSource.value = value.searchSubscriptionRequests.datas.map((item: any)=>({...item}));
       }
     });
     // Get api when page is changed
@@ -348,44 +335,6 @@ export default defineComponent({
         trigger.value = true;
       }, 500);
     };
-
-
-    
-    const companyInfo = reactive({
-      code: NaN,
-      name: '',
-      companyId: NaN,
-    })
-    const userToken = ref();
-    function cloneWebsite() {
-      const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-      const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-      const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
-      const currentUrl = window.location.origin.replace(/\/$/, '');
-      if(userToken.value){
-        window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}`, '_blank', windowFeatures);
-      }
-    }
-    const {mutate, onDone, onError: customerLoginError } = useMutation(mutations.customerWorkLogin);
-    const isCustomerModal = ref(false);
-    const onEnterUser = (data: any) => {
-      companyInfo.code = data.code;
-      companyInfo.name = data.companyName;
-      companyInfo.companyId = data.id;
-      isCustomerModal.value = true;
-    }
-    const onHandleCusAcc = (emitVal: boolean) => {
-      isCustomerModal.value = false;
-      if(emitVal){
-        mutate({companyId:companyInfo.companyId})
-      }else{
-
-      }
-    }
-    onDone((result: any) => {
-      userToken.value = result.data.customerWorkLogin;
-      cloneWebsite();
-    })
     return {
       loading,
       move_column,
@@ -412,7 +361,6 @@ export default defineComponent({
       onDoneUpdate,
       listCheckBox,
       keyRefreshPopup310,
-      onHandleCusAcc, isCustomerModal,companyInfo,onEnterUser,
       subReqStatus,
     };
   },

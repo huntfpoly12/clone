@@ -282,11 +282,20 @@ $lenght: 50;
 .confirmPopup {
   .ant-modal-confirm-btns {
     display: inline-flex;
-    margin-left: 62px;
     margin-top: 14px;
+    justify-content: center;
+    width: 100%;
   }
-  .ant-modal-confirm-body svg {
-    font-size: 40px;
+  .ant-modal-confirm-body{
+    display: flex;
+    align-items: center;
+    .ant-modal-confirm-content{
+      margin-top: 0;
+      font-size: 13px;
+    }
+    svg {
+      font-size: 30px;
+    }
   }
 }
 

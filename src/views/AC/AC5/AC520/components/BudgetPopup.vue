@@ -23,7 +23,7 @@
         <EmployeeSalaryTable @closePopup="closePopup" />
       </div>
       <div v-else>
-        <ExpenseAndRevenueBudget />
+        <ExpenseAndRevenueBudget @reload="reload" />
       </div>
     </div>
     <div v-else>
@@ -59,7 +59,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['closePopup'],
+  emits: ['closePopup', 'reload'],
   setup(props, { emit }) {
     const store = useStore()
     const step = ref<StepCreateBudget>(StepCreateBudget.Step1)
@@ -83,6 +83,9 @@ export default defineComponent({
         })
       }
     };
+    const reload = () => {
+      emit('reload')
+    }
     const onConfirm = () => {
       if (step.value === StepCreateBudget.Step1) {
         step.value = StepCreateBudget.Step2
@@ -113,7 +116,8 @@ export default defineComponent({
       dataBudget,
       closePopup,
       typePopup,
-      ComponentCreateBudget
+      ComponentCreateBudget,
+      reload
     }
   }
 })
