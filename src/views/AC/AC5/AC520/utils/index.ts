@@ -6,7 +6,8 @@ export const initialState = {
   employeePaySum: null,
   expenditureBudgetSum: null,
   revenueBudgetSum: null,
-  createdAt: new Date().getTime()
+  createdAt: new Date().getTime(),
+  status: 10
 }
 // create function get data from useQuery hook
 interface IGetEmployeePayTableReportViewUrl {

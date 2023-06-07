@@ -240,6 +240,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { computed, reactive, ref, watch } from 'vue';
 import { useStore } from "vuex";
 
+const emit = defineEmits(['reload']);
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const column_resize = computed(() => store.state.settings.colomn_resize);
@@ -382,7 +383,7 @@ onDoneCreateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    // emit('close-popup', true)
+    emit('reload')
     trigger.queryBudget = true
     dataSource.value.reload()
   }
@@ -397,7 +398,7 @@ onDoneUpdateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    // emit('close-popup', true)
+    emit('reload')
     trigger.queryBudget = true
     dataSource.value.reload()
   }

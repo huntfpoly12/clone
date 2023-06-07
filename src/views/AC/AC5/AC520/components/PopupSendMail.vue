@@ -50,6 +50,10 @@ export default defineComponent({
     type: {
       type: Number,
       required: true
+    }, 
+    displayCode: {
+      type: Boolean,
+      required: true
     }
   },
   setup(props, { emit }) {
@@ -99,7 +103,7 @@ export default defineComponent({
       }
       if(props.typeMail === TypeMail.Budget) {
         input.type = props.type
-        input.displayCode = true
+        input.displayCode = props.displayCode
       }
       mutate(input)
     }
