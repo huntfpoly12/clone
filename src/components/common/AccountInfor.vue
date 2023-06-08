@@ -1,5 +1,5 @@
 <template>
-  <a-dropdown  :overlayStyle="{ 'border': '2px solid'}">
+  <a-dropdown  :overlayStyle="{ 'border': '2px solid'}" :trigger="['click']">
       <a class="ant-dropdown-link" @click.prevent>
         <a-spin :spinning="!userInfor" size="small"></a-spin>{{ userInfor ? userInfor.name : ''}}
         <DownOutlined />
@@ -8,9 +8,9 @@
         <a-menu>
           <a-menu-item>
             <div class="user-infor">
-              <p class="name-infor" ref="paragraph" @click="copyText(userInfor.username)">
+              <p class="name-infor" ref="paragraph" >
                  <div> ID : {{userInfor.username}} <a-tag v-if="userInfor.type != 'c'" :color="getColorTag(userInfor.type)?.color">{{ getColorTag(userInfor.type)?.name }}</a-tag></div>
-                 <div class="copy-success" :class="{ 'copy-success-show': showCopySuccess }">Copy...</div>
+                 <!-- <div class="copy-success" :class="{ 'copy-success-show': showCopySuccess }">Copy...</div> -->
               </p>
               <p>{{userInfor.email}}</p>
               <p>{{ $filters.formatPhoneNumber(userInfor.mobilePhone)}}</p>
