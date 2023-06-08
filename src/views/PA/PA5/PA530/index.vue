@@ -114,11 +114,8 @@
                     </a-tooltip>
                 </div>
                 <div class="title-body-right">
-                    <a-form-item label="영수일">
-                        <div>
+                            <span class="title-body-right-label">영수일 :</span>
                             <date-time-box width="150px" v-model:valueDate="dateSendEmail" />
-                        </div>
-                    </a-form-item>
                     <!-- <date-time-box width="160px" v-model:valueDate="dateSendEmail" /> -->
                 </div>
             </div>
@@ -581,7 +578,7 @@ export default defineComponent({
             dataSource.value.map((val: any) => {
                 total += val.totalTaxfreePay
             })
-            return `과세소득합계:  <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
+            return `비과세소득합계:  <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
         }
         const customizeTotalTaxPay = () => {
             let total = 0

@@ -91,7 +91,6 @@ export default defineComponent({
       () => props.valueInput,
       (newValue) => {
         value.value = newValue;
-        console.log(`output->newValue`, newValue);
       }
     );
     const app: any = getCurrentInstance();
@@ -109,7 +108,6 @@ export default defineComponent({
     watch(result, (newVal: any) => {
       dataSource.value = newVal.findSalesRepresentatives;
     });
-    console.log(`output->newValue1`, 1111);
 
     const updateValue = (value: any) => {
       emit("update:valueInput", value);

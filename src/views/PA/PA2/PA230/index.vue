@@ -489,7 +489,6 @@ const sendMail = (e: any) => {
   modalSendMail.value = true;
 };
 const printFunc = (val: any) => {
-  triggerPrint.value = true;
   dataPrint.value = {
     ...dataPrint.value,
     input: {
@@ -502,11 +501,15 @@ const printFunc = (val: any) => {
   // Print single row
   if (typeof val == "number") {
     dataPrint.value.employeeIds = [val];
-    if (dataPrint.value) refetchPrint();
+    if (dataPrint.value){
+      triggerPrint.value = true;
+       refetchPrint();
+    }
+
   } else {
     // Print multi row
     if (selectedItemKeys.value.length == 0) {
-      notification("error", "항목을 2개 이상 선택해야합니다");
+      notification("error", Message.getCommonMessage("404").message);
       return;
     } else dataPrint.value.employeeIds = selectedItemKeys.value;
     if (dataPrint.value) refetchPrint();

@@ -1000,7 +1000,6 @@ export default defineComponent({
         payItems: pa2,
         ...rest2
       } = editRowTab2PA120.value;
-      console.log(`output->rest2`,rest2,rest)
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {

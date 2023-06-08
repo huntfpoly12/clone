@@ -5,8 +5,7 @@
       <a-spin :spinning="loading || loadingUpdate">
         <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
           <div class="collapse-content">
-            {{ formState.status }}
-            <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
+            <a-collapse v-model:activeKey="activeKey"  :bordered="false" >
               <a-collapse-panel key="1" header="심사정보">
                 <a-row>
                   <a-col :span="24" style="display: flex">
@@ -304,7 +303,7 @@
                   </div>
                 </div>
               </a-collapse-panel>
-              <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
+              <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력" >
                 <a-form-item label="출금은행" class="clr" label-align="left" :label-col=" labelCol ">
                   <bank-select-box v-model:valueInput=" formState.content.cmsBank.bankType " width="150px" />
                 </a-form-item>
@@ -318,9 +317,11 @@
                 </a-form-item>
                 <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr" label-align="left"
                   :label-col=" labelCol ">
-                  <biz-number-text-box width="250px" v-model:valueInput="
-                    formState.content.cmsBank.ownerBizNumber
-                  " :required=" true " nameInput="cmsBank-ownerBizNumber" />
+                  <text-number-box width="250px" :required=" true "
+                    v-model:valueInput=" formState.content.cmsBank.ownerBizNumber " nameInput="cmsBank-accountNumber" :ruleCustom="() => checkBizNumberLen"
+                      :messageRuleCustom="lenFixedMsg" :maxLength="13" />
+                  <!-- <biz-number-text-box width="250px" v-model:valueInput="
+                  " :required=" true " nameInput="cmsBank-ownerBizNumber" /> -->
                   <div class="noteImage">
                     <info-tool-tip>
                       예금주의 사업자등록번호 또는 주민등록번호입니다.
@@ -333,7 +334,7 @@
                   " />
                 </a-form-item>
               </a-collapse-panel>
-              <a-collapse-panel key="7" header="기타">
+              <a-collapse-panel key="7" header="기타" forceRender>
                 <a-form-item label="영업관리담당" label-align="left" :label-col=" labelCol ">
                   <list-sales-dropdown v-model:valueInput="
                     formState.content.extra.salesRepresentativeId
@@ -897,6 +898,16 @@ export default defineComponent({
       keyInfo.value = key;
       statusPupopInfo.value = true;
     };
+
+    const lenFixedMsg = Message.getCommonMessage('105').message;
+    const checkBizNumberLen = ref(false)
+    watch(()=>formState.value.content.cmsBank.ownerBizNumber,(newVal: any)=>{
+      if(newVal.length !== 10 && newVal.length !==13){
+        checkBizNumberLen.value = false;
+      }else{
+        checkBizNumberLen.value = true;
+      }
+    },{deep : true});
     return {
       selectionChanged,
       contentReady,
@@ -947,6 +958,7 @@ export default defineComponent({
       checkedAccounting,
       withholdingServiceTypes,
       isStatusApproved,onRowChangeComfirm,
+      checkBizNumberLen,lenFixedMsg,
     };
   },
 });
