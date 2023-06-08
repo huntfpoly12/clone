@@ -1,6 +1,7 @@
 import { ApolloClient, ApolloLink, createHttpLink, from, InMemoryCache } from "@apollo/client/core";
 import {getJwtObject} from "@bankda/jangbuda-common";
-
+import { onError } from '@apollo/client/link/error';
+import store from '@/store'
 const baseURL = import.meta.env.VITE_GRAPHQL_ENDPOINT;
 const httpLink = createHttpLink({
   uri: baseURL,
@@ -47,8 +48,21 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
+const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }) => {
+  if (graphQLErrors) {
+    for (let err of graphQLErrors) {
+        // set open popup if has error
+        store.commit('common/setApiErrorData', err)
+        store.commit('common/setApiErrorStatus', true)
+    }
+  }
+  if (networkError) {
+    console.log(`[Network error]: ${networkError}`);
+  }
+});
+
 export const client = new ApolloClient({
-  link: from([authMiddleware, httpLink]),
+  link: from([refreshLink,authMiddleware, httpLink]),
   cache: new InMemoryCache(),
 });
 
