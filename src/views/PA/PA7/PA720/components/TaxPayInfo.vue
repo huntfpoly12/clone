@@ -9,7 +9,7 @@
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left" />
+      <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left"/>
       <template #tag="{ data }">
         <div v-if="data.data.employeeId">
           <span class="btn-container">
@@ -40,15 +40,15 @@
       <template #paymentDay="{ data }">
         {{ formatMonth(data.data.paymentDay) }}
       </template>
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" alignment="right" />
-      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" alignment="right" />
-      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" alignment="right" />
-      <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" alignment="right"  width="80"/>
+      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" alignment="right"  width="80"/>
+      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" alignment="right"  width="80"/>
+      <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot"/>
       <template #taxRateSlot="{ data }">
         {{ data.value }}%
       </template>
       <DxColumn caption="공제" cell-template="incomLocalTax" alignment="right"
-        :calculateCellValue="calculateIncomeTypeCodeAndName" />
+        :calculateCellValue="calculateIncomeTypeCodeAndName"  width="80"/>
       <template #incomLocalTax="{ data }">
         <a-tooltip placement="top">
           <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -59,7 +59,7 @@
           </span>
         </a-tooltip>
       </template>
-      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" alignment="right" />
+      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" alignment="right" width="80" />
     </DxDataGrid>
     <a-row class="fs-14 summary-ctn">
       <a-col span="7">
@@ -338,7 +338,7 @@ export default defineComponent({
     }
     const checkLen = (text: String, num: number) => {
       if (text.length > num) {
-        return text.substring(0, num - 3) + '...';
+        return text.substring(0, num - 2) + '...';
       }
       return text;
     };
