@@ -5,7 +5,7 @@
       <a-spin :spinning="loading || loadingUpdate">
         <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
           <div class="collapse-content">
-            <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
+            <a-collapse v-model:activeKey="activeKey"  :bordered="false" >
               <a-collapse-panel key="1" header="심사정보">
                 <a-row>
                   <a-col :span="24" style="display: flex">
@@ -303,7 +303,7 @@
                   </div>
                 </div>
               </a-collapse-panel>
-              <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
+              <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력" >
                 <a-form-item label="출금은행" class="clr" label-align="left" :label-col=" labelCol ">
                   <bank-select-box v-model:valueInput=" formState.content.cmsBank.bankType " width="150px" />
                 </a-form-item>
@@ -319,7 +319,7 @@
                   :label-col=" labelCol ">
                   <text-number-box width="250px" :required=" true "
                     v-model:valueInput=" formState.content.cmsBank.ownerBizNumber " nameInput="cmsBank-accountNumber" :ruleCustom="() => checkBizNumberLen"
-                      :messageRuleCustom="lenFixedMsg"  />
+                      :messageRuleCustom="lenFixedMsg" :maxLength="13" />
                   <!-- <biz-number-text-box width="250px" v-model:valueInput="
                   " :required=" true " nameInput="cmsBank-ownerBizNumber" /> -->
                   <div class="noteImage">
@@ -334,7 +334,7 @@
                   " />
                 </a-form-item>
               </a-collapse-panel>
-              <a-collapse-panel key="7" header="기타">
+              <a-collapse-panel key="7" header="기타" forceRender>
                 <a-form-item label="영업관리담당" label-align="left" :label-col=" labelCol ">
                   <list-sales-dropdown v-model:valueInput="
                     formState.content.extra.salesRepresentativeId
