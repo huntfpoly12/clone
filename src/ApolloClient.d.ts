@@ -48,7 +48,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }) => {
+const errorHandler = onError(({ networkError, graphQLErrors, operation, forward }) => {
   if (graphQLErrors) {
     for (let err of graphQLErrors) {
         // set open popup if has error
@@ -62,7 +62,7 @@ const refreshLink = onError(({ networkError, graphQLErrors, operation, forward }
 });
 
 export const client = new ApolloClient({
-  link: from([refreshLink,authMiddleware, httpLink]),
+  link: from([errorHandler,authMiddleware, httpLink]),
   cache: new InMemoryCache(),
 });
 
