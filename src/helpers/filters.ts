@@ -56,20 +56,37 @@ const filters = {
       } return null;
     },
     formatBizNumber(input: any) {
-      let inputStr = input.toString();
-      if (inputStr) {
-        let formattedNumber = `${inputStr.slice(0, 3)}-${inputStr.slice(3, 5)}-${inputStr.slice(5, 10)}`;
-        return formattedNumber;
+      if(input){
+        let inputStr = input.toString();
+        if (inputStr) {
+          let formattedNumber = `${inputStr.slice(0, 3)}-${inputStr.slice(3, 5)}-${inputStr.slice(5, 10)}`;
+          return formattedNumber;
+        }
+        return input || '';
       }
-      return input;
+      return '';
     },
     formatManageId(input: any) {
-      let inputStr = input.toString();
-      if (inputStr) {
-        let formattedNumber = `${inputStr.slice(0, 3)}-${inputStr.slice(3, 5)}-${inputStr.slice(5, 10)}-${inputStr.slice(10, 11)}`;
-        return formattedNumber;
+      if(input){
+        let inputStr = input.toString();
+        if (inputStr) {
+          let formattedNumber = `${inputStr.slice(0, 3)}-${inputStr.slice(3, 5)}-${inputStr.slice(5, 10)}-${inputStr.slice(10, 11)}`;
+          return formattedNumber;
+        }
+        return input || '';
       }
-      return input;
+      return '';
+    },
+    formatResidentId(input: any) {
+      if(input){
+        let inputStr = input.toString();
+        if (inputStr) {
+          let formattedNumber = `${inputStr.slice(0, 6)}-${inputStr.slice(6, 13)}`;
+          return formattedNumber;
+        }
+        return input || '';
+      }
+      return '';
     },
     formatNumber(input: number | string, decimal: number = 0) {
       if (!isNaN(+input)) {
