@@ -5,7 +5,7 @@
       <a-spin :spinning="loading || loadingUpdate">
         <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
           <div class="collapse-content">
-            <a-collapse v-model:activeKey="activeKey"  :bordered="false" >
+            <a-collapse v-model:activeKey="activeKey" accordion :bordered="false" >
               <a-collapse-panel key="1" header="심사정보">
                 <a-row>
                   <a-col :span="24" style="display: flex">
@@ -379,7 +379,7 @@
       @closePopup="isStatusApproved = false"
       :typeModal="'confirm'"
       :title="''"
-      :content=" `승인된 사업자등록번호(${formState.content.company.bizNumber})는 수정불가합니다. 그래도 승인하시겠습니까?`"
+      :content=" `승인된 사업자등록번호(${$filters.formatBizNumber(formState.content.company.bizNumber)})는 수정불가합니다. 그래도 승인하시겠습니까?`"
       :okText="'승인'"
       cancelText="아니오"
       @checkConfirm="onRowChangeComfirm"
@@ -501,15 +501,14 @@ export default defineComponent({
         if (newValue) {
           isWatching.value = false;
           trigger.value = true;
-          visible.value = newValue;
           dataQuery.value = { id: props.data };
-          Object.assign(formState, initialFormState);
         } else {
-          Object.assign(formState, initialFormState);
           imageLicenseFile.value = "";
           licenseFileName.value = "";
-          visible.value = newValue;
         }
+        Object.assign(formState, initialFormState);
+        visible.value = newValue;
+        activeKey.value = 1;
       }
     );
     const { result, loading, error, refetch } = useQuery(

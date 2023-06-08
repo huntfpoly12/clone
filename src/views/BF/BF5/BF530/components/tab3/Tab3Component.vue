@@ -138,6 +138,7 @@
             caption="사원주민번호"
             data-field="residentId"
             alignment="center"
+            :format="$filters.formatResidentId"
           />
           <DxColumn
             caption="신청일"
@@ -399,26 +400,26 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const countGet = ref(0);
-    const rangeDate: any = computed({
-      get() {
-        return [
-          parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
-          parseInt(dayjs().format("YYYYMMDD")),
-        ];
-      },
-      set(newVal: any) {
-        employeeRequestListParam.input = {
-          fromDate: newVal[0],
-          toDate: newVal[1],
-        };
-        if (countGet.value == 1) {
-          employeeRequestListTrigger.value = true;
-          employeeRequestListRefetch();
-        } else {
-          countGet.value = 0;
-        }
-      },
-    });
+    // const rangeDate: any = computed({
+    //   get() {
+    //     return [
+    //       parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
+    //       parseInt(dayjs().format("YYYYMMDD")),
+    //     ];
+    //   },
+    //   set(newVal: any) {
+    //     employeeRequestListParam.input = {
+    //       fromDate: newVal[0],
+    //       toDate: newVal[1],
+    //     };
+    //     if (countGet.value > 0) {
+    //       employeeRequestListTrigger.value = true;
+    //       employeeRequestListRefetch();
+    //     } else {
+    //       countGet.value = 0;
+    //     }
+    //   },
+    // });
     const formState: any = reactive({
       companyName: "",
       manageId: "",
@@ -436,14 +437,25 @@ export default defineComponent({
 
     //-----------------------Search with holding and data source----------------
 
+    const rangeDate = ref([dayjs().subtract(1, "week").format("YYYYMMDD"), dayjs().format("YYYYMMDD")]);
+    watch(rangeDate,(newVal: any)=>{
+      if(newVal){
+        employeeRequestListParam.input = {
+          fromDate: newVal[0],
+          toDate: newVal[1],
+        };
+        employeeRequestListTrigger.value = true;
+        employeeRequestListRefetch();
+      }
+    })
     const dataSource = ref<any[]>([...dataTableTab1]);
     const filterDsTab3Bf530 = computed(
       () => store.state.common.filterDsTab3Bf530
     );
     const employeeRequestListParam = reactive({
       input: {
-        fromDate: rangeDate.value[0],
-        toDate: rangeDate.value[1],
+        fromDate: +rangeDate.value[0],
+        toDate: +rangeDate.value[1],
       },
     });
     const employeeRequestListTrigger = ref(true);
@@ -484,6 +496,11 @@ export default defineComponent({
     });
     employeeRequestListError((res: any) => {
       notification("error", res.message);
+      dataSource.value = [];
+      if (props.onSearch) {
+        props.onSearch();
+      }
+      countGet.value++;
     });
 
     //----------------------------ON SEARCH ------------------------------
