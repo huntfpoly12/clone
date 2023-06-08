@@ -449,8 +449,8 @@ export default defineComponent({
   setup() {
     const store = useStore();
     store.dispatch("auth/getUserInfor", sessionStorage.getItem("token"));
-    const hasChangedPopupPA520 = computed(
-      () => store.getters["common/hasChangedPopupPA520"]
+    const hasChangedPopupPA210 = computed(
+      () => store.getters["common/hasChangedPopupPA210"]
     );
     const globalYear = computed(() =>
       parseInt(sessionStorage.getItem("paYear") ?? "0")
@@ -568,7 +568,7 @@ export default defineComponent({
     };
 
     const closeReportGridEdit = () => {
-      if (hasChangedPopupPA520.value) {
+      if (hasChangedPopupPA210.value) {
         notification("destroy", "");
         comfirmClosePopup(() => {
           statusReportGridEdit.value = false;
@@ -582,7 +582,7 @@ export default defineComponent({
     };
 
     const closeReportGridModify = () => {
-      if (hasChangedPopupPA520.value) {
+      if (hasChangedPopupPA210.value) {
         notification("destroy", "");
         comfirmClosePopup(() => {
           statusReportGridModify.value = false;
@@ -596,7 +596,7 @@ export default defineComponent({
     };
 
     const closeReportGridEditModify = () => {
-      if (hasChangedPopupPA520.value) {
+      if (hasChangedPopupPA210.value) {
         notification("destroy", "");
         comfirmClosePopup(() => {
           statusReportGridEditModify.value = false;

@@ -1,5 +1,5 @@
 const screenGetterPA210 = {
-  hasChangedPopupPA520:(state:any)=> state.hasChangedPopupPA520,
+  hasChangedPopupPA210:(state:any)=> state.hasChangedPopupPA210,
 };
   
 export default screenGetterPA210;
