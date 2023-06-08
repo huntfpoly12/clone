@@ -18,6 +18,7 @@
             alt=""
             class="ml-3"
             @click="actionConfirmDelete"
+            v-if="false"
           />
           <img
             style="width: 31px; cursor: pointer"
