@@ -72,6 +72,7 @@ import queries from "@/graphql/queries/PA/PA1/PA110/index"
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
 import { sampleDataIncomeWage } from "../../utils/index"
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -184,7 +185,7 @@ export default defineComponent({
         onDone(res => {
             setModalVisible()
             setModalVisibleCopy()
-            notification('success', `완료!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             store.state.common.pa110.processKeyPA110.imputedMonth = month.value
             store.state.common.pa110.processKeyPA110.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
             store.state.common.pa110.processKeyPA110.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
@@ -226,9 +227,9 @@ export default defineComponent({
             modalCopy.value = true
         }
         const actionCopy = () => {
-            onSubmit();
-            setModalVisible()
-            setModalVisibleCopy()
+            // onSubmit();
+            // setModalVisible()
+            // setModalVisibleCopy()
             if (dataApiCopy.value.imputedYear) {
                 mutate({
                     companyId: companyId,
