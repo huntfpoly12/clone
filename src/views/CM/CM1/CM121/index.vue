@@ -24,6 +24,7 @@
               :allow-column-resizing="colomn_resize"
               :show-borders="true"
               key-expr="bankbookId"
+              noDataText="내역이 없습니다"
               :column-auto-width="true"
               :focused-row-enabled="true"
               v-model:focused-row-key="focusedRowKey"
