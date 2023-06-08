@@ -84,7 +84,7 @@
         </a-col>
         <a-col span="8">
           <DxField label="변경후급여">
-            <number-box-money v-model:valueInput="formData.afterSalary" required :min="1" />
+            <number-box-money v-model:valueInput="formData.afterSalary" :min="1" />
           </DxField>
         </a-col>
         <a-col span="8">
@@ -116,7 +116,7 @@
 
       </a-row>
       <div class="d-flex justify-center mt-20">
-        <button-basic :width="90" id="btn-save" @onClick="onSubmit($event)" style="margin: auto" mode="contained"
+        <button-basic :width="90" id="btn-save" :disabled="formData.afterSalary && (formData.afterSalary === formData.beforeSalary)" @onClick="onSubmit($event)" style="margin: auto" mode="contained"
           type="default" text="저장" />
       </div>
     </standard-form>

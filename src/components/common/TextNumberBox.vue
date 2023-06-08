@@ -49,7 +49,7 @@ export default defineComponent({
     },
     messageRuleCustom: {
       type: String,
-      default: Message.getCommonMessage('104').message,
+      default: Message.getCommonMessage('105').message,
     },
     rtlEnabled: {
       type: Boolean,
