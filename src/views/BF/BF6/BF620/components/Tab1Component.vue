@@ -21,8 +21,8 @@
       </a-col>
     </a-row>
     <div class="content-grid">
-      <!-- {{ filteredDataSource }} <br />
-      {{ dataSource }} <br />
+      <!-- {{ filteredDataSource }} <br /> -->
+      <!-- {{ dataSource }} <br />
       {{ productionCount }} productionCount<br />
       {{ beforeCount }} beforeCount<br /> -->
       <DxDataGrid id="tab1-bf620" :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
@@ -392,6 +392,9 @@ export default defineComponent({
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
           return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
         });
+        // console.log(`output->event.selectedRowsData[0].imputedMonth`,event.selectedRowsData[0].imputedMonth)
+        // requestFileData.value.filter.imputedMonth = event.selectedRowsData[0].imputedMonth;
+        // requestFileData.value.filter.imputedYear = event.selectedRowsData[0].imputedYear;
     };
     const modalStatus = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
