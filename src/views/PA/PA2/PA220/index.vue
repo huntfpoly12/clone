@@ -23,31 +23,23 @@
             </a-row>
         </div>
         <div class="page-content">
-            <div class="title-body" style="padding-top: 7px">
-                <a-row>
-                    <a-col :span="12">
-                        <div class="title-body-left-1">
-                            <div stlyle="font-size: 12px">
-                                서식 설정 :
-                            </div>
-                            <a-tooltip color="black" placement="top">
-                                <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
-                                <img src="@/assets/images/iconInfo.png" class="img-info" />
-                            </a-tooltip>
-                        </div>
-                        <div class="title-body-left-2">
-                            <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
-                                :layoutCustom="'vetical'" valueExpr="id" />
-                        </div>
-                    </a-col>
-                    <a-col :span="12">
-                        <div class="created-date">
-                            <label class="lable-item">작성일 :</label>
-                            <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
-                                dateFormat="YYYY-MM-DD" />
-                        </div>
-                    </a-col>
-                </a-row>
+            <div class="title-body">
+                <div class="title-body-left-1">
+                    <div class="title-body-left-1-label">
+                        서식 설정 :
+                    </div>
+                    <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
+                        :layoutCustom="'horizontal'" valueExpr="id" />
+                    <a-tooltip color="black" placement="top">
+                        <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
+                    </a-tooltip>
+                </div>
+                <div class="created-date">
+                    <label class="lable-item">작성일 :</label>
+                    <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
+                        dateFormat="YYYY-MM-DD" />
+                </div>
             </div>
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column" noDataText="내역이 없습니다"
