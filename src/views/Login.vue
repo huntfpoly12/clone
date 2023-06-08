@@ -71,6 +71,7 @@ export default {
         });
         const errors = ref(null);
         const submitForm = (e) => {
+          errors.value = null
           e.preventDefault();  
           signinData();
           sessionStorage.setItem("username", form.username);
