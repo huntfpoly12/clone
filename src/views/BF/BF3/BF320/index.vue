@@ -210,20 +210,20 @@ export default defineComponent({
           companyId: NaN,
         })
         const userToken = ref();
-        function cloneWebsite() {
+        const cloneWebsite = () => {
           const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
           const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
           const currentUrl = window.location.origin.replace(/\/$/, '');
           if(userToken.value){
-            window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}`, '_blank', windowFeatures);
+            window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}&companyName=${companyInfo.name}`, '_blank', windowFeatures);
           }
         }
         const {mutate, onDone, onError: customerLoginError } = useMutation(mutations.customerWorkLogin);
         const isCustomerModal = ref(false);
         const onEnterUser = (data: any) => {
           companyInfo.code = data.code;
-          companyInfo.name = data.companyName;
+          companyInfo.name = data.name;
           companyInfo.companyId = data.id;
           isCustomerModal.value = true;
         }

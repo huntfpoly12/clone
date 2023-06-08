@@ -122,10 +122,10 @@
                 </div>
                 <div v-else :class="!disableAddMonth(9) ? `add-month` : `add-month disabled`" @click="!disableAddMonth(9) && addMonth(9)">[+]</div>
               </template>
-              <DxColumn caption="10" width="100px" cell-template="month-10"
+              <DxColumn caption="10" width="100px" cell-template="month-10" alignment="center"
                         :cssClass="selectMonthColumn.imputedMonth == 10 ? 'column-focus': ''"/>
               <template #month-10="{ data }">
-                <div class="hover-underlined" v-if="data.data.month10" alignment="center"
+                <div class="hover-underlined" v-if="data.data.month10"
                      @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth,data.data.month10.status)">
                   <colorful-badge :value="data.data.month10.status"
                                   :year="data.data.month10.paymentYear" :month="data.data.month10.paymentMonth"
