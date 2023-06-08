@@ -46,23 +46,23 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   });
 
   return forward(operation);
-});
-
-const errorHandler = onError(({ networkError, graphQLErrors, operation, forward }) => {
-  if (graphQLErrors) {
-    for (let err of graphQLErrors) {
-        // set open popup if has error
-        store.commit('common/setApiErrorData', err)
-        store.commit('common/setApiErrorStatus', true)
+}).concat(
+  onError(({ networkError, graphQLErrors }) => {
+    if (graphQLErrors) {
+      for (let err of graphQLErrors) {
+          // set open popup if has error
+          store.commit('common/setApiErrorData', err)
+          store.commit('common/setApiErrorStatus', true)
+      }
     }
-  }
-  if (networkError) {
-    console.log(`[Network error]: ${networkError}`);
-  }
-});
+    if (networkError) {
+      console.log(`[Network error]: ${networkError}`);
+    }
+  })
+);
 
 export const client = new ApolloClient({
-  link: from([errorHandler,authMiddleware, httpLink]),
+  link: from([authMiddleware, httpLink]),
   cache: new InMemoryCache(),
 });
 

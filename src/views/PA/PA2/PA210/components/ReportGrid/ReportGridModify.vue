@@ -18,6 +18,7 @@
             alt=""
             class="ml-3"
             @click="actionConfirmDelete"
+            v-if="false"
           />
           <img
             style="width: 31px; cursor: pointer"
@@ -307,7 +308,7 @@ export default defineComponent({
         }
       },
       afterChange: async (changes: any, source: string) => {
-        if (source == "edit") {
+        if (source == "edit" && firstTimeLoad.value) {
           const { checkYETaxAdj, cell12 } = await calculateWithholdingStatusReportModified(wrapper);
           // kiểm tra disable refun theo cell 12
           if (!cell12) {
@@ -321,6 +322,8 @@ export default defineComponent({
           }
           dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
           store.commit("common/setHasChangedPopupPA210", true);
+        } else if (source == "edit") {
+          firstTimeLoad.value = true;
         }
       },
       hotRef: null,
