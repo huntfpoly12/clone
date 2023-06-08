@@ -3,7 +3,7 @@
         <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기"
             cancelText="그냥 나가기" @cancel="setModalVisible()" width="80%">
             <standard-form :wrapper-col="{ span: 14 }">
-                <a-spin :spinning="loading || loadingUpdate">
+                <a-spin :spinning="loadingData">
                     <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
                         <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
                             <div style="height: 60vh;overflow-y: scroll;">
@@ -356,12 +356,11 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const facilityBizType = FacilityBizType.all();
-        const activeKey = ref([1]);
+        const activeKey = ref(1);
         const dataQuery = ref();
         const dataQueryMemos = ref();
         const gridRefName: any = ref("grid");
 
-        const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
         let objDataDefault = reactive({ ...initialState });
 
@@ -382,7 +381,7 @@ export default defineComponent({
         const isDuplicateName = ref(true);
         // ============ GRAPQL ===============================
         // get service contract
-        const { result } = useQuery(
+        const { result, loading: loadingData, } = useQuery(
             queries.getServiceContract,
             dataQuery,
             () => ({
@@ -436,7 +435,6 @@ export default defineComponent({
         // Update Service Contract for info
         const {
             mutate: actionUpdate,
-            loading: loadingUpdate,
             onDone: updateDone,
             onError: errUpdateContract
         } = useMutation(mutations.updateServiceContractInfo);
@@ -517,17 +515,16 @@ export default defineComponent({
                 }
                 setTimeout(() => {
                     isWatching.value = true;
+                    objDataDefault = JSON.parse(JSON.stringify({ ...formState }))
                 }, 0);
             }
-            setTimeout(() => {
-                objDataDefault = JSON.parse(JSON.stringify({ ...formState }))
-            }, 1000);
         });
 
         watch(() => formState.info.usedAccounting, (value) => {
           if(isWatching.value){
             if (value) {
-                getTotalAccounting()
+                getTotalAccounting();
+                addRow();
             } else {
                 dataSource.value = []
                 formState.info.accountingPrice = 0
@@ -581,6 +578,7 @@ export default defineComponent({
         watch(() => props.modalStatus, (newValue) => {
           trigger.value = true;
           isWatching.value = false;
+          activeKey.value = 1;
             if (newValue) {
                 dataQuery.value = { id: props.idRowEdit };
                 dataQueryMemos.value = { companyId: props.idRowEdit };
@@ -633,7 +631,7 @@ export default defineComponent({
             }
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                activeKey.value = [1];
+                activeKey.value = 1;
             } else {
                 var variables = JSON.parse(JSON.stringify({ ...formState }));
                 if (variables.info.usedAccounting) {
@@ -810,7 +808,7 @@ export default defineComponent({
         const checkDuplicate = () => isDuplicateName.value;
         return {
             handleInputTexService, getImgUrl, checkOption, disableInput, getPriceOption, changeChecked, changeValueInput, getTotalAmount, setModalVisible, removeImg, handleAdd, handleDeleteMemo, handleAddMemo, actionUpdateServiceContract, addRow, onDelConfirm, onFocusedRowChanged, onInitRow,
-            move_column, colomn_resize, loading, activeKey, formState, facilityBizType, formStateMomes, loadingUpdate, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum, onDelete, deleteModal, contentDelete,
+            move_column, colomn_resize, activeKey, formState, facilityBizType, formStateMomes, loadingData, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum, onDelete, deleteModal, contentDelete,
             isDuplicateName,checkDuplicate,onChangeName
         };
     },

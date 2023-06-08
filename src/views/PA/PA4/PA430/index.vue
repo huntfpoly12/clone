@@ -351,12 +351,12 @@ export default defineComponent({
          * action send multi print
          */
         const onPrintGroup = () => {
-            if (incomeIds.value.length > 1) {
+            if (incomeIds.value.length) {
                 dataInputReport.incomeIds = incomeIds.value
                 triggerReport.value = true;
                 // refetchReport()
             } else {
-                notification('error', Message.getMessage('COMMON', '601').message)
+                notification('error', Message.getMessage('COMMON', '404').message)
             }
         };
 

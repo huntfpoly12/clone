@@ -380,6 +380,7 @@ const {
 );
 onResultPrint((res) => {
   window.open(res.data?.getIncomeWageWithholdingTaxByEmployeeReportViewUrl);
+  triggerPrint.value = false
 });
 const {
   refetch: refetchData,
@@ -503,7 +504,7 @@ const printFunc = (val: any) => {
     dataPrint.value.employeeIds = [val];
     if (dataPrint.value){
       triggerPrint.value = true;
-       refetchPrint();
+      //  refetchPrint();
     }
 
   } else {
@@ -511,8 +512,11 @@ const printFunc = (val: any) => {
     if (selectedItemKeys.value.length == 0) {
       notification("error", Message.getCommonMessage("404").message);
       return;
-    } else dataPrint.value.employeeIds = selectedItemKeys.value;
-    if (dataPrint.value) refetchPrint();
+    } else {
+      dataPrint.value.employeeIds = selectedItemKeys.value;
+      triggerPrint.value = true;
+    }
+    // if (dataPrint.value) refetchPrint();
   }
   clearSelection();
 };
