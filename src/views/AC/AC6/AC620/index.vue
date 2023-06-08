@@ -41,7 +41,7 @@
                 :focused-row-enabled="true"
                 @focused-row-changing="onFocusedRowChanging"
                 @focused-row-changed="onFocusedRowChanged"
-                v-model:focused-row-key="focusedRowKey"
+                :focused-row-key="focusedRowKey"
                 :focusedRowIndex="focusedRowIndex"
                 style="height: 740px"
                 noDataText="내역이 없습니다"
@@ -465,7 +465,7 @@ export default defineComponent({
         store: {
           type: "array",
           key: "backerCode",
-          data: listBackers.value,
+          data: res.data.searchBackers.datas || [],
         },
         requireTotalCount: true,
       });
@@ -484,13 +484,12 @@ export default defineComponent({
       if(isClickAddRow.value) {
         addNewRow()
       } else {
-        if(selectRowKeyAction.value !==0) {
-          focusedRowKey.value = selectRowKeyAction.value
-        } else {
+        isNewRow.value = false;
+        if(selectRowKeyAction.value === 0) {
           focusedRowKey.value = res.data.createBacker.backerCode;
           selectRowKeyAction.value = res.data.createBacker.backerCode;
-        }
-        isNewRow.value = false;
+          focusedRowIndex.value = 0
+        } else focusedRowKey.value = selectRowKeyAction.value
       }
       notification("success", Message.getCommonMessage('101').message);
     });
@@ -505,6 +504,7 @@ export default defineComponent({
 
       if (!isNewRow.value) {
         focusedRowKey.value = selectRowKeyAction.value;
+        focusedRowIndex.value = 0
       } else {
         storeDataSource.value.insert(initBackerCreateInput).then((result) => {
           previousRowData.value = { ...result };
@@ -602,7 +602,7 @@ export default defineComponent({
       if(e.row) {
         formState.value = e.row?.data;
         previousRowData.value = cloneDeep(e.row?.data);
-        formRef.value.resetValidate();
+        focusedRowKey.value = e.row?.key;
       }
     };
     const addNewRow = () => {

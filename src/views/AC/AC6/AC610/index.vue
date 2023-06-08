@@ -316,7 +316,6 @@ export default defineComponent({
     // const focusedRowKey: any = ref(null);
     const modalStatus = ref(false);
     const modalStatusAdd = ref(false);
-    const listClient: any = ref([]);
 
     const dataSearch = ref({
       page: 1,
@@ -367,12 +366,11 @@ export default defineComponent({
     );
 
     responseListClient((res) => {
-      listClient.value = res.data.searchClients.datas;
       dataSource.value = new DataSource({
         store: {
           type: "array",
           key: "clientId",
-          data: listClient.value || [],
+          data: res.data.searchClients.datas || [],
         },
         // requireTotalCount: true,
       });
@@ -392,8 +390,10 @@ export default defineComponent({
         addNewRow()
       } else {
         isNewRow.value = false;
-        if(selectRowKeyAction.value === 0)
+        if(selectRowKeyAction.value === 0) {
+          focusedRowIndex.value = 0
           focusedRowKey.value = res.data.createClient.clientId;
+        }
         else focusedRowKey.value = selectRowKeyAction.value;
         previousRowData.value = { ...formState.value };
       }
@@ -409,6 +409,7 @@ export default defineComponent({
       // update when click discard
       if (!isNewRow.value) {
         focusedRowKey.value = selectRowKeyAction.value;
+        focusedRowIndex.value = 0
       } else {
         isClickAddRow.value && addNewRow()
       }
@@ -517,7 +518,7 @@ export default defineComponent({
         formState.value = e.row?.data;
         previousRowData.value = { ...e.row?.data };
         isChangedForm.value = false
-        formRef.value.resetValidate();
+        // formRef.value.resetValidate();
       }
     };
     const addNewRow = () => {
