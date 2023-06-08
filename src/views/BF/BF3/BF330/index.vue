@@ -80,8 +80,8 @@
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn :width="150" caption="서비스" cell-template="used-withholding"/>
                     <template #used-withholding="{ data }">
-                        <a-tag>회계</a-tag>
-                        <a-tag style="border-radius: 50%;" >{{ data.data.usedAccountingCount }}</a-tag>
+                        <a-tag :style="{visibility: data.data.usedAccountingCount ? 'inherit' : 'hidden'}">회계</a-tag>
+                        <a-tag :style="{visibility: data.data.usedAccountingCount ? 'inherit' : 'hidden',borderRadius: '50%'}" >{{ data.data.usedAccountingCount }}</a-tag>
                         <a-tag color="black" v-if="data.data.usedWithholding === true">원천</a-tag>
                     </template>
                     <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
