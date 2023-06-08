@@ -8,7 +8,10 @@
         <a-menu>
           <a-menu-item>
             <div class="user-infor">
-              <p class="name-infor">ID : {{userInfor.username}} <a-tag v-if="userInfor.type != 'c'" :color="getColorTag(userInfor.type)?.color">{{ getColorTag(userInfor.type)?.name }}</a-tag></p>
+              <p class="name-infor" ref="paragraph" @click="copyText(userInfor.username)">
+                 <div> ID : {{userInfor.username}} <a-tag v-if="userInfor.type != 'c'" :color="getColorTag(userInfor.type)?.color">{{ getColorTag(userInfor.type)?.name }}</a-tag></div>
+                 <div class="copy-success" :class="{ 'copy-success-show': showCopySuccess }">Copy...</div>
+              </p>
               <p>{{userInfor.email}}</p>
               <p>{{ $filters.formatPhoneNumber(userInfor.mobilePhone)}}</p>
               <p v-if="userInfor.compactCompany">{{ userInfor.compactCompany.name}}</p>
@@ -42,6 +45,8 @@ export default {
   setup(props: any, { emit }: any) {
     const store = useStore();
     const router = useRouter()
+    const paragraph = ref();
+    const showCopySuccess = ref(false);
     const showModalChangePass = ref(false)
     store.dispatch('auth/getUserInfor');
     const userInfor = computed(() => store.state.auth.userInfor);
@@ -63,12 +68,30 @@ export default {
     const openChangePassword = () => {
       showModalChangePass.value = true
     }
+
+    const copyText = (id: string) => {
+      const tempInput = document.createElement('input');
+      tempInput.value = id;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      showCopySuccess.value = true;
+
+      setTimeout(() => {
+        showCopySuccess.value = false;
+      }, 2000);
+      
+    };
     return {
       userInfor,
       getColorTag,
       openChangePassword,
       showModalChangePass,
       logout,
+      paragraph,showCopySuccess,
+      copyText
     };
   },
 };
@@ -88,5 +111,17 @@ export default {
   text-align: right;
   line-height: 18px;
 
+}
+.copy-success {
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.3s, transform 1s;
+  color: red;
+  font-size: 20px;
+}
+
+.copy-success-show {
+  opacity: 1;
+  transform: translateY(-80px);
 }
 </style>
