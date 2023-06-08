@@ -1,5 +1,5 @@
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
-
+import filters from '@/helpers/filters'
 export const optionsRadioReportType = [
   { id: 1, text: "매월" },
   { id: 6, text: "반기" },
@@ -45,12 +45,14 @@ export const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
 
 const arrLabel = Array();
 TaxFreePayItem.all().forEach((k, index) => {
-  if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
-      arrLabel[index] = TaxFreePayItem.all()[index].name + ' 월' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit
-  } else if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit) {
-      arrLabel[index] = TaxFreePayItem.all()[index].name + ' 년' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit
+  let data = TaxFreePayItem.all()[index];
+  let parseToStringData = JSON.parse(JSON.stringify(data)).props;
+  if (parseToStringData.monthlyLimit) {
+      arrLabel[index] = data.name + ' 월' + filters.formatCurrency(parseToStringData.monthlyLimit)
+  } else if (parseToStringData.annualLimit) {
+      arrLabel[index] = data.name + ' 년' + filters.formatCurrency(parseToStringData.annualLimit)
   } else {
-      arrLabel[index] = TaxFreePayItem.all()[index].name
+      arrLabel[index] = data.name
   }
 });
 
