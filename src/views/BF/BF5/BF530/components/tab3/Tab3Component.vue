@@ -103,12 +103,17 @@
             :format="reportTypeTextTab3"
           />
           <DxColumn caption="업체명" data-field="companyName" />
-          <DxColumn caption="사업장관리번호" data-field="paymentYearMonth" />
+          <DxColumn
+            caption="사업장관리번호"
+            data-field="manageId"
+            :format="$filters.formatManageId"
+          />
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
           <DxColumn
             caption="상태"
             width="135px"
             cell-template="workingStatus"
+            alignment="center"
           />
           <template #workingStatus="{ data }: any">
             <SelectBoxCT
@@ -123,13 +128,15 @@
           </template>
           <DxColumn
             caption="사무대행위탁상태"
-            data-field="productionStatus2"
+            data-field="companyConsignStatus"
             width="125"
+            :format="consignStatusText"
+            alignment="center"
           />
           <DxColumn caption="사원명" data-field="name" />
           <DxColumn
             caption="사원주민번호"
-            data-field="employeeId"
+            data-field="residentId"
             alignment="center"
           />
           <DxColumn
@@ -345,7 +352,6 @@ import { Message } from "@/configs/enum";
 import {
   reportTypeSelectboxTab3,
   workingStatusSelectbox,
-  companyConsignStatusSelectbox,
   EDIStatusSelectbox,
   formatMonth,
   dataTableTab1,
@@ -353,6 +359,7 @@ import {
   reportTypeSelectbox2,
   reportTypeTextTab3,
   completedAtFormat,
+  consignStatusText,
 } from "../../utils/index";
 import dayjs from "dayjs";
 import Download from "./Download.vue";
@@ -460,6 +467,9 @@ export default defineComponent({
           return {
             companyName: item.company.name,
             companyPresidentName: item.company.presidentName,
+            manageId: item.majorInsuranceConsignStatus.manageId,
+            companyConsignStatus:
+              item.majorInsuranceConsignStatus.companyConsignStatus,
             visible: false,
             ...item,
           };
@@ -996,7 +1006,6 @@ export default defineComponent({
       filterDsTab3Bf530,
       reportTypeSelectboxTab3,
       workingStatusSelectbox,
-      companyConsignStatusSelectbox,
       EDIStatusSelectbox,
       states1,
       reportTypeSelectbox2,
@@ -1019,6 +1028,7 @@ export default defineComponent({
       downConfirm2,
       completedAtFormat,
       loadingDataSource,
+      consignStatusText,
     };
   },
 });
