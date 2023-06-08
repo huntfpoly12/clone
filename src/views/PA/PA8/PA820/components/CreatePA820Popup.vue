@@ -264,10 +264,10 @@ export default defineComponent({
       employeementInsuranceJobChangeReport: false,
       healthInsuranceLossCode: '1',
       employeementInsuranceLossDescription: '',
-      totalSalaryThisYear: 100000,
-      totalSalaryLastYear: 100000,
-      workMonthThisYear: 1300,
-      workMonthLastYear: 100000,
+      totalSalaryThisYear: 0,
+      totalSalaryLastYear: 0,
+      workMonthThisYear: 0,
+      workMonthLastYear: 0,
       retireDate: null
     })
     const formStateToCompare = ref({ ...formState });

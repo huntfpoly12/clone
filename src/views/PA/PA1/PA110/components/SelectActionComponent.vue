@@ -216,7 +216,7 @@ export default defineComponent({
                         })
                         trigger.value = true;
                     } else {
-                        notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+                        notification('error', Message.getCommonMessage('404').message)
                     }
                     break;
                 case 'EmailSalaryStatement':
@@ -228,11 +228,11 @@ export default defineComponent({
                     }
                     break;
                 case 'EmailMultiSalaryStatement':
-                    if (props.dataRows.length > 1) {
+                    if (props.dataRows.length) {
                         popupDataEmailMulti.value = props.dataRows
                         modalEmailMulti.value = true;
                     } else {
-                        notification('error', Message.getCommonMessage('601').message)
+                        notification('error', Message.getCommonMessage('404').message)
                     }
                     break;
             }

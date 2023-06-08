@@ -269,7 +269,7 @@ export default defineComponent({
             }
         }
         const onPrintGroup = () => {
-            if (dataSelect.value.length > 1) {
+            if (dataSelect.value.length) {
                 var array: any = [];
                 dataSelect.value.map((val: any) => {
                     array.push(val.employeeId)
@@ -277,7 +277,7 @@ export default defineComponent({
                 valueDefaultIncomeBusiness.value.employeeIds = array
                 triggerPrint.value = true;
             } else {
-                notification('error', messages.getCommonMessage('601').message)
+                notification('error', messages.getCommonMessage('404').message)
             }
         };
         const selectionChanged = (data: any) => {

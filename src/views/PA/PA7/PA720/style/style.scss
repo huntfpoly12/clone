@@ -129,9 +129,10 @@
   }
 
   :deep .input-group-4 {
-    .ant-form-item-control{
+    .ant-form-item-control {
       flex: 1
     }
+
     .ant-form-item-control-input-content {
       display: flex;
       align-items: center;
@@ -278,6 +279,11 @@
     .dx-freespace-row {
       display: none !important;
     }
+
+    
+  }
+  :deep span.ant-tag {
+    min-width: 145px;
   }
 
   .sum-item {
@@ -309,6 +315,7 @@
   }
 
 }
+
 .error-date {
   background: #d9534f;
   color: white;
