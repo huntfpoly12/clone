@@ -454,8 +454,8 @@ const sendMail = (e: any) => {
     createDate: createDate.value,
   };
   if (e.employeeId) {
-    clearSelection();
-    emailAddress.value = e.email;
+    console.log('%c sessionStorage.getItem("username")', 'color: red;', sessionStorage.getItem("username"));
+    emailAddress.value = userInfo.value.email;
     dataSendEmail.value.employeeInputs = [
       {
         receiverName: e.name,
@@ -465,9 +465,10 @@ const sendMail = (e: any) => {
       },
     ];
     switchTypeSendMail.value = true;
+    clearSelection();
   } else {
-    if (selectedItemKeys.value.length < 2) {
-      notification("error", Message.getCommonMessage("601").message);
+    if (selectedItemKeys.value.length < 1) {
+      notification("error", Message.getCommonMessage("404").message);
       return;
     }
     emailAddress.value = userInfo.value.email;

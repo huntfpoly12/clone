@@ -4,60 +4,29 @@
     <a-row class="cm-121_row">
       <a-col span="12" class="cm-121_main">
         <div class="cm-121_main-content">
-          <a-spin
-            :spinning="
-              loadingGetBankbooks ||
-              loadingCreateBankbook ||
-              loadingUpdateBankbook ||
-              loadingDeleteBankbook ||
-              loadingReorderBankbooks
-            "
-            size="large"
-          >
-            <DxDataGrid
-              id="gridContainer"
-              ref="cm121DxDataGrid"
-              :show-row-lines="true"
-              :hoverStateEnabled="true"
-              :data-source="dataSource"
-              :allow-column-reordering="move_column"
-              :allow-column-resizing="colomn_resize"
-              :show-borders="true"
-              key-expr="bankbookId"
-              noDataText="내역이 없습니다"
-              :column-auto-width="true"
-              :focused-row-enabled="true"
-              v-model:focused-row-key="focusedRowKey"
-              @focused-row-changing="onFocusedRowChanging"
-            >
-              <DxRowDragging
-                :allow-reordering="true"
-                :on-reorder="onReorder"
-                :on-drag-change="onDragChange"
-                :show-drag-icons="true"
-              />
+          <a-spin :spinning="loadingGetBankbooks ||
+            loadingCreateBankbook ||
+            loadingUpdateBankbook ||
+            loadingDeleteBankbook ||
+            loadingReorderBankbooks
+            " size="large">
+            <DxDataGrid id="gridContainer" ref="cm121DxDataGrid" :show-row-lines="true" :hoverStateEnabled="true"
+              :data-source="dataSource" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+              :show-borders="true" key-expr="bankbookId" noDataText="내역이 없습니다" :column-auto-width="true"
+              :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
+              @focused-row-changing="onFocusedRowChanging">
+              <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :on-drag-change="onDragChange"
+                :show-drag-icons="true" />
               <DxPaging :enabled="false" />
               <DxSorting mode="none" />
               <DxScrolling mode="standard" show-scrollbar="always" />
-              <DxSearchPanel
-                :visible="true"
-                :highlight-case-sensitive="true"
-                placeholder="검색"
-              />
+              <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
               <DxExport :enabled="true" />
               <DxToolbar>
                 <DxItem name="searchPanel" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
-                <DxItem
-                  location="after"
-                  template="button-history"
-                  css-class="cell-button-add"
-                />
-                <DxItem
-                  location="after"
-                  template="button-add"
-                  css-class="cell-button-add"
-                />
+                <DxItem location="after" template="button-history" css-class="cell-button-add" />
+                <DxItem location="after" template="button-add" css-class="cell-button-add" />
               </DxToolbar>
               <template #button-add>
                 <a-tooltip placement="top">
@@ -69,154 +38,78 @@
               </template>
               <template #button-history>
                 <DxButton icon="plus">
-                  <HistoryOutlined
-                    style="font-size: 18px"
-                    @click="modalHistory"
-                  />
+                  <HistoryOutlined style="font-size: 18px" @click="modalHistory" />
                 </DxButton>
               </template>
 
               <DxColumn caption="금융기관" data-field="type">
-                <DxLookup
-                  :data-source="bankTypeCommon"
-                  value-expr="c"
-                  display-expr="n"
-                />
+                <DxLookup :data-source="bankTypeCommon" value-expr="c" display-expr="n" />
               </DxColumn>
-              <DxColumn caption="통장번호" data-field="bankbookNumber" />
+              <DxColumn caption="통장번호" data-field="bankbookNumber" width="105"/>
               <DxColumn caption="통장용도" data-field="useType">
-                <DxLookup
-                  :data-source="bankbookUseType"
-                  value-expr="value"
-                  display-expr="label"
-                />
+                <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
               </DxColumn>
-              <DxColumn caption="통장별명" data-field="bankbookNickname" />
+              <DxColumn caption="통장별명" data-field="bankbookNickname" width="160"/>
               <DxColumn caption="사업구분" data-field="facilityBusinessId">
-                <DxLookup
-                  :data-source="listFacilityBizTypeForUser"
-                  display-expr="name"
-                  value-expr="facilityBusinessId"
-                />
+                <DxLookup :data-source="listFacilityBizTypeForUser" display-expr="name" value-expr="facilityBusinessId" />
               </DxColumn>
-              <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
-              <DxColumn
-                caption="최종 스크래핑 현황"
-                width="130px"
-                cell-template="action"
-              />
+              <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" width="130"/>
+              <DxColumn caption="최종 스크래핑 현황" cell-template="action" width="130px"/>
               <template #action="{ data }">
-                <div
-                  style="text-align: center"
-                  :style="
-                    data.data.bankbookId === newSampleID ? 'opacity: .5' : ''
-                  "
-                >
-                  <img
-                    src="@/assets/images/searchPlus.png"
-                    style="width: 20px; height: 20px; margin-top: 0px"
-                    @click="showPopupLastScrapingStatus(data.data)"
-                  />
+                <div style="text-align: center" :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''
+                  ">
+                  <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px"
+                    @click="showPopupLastScrapingStatus(data.data)" />
                 </div>
               </template>
-              <DxColumn
-                :width="50"
-                cell-template="delete"
-                css-class="cell-center"
-              />
+              <DxColumn :width="50" cell-template="delete" css-class="cell-center" />
               <template #delete="{ data }">
-                <DeleteOutlined
-                  style="
+                <DeleteOutlined style="
                     font-size: 16px;
                     width: 100%;
                     height: 30px;
                     line-height: 30px;
-                  "
-                  :style="
-                    data.data.bankbookId === newSampleID ? 'opacity: .5' : ''
-                  "
-                  @click="deleteBankBook(data.data)"
-                />
+                  " :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''
+                    " @click="deleteBankBook(data.data)" />
               </template>
             </DxDataGrid>
           </a-spin>
         </div>
       </a-col>
-      <a-col
-        span="12"
-        class="cm-121_detail"
-        :class="{ 'cm-121_disable': !dataDetailBankbook.bankbookInput.type }"
-      >
-        <a-spin
-          :spinning="
-            loadingCreateBankbook || loadingGetBankbook || loadingUpdateBankbook
-          "
-          size="large"
-        >
-          <standard-form
-            formName="cm-121-from"
-            ref="cm121Form"
-            :key="countResetForm"
-          >
+      <a-col span="12" class="cm-121_detail" :class="{ 'cm-121_disable': !dataDetailBankbook.bankbookInput.type }">
+        <a-spin :spinning="loadingCreateBankbook || loadingGetBankbook || loadingUpdateBankbook
+          " size="large">
+          <standard-form formName="cm-121-from" ref="cm121Form" :key="countResetForm">
             <div>
               <p class="cm-121_detail-infomation">통장정보</p>
               <a-row class="cm-121_detail-infomation-top">
                 <a-col span="12">
                   <a-form-item label="사업구분" class="form-item-top">
-                    <select-box-common
-                      :arrSelect="listFacilityBizTypeForUser"
-                      :required="true"
-                      v-model:valueInput="dataDetailBankbook.facilityBusinessId"
-                      displayeExpr="name"
-                      valueExpr="facilityBusinessId"
-                      width="150px"
-                      :disabled="true"
-                    />
+                    <select-box-common :arrSelect="listFacilityBizTypeForUser" :required="true"
+                      v-model:valueInput="dataDetailBankbook.facilityBusinessId" displayeExpr="name"
+                      valueExpr="facilityBusinessId" width="150px" :disabled="true" />
                   </a-form-item>
                   <a-form-item label="금융기관" class="form-item-top">
-                    <bank-select-box
-                      v-model:valueInput="dataDetailBankbook.bankbookInput.type"
-                      width="150px"
-                      :disabled="true"
-                    />
+                    <bank-select-box v-model:valueInput="dataDetailBankbook.bankbookInput.type" width="150px"
+                      :disabled="true" />
                   </a-form-item>
                   <a-form-item label="통장번호" class="form-item-top red">
                     <div class="custom-note d-flex-center">
-                      <text-number-box
-                        :required="true"
-                        :width="150"
-                        v-model:valueInput="
-                          dataDetailBankbook.bankbookInput.bankbookNumber
-                        "
-                        :disabled="!isCreate"
-                      />
+                      <text-number-box :required="true" :width="150" v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNumber
+                        " :disabled="!isCreate" />
                       <a-tooltip color="black" placement="top">
                         <template #title>최초 저장된 이후 수정 불가</template>
-                        <img
-                          src="@/assets/images/iconInfo.png"
-                          class="img-info"
-                        />
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
                       </a-tooltip>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장별명" class="form-item-top red">
                     <div class="custom-note d-flex-center">
-                      <default-text-box
-                        :required="true"
-                        :width="150"
-                        placeholder="영어,한글,숫자만 가능"
-                        v-model:valueInput="
-                          dataDetailBankbook.bankbookInput.bankbookNickname
-                        "
-                        :ruleCustom="() => isDuplicaseName"
-                        messageRuleCustom="중복 등록 불가"
-                      />
+                      <default-text-box :required="true" :width="150" placeholder="영어,한글,숫자만 가능" v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname
+                        " :ruleCustom="() => isDuplicaseName" messageRuleCustom="중복 등록 불가" />
                       <a-tooltip color="black" placement="top">
                         <template #title>중복 등록 불가</template>
-                        <img
-                          src="@/assets/images/iconInfo.png"
-                          class="img-info"
-                        />
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
                       </a-tooltip>
                     </div>
                   </a-form-item>
@@ -224,272 +117,140 @@
                 <a-col span="12">
                   <a-form-item label="통장구분" class="form-item-top">
                     <div class="custom-note d-flex-center form-item-top-switch">
-                      <switch-basic
-                        :textCheck="'법인'"
-                        :textUnCheck="'개인'"
-                        v-model:valueSwitch="isTypeClassification"
-                        :disabled="
-                          !isSetTypeClassification.corporate ||
+                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification"
+                        :disabled="!isSetTypeClassification.corporate ||
                           !isSetTypeClassification.private ||
                           !isCreate
-                        "
-                      />
+                          " />
                       <a-tooltip color="black" placement="top">
                         <template #title>최초 저장된 이후 수정 불가</template>
-                        <img
-                          src="@/assets/images/iconInfo.png"
-                          class="img-info"
-                        />
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
                       </a-tooltip>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장용도" class="form-item-top">
                     <div class="custom-note d-flex-center">
-                      <DxSelectBox
-                        :search-enabled="true"
-                        width="150"
-                        display-expr="label"
-                        value-expr="value"
-                        :data-source="bankbookUseType"
-                        v-model:value="dataDetailBankbook.bankbookInput.useType"
-                        :noDataText="
-                          Message.getMessage('COMMON', '901').message
-                        "
-                        placeholder="통장용도"
-                      />
+                      <DxSelectBox :search-enabled="true" width="150" display-expr="label" value-expr="value"
+                        :data-source="bankbookUseType" v-model:value="dataDetailBankbook.bankbookInput.useType"
+                        :noDataText="Message.getMessage('COMMON', '901').message
+                          " placeholder="통장용도" />
                       <a-tooltip color="black" placement="top">
-                        <template #title
-                          >관련 계정과목 적용 또는 관련 서식에
-                          기재됩니다.</template
-                        >
-                        <img
-                          src="@/assets/images/iconInfo.png"
-                          class="img-info"
-                        />
+                        <template #title>관련 계정과목 적용 또는 관련 서식에
+                          기재됩니다.</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
                       </a-tooltip>
                     </div>
                   </a-form-item>
                   <a-form-item label="예금주" class="form-item-top red">
-                    <default-text-box
-                      :required="true"
-                      :width="150"
-                      v-model:valueInput="
-                        dataDetailBankbook.bankbookInput.owner
-                      "
-                    />
+                    <default-text-box :required="true" :width="150" v-model:valueInput="dataDetailBankbook.bankbookInput.owner
+                      " />
                   </a-form-item>
                   <a-form-item label="계정과목" class="form-item-top">
-                    <default-text-box
-                      :width="150"
-                      v-model:valueInput="accountSubject"
-                      :disabled="true"
-                    />
+                    <default-text-box :width="150" v-model:valueInput="accountSubject" :disabled="true" />
                   </a-form-item>
                 </a-col>
               </a-row>
             </div>
             <div>
-              <div
-                class="cm-121_detail-infomation cm-121_detail-infomation-bottom d-flex-center"
-              >
+              <div class="cm-121_detail-infomation cm-121_detail-infomation-bottom d-flex-center">
                 <span>스크래핑 (통장내역 자동 조회) 정보</span>
                 <div class="pl-5">
                   <a-tooltip color="black" placement="top">
-                    <template #title
-                      >(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단,
-                      업데이트는 가능합니다.</template
-                    >
+                    <template #title>(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단,
+                      업데이트는 가능합니다.</template>
                     <img src="@/assets/images/iconInfo.png" class="img-info" />
                   </a-tooltip>
                 </div>
               </div>
               <a-row>
                 <a-col span="12">
-                  <a-form-item
-                    label="스크래핑 이용 여부"
-                    class="form-item-bottom"
-                  >
-                    <div
-                      class="custom-note d-flex-center form-item-bottom-switch"
-                    >
-                      <switch-basic
-                        :textCheck="'O'"
-                        :textUnCheck="'X'"
-                        v-model:valueSwitch="
-                          dataDetailBankbook.bankbookInput.useScrap
-                        "
-                      />
+                  <a-form-item label="스크래핑 이용 여부" class="form-item-bottom">
+                    <div class="custom-note d-flex-center form-item-bottom-switch">
+                      <switch-basic :textCheck="'O'" :textUnCheck="'X'" v-model:valueSwitch="dataDetailBankbook.bankbookInput.useScrap
+                        " />
                       <a-tooltip color="black" placement="top">
-                        <template #title
-                          >이용하지 않는 경우 스크래핑 중지가 되어 통장
-                          불러오기를 할 수 없습니다.</template
-                        >
-                        <img
-                          src="@/assets/images/iconInfo.png"
-                          class="img-info"
-                        />
+                        <template #title>이용하지 않는 경우 스크래핑 중지가 되어 통장
+                          불러오기를 할 수 없습니다.</template>
+                        <img src="@/assets/images/iconInfo.png" class="img-info" />
                       </a-tooltip>
                     </div>
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item
-                    v-if="dataDetailBankbook.bankbookInput.useScrap"
-                    label="통장 비밀번호 (숫자 4자리)"
-                    class="form-item-bottom"
-                    :class="{
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)"
+                    class="form-item-bottom" :class="{
                       red: isRequiredAccountPassword || !isCreateduseScrap,
-                    }"
-                  >
-                    <text-number-box
-                      :required="
-                        isRequiredAccountPassword || !isCreateduseScrap
-                      "
-                      :width="150"
-                      maxLength="4"
-                      v-model:value="
-                        dataDetailBankbook.scrapingInfoInput.accountPassword
-                      "
-                      :ruleCustom="() => isLength4"
-                      messageRuleCustom="숫자 4자리"
-                    />
+                    }">
+                    <InputPassword :required="isRequiredAccountPassword || !isCreateduseScrap
+                      " width="150" :maxLength="4" v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword
+    " :ruleCustom="() => isLength4" messageRuleCustom="숫자 4자리" />
                   </a-form-item>
                 </a-col>
               </a-row>
               <a-row>
                 <a-col span="12">
-                  <a-form-item
-                    v-if="dataDetailBankbook.bankbookInput.useScrap"
-                    label="사업자등록번호 (법인통장)"
-                    class="form-item-bottom"
-                    :class="{
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="사업자등록번호 (법인통장)"
+                    class="form-item-bottom" :class="{
                       red:
                         isTypeClassification &&
                         (isCreate || !isCreateduseScrap),
-                    }"
-                  >
-                    <biz-number-text-box
-                      :required="isCreate || !isCreateduseScrap"
-                      v-model:valueInput="
-                        dataDetailBankbook.scrapingInfoInput.bizNumber
-                      "
-                      :width="150"
-                      :disabled="!isTypeClassification"
-                    />
+                    }">
+                    <biz-number-text-box :required="isCreate || !isCreateduseScrap" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber
+                      " :width="150" :disabled="!isTypeClassification" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item
-                    v-if="dataDetailBankbook.bankbookInput.useScrap"
-                    label="생년월일 (개인통장)"
-                    class="form-item-bottom"
-                    :class="{
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="생년월일 (개인통장)"
+                    class="form-item-bottom" :class="{
                       red:
                         !isTypeClassification &&
                         (isCreate || !isCreateduseScrap),
-                    }"
-                  >
-                    <birth-day-box
-                      v-model:valueInput="
-                        dataDetailBankbook.scrapingInfoInput.birthday
-                      "
-                      width="150px"
-                      :required="isCreate || !isCreateduseScrap"
-                      :disabled="isTypeClassification"
-                    />
+                    }">
+                    <birth-day-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.birthday
+                      " width="150px" :required="isCreate || !isCreateduseScrap" :disabled="isTypeClassification" />
                   </a-form-item>
                 </a-col>
               </a-row>
               <a-row>
                 <a-col span="12">
-                  <a-form-item
-                    v-if="isInputWebID"
-                    :label="
-                      isTypeClassification
-                        ? inputIDPWBankType.corporate.ID
-                        : inputIDPWBankType.private.ID
-                    "
-                    class="form-item-bottom"
-                    :class="{ red: isCreate || !isCreateduseScrap }"
-                  >
-                    <default-text-box
-                      :required="isCreate || !isCreateduseScrap"
-                      :width="150"
-                      v-model:valueInput="
-                        dataDetailBankbook.scrapingInfoInput.webId
-                      "
-                    />
+                  <a-form-item v-if="isInputWebID" :label="isTypeClassification
+                      ? inputIDPWBankType.corporate.ID
+                      : inputIDPWBankType.private.ID
+                    " class="form-item-bottom" :class="{ red: isCreate || !isCreateduseScrap }">
+                    <default-text-box :required="isCreate || !isCreateduseScrap" :width="150" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId
+                      " />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item
-                    v-if="isInputWebPW"
-                    :label="
-                      isTypeClassification
-                        ? inputIDPWBankType.corporate.PW
-                        : inputIDPWBankType.private.PW
-                    "
-                    class="form-item-bottom"
-                    :class="{ red: isCreate || !isCreateduseScrap }"
-                  >
-                    <default-text-box
-                      :required="isCreate || !isCreateduseScrap"
-                      :width="150"
-                      v-model:valueInput="
-                        dataDetailBankbook.scrapingInfoInput.webPassword
-                      "
-                    />
+                  <a-form-item v-if="isInputWebPW" :label="isTypeClassification
+                      ? inputIDPWBankType.corporate.PW
+                      : inputIDPWBankType.private.PW
+                    " class="form-item-bottom" :class="{ red: isCreate || !isCreateduseScrap }">
+                    <default-text-box :required="isCreate || !isCreateduseScrap" :width="150" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword
+                      " />
                   </a-form-item>
                 </a-col>
               </a-row>
             </div>
             <div class="cm-121_detail-btn">
-              <button-basic
-                text="저장"
-                type="default"
-                mode="contained"
-                @onClick="submit"
-                :disabled="!dataDetailBankbook.bankbookInput.type"
-              />
+              <button-basic text="저장" type="default" mode="contained" @onClick="submit"
+                :disabled="!dataDetailBankbook.bankbookInput.type" />
             </div>
           </standard-form>
         </a-spin>
       </a-col>
-      <PopupRegisterBankbook
-        :isModalRegister="isModalRegister"
-        @closePopup="isModalRegister = false"
-        @dataRegisterBankbook="dataRegisterBankbook"
-        :key="keyResetPopupRegisterBankbook"
-      />
-      <PopupDeleteBankbook
-        :isModalDelete="isModalDelete"
-        @closePopup="isModalDelete = false"
-        @agreeDeleteBankbook="agreeDeleteBankbook"
-      />
-      <PopupMessage
-        :modalStatus="isModalConfirmSaveChange"
-        @closePopup="isModalConfirmSaveChange = false"
-        :typeModal="'confirm'"
-        :title="Message.getMessage('COMMON', '501').message"
-        content=""
-        :okText="Message.getMessage('COMMON', '501').yes"
-        :cancelText="Message.getMessage('COMMON', '501').no"
-        @checkConfirm="handleConfirmChange"
-      />
-      <PopupLastScrapingStatus
-        :isModalLastScrapingStatus="isModalLastScrapingStatus"
-        :data="dataPopupScrapingStatus"
-        @closePopup="isModalLastScrapingStatus = false"
-        @agreeDeleteBankbook="agreeDeleteBankbook"
-      />
-      <HistoryPopup
-        :modalStatus="modalHistoryStatus"
-        @closePopup="modalHistoryStatus = false"
-        title="변경이력"
-        :idRowEdit="idRowEdit"
-        typeHistory="cm-121"
-        keyExpr="bankbookId"
-      />
+      <PopupRegisterBankbook :isModalRegister="isModalRegister" @closePopup="isModalRegister = false"
+        @dataRegisterBankbook="dataRegisterBankbook" :key="keyResetPopupRegisterBankbook" />
+      <PopupDeleteBankbook :isModalDelete="isModalDelete" @closePopup="isModalDelete = false"
+        @agreeDeleteBankbook="agreeDeleteBankbook" />
+      <PopupMessage :modalStatus="isModalConfirmSaveChange" @closePopup="isModalConfirmSaveChange = false"
+        :typeModal="'confirm'" :title="Message.getMessage('COMMON', '501').message" content=""
+        :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
+        @checkConfirm="handleConfirmChange" />
+      <PopupLastScrapingStatus :isModalLastScrapingStatus="isModalLastScrapingStatus" :data="dataPopupScrapingStatus"
+        @closePopup="isModalLastScrapingStatus = false" @agreeDeleteBankbook="agreeDeleteBankbook" />
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+        :idRowEdit="idRowEdit" typeHistory="cm-121" keyExpr="bankbookId" />
     </a-row>
   </div>
 </template>
@@ -538,6 +299,7 @@ import {
   DATA_DETAIL_BANKBOOK,
   newSampleID,
 } from "./utils/data";
+import InputPassword from './components/InputPassword.vue'
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -561,6 +323,7 @@ export default defineComponent({
     HistoryPopup,
     DxLookup,
     DxPaging,
+    InputPassword
   },
   setup() {
     const store = useStore();

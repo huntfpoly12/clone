@@ -11,30 +11,32 @@
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left"/>
       <template #tag="{ data }">
-        <div v-if="data.data.employeeId">
-          <span class="btn-container">
-            {{ data.data.employeeId }}
-          </span>
-          <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.name.length > 8">
+        <div>
+          <div v-if="data.data.employeeId" class="d-flex-center">
+            <span class="btn-container">
+              {{ data.data.employeeId }}
+            </span>
+            <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.name.length > 4">
             <template #title>
               <span>{{ checkLenTooltip(data.data?.employee?.name, 0) }}</span>
             </template>
-            <div class="name-w-1">
-              {{ checkLen(data.data?.employee?.name, 8) }}
+            <div class="name-w-1 text-overflow">
+              {{ data.data?.employee?.name }}
             </div>
           </a-tooltip>
-          <div class="name-w-1" v-else>
-            {{ checkLen(data.data?.employee?.name, 8) }}
+          <div class="name-w-1 text-overflow" v-else>
+            {{ data.data?.employee?.name }}
           </div>
           <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.incomeTypeName">
             <template #title>
               <span>{{ data.data?.employee?.incomeTypeCode }} {{ checkLenTooltip(data.data?.employee?.incomeTypeName, 0)
               }}</span>
             </template>
-            <a-tag class="py-1 mr-0"> {{ checkLen(data.data?.employee?.incomeTypeName, 15) }}</a-tag>
+            <a-tag class="py-1 mr-0 text-overflow"> {{ data.data?.employee?.incomeTypeName }}</a-tag>
           </a-tooltip>
         </div>
         <div v-else></div>
+      </div>
       </template>
       <DxColumn caption="지급일" width="55" alignment="left" data-field="paymentDay" cell-template="paymentDay" />
       <template #paymentDay="{ data }">
@@ -337,8 +339,8 @@ export default defineComponent({
       dataGridRef.value.selectRows(val, true)
     }
     const checkLen = (text: String, num: number) => {
-      if (text.length > num) {
-        return text.substring(0, num - 2) + '...';
+      if (text.replace(/\s/g, "").length > num) {
+        return text.substring(0, num - 2) + ' ' + '...';
       }
       return text;
     };

@@ -93,6 +93,7 @@
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxLoadPanel :enabled="false" :showPane="true" />
+          <DxPaging :page-size="1000" />
           <DxSelection
             :select-all-mode="'allPages'"
             :show-check-boxes-mode="'onClick'"
@@ -134,8 +135,10 @@
           </template>
           <DxColumn
             caption="사무대행위탁상태"
-            data-field="totalCollectedTaxAmount"
+            data-field="companyConsignStatus"
             width="125"
+            :format="consignStatusText"
+            alignment="center"
           />
           <DxColumn
             caption="신청일"
@@ -298,6 +301,7 @@ import {
   DxLookup,
   DxColumnFixing,
   DxKeyboardNavigation,
+  DxPaging,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -317,6 +321,7 @@ import {
   reportTypeSelectbox2,
   reportTypeText,
   completedAtFormat,
+  consignStatusText,
 } from "../../utils/index";
 import dayjs from "dayjs";
 import History from "./History.vue";
@@ -340,6 +345,7 @@ export default defineComponent({
     SelectBoxCT,
     HistoryOutlined,
     DxKeyboardNavigation,
+    DxPaging,
   },
   props: {
     search: {
@@ -352,26 +358,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const countGet = ref(0);
-    const rangeDate: any = computed({
-      get() {
-        return [
-          parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
-          parseInt(dayjs().format("YYYYMMDD")),
-        ];
-      },
-      set(newVal: any) {
-        companyRequestListParam.input = {
-          fromDate: newVal[0],
-          toDate: newVal[1],
-        };
-        if (countGet.value == 1) {
-          companyRequestListTrigger.value = true;
-        } else {
-          countGet.value = 0;
-        }
-      },
-    });
     const formState: any = reactive({
       companyName: "",
       companyBizNumber: "",
@@ -390,14 +376,29 @@ export default defineComponent({
 
     //-----------------------Search with holding and data source----------------
 
+    const rangeDate = ref([
+      dayjs().subtract(1, "week").format("YYYYMMDD"),
+      dayjs().format("YYYYMMDD"),
+    ]);
+    watch(rangeDate, (newVal: any, oldVal) => {
+      let oldVal2 = oldVal.map((item: any) => +item);
+      if (JSON.stringify(newVal) !== JSON.stringify(oldVal2)) {
+        companyRequestListParam.input = {
+          fromDate: newVal[0],
+          toDate: newVal[1],
+        };
+        companyRequestListTrigger.value = true;
+        companyRequestListRefetch();
+      }
+    });
     const dataSource = ref<any[]>([...dataTableTab1]);
     const filterDsTab2Bf530 = computed(
       () => store.state.common.filterDsTab2Bf530
     );
     const companyRequestListParam = reactive({
       input: {
-        fromDate: rangeDate.value[0],
-        toDate: rangeDate.value[1],
+        fromDate: +rangeDate.value[0],
+        toDate: +rangeDate.value[1],
       },
     });
     const companyRequestListTrigger = ref(true);
@@ -415,26 +416,36 @@ export default defineComponent({
       })
     );
     watch(companyRequestListResult, (newVal) => {
-      loadingDataSource.value = true;
-      let dataArr = newVal.getMajorInsuranceAdminCompanyRequestList.map(
-        (item: any) => {
-          return {
-            companyName: item.company.name,
-            companyPresidentName: item.company.presidentName,
-            visible: false,
-            ...item,
-          };
-        }
-      );
-      dataSource.value = dataArr;
+      if (newVal !== null) {
+        loadingDataSource.value = true;
+        let dataArr = newVal.getMajorInsuranceAdminCompanyRequestList.map(
+          (item: any) => {
+            return {
+              companyName: item.company.name,
+              companyPresidentName: item.company.presidentName,
+              manageId: item.majorInsuranceConsignStatus.manageId,
+              companyConsignStatus:
+                item.majorInsuranceConsignStatus.companyConsignStatus,
+              visible: false,
+              ...item,
+            };
+          }
+        );
+        dataSource.value = dataArr;
+      } else {
+        dataSource.value = [];
+      }
       if (props.onSearch) {
         props.onSearch();
       }
       companyRequestListTrigger.value = false;
-      countGet.value++;
     });
     companyRequestListError((res: any) => {
       notification("error", res.message);
+      dataSource.value = [];
+      if (props.onSearch) {
+        props.onSearch();
+      }
     });
 
     //----------------------------ON SEARCH ------------------------------
@@ -670,6 +681,7 @@ export default defineComponent({
       dayjs,
       completedAtFormat,
       loadingDataSource,
+      consignStatusText,
     };
   },
 });

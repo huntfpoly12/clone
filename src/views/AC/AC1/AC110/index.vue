@@ -669,7 +669,7 @@ export default defineComponent({
       if (e.data.syncBankbookDetails.length) {
         dataSource.value = [
           ...dataSource.value,
-          e.data.syncBankbookDetails.map((items: any) => ({
+          ...e.data.syncBankbookDetails.map((items: any) => ({
             ...items,
             contentNoteCustomField: `${items?.content || ""}${items?.note || ""
               }`,
