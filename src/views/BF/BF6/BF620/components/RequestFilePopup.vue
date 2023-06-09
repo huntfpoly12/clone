@@ -5,21 +5,19 @@
     :mask-closable="false"
     class="confirm-md"
     footer=""
-    :width="644"
   >
     <standard-form action="" name="request-file-620">
       <div>
         <div class="eamil-input">
-          <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
+          <span>선택된 내역들의 전자신고파일 제작요청하시겠습니까?<br/>
+            결과를 이메일로 받으시려면 이메일 주소를 입력하세요.</span>
           <mail-text-box
             width="250px"
             :required="true"
             placeholder="abc@example.com"
             v-model:valueInput="dataRequestFile.emailInput.receiverAddress"
+            class="mt-10"
           ></mail-text-box>
-        </div>
-        <div>
-          <span>로 메일을 발송하시겠습니까?</span>
         </div>
       </div>
       <div class="text-align-center mt-10">
@@ -140,8 +138,6 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .eamil-input {
-  display: flex;
-  align-items: center;
   width: 100%;
   margin-top: 20px;
 
