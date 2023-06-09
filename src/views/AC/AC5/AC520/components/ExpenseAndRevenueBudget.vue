@@ -241,7 +241,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { computed, reactive, ref, watch } from 'vue';
 import { useStore } from "vuex";
 
-const emit = defineEmits(['reload']);
+const emit = defineEmits(['reload', 'closePopup']);
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const column_resize = computed(() => store.state.settings.colomn_resize);
@@ -270,7 +270,7 @@ const facilityBizTypeToNumber = computed(() => {
       return '49.0'
   }
 })
-const formState = ref({
+const initialForm = {
   code: '0',
   code1: '0',
   code2: '0',
@@ -284,7 +284,8 @@ const formState = ref({
   fundingSource4: 0,
   details: [],
   codeName: ''
-});
+}
+const formState = ref({...initialForm});
 const previousRowData = ref();
 const isChangedForm = computed(() => !isEqual(previousRowData.value, formState.value))
 const dataSource = ref()
@@ -306,9 +307,9 @@ const findCode = (code: string, value: string) => {
 const state = reactive({
   isPopupCalculateVisible: false,
   modalFillDataPreIndex: false,
-  rowKey: 0,
+  rowKey: '',
   rowIndex: 0,
-  rowKeyAction: 0,
+  rowKeyAction: '',
 
 })
 const totalAmount = ref(0)
@@ -344,8 +345,9 @@ onResult(({ data }) => {
         data: data.getBudget.records?.map((item: any) => ({ ...item, codeName: findCode('code', item.code)?.name })) || []
       },
     })
-    if(state.rowKey === -1) {
+    if(state.rowIndex === -1) {
       state.rowKey = state.rowKeyAction
+      state.rowIndex = 0
     }
     trigger.queryBudget = false
   }
@@ -391,9 +393,8 @@ onDoneCreateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    emit('reload')
-    trigger.queryBudget = true
-    dataSource.value.reload()
+    emit('closePopup', true)
+    loading.value = false
   }
 })
 onErrorCreateBudget((error) => {
@@ -406,10 +407,13 @@ onDoneUpdateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    emit('reload')
-    trigger.queryBudget = true
-    refetch()
-    state.rowIndex = -2
+    
+    if(dataBudget.value?.action === ACTION.ADD) {
+      emit('closePopup', true)
+    } else {
+      emit('reload')
+    }
+    loading.value = false
   }
 })
 onErrorUpdateBudget((error) => {
@@ -502,8 +506,8 @@ const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
   if(e.row?.data) {
     formState.value = e.row?.data;
     previousRowData.value = cloneDeep(e.row?.data);
-    state.rowKey = e.row?.key;
-    state.rowKeyAction = e.row?.key;
+  } else {
+    // formState.value = {...initialForm}
   }
 }
 const handleSubmit = () => {
@@ -511,8 +515,6 @@ const handleSubmit = () => {
     const { codeName, ...rest } = item
     return rest
   })
-  state.rowIndex = -1
-  state.rowKey = -1
   if (dataBudget.value?.action === ACTION.ADD && (dataBudget.value?.expenditureBudgetSum === null && dataBudget.value?.revenueBudgetSum === null)) {
     createBudget({
       companyId,
@@ -533,6 +535,7 @@ const handleSubmit = () => {
       inputs: result
     })
   }
+  loading.value = true
 }
 const fillFundingSource = (field: string) => {
   switch (field) {

@@ -27,6 +27,10 @@ export default defineComponent({
     mailData: {
       type: String,
       default: '',
+    },
+    mails: {
+      type: Array,
+      default: [],
     }
   },
   components: {},

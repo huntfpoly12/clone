@@ -4,8 +4,9 @@ export default gql`
     $companyId: Int!
     $source: IncomeProcessKeyInput!
     $target: IncomeProcessKeyInput!
+    $targetDay: Int!
   ) {
-    copyIncomeWages(companyId: $companyId, source: $source, target: $target) {
+    copyIncomeWages(companyId: $companyId, source: $source, target: $target, targetDay: $targetDay) {
       incomeId
       paymentDay
       employeeType

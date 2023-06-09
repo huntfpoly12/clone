@@ -1,38 +1,42 @@
 <template>
-  <a-modal :visible="isModalLastScrapingStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-    :width="644" >
+  <a-modal :visible="isModalLastScrapingStatus" @cancel="setModalVisible" :mask-closable="true" :closable="false"
+    class="confirm-md" footer="" :width="644">
     <template #title>
       <div>
-        <span>최종 스크래핑 현황 조회 </span><b>{{data?.bankbookNickname || ''}}</b>
+        <span>최종 스크래핑 현황 조회 </span><b>{{ data?.bankbookNickname || '' }}</b>
       </div>
     </template>
-      <div class="text-align-center">
-        <div class="mc121-popup-last-scraping-status">
-          <a-form-item label="스크래핑 상태" class="mc121-popup-last-scraping-status-from">
-            <default-text-box :required="true" :width="200" v-model:valueInput="data.lastScrapingStatus.scrapingStatus" :disabled="true"/>
-          </a-form-item>
-          <a-form-item label="최종 스크래핑 일시" label-align="right"  class="mc121-popup-last-scraping-status-from">
-              <div style="width: 200px">
-                <default-text-box :width="200" v-model:valueInput="data.lastScrapingStatus.lastScrapingDate" :disabled="true"/>
-              </div>
-          </a-form-item>
-        </div>
-        <div class="mt-20 mc121-popup-action">
-          <button-basic v-if="!!data.lastScrapingStatus.scrapingStatus" class="button-form-modal" :text="'정상'" :width="140" :type="'success'" :mode="'contained'" />
+    <div class="text-align-center">
+      <div class="mc121-popup-last-scraping-status">
+        <a-form-item label="스크래핑 상태" class="mc121-popup-last-scraping-status-from">
+          <div v-if="!!data.lastScrapingStatus.scrapingStatus" class="mc121-popup-last-scraping-status-from-tagSussce">
+            {{ data.lastScrapingStatus.scrapingStatus }}
+          </div>
           <a-tooltip v-else>
             <template #title>{{ data.lastScrapingStatus.errorMessage }}</template>
-            <span>
-              <DxButton text="에러" width="140" type="danger" styling-mode="contained" :height="$config_styles.HeightInput"/>
-            </span>
+            <div class="mc121-popup-last-scraping-status-from-tagError">에러
+            </div>
           </a-tooltip>
-        </div>
+        </a-form-item>
+        <a-form-item label="최종 스크래핑 일시" label-align="right" class="mc121-popup-last-scraping-status-from">
+          <div style="width: 200px">
+            <default-text-box :width="200" :valueInput="fomatDate(data.lastScrapingStatus.lastScrapingDate)"
+              :disabled="true" />
+          </div>
+        </a-form-item>
       </div>
+      <div class="mt-20 mc121-popup-action">
+        <button-basic class="button-form-modal" :text="'닫기'" :width="140" :type="'outlined'" :mode="'contained'"
+          @onClick="setModalVisible" />
+      </div>
+    </div>
   </a-modal>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch } from 'vue'
+import { defineComponent } from 'vue'
 import DxButton from 'devextreme-vue/button';
+import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     isModalLastScrapingStatus: {
@@ -41,7 +45,7 @@ export default defineComponent({
     },
     data: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
   },
   components: {
@@ -51,8 +55,17 @@ export default defineComponent({
     const setModalVisible = () => {
       emit("closePopup", false)
     };
+
+    const fomatDate = (date: any) => {
+      if (typeof date == 'number') {
+        return dayjs(date).format('YYYY-MM-DD hh:mm:ss')
+      } else {
+        return ''
+      }
+    }
     return {
-      setModalVisible
+      setModalVisible,
+      fomatDate
     }
   },
 })
@@ -64,13 +77,16 @@ export default defineComponent({
   justify-content: space-between;
   align-items: center;
   width: 100%;
+
   &-btn {
     margin-top: 20px;
   }
 }
+
 .mt-20 {
   margin-top: 20px;
 }
+
 .text-align-center {
   text-align: center;
 }
@@ -78,16 +94,36 @@ export default defineComponent({
 .button-form-modal {
   margin: 0px 5px;
 }
+
 :deep .mc121-popup-last-scraping-status-from {
   label {
     width: 200px;
   }
+
+  &-tagSussce {
+    width: 100px;
+    height: 28px;
+    line-height: 28px;
+    background-color: #337614;
+    color: #fff;
+    border-radius: 5px;
+  }
+  &-tagError {
+    width: 100px;
+    height: 28px;
+    line-height: 28px;
+    background-color: #bb3835;
+    color: #fff;
+    border-radius: 5px;
+  }
 }
+
 .mc121-popup-action {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .mc121-popup-slash {
   font-weight: 400;
   font-size: 30px;

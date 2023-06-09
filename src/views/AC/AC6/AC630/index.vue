@@ -59,6 +59,7 @@
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
           :focused-row-enabled="true"
+          @selection-changed="selectionChanged"
           ref="taxPayDataRef"
         >
           <DxPaging :page-size="0" />
@@ -102,7 +103,7 @@
           </DxToolbar>
           <template #button-mail>
             <div style="text-align: center">
-              <DxButton class="ml-3" @click="modalMail = true">
+              <DxButton class="ml-3" @click="onSendMail">
                 <img
                   src="@/assets/images/email.svg"
                   alt=""
@@ -185,6 +186,7 @@
     v-if="modalMail"
     v-model:mailData="mailData"
     @onMailModal="onMailModal"
+    :mails="mails"
   />
   <PrintPopup
     v-if="modalPrint"
@@ -289,14 +291,28 @@ export default defineComponent({
       parseInt(dayjs().format("YYYYMM")),
     ]);
 
+    //-------------------------------Table funtion ------------------------
+
+    const selectionChanged = (e: any) => {
+      mails.value = e.selectedRowsData;
+    }
+
     // -----------------------------MAIL-------------------
 
+    const mails = ref([]);
     const modalMail = ref(false);
-    const mailData = ref();
+    const mailData = ref('');
+    const onSendMail = () => {
+      if(mails.value.length > 0) {
+        modalMail.value = true;
+      }else {
+        notification('error', Message.getCommonMessage('404').message)
+      }
+    }
     const onMailModal = (emitVal: Boolean) => {
       if (!emitVal) {
         modalMail.value = false;
-        mailData.value = "";
+        mailData.value = '';
       } else {
       }
       // actionParam.workId = e;
@@ -525,6 +541,9 @@ export default defineComponent({
       onSearch,
       rangeDate,
       deleteContent,
+      onSendMail,
+      selectionChanged,
+      mails,
     };
   },
 });

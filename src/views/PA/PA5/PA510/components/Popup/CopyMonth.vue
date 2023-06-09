@@ -254,6 +254,7 @@ export default defineComponent({
                         paymentYear: parseInt(month2.value?.toString().slice(0, 4)),
                         paymentMonth: parseInt(month2.value?.toString().slice(4, 6)),
                     },
+                    targetDay: parseInt(paymentDayCopy.value?.toString().slice(6, 8)),
                 })
             } else {
                 notification('error', '날짜를 선택하세요.')
