@@ -2,7 +2,7 @@
     <DxTextBox :ref="numberTextBox" :width="width" value-change-event="input" :show-clear-button="clearButton"
         :placeholder="placeholder" v-model:value="value" :mode="mode" :disabled="disabled" :readOnly="readOnly"
         :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput" :maxLength="maxLength"
-        :rtlEnabled="rtlEnabled" @focusIn="onFocusIn">
+        :rtlEnabled="rtlEnabled" @focusIn="onFocusIn" :input-attr="{autocomplete: 'new-password'}">
         <DxButton :activeStateEnabled="false" :focusStateEnabled="false" :hoverStateEnabled="false" :options="passwordButton" name="password" location="after" :key="mode"/>
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />

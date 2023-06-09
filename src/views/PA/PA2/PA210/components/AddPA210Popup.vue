@@ -84,7 +84,7 @@
             </standard-form>
         </a-modal>
         <report-grid v-if="reportGridStatus" :modalStatus="reportGridStatus" @closePopup="closeAllPopupAdd" @isDoneReport="closeAllPopupAddWhenDone"
-            :dataReport="dataReport" :key="resetComponent"></report-grid>
+            :dataReport="dtReport" :key="resetComponent"></report-grid>
     </div>
 </template>
 
@@ -120,7 +120,7 @@ export default defineComponent({
         const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);
         const loading = ref<Boolean>(false)
         const dataReports: any = ref([])
-        const dataReport: any = ref([])
+        const dtReport: any = ref([])
         const reportGridStatus = ref(false)
         const resetComponent = ref(0)
         const arrayRadioCheck = ref([
@@ -214,7 +214,7 @@ export default defineComponent({
         const afterDeadline = ref(false)
         const focusedRowKey = ref(null);
         // ===================WATCH==================================
-        watch(() => props.dataPopupAdd, (value: any) => {
+      watch(() => props.dataPopupAdd, (value: any) => {
             loading.value = true;
             dataReports.value = []
             if (value.reportType == 1) {
@@ -310,7 +310,7 @@ export default defineComponent({
                 })
           }
           
-          dataReport.value = dataReports.value.length ? [dataReports.value[0]] : []
+          dtReport.value = dataReports.value.length ? [dataReports.value[0]] : []
           // check  tháng để focus row  nếu nó là tháng 1 thì focus row đầu luôn.  nếu mà tháng khác thì trừ 1 đơn vị
           let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 || parseInt(startYearMonth.toString().slice(-2)) == 12 ? 0 : parseInt(startYearMonth.toString().slice(-2)) - 1
           focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
@@ -320,8 +320,11 @@ export default defineComponent({
         // ===================FUNCTION===============================
         const onSubmit = (e: any) => {
             resetComponent.value++;
-            dataReport.value[0].afterDeadline = afterDeadline.value
-            reportGridStatus.value = true
+            dtReport.value[0].afterDeadline = afterDeadline.value
+           
+          reportGridStatus.value = true
+            
+            
         };
         const setModalVisible = () => {
             emit("closePopup", false)
@@ -347,12 +350,11 @@ export default defineComponent({
             setModalVisible()
         }
         const onSelectionChanged = (data: any) => {
-            dataReport.value = [data.data]
+          dtReport.value = [data.data]
         };
 
         // hàm xử lý việc disable row
       const onRowPrepared = (e: any) => {
-          
           if (e.rowType === 'data' && disableRadio(e.data.imputedYear,e.data.imputedMonth)) {
             e.rowElement.classList.add('disabled-row');
             e.rowElement.removeEventListener('click', handleRowClick);
@@ -373,7 +375,7 @@ export default defineComponent({
             onSelectionChanged,
             getReportType,
             disableRadio,
-            dataReports, dataReport,
+            dataReports, dtReport,
             loading,
             onSubmit,
             setModalVisible,
