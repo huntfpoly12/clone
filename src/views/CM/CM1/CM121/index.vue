@@ -341,12 +341,12 @@
                       red: isRequiredAccountPassword || !isCreateduseScrap,
                     }"
                   >
-                    <text-number-box
+                    <InputPassword
                       :required="
                         isRequiredAccountPassword || !isCreateduseScrap
                       "
-                      :width="150"
-                      maxLength="4"
+                      width="150"
+                      :maxLength="4"
                       v-model:value="
                         dataDetailBankbook.scrapingInfoInput.accountPassword
                       "
@@ -538,6 +538,7 @@ import {
   DATA_DETAIL_BANKBOOK,
   newSampleID,
 } from "./utils/data";
+import InputPassword from './components/InputPassword.vue'
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -561,6 +562,7 @@ export default defineComponent({
     HistoryPopup,
     DxLookup,
     DxPaging,
+    InputPassword
   },
   setup() {
     const store = useStore();
