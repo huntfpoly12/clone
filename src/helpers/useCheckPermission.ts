@@ -5,9 +5,7 @@ export default function useCheckPermission(roles: string[] | null) {
   if (!token || !roles || roles.length === 0) {
     return { read: false, write: false }
   } else {
-    const urlParams = new URLSearchParams(window.location.search);
-    const newToken = urlParams.get('token');
-    const jwtObject: JwtObject = getJwtObject(newToken?newToken:token);
+    const jwtObject: JwtObject = getJwtObject(token);
     // get roles from JwtObject
     const readWorkScreenRoles = jwtObject.readWotkScreenRoles?.map((i: any) => i.enumKey)
     const writeWorkScreenRoles = jwtObject.writeWorkScreenRoles?.map((i: any) => i.enumKey)
