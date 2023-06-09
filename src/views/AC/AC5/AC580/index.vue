@@ -133,7 +133,7 @@
           </div>
         </a-tooltip>
         <div style="text-align: center">
-          <DxButton class="ml-3" @click="modalMail = true">
+          <DxButton class="ml-3" @click="onSendMail">
             <img src="@/assets/images/email.svg" alt="" style="width: 18px" />
           </DxButton>
         </div>
@@ -286,10 +286,24 @@ export default defineComponent({
       parseInt(dayjs().format("YYYYMMDD")),
     ]);
 
+    //-------------------------------Table funtion ------------------------
+
+    const selectionChanged = (e: any) => {
+      mails.value = e.selectedRowsData;
+    }
+
     // -----------------------------MAIL-------------------
 
+    const mails = ref([]);
     const modalMail = ref(false);
     const mailData = ref();
+    const onSendMail = () => {
+      if(mails.value.length > 0) {
+        modalMail.value = true;
+      }else {
+        notification('error', Message.getCommonMessage('404').message)
+      }
+    }
     const onMailModal = (emitVal: Boolean) => {
       if (!emitVal) {
         modalMail.value = false;
@@ -536,6 +550,8 @@ export default defineComponent({
       deleteContent,
       employeeFashionArr,
       employeeFashionArr2,
+      onSendMail,
+      selectionChanged,
     };
   },
 });
