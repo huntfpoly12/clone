@@ -39,11 +39,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from "vue";
+import { defineComponent, watch, ref, computed } from "vue";
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA630/index";
 import { makeDataClean } from "@/helpers/commonFunction";
+import { useStore } from "vuex";
 export default defineComponent({
   props: {
     modalStatus: {
@@ -57,11 +58,17 @@ export default defineComponent({
   },
   components: {},
   setup(props, { emit }) {
+    const store = useStore();
+    const token = computed(() => sessionStorage.getItem("token"));
+    store.dispatch("auth/getUserInfor", token.value);
+    const userInfor = computed(() => store.state.auth.userInfor);
     let emailAddress = ref("");
     watch(
-      () => props.data,
+      () => props.modalStatus,
       (val) => {
-        emailAddress.value = val?.employeeInputs.receiverAddress;
+        emailAddress.value = userInfor.value?.email;
+      },{
+        deep: true,
       }
     );
 

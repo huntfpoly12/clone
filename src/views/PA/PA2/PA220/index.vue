@@ -104,10 +104,10 @@
                 <DxColumn caption="총급여액" data-field="totalSalary" />
                 <DxColumn caption="비과세금액" data-field="taxFreeIncome" />
                 <DxColumn caption="결정세액" data-field="decidedTaxAmount" />
-                <DxColumn caption="기납부세액 (현)" data-field="prePaidTaxAmount" />
+                <DxColumn caption="기납부세액 (현)" data-field="prePaidIncomeTaxAmount" />
                 <!-- <DxColumn caption="기납부세액 (전)" />
                 <DxColumn caption="납부특례세액" /> -->
-                <DxColumn caption="차감징수세액" data-field="deductibleTaxAmount" />
+                <DxColumn caption="차감징수세액" data-field="deductibleIncomeTaxAmount" />
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }">
                     <div class="custom-action" style="text-align: center;">
