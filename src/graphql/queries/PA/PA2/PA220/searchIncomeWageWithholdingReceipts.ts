@@ -28,6 +28,7 @@ export default gql`
       active
       leaved
       annualEarnedIncome
+      taxIncome
       taxFreeIncome
       totalSalary
       earnedIncomeDeduction
@@ -41,8 +42,10 @@ export default gql`
       taxReduction
       taxCredit
       decidedTaxAmount
-      prePaidTaxAmount
-      deductibleTaxAmount
+      prePaidIncomeTaxAmount
+      prePaidLocalIncomeTaxAmount
+      deductibleIncomeTaxAmount
+      deductibleLocalIncomeTaxAmount
       employee{
         type
         employeeId

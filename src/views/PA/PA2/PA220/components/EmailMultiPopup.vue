@@ -71,9 +71,11 @@ export default defineComponent({
     const userInfor = computed(() => store.state.auth.userInfor);
     let emailAddress = ref("");
     watch(
-      () => props.data,
+      () => props.modalStatus,
       (val) => {
         emailAddress.value = userInfor.value?.email;
+      },{
+        deep: true,
       }
     );
 
