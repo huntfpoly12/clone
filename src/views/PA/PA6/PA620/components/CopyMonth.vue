@@ -19,8 +19,8 @@
     <div class="text-align-center mt-20">
       <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
         @onClick="onSubmit" />
-      <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
-        @onClick="openModalCopy" />
+      <!-- <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
+        @onClick="openModalCopy" /> -->
     </div>
   </a-modal>
 
