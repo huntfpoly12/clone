@@ -45,16 +45,16 @@
               <DxColumn caption="금융기관" data-field="type">
                 <DxLookup :data-source="bankTypeCommon" value-expr="c" display-expr="n" />
               </DxColumn>
-              <DxColumn caption="통장번호" data-field="bankbookNumber" width="105"/>
+              <DxColumn caption="통장번호" data-field="bankbookNumber" width="105" />
               <DxColumn caption="통장용도" data-field="useType">
                 <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
               </DxColumn>
-              <DxColumn caption="통장별명" data-field="bankbookNickname" width="160"/>
+              <DxColumn caption="통장별명" data-field="bankbookNickname" width="160" />
               <DxColumn caption="사업구분" data-field="facilityBusinessId">
                 <DxLookup :data-source="listFacilityBizTypeForUser" display-expr="name" value-expr="facilityBusinessId" />
               </DxColumn>
-              <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" width="130"/>
-              <DxColumn caption="최종 스크래핑 현황" cell-template="action" width="130px"/>
+              <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" width="130" />
+              <DxColumn caption="최종 스크래핑 현황" cell-template="action" width="130px" />
               <template #action="{ data }">
                 <div style="text-align: center" :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''
                   ">
@@ -181,8 +181,8 @@
                     class="form-item-bottom" :class="{
                       red: isRequiredAccountPassword || !isCreateduseScrap,
                     }">
-                    <InputPassword :required="isRequiredAccountPassword || !isCreateduseScrap
-                      " width="150" :maxLength="4" v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword
+                    <text-number-box :required="isRequiredAccountPassword || !isCreateduseScrap
+                      " :width="150" maxLength="4" v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword
     " :ruleCustom="() => isLength4" messageRuleCustom="숫자 4자리" />
                   </a-form-item>
                 </a-col>
@@ -214,8 +214,8 @@
               <a-row>
                 <a-col span="12">
                   <a-form-item v-if="isInputWebID" :label="isTypeClassification
-                      ? inputIDPWBankType.corporate.ID
-                      : inputIDPWBankType.private.ID
+                    ? inputIDPWBankType.corporate.ID
+                    : inputIDPWBankType.private.ID
                     " class="form-item-bottom" :class="{ red: isCreate || !isCreateduseScrap }">
                     <default-text-box :required="isCreate || !isCreateduseScrap" :width="150" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId
                       " />
@@ -223,8 +223,8 @@
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="isInputWebPW" :label="isTypeClassification
-                      ? inputIDPWBankType.corporate.PW
-                      : inputIDPWBankType.private.PW
+                    ? inputIDPWBankType.corporate.PW
+                    : inputIDPWBankType.private.PW
                     " class="form-item-bottom" :class="{ red: isCreate || !isCreateduseScrap }">
                     <default-text-box :required="isCreate || !isCreateduseScrap" :width="150" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword
                       " />
@@ -299,7 +299,6 @@ import {
   DATA_DETAIL_BANKBOOK,
   newSampleID,
 } from "./utils/data";
-import InputPassword from './components/InputPassword.vue'
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -322,8 +321,7 @@ export default defineComponent({
     PopupLastScrapingStatus,
     HistoryPopup,
     DxLookup,
-    DxPaging,
-    InputPassword
+    DxPaging
   },
   setup() {
     const store = useStore();
