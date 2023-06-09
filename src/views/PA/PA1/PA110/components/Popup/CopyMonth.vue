@@ -240,6 +240,7 @@ export default defineComponent({
                         paymentYear: parseInt(month2.value?.toString().slice(0, 4)),
                         paymentMonth: parseInt(month2.value?.toString().slice(4, 6)),
                     },
+                    targetDay: parseInt(paymentDayCopy.value?.toString().slice(6, 8)),
                 })
 
             } else {
