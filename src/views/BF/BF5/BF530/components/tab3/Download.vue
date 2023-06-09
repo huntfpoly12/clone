@@ -37,6 +37,7 @@
             caption="사무위탁"
             data-field="consignment"
             alignment="center"
+            :format="consignStatusText"
           />
           <DxColumn
             caption="다운로드"
@@ -69,8 +70,9 @@ import DxDataGrid, {
   DxSummary,
 } from "devextreme-vue/data-grid";
 import { watch } from "vue";
-
+import {consignStatusText} from '../../utils/index';
 export default defineComponent({
+  components: { DxDataGrid, DxScrolling, DxColumn, DxSummary, DxEditing, },
   props: {
     payload: {
       type: Object,
@@ -129,11 +131,13 @@ export default defineComponent({
       () => props.payload,
       (newVal: any) => {
         if (newVal) {
+          console.log(`output->newVal`,newVal)
           dataSource.value.forEach((item: any) => {
             if (item.typeId == props.payload.type) {
               item.subject =
                 props.payload.companyName + "/" + props.payload.name;
               item.url = props.payload.url;
+              item.consignment = props.payload.majorInsuranceConsignStatus.companyConsignStatus;
               return;
             }
           });
@@ -158,9 +162,9 @@ export default defineComponent({
       colomn_resize,
       dataSource,
       onDownLoad,
+      consignStatusText,
     };
   },
-  components: { DxDataGrid, DxScrolling, DxColumn, DxSummary, DxEditing },
 });
 </script>
 <style lang="scss" scoped>

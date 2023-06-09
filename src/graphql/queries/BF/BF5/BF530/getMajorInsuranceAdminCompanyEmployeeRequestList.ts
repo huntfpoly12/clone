@@ -52,20 +52,20 @@ export default gql`
         unpaidMonths
       }
       majorInsuranceConsignStatus {
-        companyId
+        # companyId
         manageId
-        partnerId
+        # partnerId
         companyConsignStatus
-        nationalPensionEDIStatus
-        healthInsuranceEDIStatus
-        workingStatus
-        nationalPensionBranchName
-        nationalPensionFax
-        healthInsuranceBranchName
-        healthInsuranceFax
-        employeementInsuranceBranchName
-        employeementInsuranceFax
-        industrialAccidentInsuranceBranchName
+        # nationalPensionEDIStatus
+        # healthInsuranceEDIStatus
+        # workingStatus
+        # nationalPensionBranchName
+        # nationalPensionFax
+        # healthInsuranceBranchName
+        # healthInsuranceFax
+        # employeementInsuranceBranchName
+        # employeementInsuranceFax
+        # industrialAccidentInsuranceBranchName
         # industrialAccidentInsuranceFax
         # registeredAt
         # acceptedAt

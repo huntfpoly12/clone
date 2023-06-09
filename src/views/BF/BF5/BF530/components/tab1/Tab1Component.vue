@@ -427,27 +427,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const countGet = ref(0);
-    // const rangeDate: any = computed({
-    //   get() {
-    //     return [
-    //       parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
-    //       parseInt(dayjs().format("YYYYMMDD")),
-    //     ];
-    //   },
-    //   set(newVal: any) {
-    //     adminConsignStatusParam.input = {
-    //       fromDate: newVal[0],
-    //       toDate: newVal[1],
-    //     };
-    //     if (countGet.value > 0) {
-    //       adminConsignStatusTrigger.value = true;
-    //       getMajorInsuranceRefetch();
-    //     } else {
-    //       countGet.value = 0;
-    //     }
-    //   },
-    // });
     const formState: any = reactive({
       companyName: "",
       companyBizNumber: "",
@@ -470,8 +449,9 @@ export default defineComponent({
     //-----------------------Get DATA SOURCE------------------------------
     
     const rangeDate = ref([dayjs().subtract(1, "week").format("YYYYMMDD"), dayjs().format("YYYYMMDD")]);
-    watch(rangeDate,(newVal: any)=>{
-      if(newVal){
+    watch(rangeDate,(newVal: any,oldVal)=>{
+      let oldVal2 = oldVal.map((item:any) => +item);
+      if(JSON.stringify(newVal) !== JSON.stringify(oldVal2)){
         adminConsignStatusParam.input = {
           fromDate: newVal[0],
           toDate: newVal[1],
@@ -526,7 +506,6 @@ export default defineComponent({
         props.onSearch();
       }
       adminConsignStatusTrigger.value = false;
-      countGet.value++;
     });
     adminConsignStatusError((res: any) => {
       notification("error", res.message);
@@ -534,7 +513,6 @@ export default defineComponent({
       if (props.onSearch) {
         props.onSearch();
       }
-      countGet.value++;
     });
 
     //----------------------------ON SEARCH ------------------------------
@@ -638,6 +616,8 @@ export default defineComponent({
     onDoneConsignStatus(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      getMajorInsuranceTrigger.value = true;
+      getMajorInsuranceRefetch();
     });
     onErrorConsignStatus((e: any) => {
       notification("error", e.message);
