@@ -5,13 +5,14 @@
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
+      <DxStringLengthRule v-if="lengthFixed > 0" :min="lengthFixed" :max="lengthFixed" :message="lengthFixMsg" />
     </DxValidator>
   </DxTextBox>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
-import { DxValidator, DxRequiredRule, DxCustomRule } from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule, DxCustomRule, DxStringLengthRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 import { Message } from "@/configs/enum";
 export default defineComponent({
@@ -58,14 +59,23 @@ export default defineComponent({
     select: {
       type: Boolean,
       default: true,
-    }
+    },
+    lengthFixed: {
+      type: Number,
+      default: 0,
+    },
+    lengthFixMsg: {
+      type: String,
+      default: "",
+    },
   },
   components: {
     DxTextBox,
     DxValidator,
     DxRequiredRule,
-    DxCustomRule
-  },
+    DxCustomRule,
+    DxStringLengthRule
+},
   setup(props, { emit }) {
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
