@@ -4,11 +4,13 @@ mutation copyIncomeWageDailies(
     $companyId: Int!
     $source: IncomeProcessKeyInput!
     $target: IncomeProcessKeyInput!
+    $targetDay: Int!
     ) {
         copyIncomeWageDailies( 
             companyId: $companyId
             source: $source
             target: $target
+            targetDay: $targetDay
         ) {
             incomeId
             imputedMonth
