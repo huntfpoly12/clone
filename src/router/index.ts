@@ -463,6 +463,9 @@ router.beforeEach((to, from, next) => {
   const token = sessionStorage.getItem("token");
 
   const { read } = useCheckPermission(roles)
+  console.log(read, 'sfdsfdsff')
+  console.log(token, 'sfdsfdsff')
+  console.log(requiresAuth ,'sfdsfdsff')
   // check if token isExpired
   if (token && getJwtObject(token).isExpired()) {
     store.dispatch('auth/checkToken')
