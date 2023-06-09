@@ -236,7 +236,8 @@
                                     </a-form-item>
                                     <a-form-item label="장기요양기관등록번호" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
-                                            v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
+                                            v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" :lengthFixed="11" placeholder="숫자(11자리)"
+                                            :messageRuleCustom="lenFixedMsg" :maxLength="11" />
                                     </a-form-item>
                                     <div>
                                         <imgUpload :title="titleModal2" style="margin-top: 10px"
@@ -395,6 +396,7 @@ import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWith
 import dayjs from 'dayjs';
 import { Message } from "@/configs/enum";
 import { onMounted } from "vue";
+import { DataCreated } from "../PA/PA5/PA520/utils";
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
@@ -779,7 +781,6 @@ export default {
                     cmsBank: {
                         bankType: contractCreacted.bankType,
                         accountNumber: contractCreacted.accountNumber,
-                        ownerBizNumber: contractCreacted.ownerBizNumber2,
                         ownerName: contractCreacted.ownerName,
                         withdrawDay: contractCreacted.withdrawDay,
                     },
@@ -789,6 +790,11 @@ export default {
                     }
                 }
             }
+        if(contractCreacted.ownerBizNumber2.length === 10){
+          dataCallCreated.content.cmsBank.ownerBizNumber = contractCreacted.ownerBizNumber2;
+        }else {
+          dataCallCreated.content.cmsBank.ownerResidentId = contractCreacted.ownerBizNumber2;
+        }
         await makeDataClean(dataCallCreated, ['buildingName']);
         mutateCreated(dataCallCreated)
         }

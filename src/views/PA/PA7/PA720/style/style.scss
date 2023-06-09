@@ -283,7 +283,7 @@
     
   }
   :deep span.ant-tag {
-    min-width: 145px;
+    width: 210px;
   }
 
   .sum-item {
@@ -312,6 +312,7 @@
     display: inline-block;
     text-align: center;
     margin: 0 5px;
+    width: 47px;
   }
 
 }

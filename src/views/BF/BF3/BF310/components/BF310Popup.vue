@@ -245,9 +245,10 @@
                               v-model:valueInput=" dataActiveRow.capacity " />
                           </a-form-item>
                           <a-form-item label="장기요양기관등록번호" :label-col=" labelCol ">
-                            <default-text-box width="160px" :required=" true " v-model:valueInput="
-                              dataActiveRow.longTermCareInstitutionNumber
-                            " />
+                            <text-number-box width="160px" :required=" true " v-model:valueInput="
+                              dataActiveRow.longTermCareInstitutionNumber" :lengthFixed="11" placeholder="숫자(11자리)"
+                              :lengthFixMsg="lenFixedMsg" :maxLength="11"
+                              />
                           </a-form-item>
                         </a-col>
                         <a-col :span=" 6 " class="pl-12 text-color">
@@ -318,10 +319,8 @@
                 <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr" label-align="left"
                   :label-col=" labelCol ">
                   <text-number-box width="250px" :required=" true "
-                    v-model:valueInput=" formState.content.cmsBank.ownerBizNumber " nameInput="cmsBank-accountNumber" :ruleCustom="() => checkBizNumberLen"
+                    v-model:valueInput=" bizResNumber " nameInput="cmsBank-accountNumber" :ruleCustom="() => checkBizNumberLen"
                       :messageRuleCustom="lenFixedMsg" :maxLength="13" />
-                  <!-- <biz-number-text-box width="250px" v-model:valueInput="
-                  " :required=" true " nameInput="cmsBank-ownerBizNumber" /> -->
                   <div class="noteImage">
                     <info-tool-tip>
                       예금주의 사업자등록번호 또는 주민등록번호입니다.
@@ -484,6 +483,7 @@ export default defineComponent({
     const deleteModal = ref(false);
     const rowIndexDelete = ref(0);
     const contentDelete = Message.getCommonMessage("401").message;
+    const bizResNumber = ref('');
     // event close popup
     const setModalVisible = () => {
       if (
@@ -602,6 +602,7 @@ export default defineComponent({
             withholdingServiceTypes: [],
           };
         }
+        bizResNumber.value = data.content?.cmsBank.ownerBizNumber || data.content?.cmsBank.ownerResidentId;
         triggerCheckPer.value = true;
         dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value));
         objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
@@ -775,6 +776,13 @@ export default defineComponent({
       } else {
         newContent.withholding.withholdingServiceTypes = withholdingServiceTypes.value ? [1] : [];
       }
+      if(bizResNumber.value.length === 10){
+        newContent.cmsBank.ownerBizNumber = bizResNumber.value;
+        delete newContent.cmsBank.ownerResidentId;
+      }else {
+        newContent.cmsBank.ownerResidentId = bizResNumber.value;
+        delete newContent.cmsBank.ownerBizNumber;
+      }
       let variables = {
         id: formState.value.id,
         status: formState.value.status,
@@ -900,7 +908,7 @@ export default defineComponent({
 
     const lenFixedMsg = Message.getCommonMessage('105').message;
     const checkBizNumberLen = ref(false)
-    watch(()=>formState.value.content.cmsBank.ownerBizNumber,(newVal: any)=>{
+    watch(bizResNumber,(newVal: any)=>{
       if(newVal.length !== 10 && newVal.length !==13){
         checkBizNumberLen.value = false;
       }else{
@@ -958,6 +966,7 @@ export default defineComponent({
       withholdingServiceTypes,
       isStatusApproved,onRowChangeComfirm,
       checkBizNumberLen,lenFixedMsg,
+      bizResNumber,
     };
   },
 });

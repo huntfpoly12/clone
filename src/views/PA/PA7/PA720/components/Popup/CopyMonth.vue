@@ -9,9 +9,6 @@
         <DxButton :text="'지 ' + month2.slice(0, 4) + '-' + month2.slice(4)"
           :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }"
           class="btn-date mr-2" />
-        <!-- <div class="d-flex-center">
-          <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
-        </div> -->
       </div>
     </a-form-item>
     <a-form-item label="지급일" :colon="false" label-align="right">
@@ -23,8 +20,8 @@
     <div class="text-align-center mt-20">
       <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
         @onClick="onSubmit" />
-      <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
-        @onClick="openModalCopy" />
+      <!-- <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
+        @onClick="openModalCopy" /> -->
     </div>
   </a-modal>
 
@@ -201,6 +198,7 @@ export default defineComponent({
           companyId: companyId,
           source: dataApiCopy.value,
           target: processKeyPA720.value.processKey,
+          targetDay: +paymentDayPA720.value.toString().slice(-2),
         }
         mutate(param);
       } else {

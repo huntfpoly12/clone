@@ -358,27 +358,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const countGet = ref(0);
-    // const rangeDate: any = computed({
-    //   get() {
-    //     return [
-    //       parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
-    //       parseInt(dayjs().format("YYYYMMDD")),
-    //     ];
-    //   },
-    //   set(newVal: any) {
-    //     companyRequestListParam.input = {
-    //       fromDate: newVal[0],
-    //       toDate: newVal[1],
-    //     };
-    //     if (countGet.value > 0) {
-    //       companyRequestListTrigger.value = true;
-    //       companyRequestListRefetch();
-    //     } else {
-    //       countGet.value = 0;
-    //     }
-    //   },
-    // });
     const formState: any = reactive({
       companyName: "",
       companyBizNumber: "",
@@ -401,8 +380,9 @@ export default defineComponent({
       dayjs().subtract(1, "week").format("YYYYMMDD"),
       dayjs().format("YYYYMMDD"),
     ]);
-    watch(rangeDate, (newVal: any) => {
-      if (newVal) {
+    watch(rangeDate, (newVal: any, oldVal) => {
+      let oldVal2 = oldVal.map((item: any) => +item);
+      if (JSON.stringify(newVal) !== JSON.stringify(oldVal2)) {
         companyRequestListParam.input = {
           fromDate: newVal[0],
           toDate: newVal[1],
@@ -452,14 +432,13 @@ export default defineComponent({
           }
         );
         dataSource.value = dataArr;
-        if (props.onSearch) {
-          props.onSearch();
-        }
-        companyRequestListTrigger.value = false;
-        countGet.value++;
       } else {
         dataSource.value = [];
       }
+      if (props.onSearch) {
+        props.onSearch();
+      }
+      companyRequestListTrigger.value = false;
     });
     companyRequestListError((res: any) => {
       notification("error", res.message);
@@ -467,7 +446,6 @@ export default defineComponent({
       if (props.onSearch) {
         props.onSearch();
       }
-      countGet.value++;
     });
 
     //----------------------------ON SEARCH ------------------------------
