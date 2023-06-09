@@ -15,14 +15,23 @@ export default function useCheckPermission(roles: string[] | null) {
     const userType = jwtObject.userType
     // return read and write permission
     if (userType === UserType.CUSTOMER) {
+      
       return {
         read: roles.some((item) => readWorkScreenRoles?.includes(item)),
         write: roles.some((item) => writeWorkScreenRoles?.includes(item))
       }
     } else {
-      return {
-        read: roles.some((item) => readAdminScreenRoles?.includes(item)),
-        write: roles.some((item) => writeAdminScreenRoles?.includes(item))
+      if (jwtObject.additionalUserType === UserType.CUSTOMER) {
+        // 일반사용자의 권한을 위임받은 경우
+        return {
+          read: roles.some((item) => readWorkScreenRoles?.includes(item)) || roles.some((item) => readAdminScreenRoles?.includes(item)),
+          write: roles.some((item) => writeWorkScreenRoles?.includes(item)) || roles.some((item) => writeAdminScreenRoles?.includes(item))
+        }
+      } else {
+        return {
+          read: roles.some((item) => readAdminScreenRoles?.includes(item)),
+          write: roles.some((item) => writeAdminScreenRoles?.includes(item))
+        }
       }
     }
   };
