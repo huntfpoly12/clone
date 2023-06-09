@@ -345,8 +345,8 @@
                       :required="
                         isRequiredAccountPassword || !isCreateduseScrap
                       "
-                      :width="150"
-                      maxLength="4"
+                      width="150"
+                      :maxLength="4"
                       v-model:value="
                         dataDetailBankbook.scrapingInfoInput.accountPassword
                       "
