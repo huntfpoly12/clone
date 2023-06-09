@@ -279,6 +279,7 @@ export default defineComponent({
     const confirmStatus = ref<boolean>(false);
     const disabledRefund = ref<boolean>(false);
     const confirmLoadNewStatus = ref<boolean>(false);
+    const firstTimeLoad = ref<boolean>(false);
     const cellNegativeNumber = [[7, 7], [15, 7], [59, 7]]
     const cellPageSettings = ref<any>(cellsSettingModified);
     const hotSettings = {
@@ -317,7 +318,7 @@ export default defineComponent({
         }
       },
       afterChange: async (changes: any, source: string) => {
-        if (source == "edit") {
+        if (source == "edit" && firstTimeLoad.value) {
           const { checkYETaxAdj, cell12 } = await calculateWithholdingStatusReportModified(wrapper);
           // kiểm tra disable refun theo cell 12
           if (!cell12) {
@@ -331,6 +332,8 @@ export default defineComponent({
           }
           dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
           store.commit("common/setHasChangedPopupPA210", true);
+        } else if (source == "edit") {
+          firstTimeLoad.value = true;
         }
       },
       hotRef: null,
