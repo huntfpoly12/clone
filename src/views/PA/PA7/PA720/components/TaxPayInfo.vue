@@ -9,46 +9,48 @@
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left" />
+      <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left"/>
       <template #tag="{ data }">
-        <div v-if="data.data.employeeId">
-          <span class="btn-container">
-            {{ data.data.employeeId }}
-          </span>
-          <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.name.length > 8">
+        <div>
+          <div v-if="data.data.employeeId" class="d-flex-center">
+            <span class="btn-container">
+              {{ data.data.employeeId }}
+            </span>
+            <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.name.length > 4">
             <template #title>
               <span>{{ checkLenTooltip(data.data?.employee?.name, 0) }}</span>
             </template>
-            <div class="name-w-1">
-              {{ checkLen(data.data?.employee?.name, 8) }}
+            <div class="name-w-1 text-overflow">
+              {{ data.data?.employee?.name }}
             </div>
           </a-tooltip>
-          <div class="name-w-1" v-else>
-            {{ checkLen(data.data?.employee?.name, 8) }}
+          <div class="name-w-1 text-overflow" v-else>
+            {{ data.data?.employee?.name }}
           </div>
           <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.incomeTypeName">
             <template #title>
               <span>{{ data.data?.employee?.incomeTypeCode }} {{ checkLenTooltip(data.data?.employee?.incomeTypeName, 0)
               }}</span>
             </template>
-            <a-tag class="py-1 mr-0"> {{ checkLen(data.data?.employee?.incomeTypeName, 15) }}</a-tag>
+            <a-tag class="py-1 mr-0 text-overflow"> {{ data.data?.employee?.incomeTypeName }}</a-tag>
           </a-tooltip>
         </div>
         <div v-else></div>
+      </div>
       </template>
       <DxColumn caption="지급일" width="55" alignment="left" data-field="paymentDay" cell-template="paymentDay" />
       <template #paymentDay="{ data }">
         {{ formatMonth(data.data.paymentDay) }}
       </template>
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" alignment="right" />
-      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" alignment="right" />
-      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" alignment="right" />
-      <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" alignment="right"  width="80"/>
+      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" alignment="right"  width="80"/>
+      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" alignment="right"  width="80"/>
+      <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot"/>
       <template #taxRateSlot="{ data }">
         {{ data.value }}%
       </template>
       <DxColumn caption="공제" cell-template="incomLocalTax" alignment="right"
-        :calculateCellValue="calculateIncomeTypeCodeAndName" />
+        :calculateCellValue="calculateIncomeTypeCodeAndName"  width="80"/>
       <template #incomLocalTax="{ data }">
         <a-tooltip placement="top">
           <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -59,7 +61,7 @@
           </span>
         </a-tooltip>
       </template>
-      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" alignment="right" />
+      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" alignment="right" width="80" />
     </DxDataGrid>
     <a-row class="fs-14 summary-ctn">
       <a-col span="7">
@@ -337,8 +339,8 @@ export default defineComponent({
       dataGridRef.value.selectRows(val, true)
     }
     const checkLen = (text: String, num: number) => {
-      if (text.length > num) {
-        return text.substring(0, num - 3) + '...';
+      if (text.replace(/\s/g, "").length > num) {
+        return text.substring(0, num - 2) + ' ' + '...';
       }
       return text;
     };

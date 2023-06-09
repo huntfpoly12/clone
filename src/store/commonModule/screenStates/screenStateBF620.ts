@@ -7,7 +7,7 @@ let statesBF620 = {
     companyName: "",
     manageUserId: null,
     salesRepresentativeId: null,
-    active: true,
+    // active: true,
     paymentYear: +dayjs().format("YYYY"),
     paymentMonth: +dayjs().format("MM"),
     reportType: null,

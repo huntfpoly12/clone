@@ -26,12 +26,6 @@
             />
           </a-form-item>
         </a-rol>
-        <!-- <a-rol class="mr-20">
-          <a-form-item label="신고구분">
-            <SelectBoxCT :arrSelect="reportTypeSelectbox" v-model:valueInput="formState.companyName4"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
-          </a-form-item>
-        </a-rol> -->
         <a-rol class="mr-20">
           <a-form-item label="상태">
             <SelectBoxCT
@@ -124,6 +118,7 @@
         >
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
+          <DxPaging :page-size="1000" />
           <DxLoadPanel :enabled="false" :showPane="true" />
           <DxSelection
             :select-all-mode="'allPages'"
@@ -375,6 +370,7 @@ import {
   DxSelection,
   DxLoadPanel,
   DxKeyboardNavigation,
+DxPaging,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -418,7 +414,8 @@ export default defineComponent({
     DxTextBox,
     DxTooltip,
     DxKeyboardNavigation,
-  },
+    DxPaging
+},
   props: {
     search: {
       type: Number,
@@ -430,26 +427,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const countGet = ref(0);
-    const rangeDate: any = computed({
-      get() {
-        return [
-          parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
-          parseInt(dayjs().format("YYYYMMDD")),
-        ];
-      },
-      set(newVal: any) {
-        adminConsignStatusParam.input = {
-          fromDate: newVal[0],
-          toDate: newVal[1],
-        };
-        if (countGet.value == 1) {
-          adminConsignStatusTrigger.value = true;
-        } else {
-          countGet.value = 0;
-        }
-      },
-    });
     const formState: any = reactive({
       companyName: "",
       companyBizNumber: "",
@@ -466,19 +443,31 @@ export default defineComponent({
     const companies = ref<any[]>([]);
     const globalYear = dayjs().year();
     const loadingDataSource = ref(false);
-
+    
     //-----------------------Fcn common-----------------------------------------
-
+    
     //-----------------------Get DATA SOURCE------------------------------
-
+    
+    const rangeDate = ref([dayjs().subtract(1, "week").format("YYYYMMDD"), dayjs().format("YYYYMMDD")]);
+    watch(rangeDate,(newVal: any,oldVal)=>{
+      let oldVal2 = oldVal.map((item:any) => +item);
+      if(JSON.stringify(newVal) !== JSON.stringify(oldVal2)){
+        adminConsignStatusParam.input = {
+          fromDate: newVal[0],
+          toDate: newVal[1],
+        };
+        adminConsignStatusTrigger.value = true;
+        getMajorInsuranceRefetch();
+      }
+    })
     const dataSource = ref<any[]>([]);
     const filterDsTab1Bf530 = computed(
       () => store.state.common.filterDsTab1Bf530
     );
     const adminConsignStatusParam = reactive({
       input: {
-        fromDate: rangeDate.value[0],
-        toDate: rangeDate.value[1],
+        fromDate: +rangeDate.value[0],
+        toDate: +rangeDate.value[1],
       },
     });
     const adminConsignStatusTrigger = ref(true);
@@ -496,27 +485,34 @@ export default defineComponent({
       })
     );
     watch(adminConsignStatusResult, (newVal) => {
-      loadingDataSource.value = true;
-      let dataArr = newVal.getMajorInsuranceAdminConsignStatus.map(
-        (item: any) => {
-          return {
-            companyCode: item.company.code,
-            companyName: item.company.name,
-            companyBizNumber: item.company.bizNumber,
-            companyPresidentName: item.company.presidentName,
-            ...item,
-          };
-        }
-      );
-      dataSource.value = dataArr;
+      if (newVal !== null) {
+        loadingDataSource.value = true;
+        let dataArr = newVal.getMajorInsuranceAdminConsignStatus.map(
+          (item: any) => {
+            return {
+              companyCode: item.company.code,
+              companyName: item.company.name,
+              companyBizNumber: item.company.bizNumber,
+              companyPresidentName: item.company.presidentName,
+              ...item,
+            };
+          }
+        );
+        dataSource.value = dataArr;
+      }else {
+        dataSource.value = [];
+      }
       if (props.onSearch) {
         props.onSearch();
       }
       adminConsignStatusTrigger.value = false;
-      countGet.value++;
     });
     adminConsignStatusError((res: any) => {
       notification("error", res.message);
+      dataSource.value = [];
+      if (props.onSearch) {
+        props.onSearch();
+      }
     });
 
     //----------------------------ON SEARCH ------------------------------
@@ -620,6 +616,8 @@ export default defineComponent({
     onDoneConsignStatus(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
+      getMajorInsuranceTrigger.value = true;
+      getMajorInsuranceRefetch();
     });
     onErrorConsignStatus((e: any) => {
       notification("error", e.message);

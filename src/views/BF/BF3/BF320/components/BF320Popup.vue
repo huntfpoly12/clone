@@ -194,16 +194,16 @@
                   class=" mt-5 clr"
                 >
                   <div class="d-flex-center">
-                    <id-number-text-box
+                    <text-number-box
                     width="250px"
-                    checkAllResidentId
                     v-model:valueInput="
                       formState.extendInfoCmsBankOwnerBizNumber
                     "
                     :required="true"
                     nameInput="formState-extendInfoCmsBankOwnerBizNumber"
-                  >
-                  </id-number-text-box>
+                    :ruleCustom="ruleCustomOwnerBizNumber"
+                    customRule
+                  />
                   <info-tool-tip>예금주의 사업자등록번호 또는 주민등록번호입니다.</info-tool-tip>
                   </div>
                 </a-form-item>
@@ -662,6 +662,9 @@ export default defineComponent({
       dataImg.value = resImg;
       formState.extendInfoDetailLicenseFileStorageId = resImg.id;
     };
+    const ruleCustomOwnerBizNumber = (e: any) => {
+      return e.value?.length >= 10 && e.value?.length <= 13
+    }
     return {
       arrayRadioWithdrawDay,
       fileList,
@@ -688,7 +691,8 @@ export default defineComponent({
       handleAddMemo,
       updateCompany,
       getImgUrl,
-      isNewMemo
+      isNewMemo,
+      ruleCustomOwnerBizNumber
     };
   },
 });

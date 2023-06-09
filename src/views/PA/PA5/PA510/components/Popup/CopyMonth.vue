@@ -72,6 +72,7 @@ import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
 import { sampleDataIncomeWageDaily } from "../../utils/index"
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -140,7 +141,7 @@ export default defineComponent({
         onDone(res => {
             setModalVisible()
             setModalVisibleCopy()
-            notification('success', `완료!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             processKey.value.imputedMonth = month.value
             processKey.value.paymentYear = parseInt(month2.value?.toString().slice(0, 4))
             processKey.value.paymentMonth = parseInt(month2.value?.toString().slice(4, 6))
@@ -253,6 +254,7 @@ export default defineComponent({
                         paymentYear: parseInt(month2.value?.toString().slice(0, 4)),
                         paymentMonth: parseInt(month2.value?.toString().slice(4, 6)),
                     },
+                    targetDay: parseInt(paymentDayCopy.value?.toString().slice(6, 8)),
                 })
             } else {
                 notification('error', '날짜를 선택하세요.')

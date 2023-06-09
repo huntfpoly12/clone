@@ -55,8 +55,8 @@
 					<a-row>
 						<a-col :span="14">
 							<a-form-item label="항목명" :label-col="labelCol" class="red">
-								<default-text-box style="width: 150px; margin-right: 10px" :required="true"
-									v-model:valueInput="formState.name" placeholder="기존항목과 중복불가">
+								<default-text-box style="margin-right: 10px" :required="true"
+									v-model:valueInput="formState.name" placeholder="기존 항목명과 중복 불가" width="320">
 								</default-text-box>
 							</a-form-item>
 						</a-col>
@@ -111,9 +111,9 @@
 					</a-row>
 					<a-row>
 						<a-col :span="14">
-							<a-form-item label="항목명" :label-col="labelCol" class="red">
-								<default-text-box style="width: 150px; margin-right: 10px" :disabled="useChangable"
-									:required="true" v-model:valueInput="formState.name">
+							<a-form-item label="항목명" :label-col="labelCol" class="red" >
+								<default-text-box style=" margin-right: 10px" :disabled="useChangable"
+									:required="true" v-model:valueInput="formState.name" width="320">
 								</default-text-box>
 							</a-form-item>
 						</a-col>

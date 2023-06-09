@@ -80,3 +80,10 @@
 :deep .dx-command-drag {
   cursor: move !important;
 }
+:deep .dx-datagrid-rowsview{
+  border-left: 0;
+  border-right: 0;
+}
+:deep .dx-empty{
+  border-bottom: 0;
+}

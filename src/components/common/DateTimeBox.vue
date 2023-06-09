@@ -161,13 +161,13 @@ export default defineComponent({
                 const maxIndexYear = arrText[0].length
                 const maxIndexMonth = maxIndexYear + arrText[1].length + 1
                 const maxIndexDay = maxIndexMonth + arrText[2].length  + 1
-                if(indexCusor <= maxIndexYear){
+                if(indexCusor <= maxIndexYear || indexCusor >= maxIndexDay){
                     e.target.setSelectionRange(0, maxIndexYear)
                 }
                 if(indexCusor >= maxIndexYear + 1 && indexCusor <= maxIndexMonth){
                     e.target.setSelectionRange(maxIndexYear + 1, maxIndexMonth)
                 }
-                if(indexCusor >= maxIndexMonth + 1 ){
+                if(indexCusor >= maxIndexMonth + 1 && indexCusor < maxIndexDay){
                     e.target.setSelectionRange(maxIndexMonth + 1, maxIndexDay)
                 }
             }
@@ -175,7 +175,7 @@ export default defineComponent({
 
         const input = (e: any) => {
             if(e.target.value.length === 10 && (e.target.selectionStart === 4 || e.target.selectionStart === 7)){
-                if(dayjs(e.target.value, 'YYYY-MM-DD', true).isValid()) {
+                if(dayjs(e.target.value, 'YYYY-MM-DD', false).isValid()) {
                     if(e.target.selectionStart === 4) {
                         e.target.setSelectionRange(5, 7)
                     }else {

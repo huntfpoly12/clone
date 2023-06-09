@@ -151,28 +151,28 @@
             <a-row>
               <a-col :span="12">
                 <a-form-item label="당해년도 보수총액" label-align="right">
-                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.totalSalaryThisYear"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled="false" v-model:valueInput="formState.totalSalaryThisYear"
+                    :required="false" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="당해년도 산정월수" label-align="right">
-                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.workMonthThisYear"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled="false" v-model:valueInput="formState.workMonthThisYear"
+                    :required="false" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row>
               <a-col :span="12">
                 <a-form-item label="전년도 보수총액" label-align="right">
-                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.totalSalaryLastYear"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled="false" v-model:valueInput="formState.totalSalaryLastYear"
+                    :required="false" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="전년도 산정월수" label-align="right">
-                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.workMonthLastYear"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled="false" v-model:valueInput="formState.workMonthLastYear"
+                    :required="false" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -264,10 +264,10 @@ export default defineComponent({
       employeementInsuranceJobChangeReport: false,
       healthInsuranceLossCode: '1',
       employeementInsuranceLossDescription: '',
-      totalSalaryThisYear: 100000,
-      totalSalaryLastYear: 100000,
-      workMonthThisYear: 1300,
-      workMonthLastYear: 100000,
+      totalSalaryThisYear: 0,
+      totalSalaryLastYear: 0,
+      workMonthThisYear: 0,
+      workMonthLastYear: 0,
       retireDate: null
     })
     const formStateToCompare = ref({ ...formState });

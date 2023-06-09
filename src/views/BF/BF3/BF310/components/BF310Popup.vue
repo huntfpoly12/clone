@@ -5,8 +5,7 @@
       <a-spin :spinning="loading || loadingUpdate">
         <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
           <div class="collapse-content">
-            {{ formState.status }}
-            <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
+            <a-collapse v-model:activeKey="activeKey" accordion :bordered="false" >
               <a-collapse-panel key="1" header="심사정보">
                 <a-row>
                   <a-col :span="24" style="display: flex">
@@ -246,9 +245,10 @@
                               v-model:valueInput=" dataActiveRow.capacity " />
                           </a-form-item>
                           <a-form-item label="장기요양기관등록번호" :label-col=" labelCol ">
-                            <default-text-box width="160px" :required=" true " v-model:valueInput="
-                              dataActiveRow.longTermCareInstitutionNumber
-                            " />
+                            <text-number-box width="160px" :required=" true " v-model:valueInput="
+                              dataActiveRow.longTermCareInstitutionNumber" :lengthFixed="11" placeholder="숫자(11자리)"
+                              :lengthFixMsg="lenFixedMsg" :maxLength="11"
+                              />
                           </a-form-item>
                         </a-col>
                         <a-col :span=" 6 " class="pl-12 text-color">
@@ -304,7 +304,7 @@
                   </div>
                 </div>
               </a-collapse-panel>
-              <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
+              <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력" >
                 <a-form-item label="출금은행" class="clr" label-align="left" :label-col=" labelCol ">
                   <bank-select-box v-model:valueInput=" formState.content.cmsBank.bankType " width="150px" />
                 </a-form-item>
@@ -318,9 +318,9 @@
                 </a-form-item>
                 <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr" label-align="left"
                   :label-col=" labelCol ">
-                  <biz-number-text-box width="250px" v-model:valueInput="
-                    formState.content.cmsBank.ownerBizNumber
-                  " :required=" true " nameInput="cmsBank-ownerBizNumber" />
+                  <text-number-box width="250px" :required=" true "
+                    v-model:valueInput=" bizResNumber " nameInput="cmsBank-accountNumber" :ruleCustom="() => checkBizNumberLen"
+                      :messageRuleCustom="lenFixedMsg" :maxLength="13" />
                   <div class="noteImage">
                     <info-tool-tip>
                       예금주의 사업자등록번호 또는 주민등록번호입니다.
@@ -333,7 +333,7 @@
                   " />
                 </a-form-item>
               </a-collapse-panel>
-              <a-collapse-panel key="7" header="기타">
+              <a-collapse-panel key="7" header="기타" forceRender>
                 <a-form-item label="영업관리담당" label-align="left" :label-col=" labelCol ">
                   <list-sales-dropdown v-model:valueInput="
                     formState.content.extra.salesRepresentativeId
@@ -378,7 +378,7 @@
       @closePopup="isStatusApproved = false"
       :typeModal="'confirm'"
       :title="''"
-      :content=" `승인된 사업자등록번호(${formState.content.company.bizNumber})는 수정불가합니다. 그래도 승인하시겠습니까?`"
+      :content=" `승인된 사업자등록번호(${$filters.formatBizNumber(formState.content.company.bizNumber)})는 수정불가합니다. 그래도 승인하시겠습니까?`"
       :okText="'승인'"
       cancelText="아니오"
       @checkConfirm="onRowChangeComfirm"
@@ -483,6 +483,7 @@ export default defineComponent({
     const deleteModal = ref(false);
     const rowIndexDelete = ref(0);
     const contentDelete = Message.getCommonMessage("401").message;
+    const bizResNumber = ref('');
     // event close popup
     const setModalVisible = () => {
       if (
@@ -500,15 +501,14 @@ export default defineComponent({
         if (newValue) {
           isWatching.value = false;
           trigger.value = true;
-          visible.value = newValue;
           dataQuery.value = { id: props.data };
-          Object.assign(formState, initialFormState);
         } else {
-          Object.assign(formState, initialFormState);
           imageLicenseFile.value = "";
           licenseFileName.value = "";
-          visible.value = newValue;
         }
+        Object.assign(formState, initialFormState);
+        visible.value = newValue;
+        activeKey.value = 1;
       }
     );
     const { result, loading, error, refetch } = useQuery(
@@ -602,6 +602,7 @@ export default defineComponent({
             withholdingServiceTypes: [],
           };
         }
+        bizResNumber.value = data.content?.cmsBank.ownerBizNumber || data.content?.cmsBank.ownerResidentId;
         triggerCheckPer.value = true;
         dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value));
         objDataDefault.value = JSON.parse(JSON.stringify(formState.value));
@@ -775,6 +776,13 @@ export default defineComponent({
       } else {
         newContent.withholding.withholdingServiceTypes = withholdingServiceTypes.value ? [1] : [];
       }
+      if(bizResNumber.value.length === 10){
+        newContent.cmsBank.ownerBizNumber = bizResNumber.value;
+        delete newContent.cmsBank.ownerResidentId;
+      }else {
+        newContent.cmsBank.ownerResidentId = bizResNumber.value;
+        delete newContent.cmsBank.ownerBizNumber;
+      }
       let variables = {
         id: formState.value.id,
         status: formState.value.status,
@@ -897,6 +905,16 @@ export default defineComponent({
       keyInfo.value = key;
       statusPupopInfo.value = true;
     };
+
+    const lenFixedMsg = Message.getCommonMessage('105').message;
+    const checkBizNumberLen = ref(false)
+    watch(bizResNumber,(newVal: any)=>{
+      if(newVal.length !== 10 && newVal.length !==13){
+        checkBizNumberLen.value = false;
+      }else{
+        checkBizNumberLen.value = true;
+      }
+    },{deep : true});
     return {
       selectionChanged,
       contentReady,
@@ -947,6 +965,8 @@ export default defineComponent({
       checkedAccounting,
       withholdingServiceTypes,
       isStatusApproved,onRowChangeComfirm,
+      checkBizNumberLen,lenFixedMsg,
+      bizResNumber,
     };
   },
 });

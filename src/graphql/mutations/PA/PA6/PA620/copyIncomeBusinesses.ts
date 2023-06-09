@@ -4,11 +4,13 @@ mutation copyIncomeBusinesses(
     $companyId: Int!
     $source: IncomeProcessKeyInput!
     $target: IncomeProcessKeyInput!
+    $targetDay: Int!
     ) {
         copyIncomeBusinesses( 
             companyId : $companyId,
             source: $source, 
             target: $target,
+            targetDay: $targetDay,
         ){
             incomeId
         }

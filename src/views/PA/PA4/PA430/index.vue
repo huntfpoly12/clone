@@ -5,7 +5,7 @@
             <div class="search-form">
                 <a-row :gutter="20">
                     <a-col>
-                        <div class="income-earners dflex custom-flex">
+                        <div class="dflex custom-flex">
                             <label class="lable-item">귀속기간: </label>
                             <div style="width: 70px;" class="label-belonging">귀속</div>
                         </div>
@@ -14,9 +14,6 @@
                         <div class="dflex custom-flex">
                             <range-month-time-box v-model:valueDate="rangeDate" :minDate="minDate" :maxDate="maxDate"
                                 placeholder="시작월 > 종료월" />
-                            <!-- <a-range-picker :placeholder="['Start month', 'End month']" format="YYYY-MM"
-                                :value="rangeDate" :mode="mode2" @panelChange="handlePanelChange2"
-                                @change="handleChange" :locale="locale" /> -->
                         </div>
                     </a-col>
                     <a-col>
@@ -44,18 +41,10 @@
                     </a-col>
                     <a-col :span="12">
                         <div class="created-date">
-                            <a-form-item label="영수일" class="red">
-                                <div class="format-settings-text">
-                                    <date-time-box width="150px" v-model:valueDate="dataInputReport.input.receiptDate">
-                                    </date-time-box>
-                                </div>
-                            </a-form-item>
+                            <label class="lable-item">영수일 :</label>
+                            <date-time-box width="150px" v-model:valueDate="dataInputReport.input.receiptDate" />
                         </div>
                     </a-col>
-                    <!-- <a-col :span="12">
-                        <strong class="lable-item">소득자보관용 :</strong>
-                        <switch-basic v-model:valueSwitch="valSwitch" :textCheck="'발행자보관용'" :textUnCheck="'발행자보고용'" />
-                    </a-col> -->
                 </a-row>
                 <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA430" :show-row-lines="true" :hoverStateEnabled="true"
                     :data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
@@ -67,34 +56,26 @@
                         <DxItem template="send-group-print" />
                     </DxToolbar>
                     <template #send-group-mail>
-                        <div class="custom-mail-group">
-                            <DxButton @click="actionOpenPopupEmailMulti" class="bt-email-group">
-                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
-                            </DxButton>
-                        </div>
+                        <DxButton @click="actionOpenPopupEmailMulti" class="bt-email-group">
+                            <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
+                        </DxButton>
                     </template>
                     <template #send-group-print>
-                        <div class="custom-mail-group">
-                            <DxButton @click="onPrintGroup" class="bt-print-group">
-                                <a-tooltip>
-                                    <template #title>
-                                        출력 / 저장
-                                    </template>
-                                    <img src="@/assets/images/printGroup.png" alt=""
-                                        style="width: 28px; margin-right: 3px; cursor: pointer" />
-                                </a-tooltip>
-                            </DxButton>
-                        </div>
+                        <DxButton @click="onPrintGroup" class="bt-print-group">
+                            <a-tooltip title="출력 / 저장" placement="topLeft">
+                                <img src="@/assets/images/printGroup.png" alt=""
+                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
+                            </a-tooltip>
+                        </DxButton>
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
-                    <DxColumn :width="230" caption="사원" css-class="cell-left" cell-template="employee-info" data-field="employee.employeeId"/>
+                    <DxColumn :width="230" caption="사원" css-class="cell-left" cell-template="employee-info"
+                        data-field="employee.employeeId" />
                     <template #employee-info="{ data }">
-                        <div class="custom-action">
-                            <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-                                :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-                                :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                                :forDailyUse="data.data.employeeType == 20 ? true : false" />
-                        </div>
+                        <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                            :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                            :foreigner="data.data.employee.foreigner" :checkStatus="false"
+                            :forDailyUse="data.data.employeeType == 20 ? true : false" />
                     </template>
                     <DxColumn width="55" data-field="retirementType" caption="구분 " cell-template="grid-cell"
                         css-class="cell-center" />
@@ -113,11 +94,13 @@
                     <template #settlementFinishDate="{ data }">
                         {{ $filters.formatDate(data.value) }}
                     </template>
-                    <DxColumn width="70" caption="귀속연월" css-class="cell-center" data-field="imputedMonth" cell-template="inputedYearMonth" />
+                    <DxColumn width="70" caption="귀속연월" css-class="cell-center" data-field="imputedMonth"
+                        cell-template="inputedYearMonth" />
                     <template #inputedYearMonth="{ data }">
                         {{ paYear }}-{{ $filters.formatMonth(data.data.imputedMonth) }}
                     </template>
-                    <DxColumn width="70" caption="지급연월" css-class="cell-center" data-field="paymentMonth" cell-template="paymentYearMonth" />
+                    <DxColumn width="70" caption="지급연월" css-class="cell-center" data-field="paymentMonth"
+                        cell-template="paymentYearMonth" />
                     <template #paymentYearMonth="{ data }">
                         {{ data.data.paymentYear }}-{{ $filters.formatMonth(data.data.paymentMonth) }}
                     </template>
@@ -136,51 +119,35 @@
                         </a-tooltip>
                     </template>
                     <DxColumn caption="차인지급액" data-field="actualPayment" width="70" format="#,###" alignment="right" />
-                    <DxColumn caption="비고" css-class="cell-left" cell-template="note" data-field="employee.nationalPensionDeduction"/>
+                    <DxColumn caption="비고" css-class="cell-left" cell-template="note"
+                        data-field="employee.nationalPensionDeduction" />
                     <template #note="{ data }">
-                        <div class="custom-action">
-                            <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
-                                :typeValue="1" />
-                            <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
-                                :typeValue="1" />
-                            <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
-                                :typeValue="1" />
-                            <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
-                                :ratio="data.data.employee.nationalPensionSupportPercent" />
-                            <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
-                                :ratio="data.data.employee.employeementInsuranceSupportPercent" />
-                            <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
-                                :ratio="data.data.employee.employeementReductionRatePercent" />
-                            <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
-                                :ratio="data.data.employee.incomeTaxMagnification" />
-                        </div>
+                        <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
+                            :ratio="data.data.employee.nationalPensionSupportPercent" />
+                        <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
+                            :ratio="data.data.employee.employeementInsuranceSupportPercent" />
+                        <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
+                            :ratio="data.data.employee.employeementReductionRatePercent" />
+                        <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
+                            :ratio="data.data.employee.incomeTaxMagnification" />
                     </template>
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
-                        <div class="custom-action" style="text-align: center;">
+                        <div style="text-align: center;">
                             <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px;" />
-                            <a-tooltip>
-                                <template #title>출력 / 저장</template>
+                            <a-tooltip title="출력 / 저장" placement="topLeft">
                                 <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
                                     @click="actionPrint(data.data)" />
                             </a-tooltip>
                         </div>
                     </template>
-                    <!-- <DxSummary v-if="dataSource.length">
-                        <DxTotalItem value-format="#,###" :customize-text="employeeType1" show-in-column="사원"
-                            alignment="left" />
-                        <DxTotalItem value-format="#,###" display-format="퇴직급여합계: {0}" column="retirementBenefits"
-                            summary-type="sum" alignment="left" />
-                        <DxTotalItem value-format="#,###" display-format="비과세퇴직급여합계: {0}"
-                            column="nonTaxableRetirementBenefits" summary-type="sum" alignment="left" />
-                        <DxTotalItem value-format="#,###" display-format="과세대상퇴직급여합계: {0}"
-                            column="taxableRetirementBenefits" summary-type="sum" alignment="left" />
-                        <DxTotalItem value-format="#,###" display-format="공제합계: {0}" column="totalDeduction"
-                            summary-type="sum" />
-                        <DxTotalItem value-format="#,###" display-format="차인지급액합계: {0}" column="actualPayment"
-                            summary-type="sum" />
-                    </DxSummary> -->
                 </DxDataGrid>
                 <div v-if="dataSource.length"
                     style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
@@ -191,11 +158,13 @@
                         </div>
                     </div>
                     <div style="margin-left: 50px;">
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customNonTaxableRetirementBenefits()">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                            v-html="customNonTaxableRetirementBenefits()">
                         </div>
                     </div>
                     <div style="margin-left: 50px;">
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTaxableRetirementBenefits()">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                            v-html="customTaxableRetirementBenefits()">
                         </div>
                     </div>
                     <div style=" margin-left: 50px;">
@@ -382,12 +351,12 @@ export default defineComponent({
          * action send multi print
          */
         const onPrintGroup = () => {
-            if (incomeIds.value.length > 1) {
+            if (incomeIds.value.length) {
                 dataInputReport.incomeIds = incomeIds.value
                 triggerReport.value = true;
                 // refetchReport()
             } else {
-                notification('error', Message.getMessage('COMMON', '601').message)
+                notification('error', Message.getMessage('COMMON', '404').message)
             }
         };
 

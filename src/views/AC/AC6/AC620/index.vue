@@ -41,8 +41,8 @@
                 :focused-row-enabled="true"
                 @focused-row-changing="onFocusedRowChanging"
                 @focused-row-changed="onFocusedRowChanged"
-                v-model:focused-row-key="focusedRowKey"
-                :focusedRowIndex="0"
+                :focused-row-key="focusedRowKey"
+                :focusedRowIndex="focusedRowIndex"
                 style="height: 740px"
                 noDataText="내역이 없습니다"
               >
@@ -384,6 +384,7 @@ export default defineComponent({
     const isNewRow = ref(false); // check if new row is adding
     const isClickAddRow = ref(false); // check if click add row
     const focusedRowKey = ref<number>(0); // focused row key
+      const focusedRowIndex = ref<number>(0);
     const previousRowData = ref({...initBackerCreateInput}); // save previous row data when focus row change
 
     const formState: any = ref({...initBackerCreateInput}); // data show in form when click row or add new row
@@ -464,10 +465,13 @@ export default defineComponent({
         store: {
           type: "array",
           key: "backerCode",
-          data: listBackers.value,
+          data: res.data.searchBackers.datas || [],
         },
         requireTotalCount: true,
       });
+      if (!isNewRow.value) {
+        focusedRowKey.value = selectRowKeyAction.value;
+      }
     });
 
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
@@ -480,13 +484,12 @@ export default defineComponent({
       if(isClickAddRow.value) {
         addNewRow()
       } else {
-        if(selectRowKeyAction.value !==0) {
-          focusedRowKey.value = selectRowKeyAction.value
-        } else {
+        isNewRow.value = false;
+        if(selectRowKeyAction.value === 0) {
           focusedRowKey.value = res.data.createBacker.backerCode;
           selectRowKeyAction.value = res.data.createBacker.backerCode;
-        }
-        isNewRow.value = false;
+          focusedRowIndex.value = 0
+        } else focusedRowKey.value = selectRowKeyAction.value
       }
       notification("success", Message.getCommonMessage('101').message);
     });
@@ -501,6 +504,7 @@ export default defineComponent({
 
       if (!isNewRow.value) {
         focusedRowKey.value = selectRowKeyAction.value;
+        focusedRowIndex.value = 0
       } else {
         storeDataSource.value.insert(initBackerCreateInput).then((result) => {
           previousRowData.value = { ...result };
@@ -546,55 +550,60 @@ export default defineComponent({
     };
     // handle onFocusedRowChanging to row
     const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
-      const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
-      // create new row and click row other then check data input
-      if (isNewRow.value) {
-        focusedRowKey.value = 0;
-        if (e.rows[e.newRowIndex].key === 0) return;
+      if(e) {
+        const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
+        // create new row and click row other then check data input
+        if (isNewRow.value) {
+          focusedRowKey.value = 0;
+          if (e.rows[e.newRowIndex].key === 0) return;
 
-        // when isNewRow and click row other then check data input
-        if (isEqual(formState.value, initBackerCreateInput)) {
-          storeDataSource.value.remove(0).then(() => {
-            storeDataSource.value
-              .byKey(e.rows[e.newRowIndex].key)
-              .then((value) => {
-                // formState = value;
-                previousRowData.value = cloneDeep(formState.value) as any;
-              });
-            dataGridRef.value?.refresh();
-            isNewRow.value = false;
-          });
+          // when isNewRow and click row other then check data input
+          if (isEqual(formState.value, initBackerCreateInput)) {
+            storeDataSource.value.remove(0).then(() => {
+              storeDataSource.value
+                .byKey(e.rows[e.newRowIndex].key)
+                .then((value) => {
+                  // formState = value;
+                  previousRowData.value = cloneDeep(formState.value) as any;
+                });
+              dataGridRef.value?.refresh();
+              isNewRow.value = false;
+            });
+          } else {
+            selectRowKeyAction.value = e.rows[e.newRowIndex].key;
+            previousRowData.value = { ...e.rows[e.newRowIndex].data };
+            isDiscard.value = true;
+            rowElement?.classList.add("dx-state-hover-custom")
+            e.cancel = true;
+          }
         } else {
-          selectRowKeyAction.value = e.rows[e.newRowIndex].key;
-          previousRowData.value = { ...e.rows[e.newRowIndex].data };
-          isDiscard.value = true;
-          rowElement?.classList.add("dx-state-hover-custom")
-          e.cancel = true;
-        }
-      } else {
-        // new row is not adding, check data input not change then not handle onFocusedRowChanged
-        if (focusedRowKey.value === e.rows[e.newRowIndex].key) {
-          e.cancel = true;
-          return;
-        }
-        if (
-          focusedRowKey.value !== e.rows[e.newRowIndex].key &&
-          previousRowData.value &&
-          !isEqual(formState.value, previousRowData.value)
-        ) {
-          isDiscard.value = true;
-          selectRowKeyAction.value = e.rows[e.newRowIndex].key;
-          rowElement?.classList.add("dx-state-hover-custom")
-          e.cancel = true;
-        } else {
-          selectRowKeyAction.value = e.rows[e.newRowIndex].key;
+          // new row is not adding, check data input not change then not handle onFocusedRowChanged
+          if (focusedRowKey.value === e.rows[e.newRowIndex].key) {
+            e.cancel = true;
+            return;
+          }
+          if (
+            focusedRowKey.value !== e.rows[e.newRowIndex].key &&
+            previousRowData.value &&
+            !isEqual(formState.value, previousRowData.value)
+          ) {
+            isDiscard.value = true;
+            selectRowKeyAction.value = e.rows[e.newRowIndex].key;
+            rowElement?.classList.add("dx-state-hover-custom")
+            e.cancel = true;
+          } else {
+            selectRowKeyAction.value = e.rows[e.newRowIndex].key;
+          }
         }
       }
     };
     // handle onFocusedRowChanged to row, function run then auto set focusedRowKey
     const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
-      formState.value = e.row?.data;
-      previousRowData.value = cloneDeep(e.row?.data);
+      if(e.row) {
+        formState.value = e.row?.data;
+        previousRowData.value = cloneDeep(e.row?.data);
+        focusedRowKey.value = e.row?.key;
+      }
     };
     const addNewRow = () => {
       storeDataSource.value.insert(initBackerCreateInput).then((result) => {
@@ -619,6 +628,7 @@ export default defineComponent({
           if (!isDisableBtnCheckBizNumber.value || !isDisableBtnCheckResidentId.value) {
             if (isCheckedBizNumber.value || isCheckedResidentId.value) {
               await updateBacker(dataUpdate.value);
+              focusedRowIndex.value = -1;
             } else {
               dataGridRef.value?.refresh();
               const messageType = formState.value.type === 1 ? '001' : '002';
@@ -626,6 +636,7 @@ export default defineComponent({
             }
           } else {
             await updateBacker(dataUpdate.value);
+            focusedRowIndex.value = -1;
           }
         } else {
           const newData = {
@@ -941,7 +952,8 @@ export default defineComponent({
       isDisableBtnCheckBizNumber,
       isCheckedBizNumber,
       isCheckedResidentId,
-      isDataRow
+      isDataRow,
+      focusedRowIndex
     };
   },
 });

@@ -430,11 +430,13 @@
     :modalStatus="modalPrint"
     @closePopup="closePopupPrint"
     :dataCall="dataCall"
+    v-if="modalPrint"
   />
   <PopupSendEmail
     :modalStatus="modalSendEmail"
     @closePopup="closeSendEmail"
     :dataCall="dataCall"
+    v-if="modalSendEmail"
   />
 </template>
 

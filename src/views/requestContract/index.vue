@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="form-item">
                                         <label class="red">사업자등록번호 :</label>
-                                        <biz-number-text-box width="135px" v-model:valueInput="contractCreacted.ownerBizNumber"
+                                        <biz-number-text-box width="135px" v-model:valueInput="contractCreacted.ownerBizNumber1"
                                             :required="true" />
                                     </div>
                                     <div class="form-item">
@@ -236,7 +236,8 @@
                                     </a-form-item>
                                     <a-form-item label="장기요양기관등록번호" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
-                                            v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
+                                            v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" :lengthFixed="11" placeholder="숫자(11자리)"
+                                            :messageRuleCustom="lenFixedMsg" :maxLength="11" />
                                     </a-form-item>
                                     <div>
                                         <imgUpload :title="titleModal2" style="margin-top: 10px"
@@ -305,7 +306,10 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자(주민)등록번호 :</label>
-                                <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" />
+                                <text-number-box width="170px" :required=" true "
+                                  v-model:valueInput=" contractCreacted.ownerBizNumber2 " nameInput="cmsBank-accountNumber" :ruleCustom="() => checkBizNumberLen"
+                                  :messageRuleCustom="lenFixedMsg" :maxLength="13"  />
+                                <!-- <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber" width="170px" :required="true" /> -->
                                 <info-tool-tip class="mt-5">
                                   예금주의 사업자등록번호 또는 주민등록번호입니다
                                 </info-tool-tip>
@@ -392,6 +396,7 @@ import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWith
 import dayjs from 'dayjs';
 import { Message } from "@/configs/enum";
 import { onMounted } from "vue";
+import { DataCreated } from "../PA/PA5/PA520/utils";
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
@@ -498,12 +503,12 @@ export default {
                 step.value = 1
                 window.scrollTo(0, 0);
             }
-            if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.ownerBizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.ownerBizNumber.length == 10 && statusMailValidate.value == false
+            if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.ownerBizNumber1 != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.ownerBizNumber1.length == 10 && statusMailValidate.value == false
             ) {
                 step.value = 2
                 window.scrollTo(0, 0);
             }
-            if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.ownerBizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.ownerBizNumber.length == 10 && statusMailValidate.value == false
+            if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.ownerBizNumber2 != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.ownerBizNumber2.length == 10 && statusMailValidate.value == false
             ) {
                 if (dataInputCallApi.dossier != 2 && dataInputCallApi.applicationService != 2) {
                     let count = 0
@@ -516,7 +521,7 @@ export default {
                         if (contractCreacted.bankType == ''
                             || contractCreacted.accountNumber == ''
                             || contractCreacted.ownerName == ''
-                            || contractCreacted.ownerBizNumber == ''
+                            || contractCreacted.ownerBizNumber2 == ''
                         ) {
                             count++
                         }
@@ -575,7 +580,7 @@ export default {
                 } else if (step.value == 1) {
                     if (
                         contractCreacted.nameCompany != "" &&
-                        contractCreacted.ownerBizNumber != "" &&
+                        contractCreacted.ownerBizNumber1 != "" &&
                         contractCreacted.zipcode != "" &&
                         contractCreacted.namePresident != "" &&
                         contractCreacted.birthday != "" &&
@@ -583,7 +588,7 @@ export default {
                         contractCreacted.email != "" &&
                         contractCreacted.phone != "" &&
                         contractCreacted.addressExtend != "" &&
-                        contractCreacted.ownerBizNumber.length == 10 &&
+                        contractCreacted.ownerBizNumber1.length == 10 &&
                         statusMailValidate.value == false
                     ) {
                         step.value++;
@@ -761,7 +766,7 @@ export default {
                         phone: contractCreacted.phone,
                         fax: contractCreacted.fax,
                         licenseFileStorageId: contractCreacted.licenseFileStorageId,
-                        bizNumber: contractCreacted.ownerBizNumber,
+                        bizNumber: contractCreacted.ownerBizNumber1,
                         bizType: contractCreacted.bizType,
                         residentId: contractCreacted.residentId,
                     },
@@ -776,7 +781,6 @@ export default {
                     cmsBank: {
                         bankType: contractCreacted.bankType,
                         accountNumber: contractCreacted.accountNumber,
-                        ownerBizNumber: contractCreacted.ownerBizNumber,
                         ownerName: contractCreacted.ownerName,
                         withdrawDay: contractCreacted.withdrawDay,
                     },
@@ -786,6 +790,11 @@ export default {
                     }
                 }
             }
+        if(contractCreacted.ownerBizNumber2.length === 10){
+          dataCallCreated.content.cmsBank.ownerBizNumber = contractCreacted.ownerBizNumber2;
+        }else {
+          dataCallCreated.content.cmsBank.ownerResidentId = contractCreacted.ownerBizNumber2;
+        }
         await makeDataClean(dataCallCreated, ['buildingName']);
         mutateCreated(dataCallCreated)
         }
@@ -871,10 +880,23 @@ export default {
           gridRefName.value.instance.deleteRow(rowIndexDelete.value);
           deleteModal.value = false;
         };
+
+        
+
+        const lenFixedMsg = Message.getCommonMessage('105').message;
+        const checkBizNumberLen = ref(false)
+        watch(()=>contractCreacted.ownerBizNumber2,(newVal: any)=>{
+          if(newVal.length !== 10 && newVal.length !==13){
+            checkBizNumberLen.value = false;
+          }else{
+            checkBizNumberLen.value = true;
+          }
+        },{deep : true});
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady,  checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale, isWithholding,checkedAccounting,onInitRow,deleteModal,onDelete,onDelConfirm,contentDelete
+            optionSale, isWithholding,checkedAccounting,onInitRow,deleteModal,onDelete,onDelConfirm,contentDelete,
+            checkBizNumberLen,lenFixedMsg,
         };
     },
 };

@@ -3,7 +3,7 @@
         <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기"
             cancelText="그냥 나가기" @cancel="setModalVisible()" width="80%">
             <standard-form :wrapper-col="{ span: 14 }">
-                <a-spin :spinning="loading || loadingUpdate">
+                <a-spin :spinning="loadingData">
                     <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
                         <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
                             <div style="height: 60vh;overflow-y: scroll;">
@@ -50,7 +50,7 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                     </div>
-                                    <DxDataGrid noDataText="내역이 없습니다" v-if="formState.info.usedAccounting" id="gridContainer"
+                                    <DxDataGrid noDataText="내역이 없습니다" id="gridContainer"
                                         :show-borders="true" ref="gridRefName" :data-source="dataSource"
                                         key-expr="rowIndex" :allow-column-reordering="move_column"
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -91,32 +91,6 @@
                                         <DxColumn cell-template="action" width="48" />
                                         <template #action=" { data } ">
                                           <DxButton type="ghost" style="cursor: pointer" @click=" onDelete(data) ">
-                                            <a-tooltip zIndex="9999999" placement="top" color="black">
-                                              <template #title>
-                                                <div>
-                                                  삭제
-                                                </div>
-                                              </template>
-                                              <DeleteOutlined style="font-size: 16px" />
-                                            </a-tooltip>
-                                          </DxButton>
-                                        </template>
-                                    </DxDataGrid>
-                                    <DxDataGrid v-else noDataText="내역이 없습니다" id="gridContainer" :show-borders="true" ref="gridRefName"
-                                        >
-                                        <DxScrolling mode="standard" show-scrollbar="always" />
-                                        <DxEditing :use-icons="true" :allow-adding="true">
-                                        </DxEditing>
-                                        <DxColumn :allow-editing="false" :width="50" caption="#" />
-                                        <DxColumn caption="사업명 (중복불가)" />
-                                        <DxColumn caption="사업분류"></DxColumn>
-                                        <DxColumn caption="서비스시작년월" />
-                                        <DxColumn caption="정원수 (명)" />
-                                        <DxColumn caption="회계서비스이용료" />
-                                        <DxColumn cell-template="action" width="40" />
-                                        <template #action=" { data } ">
-                                          <DxButton type="ghost" style="cursor: pointer" @click=" onDelete(data) "
-                                            v-if=" data.data.deletable">
                                             <a-tooltip zIndex="9999999" placement="top" color="black">
                                               <template #title>
                                                 <div>
@@ -382,12 +356,11 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const facilityBizType = FacilityBizType.all();
-        const activeKey = ref([1]);
+        const activeKey = ref(1);
         const dataQuery = ref();
         const dataQueryMemos = ref();
         const gridRefName: any = ref("grid");
 
-        const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
         let objDataDefault = reactive({ ...initialState });
 
@@ -408,7 +381,7 @@ export default defineComponent({
         const isDuplicateName = ref(true);
         // ============ GRAPQL ===============================
         // get service contract
-        const { result } = useQuery(
+        const { result, loading: loadingData, } = useQuery(
             queries.getServiceContract,
             dataQuery,
             () => ({
@@ -462,7 +435,6 @@ export default defineComponent({
         // Update Service Contract for info
         const {
             mutate: actionUpdate,
-            loading: loadingUpdate,
             onDone: updateDone,
             onError: errUpdateContract
         } = useMutation(mutations.updateServiceContractInfo);
@@ -477,7 +449,7 @@ export default defineComponent({
                 }
                 actionUpdateExtra(variablesNotInfo);
             } else {
-                notification('success', "업데이트 완료!")
+                notification('success', Message.getMessage("COMMON", "106").message)
                 emit("closePopup", false)
             }
         });
@@ -528,32 +500,36 @@ export default defineComponent({
                         }]
                     }
                 }
-                dataSource.value = formState.info.accounting?.map((item: any, key: any) => {
+                if(formState.info.accounting){
+                  dataSource.value = formState.info.accounting?.map((item: any, key: any) => {
                     return {
-                        ...item, rowIndex: key
+                      ...item, rowIndex: key
                     }
-                })
-                dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
-                dataActiveRow.value = dataSource.value[0];
+                  })
+                  dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
+                  dataActiveRow.value = dataSource.value[0];
+                }else{
+                  dataSource.value = [];
+                  dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
+                  dataActiveRow.value = dataSource.value[0];
+                }
                 setTimeout(() => {
                     isWatching.value = true;
+                    objDataDefault = JSON.parse(JSON.stringify({ ...formState }))
                 }, 0);
             }
-            setTimeout(() => {
-                objDataDefault = JSON.parse(JSON.stringify({ ...formState }))
-            }, 1000);
         });
 
         watch(() => formState.info.usedAccounting, (value) => {
           if(isWatching.value){
             if (value) {
-                getTotalAccounting()
+                getTotalAccounting();
+                addRow();
             } else {
                 dataSource.value = []
                 formState.info.accountingPrice = 0
             }
             if(!value && !formState.info.usedWithholding){
-              console.log(`output-`,)
                 notification("error", Message.getMessage('BF310', '001').message);
             }
           }
@@ -588,7 +564,6 @@ export default defineComponent({
                 formState.info.withholdingPrice = 0
             }
             if(!value && !formState.info.usedAccounting){
-              console.log(`output-`,)
                 notification("error", Message.getMessage('BF310', '001').message);
             }
           }
@@ -603,6 +578,7 @@ export default defineComponent({
         watch(() => props.modalStatus, (newValue) => {
           trigger.value = true;
           isWatching.value = false;
+          activeKey.value = 1;
             if (newValue) {
                 dataQuery.value = { id: props.idRowEdit };
                 dataQueryMemos.value = { companyId: props.idRowEdit };
@@ -651,12 +627,11 @@ export default defineComponent({
         const actionUpdateServiceContract = (e: any) => {
             var res = e.validationGroup.validate();
             if(!formState.info.usedAccounting && !formState.info.usedWithholding){
-              console.log(`output-`,)
                 notification("error", Message.getMessage('BF310', '001').message);
             }
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                activeKey.value = [1];
+                activeKey.value = 1;
             } else {
                 var variables = JSON.parse(JSON.stringify({ ...formState }));
                 if (variables.info.usedAccounting) {
@@ -696,7 +671,9 @@ export default defineComponent({
                 })
                 totalAmount += parseInt(data.price)
             }
-            getTotalAccounting()
+            if(dataSource.value){
+              getTotalAccounting()
+            }
             return totalAmount
         }
         const getTotalAccounting = () => {
@@ -831,7 +808,7 @@ export default defineComponent({
         const checkDuplicate = () => isDuplicateName.value;
         return {
             handleInputTexService, getImgUrl, checkOption, disableInput, getPriceOption, changeChecked, changeValueInput, getTotalAmount, setModalVisible, removeImg, handleAdd, handleDeleteMemo, handleAddMemo, actionUpdateServiceContract, addRow, onDelConfirm, onFocusedRowChanged, onInitRow,
-            move_column, colomn_resize, loading, activeKey, formState, facilityBizType, formStateMomes, loadingUpdate, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum, onDelete, deleteModal, contentDelete,
+            move_column, colomn_resize, activeKey, formState, facilityBizType, formStateMomes, loadingData, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum, onDelete, deleteModal, contentDelete,
             isDuplicateName,checkDuplicate,onChangeName
         };
     },

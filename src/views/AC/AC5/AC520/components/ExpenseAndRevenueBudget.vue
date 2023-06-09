@@ -13,72 +13,73 @@
         <div class="d-flex-center justify-content-end mb-5">
           <DxButton type="default" @click="handleFillValuePreIndex" :disabled="dataBudget?.status !== 10" text="전예산액 불러오기" />
           </div>
+        <a-spin :spinning="loading">
+          <DxDataGrid :load-panel="false" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"
+            key-expr="code" :allow-column-reordering="move_column" :allow-column-resizing="column_resize"
+            :column-auto-width="true" :focused-row-enabled="true" :focused-row-key="state.rowKey" :focusedRowIndex="state.rowIndex" @cell-prepared="onCellPrepared"
+            @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged" noDataText="내역이 없습니다"
+            style="max-height: 670px">
+            <DxPaging :page-size="0" />
 
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"
-          key-expr="code" :allow-column-reordering="move_column" :allow-column-resizing="column_resize"
-          :column-auto-width="true" :focused-row-enabled="true" :focusedRowIndex="state.rowIndex" @cell-prepared="onCellPrepared"
-          @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged" noDataText="내역이 없습니다"
-          style="max-height: 670px">
-          <DxPaging :page-size="0" />
+            <DxColumn :allow-sorting="false" caption="관" data-field="code1" cell-template="code1" width="100px" />
+            <DxColumn :allow-sorting="false" caption="항" data-field="code2" cell-template="code2" width="100px"/>
+            <DxColumn :allow-sorting="false" caption="목" data-field="code3" cell-template="code3" width="100px"/>
+            <DxColumn :allow-sorting="false" caption="세목" data-field="codeName" width="100px"/>
+            <DxColumn :allow-sorting="false" caption="세목코드" data-field="code" />
+            <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index) - 1}차 추경` : `전년도`"
+              cell-template="amountPreBudget" alignment="right" />
+            <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index)}차 추경` : `당해년도`"
+                      cell-template="amount"  alignment="right" />
+            <DxColumn :allow-sorting="false" caption="증감액" cell-template="calculateAmount" alignment="right" />
 
-          <DxColumn :allow-sorting="false" caption="관" data-field="code1" cell-template="code1" width="100px" />
-          <DxColumn :allow-sorting="false" caption="항" data-field="code2" cell-template="code2" width="100px"/>
-          <DxColumn :allow-sorting="false" caption="목" data-field="code3" cell-template="code3" width="100px"/>
-          <DxColumn :allow-sorting="false" caption="세목" data-field="codeName" width="100px"/>
-          <DxColumn :allow-sorting="false" caption="세목코드" data-field="code" />
-          <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index) - 1}차 추경` : `전년도`"
-            cell-template="amountPreBudget" alignment="right" />
-          <DxColumn :allow-sorting="false" :caption="Number(dataBudget?.index) > 0 ? `${Number(dataBudget?.index)}차 추경` : `당해년도`"
-                    cell-template="amount"  alignment="right" />
-          <DxColumn :allow-sorting="false" caption="증감액" cell-template="calculateAmount" alignment="right" />
+            <DxColumn :allow-sorting="false" caption="증감비율(%)" cell-template="changeRate" alignment="right" />
+            <DxColumn :allow-sorting="false" caption="자금원천" cell-template="sourceOfFunding" width="120px" />
+            <DxColumn :allow-sorting="false" caption="산출내역" cell-template="outputRecord" />
+            <DxColumn :allow-sorting="false" caption="비고" data-field="remark" />
 
-          <DxColumn :allow-sorting="false" caption="증감비율(%)" cell-template="changeRate" alignment="right" />
-          <DxColumn :allow-sorting="false" caption="자금원천" cell-template="sourceOfFunding" width="120px" />
-          <DxColumn :allow-sorting="false" caption="산출내역" cell-template="outputRecord" />
-          <DxColumn :allow-sorting="false" caption="비고" data-field="remark" />
+            <template #code1="{ data }">
+              <span :title="findCode('code1', data.data.code1)?.name1">{{ findCode('code1', data.data.code1)?.name1 }}</span>
+            </template>
+            <template #code2="{ data }">
+              <span :title="findCode('code2', data.data.code2)?.name2">{{ findCode('code2', data.data.code2)?.name2 }}</span>
+            </template>
+            <template #code3="{ data }">
+              <span :title="findCode('code3', data.data.code3)?.name3">{{ findCode('code3', data.data.code3)?.name3 }}</span>
+            </template>
+            <template #sourceOfFunding="{ data }">
+              <tag-funding-source :fundingSource1="data.data.fundingSource1" :fundingSource2="data.data.fundingSource2"
+                :fundingSource3="data.data.fundingSource3" :fundingSource4="data.data.fundingSource4" />
+            </template>
+            <template #amountPreBudget="{ data }">
+              <div :class="data.data.previousAmount <= 0 && `text-red`">
+              {{ filters.formatNumber(data.data.previousAmount) }}
+              </div>
+            </template>
+            <template #amount="{data}">
+              <div :class="data.data.amount <= 0 && `text-red`">
+                {{filters.formatNumber(data.data.amount)}}
+              </div>
+            </template>
+            <template #calculateAmount="{ data }">
+              <div :class="( data.data.amount - data.data.previousAmount <= 0) && `text-red`">
+                {{ filters.formatNumber( data.data.amount - data.data.previousAmount) }}
+              </div>
+            </template>
 
-          <template #code1="{ data }">
-            <span :title="findCode('code1', data.data.code1)?.name1">{{ findCode('code1', data.data.code1)?.name1 }}</span>
-          </template>
-          <template #code2="{ data }">
-            <span :title="findCode('code2', data.data.code2)?.name2">{{ findCode('code2', data.data.code2)?.name2 }}</span>
-          </template>
-          <template #code3="{ data }">
-            <span :title="findCode('code3', data.data.code3)?.name3">{{ findCode('code3', data.data.code3)?.name3 }}</span>
-          </template>
-          <template #sourceOfFunding="{ data }">
-            <tag-funding-source :fundingSource1="data.data.fundingSource1" :fundingSource2="data.data.fundingSource2"
-              :fundingSource3="data.data.fundingSource3" :fundingSource4="data.data.fundingSource4" />
-          </template>
-          <template #amountPreBudget="{ data }">
-            <div :class="data.data.previousAmount <= 0 && `text-red`">
-            {{ filters.formatNumber(data.data.previousAmount) }}
-            </div>
-          </template>
-          <template #amount="{data}">
-            <div :class="data.data.amount <= 0 && `text-red`">
-              {{filters.formatNumber(data.data.amount)}}
-            </div>
-          </template>
-          <template #calculateAmount="{ data }">
-            <div :class="( data.data.amount - data.data.previousAmount <= 0) && `text-red`">
-              {{ filters.formatNumber( data.data.amount - data.data.previousAmount) }}
-            </div>
-          </template>
-
-          <template #changeRate="{ data }">
-            {{ filters.formatNumber(data.data.previousAmount ? (data.data.amount/data.data.previousAmount - 1)*100: 0, 2) }}
-          </template>
-          <template #outputRecord="{ data }">
-            <div v-if="data.data && data.data.details?.length > 0">
-              <ul>
-                <li v-for="(row, index) in data.data.details" :key="index">
-                  {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }} {{ row.type === 1 ? '' : (row.calculationResult !== '' ? `= ${ filters.formatNumber(+row.calculationResult)}` : '') }}
-                </li>
-              </ul>
-            </div>
-          </template>
-        </DxDataGrid>
+            <template #changeRate="{ data }">
+              {{ filters.formatNumber(data.data.previousAmount ? (data.data.amount/data.data.previousAmount - 1)*100: 0, 2) }}
+            </template>
+            <template #outputRecord="{ data }">
+              <div v-if="data.data && data.data.details?.length > 0">
+                <ul>
+                  <li v-for="(row, index) in data.data.details" :key="index">
+                    {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }} {{ row.type === 1 ? '' : (row.calculationResult !== '' ? `= ${ filters.formatNumber(+row.calculationResult)}` : '') }}
+                  </li>
+                </ul>
+              </div>
+            </template>
+          </DxDataGrid>
+        </a-spin>
       </a-col>
       <a-col span="8">
         <standard-form ref="formRef">
@@ -240,7 +241,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { computed, reactive, ref, watch } from 'vue';
 import { useStore } from "vuex";
 
-const emit = defineEmits(['reload']);
+const emit = defineEmits(['reload', 'closePopup']);
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const column_resize = computed(() => store.state.settings.colomn_resize);
@@ -269,7 +270,7 @@ const facilityBizTypeToNumber = computed(() => {
       return '49.0'
   }
 })
-const formState = ref({
+const initialForm = {
   code: '0',
   code1: '0',
   code2: '0',
@@ -283,7 +284,8 @@ const formState = ref({
   fundingSource4: 0,
   details: [],
   codeName: ''
-});
+}
+const formState = ref({...initialForm});
 const previousRowData = ref();
 const isChangedForm = computed(() => !isEqual(previousRowData.value, formState.value))
 const dataSource = ref()
@@ -307,7 +309,7 @@ const state = reactive({
   modalFillDataPreIndex: false,
   rowKey: '',
   rowIndex: 0,
-  rowIndexSave: 0,
+  rowKeyAction: '',
 
 })
 const totalAmount = ref(0)
@@ -324,7 +326,7 @@ const queryEmployeeTable = {
   facilityBusinessId: globalFacilityBizId.value,
   index: dataBudget.value?.index,
 }
-const { onResult, onError } = useQuery(queries.getBudget, query, () => ({
+const { onResult, onError, refetch, loading } = useQuery(queries.getBudget, query, () => ({
   fetchPolicy: "no-cache",
   enabled: trigger.queryBudget
 }))
@@ -344,7 +346,8 @@ onResult(({ data }) => {
       },
     })
     if(state.rowIndex === -1) {
-      state.rowIndex = state.rowIndexSave
+      state.rowKey = state.rowKeyAction
+      state.rowIndex = 0
     }
     trigger.queryBudget = false
   }
@@ -390,9 +393,8 @@ onDoneCreateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    emit('reload')
-    trigger.queryBudget = true
-    dataSource.value.reload()
+    emit('closePopup', true)
+    loading.value = false
   }
 })
 onErrorCreateBudget((error) => {
@@ -405,10 +407,13 @@ onDoneUpdateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    emit('reload')
-    trigger.queryBudget = true
-    dataSource.value?.reload()
-    state.rowIndex = -1 
+    
+    if(dataBudget.value?.action === ACTION.ADD) {
+      emit('closePopup', true)
+    } else {
+      emit('reload')
+    }
+    loading.value = false
   }
 })
 onErrorUpdateBudget((error) => {
@@ -474,7 +479,7 @@ watch(() => checkDataNewRow.value, (val: any) => {
     trigger.employeeTable = true
     if (dataBudget.value?.action === ACTION.EDIT) {
       if (dataBudget.value?.index === 0 && acYear.value <= 2023) return
-      trigger.queryPreIndexBudget = true
+      // trigger.queryPreIndexBudget = true
     }
   }
 }, { deep: true, immediate: true })
@@ -498,11 +503,11 @@ const handleCloseCalPopup = (value: any) => {
 const onFocusedRowChanging = () => {
 }
 const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
-  state.rowIndex = e.rowIndex
   if(e.row?.data) {
     formState.value = e.row?.data;
     previousRowData.value = cloneDeep(e.row?.data);
-    state.rowIndexSave = e.rowIndex
+  } else {
+    // formState.value = {...initialForm}
   }
 }
 const handleSubmit = () => {
@@ -530,6 +535,7 @@ const handleSubmit = () => {
       inputs: result
     })
   }
+  loading.value = true
 }
 const fillFundingSource = (field: string) => {
   switch (field) {

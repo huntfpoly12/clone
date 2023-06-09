@@ -1,6 +1,7 @@
 <template>
   <div class="company-infor-header">
-   <p>{{ userInfor && userInfor.compactCompany ? userInfor.compactCompany.name : '' }}</p>
+    <p v-if="companyName">{{ companyName }}</p>
+   <p v-else>{{ userInfor && userInfor.compactCompany ? userInfor.compactCompany.name : '' }}</p>
   </div>
 </template>
 <script lang="ts">
@@ -12,8 +13,10 @@ export default {
     const store = useStore();
     store.dispatch('auth/getUserInfor');
     const userInfor = computed(() => store.state.auth.userInfor);
+    const companyName = sessionStorage.getItem('companyName');
     return {
       userInfor,
+      companyName
     };
   },
 };

@@ -337,8 +337,10 @@ const {
 }));
 const employeeList = computed(() => {
   if (!resultEmployee.value) return []
-  const isJoinedBeforeSelectedMonth = (item: any) => +item.joinedAt.toString().slice(4, 6) <= selectMonthColumn.value.imputedMonth && !employeeIdCreated.value.includes(item.employeeId);
-  const isLeavedAfterSelectedMonth = (item: any) => +item.leavedAt.toString().slice(4, 6) >= selectMonthColumn.value.imputedMonth && !employeeIdCreated.value.includes(item.employeeId);
+  const isJoinedBeforeSelectedMonth = (item: any) => (+item.joinedAt.toString().slice(0, 4) <= selectMonthColumn.value.imputedYear || +item.joinedAt.toString().slice(4, 6) <= selectMonthColumn.value.imputedMonth)
+    && !employeeIdCreated.value?.find((i:any) => i.employeeId === item.employeeId && i.employeeType === item.type)
+  const isLeavedAfterSelectedMonth = (item: any) => (+item.leavedAt.toString().slice(0, 4) >= selectMonthColumn.value.imputedYear || +item.leavedAt.toString().slice(4, 6) >= selectMonthColumn.value.imputedMonth)
+   && !employeeIdCreated.value?.find((i:any) => i.employeeId === item.employeeId && i.employeeType === item.type);
   if (props.retirementIncome === EmployeeWageType.WAGE) { // 10
     if (props.retirementType === 1) { // 1 is leaved
       return resultEmployee.value.findEmployeesForIncomeRetirement.employeeWages.filter(isLeavedAfterSelectedMonth)

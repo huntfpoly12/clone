@@ -176,6 +176,7 @@
             data-field="employee.status"
             cell-template="status"
             width="100"
+            alignment="left"
           />
           <template #status="{ data }">
             <span class="status-blue" v-if="data.data.employee.status != 0"
@@ -379,6 +380,7 @@ const {
 );
 onResultPrint((res) => {
   window.open(res.data?.getIncomeWageWithholdingTaxByEmployeeReportViewUrl);
+  triggerPrint.value = false
 });
 const {
   refetch: refetchData,
@@ -452,8 +454,8 @@ const sendMail = (e: any) => {
     createDate: createDate.value,
   };
   if (e.employeeId) {
-    clearSelection();
-    emailAddress.value = e.email;
+    console.log('%c sessionStorage.getItem("username")', 'color: red;', sessionStorage.getItem("username"));
+    emailAddress.value = userInfo.value.email;
     dataSendEmail.value.employeeInputs = [
       {
         receiverName: e.name,
@@ -463,9 +465,10 @@ const sendMail = (e: any) => {
       },
     ];
     switchTypeSendMail.value = true;
+    clearSelection();
   } else {
-    if (selectedItemKeys.value.length < 2) {
-      notification("error", Message.getCommonMessage("601").message);
+    if (selectedItemKeys.value.length < 1) {
+      notification("error", Message.getCommonMessage("404").message);
       return;
     }
     emailAddress.value = userInfo.value.email;
@@ -488,7 +491,6 @@ const sendMail = (e: any) => {
   modalSendMail.value = true;
 };
 const printFunc = (val: any) => {
-  triggerPrint.value = true;
   dataPrint.value = {
     ...dataPrint.value,
     input: {
@@ -501,14 +503,21 @@ const printFunc = (val: any) => {
   // Print single row
   if (typeof val == "number") {
     dataPrint.value.employeeIds = [val];
-    if (dataPrint.value) refetchPrint();
+    if (dataPrint.value){
+      triggerPrint.value = true;
+      //  refetchPrint();
+    }
+
   } else {
     // Print multi row
     if (selectedItemKeys.value.length == 0) {
-      notification("error", "항목을 1개 이상 선택해야합니다");
+      notification("error", Message.getCommonMessage("404").message);
       return;
-    } else dataPrint.value.employeeIds = selectedItemKeys.value;
-    if (dataPrint.value) refetchPrint();
+    } else {
+      dataPrint.value.employeeIds = selectedItemKeys.value;
+      triggerPrint.value = true;
+    }
+    // if (dataPrint.value) refetchPrint();
   }
   clearSelection();
 };

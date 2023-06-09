@@ -1,16 +1,16 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
     :width="562">
-    <standard-form action="" name="email-single-630">
+    <standard-form action="" name="email-single-630" :key="resetForm">
       <div class="custom-modal-send-email">
         <img src="@/assets/images/email.svg" alt="" />
         <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress" placeholder="abc@example.com"/>
         <span>로 메일을 발송하시겠습니까?</span>
       </div>
-      <div class="text-align-center mt-50">
-        <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+      <div class="text-center mt-50">
+        <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
           @onClick="setModalVisible()" />
-        <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
+        <button-basic class="ml-5" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
           @onClick="onSubmit" />
       </div>
     </standard-form>
@@ -37,6 +37,7 @@ export default defineComponent({
   components: {},
   setup(props, { emit }) {
     let emailAddress = ref("");
+    let resetForm = ref<number>(0);
     watch(
       () => props.data,
       (val) => {
@@ -69,15 +70,18 @@ export default defineComponent({
     errorSendEmail((e: any) => {
       notification("error", e.message);
     });
-    watch(
-      () => props.modalStatus,
-      (value) => { }
+    watch(() => props.modalStatus, (value) => {
+        if (value) {
+          resetForm.value++
+        }
+      }
     );
 
     return {
       setModalVisible,
       onSubmit,
       emailAddress,
+      resetForm,
     };
   },
 });
@@ -99,17 +103,5 @@ export default defineComponent({
   span {
     padding-left: 5px;
   }
-}
-
-.mt-50 {
-  margin-top: 50px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
 }
 </style>
