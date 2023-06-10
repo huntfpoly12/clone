@@ -59,6 +59,7 @@
             :searchTimeout="0"
             @value-changed="setEditedValue($event, data)"
             @enter-key="onEnterKey($event, data)"
+            showSelectionControls
           />
         </template>
         <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
@@ -120,10 +121,10 @@
         <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right" format="#0,###" />
         <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right" format="#0,###" />
         <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right"
-                  format="#0,###" />
+                  format="#0,###" width="120px" />
         <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right"
-                  format="#0,###" />
-        <DxColumn caption="계" data-field="total" alignment="right" cell-template="total" :allowEditing="false" />
+                  format="#0,###" width="120px"/>
+        <DxColumn caption="계" data-field="total" alignment="right" cell-template="total" :allowEditing="false" width="160px"/>
         <template #total="{ data }">
           <span class="px-7">{{ calculateSalary(data) }}</span>
         </template>
@@ -228,6 +229,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import {ValueChangedEvent} from "devextreme/ui/select_box";
 import cloneDeep from 'lodash/cloneDeep';
 import {Modal} from "ant-design-vue";
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 
 const emit = defineEmits(['closePopup'])
 const props = defineProps({
@@ -437,16 +439,10 @@ const deleteRow = (e: any) => {
 
 const setModalVisible = () => {
   if (!isEqual(dataAllRow.value, dataOld.value)) {
-    Modal.confirm({
-      title: Message.getCommonMessage('301').message,
-      okText: '네',
+    comfirmClosePopup(() => {
+      emit('closePopup', false)
+    }, {
       cancelText: '아니요',
-      onOk() {
-        emit('closePopup', false)
-      },
-      onCancel() {
-        return
-      },
     })
     return
   } else {

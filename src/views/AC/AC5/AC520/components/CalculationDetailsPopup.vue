@@ -44,6 +44,7 @@ import DxButton from 'devextreme-vue/button'
 import {cloneDeep, isEqual} from "lodash";
 import {Modal} from "ant-design-vue/es";
 import {Message} from "@/configs/enum";
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 
 interface Props extends ModalProps {
   data: Description[];
@@ -103,17 +104,11 @@ const handleOk = () => {
 }
 const closePopup = () => {
   if (isFormChange.value) {
-    Modal.confirm({
-      title: '',
-      content: Message.getCommonMessage('301').message,
-      onOk() {
-        emit('closePopup', false)
-      },
-      onCancel() {},
-      width: 450,
-      okText: '네',
+    comfirmClosePopup(() => {
+      emit('closePopup', false)
+    }, {
       cancelText: '아니요',
-    });
+    })
   } else {
     emit('closePopup', false)
     return;

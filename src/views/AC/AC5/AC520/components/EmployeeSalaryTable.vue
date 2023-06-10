@@ -123,9 +123,9 @@
       <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right" format="#0,###"/>
       <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right" format="#0,###"/>
       <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right" format="#0,###"/>
-      <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right" format="#0,###"/>
-      <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right" format="#0,###"/>
-      <DxColumn caption="계" data-field="total" alignment="right" cell-template="total" :allowEditing="false"/>
+      <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right" format="#0,###" width="120px"/>
+      <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right" format="#0,###" width="120px"/>
+      <DxColumn caption="계" data-field="total" alignment="right" cell-template="total" :allowEditing="false" width="160px"/>
       <template #total="{ data }">
         <span class="px-7">{{ calculateSalary(data) }}</span>
       </template>

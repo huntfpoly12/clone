@@ -9,7 +9,7 @@
     </div>
 
     <a-row>
-      <a-col span="16" class="table-left">
+      <a-col span="17" class="table-left">
         <div class="d-flex-center justify-content-end mb-5">
           <DxButton type="default" @click="handleFillValuePreIndex" :disabled="dataBudget?.status !== 10" text="전예산액 불러오기" />
           </div>
@@ -35,7 +35,7 @@
             <DxColumn :allow-sorting="false" caption="증감비율(%)" cell-template="changeRate" alignment="right" />
             <DxColumn :allow-sorting="false" caption="자금원천" cell-template="sourceOfFunding" width="120px" />
             <DxColumn :allow-sorting="false" caption="산출내역" cell-template="outputRecord" />
-            <DxColumn :allow-sorting="false" caption="비고" data-field="remark" />
+            <DxColumn :allow-sorting="false" caption="비고" data-field="remark" cell-template="remark" width="50px"/>
 
             <template #code1="{ data }">
               <span :title="findCode('code1', data.data.code1)?.name1">{{ findCode('code1', data.data.code1)?.name1 }}</span>
@@ -48,7 +48,7 @@
             </template>
             <template #sourceOfFunding="{ data }">
               <tag-funding-source :fundingSource1="data.data.fundingSource1" :fundingSource2="data.data.fundingSource2"
-                :fundingSource3="data.data.fundingSource3" :fundingSource4="data.data.fundingSource4" />
+                :fundingSource3="data.data.fundingSource3" :fundingSource4="data.data.fundingSource4" cssClass="d-flex-center justify-content-start gap-5" />
             </template>
             <template #amountPreBudget="{ data }">
               <div :class="data.data.previousAmount <= 0 && `text-red`">
@@ -69,19 +69,35 @@
             <template #changeRate="{ data }">
               {{ filters.formatNumber(data.data.previousAmount ? (data.data.amount/data.data.previousAmount - 1)*100: 0, 2) }}
             </template>
-            <template #outputRecord="{ data }">
-              <div v-if="data.data && data.data.details?.length > 0">
-                <ul>
-                  <li v-for="(row, index) in data.data.details" :key="index">
-                    {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }} {{ row.type === 1 ? '' : (row.calculationResult !== '' ? `= ${ filters.formatNumber(+row.calculationResult)}` : '') }}
-                  </li>
-                </ul>
-              </div>
+            <template #outputRecord="{ data }">       
+              <a-tooltip>
+                <template #title>
+                  <div v-if="data.data && data.data.details?.length > 0">
+                    <ul>
+                      <li v-for="(row, index) in data.data.details" :key="index">
+                        {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }} {{ row.type === 1 ? '' : (row.calculationResult !== '' ? `= ${ filters.formatNumber(+row.calculationResult)}` : '') }}
+                      </li>
+                    </ul>
+                  </div>
+                </template>
+                <div>
+                  <div v-if="data.data && data.data.details?.length > 0">
+                    <ul>
+                      <li v-for="(row, index) in data.data.details" :key="index" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        {{data.data.details.length > 1 ? `${index + 1}. ` : ''}}{{ row.detail }} {{ row.type === 1 ? '' : (row.calculationResult !== '' ? `= ${ filters.formatNumber(+row.calculationResult)}` : '') }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </a-tooltip>
+            </template>
+            <template #remark>
+              <span title="임직원보수일람표 반영">임직원보수일람표 반영</span>
             </template>
           </DxDataGrid>
         </a-spin>
       </a-col>
-      <a-col span="8">
+      <a-col span="7">
         <standard-form ref="formRef">
           <DxField label="계정과목">
             <default-text-box :value-input="`${formState.codeName} ${formState.code}`" disabled width="200px" />
@@ -522,7 +538,7 @@ const handleSubmit = () => {
       facilityBusinessId: globalFacilityBizId.value,
       index: dataBudget.value?.index,
       type: dataBudget.value?.budgetType,
-      accounSubjectOrder: accountSubject[0].theOrder,
+      accounSubjectOrder: JSON.parse(sessionStorage.getItem("accountSubject") || '')[0].theOrder,
       inputs: result
     })
   } else {
@@ -604,6 +620,9 @@ const filled = () => {
   height: 700px;
 }
 
+.gap-5 {
+  gap: 5px;
+}
 .gap-10 {
   gap: 10px;
 }
