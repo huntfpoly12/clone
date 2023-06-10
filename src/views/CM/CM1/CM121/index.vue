@@ -42,19 +42,19 @@
                 </DxButton>
               </template>
 
-              <DxColumn caption="금융기관" data-field="type">
+              <DxColumn caption="금융기관" data-field="type" width="70">
                 <DxLookup :data-source="bankTypeCommon" value-expr="c" display-expr="n" />
               </DxColumn>
               <DxColumn caption="통장번호" data-field="bankbookNumber" width="105" />
-              <DxColumn caption="통장용도" data-field="useType">
+              <DxColumn caption="통장용도" data-field="useType" width="70">
                 <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
               </DxColumn>
-              <DxColumn caption="통장별명" data-field="bankbookNickname" width="160" />
-              <DxColumn caption="사업구분" data-field="facilityBusinessId">
+              <DxColumn caption="통장별명" data-field="bankbookNickname" width="125" />
+              <DxColumn caption="사업구분" data-field="facilityBusinessId" width="100">
                 <DxLookup :data-source="listFacilityBizTypeForUser" display-expr="name" value-expr="facilityBusinessId" />
               </DxColumn>
-              <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" width="130" />
-              <DxColumn caption="최종 스크래핑 현황" cell-template="action" width="130px" />
+              <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" width="127" />
+              <DxColumn caption="최종 스크래핑 현황" cell-template="action" width="127" />
               <template #action="{ data }">
                 <div style="text-align: center" :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''
                   ">
@@ -153,14 +153,10 @@
             </div>
             <div>
               <div class="cm-121_detail-infomation cm-121_detail-infomation-bottom d-flex-center">
-                <span>스크래핑 (통장내역 자동 조회) 정보</span>
-                <div class="pl-5">
-                  <a-tooltip color="black" placement="top">
-                    <template #title>(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단,
-                      업데이트는 가능합니다.</template>
-                    <img src="@/assets/images/iconInfo.png" class="img-info" />
-                  </a-tooltip>
-                </div>
+                <span class="cm-121_detail-infomation-title">스크래핑 (통장내역 자동 조회) 정보</span>
+                <span class="cm-121_detail-infomation-note">
+                  (주의) 스크래핑 정보는 민감한 정보로서 보안상의 이유로 공란으로 표시됩니다. 수정하려면 새로 입력 후 저장하세요.
+                </span>
               </div>
               <a-row>
                 <a-col span="12">
