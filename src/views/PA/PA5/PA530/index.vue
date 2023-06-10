@@ -220,7 +220,7 @@
             </a-spin>
             <PA530Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
                 :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
-                :receiptDate="dateSendEmail" @closePopup="modalStatus == false" :companyId="companyId" />
+                :receiptDate="dateSendEmail" @closePopup="modalStatus = false" :companyId="companyId" />
         </div>
     </div>
 </template>
