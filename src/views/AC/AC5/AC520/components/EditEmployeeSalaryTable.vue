@@ -17,6 +17,9 @@
         </DxEditing>
         <DxPaging :page-size="0" />
         <DxToolbar>
+          <DxItem location="after" >
+            <DxButton :disabled="dataBudget?.status !== 10" @click="handleFillValuePreIndex" text="전예산액 불러오기" class="d-flex-center" style="background: #337ab7; color: white; height: 100%;" />
+          </DxItem>
           <DxItem location="after" name="addRowButton" css-class="cell-button-add" cell-template="addRow">
             <a-tooltip title="임직원보수등록">
               <div>
@@ -189,6 +192,19 @@
         </DxSummary>
       </DxDataGrid>
     </standard-form>
+    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="350">
+      <div>
+        <div>최종차수(본예산인 경우 전년도 최종차수) 예산액을</div>
+        <div>불러옵니다. 이미 입력된 전예산액이 있더라도 새로 불러온</div>
+        <div>전예산액이 입력됩니다. 그래도 불러오겠습니까?</div>
+      </div>
+      <div class="footer">
+        <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'"
+          @onClick="closeModal" />
+        <button-basic class="button-form-modal" text="네. 불러옵니다" :width="140" :type="'default'" :mode="'contained'"
+          @onClick="filled" />
+      </div>
+    </a-modal>
   </a-modal>
 </template>
 
@@ -249,7 +265,10 @@ const LaborCostClassificationArray = [{ name: '직접', value: 1 }, { name: '간
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
+const state = reactive({
+  triggerQueryPreIndexBudget: false,
+  modalFillDataPreIndex: false
+})
 const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 const dataBudget = computed(() => store.getters['common/getDataBudget']);
@@ -299,7 +318,33 @@ onResultSearch(({ data }) => {
   }
 })
 
-
+// get data pre index
+const { onResult: onResultEmployeePayTablePreIndex, onError: onErrorEmployeePayTablePreIndex } = useQuery(getEmployeePayTable, {
+  companyId,
+  facilityBusinessId: globalFacilityBizId.value,
+  fiscalYear: dataBudget.value?.index ? acYear.value : acYear.value - 1,
+  index: dataBudget.value?.index ? dataBudget.value?.index - 1 : dataBudget.value?.index
+}, () => ({
+  fetchPolicy: "no-cache",
+  enabled: state.triggerQueryPreIndexBudget
+}))
+onResultEmployeePayTablePreIndex(({ data }) => {
+  if (data) {
+    const transformData = data?.getEmployeePayTable?.items.map((item: any) => ({ ...item, key: new Guid().toString() }))
+    dataSource.value = new DataSource({
+      store: {
+        type: "array",
+        key: "key",
+        data: transformData ?? [],
+      },
+    })
+    state.triggerQueryPreIndexBudget = false
+    dataAllRow.value = []
+  }
+})
+onErrorEmployeePayTablePreIndex((error) => {
+  console.error('getEmployeePayTable', error)
+})
 // create mutation useQuery
 const { mutate, onDone, loading, onError } = useMutation(mutations.saveEmployeePayTable)
 onDone(({ data }) => {
@@ -540,6 +585,16 @@ const onReorder = (e: RowDraggingReorderEvent) => {
     },
   })
 }
+const handleFillValuePreIndex = () => {
+  state.modalFillDataPreIndex = true
+}
+const closeModal = () => {
+  state.modalFillDataPreIndex = false
+}
+const filled = () => {
+  state.triggerQueryPreIndexBudget = true
+  state.modalFillDataPreIndex = false
+}
 </script>
 
 <style scoped lang="scss">
@@ -607,7 +662,13 @@ const onReorder = (e: RowDraggingReorderEvent) => {
 
 :deep(.dx-freespace-row) {
   display: none !important;
-}</style>
+}
+:deep(.dx-button-content) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
 <style>
 .custom-tooltip-header {
   max-width: 320px !important;

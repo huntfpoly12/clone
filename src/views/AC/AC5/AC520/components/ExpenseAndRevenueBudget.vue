@@ -221,7 +221,7 @@
     </a-row>
     <CalculationDetailsPopup :visible="state.isPopupCalculateVisible" @close-popup="handleCloseCalPopup"
       @ok="handleCloseCalPopup" :data="formState?.details" />
-    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="400">
+    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="350">
       <div>
         <div>최종차수(본예산인 경우 전년도 최종차수) 예산액을</div>
         <div>불러옵니다. 이미 입력된 전예산액이 있더라도 새로 불러온</div>
