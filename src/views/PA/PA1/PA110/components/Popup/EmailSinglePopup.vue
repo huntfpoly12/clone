@@ -63,11 +63,14 @@ export default defineComponent({
     const paYear = ref<number>(
       parseInt(sessionStorage.getItem("paYear") ?? "0")
     );
+    const token = computed(() => sessionStorage.getItem("token"));
+    store.dispatch("auth/getUserInfor", token.value);
+    const userInfor = computed(() => store.state.auth.userInfor);
     let emailAddress = ref("");
     watch(
       () => props.data,
       (val) => {
-        emailAddress.value = val?.employee.email;
+        emailAddress.value = userInfor.value?.email;
       }
     );
 
@@ -78,7 +81,6 @@ export default defineComponent({
       mutate: sendEmail,
       onDone: onDoneAdd,
       onError: errorSendEmail,
-      error,
     } = useMutation(mutations.sendIncomeWageSalaryStatementReportEmail);
     const onSubmit = (e: any) => {
       var res = e.validationGroup.validate();

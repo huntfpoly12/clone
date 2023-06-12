@@ -247,7 +247,7 @@ export default defineComponent({
       modalEmailSingle.value = false;
     };
     const actionOpenPopupEmailGroup = () => {
-      if (dataSelect.value.length > 1) {
+      if (dataSelect.value.length) {
         popupGroupData.value = {
           companyId: companyId,
           input: {
@@ -259,7 +259,7 @@ export default defineComponent({
         };
         modalEmailGroup.value = true;
       } else {
-        notification('error', messages.getCommonMessage('601').message)
+        notification('error', messages.getCommonMessage('404').message)
       }
     };
     const onSelectionChanged = (data: any) => {

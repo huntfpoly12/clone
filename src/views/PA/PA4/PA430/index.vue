@@ -331,7 +331,7 @@ export default defineComponent({
          * action send multi email
          */
         const actionOpenPopupEmailMulti = () => {
-            if (dataSelect.value.length > 1) {
+            if (dataSelect.value.length) {
                 popupDataEmailMulti.value = {
                     companyId: companyId,
                     input: {
@@ -343,7 +343,7 @@ export default defineComponent({
                 }
                 modalEmailMulti.value = true
             } else {
-                notification('error', Message.getMessage('COMMON', '601').message)
+                notification('error', Message.getMessage('COMMON', '404').message)
             }
         }
 
