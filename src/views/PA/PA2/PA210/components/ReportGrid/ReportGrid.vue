@@ -345,7 +345,7 @@ export default defineComponent({
           !reg.test(e.key) && 
           e.key != "Backspace"
         ) {
-          if(e.key == 'Process') hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit'); // kiểm tra xem có phải kí tự hangul không nếu là hanggul thì key sẽ trẻ về là process
+          if(e.key == 'Process') hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit'); // kiểm tra xem có phải kí tự hangul không nếu là hanggul thì key sẽ trả về là process
           e.preventDefault();
         }
         // nêu đang nhập ở các ô đặc biệt đươc nhập số âm thì check như sau
@@ -403,7 +403,7 @@ export default defineComponent({
     };
 
     const trigger = ref<boolean>(false);
-    const dataSource = ref<any>(props.dataReport);
+    const dataSource = ref<any>(JSON.parse(JSON.stringify(props.dataReport)));
     const originData = ref();
 
     const setModalVisible = () => {
@@ -439,7 +439,7 @@ export default defineComponent({
     onError((error) => {
       ////notification('error', error.message)
     });
-    watch(result, (data) => {
+    watch(result, async (data) => {
       if (data) {
         // make new format for data
         const newData = data.getIncomesForTaxWithholdingStatusReport.map(
@@ -452,7 +452,9 @@ export default defineComponent({
             };
           }
         );
-        calculateWithholdingStatusReport(wrapper, newData);
+        const { checkYETaxAdj } = await calculateWithholdingStatusReport(wrapper, newData);
+        // set lại checkbox yearEndTaxAdjustment
+        dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
       }
     });
 

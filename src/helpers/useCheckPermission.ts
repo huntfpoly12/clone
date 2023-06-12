@@ -5,9 +5,7 @@ export default function useCheckPermission(roles: string[] | null) {
   if (!token || !roles || roles.length === 0) {
     return { read: false, write: false }
   } else {
-    const urlParams = new URLSearchParams(window.location.search);
-    const newToken = urlParams.get('token');
-    const jwtObject: JwtObject = getJwtObject(newToken?newToken:token);
+    const jwtObject: JwtObject = getJwtObject(token);
     // get roles from JwtObject
     const readWorkScreenRoles = jwtObject.readWotkScreenRoles?.map((i: any) => i.enumKey)
     const writeWorkScreenRoles = jwtObject.writeWorkScreenRoles?.map((i: any) => i.enumKey)
@@ -17,14 +15,23 @@ export default function useCheckPermission(roles: string[] | null) {
     const userType = jwtObject.userType
     // return read and write permission
     if (userType === UserType.CUSTOMER) {
+      
       return {
         read: roles.some((item) => readWorkScreenRoles?.includes(item)),
         write: roles.some((item) => writeWorkScreenRoles?.includes(item))
       }
     } else {
-      return {
-        read: roles.some((item) => readAdminScreenRoles?.includes(item)),
-        write: roles.some((item) => writeAdminScreenRoles?.includes(item))
+      if (jwtObject.additionalUserType === UserType.CUSTOMER) {
+        // 일반사용자의 권한을 위임받은 경우
+        return {
+          read: roles.some((item) => readWorkScreenRoles?.includes(item)) || roles.some((item) => readAdminScreenRoles?.includes(item)),
+          write: roles.some((item) => writeWorkScreenRoles?.includes(item)) || roles.some((item) => writeAdminScreenRoles?.includes(item))
+        }
+      } else {
+        return {
+          read: roles.some((item) => readAdminScreenRoles?.includes(item)),
+          write: roles.some((item) => writeAdminScreenRoles?.includes(item))
+        }
       }
     }
   };

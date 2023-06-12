@@ -523,7 +523,7 @@ export default defineComponent({
         formState.extendInfoCmsBankAccountNumber =
           value.getCompany.extendInfo.cmsBank.accountNumber;
         formState.extendInfoCmsBankOwnerBizNumber =
-          value.getCompany.extendInfo.cmsBank.ownerBizNumber;
+          value.getCompany.extendInfo.cmsBank.ownerBizNumber || value.getCompany.extendInfo.cmsBank.ownerResidentId;
         formState.extendInfoCmsBankOwnerName =
           value.getCompany.extendInfo.cmsBank.ownerName;
         formState.extendInfoCmsBankWithdrawDay =
@@ -613,13 +613,17 @@ export default defineComponent({
           mobilePhone: formState.extendInfoPresidentMobilePhone,
           email: formState.extendInfoPresidentEmail,
         };
-        let extendInfoCmsBank = {
+        let extendInfoCmsBank: any = {
           bankType: formState.extendInfoCmsBankBankType,
           accountNumber: formState.extendInfoCmsBankAccountNumber.toString(),
-          ownerBizNumber: formState.extendInfoCmsBankOwnerBizNumber,
           ownerName: formState.extendInfoCmsBankOwnerName,
           withdrawDay: formState.extendInfoCmsBankWithdrawDay,
         };
+        if(formState.extendInfoCmsBankOwnerBizNumber.length === 10) {
+          extendInfoCmsBank.ownerBizNumber = formState.extendInfoCmsBankOwnerBizNumber
+        } else {
+          extendInfoCmsBank.ownerResidentId = formState.extendInfoCmsBankOwnerBizNumber
+        }
         let variables = {
           id: formState.id,
           detail: extendInfoDetail,
@@ -663,7 +667,7 @@ export default defineComponent({
       formState.extendInfoDetailLicenseFileStorageId = resImg.id;
     };
     const ruleCustomOwnerBizNumber = (e: any) => {
-      return e.value?.length >= 10 && e.value?.length <= 13
+      return e.value?.length === 10 || e.value?.length === 13
     }
     return {
       arrayRadioWithdrawDay,

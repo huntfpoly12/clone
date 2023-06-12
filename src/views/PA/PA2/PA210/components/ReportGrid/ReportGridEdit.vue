@@ -357,7 +357,7 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const dataSource = ref<any>(props.dataReport);
+    const dataSource = ref<any>(JSON.parse(JSON.stringify(props.dataReport)));
     const trigger = ref<boolean>(false);
     const originData = ref();
     const setModalVisible = () => {

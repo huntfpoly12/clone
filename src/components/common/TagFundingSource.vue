@@ -1,9 +1,25 @@
 <template>
   <div :class="cssClass">
-    <div v-if="fundingSource1" class="tag">자</div>
-    <div v-if="fundingSource2" class="tag">수</div>
-    <div v-if="fundingSource3" class="tag">보</div>
-    <div v-if="fundingSource4" class="tag">후</div>
+    <div v-if="fundingSource1" class="tag">
+      <a-tooltip :title="`자부담 ${fundingSource1}`">
+        <div>자</div>
+      </a-tooltip>
+    </div>
+    <div v-if="fundingSource2" class="tag">
+      <a-tooltip :title="`수익사업 ${fundingSource1}`">
+        <div>수</div>
+      </a-tooltip>
+    </div>
+    <div v-if="fundingSource3" class="tag">
+      <a-tooltip :title="`보조금 ${fundingSource1}`">
+        <div>보</div>
+      </a-tooltip>
+    </div>
+    <div v-if="fundingSource4" class="tag">
+      <a-tooltip :title="`후원금 ${fundingSource1}`">
+        <div>후</div>
+      </a-tooltip>
+    </div>
   </div>
 </template>
 

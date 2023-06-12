@@ -55,6 +55,7 @@ app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$config_styles = styles;
 
 app.config.performance = true;
+app.config.warnHandler = () => {}; // tắt cảnh báo vue
 app.use(globalDirectives)
 app.use(router);
 app.use(store);

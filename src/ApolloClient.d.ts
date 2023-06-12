@@ -2,6 +2,7 @@ import { ApolloClient, ApolloLink, createHttpLink, from, InMemoryCache } from "@
 import {getJwtObject} from "@bankda/jangbuda-common";
 import { onError } from '@apollo/client/link/error';
 import store from '@/store'
+import { useRouter } from "vue-router";
 const baseURL = import.meta.env.VITE_GRAPHQL_ENDPOINT;
 const httpLink = createHttpLink({
   uri: baseURL,
@@ -14,7 +15,7 @@ const connections: { [key: string]: any } = {}; // Hold the controller for each 
 const authMiddleware = new ApolloLink((operation, forward) => {
   const accessToken = sessionStorage.getItem('token');
   // Check if the token is expired
-  const isTokenExpired = accessToken ? getJwtObject(accessToken).isExpired() : false;
+  const isTokenExpired = accessToken ? getJwtObject(accessToken).isExpired(60) : false;
   if (isTokenExpired) {
     if (!isTokenRefreshing) {
       isTokenRefreshing = true;
@@ -68,6 +69,7 @@ export const client = new ApolloClient({
 
 async function refreshLogin() {
   try {
+    const router = useRouter()
     // Make the API request to refresh the token
     const response = await fetch(baseURL, {
       method: "POST",
@@ -96,6 +98,11 @@ async function refreshLogin() {
 
     // Extract the new access token from the response
     const data = await response.json();
+    if(data.errors) {
+      store.commit("auth/logout");
+      router.push('/login');
+      return
+    }
     // Update the access token and expiration time in session storage
     sessionStorage.setItem("token", data.data.refreshLogin.accessToken);
     sessionStorage.setItem('refreshToken', data.data.refreshLogin.refreshToken);

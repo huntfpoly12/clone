@@ -1,26 +1,11 @@
 <template>
   <a-modal :visible="visible" centered @cancel="actionClose()" :mask-closable="btnClose" :footer="false"
     :closable="btnClose" class="clear-border-header">
-    <div v-if="step === StepCreateBudget.Step1" class="text-center">
+    <div  class="text-center">
       {{ index === 0 ? `본예산 작성하시겠습니까?` : `추경 ${index}차 작성하시겠습니까?` }}
     </div>
-    <div v-else-if="step === StepCreateBudget.Step2">
-      <div class="modal-content">
-        <span>최종차수(본예산인 경우 전년도 최종차수) 임직원보수일람표,</span>
-        <span>세출예산서, 세입예산서 중 없는 내역이 있습니다. 내역이 없으면 </span>
-        <span>모두 공란으로 불러와지며, 이후 수기작성할 수 있습니다.</span>
-        <span>그래도 작성하시겠습니까?</span>
-      </div>
-    </div>
-    <div v-else>
-      <div class="modal-content">
-        <span>최종차수(본예산인 경우 전년도 최종차수) 임직원보수일람표,</span>
-        <span>세출예산서, 세입예산서를 불러와서 새로 작성되었습니다.</span>
-        <span>이후 수기작성할 수 있습니다.</span>
-      </div>
-    </div>
 
-    <div v-if="step !== StepCreateBudget.Step3" class="footer">
+    <div class="footer">
       <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'" @onClick="actionClose()" />
       <button-basic class="button-form-modal" text="네. 작성합니다" :width="140" :type="'default'" :mode="'contained'"
         @onClick="onConfirm" />
@@ -61,24 +46,10 @@ export default defineComponent({
       emit('closePopup', false)
     };
     const onConfirm = () => {
-      if (step.value === StepCreateBudget.Step1 && props.index === 0) {
-        step.value = StepCreateBudget.Step2
-      } else if (step.value === StepCreateBudget.Step1 && props.index > 0 || step.value === StepCreateBudget.Step2) {
-        step.value = StepCreateBudget.Step3
-        emit('closePopup', ACTION.ADD)
-        btnClose.value = true
-      } else {
-        btnClose.value = false
-      }
+      step.value = StepCreateBudget.Step3
+      emit('closePopup', ACTION.ADD)
+      btnClose.value = true
     }
-    watchEffect(() => {
-      if (props.visible) step.value = StepCreateBudget.Step1
-    })
-    watch(dataBudget, (val) => {
-      if (val?.action === ACTION.EDIT) {
-        step.value = StepCreateBudget.Step2
-      }
-    })
     const closePopup = (e: boolean) => {
       if (e) {
         emit('closePopup', true)
@@ -87,7 +58,6 @@ export default defineComponent({
     return {
       actionClose,
       onConfirm,
-      step,
       StepCreateBudget,
       dataBudget,
       closePopup,

@@ -98,6 +98,7 @@ export default defineComponent({
   props: {
     modalStatus: {
       type: Boolean,
+      default: false,
     },
     dataPopup: {
       type: Object,
@@ -130,18 +131,18 @@ export default defineComponent({
     const token = computed(() => sessionStorage.getItem("token"));
     store.dispatch("auth/getUserInfor", token.value);
     const userInfor = computed(() => store.state.auth.userInfor);
-    const modalStatus = ref();
     const email = ref();
     const setModalVisible = () => {
-      modalStatus.value = false;
       emit("closePopup", false);
     };
     watch(
-      () => props.dataPopup,
+      () => props.modalStatus,
       (val) => {
-        modalStatus.value = props.modalStatus;
-        if (props.groupSendMail == false) email.value = val?.receiverAddress;
-        else email.value = userInfor.value?.email;
+        if (props.groupSendMail) {
+          email.value = userInfor.value?.email;
+        }
+      },{
+        deep: true,
       }
     );
     const { mutate, onError, onDone } = useMutation(mutations.sendEmail);
@@ -186,7 +187,6 @@ export default defineComponent({
       }
     };
     return {
-      modalStatus,
       email,
       sendEmail,
       setModalVisible,

@@ -236,7 +236,8 @@
                                     </a-form-item>
                                     <a-form-item label="장기요양기관등록번호" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
-                                            v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
+                                            v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" :lengthFixed="11" placeholder="숫자(11자리)"
+                                            :messageRuleCustom="lenFixedMsg" :maxLength="11" />
                                     </a-form-item>
                                     <div>
                                         <imgUpload :title="titleModal2" style="margin-top: 10px"

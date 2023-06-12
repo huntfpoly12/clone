@@ -51,7 +51,7 @@
       <DxColumn caption="세출예산서" cell-template="expenseBudget" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="세입예산서" cell-template="revenueBudget" alignment="center" :allow-sorting="false"/>
       <DxColumn caption="예산총괄표" alignment="center" :allow-sorting="false" cell-template="mailPrint"/>
-      <DxColumn caption="" width="100px" cell-template="action" alignment="center"/>
+      <DxColumn caption="삭제" width="100px" cell-template="action" alignment="center"/>
       <template #action="{data}">
         <div class="d-flex justify-content-center">
           <a-tooltip :trigger="data.data.index !== (dataSource?.totalCount() || 0) - 1 && data.data.status !== 10 ? '' : 'hover'" placement="left" title="예산서 (임직원보수일람표 포함) 삭제">
@@ -322,9 +322,9 @@ const handleClosePopupAddRow = (e: boolean | ACTION) => {
       dataGridRef.value?.refresh();
       disableAddRow.value = true
     });
-  } else {
-    isModal.addRow = false
   }
+  isModal.addRow = false
+
 }
 const modal = reactive({
   budget: false,
@@ -397,7 +397,7 @@ const openHistory = () => {
   modalHistory.value = true
 }
 const handleDeleteBudget = (data: any) => {
-  if (disableAddRow.value) {
+  if (!data.savedAt) {
     dataSource.value?.store().remove(data.createdAt).then(() => {
       dataGridRef.value?.refresh();
       disableAddRow.value = false
