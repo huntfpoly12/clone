@@ -79,6 +79,9 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const processKey = computed(() => store.state.common.pa510.processKeyPA510);
+    const token = computed(() => sessionStorage.getItem("token"));
+    store.dispatch("auth/getUserInfor", token.value);
+    const userInfor = computed(() => store.state.auth.userInfor);
     let emailAddress: any = ref("");
     const dataSelect = ref([
       { name: "사번순", value: "사번" },
@@ -95,7 +98,7 @@ export default defineComponent({
     watch(
       () => props.data,
       (val) => {
-        emailAddress.value = val?.employee.email;
+        emailAddress.value = userInfor.value?.email;
       }
     );
 

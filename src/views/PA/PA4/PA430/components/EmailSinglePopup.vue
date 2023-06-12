@@ -39,7 +39,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from "vue";
+import { defineComponent, watch, ref, computed } from "vue";
+import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA630/index";
@@ -57,12 +58,16 @@ export default defineComponent({
   },
   components: {},
   setup(props, { emit }) {
+    const store = useStore();
+    const token = computed(() => sessionStorage.getItem("token"));
+    store.dispatch("auth/getUserInfor", token.value);
+    const userInfor = computed(() => store.state.auth.userInfor);
     let emailAddress = ref("");
     let resetForm = ref<number>(0);
     watch(
       () => props.data,
       (val) => {
-        emailAddress.value = val?.employeeInputs.receiverAddress;
+        emailAddress.value = userInfor.value?.email;
       }
     );
 
