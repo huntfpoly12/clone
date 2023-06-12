@@ -1,4 +1,5 @@
 @import "../../../../../assets/styles/settingStyle.scss";
+
 #pa-510 {
     margin-top: 10px;
 
@@ -31,12 +32,13 @@
         }
     }
 
-    :deep .custom-layout.custom-form-data > div{
+    :deep .custom-layout.custom-form-data>div {
 
-            border: 1px solid #d7d7d7;
-            padding: 10px;
-            height: 100%; 
+        border: 1px solid #d7d7d7;
+        padding: 10px;
+        height: 100%;
     }
+
     :deep .custom-layout {
         padding: 10px 10px 10px 0;
     }
@@ -64,17 +66,6 @@
     }
 }
 
-.button-open-tab {
-    color: white;
-    background-color: blue;
-    font-size: 10px;
-    border: none;
-    border-radius: 5px;
-    padding: 9px 7px;
-    margin-left: 3px;
-    cursor: pointer;
-}
-
 .deduction-main {
     overflow: scroll;
     padding-left: 5px;
@@ -94,7 +85,8 @@
         display: flex;
         align-items: center;
     }
-    margin-bottom: $margin-bottom+px;;
+
+    margin-bottom: $margin-bottom+px;
 }
 
 :deep .dx-master-detail-cell {
@@ -122,32 +114,30 @@
     pointer-events: none;
     opacity: 0.5;
 }
-.action-select-1  :deep(.dx-button-content){
-  padding: 6px 15px;
-}
 
-.action-select-2  :deep(.dx-button-content){
-  padding: 6px 15px;
-}
 .formPA510 {
     border: 1px solid #d7d7d7;
     padding: 10px;
     height: calc(100vh - 300px);
 }
+
 .custom-detail {
     text-align: right;
 }
+
 :deep .dx-datagrid-table .dx-row .dx-command-expand.dx-datagrid-group-space {
     padding-top: 4px;
 }
+
 #data-tax-pay-info {
     height: calc(100vh - 334px);
+
     :deep .dx-freespace-row {
         display: none !important;
     }
 }
+
 :deep .dx-datagrid-text-content span {
     font-size: 15px;
     font-weight: bold;
 }
-

@@ -1,6 +1,11 @@
 #pa-730 {
   #gridContainerPA730 {
     height: calc(100vh - 280px);
+    :deep .dx-datagrid-header-panel {
+      position: absolute;
+      top: -40px;
+      right: 0;
+    }
   }
   :deep .dx-freespace-row {
     display: none !important;
@@ -15,6 +20,7 @@
   .created-date {
     float: right;
     display: flex;
+    margin-right: 90px;
     align-items: center;
 
     .lable-item {
@@ -37,8 +43,11 @@
 
   .page-content {
     .header-group {
-      align-items: top;
       margin-top: 5px;
+      .custom-flex {
+        height: 31px;
+      }
+      
     }
 
     .lable-item {
