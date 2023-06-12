@@ -52,6 +52,7 @@ mutation updateCompany(
         ownerBizNumber
         ownerName
         withdrawDay
+        ownerResidentId
       }
     }
     sealFileStorageId
