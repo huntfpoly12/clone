@@ -51,6 +51,7 @@ query getCompany ($id: Int!) {
         ownerBizNumber
         ownerName
         withdrawDay
+        ownerResidentId
       }
     }
     sealFileStorageId

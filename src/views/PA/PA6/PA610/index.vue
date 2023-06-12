@@ -122,7 +122,7 @@
               </a-form-item>
               <a-form-item label="소득구분" label-align="right" class="red">
                 <type-code-select-box width="200px" v-model:valueInput="dataShow.incomeTypeCode"
-                  @textTypeCode="changeTextTypeCode" :disabled="!isNewRow" />
+                  @textTypeCode="changeTextTypeCode" :disabled="!isNewRow" required/>
               </a-form-item>
               <a-form-item label="이메일" label-align="right">
                 <div class="d-flex-center">
@@ -149,9 +149,6 @@
   <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'"
     :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요"
     @checkConfirm="handleConfirm" />
-  <PopupMessageCustom :modalStatus="isPopupVisible" @closePopup="hidePopup" :typeModal="'confirm'"
-    :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
-    :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="confirmPopup" />
 </template>
 <script lang="ts">
 import queries from "@/graphql/queries/PA/PA6/PA610/index";
@@ -200,7 +197,7 @@ import { Store } from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import PopupMessageCustom from "./components/PopupMessageCustom.vue";
 import { ArrForeigner, valueDefaultAction } from "./utils";
-import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
+import { FormStatus } from "@/store/settingModule/types";
 import DxTextBox from "devextreme-vue/text-box";
 import dayjs from "dayjs";
 import deletePopup from "@/utils/deletePopup";
@@ -249,10 +246,6 @@ export default defineComponent({
     const paYear = computed(() => Number(sessionStorage.getItem("paYear")) || dayjs().year())
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 
-    const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
-    const isFormChange = computed(() => !isEqual(dataShow.value, previousRowData.value));
-    const isPopupVisible = computed(() => store.getters['settings/isPopupVisible'])
-
     // Ref
     const formWrapper = ref(null)
     const isDiscard = ref(false); // verify popup discard
@@ -287,32 +280,7 @@ export default defineComponent({
       dataShow.value.name = dataShow.value.name?.toUpperCase() ?? '';
     });
 
-    // watch isFormChange change and change status of form
-    watch(isFormChange, (newVal) => {
-      if (newVal) {
-        store.commit('settings/setFormStatus', FormStatus.editing);
-      } else {
-        store.commit('settings/setFormStatus', FormStatus.none);
-      }
-    }, { deep: true });
 
-    // Watch listen clickYearStatus
-    watch(clickYearStatus, async (newVal: ClickYearStatus) => {
-      if (newVal !== ClickYearStatus.none) {
-        store.commit('settings/setPopupVisible', true)
-      }
-    }, { deep: true });
-    const hidePopup = (e: boolean) => {
-      if (!e) {
-        store.dispatch('settings/hidePopup')
-      }
-    }
-    const confirmPopup = (e: boolean) => {
-      if (e) {
-        handleSubmit()
-        store.dispatch('settings/confirmPopup')
-      }
-    }
 
     // watch listen dataSource and paYear change then change focusedRowKey
     watch([dataSource, paYear], async (newVal, oldValue) => {
@@ -526,10 +494,6 @@ export default defineComponent({
       store.state.common.savePA610++;
       // when update success then check click year
       // if user click button change year then update year
-      if (clickYearStatus.value !== ClickYearStatus.none) {
-        store.commit('settings/setCurrentYear')
-        store.commit('settings/setClickYearStatus', ClickYearStatus.none)
-      }
       dataGridRef.value?.refresh();
     });
     updateError((res) => {
@@ -565,10 +529,6 @@ export default defineComponent({
       }
       notification("success", Message.getCommonMessage('101').message);
       store.state.common.savePA610++;
-      if (clickYearStatus.value !== ClickYearStatus.none) {
-        store.commit('settings/setCurrentYear')
-        store.commit('settings/setClickYearStatus', ClickYearStatus.none)
-      }
     });
     createdErr((res) => {
       dataGridRef.value?.refresh();
@@ -666,10 +626,7 @@ export default defineComponent({
       isDiscard.value = false;
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
-        // if valid fail then set state default
-        store.commit('settings/setClickYearStatus', ClickYearStatus.none)
         store.commit('settings/setFormStatus', FormStatus.editing)
-        dataGridRef.value?.refresh();
         selectRowKeyAction.value = focusedRowKey.value
       } else {
         // if form disabled => action edit
@@ -687,9 +644,6 @@ export default defineComponent({
               stayQualification: dataShow.value.stayQualification,
               residentId: dataShow.value.residentId,
               email: dataShow.value.email || null,
-              // employeeId: parseInt(
-              //   dataShow.value.employeeId ? dataShow.value.employeeId : ""
-              // ),
               incomeTypeCode: dataShow.value.incomeTypeCode,
               incomeTypeName: dataShow.value.incomeTypeName,
             },
@@ -765,9 +719,6 @@ export default defineComponent({
       formWrapper,
       changeRadioForeigner,
       calculateIncomeTypeCodeAndName,
-      isPopupVisible,
-      hidePopup,
-      confirmPopup,
       isDataInvalidAttributionYear
     };
   },
