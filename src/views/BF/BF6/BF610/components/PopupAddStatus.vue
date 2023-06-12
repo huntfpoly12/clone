@@ -18,6 +18,7 @@
         key-expr="companyId"
         class="wf-100"
         :column-auto-width="true"
+        :noDataText="Message.getMessage('COMMON', '901').message"
       >
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxColumn
@@ -109,6 +110,7 @@ import mutations from "@/graphql/mutations/BF/BF6/BF610/index";
 import notification from "@/utils/notification";
 import dayjs from "dayjs";
 import { IncomeType } from "@bankda/jangbuda-common";
+import { Message } from "@/configs/enum";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -225,6 +227,7 @@ export default defineComponent({
       changeStatusRowTable,
       getColorTag,
       IncomeType,
+      Message
     };
   },
 });

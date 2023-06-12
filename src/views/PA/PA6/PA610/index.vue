@@ -60,7 +60,9 @@
                 <DxColumn caption="소득구분" cell-template="grade-cell" width="300" data-field="TypeCodeAndName"
                   :calculateCellValue="calculateIncomeTypeCodeAndName" />
                 <template #grade-cell="{ data }" class="custom-action">
-                  <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.incomeTypeName" />
+                  <div v-if="data.data.incomeTypeCode">
+                    <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.incomeTypeName" />
+                  </div>
                 </template>
                 <DxColumn :width="50" cell-template="popup" />
                 <template #popup="{ data }" class="custom-action">
@@ -481,20 +483,20 @@ export default defineComponent({
       if (!isNewRow.value) {
         focusedRowKey.value = selectRowKeyAction.value;
       } else {
-        storeDataSource.value.insert(cloneDeep(valueDefaultAction)).then((result) => {
-          formRef.value.resetValidate()
+        storeDataSource.value.insert(cloneDeep(valueDefaultAction)).then(() => {
           focusedRowKey.value = 0;
-          dataShow.value = result;
-          previousRowData.value = { ...result };
+          dataShow.value = cloneDeep(valueDefaultAction);
+          previousRowData.value = cloneDeep(valueDefaultAction);
           dataGridRef.value?.refresh();
+          formRef.value.resetValidate()
         });
       }
       isDiscard.value = false;
       notification("success", Message.getCommonMessage('106').message);
       store.state.common.savePA610++;
-      // when update success then check click year
-      // if user click button change year then update year
-      dataGridRef.value?.refresh();
+      // // when update success then check click year
+      // // if user click button change year then update year
+      // dataGridRef.value?.refresh();
     });
     updateError((res) => {
       if (isDiscard.value) {
@@ -590,6 +592,18 @@ export default defineComponent({
     }
     const dataUpdate = computed(() => {
       let residentId = dataShow.value.residentId.replace("-", "");
+      const input: any = {
+        name: dataShow.value.name,
+        foreigner: dataShow.value.foreigner,
+        nationality: dataShow.value.nationality,
+        nationalityCode: dataShow.value.nationalityCode,
+        stayQualification: dataShow.value.stayQualification,
+        residentId: residentId,
+        incomeTypeName: dataShow.value.incomeTypeName,
+      }
+      if(dataShow.value.email) {
+        input.email = dataShow.value.email
+      }
       return {
         companyId: companyId,
         imputedYear: paYear.value,
@@ -597,16 +611,7 @@ export default defineComponent({
           dataShow.value.employeeId ? dataShow.value.employeeId : ""
         ),
         // incomeTypeCode: dataShow.value.incomeTypeCode,
-        input: {
-          name: dataShow.value.name,
-          foreigner: dataShow.value.foreigner,
-          nationality: dataShow.value.nationality,
-          nationalityCode: dataShow.value.nationalityCode,
-          stayQualification: dataShow.value.stayQualification,
-          residentId: residentId,
-          email: dataShow.value.email,
-          incomeTypeName: dataShow.value.incomeTypeName,
-        },
+        input
       };
     });
     const addNewRow = () => {

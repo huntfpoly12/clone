@@ -1,22 +1,26 @@
 <template>
-  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-           :width="500">
-    <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
-      <div class="d-flex-center">
-        <div class="month-custom-1 d-flex-center">
-          귀 {{ paYear }}-{{ $filters.formatMonth(attributionMonth) }}
+  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="" :width="500">
+    <a-spin :spinning="loading">
+      <div class="title">소득자료 생성</div>
+      <div style="padding-left: 70px;">
+        <a-form-item label="귀속/지급연월" label-align="right" class="mt-20">
+          <div class="d-flex-center">
+            <div class="month-custom-1 d-flex-center">
+              귀 {{ paYear }}-{{ $filters.formatMonth(attributionMonth) }}
+            </div>
+            <month-picker-box-custom v-model:valueDate="paymentYearMonthChoose" text="지" disabled/>
+          </div>
+        </a-form-item>
+        <a-form-item label="지급일" label-align="right" class="label-required">
+          <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate" :clearable="false"
+                                v-model:valueDate="paymentDayConfig"/>
+        </a-form-item>
+        <div class="text-align-center mt-30">
+          <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
+                        @onClick="onSubmit"/>
         </div>
-        <month-picker-box-custom v-model:valueDate="paymentYearMonthChoose" text="지" disabled/>
       </div>
-    </a-form-item>
-    <a-form-item label="지급일" label-align="right" class="label-required">
-      <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate" :clearable="false"
-                            v-model:valueDate="paymentDayConfig"/>
-    </a-form-item>
-    <div class="text-align-center mt-30">
-      <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
-                    @onClick="onSubmit"/>
-    </div>
+    </a-spin>
   </a-modal>
 </template>
 <script lang="ts" setup>
@@ -59,7 +63,7 @@ const setModalVisible = () => {
 };
 let trigger = ref(false)
 
-const {result: resultConfig, refetch} = useQuery(
+const {result: resultConfig, refetch, loading} = useQuery(
   queries.getWithholdingConfig,
   dataQuery,
   () => ({
@@ -182,5 +186,10 @@ const onSubmit = (e: any) => {
   .dp__icon {
     display: none;
   }
+}
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
 }
 </style>

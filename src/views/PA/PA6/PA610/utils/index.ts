@@ -25,7 +25,7 @@ export const valueDefaultAction = {
   employeeId: "",
   foreigner: false,
   incomeTypeCode: "",
-  incomeTypeName: "",
+  incomeTypeName: undefined,
   name: "",
   residentId: "",
   status: null,

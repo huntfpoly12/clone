@@ -7,6 +7,7 @@
             v-model:value="typeCal"
             class="d-flex-center"
             required
+            :disabled="dataBudget?.status === 20"
           >
             <a-radio :value="1" @click="changeType">제목</a-radio>
             <a-radio :value="2">계산식</a-radio>
@@ -18,19 +19,19 @@
         <standard-form ref="formRef">
           <div v-for="(data, index) in details" :key="index" class="mb-10">
             <div class="d-flex-center gap-10">
-              <default-text-box v-model="data.detail" placeholder="한글, 영문, 숫자, 괄호(), 사칙연산(+, -, *, /)"/>
-              <number-box-money v-model:valueInput="data.calculationResult" placeholder="계산결과" format="#0,###"/>
+              <default-text-box :disabled="dataBudget?.status === 20" v-model="data.detail" placeholder="한글, 영문, 숫자, 괄호(), 사칙연산(+, -, *, /)"/>
+              <number-box-money :disabled="dataBudget?.status === 20" v-model:valueInput="data.calculationResult" placeholder="계산결과" format="#0,###"/>
               <div class="wrap-action">
-                <DxButton @click="removeRow(index)" icon="minus" v-if="index > 0 || details.length > 1 " />
-                <DxButton @click="addRow" icon="plus" v-if="+index === details.length - 1 || details.length === 0  " />
+                <DxButton @click="removeRow(index)" icon="minus" v-if="index > 0 || details.length > 1 " :disabled="dataBudget?.status === 20"/>
+                <DxButton @click="addRow" icon="plus" v-if="+index === details.length - 1 || details.length === 0  " :disabled="dataBudget?.status === 20"/>
               </div>
             </div>
           </div>
         </standard-form>
       </a-col>
       <div class="wf-100 text-center">
-        <DxButton type="default" :disabled="typeCal === 1" @click="handleCalculate" text="계산" class="mr-10"/>
-        <DxButton type="default" @click="handleSubmit" text="산출내역 저장"/>
+        <DxButton type="default" :disabled="typeCal === 1 || dataBudget?.status === 20" @click="handleCalculate" text="계산" class="mr-10"/>
+        <DxButton :disabled="dataBudget?.status === 20" type="default" @click="handleSubmit" text="산출내역 저장"/>
       </div>
     </a-row>
   </a-modal>
@@ -45,6 +46,8 @@ import {cloneDeep, isEqual} from "lodash";
 import {Modal} from "ant-design-vue/es";
 import {Message} from "@/configs/enum";
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import { useStore } from 'vuex';
+import { Budget } from '../type';
 
 interface Props extends ModalProps {
   data: Description[];
@@ -77,9 +80,9 @@ const typeCal = ref(2);
 const details = ref<Description[]>([]);
 const formRef = ref();
 const valueOld = ref();
-
+const store = useStore();;
+const dataBudget = computed<Budget | null>(() => store.getters["common/getDataBudget"]);
 const isFormChange = computed(() => {
-
   return !isEqual(details.value, valueOld.value)
 })
 function addRow() {
