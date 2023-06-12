@@ -722,6 +722,11 @@ export default defineComponent({
 			) {
 				store.state.common.pa510.actionCallGetMonthDetail++;
 			}
+			for (let i = 1; i <= 12; i++) { // xóa month vừa copy nhưng không thêm data
+				if (!dataSource.value[0]["month" + i]?.companyId) {
+					delete dataSource.value[0]["month" + i]
+				}
+			}
 			dataMonthNew.value = month;
 			if (checkChangeForm.value) {
 				modalChangeRow.value = true;
@@ -783,6 +788,11 @@ export default defineComponent({
 			}
 		};
 		const dataAddIncomeProcess = (data: any) => {
+			for (let i = 1; i <= 12; i++) { // xóa month vừa copy nhưng không thêm data
+				if (!dataSource.value[0]["month" + i]?.companyId) {
+					delete dataSource.value[0]["month" + i]
+				}
+			}
 			dataSource.value[0]["month" + data.imputedMonth] = data;
 			dataSource.value[0]["month" + data.imputedMonth].status = 10;
 			status.value = 10;

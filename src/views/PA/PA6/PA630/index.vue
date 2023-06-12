@@ -253,7 +253,7 @@ export default defineComponent({
         }
 
         const actionOpenPopupEmailMulti = () => {
-            if (dataSelect.value.length > 1) {
+            if (dataSelect.value.length) {
                 popupDataEmailMulti.value = {
                     companyId: companyId,
                     input: {
@@ -265,7 +265,7 @@ export default defineComponent({
                 }
                 modalEmailMulti.value = true
             } else {
-                notification('error', messages.getCommonMessage('601').message)
+                notification('error', messages.getCommonMessage('404').message)
             }
         }
         const onPrintGroup = () => {

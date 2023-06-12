@@ -689,7 +689,8 @@ export default defineComponent({
 			if (value) {
 				let data = value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100)
 				dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = data;
-				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(data / 100) * 10;
+				let value1012 = Math.floor(data / 100) * 10;
+				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew =  value1012 > 1000 ? value1012 : 0;
 			}
 			modalDeductions.value = true;
 		});
@@ -915,9 +916,9 @@ export default defineComponent({
 						: 0;
 					item.amountNew = total4;
 				}
-				calculateVariables.totalTaxPay = totalPayItemTaxFree.value;
-				triggerCalcIncome.value = true;
 			});
+			calculateVariables.totalTaxPay = totalPayItemTaxFree.value;
+			triggerCalcIncome.value = true;
 		};
 		const actionCalculateMTS = () => {
 			originCalculateMidTermSettlement.value.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1
