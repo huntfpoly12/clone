@@ -50,14 +50,14 @@
           <template #send-group-mail>
               <DxButton @click="actionOpenPopupEmailGroup">
                 <img src="@/assets/images/emailGroup.png" alt=""
-                  style="width: 28px; margin-right: 3px; cursor: pointer" />
+                  style="width: 28px;" />
               </DxButton>
           </template>
           <template #send-group-print>
               <DxButton @click="onPrintGroup">
                 <a-tooltip title="출력 / 저장" placement="topLeft">
                   <img src="@/assets/images/printGroup.png" alt=""
-                    style="width: 28px; margin-right: 3px; cursor: pointer" />
+                    style="width: 28px;" />
                 </a-tooltip>
               </DxButton>
           </template>

@@ -67,7 +67,7 @@
 								" :textUnCheck="'월급'" :textCheck="'일급'" />
 							<number-box-money :disabled="store.state.common.pa510.statusDisabledStatus"
 								@changeInput="onChangePrice" v-if="dataIncomeWageDaily.employee.monthlyPaycheck"
-								width="110px" :required="true" placeholder="일급여" :spinButtons="false"
+								width="105px" :required="true" placeholder="일급여" :spinButtons="false"
 								v-model:valueInput="dataIncomeWageDaily.dailyWage" />
 							<number-box-money :disabled="store.state.common.pa510.statusDisabledStatus"
 								@changeInput="onChangePrice" v-else width="105px" :required="true" placeholder="월급여"

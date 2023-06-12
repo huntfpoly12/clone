@@ -5,19 +5,19 @@
             <div class="search-form">
                 <a-row :gutter="20">
                     <a-col>
-                        <div class="dflex custom-flex">
+                        <div class="custom-flex">
                             <label class="lable-item">귀속기간: </label>
                             <div style="width: 70px;" class="label-belonging">귀속</div>
                         </div>
                     </a-col>
                     <a-col>
-                        <div class="dflex custom-flex">
+                        <div class="custom-flex">
                             <range-month-time-box v-model:valueDate="rangeDate" :minDate="minDate" :maxDate="maxDate"
                                 placeholder="시작월 > 종료월" />
                         </div>
                     </a-col>
                     <a-col>
-                        <div class=" selectRatio dflex custom-flex">
+                        <div class="selectRatio custom-flex">
                             <strong class="lable-item">구분 :</strong>
                             <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="originData.filter.type"
                                 :layoutCustom="'horizontal'" />
@@ -26,10 +26,10 @@
                 </a-row>
             </div>
             <div class="page-content">
-                <a-row>
+                <a-row class="header-group">
                     <a-col :span="12">
                         <a-form-item label="서식 설정">
-                            <div class="dflex custom-flex">
+                            <div class="custom-flex">
                                 <radio-group :arrayValue="arrayRadioType" :layoutCustom="'horizontal'"
                                     v-model:valueRadioCheck="dataInputReport.input.type" />
                                 <a-tooltip color="black" placement="top">
@@ -64,7 +64,7 @@
                         <DxButton @click="onPrintGroup" class="bt-print-group">
                             <a-tooltip title="출력 / 저장" placement="topLeft">
                                 <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
+                                    style="width: 28px;" />
                             </a-tooltip>
                         </DxButton>
                     </template>
