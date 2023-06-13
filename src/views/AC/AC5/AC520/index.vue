@@ -28,9 +28,13 @@
         <DxItem location="after" template="button-history" css-class="cell-button-add"/>
       </DxToolbar>
       <template #button-history>
-        <DxButton >
-          <HistoryOutlined style="font-size: 18px;" @click="openHistory"/>
-        </DxButton>
+        <a-tooltip placement="topLeft" title="변경이력">
+          <div>
+            <DxButton >
+              <HistoryOutlined style="font-size: 18px;" @click="openHistory"/>
+            </DxButton>
+          </div>
+        </a-tooltip>
       </template>
       <template #button-template>
         <a-tooltip placement="topLeft" title="예산서 신규 작성">
@@ -185,7 +189,9 @@
       @closePopup="modalHistory = false"
       keyExpr="loggedAt"
       title="변경이력"
-      typeHistory="ac-520" />
+      typeHistory="ac-520" 
+      width="1300px"
+    />
     <AddRowPopup :visible="isModal.addRow" @close-popup="handleClosePopupAddRow" :index="dataSource?.totalCount() || 0"/>
   </div>
 </template>

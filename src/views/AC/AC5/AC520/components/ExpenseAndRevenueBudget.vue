@@ -91,8 +91,8 @@
                 </div>
               </a-tooltip>
             </template>
-            <template #remark>
-              <span title="임직원보수일람표 반영">임직원보수일람표 반영</span>
+            <template #remark="{data}">
+              <span v-if="data.data.code1 === '501000000' && data.data.code2 === '501010000'" title="임직원보수일람표 반영">임직원보수일람표 반영</span>
             </template>
           </DxDataGrid>
         </a-spin>
@@ -105,7 +105,7 @@
           <DxField :label="dataBudget?.index === 0 ? `전년도` : `${(dataBudget?.index || 0) - 1} 차 추경`">
             <div class="d-flex">
               <div class="d-flex-center">
-                <number-box-money class="flex-1 mr-5" :min="0" width="200px" format="#0,###"
+                <number-box-money :disabled="dataBudget?.status === 20" class="flex-1 mr-5" :min="0" width="200px" format="#0,###"
                   v-model:valueInput="formState.previousAmount" />
                 <a-tag v-if="formState.code2 === '501010000'">임직원보수일람표 반영</a-tag>
               </div>
@@ -172,32 +172,32 @@
           </DxField>
           <DxField label="자부담">
             <div class="d-flex-center gap-10">
-              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource1" width="200px" />
-              <DxButton icon="back" type="default"
+              <number-box-money :disabled="dataBudget?.status === 20" placeholder="" v-model:valueInput="formState.fundingSource1" width="200px" />
+              <DxButton icon="back" type="default" :disabled="dataBudget?.status === 20"
                 :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource1')" />
             </div>
           </DxField>
           <DxField label="수익사업">
             <div class="d-flex-center gap-10">
-              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource2" width="200px" />
-              <DxButton icon="back" type="default"
+              <number-box-money :disabled="dataBudget?.status === 20" placeholder="" v-model:valueInput="formState.fundingSource2" width="200px" />
+              <DxButton icon="back" type="default" :disabled="dataBudget?.status === 20"
                 :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource2')" />
             </div>
           </DxField>
           <DxField label="보조금">
             <div class="d-flex-center gap-10">
-              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource3" width="200px" />
-              <DxButton icon="back" type="default"
+              <number-box-money :disabled="dataBudget?.status === 20" placeholder="" v-model:valueInput="formState.fundingSource3" width="200px" />
+              <DxButton icon="back" type="default" :disabled="dataBudget?.status === 20"
                 :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource3')" />
             </div>
           </DxField>
           <DxField label="후원금">
             <div class="d-flex-center gap-10">
-              <number-box-money placeholder="" v-model:valueInput="formState.fundingSource4" width="200px" />
-              <DxButton icon="back" type="default"
+              <number-box-money :disabled="dataBudget?.status === 20" placeholder="" v-model:valueInput="formState.fundingSource4" width="200px" />
+              <DxButton icon="back" type="default" :disabled="dataBudget?.status === 20"
                 :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource4')" />
             </div>
@@ -209,7 +209,7 @@
                   {{ dataBudget?.index == 0 ? `당해년도` : `${dataBudget?.index}차 추경` }} 예산액 {{filters.formatNumber(formState.amount)}} 과 자금원천 합계 {{filters.formatNumber(summaryFundingSource)}} 는 일치해하지 않기에 저장불가합니다.
                 </template>
                 <div>
-                  <DxButton type="default" :disabled="summaryFundingSource !== formState.amount" @click="handleSubmit"
+                  <DxButton type="default" :disabled="summaryFundingSource !== formState.amount || dataBudget?.status === 20" @click="handleSubmit"
                     text="저장" />
                 </div>
               </a-tooltip>
@@ -354,6 +354,7 @@ onResult(({ data }) => {
       if (!arrCode1s.value.find((row: any) => row == item.code1))
         arrCode1s.value.push(item.code1)
     })
+    console.log('data.getBudget,', dataBudget.value)
     dataSource.value = new DataSource({
       store: {
         type: "array",

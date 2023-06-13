@@ -1,6 +1,6 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
+        <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" :width="width ? width :'1024px'"
             :mask-closable="false">
             <a-spin
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820|| loadingPA840_1|| loadingPA840_2||
@@ -56,7 +56,7 @@ import { useQuery } from "@vue/apollo-composable";
 import dayjs from 'dayjs';
 
 export default defineComponent({
-    props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit', 'companyId', 'historyData', 'keyExpr'],
+    props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit', 'companyId', 'historyData', 'keyExpr', 'width'],
     components: {
         DxDataGrid,
         DxColumn,

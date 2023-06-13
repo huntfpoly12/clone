@@ -14,7 +14,6 @@
           </a-col>
           <a-col>
             <div class="dflex custom-flex">
-              {{ statuses }}
               <label class="lable-item">심사상태/결과 :</label>
               <SelectCustomField v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
             </div>

@@ -6,17 +6,17 @@
       </a-tooltip>
     </div>
     <div v-if="fundingSource2" class="tag">
-      <a-tooltip :title="`수익사업 ${fundingSource1}`">
+      <a-tooltip :title="`수익사업 ${fundingSource2}`">
         <div>수</div>
       </a-tooltip>
     </div>
     <div v-if="fundingSource3" class="tag">
-      <a-tooltip :title="`보조금 ${fundingSource1}`">
+      <a-tooltip :title="`보조금 ${fundingSource3}`">
         <div>보</div>
       </a-tooltip>
     </div>
     <div v-if="fundingSource4" class="tag">
-      <a-tooltip :title="`후원금 ${fundingSource1}`">
+      <a-tooltip :title="`후원금 ${fundingSource4}`">
         <div>후</div>
       </a-tooltip>
     </div>

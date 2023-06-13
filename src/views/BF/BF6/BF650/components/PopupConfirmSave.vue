@@ -6,22 +6,20 @@
     title=""
     okText="네. 발송합니다"
     cancelText="아니요"
-    width="650px"
+    width="400px"
     @cancel="setModalVisible"
   >
     <standard-form>
       <div class="mt-25">
-        <div class="d-flex-center">
-          <span class="mr-10">
-            선택된 내역들의 전자신고파일 제작요청하고, 결과를
-          </span>
+        <div class="">
+          <div class="mb-5">선택된 내역들의 전자신고파일 제작요청하시겠습니까?</div>
+          <div class="mb-5">결과를 이메일로 받으시려면 이메일 주소를 입력하세요.</div>
           <mail-text-box
             width="250"
             v-model:valueInput="mailAction"
             required="true"
-          />
+            />
         </div>
-        <span> 로 메일을 발송하시겠습니까? </span>
       </div>
       <div class="d-flex-center mt-10" style="justify-content: center">
         <button-basic
@@ -32,7 +30,7 @@
         />
         <button-basic
           class="ml-5"
-          :text="'네. 발송합니다'"
+          :text="'네. 제작요청합니다'"
           :width="140"
           :type="'default'"
           :mode="'contained'"
