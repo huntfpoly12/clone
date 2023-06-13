@@ -37,13 +37,13 @@
         <DxDataGrid noDataText="내역이 없습니다" id="formItemAC120" :show-row-lines="true" :hoverStateEnabled="true"
           :data-source="dataSource" :show-borders="true" key-expr="accountingDocumentId"
           :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          v-model:focused-row-key="focusedRowKey" focused-row-enabled="true" :onRowClick="onSelectionChanged"
+          v-model:focused-row-key="focusedRowKey" focused-row-enabled="true" :onRowClick="onRowClick"
           :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
           <DxColumn caption="선택" cell-template="radioCheck" />
           <template #radioCheck="{ data }">
-            <div class="text-align-center">
+            <div class="text-center">
               <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.accountingDocumentId ? true : false
                 " />
             </div>
@@ -178,7 +178,7 @@ export default defineComponent({
       month: dayjs().month() + 1,
     });
 
-    const focusedRowKey = ref<Number>(1);
+    const focusedRowKey = ref(null);
 
     // =================== GRAPHQL ===================
     // query searchSpendingAccountingDocuments
@@ -205,6 +205,8 @@ export default defineComponent({
       () => dataQuerySearchSpendingAccountingDocuments.value.month,
       (value) => {
         triggerQuerySearchSpendingAccountingDocuments.value = true;
+        dataSelect.value = null;
+        focusedRowKey.value = null;
       }
     );
 
@@ -249,7 +251,7 @@ export default defineComponent({
       emit("closePopup", false);
       // notification('success', Message.getMessage('AC120', '001').message)
     };
-    const onSelectionChanged = (data: any) => {
+    const onRowClick = (data: any) => {
       dataSelect.value = data.data;
     };
 
@@ -261,7 +263,7 @@ export default defineComponent({
       // onSearch,
       setModalVisible,
       focusedRowKey,
-      onSelectionChanged,
+      onRowClick,
       // showEmployeeInfo,
       dataSource,
       onCopy,
