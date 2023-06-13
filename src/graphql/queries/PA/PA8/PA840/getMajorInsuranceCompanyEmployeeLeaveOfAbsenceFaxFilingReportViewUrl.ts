@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 export default gql`
-  query getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl(
+  query getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl(
     $companyId: Int!
     $imputedYear: Int!
     $workId: Int!
   ) {
-    getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl(
+    getMajorInsuranceCompanyEmployeeLeaveOfAbsenceFaxFilingReportViewUrl(
       companyId: $companyId
       imputedYear: $imputedYear
       workId: $workId
