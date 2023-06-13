@@ -212,7 +212,7 @@
         </DxButton>
         <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true" :disabled="!isColumnData">
           <a-tooltip placement="top">
-            <template #title>근로소득자료 변경이력</template>
+            <template #title>기타소득자료 변경이력</template>
             <div class="text-center">
               <HistoryOutlined style="font-size: 16px" />
             </div>
@@ -220,7 +220,7 @@
         </DxButton>
         <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true" :disabled="!isColumnData">
           <a-tooltip placement="top">
-            <template #title>근로소득 마감상태 변경이력</template>
+            <template #title>기타소득 마감상태 변경이력</template>
             <div class="text-center">
               <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
             </div>
@@ -250,6 +250,7 @@
           :isColumnData="isColumnData" @onFormDone="onFormDone" @subValidate="subValidate"
           :addNewIncomeExtra="processKeyPA720.processKey" :isExpiredStatus="isExpiredStatus" />
       </a-col>
+      {{ dateType }}
     </a-row>
   </div>
   <DeletePopup @delDone="onDelDone" :modalStatus="modalDelete" @closePopup="modalDelete = false"
