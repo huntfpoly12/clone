@@ -1159,14 +1159,17 @@ export default defineComponent({
       const lengthData =
         dataSourceTransactionDetails.value.transactionDetails.length;
       if (lengthData > 0) {
-        const firstTransactionDetail =
-          dataSourceTransactionDetails.value.transactionDetails[lengthData - 1];
+        const firstTransactionDetail = dataSourceTransactionDetails.value.transactionDetails[0];
+        if (lengthData === 1) {
+          initTransactionDetails.theOrder = firstTransactionDetail.theOrder + 1 || 1;
+          initTransactionDetails.accountingDocumentId = firstTransactionDetail.accountingDocumentId + 1 + "create" || "create";
+        } else {
+          const beforTransactionDetail = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1];
+          initTransactionDetails.theOrder = beforTransactionDetail.theOrder + 1 || 1;
+          initTransactionDetails.accountingDocumentId = beforTransactionDetail.accountingDocumentId + 1 + "create" || "create";
+        }
         initTransactionDetails.summary = firstTransactionDetail.summary;
-        initTransactionDetails.theOrder =
-          firstTransactionDetail.theOrder + 1 || 1;
-        initTransactionDetails.accountingDocumentId =
-          firstTransactionDetail.accountingDocumentId + 1 + "create" ||
-          "create";
+        initTransactionDetails.letterOfApprovalType = firstTransactionDetail.letterOfApprovalType
       } else {
         initTransactionDetails.theOrder = 0;
         initTransactionDetails.accountingDocumentId = "create";
@@ -1175,6 +1178,8 @@ export default defineComponent({
         ...dataSourceTransactionDetails.value.transactionDetails,
         initTransactionDetails,
       ];
+      console.log(dataSourceTransactionDetails.value.transactionDetails);
+
       nextTick(() => {
         rowKeyfocusedGridDetail.value =
           initTransactionDetails.accountingDocumentId;
