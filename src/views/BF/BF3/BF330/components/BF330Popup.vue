@@ -135,8 +135,10 @@
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="장기요양기관등록번호" class="red">
-                                                    <default-text-box style="float:right" :width="150" :required="true"
-                                                        v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
+                                                    <text-number-box style="float:right" :width="150" :required="true"
+                                                        v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" 
+                                                        :lengthFixMsg="lenFixedMsg" :maxLength="11" :lengthFixed="11"
+                                                        placeholder="숫자(11자리)" />
                                                 </a-form-item>
                                             </div>
                                         </a-col>
@@ -467,6 +469,7 @@ export default defineComponent({
             emit("closePopup", false)
         });
 
+        const lenFixedMsg = Message.getCommonMessage('105').message;
         // ========== WATCH ============================
         // process data after call getServiceContract api
         watch(result, (value) => {
@@ -809,7 +812,7 @@ export default defineComponent({
         return {
             handleInputTexService, getImgUrl, checkOption, disableInput, getPriceOption, changeChecked, changeValueInput, getTotalAmount, setModalVisible, removeImg, handleAdd, handleDeleteMemo, handleAddMemo, actionUpdateServiceContract, addRow, onDelConfirm, onFocusedRowChanged, onInitRow,
             move_column, colomn_resize, activeKey, formState, facilityBizType, formStateMomes, loadingData, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum, onDelete, deleteModal, contentDelete,
-            isDuplicateName,checkDuplicate,onChangeName
+            isDuplicateName,checkDuplicate,onChangeName,lenFixedMsg
         };
     },
 });
