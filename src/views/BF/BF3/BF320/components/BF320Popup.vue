@@ -416,6 +416,7 @@ export default defineComponent({
       notification("success", "메모 추가 완료!");
       isNewMemo.value = false
       refetchMemo();
+      activeKey.value = [1]
     });
     updateMemoErr((e) => {
       //notification('error', e.message)
@@ -655,8 +656,12 @@ export default defineComponent({
     );
     const setModalVisible = () => {
       if (isChangedForm.value)
-        comfirmClosePopup(() => emit("closePopup", false));
+        comfirmClosePopup(() => emit("closePopup", false), {
+          okText: '네', 
+          cancelText: '취소',
+        });
       else emit("closePopup", false);
+      activeKey.value = [1]
     };
     const getImgUrl = (img: any) => {
       let resImg = {

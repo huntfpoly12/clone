@@ -52,7 +52,7 @@
           "
         >
           <a-tooltip placement="top">
-            <template #title>근로소득자료 변경이력</template>
+            <template #title>퇴직소득자료 변경이력</template>
             <div class="text-center">
               <HistoryOutlined style="font-size: 16px" />
             </div>
@@ -66,7 +66,7 @@
           "
         >
           <a-tooltip placement="left">
-            <template #title>근로소득 마감상태 변경이력</template>
+            <template #title>퇴직소득 마감 상태 변경이력</template>
             <div class="text-center">
               <img
                 src="@/assets/images/icon_status_history.png"
@@ -110,7 +110,6 @@
           caption="사원"
           data-field="employee.name"
           cell-template="tag"
-          width="200"
           header-cell-template="title-header-사원"
         />
         <template #tag="{ data }">
@@ -135,6 +134,7 @@
           data-field="retirementType"
           cell-template="retirementType"
           alignment="center"
+          width="100"
         />
         <template #retirementType="{ data }">
           <div class="d-flex-center justify-content-center">
@@ -151,6 +151,7 @@
           data-field="specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate"
           cell-template="joinedAt"
           alignment="center"
+          width="100"
         />
         <template #joinedAt="{ data }">
           <div>
@@ -170,6 +171,7 @@
           data-field="specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate"
           cell-template="leavedAt"
           alignment="center"
+          width="100"
         />
         <template #leavedAt="{ data }">
           <div>
@@ -189,23 +191,23 @@
           data-field="retirementBenefits"
           data-type="string"
           format="#,###"
-          width="120px"
+          width="100px"
           alignment="right"
         />
         <DxColumn
-          width="150px"
           caption="비과세 퇴직급여"
           data-field="nonTaxableRetirementBenefits"
           data-type="string"
           format="#,###"
+          width="100px"
           alignment="right"
         />
         <DxColumn
           caption="과세대상 퇴직급여"
-          width="160px"
           data-field="taxableRetirementBenefits"
           data-type="string"
           format="#,###"
+          width="100px"
           alignment="right"
         />
         <DxColumn
@@ -240,7 +242,7 @@
           caption="비고"
           cell-template="note"
           data-type="string"
-          width="250px"
+          
         />
         <template #note="{ data }">
           <div>
@@ -285,6 +287,7 @@
           caption="지급일"
           data-field="paymentDay"
           cell-template="payment-day"
+          width="50"
         />
         <template #payment-day="{ data }">
           {{

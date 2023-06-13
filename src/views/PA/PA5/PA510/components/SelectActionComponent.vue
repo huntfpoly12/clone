@@ -1,39 +1,35 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.pa510.statusDisabledStatus || (store.state.common.pa510.statusChangeFormAdd&&store.state.common.pa510.statusFormAdd)">
+    <DxButton @click="deleteItem"
+        :disabled="store.state.common.pa510.statusDisabledStatus || (store.state.common.pa510.statusChangeFormAdd && store.state.common.pa510.statusFormAdd)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.pa510.statusDisabledStatus"/>
-    <!-- <DxButton @click="onSubmit($event)" size="large" class="ml-4" :disabled="store.state.common.pa510.statusDisabledStatus">
-        <SaveOutlined style="font-size: 17px" />
-    </DxButton> -->
-    <DxButton class="ml-4" style="cursor: pointer; display: inline-flex;"
-        @click="onItemClick({ itemData: { event: 'History' } })">
-        <a-tooltip placement="top">
-            <template #title>근로소득자료 변경이력</template>
-            <div class="text-center">
-                <HistoryOutlined style="font-size: 16px" />
-            </div>
-        </a-tooltip>
-    </DxButton>
-    <DxButton class="ml-4" style="cursor: pointer" @click="onItemClick({ itemData: { event: 'HistoryStatus' } })">
-        <a-tooltip placement="top">
-            <template #title>근로소득 마감상태 변경이력</template>
-            <div class="text-center">
-                <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
-            </div>
-        </a-tooltip>
-    </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.pa510.statusDisabledStatus || (store.state.common.pa510.statusChangeFormAdd&&store.state.common.pa510.statusFormAdd)">
+    <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.pa510.statusDisabledStatus" />
+    <a-tooltip placement="top" title="일용직소득자료 변경이력">
+        <span>
+            <DxButton class="ml-4" @click="onItemClick({ itemData: { event: 'History' } })">
+                <HistoryOutlined style="font-size: 18px" />
+            </DxButton>
+        </span>
+    </a-tooltip>
+    <a-tooltip placement="top" title="일영직소득 마감상태 변경이력">
+        <span>
+            <DxButton class="ml-4" @click="onItemClick({ itemData: { event: 'HistoryStatus' } })">
+                <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history-custom" />
+            </DxButton>
+        </span>
+    </a-tooltip>
+    <DxButton @click="editItem" class="ml-4"
+        :disabled="store.state.common.pa510.statusDisabledStatus || (store.state.common.pa510.statusChangeFormAdd && store.state.common.pa510.statusFormAdd)">
         <div class="d-flex-center">
-            <checkbox-basic  :valueCheckbox="true" disabled="true" />
+            <checkbox-basic :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
         </div>
     </DxButton>
-    <button class="button-open-tab" style="pointer-events: all; opacity: 1;"
-        @click="openTab({ url: '/dashboard/pa-520', name: '일용직사원등록', id: 'pa-520' })">일용직사원등록</button>
+    <DxButton class="button-open-tab ml-4" @click="openTab({ url: '/dashboard/pa-520', name: '일용직사원등록', id: 'pa-520' })">
+        일용직사원등록</DxButton>
 
-    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3 action-select-1" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
-        item-template="item-field">
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-4 action-select-1" :items="arrDropDownPayrollRegister"
+        text="급여대장" @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;">
                 <img v-if="data.id == 1" src="@/assets/images/print.svg" alt="" style="width: 25px; height: 25px;" />
@@ -42,8 +38,8 @@
         </template>
     </DxDropDownButton>
 
-    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3  action-select-2" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
-        item-template="item-field">
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-4  action-select-2" :items="arrDropDownSalaryStatement"
+        text="급여명세서" @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;">
                 <img v-if="data.id == 1" src="@/assets/images/print.svg" alt="" style="width: 25px; height: 25px;" />
@@ -54,24 +50,24 @@
         </template>
     </DxDropDownButton>
     <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
-        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmChange" />
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
+        :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmChange" />
 
     <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
-    :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
+        :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
 
     <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
-    <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
-        @closePopup="modalPrintPayrollRegister = false" />
+    <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister" @closePopup="modalPrintPayrollRegister = false" />
     <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" />
     <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister"
         @closePopup="modalEmailSinglePayrollRegister = false" :data="popupDataEmailSinglePayrollRegister" />
-    <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
-        :data="popupDataEmailSingle" />
+    <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false" :data="popupDataEmailSingle" />
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="popupDataHistory" title="변경이력"
         typeHistory="pa-510" />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-        :data="popupDataHistoryStatus" title="업무상태 변경이력" typeHistory="pa-status-510" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupDataHistoryStatus"
+        title="업무상태 변경이력" typeHistory="pa-status-510" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -160,8 +156,8 @@ export default defineComponent({
             } else {
                 if (store.state.common.pa510.statusRowAdd) {
                     store.state.common.pa510.addRow++ // add row
-                        store.state.common.pa510.statusRowAdd = false;
-                        store.state.common.pa510.statusFormAdd = true;
+                    store.state.common.pa510.statusRowAdd = false;
+                    store.state.common.pa510.statusFormAdd = true;
                 } else {
                     if (store.state.common.pa510.statusChangeFormAdd) {
                         modalStatusAdd.value = true
@@ -310,12 +306,35 @@ export default defineComponent({
             popupDataEdit,
             modalStatusAdd, statusComfirmAdd,
             openTab,
-            store, 
+            store,
             Message, statusComfirmChange, modalChangeRow,
         };
     },
 });
 </script>
-<style lang="scss" scoped  src="../style/style.scss" >
+<style lang="scss" scoped >
+.action-select-1 :deep(.dx-button-content) {
+    padding: 6px 15px;
+}
 
-</style>
+.action-select-2 :deep(.dx-button-content) {
+    padding: 6px 15px;
+}
+
+.button-open-tab {
+    color: white;
+    background-color: blue;
+    border: none;
+    border-radius: 5px;
+    padding: 9px 8px;
+    cursor: pointer;
+}
+
+:deep .dx-button-content {
+    padding: 6px 8px;
+}
+
+.icon_status_history-custom {
+    width: 18px;
+    height: 18px;
+}</style>

@@ -167,6 +167,8 @@ const setModalVisible = () => {
       emit("closePopup", false);
       store.commit('common/resetForm');
       modalStatusAccept.value = false;
+    }, {
+      cancelText: '아니요'
     })
   }
 };

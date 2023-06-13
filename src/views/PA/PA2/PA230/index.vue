@@ -3,9 +3,9 @@
     <action-header title="" @actionSearch="searching" :buttonSearch="true" />
     <div id="pa-230">
       <div class="search-form">
-        <a-row>
+        <a-row >
           <a-col :span="12">
-            <a-row :gutter="[24, 8]">
+            <a-row :gutter="[24, 8]" >
               <a-col>
                 <div class="d-flex-center">
                   <label class="lable-item">구분 :</label>
@@ -28,8 +28,8 @@
         </a-row>
       </div>
       <div class="page-content">
-        <a-row>
-          <a-col :span="12">
+        <a-row class="relative">
+          <a-col :span="12" class="setting ">
             <a-form-item label="서식 설정" class="red">
               <div style="width: fit-content">
                 <info-tool-tip style="width: fit-content"
@@ -43,12 +43,6 @@
                 :arrayValue="radioCheckData"
                 v-model:valueRadioCheck="checkBoxOption2"
               />
-            </div>
-          </a-col>
-          <a-col :span="12">
-            <div class="created-date">
-              <label class="lable-item">작성일 :</label>
-              <date-time-box v-model:valueDate="createDate" width="150px" />
             </div>
           </a-col>
         </a-row>
@@ -66,9 +60,15 @@
           @cell-prepared="onCellPrepared"
           @row-prepared="onRowPrepared"
           noDataText="내역이 없습니다"
-          style="height: calc(100vh - 310px)"
+          style="height: calc(100vh - 310px); margin-top: 100px; z-index: 0;"
         >
           <DxToolbar>
+            <DxItem >
+              <div class="created-date">
+              <label class="lable-item">작성일 :</label>
+              <date-time-box v-model:valueDate="createDate" width="150px" />
+            </div>
+            </DxItem>
             <DxItem template="pagination-send-group-mail" />
             <DxItem template="send-group-print" />
           </DxToolbar>

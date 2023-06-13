@@ -276,12 +276,12 @@ export default defineComponent({
       refetch: refetchTable,
       loading: loadingTable,
       onError: errorTable,
-      onResult: resTable,
+      result: resultTable,
     } = useQuery(
       queries.searchIncomeWageDailyPaymentStatementElectronicFilingsByYearMonth,
-      { ...paramSearch.value },
+      paramSearch.value,
       () => ({
-        enabled: trigger.value,
+        // enabled: trigger.value,
         fetchPolicy: "no-cache",
       })
     );
@@ -325,10 +325,10 @@ export default defineComponent({
         return false;
       }
     };
-    resTable(async (val: any) => {
+    watch(resultTable, async (value: any) => {
       // Filtering the dataSource.value to remove duplicate data.
       let arrDataConvert: any = [];
-      val.data.searchIncomeWageDailyPaymentStatementElectronicFilingsByYearMonth.map(
+      value.searchIncomeWageDailyPaymentStatementElectronicFilingsByYearMonth.map(
         (val: any) => {
           let row = arrDataConvert.find(
             (data: any) => data.companyId == val.companyId
@@ -381,6 +381,7 @@ export default defineComponent({
           );
         }
       );
+      trigger.value = false
     });
 
     errorTable((error: any) => {
@@ -397,14 +398,14 @@ export default defineComponent({
     // watch datePayment then refreshTable
     watch(
       datePayment,
-      async () => {
+      async (value) => {
         paramSearch.value.paymentYear = parseInt(
-          datePayment.value.toString().slice(0, 4)
+          value.toString().slice(0, 4)
         );
         paramSearch.value.paymentMonth = parseInt(
-          datePayment.value.toString().slice(4, 6)
+          value.toString().slice(4, 6)
         );
-        refetchTable(paramSearch.value);
+        trigger.value = true
       },
       { deep: true }
     );
@@ -483,16 +484,12 @@ export default defineComponent({
     // ================== FUNCTION ==================
     const openModalSave = () => {
       modalConfirmMail.value = true;
-      let dataFilter: any = {
-        beforeProduction: !filter.beforeProduction,
-        excludeCancel: filter.companyServiceContractActive,
-        paymentYear: paramSearch.value.paymentYear,
-        paymentMonth: paramSearch.value.paymentMonth,
-      };
       if (filter.beforeProduction)
-        dataFilter.productionStatuses = filter.productionStatuses;
       dataModalSave.value = {
-        filter: dataFilter,
+        filter: {
+          paymentYear: paramSearch.value.paymentYear,
+          paymentMonth: paramSearch.value.paymentMonth,
+        },
         emailInput: {
           receiverName: userInfor.value.name,
           receiverAddress: userInfor.value.email,

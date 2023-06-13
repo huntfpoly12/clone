@@ -132,11 +132,7 @@
 											:width="'130px'" />
 										<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
 											:name="item.name" :type="3" :showTooltip="false" :subName="item.taxfreePayItemCode +
-												' ' +
-												item.taxfreePayItemName +
-												' ' +
-												item.taxFreeIncludeSubmission
-												" :width="'130px'" />
+												' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" :width="'130px'" />
 										<deduction-items v-if="item.taxPayItemCode == null &&
 											item.taxfreePayItemCode == null
 											" :name="item.name" :type="4" subName="공제" :showTooltip="false" :width="'130px'" />
@@ -167,11 +163,7 @@
 											:name="item.name" :type="2" :showTooltip="false" subName="상여(과세)" />
 										<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
 											:name="item.name" :type="3" :showTooltip="false" :subName="item.taxfreePayItemCode +
-												' ' +
-												item.taxfreePayItemName +
-												' ' +
-												item.taxFreeIncludeSubmission
-												" />
+												' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
 										<deduction-items v-if="item.taxPayItemCode == null &&
 											item.taxfreePayItemCode == null
 											" :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
@@ -690,7 +682,7 @@ export default defineComponent({
 				let data = value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100)
 				dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = data;
 				let value1012 = Math.floor(data / 100) * 10;
-				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew =  value1012 > 1000 ? value1012 : 0;
+				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = value1012 > 1000 ? value1012 : 0;
 			}
 			modalDeductions.value = true;
 		});

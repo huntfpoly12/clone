@@ -58,7 +58,7 @@
                             <DxButton @click="onPrintGroup">
                                 <a-tooltip title="출력 / 저장" placement="topLeft">
                                     <img src="@/assets/images/printGroup.png" alt=""
-                                        style="width: 28px; margin-right: 3px; cursor: pointer" /> 
+                                        style="width: 28px;" /> 
                                 </a-tooltip>
                             </DxButton>
                     </template>
