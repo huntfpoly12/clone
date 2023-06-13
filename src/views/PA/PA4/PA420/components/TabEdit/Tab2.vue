@@ -80,6 +80,7 @@ const props = defineProps<{ dataDetail: IncomeRetirement }>()
 
 const store = useStore();
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
+const isDisableBtnTab1 = computed(() => store.getters["common/getIsDisableBtnTab1"]);
 
 const dataFormOld = {
   annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
@@ -87,8 +88,8 @@ const dataFormOld = {
   totalPay3Month: props.dataDetail.specification?.totalPay3Month || 0,
 }
 const dataFormIncomeCalculation = reactive<DataFormIncomeCalculation>(cloneDeep(dataFormOld))
-const dataIncomeRetirement = ref(0)
-const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
+const dataIncomeRetirement = ref(props.dataDetail.specification?.expectedRetirementBenefits)
+const definedRetirementBenefits = ref(props.dataDetail.specification?.definedRetirementBenefits) // 5. 퇴직급여(확정)
 
 // const emptyForm = computed(() => {
 //   return dataFormIncomeCalculation.totalAnualBonus === 0 || dataFormIncomeCalculation.totalPay3Month === 0 || dataFormIncomeCalculation.annualLeaveAllowance === 0
@@ -97,30 +98,34 @@ const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
 
 // watch isChangeForm to set value to store
 watch(dataFormIncomeCalculation, (value) => {
-  if (isEqual(value, dataFormOld)){
-    store.commit('common/setIsChangeForm', {tab2: true})
-    store.commit('common/setIsDisableBtnTab2', false)
-  } else {
-    store.commit('common/setIsChangeForm', {tab2: false})
-    store.commit('common/setIsDisableBtnTab2', true)
+  if(!isDisableBtnTab1.value) {
+    if (!isEqual(value, dataFormOld)){
+      store.commit('common/setIsChangeForm', {tab2: false})
+      store.commit('common/setIsDisableBtnTab2', true)
+    } else {
+      store.commit('common/setIsChangeForm', {tab2: true})
+      store.commit('common/setIsDisableBtnTab2', false)
+    }
     store.commit('common/setIncomeCalculationInputOld', value)
+
+  } else {
+    store.commit('common/setIsDisableBtnTab2', true)
   }
 }, {deep: true})
 
-watchEffect(() => {
-  dataIncomeRetirement.value = props.dataDetail.specification?.expectedRetirementBenefits || 0
-  definedRetirementBenefits.value = props.dataDetail.specification?.definedRetirementBenefits || 0
-})
 // watch definedRetirementBenefits to set value to store
 watchEffect(() => {
   store.commit('common/setDefinedRetirementBenefits', definedRetirementBenefits.value)
-  if(!definedRetirementBenefits.value) store.commit('common/setIsDisableBtnTab2', true) 
-  else {
-    if(definedRetirementBenefits.value && !isEqual(dataFormIncomeCalculation, dataFormOld)) store.commit('common/setIsDisableBtnTab2', true)
-    else store.commit('common/setIsDisableBtnTab2', false)
+  if(!isDisableBtnTab1.value) {
+    if(!definedRetirementBenefits.value) store.commit('common/setIsDisableBtnTab2', true) 
+    else {
+      if(definedRetirementBenefits.value && !isEqual(dataFormIncomeCalculation, dataFormOld)) store.commit('common/setIsDisableBtnTab2', true)
+      else store.commit('common/setIsDisableBtnTab2', false)
+    }
+  } else {
+    store.commit('common/setIsDisableBtnTab2', true)
   }
 })
-const trigger = ref(false)
 const formRef = ref()
 const {client} = useApolloClient()
 
@@ -145,7 +150,8 @@ const calculateIncomeRetirement = async () => {
       store.commit('common/setIncomeCalculationInput', dataFormIncomeCalculation)
       store.commit('common/setIncomeCalculationInputOld', dataFormIncomeCalculation)
       store.commit('common/setIsDisableBtnTab2', false)
-      trigger.value = false;
+      store.commit('common/setIsDisableBtnTab1', false)
+      store.commit('common/setNeedToRecalculatePa420', true)
     }
   }
 }

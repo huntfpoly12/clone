@@ -57,7 +57,7 @@
         type="default"
         mode="contained"
         @onClick="updated"
-        :disabled="isDisableCreate"
+        :disabled="isDisableCreate || !isChangeForm"
         v-if="step === 2"
       />
     </div>
@@ -90,19 +90,11 @@ const emit = defineEmits(["closePopup", "updateSuccess", "closePopup"]);
 
 const formEditTab3 = ref();
 const store = useStore();
-const selectMonthColumn = computed(
-  () => store.getters["common/getSelectMonthColumn"]
-);
-const isDisableCreate = computed(
-  () => store.getters["common/getIsDisableCreate"]
-);
+const selectMonthColumn = computed(() => store.getters["common/getSelectMonthColumn"]);
+const isDisableCreate = computed(() => store.getters['common/getNeedToRecalculatePa420'])
 const getAllData = computed(() => store.getters["common/getAllDataUpdate"]);
-const interimPaymentTab1 = computed(
-  () => store.getters["common/getInterimPaymentTab1"]
-);
-const isDisableBtnTab2 = computed(
-  () => store.getters["common/getIsDisableBtnTab2"]
-);
+const interimPaymentTab1 = computed(() => store.getters["common/getInterimPaymentTab1"]);
+const isDisableBtnTab2 = computed(() => store.getters["common/getIsDisableBtnTab2"]);
 const isChangeForm = computed(() => store.getters["common/getIsChangeForm"]);
 
 const step = ref(0);
