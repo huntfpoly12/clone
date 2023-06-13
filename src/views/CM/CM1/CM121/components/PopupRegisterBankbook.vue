@@ -7,9 +7,9 @@
         <div class="cmc121-popup-from-select-data">
           <a-form-item class="mr-10">
             <select-box-common :arrSelect="listFacilityBizTypeForUser"
-              v-model:valueInput="dataFrom.facilityBiz" displayeExpr="name" valueExpr="facilityBusinessId" width="160px" placeholder="사업유형 선택"/>
+              v-model:valueInput="dataFrom.facilityBiz" displayeExpr="name" valueExpr="facilityBusinessId" width="160px" placeholder="사업명 선택"/>
           </a-form-item>
-          <span class="mr-10">에</span>
+          <span class="mr-10">의</span>
           <a-form-item class="clr mr-10" label-align="left">
             <bank-select-box v-model:valueInput="dataFrom.type" width="160px" />
           </a-form-item>

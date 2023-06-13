@@ -89,7 +89,7 @@ export const INITIAL_STATE = {
 
   // tab 3: create variable enable button form when tab 3 validation done
   isDisableBtnTab3: true,
-  isDisableBtnTab1: true,
+  isDisableBtnTab1: false,
 
   // check form change
   isChangeForm: {
@@ -113,6 +113,7 @@ const statesPA420 = {
   ...cloneDeep(INITIAL_STATE),
   employeeIdCreated: [],
   retirementStatus: 10,
+  needToRecalculatePa420: false,
 };
 
 export default statesPA420;

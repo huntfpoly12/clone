@@ -21,7 +21,7 @@
         &-infomation {
             background-color: #c6d9f1;
             font-size: 14px;
-            padding: 3px 0 3px 10px;
+            padding: 3px 10px;
             color: black;
             line-height: 28px;
             font-weight: bold;
@@ -30,11 +30,12 @@
             }
             &-bottom {
                 margin-top: 30px;
-            }
-            &-note {
-              font-size: 10px;
-              color: rgb(202, 131, 0);
-              margin-left: 10px;
+                display: flex;
+                justify-content: space-between;
+                &-note {
+                  font-size: 10px;
+                  color: rgb(202, 131, 0);
+                }
             }
         }
         &-btn {

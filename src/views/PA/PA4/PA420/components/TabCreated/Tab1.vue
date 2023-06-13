@@ -554,7 +554,6 @@ const submitForm = (e: any) => {
     dtValidate = false
   }
   const res = e.validationGroup.validate();
-  const res1 = formRef.value?.validate();
   if (!res.isValid) {
     res.brokenRules[0].validator.focus();
     dtValidate = true
@@ -564,8 +563,9 @@ const submitForm = (e: any) => {
     const {inputFormTab1, incomeCalculationInput, ...taxCalculationInput} = formState
     store.commit('common/setIncomeCalculationInput', incomeCalculationInput)
     if (!isEqual({...incomeCalculationInputCur.value, ...incomeCalculationInput}, incomeCalculationInputOld.value)) {
-      store.commit('common/setIsDisableBtnTab2', true)
       store.commit('common/setIncomeCalculationInputOld', {...incomeCalculationInputCur.value, ...incomeCalculationInput})
+      store.commit('common/setIsDisableBtnTab1', true)
+      store.commit('common/setNeedToRecalculatePa420', true)
     }
     store.commit('common/setTaxCalculationInput', {
       ...taxCalculationInput,
@@ -578,7 +578,7 @@ const submitForm = (e: any) => {
         paymentDate: paymentDay
       }
     })
-    store.commit('common/setIsDisableBtnTab1', false)
+    // store.commit('common/setIsDisableBtnTab1', false)
     store.commit('common/setInputTab1', {
       ...inputFormTab1,
       retirementType: props.retirementType,

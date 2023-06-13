@@ -28,7 +28,7 @@
         </div>
         <process-status
           v-model:valueStatus="statusButton"
-          @checkConfirm="statusComfirm"
+          @checkConfirm="statusConfirm"
           :disabled="statusButton !== 10 && statusButton !== 20"
         />
       </div>
@@ -299,19 +299,28 @@
         <DxColumn
           caption=""
           cell-template="action"
-          width="50px"
+          width="60px"
           fixedPosition="right"
         />
         <template #action="{ data }">
-          <div class="text-center">
-            <EditOutlined
-              class=""
-              @click="
-                statusButton != 20
-                  ? actionEditRow(data.data.incomeId)
-                  : handleView(data.data.incomeId)
-              "
-            />
+          <div class="d-flex-center">
+            <div class="mr-5">
+              <img
+                src="@/assets/images/searchPlus.png"
+                style="width: 20px; height: 20px; margin-top: 0px"
+                @click="handleViewPrint(data.data)"
+              />
+            </div>
+            <div class="text-center">
+              <EditOutlined
+                class=""
+                @click="
+                  statusButton != 20
+                    ? actionEditRow(data.data.incomeId)
+                    : handleView(data.data.incomeId)
+                "
+              />
+            </div>
           </div>
         </template>
       </DxDataGrid>
@@ -373,8 +382,6 @@
     :data="popupDataDelete"
     :key="resetFormNum"
     @createdDone="emit('createdDone')"
-    :processKey="dataTableDetail.processKey"
-    :listEmployeeexist="listEmployeeId"
   />
   <UpdatePopup
     v-if="modalUpdate"
@@ -394,6 +401,7 @@
 import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
+import getIncomeRetirementWithholdingReceiptReportViewUrl from "@/graphql/queries/PA/PA4/PA430/getIncomeRetirementWithholdingReceiptReportViewUrl";
 import { companyId } from "@/helpers/commonFunction";
 import filters from "@/helpers/filters";
 import notification from "@/utils/notification";
@@ -420,13 +428,13 @@ import EditPopup from "./EditPaymentDayPopup.vue";
 import UpdatePopup from "./UpdatePopup.vue";
 import ViewDetail from "./ViewDetail.vue";
 import { watchEffect } from "vue";
+import dayjs from "dayjs";
 
 const props = defineProps<{ statusButton: number; actionSave: number }>();
 const emit = defineEmits(["createdDone", "changedStatus"]);
 
 const dataGrid = ref();
 const dataSourceDetail = ref([]);
-const listEmployeeId = ref<any>([]);
 const keyDetailRow = ref();
 const modalEdit = ref<boolean>(false);
 const popupDataDelete: any = ref([]);
@@ -477,16 +485,6 @@ const {
 resTableDetail((res) => {
   dataSourceDetail.value = res.data.getIncomeRetirements;
   store.commit('common/setEmployeeIdCreated', res.data.getIncomeRetirements?.map((item: any) => ({employeeId:item.employeeId, employeeType: item.employeeType})) || [])
-  const listEmployee: any = [];
-  // create array id already exist
-  res.data.getIncomeRetirements.map((item: any) => {
-    // The above code is checking if the employeeId is already in the listEmployeeId array. If it is
-    // not, then it will push the employeeId into the array.
-    if (!listEmployeeId.value.includes(item.employeeId)) {
-      listEmployee.push(item.employeeId);
-    }
-  });
-  listEmployeeId.value = listEmployee;
   triggerDetail.value = false;
 });
 errorTableDetail((res) => {
@@ -635,12 +633,43 @@ const handleView = (data: any) => {
   modalView.value = true;
   keyDetailRow.value = data;
 };
-const statusComfirm = () => {
+const statusConfirm = () => {
   mutate({
     companyId: companyId,
     processKey: dataTableDetail.value.processKey,
     status: statusButton.value,
   });
 };
+const dataInputReport = reactive({
+  companyId: companyId,
+  input: {
+      imputedYear: selectMonthColumn.value.imputedYear,
+      type: 1,
+      receiptDate: filters.formatDateToInterger(dayjs())
+  },
+  incomeIds: [0]
+})
+const triggerReport = ref(false)
+const {
+  result: resultReport,
+  onError: errorReport,
+} = useQuery(getIncomeRetirementWithholdingReceiptReportViewUrl, dataInputReport, () => ({
+  enabled: triggerReport.value,
+  fetchPolicy: "no-cache",
+}));
+watch(resultReport, (newValue) => {
+  window.open(newValue.getIncomeRetirementWithholdingReceiptReportViewUrl);
+  triggerReport.value = false;
+}, { deep: true });
+errorReport(res => {
+  triggerReport.value = false
+  notification('error', res.message)
+})
+const handleViewPrint = (data: any) => { 
+  console.log('%c data', 'color: red;', data);
+  dataInputReport.input.type = data.retirementType;
+  dataInputReport.incomeIds = [data.incomeId]
+  triggerReport.value = true;
+}
 </script>
 <style scoped src="../style/style.scss"></style>
