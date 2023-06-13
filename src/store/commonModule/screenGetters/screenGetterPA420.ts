@@ -3,6 +3,7 @@ const screenGetterPA420 = {
   hasIncomeProcessRetirements: (state: any) => state.hasIncomeProcessRetirements,
   getSelectMonthColumn: (state: any) => state.selectMonthColumn,
   getPaymentDay: (state: any) => state.inputTab1.paymentDay,
+  getIsDisableBtnTab1: (state: any) => state.isDisableBtnTab1,
   getIsDisableBtnTab2: (state: any) => state.isDisableBtnTab2,
   getIncomeCalculationInputOld: (state: any) => state.incomeCalculationInputOld,
   getIncomeCalculationInput: (state: any) => state.incomeCalculationInput,
@@ -34,6 +35,7 @@ const screenGetterPA420 = {
   getEmployeeEdit: (state: any) => state.employee,
   getEmployeeIdCreated: (state: any) => state.employeeIdCreated,
   getRetirementStatus: (state: any) => state.retirementStatus,
+  getNeedToRecalculatePa420: (state: any) => state.needToRecalculatePa420,
 };
 
 export default screenGetterPA420;

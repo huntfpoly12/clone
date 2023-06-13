@@ -26,12 +26,10 @@
           </div>
         </a-form-item>
 
-        <div class="d-flex mt-20 mb-20 wf-100">
-          <div class="d-flex-center" style="margin-left: 250px;">
+        <div class="mt-20 mb-20 wf-100">
+          <div class="d-flex-center justify-content-center">
             <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement"/>
-            <info-tool-tip>
-              상기 급여(수당)으로 퇴직금 계산합니다.
-            </info-tool-tip>
+            <info-tool-tip>상기 급여(수당)으로 퇴직금 계산합니다.</info-tool-tip>
           </div>
         </div>
       </standard-form>
@@ -39,11 +37,10 @@
       <div class="retire-benefit">
         <a-form-item label="퇴직급여(예상)">
           <div class="d-flex-center">
-            <number-box-money v-model:valueInput="dataIncomeRetirement" :required="false" width="200px" :disabled="true" format="#0,###"/>
+            <number-box-money v-model:valueInput="dataIncomeRetirement" :required="false" width="200px" :disabled="true"
+                              format="#0,###"/>
             <span class="pl-5">원</span>
-            <info-tool-tip>
-              상기 급여(수당)으로 계산된 퇴직금으로 실제 지급된 퇴직금과는 상이할 수 있습니다.
-            </info-tool-tip>
+            <info-tool-tip>상기 급여(수당)으로 계산된 퇴직금으로 실제 지급된 퇴직금과는 상이할 수 있습니다.</info-tool-tip>
           </div>
 
         </a-form-item>
@@ -53,101 +50,108 @@
             <number-box-money :required="false" width="200px"
                               v-model:valueInput="definedRetirementBenefits" format="#0,###"/>
             <span class="pl-5">원</span>
-            <info-tool-tip>
-              실제 지급된 퇴직급여를 입력합니다.
-            </info-tool-tip>
+            <info-tool-tip>실제 지급된 퇴직급여를 입력합니다.</info-tool-tip>
           </div>
-
         </a-form-item>
       </div>
     </a-col>
   </a-row>
 </template>
 
+
 <script lang="ts" setup>
-import {computed, ref, watch} from 'vue'
+import {computed, reactive, ref, watch, watchEffect} from 'vue'
 import {useApolloClient} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import {companyId} from "@/helpers/commonFunction"
+import {companyId} from '@/helpers/commonFunction';
+import {useStore} from 'vuex';
+import {IncomeRetirement} from "@/views/PA/PA4/PA420/types";
+import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import {useStore} from "vuex";
 
 interface DataFormIncomeCalculation {
-  additionalDays: number;
   annualLeaveAllowance: number;
-  exclusionDays: number;
-  settlementFinishDate: number;
-  settlementStartDate: number;
   totalAnualBonus: number;
   totalPay3Month: number;
 }
 
-interface DataFormTaxCalculation {
-  additionalDays: number;
-  annualLeaveAllowance: number;
-}
+const props = defineProps<{ dataDetail: IncomeRetirement }>()
+// const emit = defineEmits(['closePopup', 'nextPage'])
 
-const trigger = ref<boolean>(false)
-const dataIncomeRetirement = ref()
-const store = useStore()
+const store = useStore();
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
+const isDisableBtnTab1 = computed(() => store.getters["common/getIsDisableBtnTab1"]);
+const isDisableBtnTab2 = computed(() => store.getters["common/getIsDisableBtnTab2"]);
 
-const dataFormIncomeCalculation = ref({...store.getters['common/getIncomeCalculationInput']})
-
+const dataFormOld = {
+  annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
+  totalAnualBonus: props.dataDetail.specification?.totalAnualBonus || 0,
+  totalPay3Month: props.dataDetail.specification?.totalPay3Month || 0,
+}
+const dataFormIncomeCalculation = reactive<DataFormIncomeCalculation>(cloneDeep(dataFormOld))
+const dataIncomeRetirement = ref(0)
 const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
-const emptyForm = computed(() => {
-  return dataFormIncomeCalculation.value.totalAnualBonus === 0 || dataFormIncomeCalculation.value.totalPay3Month === 0 || dataFormIncomeCalculation.value.annualLeaveAllowance === 0
-})
-store.commit('common/setIsDisableBtnTab2', emptyForm.value)
+
+// const emptyForm = computed(() => {
+//   return dataFormIncomeCalculation.totalAnualBonus === 0 || dataFormIncomeCalculation.totalPay3Month === 0 || dataFormIncomeCalculation.annualLeaveAllowance === 0
+// })
+// store.commit('common/setIsDisableBtnTab2', emptyForm.value)
 
 // watch isChangeForm to set value to store
-watch(() => dataFormIncomeCalculation.value, (value) => {
-  if (isEqual(value, incomeCalculationInput.value)){
-    store.commit('common/setIsChangeForm', {tab2: true})
-    store.commit('common/setIsDisableBtnTab2', false)
+watch(dataFormIncomeCalculation, (value) => {
+  if(!isDisableBtnTab1.value) {
+    if (!isEqual(value, dataFormOld)){
+      store.commit('common/setIsChangeForm', {tab2: false})
+      store.commit('common/setIsDisableBtnTab2', true)
+    } else {
+      store.commit('common/setIsChangeForm', {tab2: true})
+      store.commit('common/setIsDisableBtnTab2', false)
+    }
+    store.commit('common/setIncomeCalculationInputOld', value)
   } else {
-    store.commit('common/setIsChangeForm', {tab2: false})
     store.commit('common/setIsDisableBtnTab2', true)
   }
 }, {deep: true})
 
+watchEffect(() => {
+  dataIncomeRetirement.value = props.dataDetail.specification?.expectedRetirementBenefits || 0
+  definedRetirementBenefits.value = props.dataDetail.specification?.definedRetirementBenefits || 0
+})
 // watch definedRetirementBenefits to set value to store
-watch(definedRetirementBenefits, (value) => {
-  store.commit('common/setDefinedRetirementBenefits', value)
-  if(!value) store.commit('common/setIsDisableBtnTab2', true) 
-  else {
-    if(value && !isEqual(dataFormIncomeCalculation.value, incomeCalculationInput.value)) store.commit('common/setIsDisableBtnTab2', true)
-    else store.commit('common/setIsDisableBtnTab2', false)
+watchEffect(() => {
+  store.commit('common/setDefinedRetirementBenefits', definedRetirementBenefits.value)
+  if(!isDisableBtnTab1.value) {
+    if(!definedRetirementBenefits.value) store.commit('common/setIsDisableBtnTab2', true) 
+  } else {
+    store.commit('common/setIsDisableBtnTab2', true)
   }
 })
 const formRef = ref()
-const { client } = useApolloClient()
+const {client} = useApolloClient()
 
 const calculateIncomeRetirement = async () => {
   const res = formRef.value?.validate();
   if (!res.isValid) {
     res.brokenRules[0].validator.focus();
   } else {
-    const { data } = await client.query({
+    const {data} = await client.query({
       query: queries.calculateIncomeRetirement,
       variables: {
         companyId: companyId,
         input: {
           ...incomeCalculationInput.value,
-          totalPay3Month:dataFormIncomeCalculation.value.totalPay3Month,
-          totalAnualBonus:dataFormIncomeCalculation.value.totalAnualBonus,
-          annualLeaveAllowance:dataFormIncomeCalculation.value.annualLeaveAllowance,
+          ...dataFormIncomeCalculation
         },
       },
     })
     if (data) {
       dataIncomeRetirement.value = data.calculateIncomeRetirement;
       definedRetirementBenefits.value = data.calculateIncomeRetirement;
-      store.commit('common/setIncomeCalculationInput', {...dataFormIncomeCalculation.value})
-      store.commit('common/setIncomeCalculationInputOld', {...dataFormIncomeCalculation.value})
-
+      store.commit('common/setIncomeCalculationInput', dataFormIncomeCalculation)
+      store.commit('common/setIncomeCalculationInputOld', dataFormIncomeCalculation)
       store.commit('common/setIsDisableBtnTab2', false)
-      trigger.value = false;
+      store.commit('common/setIsDisableBtnTab1', false)
+      store.commit('common/setNeedToRecalculatePa420', true)
     }
   }
 }
@@ -159,10 +163,15 @@ const calculateIncomeRetirement = async () => {
 </style>
 <style scoped lang="scss">
 ::v-deep label {
-  min-width: 200px !important;
+  min-width: 250px !important;
 }
 
 ::v-deep .custom-input-number .dx-texteditor-input {
   color: red;
+}
+
+.absolute {
+  position: absolute;
+  left: 60%;
 }
 </style>

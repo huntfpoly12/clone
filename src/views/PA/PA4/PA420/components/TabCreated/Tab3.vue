@@ -706,6 +706,7 @@ onResult((value) => {
     // }
   }
   store.commit("common/setIsDisableBtnTab3", false);
+  store.commit('common/setNeedToRecalculatePa420', false)
   store.commit("common/setTaxCalculationInput", {
     calculationOfDeferredRetirementIncomeTax: {
       statements:

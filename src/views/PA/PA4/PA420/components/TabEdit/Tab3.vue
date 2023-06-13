@@ -655,21 +655,11 @@ const FORM_STATE_OLD = {
   nonTaxableRetirementBenefits: Number(
     props.dataDetail.specification?.nonTaxableRetirementBenefits
   ),
-  taxCredit:
-    props.dataDetail.specification?.specificationDetail.taxAmountCalculation
-      .taxCredit,
-  prePaidDelayedTaxPaymentTaxAmount:
-    props.dataDetail.specification?.specificationDetail.taxAmountCalculation
-      .prePaidDelayedTaxPaymentTaxAmount,
-  prevRetirementBenefitStatus:
-    props.dataDetail.specification?.specificationDetail
-      .prevRetirementBenefitStatus,
-  prevRetiredYearsOfService:
-    props.dataDetail.specification?.specificationDetail
-      .prevRetiredYearsOfService,
-  lastRetiredYearsOfService:
-    props.dataDetail.specification?.specificationDetail
-      .lastRetiredYearsOfService,
+  taxCredit: props.dataDetail.specification?.specificationDetail.taxAmountCalculation.taxCredit,
+  prePaidDelayedTaxPaymentTaxAmount: props.dataDetail.specification?.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
+  prevRetirementBenefitStatus: props.dataDetail.specification?.specificationDetail.prevRetirementBenefitStatus,
+  prevRetiredYearsOfService: props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService,
+  lastRetiredYearsOfService: props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService,
 };
 const initialIncomeRetirementTax_old = computed(() =>
   cloneDeep({
@@ -798,6 +788,7 @@ onResult((value) => {
       );
   }
   store.commit("common/setIsDisableBtnTab3", false);
+  store.commit('common/setNeedToRecalculatePa420', false)
   store.commit("common/setTaxCalculationInput", {
     calculationOfDeferredRetirementIncomeTax: {
       statements:
