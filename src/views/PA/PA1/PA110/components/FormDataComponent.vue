@@ -169,7 +169,7 @@
 											" :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
 									</span>
 									<div>
-										<a-tooltip v-if="statusFormAdd" color="black" placement="top" zIndex="9999"
+										<a-tooltip v-if="statusFormAdd && dataIW.employee.employeeId" color="black" placement="top" zIndex="9999"
 											:class="item.itemCode == 1012 && localIncomeBoo ? 'red' : ''"
 											:title="item.itemCode == 1012 && localIncomeBoo ? '소액징수부면제 적용' + localReal : ''">
 											<!-- <template #title>
