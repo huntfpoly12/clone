@@ -123,7 +123,7 @@
                   :required="true" :disabled="!dataShow.deletable && !isNewRow" :foreigner="dataShow.foreigner" />
               </a-form-item>
               <a-form-item label="소득구분" label-align="right" class="red">
-                <type-code-select-box width="200px" v-model:valueInput="dataShow.incomeTypeCode"
+                <type-code-select-box width="200px" v-model:valueInput="dataShow.incomeTypeCode" nameInput="typeCode"
                   @textTypeCode="changeTextTypeCode" :disabled="!isNewRow" required/>
               </a-form-item>
               <a-form-item label="이메일" label-align="right">
@@ -564,7 +564,7 @@ export default defineComponent({
       dataShow.value.nationality = text;
     };
     const changeTextTypeCode = (text: any) => {
-      dataShow.value.incomeTypeName = text;
+      dataShow.value.incomeTypeName = text ?? '';
     };
     const changeRadioForeigner = (value: Boolean) => {
       if (!value) {
@@ -622,8 +622,8 @@ export default defineComponent({
         dataGridRef.value?.refresh();
         isClickAddRow.value = false;
         isNewRow.value = true;
-        formRef.value.resetValidate()
         selectRowKeyAction.value = 0;
+        formRef.value.resetValidate()
       });
     }
     const handleSubmit = async () => {

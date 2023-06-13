@@ -52,6 +52,7 @@
         </DxColumn>
         <template #selectOccupation="{data}">
           <DxSelectBox
+            ref="selectOccupationRef"
             :noDataText="Message.getMessage('COMMON', '901').message"
             :data-source="arrSelectOccupation"
             placeholder="선택 또는 직접입력"
@@ -62,7 +63,7 @@
             :searchTimeout="0"
             @value-changed="setEditedValue($event, data)"
             @enter-key="onEnterKey($event, data)"
-            showSelectionControls
+            :onFocusIn="onFocusInOccupation"
           />
         </template>
         <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
@@ -74,6 +75,7 @@
         </DxColumn>
         <template #laborCostClassificationArray="{data}">
           <DxSelectBox
+            ref="laborCostClassificationArrayRef"
             :noDataText="Message.getMessage('COMMON', '901').message"
             :data-source="LaborCostClassificationArray"
             placeholder="선택"
@@ -81,6 +83,7 @@
             display-expr="name"
             value-expr="value"
             @value-changed="setEditedValue($event, data)"
+            :onFocusIn="onFocusInLabor"
           />
         </template>
         <template #classification>
@@ -594,6 +597,14 @@ const closeModal = () => {
 const filled = () => {
   state.triggerQueryPreIndexBudget = true
   state.modalFillDataPreIndex = false
+}
+const selectOccupationRef = ref()
+const laborCostClassificationArrayRef = ref()
+const onFocusInOccupation = () => {
+  selectOccupationRef.value.instance.open()
+}
+const onFocusInLabor = () => {
+  laborCostClassificationArrayRef.value.instance.open()
 }
 </script>
 
