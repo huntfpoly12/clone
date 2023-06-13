@@ -2,7 +2,11 @@
   margin-top: 10px;
 
   #pa-120-gridContainer {
-    max-height: calc(100vh - 173px);
+    height: calc(100vh - 173px) !important;
+
+    :deep .dx-freespace-row {
+      display: none !important;
+    }
   }
   .row-first{
   }

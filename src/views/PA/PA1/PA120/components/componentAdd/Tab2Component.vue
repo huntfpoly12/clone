@@ -1,7 +1,7 @@
 <template>
   <div id="tab2-pa120">
-    <!-- {{ editRowTab2PA120.payItems }}w<br />
-    {{ initFormTab2PA120.payItems }}w -->
+    <!-- {{ editRowTab2PA120.deductionItems }}w<br />
+    {{ initFormTab2PA120.deductionItems }}w -->
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-row class="mb-7">
       <a-col span="24" style="display: flex; flex-wrap: wrap">

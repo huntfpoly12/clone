@@ -195,7 +195,6 @@
                 </a-tooltip>
               </DxButton>
             </template>
-            <DxScrolling column-rendering-mode="virtual" />
           </DxDataGrid>
         </a-spin>
         <!-- <input v-model="focusedRowKey"/> -->
@@ -207,6 +206,7 @@
           :modalStatus="modalAddNewStatus"
           v-if="actionChangeComponent == 1"
           :key="addComponentKey"
+          @redirectTab="redirectTab"
         />
         <PA120PopupEdit
           :idRowEdit="idRowEdit"
@@ -613,19 +613,16 @@ export default defineComponent({
       if (isNewRowPA120.value) {
         if (compareForm()) {
           delNewRow();
-          // focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
           if (actionChangeComponent.value == 1) {
             actionChangeComponent.value = 2;
           }
-          // isFirstWeb.value = false;
           return;
         }
         rowChangeStatus.value = true;
         idRowFake.value = data.data.employeeId;
         return;
       }
-      // isFirstWeb.value = false;
       if (!compareForm()) {
         rowChangeStatus.value = true;
         idRowFake.value = data.data.employeeId;
@@ -692,7 +689,9 @@ export default defineComponent({
           newVal.getWithholdingConfig.insuranceSupport;
       }
     });
+
     //-----------------------hover when click diff row----------------
+
     const gridRef = ref(); // ref of grid
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     const onFocusedRowChanging = (e: any) => {
@@ -712,16 +711,9 @@ export default defineComponent({
       const element = document.querySelector(".dx-state-hover-custom");
       if (element) dataGridRef.value?.refresh();
     };
-    // const disableAddMonth = (val: any = 1) => {
-    //   let date = dayjs(globalYear.value + 1 + '' + val);
-    //   let dateToCompare = dayjs(`${startYearMonth}`, 'YYYYMM')
-    //   if (dateToCompare.isBefore(date)) {
-    //     return false;
-    //   }
-    //   return true;
-    // }
 
     // get config
+
     const withholdingTrigger = ref(true);
     const dataQueryCm130 = ref({
       companyId: companyId,
@@ -742,6 +734,13 @@ export default defineComponent({
         withholdingTrigger.value = false;
       }
     });
+
+    const redirectTab = () => {
+      if(initFormStateTabPA120.value.employeeId){
+        idRowEdit.value = initFormStateTabPA120.value.employeeId;
+        actionChangeComponent.value = 2;
+      }
+    }
     return {
       loading,
       idRowEdit,
@@ -784,7 +783,7 @@ export default defineComponent({
       rowKeyTab2PA120,
       calculateIncomeTypeCodeAndName,
       onFocusedRowChanging,
-      // disableAddMonth,
+      redirectTab,
     };
   },
 });

@@ -88,7 +88,7 @@ export default defineComponent({
     },
     dateType: {
       type: Number,
-      default: 1,
+      default: 0,
     },
   },
   components: {
@@ -129,18 +129,21 @@ export default defineComponent({
 
     const month2 = ref<String>(`${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`);
     watch(
-      () => [props.month, processKeyPA720.value.processKey.paymentYear],
-      ([val], [newYear, oldYear]) => {
-        month1.value = val;
-        let yearMonth = `${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.imputedMonth}`;
-        if (props.dateType == 2 && val) {
-          yearMonth = val == 12 ? `${globalYear.value + 1}01` : `${globalYear.value}${filters.formatMonth(val + 1)}`;
+      () => props.modalStatus,
+      (newVal: boolean) => {
+        if(newVal){
+          let val = props.month;
+          month1.value = val;
+          let yearMonth = `${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.imputedMonth}`;
+          if (props.dateType == 2 && val) {
+            yearMonth = val == 12 ? `${globalYear.value + 1}01` : `${globalYear.value}${filters.formatMonth(val + 1)}`;
+          }
+          if (props.dateType == 1) {
+            yearMonth = `${globalYear.value}${filters.formatMonth(val)}`;
+          }
+          month2.value = yearMonth;
+          trigger.value = true;
         }
-        if (props.dateType == 1) {
-          yearMonth = `${globalYear.value}${filters.formatMonth(val)}`;
-        }
-        month2.value = yearMonth;
-        trigger.value = true;
       }, { deep: true }
     );
 
