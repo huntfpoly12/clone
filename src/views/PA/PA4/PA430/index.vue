@@ -32,8 +32,7 @@
                             <div class="custom-flex">
                                 <radio-group :arrayValue="arrayRadioType" :layoutCustom="'horizontal'"
                                     v-model:valueRadioCheck="dataInputReport.input.type" />
-                                <a-tooltip color="black" placement="top">
-                                    <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
+                                <a-tooltip title="본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.">
                                     <img src="@/assets/images/iconInfo.png" class="img-info" />
                                 </a-tooltip>
                             </div>

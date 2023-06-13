@@ -13,7 +13,7 @@
           </div>
         </div>
       </div>
-      <div class="textcenter mt-50">
+      <div class="text-center mt-50">
         <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
           @onClick="setModalVisible()" />
         <button-basic class="ml-5" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"

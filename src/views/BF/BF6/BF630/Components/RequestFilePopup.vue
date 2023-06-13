@@ -1,47 +1,21 @@
 <template>
-  <a-modal
-    :visible="modalStatus"
-    @cancel="setModalVisible"
-    :mask-closable="false"
-    class="confirm-md"
-    footer=""
-    :width="550"
-  >
-    <standard-form
-      class="bf-630-form-request"
-      action=""
-      name="request-file-630"
-    >
+  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
+    :width="500">
+    <standard-form class="bf-630-form-request" action="" name="request-file-630">
       <div>
-        <div>
-          <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
-        </div>
+        <span>선택된 내역들의 전자신고파일 제작요청하시겠습니까?</span>
+        <br>
+        <span>결과를 이메일로 받으시려면 이메일 주소를 입력하세요.</span>
         <div class="email-input">
-          <mail-text-box
-            width="250px"
-            :required="true"
-            v-model:valueInput="dataRequestFile.emailInput.receiverAddress"
-            placeholder="abc@example.com"
-          ></mail-text-box>
-          <span>로 메일을 발송하시겠습니까?</span>
+          <mail-text-box width="250px" :required="true" v-model:valueInput="dataRequestFile.emailInput.receiverAddress"
+            placeholder="abc@example.com" />
         </div>
       </div>
-      <div class="text-align-center mt-10">
-        <button-basic
-          class="button-form-modal"
-          :text="'아니요'"
-          :type="'default'"
-          :mode="'outlined'"
-          @onClick="setModalVisible()"
-        />
-        <button-basic
-          class="button-form-modal"
-          :text="'네. 발송합니다'"
-          :width="140"
-          :type="'default'"
-          :mode="'contained'"
-          @onClick="onSubmit"
-        />
+      <div class="text-center mt-20">
+        <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
+          @onClick="setModalVisible()" />
+        <button-basic class="ml-5" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
+          @onClick="onSubmit" />
       </div>
     </standard-form>
   </a-modal>
@@ -189,24 +163,11 @@ export default defineComponent({
   display: flex;
   justify-content: center;
 }
+
 .email-input {
   display: flex;
   align-items: center;
   width: 100%;
   margin-top: 5px;
-  span {
-    padding-left: 10px;
-  }
-}
-.mt-50 {
-  margin-top: 50px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
 }
 </style>
