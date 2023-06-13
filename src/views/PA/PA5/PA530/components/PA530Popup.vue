@@ -138,7 +138,7 @@ export default defineComponent({
     watch(
       () => props.modalStatus,
       (val) => {
-        if (props.groupSendMail) {
+        if (val) {
           email.value = userInfor.value?.email;
         }
       },{

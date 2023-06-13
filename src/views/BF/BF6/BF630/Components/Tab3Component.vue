@@ -550,7 +550,7 @@ export default defineComponent({
       if (companyIds.length) {
         dataRequestFile.value = {
           companyIds: companyIds,
-          filter: filterForm,
+          filter: { imputedYear: filterForm.imputedYear },
           emailInput: {
             receiverName: userInfor.value.name,
             receiverAddress: userInfor.value.email,
