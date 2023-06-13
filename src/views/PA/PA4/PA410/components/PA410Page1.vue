@@ -39,6 +39,8 @@ export default defineComponent({
                                                     })
           return store.state.common.arrayEmployeePA410
         })
+        console.log(arrayEmployeeSelect.value);
+        
         const nextPage = () => {
           store.commit('common/setEmployeeIdPA410',valueSelected)
         }

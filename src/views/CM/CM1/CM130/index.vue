@@ -172,7 +172,7 @@
 					<button-basic style="margin-left: 350px; margin-top: 20px" :text="'저장'" type="default"
 						@onClick="onSubmitConfig()" />
 					<SettingPopup :modalStatus="modalSettingStatus" @closePopup="modalSettingStatus = false"
-						@dataEmit="changeValueAddress" title="원천설정" />
+						@dataEmit="changeValueAddress" title="원천설정" :key="countResetPopup" />
 				</a-spin>
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="급여항목">
@@ -354,6 +354,7 @@ export default defineComponent({
 		const dataOldFormStateDeduction = reactive({
 			...initialFormStateDeduction,
 		});
+		const countResetPopup = ref<number>(0);
 
 		const modalStatus = ref<boolean>(false);
 		const statusClickSaveModal = ref<boolean>(false);
@@ -580,6 +581,7 @@ export default defineComponent({
 		};
 
 		const modalSetting = () => {
+			countResetPopup.value++
 			modalSettingStatus.value = true;
 		};
 
@@ -635,6 +637,7 @@ export default defineComponent({
 			Message,
 			statusComfirm,
 			gridRefCM110Tab3,
+			countResetPopup,
 		};
 	},
 });

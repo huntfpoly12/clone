@@ -89,24 +89,24 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
       } else {
         const payload = cloneDeep(dataRequestFile.value);
-        payload.filter.beforeProduction = !payload.filter.afterProduction;
-        delete payload.filter.afterProduction;
-        const payloadClear = makeDataClean(payload);
-        if (!payloadClear.filter.productionStatuses.length) {
-          payloadClear.filter.productionStatuses = null;
-        }
+        // payload.filter.beforeProduction = !payload.filter.afterProduction;
+        // delete payload.filter.afterProduction;
+        // const payloadClear = makeDataClean(payload);
+        // if (!payloadClear.filter.productionStatuses.length) {
+        //   payloadClear.filter.productionStatuses = null;
+        // }
         switch (props.tabName) {
           case "tab1":
-            sendRequestFileTab1(payloadClear);
+            sendRequestFileTab1(payload);
             break;
           case "tab2":
-            sendRequestFileTab2(payloadClear);
+            sendRequestFileTab2(payload);
             break;
           case "tab3":
-            sendRequestFileTab3(payloadClear);
+            sendRequestFileTab3(payload);
             break;
           case "tab4":
-            sendRequestFileTab4(payloadClear);
+            sendRequestFileTab4(payload);
             break;
           default:
             break;
