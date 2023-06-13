@@ -50,7 +50,7 @@
                 <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
               </DxColumn>
               <DxColumn caption="통장별명" data-field="bankbookNickname" width="125" />
-              <DxColumn caption="사업구분" data-field="facilityBusinessId" width="100">
+              <DxColumn caption="사업명" data-field="facilityBusinessId" width="100">
                 <DxLookup :data-source="listFacilityBizTypeForUser" display-expr="name" value-expr="facilityBusinessId" />
               </DxColumn>
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" width="127" />
@@ -84,7 +84,7 @@
               <p class="cm-121_detail-infomation">통장정보</p>
               <a-row class="cm-121_detail-infomation-top">
                 <a-col span="12">
-                  <a-form-item label="사업구분" class="form-item-top">
+                  <a-form-item label="사업명" class="form-item-top">
                     <select-box-common :arrSelect="listFacilityBizTypeForUser" :required="true"
                       v-model:valueInput="dataDetailBankbook.facilityBusinessId" displayeExpr="name"
                       valueExpr="facilityBusinessId" width="150px" :disabled="true" />
@@ -152,9 +152,9 @@
               </a-row>
             </div>
             <div>
-              <div class="cm-121_detail-infomation cm-121_detail-infomation-bottom d-flex-center">
-                <span class="cm-121_detail-infomation-title">스크래핑 (통장내역 자동 조회) 정보</span>
-                <span class="cm-121_detail-infomation-note">
+              <div class="cm-121_detail-infomation cm-121_detail-infomation-bottom">
+                <span class="cm-121_detail-infomation-bottom-title">스크래핑 (통장내역 자동 조회) 정보</span>
+                <span class="cm-121_detail-infomation-bottom-note">
                   (주의) 스크래핑 정보는 민감한 정보로서 보안상의 이유로 공란으로 표시됩니다. 수정하려면 새로 입력 후 저장하세요.
                 </span>
               </div>

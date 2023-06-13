@@ -79,7 +79,7 @@
             :retirement-type="retirementType"
             @nextPage="step++"
           />
-          <Tab2  v-else-if="step === 1"/>
+          <Tab2  v-else-if="step === 1" :dataDetail="dataDetail"/>
           <Tab3 v-else/>
       </keep-alive>
     </div>
@@ -105,7 +105,7 @@
         type="default"
         mode="contained"
         @onClick="created"
-        :disabled="isDisableCreate"
+        :disabled="isDisableCreate || !isChangeForm"
         v-if="step === 2"
       />
     </div>
@@ -126,15 +126,17 @@ import {useStore} from "vuex";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import {Message} from "@/configs/enum";
 import dayjs from "dayjs";
+import { IncomeRetirement } from "../types";
+import { dataDefaultDetailUtils } from "../utils";
+import cloneDeep from "lodash/cloneDeep";
 enum EmployeeWageType {
   WAGE = 10,
   WAGEDaily = 20,
 }
 interface Props {
   modalStatus: boolean,
-  listEmployeeexist: Array<any>
 }
-const props = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits(["closePopup", "createdDone"]);
 
 const store = useStore();
@@ -147,7 +149,9 @@ const modalStatusAccept = ref(false);
 const retirementIncome = ref(EmployeeWageType.WAGE);
 const isDisableBtnTab2 = computed(() => store.getters['common/getIsDisableBtnTab2'])
 const isChangeForm = computed(() => store.getters['common/getIsChangeForm'])
-
+const dataDetail = reactive<IncomeRetirement>(
+  cloneDeep(dataDefaultDetailUtils)
+);
 const retirementType = ref(1)
 
 const optionEmployeeType = reactive([
@@ -256,7 +260,7 @@ const nextStep = (event: any) => {
 const prevStep = () => {
   step.value--;
 };
-const isDisableCreate = computed(() => store.getters['common/getIsDisableCreate'])
+const isDisableCreate = computed(() => store.getters['common/getNeedToRecalculatePa420'])
 const getAllData = computed(() => store.getters['common/getAllData'])
 const interimPaymentTab1 = computed(() => store.getters['common/getInterimPaymentTab1'])
 

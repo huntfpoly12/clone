@@ -26,7 +26,7 @@
         </a-form-item>
       </div>
       <div class="mt-20 mc121-popup-action">
-        <button-basic class="button-form-modal" :text="'닫기'" :width="140" :type="'success'" :mode="'contained'"
+        <button-basic class="button-form-modal" :text="'닫기'" :width="140" :type="'default'" :mode="'contained'"
           @onClick="setModalVisible" />
       </div>
     </div>
