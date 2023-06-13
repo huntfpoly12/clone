@@ -103,20 +103,17 @@
         </div>
         <div class="page-content">
             <div class="title-body">
-                <div class="title-body-left-1">
-                    <div>
-                        서식 설정 :
+                <a-form-item label="서식 설정">
+                    <div class="custom-flex">
                         <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용" textUnCheck="지급자보관용" />
+                        <a-tooltip title="본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.">
+                            <img src="@/assets/images/iconInfo.png" class="img-info" />
+                        </a-tooltip>
                     </div>
-                    <a-tooltip color="black" placement="top">
-                        <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
-                        <img src="@/assets/images/iconInfo.png" class="img-info" />
-                    </a-tooltip>
-                </div>
-                <div class="title-body-right">
-                            <span class="title-body-right-label">영수일 :</span>
-                            <date-time-box width="150px" v-model:valueDate="dateSendEmail" />
-                    <!-- <date-time-box width="160px" v-model:valueDate="dateSendEmail" /> -->
+                </a-form-item>
+                <div class="created-date">
+                    <label class="lable-item">영수일 :</label>
+                    <date-time-box width="150px" v-model:valueDate="dateSendEmail" />
                 </div>
             </div>
             <a-spin :spinning="loadingGetEmployeeBusinesses || loadingPrint" size="large">
@@ -150,7 +147,7 @@
                         </div>
                     </template>
                     <DxSelection mode="multiple" />
-                    <DxColumn caption="성명 (상호)" data-field="employee.employeeId" cell-template="tag" alignment="left"/>
+                    <DxColumn caption="성명 (상호)" data-field="employee.employeeId" cell-template="tag" alignment="left" />
                     <template #tag="{ data }">
                         <div class="custom-action" v-if="data.data.employee.employeeId != '-1'">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -189,13 +186,6 @@
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" width="200px" format="fixedPoint" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" width="230px"
                         format="fixedPoint" />
-                    <!-- <DxSummary>
-                        <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
-                        <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
-                        <DxTotalItem :customize-text="customizeTotalTaxfreePay" show-in-column="비과세소득" />
-                        <DxTotalItem :customize-text="customizeIncomeTax" column="withholdingIncomeTax" />
-                        <DxTotalItem :customize-text="customizeDateLocalIncomeTax" column="원천징수세액 지방소득세" />
-                    </DxSummary> -->
                     <DxColumn width="100px" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
@@ -230,17 +220,17 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA5/PA530/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
-import { companyId, userId } from "@/../src/helpers/commonFunction";
+import { companyId } from "@/../src/helpers/commonFunction";
 import PA530Popup from "./components/PA530Popup.vue";
 import dayjs from 'dayjs';
 import filters from "@/helpers/filters";
+import { initialArrCheckBoxSearch } from "./utils/index";
 import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, PA530Popup
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton, PA530Popup
     },
     setup() {
         let dataCallApiPrint = ref()
@@ -259,84 +249,7 @@ export default defineComponent({
         const triggerPrint = ref<boolean>(false);
         const globalYear: any = computed(() => parseInt(sessionStorage.getItem("paYear") ?? "0"))
         let vModalSelectedRowKeys: any = ref([])
-        const arrCheckBoxSearch: any = reactive({
-            quarter1: {
-                label: "1/4분기",
-                value: true,
-            },
-            quarter2: {
-                label: "2/4분기",
-                value: true,
-            },
-            quarter3: {
-                label: "3/4분기",
-                value: true,
-            },
-            quarter4: {
-                label: "4/4분기",
-                value: true,
-            },
-            month1: {
-                label: "01월",
-                value: true,
-                subValue: parseInt(globalYear.value + "01")
-            },
-            month2: {
-                label: "02월",
-                value: true,
-                subValue: parseInt(globalYear.value + "02")
-            },
-            month3: {
-                label: "03월",
-                value: true,
-                subValue: parseInt(globalYear.value + "03")
-            },
-            month4: {
-                label: "04월",
-                value: true,
-                subValue: parseInt(globalYear.value + "04")
-            },
-            month5: {
-                label: "05월",
-                value: true,
-                subValue: parseInt(globalYear.value + "05")
-            },
-            month6: {
-                label: "06월",
-                value: true,
-                subValue: parseInt(globalYear.value + "06")
-            },
-            month7: {
-                label: "07월",
-                value: true,
-                subValue: parseInt(globalYear.value + "07")
-            },
-            month8: {
-                label: "08월",
-                value: true,
-                subValue: parseInt(globalYear.value + "08")
-            },
-            month9: {
-                label: "09월",
-                value: true,
-                subValue: parseInt(globalYear.value + "09")
-            },
-            month10: {
-                label: "10월",
-                value: true,
-                subValue: parseInt(globalYear.value + "10")
-            },
-            month11: {
-                label: "11월",
-                value: true,
-                subValue: parseInt(globalYear.value + "11")
-            },
-            month12: {
-                label: "12월",
-                value: true,
-                subValue: parseInt(globalYear.value + "12")
-            },
-        })
+        const arrCheckBoxSearch: any = reactive({...initialArrCheckBoxSearch})
         const getArrPaymentYearMonth = () => {
             let arrVal = []
             if (arrCheckBoxSearch.month1.value == true)
@@ -389,11 +302,12 @@ export default defineComponent({
         })
         // ================GRAPQL==============================================
         // QUERY NAME : searchIncomeWageDailyWithholdingReceipts
-        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.search, dataApiSearch, () => ({
+        const { loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.search, dataApiSearch, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
+            trigger.value = false;
             dataSource.value = res.data.searchIncomeWageDailyWithholdingReceipts
         })
         errorGetEmployeeBusinesses(res => {
@@ -401,7 +315,6 @@ export default defineComponent({
         })
         // QUERY NAME : getIncomeWageDailyWithholdingReceiptReportViewUrl
         const {
-            refetch: refetchPrint,
             loading: loadingPrint,
             onError: errorPrint,
             onResult: resPrint,
@@ -410,6 +323,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resPrint(res => {
+            triggerPrint.value = false;
             window.open(res.data?.getIncomeWageDailyWithholdingReceiptReportViewUrl);
         })
         errorPrint(res => {
@@ -424,7 +338,6 @@ export default defineComponent({
                 year2.subValue = subValue
             dataApiSearch.filter.imputedYear = value
             trigger.value = true
-            refetchData()
         }, { deep: true });
         watch(() => year2.value, (val) => {
             if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year1.value == true)
@@ -539,7 +452,7 @@ export default defineComponent({
         const searching = () => {
             if (getArrPaymentYearMonth().length > 0) {
                 dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
-                refetchData()
+                trigger.value = true
             } else {
                 notification('error', '조회 기간을 선택하세요!')
             }
@@ -600,11 +513,9 @@ export default defineComponent({
                 }
             }
             triggerPrint.value = true
-            if (dataCallApiPrint.value.employeeIds.length > 0)
-                refetchPrint()
         }
         const sendMailGroup = () => {
-            if (selectedItemKeys.value.length > 1) {
+            if (selectedItemKeys.value.length) {
                 actionSendEmailGroup.value = true
                 let dataCall: any = []
                 // Gets the row of checked data 
@@ -622,7 +533,7 @@ export default defineComponent({
                 paymentYearMonthsModal.value = getArrPaymentYearMonth()
                 modalStatus.value = true
             } else
-                notification('error', Message.getCommonMessage('601').message)
+                notification('error', Message.getCommonMessage('404').message)
         }
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
@@ -667,8 +578,7 @@ export default defineComponent({
         }
 
         const printGroup = () => {
-            if (selectedItemKeys.value.length > 1) {
-                triggerPrint.value = true
+            if (selectedItemKeys.value.length) {
                 dataCallApiPrint.value = {
                     companyId: companyId,
                     employeeIds: selectedItemKeys.value,
@@ -679,10 +589,9 @@ export default defineComponent({
                         receiptDate: dateSendEmail.value
                     }
                 }
-
-                refetchPrint()
+                triggerPrint.value = true
             } else
-                notification('error', Message.getCommonMessage('601').message)
+                notification('error', Message.getCommonMessage('404').message)
         }
         return {
             actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,

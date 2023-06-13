@@ -1,10 +1,18 @@
 #pa-530 {
     #DxDataGrid-pa530 {
-      height: calc(100vh - 300px);
-      :deep .dx-freespace-row {
-          display: none !important;
-      }
+        height: calc(100vh - 310px);
+
+        :deep .dx-freespace-row {
+            display: none !important;
+        }
+
+        :deep .dx-datagrid-header-panel {
+            position: absolute;
+            top: -40px;
+            right: 0;
+        }
     }
+
     .custom-info {
         display: flex;
         align-items: center;
@@ -36,10 +44,11 @@
     }
 
     .title-body {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px 0;
+
         .title-body-left-1 {
             display: flex;
             align-items: center;
@@ -53,15 +62,32 @@
                 font-size: 12px;
             }
         }
-        &-right {
+
+        .created-date {
+            float: right;
             display: flex;
+            margin-right: 90px;
             align-items: center;
-            &-label {
-                font-weight: bold;
-                margin-right: 5px;
+
+            .lable-item {
                 font-size: 14px;
             }
         }
+
+        // &-right {
+        //     display: flex;
+        //     align-items: center;
+        //     &-label {
+        //         font-weight: bold;
+        //         margin-right: 5px;
+        //         font-size: 14px;
+        //     }
+        // }
+    }
+
+    .lable-item {
+        font-size: 16px;
+        font-weight: 600;
     }
 
     :deep .custom-layout {
@@ -95,9 +121,11 @@
             text-align: center;
         }
     }
+
     .ant-switch-checked {
         background-color: black;
     }
+
     .DxDataGrid-pa-530-sumary {
         display: flex;
         align-items: center;
@@ -111,5 +139,5 @@
 }
 
 :deep .dx-datagrid-text-content {
-    white-space: break-spaces; 
+    white-space: break-spaces;
 }
