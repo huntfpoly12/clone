@@ -1,59 +1,50 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.pa110.statusDisabledStatus || (store.state.common.pa110.statusChangeFormAdd&&store.state.common.pa110.statusFormAdd) || store.state.common.pa110.statusMidTermSettlement2">
+    <DxButton @click="deleteItem"
+        :disabled="store.state.common.pa110.statusDisabledStatus || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd) || store.state.common.pa110.statusMidTermSettlement2">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.pa110.statusDisabledStatus" />
-    <!-- <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.pa110.statusDisabledStatus"/> -->
-    <!-- <DxButton @click="onSubmit($event)" size="large"
-        class="ml-4" :disabled="store.state.common.pa110.statusDisabledStatus">
-        <SaveOutlined style="font-size: 17px" />
-    </DxButton> -->
-    <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="showHistory">
-        <a-tooltip color="black" placement="top">
-            <template #title>근로소득자료 변경이력</template>
-            <div class="text-center">
-                <HistoryOutlined style="font-size: 16px" />
-            </div>
-        </a-tooltip>
-    </DxButton>
-    <DxButton class="ml-4" style="cursor: pointer" @click="showHistoryStatus">
-        <a-tooltip color="black" placement="top">
-            <template #title>근로소득 마감상태 변경이력</template>
-            <div class="text-center">
-                <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
-            </div>
-        </a-tooltip>
-    </DxButton>
-    <DxButton @click="editItem" class="ml-4" :disabled="store.state.common.pa110.statusDisabledStatus || (store.state.common.pa110.statusChangeFormAdd&&store.state.common.pa110.statusFormAdd)">
+    <DxButton class="ml-4" icon="plus" @click="onActionAddItem" :disabled="store.state.common.pa110.statusDisabledStatus" />
+    <a-tooltip placement="top" title="일용직소득자료 변경이력">
+        <span>
+            <DxButton class="ml-4" @click="showHistory">
+                <HistoryOutlined style="font-size: 18px" />
+            </DxButton>
+        </span>
+    </a-tooltip>
+    <a-tooltip placement="top" title="일영직소득 마감상태 변경이력">
+        <span>
+            <DxButton class="ml-4" @click="showHistoryStatus">
+                <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history-custom" />
+            </DxButton>
+        </span>
+    </a-tooltip>
+    <DxButton @click="editItem" class="ml-4"
+        :disabled="store.state.common.pa110.statusDisabledStatus || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd)">
         <div class="d-flex-center">
             <checkbox-basic :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
         </div>
     </DxButton>
-    <div class="custom-select-tab ml-4">
-        <button class="button-open-tab" style="pointer-events: all; opacity: 1;"
-            @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</button>
-    </div>
-    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장"
+    <DxButton class="button-open-tab ml-4" style="pointer-events: all; opacity: 1;"
+        @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</DxButton>
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-4" :items="arrDropDownPayrollRegister" text="급여대장"
         @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
-            <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
-                    style="width: 25px; height: 25px;" /></div>
+            <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt="" style="width: 25px;" /></div>
         </template>
     </DxDropDownButton>
-    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서"
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-4" :items="arrDropDownSalaryStatement" text="급여명세서"
         @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
-            <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
-                    style="width: 25px; height: 25px;" /></div>
+            <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt="" style="width: 25px;" /></div>
         </template>
     </DxDropDownButton>
     <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
         :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
         :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
     <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
-        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
-        @checkConfirm="statusComfirmChange" />
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
+        :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmChange" />
 
     <DeletePopupIncomeWages :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
@@ -266,7 +257,7 @@ export default defineComponent({
             if (val) { // action save form
                 // store.state.common.pa110.checkClickYear = false;
                 store.state.common.pa110.actionSubmit++
-            } else { 
+            } else {
                 if (store.state.common.pa110.statusRowAdd) { // add row
                     store.state.common.pa110.addRow++ // add row
                     store.state.common.pa110.statusRowAdd = false;
@@ -325,4 +316,22 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped  src="../style/style.scss" ></style>
+<style lang="scss" scoped>
+.button-open-tab {
+    color: white;
+    background-color: blue;
+    border: none;
+    border-radius: 5px;
+    padding: 9px 8px;
+    cursor: pointer;
+}
+
+:deep .dx-button-content {
+    padding: 6px 8px;
+}
+
+.icon_status_history-custom {
+    width: 18px;
+    height: 18px;
+}
+</style>

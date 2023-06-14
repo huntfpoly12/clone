@@ -76,6 +76,9 @@ const screenMutatePA420 = {
   },
   setRetirementStatus(state: any, data: number) {
     state.retirementStatus = data
+  },
+  setNeedToRecalculatePa420(state: any, data: boolean) {
+    state.needToRecalculatePa420 = data
   }
 };
 export default screenMutatePA420;

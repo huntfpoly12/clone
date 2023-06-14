@@ -1,4 +1,16 @@
 #pa-220 {
+    #gridContainerPA220 {
+        height: calc(100vh - 230px);
+        :deep .dx-datagrid-header-panel {
+            position: absolute;
+            top: -40px;
+            right: 0;
+        }
+    }
+    :deep .dx-freespace-row {
+        display: none !important;
+    }
+
     .custom-info {
         display: flex;
         align-items: center;
@@ -16,6 +28,9 @@
     .selectRatio {
         display: flex;
         align-items: center;
+        :deep .dx-radiobutton-icon {
+            padding-top: 2px;
+        }
     }
 
     :deep .custom-mail-group {
@@ -23,50 +38,40 @@
             padding: 3px;
         }
     }
+    .page-content {
+        .header-group {
+            margin-top: 5px;
+        }
+    }
 
     .custom-flex {
         display: flex;
-        width: 100%;
+        align-items: flex-start;
         align-items: center;
-
-        .ant-row {
-            width: 100%;
-        }
     }
 
-    .title-body {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 5px 0;
-        .title-body-left-1 {
-            display: flex;
-            align-items: center;
-            &-label {
-                font-size: 14px;
-            }
-            >div {
-                margin-right: 10px;
-            }
-            :deep .dx-item-content {
-                line-height: 22px;
-            }
-        }
-    }
     .created-date {
+        float: right;
+        margin-right: 90px;
         display: flex;
         align-items: center;
+
         .lable-item {
             font-weight: bold;
             font-size: 14px;
         }
     }
+    .lable-item {
+        font-size: 16px;
+        font-weight: 600;
+    }
 
 
     :deep .ant-form-item-label>label {
-        width: 180px;
-        padding-left: 10px;
         color: red;
+    }
+    :deep .dx-radiogroup-horizontal {
+        padding-top: 5px;
     }
 
     :deep .custom-layout {
@@ -100,9 +105,8 @@
             text-align: center;
         }
     }
-    :deep .dx-radiobutton-icon {
-        padding-top: 2px;
-    }
+
+    
 
     :deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
         background: white;
@@ -111,14 +115,16 @@
         color: black;
     }
 
-    .status-red, :deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
+    .status-red,
+    :deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
         background: rgb(194, 56, 56);
         padding: 2px 15px;
         border-radius: 5px;
         color: white;
     }
 
-    .status-blue, :deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
+    .status-blue,
+    :deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
         background: rgb(76, 134, 65);
         padding: 2px 15px;
         border-radius: 5px;

@@ -1,69 +1,81 @@
 #pa-430 {
     #gridContainerPA430 {
-        height: calc(100vh - 255px);
+        height: calc(100vh - 260px);
+        :deep .dx-datagrid-header-panel {
+            position: absolute;
+            top: -40px;
+            right: 0;
+        }
     }
+
     :deep .dx-freespace-row {
         display: none !important;
     }
 
     .created-date {
         float: right;
+        margin-right: 90px;
         display: flex;
         align-items: center;
+
         .lable-item {
             font-size: 14px;
         }
     }
+
+    .page-content {
+        .header-group {
+            margin-top: 5px;
+        }
+    }
+
     .lable-item {
         font-size: 16px;
         font-weight: 600;
     }
 
-    :deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
-        background: white;
-        padding: 2px 15px;
-        border-radius: 5px;
-        color: black;
-    }
+    // :deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
+    //     background: white;
+    //     padding: 2px 15px;
+    //     border-radius: 5px;
+    //     color: black;
+    // }
 
-    :deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
-        background: rgb(194, 56, 56);
-        padding: 2px 15px;
-        border-radius: 5px;
-        color: white;
-    }
+    // :deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
+    //     background: rgb(194, 56, 56);
+    //     padding: 2px 15px;
+    //     border-radius: 5px;
+    //     color: white;
+    // }
 
-    :deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
-        background: #77933C;
-        padding: 2px 15px;
-        border-radius: 5px;
-        color: white;
-    }
+    // :deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
+    //     background: #77933C;
+    //     padding: 2px 15px;
+    //     border-radius: 5px;
+    //     color: white;
+    // }
 
-    :deep .selectRatio .dx-item-content {
-        background: #77933C;
-        padding: 2px 15px;
-        border-radius: 5px;
-        color: white;
-    }
+    // :deep .selectRatio .dx-item-content {
+    //     background: #77933C;
+    //     padding: 2px 15px;
+    //     border-radius: 5px;
+    //     color: white;
+    // }
 
     .ant-switch-checked {
         background-color: black;
     }
 
-        .label-belonging {
-            align-items: center;
-            background: #A6A6A6;
-            padding: 2px 20px;
-            border-radius: 20px;
-            color: white;
-        }
-
-    .dflex {
-        display: flex;
+    .label-belonging {
+        align-items: center;
+        background: #A6A6A6;
+        padding: 2px 20px;
+        border-radius: 20px;
+        color: white;
     }
 
     .custom-flex {
+        display: flex;
         align-items: flex-start;
         align-items: center;
     }
@@ -72,16 +84,18 @@
         text-align: center !important
     }
 
-    :deep(.dx-button-content){
-      padding: 3px;
+    :deep(.dx-button-content) {
+        padding: 3px;
     }
 
     :deep .dx-datagrid-text-content {
         white-space: pre-wrap;
     }
+
     :deep .dx-radiogroup-horizontal {
         padding-top: 5px;
     }
+
     :deep .dx-datagrid-text-content span {
         font-size: 15px;
         font-weight: bold;

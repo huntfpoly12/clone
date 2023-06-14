@@ -265,7 +265,7 @@
         </a-row>
       </a-spin>
     </a-col>
-    <a-col :span="10" class="form-tax form-action">
+    <a-col style="flex: 1" class="form-tax form-action">
       <a-spin
         :spinning="loadingIncomeBusiness || loadingIncomeBusinesses"
         size="large"
@@ -398,7 +398,7 @@
                       }}</b
                     >원
                     <a-tooltip placement="top" class="custom-tooltip">
-                      <template #title> 지급액 - 공제합계. </template>
+                      <template #title> 지급액 - 공제합계 </template>
                       <div style="text-align: center">
                         <img
                           src="@/assets/images/iconInfo.png"

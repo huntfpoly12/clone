@@ -14,8 +14,8 @@ export default (callback: Function, options?: {okText?:string, cancelText?:strin
             callback();
         },
         onCancel() { status = false },
-        cancelText: options?.cancelText || '네' ,
-        okText: options?.okText || '취소' ,
+        cancelText: options?.cancelText || '취소' ,
+        okText: options?.okText || '네' ,
         wrapClassName: 'confirmPopup',
     });
 

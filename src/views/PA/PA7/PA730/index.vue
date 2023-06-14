@@ -50,14 +50,14 @@
           <template #send-group-mail>
               <DxButton @click="actionOpenPopupEmailGroup">
                 <img src="@/assets/images/emailGroup.png" alt=""
-                  style="width: 28px; margin-right: 3px; cursor: pointer" />
+                  style="width: 28px;" />
               </DxButton>
           </template>
           <template #send-group-print>
               <DxButton @click="onPrintGroup">
                 <a-tooltip title="출력 / 저장" placement="topLeft">
                   <img src="@/assets/images/printGroup.png" alt=""
-                    style="width: 28px; margin-right: 3px; cursor: pointer" />
+                    style="width: 28px;" />
                 </a-tooltip>
               </DxButton>
           </template>
@@ -247,7 +247,7 @@ export default defineComponent({
       modalEmailSingle.value = false;
     };
     const actionOpenPopupEmailGroup = () => {
-      if (dataSelect.value.length > 1) {
+      if (dataSelect.value.length) {
         popupGroupData.value = {
           companyId: companyId,
           input: {
@@ -259,7 +259,7 @@ export default defineComponent({
         };
         modalEmailGroup.value = true;
       } else {
-        notification('error', messages.getCommonMessage('601').message)
+        notification('error', messages.getCommonMessage('404').message)
       }
     };
     const onSelectionChanged = (data: any) => {

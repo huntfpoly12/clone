@@ -28,7 +28,7 @@
         </div>
         <process-status
           v-model:valueStatus="statusButton"
-          @checkConfirm="statusComfirm"
+          @checkConfirm="statusConfirm"
           :disabled="statusButton !== 10 && statusButton !== 20"
         />
       </div>
@@ -52,7 +52,7 @@
           "
         >
           <a-tooltip placement="top">
-            <template #title>근로소득자료 변경이력</template>
+            <template #title>퇴직소득자료 변경이력</template>
             <div class="text-center">
               <HistoryOutlined style="font-size: 16px" />
             </div>
@@ -66,7 +66,7 @@
           "
         >
           <a-tooltip placement="left">
-            <template #title>근로소득 마감상태 변경이력</template>
+            <template #title>퇴직소득 마감 상태 변경이력</template>
             <div class="text-center">
               <img
                 src="@/assets/images/icon_status_history.png"
@@ -110,7 +110,6 @@
           caption="사원"
           data-field="employee.name"
           cell-template="tag"
-          width="200"
           header-cell-template="title-header-사원"
         />
         <template #tag="{ data }">
@@ -135,6 +134,7 @@
           data-field="retirementType"
           cell-template="retirementType"
           alignment="center"
+          width="100"
         />
         <template #retirementType="{ data }">
           <div class="d-flex-center justify-content-center">
@@ -151,6 +151,7 @@
           data-field="specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate"
           cell-template="joinedAt"
           alignment="center"
+          width="100"
         />
         <template #joinedAt="{ data }">
           <div>
@@ -170,6 +171,7 @@
           data-field="specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate"
           cell-template="leavedAt"
           alignment="center"
+          width="100"
         />
         <template #leavedAt="{ data }">
           <div>
@@ -189,23 +191,23 @@
           data-field="retirementBenefits"
           data-type="string"
           format="#,###"
-          width="120px"
+          width="100px"
           alignment="right"
         />
         <DxColumn
-          width="150px"
           caption="비과세 퇴직급여"
           data-field="nonTaxableRetirementBenefits"
           data-type="string"
           format="#,###"
+          width="100px"
           alignment="right"
         />
         <DxColumn
           caption="과세대상 퇴직급여"
-          width="160px"
           data-field="taxableRetirementBenefits"
           data-type="string"
           format="#,###"
+          width="100px"
           alignment="right"
         />
         <DxColumn
@@ -240,7 +242,7 @@
           caption="비고"
           cell-template="note"
           data-type="string"
-          width="250px"
+          
         />
         <template #note="{ data }">
           <div>
@@ -285,6 +287,7 @@
           caption="지급일"
           data-field="paymentDay"
           cell-template="payment-day"
+          width="50"
         />
         <template #payment-day="{ data }">
           {{
@@ -296,19 +299,28 @@
         <DxColumn
           caption=""
           cell-template="action"
-          width="50px"
+          width="60px"
           fixedPosition="right"
         />
         <template #action="{ data }">
-          <div class="text-center">
-            <EditOutlined
-              class=""
-              @click="
-                statusButton != 20
-                  ? actionEditRow(data.data.incomeId)
-                  : handleView(data.data.incomeId)
-              "
-            />
+          <div class="d-flex-center">
+            <div class="mr-5">
+              <img
+                src="@/assets/images/searchPlus.png"
+                style="width: 20px; height: 20px; margin-top: 0px"
+                @click="handleViewPrint(data.data)"
+              />
+            </div>
+            <div class="text-center">
+              <EditOutlined
+                class=""
+                @click="
+                  statusButton != 20
+                    ? actionEditRow(data.data.incomeId)
+                    : handleView(data.data.incomeId)
+                "
+              />
+            </div>
           </div>
         </template>
       </DxDataGrid>
@@ -370,8 +382,6 @@
     :data="popupDataDelete"
     :key="resetFormNum"
     @createdDone="emit('createdDone')"
-    :processKey="dataTableDetail.processKey"
-    :listEmployeeexist="listEmployeeId"
   />
   <UpdatePopup
     v-if="modalUpdate"
@@ -391,6 +401,7 @@
 import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
+import getIncomeRetirementWithholdingReceiptReportViewUrl from "@/graphql/queries/PA/PA4/PA430/getIncomeRetirementWithholdingReceiptReportViewUrl";
 import { companyId } from "@/helpers/commonFunction";
 import filters from "@/helpers/filters";
 import notification from "@/utils/notification";
@@ -417,13 +428,13 @@ import EditPopup from "./EditPaymentDayPopup.vue";
 import UpdatePopup from "./UpdatePopup.vue";
 import ViewDetail from "./ViewDetail.vue";
 import { watchEffect } from "vue";
+import dayjs from "dayjs";
 
 const props = defineProps<{ statusButton: number; actionSave: number }>();
 const emit = defineEmits(["createdDone", "changedStatus"]);
 
 const dataGrid = ref();
 const dataSourceDetail = ref([]);
-const listEmployeeId = ref<any>([]);
 const keyDetailRow = ref();
 const modalEdit = ref<boolean>(false);
 const popupDataDelete: any = ref([]);
@@ -474,16 +485,6 @@ const {
 resTableDetail((res) => {
   dataSourceDetail.value = res.data.getIncomeRetirements;
   store.commit('common/setEmployeeIdCreated', res.data.getIncomeRetirements?.map((item: any) => ({employeeId:item.employeeId, employeeType: item.employeeType})) || [])
-  const listEmployee: any = [];
-  // create array id already exist
-  res.data.getIncomeRetirements.map((item: any) => {
-    // The above code is checking if the employeeId is already in the listEmployeeId array. If it is
-    // not, then it will push the employeeId into the array.
-    if (!listEmployeeId.value.includes(item.employeeId)) {
-      listEmployee.push(item.employeeId);
-    }
-  });
-  listEmployeeId.value = listEmployee;
   triggerDetail.value = false;
 });
 errorTableDetail((res) => {
@@ -632,12 +633,43 @@ const handleView = (data: any) => {
   modalView.value = true;
   keyDetailRow.value = data;
 };
-const statusComfirm = () => {
+const statusConfirm = () => {
   mutate({
     companyId: companyId,
     processKey: dataTableDetail.value.processKey,
     status: statusButton.value,
   });
 };
+const dataInputReport = reactive({
+  companyId: companyId,
+  input: {
+      imputedYear: selectMonthColumn.value.imputedYear,
+      type: 1,
+      receiptDate: filters.formatDateToInterger(dayjs())
+  },
+  incomeIds: [0]
+})
+const triggerReport = ref(false)
+const {
+  result: resultReport,
+  onError: errorReport,
+} = useQuery(getIncomeRetirementWithholdingReceiptReportViewUrl, dataInputReport, () => ({
+  enabled: triggerReport.value,
+  fetchPolicy: "no-cache",
+}));
+watch(resultReport, (newValue) => {
+  window.open(newValue.getIncomeRetirementWithholdingReceiptReportViewUrl);
+  triggerReport.value = false;
+}, { deep: true });
+errorReport(res => {
+  triggerReport.value = false
+  notification('error', res.message)
+})
+const handleViewPrint = (data: any) => { 
+  console.log('%c data', 'color: red;', data);
+  dataInputReport.input.type = data.retirementType;
+  dataInputReport.incomeIds = [data.incomeId]
+  triggerReport.value = true;
+}
 </script>
 <style scoped src="../style/style.scss"></style>

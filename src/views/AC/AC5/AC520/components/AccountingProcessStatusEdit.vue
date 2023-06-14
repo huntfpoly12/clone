@@ -13,7 +13,7 @@
         <div class="mt-20">
           <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'"
                         @onClick="hide"/>
-          <button-basic class="button-form-modal" :text="'네, 변경합니다.'" :width="140" :type="'default'"
+          <button-basic class="button-form-modal" :text="'네, 변경합니다'" :width="140" :type="'default'"
                         :mode="'contained'" @onClick="submitChangeStatus"/>
         </div>
       </div>
