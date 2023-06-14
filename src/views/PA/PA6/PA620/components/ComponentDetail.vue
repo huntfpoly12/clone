@@ -93,7 +93,6 @@
   </div>
   <a-row style="flex-flow: row nowrap">
     <a-col
-      :span="14"
       class="col-tax"
       :class="{ 'ele-opacity': !compareForm() }"
     >
@@ -265,7 +264,7 @@
         </a-row>
       </a-spin>
     </a-col>
-    <a-col style="flex: 1" class="form-tax form-action">
+    <a-col span="10" class="form-tax form-action">
       <a-spin
         :spinning="loadingIncomeBusiness || loadingIncomeBusinesses"
         size="large"
