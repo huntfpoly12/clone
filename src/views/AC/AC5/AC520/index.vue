@@ -57,7 +57,7 @@
       <DxColumn caption="예산총괄표" alignment="center" :allow-sorting="false" cell-template="mailPrint"/>
       <DxColumn caption="삭제" width="100px" cell-template="action" alignment="center"/>
       <template #action="{data}">
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center" v-if="data.data.status === 10">
           <a-tooltip :trigger="data.data.index !== (dataSource?.totalCount() || 0) - 1 && data.data.status !== 10 ? '' : 'hover'" placement="left" title="예산서 (임직원보수일람표 포함) 삭제">
             <div >
               <DxButton type="ghost"
