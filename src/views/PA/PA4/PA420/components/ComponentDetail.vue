@@ -111,6 +111,7 @@
           data-field="employee.name"
           cell-template="tag"
           header-cell-template="title-header-사원"
+          width="230"
         />
         <template #tag="{ data }">
           <employee-info
@@ -305,11 +306,15 @@
         <template #action="{ data }">
           <div class="d-flex-center">
             <div class="mr-5">
-              <img
-                src="@/assets/images/searchPlus.png"
-                style="width: 20px; height: 20px; margin-top: 0px"
-                @click="handleViewPrint(data.data)"
-              />
+              <a-tooltip title="퇴직소득원천징수영수증 보기" placement="topLeft">
+                <div>
+                  <img
+                    src="@/assets/images/searchPlus.png"
+                    style="width: 20px; height: 20px; margin-top: 0px"
+                    @click="handleViewPrint(data.data)"
+                  />
+                </div>
+              </a-tooltip>
             </div>
             <div class="text-center">
               <EditOutlined
@@ -427,10 +432,9 @@ import DeletePopup from "./DeletePopup.vue";
 import EditPopup from "./EditPaymentDayPopup.vue";
 import UpdatePopup from "./UpdatePopup.vue";
 import ViewDetail from "./ViewDetail.vue";
-import { watchEffect } from "vue";
 import dayjs from "dayjs";
 
-const props = defineProps<{ statusButton: number; actionSave: number }>();
+defineProps<{ statusButton: number; actionSave: number }>();
 const emit = defineEmits(["createdDone", "changedStatus"]);
 
 const dataGrid = ref();
@@ -467,10 +471,10 @@ let dataTableDetail = ref({
   processKey: { ...selectMonthColumn.value },
 });
 
-const clearSelection = () => {
-  const dataGridRef = dataGrid.value?.instance;
-  dataGridRef?.clearSelection();
-};
+// const clearSelection = () => {
+//   const dataGridRef = dataGrid.value?.instance;
+//   dataGridRef?.clearSelection();
+// };
 
 // ================GRAPQL==============================================
 const {
@@ -563,7 +567,7 @@ const closeChangePaymentDay = (e: boolean) => {
   if (e) {
     refetchTableDetail();
     triggerDetail.value = true;
-    clearSelection();
+    // clearSelection();
   }
   modalEdit.value = false;
 };

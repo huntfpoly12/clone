@@ -227,7 +227,7 @@ export default defineComponent({
                                                   year.toString() + // year
                                                   ((i + 1) < 10 ? '0' + (i + 1).toString() : (i + 1).toString()) + // month
                                                   '10' // day
-                                                ) 
+                        ) 
                             dataReports.value.push({
                                 reportId: i,
                                 imputedYear: year,
@@ -258,7 +258,6 @@ export default defineComponent({
                             const yearSub = (paymentMonth == 13 ? year + 1 : year).toString();
                             const monthSub = (paymentMonth < 10 ? '0' + (paymentMonth + 1).toString() : (paymentMonth + 1).toString()) 
                             const subDate = parseInt(yearSub+monthSub +'10') 
-                          
                             dataReports.value.push({
                                 reportId: i,
                                 imputedYear: year,
@@ -285,9 +284,9 @@ export default defineComponent({
                         // string concatenation 10th next month of paymentday
                         const subDate = parseInt(
                                                   globalYear.value.toString() + // year
-                                                  (data.paymentMonth +1).toString() + // month
+                                                  ((data.paymentMonth + 1) < 10 ? '0' + (data.paymentMonth + 1).toString() : (data.paymentMonth + 1).toString()) + // month
                                                   '10' // day
-                                                ) 
+                        )        
                         dataReports.value.push({
                             reportId: index,
                             imputedYear: globalYear.value,
