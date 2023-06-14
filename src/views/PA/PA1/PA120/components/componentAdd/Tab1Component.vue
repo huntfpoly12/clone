@@ -443,8 +443,6 @@ export default defineComponent({
         store.state.common.isNewRowPA120 = true;
         store.commit("common/actionFormErrorPA120");
       } else {
-        makeDataClean(initFormStateTabPA120.value);
-        emit("employeeId", +initFormStateTabPA120.value.employeeId);
         let formData = {
           ...initFormStateTabPA120.value,
           employeeId: +initFormStateTabPA120.value.employeeId,
@@ -453,7 +451,8 @@ export default defineComponent({
         delete formData.deletable;
         delete formData.employeeId;
         // if (isEdit.value) {
-        // }
+          // }
+        makeDataClean(formData);
         let dataNew: any = {
           ...formParam,
           input: {
@@ -497,9 +496,6 @@ export default defineComponent({
         store.commit("common/presidentPA120", newValue);
       },{immediate: true}
     );
-    const onFocusOut = (emitVal: any) => {
-      initFormStateTabPA120.value.employeeId = employeeId.value;
-    };
     const onChange = (emitVal: any) => {
       initFormStateTabPA120.value.name = emitVal.toUpperCase();
     };
@@ -523,7 +519,6 @@ export default defineComponent({
       arrResponsibility,
       actionFormDonePA120,
       changeTextCountry,
-      onFocusOut,
       onChange,
       isEdit,
       isNewRowPA120,

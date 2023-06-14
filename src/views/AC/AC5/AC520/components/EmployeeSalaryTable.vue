@@ -6,8 +6,6 @@
                 @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared"
                 @saving="handleSaving"
                 style="height: 70vh"
-                :remote-operations="true"
-
     >
       <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" :on-reorder="onReorder"/>
       <DxEditing mode="batch" :allow-adding="true" :allow-deleting="true" :allow-updating="true"
@@ -55,6 +53,7 @@
       </DxColumn>
       <template #selectOccupation="{data}">
         <DxSelectBox
+          ref="selectOccupationRef"
           :noDataText="Message.getMessage('COMMON', '901').message"
           :data-source="arrSelectOccupation"
           placeholder="선택 또는 직접입력"
@@ -65,6 +64,7 @@
           :searchTimeout="0"
           @value-changed="setEditedValue($event, data)"
           @enter-key="onEnterKey($event, data)"
+          :onFocusIn="onFocusInOccupation"
         />
       </template>
       <DxColumn caption="인건비구분" data-field="classification" css-class="text-red" alignment="center"
@@ -76,6 +76,7 @@
       </DxColumn>
       <template #laborCostClassificationArray="{data}">
         <DxSelectBox
+          ref="laborCostClassificationArrayRef"
           :noDataText="Message.getMessage('COMMON', '901').message"
           :data-source="LaborCostClassificationArray"
           placeholder="선택"
@@ -83,6 +84,7 @@
           display-expr="name"
           value-expr="value"
           @value-changed="setEditedValue($event, data)"
+          :onFocusIn="onFocusInLabor"
         />
       </template>
       <template #classification>
@@ -179,11 +181,9 @@
       </DxSummary>
     </DxDataGrid>
   </standard-form>
-  <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="350">
+  <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="980">
     <div>
-      <div>최종차수(본예산인 경우 전년도 최종차수) 예산액을</div>
-      <div>불러옵니다. 이미 입력된 전예산액이 있더라도 새로 불러온</div>
-      <div>전예산액이 입력됩니다. 그래도 불러오겠습니까?</div>
+      최종차수(본예산인 경우 전년도 최종차수) 전임직원수일람표를 불러옵니다. 이미 입력된 정보가 있더라도 새로 불러온 정보가 입력됩니다. 그래도 불러오겠습니까?
     </div>
     <div class="footer">
       <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'"
@@ -216,7 +216,7 @@ import {RowDraggingReorderEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
 import {useMutation, useQuery} from "@vue/apollo-composable";
-import {accountSubject, companyId} from "@/helpers/commonFunction";
+import {companyId} from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
 import filters from "@/helpers/filters";
@@ -227,6 +227,7 @@ import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons-vue"
 import DxSelectBox from "devextreme-vue/select-box";
 import {ValueChangedEvent} from "devextreme/ui/select_box";
 import Guid from 'devextreme/core/guid';
+import debounce from 'lodash/debounce';
 
 const emit = defineEmits(['closePopup'])
 const gridRef = ref()
@@ -311,6 +312,7 @@ onResultEmployeePayTablePreIndex(({ data }) => {
 })
 onErrorEmployeePayTablePreIndex((error) => {
   console.error('getEmployeePayTable', error)
+  state.triggerQueryPreIndexBudget = false
 })
 // create mutation useQuery
 const {mutate, onDone, loading, onError} = useMutation(mutations.saveEmployeePayTable)
@@ -326,7 +328,7 @@ onError((error) => {
 
 })
 
-const handleSaving = (e: SavingEvent) => {
+const handleSaving = debounce((e: SavingEvent) => {
   const res = formRef.value.validate();
   if (res.isValid) {
     // remove all key "key" in dataAllRow
@@ -342,14 +344,13 @@ const handleSaving = (e: SavingEvent) => {
       totalLaborCost: formatSummary.total,
       totalDirectLaborCost: formatSummary.total1,
       totalIndirectLaborCost: formatSummary.total2,
-      accounSubjectOrder: accountSubject[0].theOrder,
+      accounSubjectOrder: JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0].theOrder,
       inputs
     }
     mutate(result)
   }
   e.cancel = true
-}
-
+}, 300)
 watch(() => dataAllRow.value, (val: any) => {
   if (val) {
     const initialValue = {
@@ -423,10 +424,10 @@ watch(() => dataAllRow.value, (val: any) => {
 const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
-  // e.component.deleteRow(rowIndex)
-  dataSource.value.store().remove(key_row).then(() => {
-    dataSource.value.reload()
-  })
+  e.component.deleteRow(rowIndex)
+  // dataSource.value.store().remove(key_row).then(() => {
+  //   dataSource.value.reload()
+  // })
   dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== key_row)
 }
 
@@ -487,10 +488,10 @@ function calculateSalary(data: any) {
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
 }
 const addRow = () => {
-  // gridRef.value?.instance.addRow()
-  dataSource.value?.store().insert({}).then(() => {
-    dataSource.value?.reload()
-  })
+  gridRef.value?.instance.addRow()
+  // dataSource.value?.store().insert({}).then(() => {
+  //   dataSource.value?.reload()
+  // })
 }
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
@@ -513,17 +514,17 @@ const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
 }
 
 const onReorder = (e: RowDraggingReorderEvent) => {
-  const data = dataSource.value?.items()
-  const newTasks = [...data];
-  newTasks.splice(e.fromIndex, 1);
-  newTasks.splice(e.toIndex, 0, e.itemData);
-  dataSource.value = new DataSource({
-      store: {
-        type: "array",
-        key: "key",
-        data: newTasks,
-      },
-    })
+  // const data = dataSource.value?.items()
+  // const newTasks = [...data];
+  // newTasks.splice(e.fromIndex, 1);
+  // newTasks.splice(e.toIndex, 0, e.itemData);
+  // dataSource.value = new DataSource({
+  //     store: {
+  //       type: "array",
+  //       key: "key",
+  //       data: newTasks,
+  //     },
+  //   })
 }
 const handleFillValuePreIndex = () => {
   state.modalFillDataPreIndex = true
@@ -534,6 +535,14 @@ const closeModal = () => {
 const filled = () => {
   state.triggerQueryPreIndexBudget = true
   state.modalFillDataPreIndex = false
+}
+const selectOccupationRef = ref()
+const laborCostClassificationArrayRef = ref()
+const onFocusInOccupation = () => {
+  selectOccupationRef.value.instance.open()
+}
+const onFocusInLabor = () => {
+  laborCostClassificationArrayRef.value.instance.open()
 }
 </script>
 

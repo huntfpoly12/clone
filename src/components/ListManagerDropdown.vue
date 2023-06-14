@@ -1,7 +1,7 @@
 <template>
   <div>
     <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="width"
-      :data-source="result?.searchUsers?.datas.length > 0 ? result.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : []"
+      :data-source="dataSource"
       :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
       :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택"
       :name="nameInput" field-template="field" item-template="item">
@@ -103,6 +103,10 @@ export default defineComponent({
         value.value = newValue;
       }
     );
+    watch(result, (newValue: any) => {
+      // .length > 0 ? newValue.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : []
+      dataSource.value = newValue?.searchUsers?.datas;
+    })
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };

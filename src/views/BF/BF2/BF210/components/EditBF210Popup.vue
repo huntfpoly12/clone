@@ -9,238 +9,239 @@
       width="992px"
       :mask-closable="false"
     >
-      <standard-form formName="edit-bf-210">
-        <h2 class="title_modal">회원정보</h2>
-        <a-row :gutter="24">
-          <a-col :span="12">
-            <a-form-item label="회원ID" class="red" :label-col="labelCol">
-              <div class="dflex">
+      <a-spin :spinning="loading">
+        <standard-form formName="edit-bf-210">
+          <h2 class="title_modal">회원정보</h2>
+          <a-row :gutter="24">
+            <a-col :span="12">
+              <a-form-item label="회원ID" class="red" :label-col="labelCol">
+                <div class="dflex">
+                  <default-text-box
+                    disabled
+                    v-model:valueInput="formState.username"
+                    style="width: 150px; margin-right: 10px"
+                  />
+                  <button-basic
+                    :text="'중복체크'"
+                    :type="'default'"
+                    :mode="'contained'"
+                    :disabled="true"
+                  />
+                </div>
+              </a-form-item>
+              <a-form-item label="회원명" class="red" :label-col="labelCol">
                 <default-text-box
-                  disabled
-                  v-model:valueInput="formState.username"
+                  v-if="formState.type != 'c'"
+                  v-model:valueInput="formState.name"
                   style="width: 150px; margin-right: 10px"
-                  :replaceRegex="true"
+                  :required="true"
                 />
-                <button-basic
-                  :text="'중복체크'"
-                  :type="'default'"
-                  :mode="'contained'"
+                <default-text-box
+                  v-if="formState.type == 'c'"
+                  disabled
+                  v-model:valueInput="formState.name"
+                  style="width: 150px; margin-right: 10px"
+                />
+              </a-form-item>
+              <a-form-item label="소속" class="red" :label-col="labelCol">
+                <default-text-box
+                  v-model:valueInput="formState.groupCode"
+                  style="width: 150px; margin-right: 10px"
                   :disabled="true"
                 />
-              </div>
-            </a-form-item>
-            <a-form-item label="회원명" class="red" :label-col="labelCol">
-              <default-text-box
-                v-if="formState.type != 'c'"
-                v-model:valueInput="formState.name"
-                style="width: 150px; margin-right: 10px"
-                :required="true"
-              />
-              <default-text-box
-                v-if="formState.type == 'c'"
-                disabled
-                v-model:valueInput="formState.name"
-                style="width: 150px; margin-right: 10px"
-              />
-            </a-form-item>
-            <a-form-item label="소속" class="red" :label-col="labelCol">
-              <default-text-box
-                v-model:valueInput="formState.groupCode"
-                style="width: 150px; margin-right: 10px"
-                :disabled="true"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-item label="상태" :label-col="labelCol">
-              <switch-basic
-                v-model:valueSwitch="formState.active"
-                textCheck="이용중"
-                textUnCheck="이용중지"
-                :disabled="formState.type == 'c' ? true : false"
-              />
-            </a-form-item>
-            <a-form-item label="회원종류" class="red" :label-col="labelCol">
-              <DxSelectBox
-                id="custom-templates"
-                :data-source="products"
-                display-expr="name"
-                value-expr="id"
-                item-template="item"
-                :height="$config_styles.HeightInput"
-                style="width: 170px"
-                field-template="field"
-                :value="typeSelect"
-                :disabled="true"
-              >
-                <template #field="{ data }">
-                  <Field :fieldData="data" />
-                </template>
-                <template #item="{ data }">
-                  <div style="width: 100%; padding: 3px">
-                    <div
-                      :style="{
-                        color: data.color,
-                        background: data.background,
-                        padding: '2px 12px',
-                        borderRadius: '5px',
-                        border: data.border,
-                      }"
-                    >
-                      {{ data.name }}
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="상태" :label-col="labelCol">
+                <switch-basic
+                  v-model:valueSwitch="formState.active"
+                  textCheck="이용중"
+                  textUnCheck="이용중지"
+                  :disabled="formState.type == 'c' ? true : false"
+                />
+              </a-form-item>
+              <a-form-item label="회원종류" class="red" :label-col="labelCol">
+                <DxSelectBox
+                  id="custom-templates"
+                  :data-source="products"
+                  display-expr="name"
+                  value-expr="id"
+                  item-template="item"
+                  :height="$config_styles.HeightInput"
+                  style="width: 170px; opacity: 1;"
+                  field-template="field"
+                  :value="typeSelect"
+                  :disabled="true"
+                >
+                  <template #field="{ data }">
+                    <Field :fieldData="data" />
+                  </template>
+                  <template #item="{ data }">
+                    <div style="width: 100%; padding: 3px">
+                      <div
+                        :style="{
+                          color: data.color,
+                          background: data.background,
+                          padding: '2px 12px',
+                          borderRadius: '5px',
+                          border: data.border,
+                        }"
+                      >
+                        {{ data.name }}
+                      </div>
                     </div>
-                  </div>
-                </template>
-              </DxSelectBox>
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="12">
-            <a-form-item
-              label="휴대폰"
-              :span="4"
-              class="red"
-              :label-col="labelCol"
-            >
-              <tel-text-box
-                v-if="formState.type !== 'c'"
-                @keypress="onlyNumber"
-                type="text"
-                v-model:valueInput="formState.mobilePhone"
-                style="width: 150px; margin-right: 8px"
-                :required="true"
-              />
-              <tel-text-box
-                v-if="formState.type == 'c'"
-                disabled
-                @keypress="onlyNumber"
-                type="text"
-                v-model:valueInput="formState.mobilePhone"
-                style="width: 150px; margin-right: 8px"
-                :required="true"
-              />
-            </a-form-item>
-            <a-form-item
-              label="이메일"
-              :span="8"
-              class="red"
-              :label-col="labelCol"
-            >
-              <mail-text-box
-                v-if="formState.type !== 'c'"
-                v-model:valueInput="formState.email"
-                style="width: 237px"
-                :required="true"
-              />
-              <mail-text-box
-                v-else
-                disabled
-                :required="true"
-                v-model:valueInput="formState.email"
-                style="width: 237px"
-              />
-              <div style="margin-top: 3px">
-                <button-basic
-                  :text="'비밀번호 변경'"
+                  </template>
+                </DxSelectBox>
+              </a-form-item>
+            </a-col>
+  
+            <a-col :span="12">
+              <a-form-item
+                label="휴대폰"
+                :span="4"
+                class="red"
+                :label-col="labelCol"
+              >
+                <tel-text-box
                   v-if="formState.type !== 'c'"
-                  :type="'danger'"
-                  :mode="'outlined'"
-                  @onClick="showModal"
-                  :disabled="disabledBtn"
+                  @keypress="onlyNumber"
+                  type="text"
+                  v-model:valueInput="formState.mobilePhone"
+                  style="width: 150px; margin-right: 8px"
+                  :required="true"
                 />
-                <button-basic
-                  :text="'비밀번호 변경'"
-                  v-else
-                  :type="'danger'"
-                  :mode="'outlined'"
-                  :disabled="true"
+                <tel-text-box
+                  v-if="formState.type == 'c'"
+                  disabled
+                  @keypress="onlyNumber"
+                  type="text"
+                  v-model:valueInput="formState.mobilePhone"
+                  style="width: 150px; margin-right: 8px"
+                  :required="true"
                 />
-              </div>
-            </a-form-item>
-            <div class="confirm-popup">
-              <a-modal
-                footer=""
-                v-model:visible="visible"
-                :mask-closable="false"
+              </a-form-item>
+              <a-form-item
+                label="이메일"
+                :span="8"
+                class="red"
+                :label-col="labelCol"
               >
-                <a-row>
-                  <a-col :span="4">
-                    <mail-outlined :style="{ fontSize: '70px' }" />
-                  </a-col>
-                  <a-col :span="20">
-                    <p><strong>비밀번호 설정 이메일</strong></p>
-                    <p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
-                    <p>계속 진행하시겠습니까?</p>
-                  </a-col>
-                  <a-col :span="4"></a-col>
-                  <a-col :span="20">
-                    <div class="custom-button-modal">
-                      <button-basic
-                        :width="120"
-                        text="아니오"
-                        type="default"
-                        mode="outlined"
-                        @onClick="closePopupEmail"
-                        class="mr-10"
-                      />
-                      <button-basic
-                        text="네. 발송합니다"
-                        type="default"
-                        mode="contained"
-                        @onClick="sendMessToGmail"
-                      />
-                    </div>
-                  </a-col>
-                </a-row>
-              </a-modal>
+                <mail-text-box
+                  v-if="formState.type !== 'c'"
+                  v-model:valueInput="formState.email"
+                  style="width: 237px"
+                  :required="true"
+                />
+                <mail-text-box
+                  v-else
+                  disabled
+                  :required="true"
+                  v-model:valueInput="formState.email"
+                  style="width: 237px"
+                />
+                <div style="margin-top: 3px">
+                  <button-basic
+                    :text="'비밀번호 변경'"
+                    v-if="formState.type !== 'c'"
+                    :type="'danger'"
+                    :mode="'outlined'"
+                    @onClick="showModal"
+                    :disabled="disabledBtn"
+                  />
+                  <button-basic
+                    :text="'비밀번호 변경'"
+                    v-else
+                    :type="'danger'"
+                    :mode="'outlined'"
+                    :disabled="true"
+                  />
+                </div>
+              </a-form-item>
+              <div class="confirm-popup">
+                <a-modal
+                  footer=""
+                  v-model:visible="visible"
+                  :mask-closable="false"
+                >
+                  <a-row>
+                    <a-col :span="4">
+                      <mail-outlined :style="{ fontSize: '70px' }" />
+                    </a-col>
+                    <a-col :span="20">
+                      <p><strong>비밀번호 설정 이메일</strong></p>
+                      <p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
+                      <p>계속 진행하시겠습니까?</p>
+                    </a-col>
+                    <a-col :span="4"></a-col>
+                    <a-col :span="20">
+                      <div class="custom-button-modal">
+                        <button-basic
+                          :width="120"
+                          text="아니오"
+                          type="default"
+                          mode="outlined"
+                          @onClick="closePopupEmail"
+                          class="mr-10"
+                        />
+                        <button-basic
+                          text="네. 발송합니다"
+                          type="default"
+                          mode="contained"
+                          @onClick="sendMessToGmail"
+                        />
+                      </div>
+                    </a-col>
+                  </a-row>
+                </a-modal>
+              </div>
+            </a-col>
+          </a-row>
+          <div style="margin-top: 50px">
+            <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
+            <div style="position: relative">
+              <div class="overlay" v-if="formState.type == 'c'"></div>
+              <DxDataGrid
+                noDataText="내역이 없습니다"
+                :show-row-lines="true"
+                :hoverStateEnabled="true"
+                :data-source="arrData"
+                :show-bordes="true"
+                :selected-row-keys="checkedNames"
+                :allow-column-reordering="move_column"
+                :allow-column-resizing="colomn_resize"
+                :column-auto-width="true"
+                class="table-scroll"
+                key-expr="id"
+                @selection-changed="onSelectionChanged"
+              >
+                <DxScrolling mode="standard" show-scrollbar="always" />
+                <DxSelection mode="multiple" />
+                <DxColumn data-field="id" caption="코드" :width="200" />
+                <DxColumn data-field="name" caption="권한그룹명" />
+                <DxColumn data-field="memo" caption="권한그룹설명" />
+              </DxDataGrid>
             </div>
-          </a-col>
-        </a-row>
-        <div style="margin-top: 50px">
-          <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
-          <div style="position: relative">
-            <div class="overlay" v-if="formState.type == 'c'"></div>
-            <DxDataGrid
-              noDataText="내역이 없습니다"
-              :show-row-lines="true"
-              :hoverStateEnabled="true"
-              :data-source="arrData"
-              :show-bordes="true"
-              :selected-row-keys="checkedNames"
-              :allow-column-reordering="move_column"
-              :allow-column-resizing="colomn_resize"
-              :column-auto-width="true"
-              class="table-scroll"
-              key-expr="id"
-              @selection-changed="onSelectionChanged"
-            >
-              <DxScrolling mode="standard" show-scrollbar="always" />
-              <DxSelection mode="multiple" />
-              <DxColumn data-field="id" caption="코드" :width="200" />
-              <DxColumn data-field="name" caption="권한그룹명" />
-              <DxColumn data-field="memo" caption="권한그룹설명" />
-            </DxDataGrid>
           </div>
-        </div>
-        <a-col style="text-align: center; margin-top: 20px">
-          <button-basic
-            text="취소"
-            type="default"
-            mode="outlined"
-            @onClick="setModalVisible"
-            class="mr-10"
-            :width="120"
-          />
-          <button-basic
-            text="저장하고 나가기"
-            type="default"
-            mode="contained"
-            @onClick="confirmUpdate($event)"
-            :disabled="formState.type == 'c' ? true : false"
-            :width="150"
-          />
-        </a-col>
-      </standard-form>
+          <a-col style="text-align: center; margin-top: 20px">
+            <button-basic
+              text="취소"
+              type="default"
+              mode="outlined"
+              @onClick="setModalVisible"
+              class="mr-10"
+              :width="120"
+            />
+            <button-basic
+              text="저장하고 나가기"
+              type="default"
+              mode="contained"
+              @onClick="confirmUpdate($event)"
+              :disabled="formState.type == 'c' ? true : false"
+              :width="150"
+            />
+          </a-col>
+        </standard-form>
+      </a-spin>
     </a-modal>
   </div>
 </template>
@@ -374,7 +375,7 @@ export default defineComponent({
       };
       sendGmail(dataCallSendEmail);
     };
-    const { result, refetch } = useQuery(queries.getUser, dataQuery, () => ({
+    const { result, refetch, loading } = useQuery(queries.getUser, dataQuery, () => ({
       enabled: trigger.value,
       fetchPolicy: "no-cache",
     }));
@@ -472,6 +473,8 @@ export default defineComponent({
         formState.value.groupCode =
           value.getUser.groupCode + " " + value.getUser.groupName;
         originData.value.types = [value.getUser.type];
+        if (value.getUser.type == "m" && value.getUser.managerGrade == "1")
+          typeSelect.value = 0;
         if (value.getUser.type == "m" && value.getUser.managerGrade == "2")
           typeSelect.value = 1;
         if (value.getUser.type == "m" && value.getUser.managerGrade == "3")
@@ -542,6 +545,7 @@ export default defineComponent({
       sendGmail,
       sendMessToGmail,
       confirmUpdate,
+      loading
     };
   },
 });
