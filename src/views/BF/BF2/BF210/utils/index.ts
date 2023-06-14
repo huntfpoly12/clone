@@ -122,9 +122,18 @@ export const formStatePopupEdit = {
 
 export const productsPopupEdit = [
     {
+        id: 0,
+        color: 'white',
+        name: "최고매니저",
+        type: "m",
+        grade: "1",
+        background: 'black',
+        border: "1px solid black",
+    },
+    {
         id: 1,
         color: 'white',
-        name: "중간메니저",
+        name: "담당매니저",
         type: "m",
         grade: "2",
         background: 'black',
