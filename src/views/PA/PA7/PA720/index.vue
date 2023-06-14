@@ -1,13 +1,13 @@
 <template>
   <action-header title="기타소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-720" class="page-content">
-    <a-row :class="{ 'ele-opacity': !compareForm() }">
+    <div :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData" :show-borders="true"
           :allow-column-reordering="move_column" key-expr="hasData" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" ref="pa720GridRef">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn :caption="processKeyPA720.processKey.imputedYear + '귀속월'" cell-template="imputed-year"/>
+          <DxColumn :caption="processKeyPA720.processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year>
             <span>지급연월 </span>
           </template>
@@ -194,7 +194,7 @@
           </template>
         </DxDataGrid>
       </a-spin>
-    </a-row>
+    </div>
     <a-row :class="{ 'ele-opacity': !compareForm() }"
       style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
@@ -310,19 +310,23 @@ export default defineComponent({
     const statusParam = ref<any>({ status: 10 });
     const store = useStore();
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
-    const { per_page, move_column, colomn_resize } = store.state.settings;
+    const { move_column, colomn_resize } = store.state.settings;
     const modalDelete = ref<boolean>(false);
     const modalEdit = ref<boolean>(false);
     const modalHistory = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
-    const editTaxParam = ref<any>({});
+    const processKeyPA720 = computed(() => store.getters['common/processKeyPA720']);
+    const editTaxParam = ref<any>({
+      companyId:companyId,
+      incomeId: 0,
+      processKey:processKeyPA720.value.processKey
+    });
     const changeFommDone = ref(1);
     const formTaxRef = ref();
     const taxPayRef = ref();
     const deleteIncomeExtrasParam = ref<any>({});
     const changeIncomeExtraPaymentDayParam = ref<any>({ day: null });
     store.commit('common/processKeyPA720', globalYear.value);
-    const processKeyPA720 = computed(() => store.getters['common/processKeyPA720']);
     const modalCopy = ref<boolean>(false);
     const dataModalCopy = ref<number>(1);
     const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
@@ -658,7 +662,12 @@ export default defineComponent({
         if (!store.state.common.isClickEditDiffPA720) {
           store.commit('common/selectedRowKeysPA720', compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId);
         }
-        editTaxParam.value.incomeId = compareType.value == 1 ? formPA720.value.input.incomeId : editTaxParamFake.value.incomeId;
+        let incomeId = compareType.value == 1 ? formPA720.value.input.incomeId : editTaxParamFake.value.incomeId;
+        editTaxParam.value = {
+          ...editTaxParam.value,
+          processKey: processKeyPA720.value.processKey,
+          incomeId
+        }
         taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId;
         store.state.common.isNewRowPA720 = false;
         if (isClickMonthDiff.value) {
@@ -739,6 +748,7 @@ export default defineComponent({
       dataQuery.value.imputedYear = globalYear.value;
       configTrigger.value = true;
       refetchConfig();
+      
     }
     const onAddMonth = (val: number) => {
       monthHover.value = val;
@@ -824,7 +834,6 @@ export default defineComponent({
     return {
       statusParam,
       loadingIncomeProcessExtras,
-      per_page,
       move_column,
       colomn_resize,
       modalDelete,

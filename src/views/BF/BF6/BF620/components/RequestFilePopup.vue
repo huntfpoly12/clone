@@ -5,8 +5,7 @@
     :mask-closable="false"
     class="confirm-md"
     footer=""
-    :closable="false"
-    :width="400"
+    :width="420"
   >
     <standard-form action="" name="request-file-620">
       <div>
@@ -34,8 +33,8 @@
         />
         <button-basic
           class="button-form-modal"
-          :text="'네. 발송합니다'"
-          :width="140"
+          :text="'네. 제작요청합니다'"
+          :width="160"
           :type="'default'"
           :mode="'contained'"
           @onClick="onSubmit"
@@ -103,11 +102,11 @@ export default defineComponent({
           props.requestFileData.filter.paymentYear;
         filterRequest.value.paymentMonth =
           props.requestFileData.filter.paymentMonth;
-        filterRequest.value.withholdingTaxType =
-          props.requestFileData.filter.withholdingTaxType;
-        dataRequestFile.value.filter = filterRequest.value;
         switch (props.tabName) {
           case "tab1":
+            filterRequest.value.withholdingTaxType =
+              props.requestFileData.filter.withholdingTaxType;
+            dataRequestFile.value.filter = filterRequest.value;
             makeDataClean(dataRequestFile.value);
             dataRequestFile.value.filter.productionStatuses = dataRequestFile
               .value.filter.beforeProduction
@@ -116,6 +115,9 @@ export default defineComponent({
             creationWithholdingTaxTab1(dataRequestFile.value);
             break;
           case "tab2":
+            filterRequest.value.reportType =
+              props.requestFileData.filter.reportType;
+            dataRequestFile.value.filter = filterRequest.value;
             makeDataClean(dataRequestFile.value);
             dataRequestFile.value.filter.productionStatuses = dataRequestFile
               .value.filter.beforeProduction

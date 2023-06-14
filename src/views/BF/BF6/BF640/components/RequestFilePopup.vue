@@ -1,12 +1,11 @@
 <template>
   <a-modal
     :visible="true"
-    @cancel="$emit('cancel')"
+    @cancel="$emit('cancel', false)"
     :mask-closable="false"
     class="confirm-md"
     footer=""
-    :closable="false"
-    :width="400"
+    :width="420"
   >
     <standard-form action="" name="request-file-620">
       <div>
@@ -28,12 +27,12 @@
           :text="'아니요'"
           :type="'default'"
           :mode="'outlined'"
-          @onClick="$emit('cancel')"
+          @onClick="$emit('cancel', false)"
         />
         <button-basic
           class="button-form-modal"
-          :text="'네. 발송합니다'"
-          :width="140"
+          :text="'네. 제작요청합니다'"
+          :width="160"
           :type="'default'"
           :mode="'contained'"
           @onClick="onSubmit"
@@ -124,7 +123,7 @@ export default defineComponent({
     // onDone tab 1
     onDoneTab1(() => {
       notification("success", messageCreate);
-      emit("cancel", false);
+      emit("cancel", true);
     });
     onErrorTab1((e: any) => {
       //notification('error', e.message);
@@ -132,7 +131,7 @@ export default defineComponent({
     // onDone tab 2
     onDoneTab2(() => {
       notification("success", messageCreate);
-      emit("cancel", false);
+      emit("cancel", true);
     });
     onErrorTab2((e: any) => {
       //notification('error', e.message);
