@@ -1,8 +1,8 @@
 <template>
   <a-spin :spinning="loadingTab1 || loadingTab2 || loadingTab3 || loadingTab4">
-    <span class="tag-status-null" style="padding:1px 10px;opacity: 50%" v-if="beforeProductionRequest">제작요청전</span>
+    <span class="tag-status-null" style="padding:1px 10px;opacity: 50%" v-if="!beforeProductionRequest">제작요청전</span>
     <template v-else>
-      <a-tooltip placement="topLeft" color="#C00000"  v-if="checkStatus(-1)">
+      <a-tooltip placement="topLeft" color="#C00000" v-if="checkStatus(-1)">
         <template #title>{{ causeOfProductionFailure }}</template>
         <div>
           <production-status :typeTag="5" padding="1px 10px" />
@@ -53,20 +53,20 @@ export default defineComponent({
     })
     let causeOfProductionFailure = ref('')
     watch(dataSearch, (newVal) => {
-      if (newVal && !props.beforeProductionRequest) {
-        if (props.tabName == 'tab1') {
-          triggerTab1.value = true
-        }
-        if (props.tabName == 'tab2') {
-          triggerTab2.value = true
-        }
-        if (props.tabName == 'tab3') {
-          triggerTab3.value = true
-        }
-        if (props.tabName == 'tab4') {
-          triggerTab4.value = true
-        }
-      }
+      // if (newVal && !props.beforeProductionRequest) {
+      //   if (props.tabName == 'tab1') {
+      //     triggerTab1.value = true
+      //   }
+      //   if (props.tabName == 'tab2') {
+      //     triggerTab2.value = true
+      //   }
+      //   if (props.tabName == 'tab3') {
+      //     triggerTab3.value = true
+      //   }
+      //   if (props.tabName == 'tab4') {
+      //     triggerTab4.value = true
+      //   }
+      // }
     }, {
       deep: true,
       immediate: true
@@ -107,7 +107,7 @@ export default defineComponent({
 
     // active query by TAB
     if (props.tabName == 'tab1') {
-      triggerTab1.value = true
+      triggerTab1.value = props.beforeProductionRequest == null ? false : true
       onResultTab1((res: any) => {
         triggerTab1.value = false
         if (res.data) {
@@ -115,11 +115,11 @@ export default defineComponent({
           emit('productionStatusData', arrStatus.value);
         } else {
           emit('productionStatusData', null);
-        }  
+        }
       })
     }
     if (props.tabName == 'tab2') {
-      triggerTab2.value = true
+      triggerTab2.value = props.beforeProductionRequest == null ? false : true
       onResultTab2((res: any) => {
         triggerTab2.value = false
         if (res.data) {
@@ -131,7 +131,7 @@ export default defineComponent({
       })
     }
     if (props.tabName == 'tab3') {
-      triggerTab3.value = true
+      triggerTab3.value = props.beforeProductionRequest == null ? false : true
       onResultTab3((res: any) => {
         triggerTab3.value = false
         if (res.data) {
@@ -143,7 +143,7 @@ export default defineComponent({
       })
     }
     if (props.tabName == 'tab4') {
-      triggerTab4.value = true
+      triggerTab4.value = props.beforeProductionRequest == null ? false : true
       onResultTab4((res: any) => {
         triggerTab4.value = false
         if (res.data) {
@@ -157,10 +157,10 @@ export default defineComponent({
 
 
     const checkStatus = (status: any) => {
-      if (!!arrStatus.value && arrStatus.value.productionStatus === status){
+      if (!!arrStatus.value && arrStatus.value.productionStatus === status) {
         causeOfProductionFailure.value = arrStatus.value?.causeOfProductionFailure || ''
         return true
-      }else{
+      } else {
         return false
       }
     }
