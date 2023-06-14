@@ -5,27 +5,27 @@
       :buttonSearch="true" />
     <div id="bf-310">
       <div class="search-form">
-        <a-row :gutter="[24, 8]">
-          <a-col>
+        <a-row justify="end">
+          <a-col class="ml-10">
             <label class="lable-item">서비스종류 :</label>
             <checkbox-basic v-model:valueCheckbox="listCheckBox.accounting" :disabled="false" :size="'14'" label="회계"
               style="margin-right: 10px" />
             <checkbox-basic v-model:valueCheckbox="listCheckBox.withholding" :disabled="false" :size="'14'" label="원천" />
           </a-col>
-          <a-col>
+          <a-col class="ml-10">
             <div class="dflex custom-flex">
               <label class="lable-item">심사상태/결과 :</label>
               <SelectCustomField v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
             </div>
           </a-col>
-          <a-col>
+          <a-col class="ml-10">
             <div class="dflex custom-flex">
               <label class="lable-item">영업자 :</label>
               <list-sales-dropdown width="150px" v-model:valueInput="originData.salesRepresentativeId" />
             </div>
           </a-col>
 
-          <a-col>
+          <!-- <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">상호 :</label>
               <default-text-box width="150px" v-model:valueInput="originData.companyName" />
@@ -37,8 +37,8 @@
               <label class="lable-item">대표자 :</label>
               <default-text-box width="150px" v-model:valueInput="originData.presidentName" />
             </div>
-          </a-col>
-          <a-col>
+          </a-col> -->
+          <a-col class="ml-10">
             <div class="dflex custom-flex">
               <label class="lable-item">신청기간 :</label>
               <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
