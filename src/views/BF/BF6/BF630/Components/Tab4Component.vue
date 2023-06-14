@@ -569,13 +569,13 @@ export default defineComponent({
       }
     };
 
-    const countStatus = (arr: any[], type: number, propertyCompare: string) => {
+    const countStatus = (arr: any[], type: number) => {
       if (Object.keys(arr).length === 0 || arr.length === 0) {
         return 0;
       }
       let count = arr.reduce((acc: any, crr: any) => {
-        acc[crr[propertyCompare]] = acc[crr[propertyCompare]]
-          ? acc[crr[propertyCompare]] + 1
+        acc[crr["productionStatus"]] = acc[crr["productionStatus"]]
+          ? acc[crr["productionStatus"]] + 1
           : 1;
         return acc;
       }, {});
@@ -591,27 +591,11 @@ export default defineComponent({
           totalBeforeProduction++;
         }
       });
-      return `제작요청전 <span style="font-size: 16px">[${totalBeforeProduction}]</span> 
-              제작대기 <span style="font-size: 16px">[${countStatus(
-                productionStatusArr.value,
-                0,
-                "productionStatus"
-              )}]</span> 
-              제작중 <span style="font-size: 16px">[${countStatus(
-                productionStatusArr.value,
-                1,
-                "productionStatus"
-              )}]</span> 
-              제작실패 <span style="font-size: 16px">[${countStatus(
-                productionStatusArr.value,
-                -1,
-                "productionStatus"
-              )}]</span> 
-              제작성공 <span style="font-size: 16px">[${countStatus(
-                productionStatusArr.value,
-                2,
-                "productionStatus"
-              )}]</span>`;
+      return `제작요청전 <span style="font-size: 16px">[${totalBeforeProduction}]</span>
+              제작대기 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 0)}]</span> 
+              제작중 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 1)}]</span> 
+              제작성공 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 2)}]</span>
+              제작실패 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, -1)}]</span> `;
     };
     const productionStatusData = (emitVal: any, index: number) => {
       countListData.value++;
