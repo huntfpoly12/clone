@@ -81,6 +81,7 @@
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
           id="tab1-bf640" noDataText="내역이 없습니다">
+          <DxPaging :enabled="false" />
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="code" cell-template="company-code" />
@@ -170,6 +171,7 @@ import {
   DxScrolling,
   DxSummary,
   DxTotalItem,
+DxPaging,
 } from "devextreme-vue/data-grid";
 import RequestFilePopup from "./RequestFilePopup.vue";
 import GetStatusTable from "./GetStatusTable.vue";
@@ -198,7 +200,8 @@ export default defineComponent({
     GetStatusTable,
     CheckboxGroup,
     DxLoadPanel,
-  },
+    DxPaging
+},
   props: {
     search: {
       type: Number,
