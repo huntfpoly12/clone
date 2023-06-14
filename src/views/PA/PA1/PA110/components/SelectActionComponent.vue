@@ -4,14 +4,14 @@
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-4" icon="plus" @click="onActionAddItem" :disabled="store.state.common.pa110.statusDisabledStatus" />
-    <a-tooltip placement="top" title="일용직소득자료 변경이력">
+    <a-tooltip placement="top" title="근로소득자료 변경이력">
         <span>
             <DxButton class="ml-4" @click="showHistory">
                 <HistoryOutlined style="font-size: 18px" />
             </DxButton>
         </span>
     </a-tooltip>
-    <a-tooltip placement="top" title="일영직소득 마감상태 변경이력">
+    <a-tooltip placement="top" title="근로소득 마감상태 변경이력">
         <span>
             <DxButton class="ml-4" @click="showHistoryStatus">
                 <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history-custom" />
