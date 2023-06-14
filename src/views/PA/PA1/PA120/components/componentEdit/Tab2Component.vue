@@ -37,7 +37,7 @@
                 v-model:valueCheckbox="
                   initFormTab2PA120.employeementInsuranceDeduction
                 "
-                :disabled="presidentEditPA120"
+                :disabled="insuranceDisabled"
               ></checkbox-basic>
             </span>
             <a-tooltip placement="top" class="custom-tooltip">
@@ -559,6 +559,8 @@ export default defineComponent({
     let countConfigPayItems = ref(0);
     let countRestFirstRun = ref(-1);
     const modalCalc = ref(false);
+    const insuranceDisabled = ref(false);
+
     // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
@@ -714,15 +716,13 @@ export default defineComponent({
     watch(resultGetEmployeeWage, async (value) => {
       if (value) {
         let data = value.getEmployeeWage;
-        store.state.common.presidentEditPA120 = data.president;
         let editRowData: any = {};
+        insuranceDisabled.value = data.president;
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
         editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
         editRowData.longTermCareInsuranceDeduction =
           data.longTermCareInsuranceDeduction;
-        editRowData.employeementInsuranceDeduction = presidentEditPA120.value
-          ? false
-          : data.employeementInsuranceDeduction;
+        editRowData.employeementInsuranceDeduction = data.employeementInsuranceDeduction;
         editRowData.insuranceSupport = data.insuranceSupport;
         if (
           data?.nationalPensionSupportPercent >= 0 &&
@@ -785,7 +785,7 @@ export default defineComponent({
             );
             let value = item2Value?.amount ? item2Value.amount : 0;
             initFormTab2PA120.value.payItems[key] = { ...item1, value };
-            editRowTab2PA120.value.payItems[key] = { ...item1, value };
+            editRowTab2PA120.value.payItems[key] = JSON.parse(JSON.stringify({ ...item1, value }));
           });
         }
         if (data.deductionItems && dataConfigDeduction.value.length > 0) {
@@ -795,7 +795,7 @@ export default defineComponent({
             );
             let value = item2Value?.amount ? item2Value.amount : 0;
             initFormTab2PA120.value.deductionItems[key] = { ...item1, value };
-            editRowTab2PA120.value.deductionItems[key] = { ...item1, value };
+            editRowTab2PA120.value.deductionItems[key] = JSON.parse(JSON.stringify({ ...item1, value }));
           });
         }
         calculateVariables.totalTaxPay =
@@ -975,35 +975,35 @@ export default defineComponent({
       (newValue) => {
         if (newValue) {
           initFormTab2PA120.value.employeementInsuranceDeduction = false;
+          updateDeduction();
         }
+        insuranceDisabled.value = newValue;
       },
       { deep: true }
     );
+    
     //  // watch initFormTab2PA120 to check calculate button
     watch(
-      () => initFormTab2PA120.value.payItems,
-      (newVal) => {
-        if (countConfigPayItems.value < 1) {
-          countConfigPayItems.value++;
-          return;
-        } else {
+      () => initFormTab2PA120.value,
+      () => {
+        if (!compareForm()) {
           isBtnYellow.value = true;
+        } else {
+          isBtnYellow.value = false;
         }
       },
       { deep: true }
     );
     const isBtnYellow = ref(false);
     const compareForm = () => {
-      const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
+      const { deductionItems, ...rest } = initFormTab2PA120.value;
       const {
         deductionItems: de2,
-        payItems: pa2,
         ...rest2
       } = editRowTab2PA120.value;
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {
-      const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
       if (countRestFirstRun.value < 1) {
         countRestFirstRun.value++;
         return;
@@ -1154,6 +1154,7 @@ export default defineComponent({
       msgCalc,
       vnode,
       handleFocusOut,
+      insuranceDisabled,
     };
   },
 });

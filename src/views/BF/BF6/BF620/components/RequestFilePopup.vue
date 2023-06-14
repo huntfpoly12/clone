@@ -5,12 +5,15 @@
     :mask-closable="false"
     class="confirm-md"
     footer=""
+    :width="420"
   >
     <standard-form action="" name="request-file-620">
       <div>
         <div class="eamil-input">
-          <span>선택된 내역들의 전자신고파일 제작요청하시겠습니까?<br/>
-            결과를 이메일로 받으시려면 이메일 주소를 입력하세요.</span>
+          <span
+            >선택된 내역들의 전자신고파일 제작요청하시겠습니까?<br />
+            결과를 이메일로 받으시려면 이메일 주소를 입력하세요.</span
+          >
           <mail-text-box
             width="250px"
             :required="true"
@@ -20,7 +23,7 @@
           ></mail-text-box>
         </div>
       </div>
-      <div class="text-align-center mt-10">
+      <div class="text-align-center mt-20">
         <button-basic
           class="button-form-modal"
           :text="'아니요'"
@@ -30,8 +33,8 @@
         />
         <button-basic
           class="button-form-modal"
-          :text="'네. 발송합니다'"
-          :width="140"
+          :text="'네. 제작요청합니다'"
+          :width="160"
           :type="'default'"
           :mode="'contained'"
           @onClick="onSubmit"
@@ -42,7 +45,7 @@
 </template>
 <script lang="ts">
 import { useMutation } from "@vue/apollo-composable";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import mutations from "@/graphql/mutations/BF/BF6/BF620/index";
 import notification from "@/utils/notification";
 import { makeDataClean } from "@/helpers/commonFunction";
@@ -62,6 +65,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const dataRequestFile = ref(props.requestFileData);
     const messageCreate = Message.getCommonMessage("106").message;
+    const filterRequest: any = ref({});
+
     //----------------- query send request file tab 1--------------------------------
 
     const {
@@ -89,8 +94,19 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
+        filterRequest.value.imputedYear =
+          props.requestFileData.filter.imputedYear;
+        filterRequest.value.imputedMonth =
+          props.requestFileData.filter.imputedMonth;
+        filterRequest.value.paymentYear =
+          props.requestFileData.filter.paymentYear;
+        filterRequest.value.paymentMonth =
+          props.requestFileData.filter.paymentMonth;
         switch (props.tabName) {
           case "tab1":
+            filterRequest.value.withholdingTaxType =
+              props.requestFileData.filter.withholdingTaxType;
+            dataRequestFile.value.filter = filterRequest.value;
             makeDataClean(dataRequestFile.value);
             dataRequestFile.value.filter.productionStatuses = dataRequestFile
               .value.filter.beforeProduction
@@ -99,6 +115,9 @@ export default defineComponent({
             creationWithholdingTaxTab1(dataRequestFile.value);
             break;
           case "tab2":
+            filterRequest.value.reportType =
+              props.requestFileData.filter.reportType;
+            dataRequestFile.value.filter = filterRequest.value;
             makeDataClean(dataRequestFile.value);
             dataRequestFile.value.filter.productionStatuses = dataRequestFile
               .value.filter.beforeProduction

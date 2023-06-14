@@ -48,17 +48,17 @@
           label-align="left"
           class="fix-width-label"
         >
-          <default-text-box v-model:valueInput="dataSearch.companyCode" />
+          <default-text-box v-model:valueInput="dataSearch.companyCode" width="160"/>
         </a-form-item>
         <a-form-item label="상호" label-align="left" class="fix-width-label">
-          <default-text-box v-model:valueInput="dataSearch.companyName" />
+          <default-text-box v-model:valueInput="dataSearch.companyName" width="160" />
         </a-form-item>
         <a-form-item
           label="매니저리스트"
           label-align="left"
           class="fix-width-label"
         >
-          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
+          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160" />
         </a-form-item>
         <a-form-item
           label="영업자리스트"
@@ -66,7 +66,7 @@
           class="fix-width-label"
         >
           <list-sales-dropdown
-            v-model:valueInput="dataSearch.salesRepresentativeId"
+            v-model:valueInput="dataSearch.salesRepresentativeId" width="160"
           />
         </a-form-item>
       </a-col>
@@ -74,7 +74,7 @@
         <switch-basic
           textCheck="해지제외"
           textUnCheck="해지포함"
-          v-model:valueSwitch="dataSearch.excludeCancel"
+          v-model:valueSwitch="dataSearch.active"
         />
       </a-col>
     </a-row>
@@ -88,10 +88,9 @@
             :disabled="true"
           />
           <span class="d-flex-center">
-            <img src="@/assets/images/iconInfo.png" style="width: 16px" />
-            <span class="pl-5"
-              >본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span
-            >
+            <info-tool-tip>
+              <span>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
+            </info-tool-tip>
           </span>
         </div>
       </a-form-item>

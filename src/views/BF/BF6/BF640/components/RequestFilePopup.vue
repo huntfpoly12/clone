@@ -1,11 +1,11 @@
 <template>
   <a-modal
     :visible="true"
-    @cancel="$emit('cancel')"
+    @cancel="$emit('cancel', false)"
     :mask-closable="false"
     class="confirm-md"
     footer=""
-    :width="644"
+    :width="420"
   >
     <standard-form action="" name="request-file-620">
       <div>
@@ -21,18 +21,18 @@
           ></mail-text-box>
         </div>
       </div>
-      <div class="text-align-center mt-10">
+      <div class="text-align-center mt-20">
         <button-basic
           class="button-form-modal"
           :text="'아니요'"
           :type="'default'"
           :mode="'outlined'"
-          @onClick="$emit('cancel')"
+          @onClick="$emit('cancel', false)"
         />
         <button-basic
           class="button-form-modal"
-          :text="'네. 발송합니다'"
-          :width="140"
+          :text="'네. 제작요청합니다'"
+          :width="160"
           :type="'default'"
           :mode="'contained'"
           @onClick="onSubmit"
@@ -63,6 +63,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const dataRequestFile = ref(props.requestFileData);
     const messageCreate = Message.getCommonMessage("106").message;
+    const filterRequest:any = ref({});
 
     //----------------- query send request file tab 1--------------------------------
 
@@ -91,16 +92,21 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
+        filterRequest.value.paymentYear = props.requestFileData.filter.paymentYear;
         switch (props.tabName) {
           case "tab1":
+            filterRequest.value.paymentHalfYear = props.requestFileData.filter.paymentHalfYear;
+            dataRequestFile.value.filter = filterRequest.value;
             makeDataClean(dataRequestFile.value);
             dataRequestFile.value.filter.productionStatuses = dataRequestFile
-              .value.filter.beforeProduction
-              ? null
-              : dataRequestFile.value.filter.productionStatuses;
+            .value.filter.beforeProduction
+            ? null
+            : dataRequestFile.value.filter.productionStatuses;
             creationWithholdingTaxTab1(dataRequestFile.value);
             break;
-          case "tab2":
+            case "tab2":
+            filterRequest.value.paymentMonth = props.requestFileData.filter.paymentMonth;
+            dataRequestFile.value.filter = filterRequest.value;
             makeDataClean(dataRequestFile.value);
             dataRequestFile.value.filter.productionStatuses = dataRequestFile
               .value.filter.beforeProduction
@@ -117,7 +123,7 @@ export default defineComponent({
     // onDone tab 1
     onDoneTab1(() => {
       notification("success", messageCreate);
-      emit("cancel", false);
+      emit("cancel", true);
     });
     onErrorTab1((e: any) => {
       //notification('error', e.message);
@@ -125,7 +131,7 @@ export default defineComponent({
     // onDone tab 2
     onDoneTab2(() => {
       notification("success", messageCreate);
-      emit("cancel", false);
+      emit("cancel", true);
     });
     onErrorTab2((e: any) => {
       //notification('error', e.message);

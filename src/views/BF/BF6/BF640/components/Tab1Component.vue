@@ -34,16 +34,16 @@
       </a-col>
       <a-col class="search-company">
         <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
-          <default-text-box v-model:valueInput="dataSearch.companyCode" />
+          <default-text-box v-model:valueInput="dataSearch.companyCode" width="160px" />
         </a-form-item>
         <a-form-item label="상호" label-align="left" class="fix-width-label">
-          <default-text-box v-model:valueInput="dataSearch.companyName" />
+          <default-text-box v-model:valueInput="dataSearch.companyName" width="160px" />
         </a-form-item>
         <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
+          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
         </a-form-item>
         <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" />
+          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px" />
         </a-form-item>
       </a-col>
       <a-col class="search-4">
@@ -56,12 +56,13 @@
           <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고"
             :disabled="true" />
           <span class="d-flex-center">
-            <img src="@/assets/images/iconInfo.png" style="width: 16px" />
-            <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
+            <info-tool-tip>
+              <span>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
+            </info-tool-tip>
           </span>
         </div>
       </a-form-item>
-      <a-form-item label="제출연월일" label-align="left">
+      <a-form-item label="제출연월일" label-align="left" class="date-group">
         <div class="d-flex-center">
           <date-time-box width="150px" v-model:valueDate="dayReport" />
           <a-tooltip placement="topLeft" color="black">
@@ -213,7 +214,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const globalYear: any = +dayjs().format("YYYY");
-    const dayReport = ref(`${globalYear.value}0802`);
+    const dayReport = ref(dayjs().format("YYYYMMDD"));
     let checkBoxSearch = [...checkBoxSearchStep1];
     let valueDefaultCheckbox = ref(1);
     let valueDefaultSwitch = ref(true);
@@ -503,8 +504,10 @@ export default defineComponent({
         notification("warning", messageDelNoItem);
       }
     };
-    const onRequestDone = () => {
-      refetchTable();
+    const onRequestDone = (emitVal: boolean) => {
+      if(emitVal){
+        refetchTable();
+      }
       modalStatus.value = false;
     };
 

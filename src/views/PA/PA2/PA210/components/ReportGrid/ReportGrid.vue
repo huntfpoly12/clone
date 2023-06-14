@@ -257,7 +257,7 @@
     v-if="confirmLoadNewStatus"
     :modalStatus="confirmLoadNewStatus"
     @closePopup="confirmLoadNewStatus = false"
-    @loadNewAction="loadNew"
+    @loadNewAction="loadNew(false)"
   />
 </template>
 
@@ -412,7 +412,7 @@ export default defineComponent({
 
     onMounted(() => {
       clearAllCellValue(wrapper);
-      loadNew();
+      loadNew(true);
     });
 
     watch(
@@ -463,7 +463,7 @@ export default defineComponent({
     };
 
     // A function that is called when the user clicks on the "Load New" button.
-    const loadNew = async () => {
+    const loadNew = async (firstLoad: boolean) => {
       clearAllCellValue(wrapper);
       originData.value = {
         companyId: companyId,
@@ -480,6 +480,9 @@ export default defineComponent({
       };
       trigger.value = true;
       refetchData();
+      if (!firstLoad) {
+        store.commit("common/setHasChangedPopupPA210", true);
+      }
       await checkDisableRefund()
       await checkDisableA04A06()
     };

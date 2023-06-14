@@ -38,7 +38,6 @@
               />
               <info-tool-tip width="310px">
                 본 항목은 공제 계산을 위한 설정으로 실제 4대보험
-                <br />
                 신고 여부와는 무관합니다.
               </info-tool-tip>
             </div>

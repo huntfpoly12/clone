@@ -293,7 +293,7 @@ export default defineComponent({
       initFormStateTabPA120.value.roadAddress = data.roadAddress;
     };
     const messageUpdate = Message.getMessage("COMMON", "106").message;
-
+    const presidentOrigin = ref(false);
     watch(
       () => props.popupStatus,
       (newValue: any) => {
@@ -384,6 +384,7 @@ export default defineComponent({
       store.state.common.deductionDependentCountPA120 = data?.deductionDependentCount || 1;
       editRowData.name = data.name.toUpperCase();
       editRowData.foreigner = data.foreigner;
+      presidentOrigin.value = data.president;
       editRowData.president = data.president;
       editRowData.nationality = data.nationality;
       editRowData.nationalityCode = data.nationalityCode;
@@ -441,6 +442,11 @@ export default defineComponent({
       store.commit("common/actionFormDonePA120");
       store.state.common.isNewRowPA120 = false;
       store.commit("common/editRowPA120", initFormStateTabPA120.value);
+      if(presidentOrigin.value !== initFormStateTabPA120.value.president){
+        store.state.common.presidentEditPA120 = initFormStateTabPA120.value.president;
+      } else {
+        store.state.common.presidentEditPA120 = false;
+      }
     });
     watch(
       () => props.idRowEdit,
@@ -448,6 +454,7 @@ export default defineComponent({
         if (value != 0) {
           originDataDetail.value.employeeId = value;
           getEmployeeWageTrigger.value = true;
+          store.state.common.presidentEditPA120 = false;
         }
       },
       { immediate: true }
@@ -486,18 +493,11 @@ export default defineComponent({
       },
       { deep: true }
     );
-    watch(
-      () => initFormStateTabPA120.value.president,
-      (newValue) => {
-        store.state.common.presidentEditPA120 = newValue;
-      },
-      { deep: true }
-    );
 
     //----------------------NOTIFY PRESIDENT CHANGE--------------------
 
     const presidentWaring =
-      "대표자는 고용보험에서 제외됩니다. ( 기존에 선택되어있는 경우 강제로 해지됩니다";
+      "대표자는 고용보험에서 제외됩니다. (기존에 선택되어있는 경우 강제로 해지됩니다)";
     const presidenStatus = ref(false);
     const onChangePresident = (emit: any) => {
       if (emit) {

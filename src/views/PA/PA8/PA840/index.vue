@@ -275,18 +275,18 @@ const actionDelete = (type: number, workId: number) => {
   modalDelete.value = true;
   cancelCompanyParam.workId = workId;
   if (type === 4) {
-    dataType.value == type;
+    dataType.value = type;
   }
   if (type === 5) {
-    dataType.value == type;
+    dataType.value = type;
   }
 }
 const handleDelete = (e: boolean) => {
   modalDelete.value = false;
-  if (e && dataType.value == 4) {
+  if (e && dataType.value === 4) {
     cancelLeaveOfAbsenceMutate(cancelCompanyParam);
   }
-  if (e && dataType.value == 5) {
+  if (e && dataType.value === 5) {
     cancelReturnToWorkMutate(cancelCompanyParam);
   }
 }

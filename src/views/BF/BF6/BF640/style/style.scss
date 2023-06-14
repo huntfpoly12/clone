@@ -135,11 +135,17 @@
     grid-template-columns: 50% 50%;
 
     :deep .ant-form-item-label>label {
-      width: 120px;
+      width: 115px;
       padding-left: 10px;
     }
   }
-
+  .date-group{
+    :deep .ant-form-item-label>label {
+      width: 90px;
+      padding-left: 10px;
+    }
+  }
+  
   .search-4 {
     align-self: center;
 
