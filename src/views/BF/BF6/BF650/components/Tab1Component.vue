@@ -106,7 +106,7 @@
             <template #title>전자신고파일 제작 요청</template>
             <div
               class="btn-modal-save"
-              @click="keySelect.length > 0 && openModalSave()"
+              @click="openModalSave()"
             >
               <SaveOutlined class="fz-24 ml-5 action-save" />
               <span style="margin-left: 5px">파일제작요청</span>
@@ -225,6 +225,7 @@ import GetStatusTable from "./GetStatusTable.vue";
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
 import { useApolloClient, useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
+import { Message } from "@/configs/enum";
 
 export default defineComponent({
   components: {
@@ -483,6 +484,10 @@ export default defineComponent({
     );
     // ================== FUNCTION ==================
     const openModalSave = () => {
+      if(keySelect.value.length === 0) {
+        notification('warning', Message.getCommonMessage('404').message)
+        return
+      }
       modalConfirmMail.value = true;
       if (filter.beforeProduction)
       dataModalSave.value = {

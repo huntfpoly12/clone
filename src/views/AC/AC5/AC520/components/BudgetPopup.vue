@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" centered
-           :title="dataBudget?.index === 0  ? '' : typePopup === ComponentCreateBudget.EmployeeSalaryTable && `임직원보수일람표`"
+           :title="typePopup === ComponentCreateBudget.EmployeeSalaryTable && `임직원보수일람표`"
     @cancel="setModalVisible()" :mask-closable="false"
     :width="typePopup === ComponentCreateBudget.EmployeeSalaryTable ? '1300px' : '90%' "
     :footer="false" v-if="modalStatus">
