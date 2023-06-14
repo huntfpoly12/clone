@@ -1,26 +1,29 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-    :width="500">
-    <a-form-item label="귀속/지급연월" label-align="right" class="mt-20">
-      <div class="d-flex-center">
-        <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
-          :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
-          class="btn-date mr-2" />
-        <DxButton :text="'지 ' + month2.slice(0, 4) + '-' + month2.slice(4)"
-          :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }"
-          class="btn-date mr-2" />
-      </div>
-    </a-form-item>
-    <a-form-item label="지급일" label-align="right">
-      <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
-        v-model:valueDate="paymentDayPA620" />
-    </a-form-item>
+    :width="460">
+    <div class="form-group">
+      <h3 style="font-weight: 600; text-align: center;">소득자료 생성</h3>
+      <a-form-item label="귀속/지급연월" label-align="right" class="mt-20" :label-col="{span:10}">
+        <div class="d-flex-center">
+          <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
+            :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
+            class="btn-date mr-2" />
+          <DxButton :text="'지 ' + month2.slice(0, 4) + '-' + month2.slice(4)"
+            :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }"
+            class="btn-date mr-2" />
+        </div>
+      </a-form-item>
+      <a-form-item label="지급일" label-align="right" :label-col="{span:10}">
+        <date-time-box-custom width="170px" :required="true" :startDate="startDate" :finishDate="finishDate"
+          v-model:valueDate="paymentDayPA620" />
+      </a-form-item>
 
-    <div class="text-align-center mt-20">
-      <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
-        @onClick="onSubmit" />
-      <!-- <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
+      <div class="text-align-center mt-20">
+        <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
+          @onClick="onSubmit" />
+        <!-- <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
         @onClick="openModalCopy" /> -->
+      </div>
     </div>
   </a-modal>
 
@@ -309,5 +312,8 @@ export default defineComponent({
   div.dx-button-content {
     padding: 0px 10px 0px;
   }
+}
+.form-group{
+  margin-top: 20px;
 }
 </style>

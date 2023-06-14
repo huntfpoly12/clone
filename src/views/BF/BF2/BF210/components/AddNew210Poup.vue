@@ -18,10 +18,10 @@
               <div class="dflex">
                 <default-text-box
                   v-model:valueInput="formState.username"
-                  :replaceRegex="true"
                   style="width: 190px; margin-right: 10px"
                   :required="true"
                   mess-required="이항목은 필수 입력사항입니다!"
+                  @onChange="onChangeName"
                 >
                 </default-text-box>
                 <button-basic
@@ -473,6 +473,9 @@ export default defineComponent({
       if (!isChangedForm.value) emit("closePopup", false);
       else comfirmClosePopup(() => emit("closePopup", false));
     };
+    const onChangeName = (e: any) => {
+        formState.username = e.trim();
+    }
     return {
       creactUserNew,
       products,
@@ -488,6 +491,7 @@ export default defineComponent({
       checkDuplicateUsername,
       onSelectionChanged,
       disabledBtn,
+      onChangeName
     };
   },
   methods: {},

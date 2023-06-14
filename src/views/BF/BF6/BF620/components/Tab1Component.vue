@@ -5,10 +5,9 @@
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
         <switch-basic :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'" />
-        <span style="font-size: 11px; color: #888888" class="ml-5">
-          <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-          제작전은 제작요청되지 않은 상태입니다.
-        </span>
+        <info-tool-tip>
+          <span>제작전은 제작요청되지 않은 상태입니다.</span>
+        </info-tool-tip>
       </a-col>
       <a-col>
         <a-tooltip placement="topLeft" color="black">
@@ -29,6 +28,7 @@
         :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
         :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
         :allowSelection="true" noDataText="내역이 없습니다">
+        <DxPaging :enabled="false" />
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
@@ -133,7 +133,7 @@ import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useApolloClient, useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel, DxPaging } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import GetStatusTable from './GetStatusTable.vue';
 import notification from '@/utils/notification';
@@ -154,8 +154,9 @@ export default defineComponent({
     DxSummary,
     DxTotalItem,
     GetStatusTable,
-    DxLoadPanel
-  },
+    DxLoadPanel,
+    DxPaging
+},
   props: {
     search: {
       type: Number,
@@ -390,11 +391,8 @@ export default defineComponent({
       }
       if (event.selectedRowsData)
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
-          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
+          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId, imputedMonth: item.imputedMonth};
         });
-        // console.log(`output->event.selectedRowsData[0].imputedMonth`,event.selectedRowsData[0].imputedMonth)
-        // requestFileData.value.filter.imputedMonth = event.selectedRowsData[0].imputedMonth;
-        // requestFileData.value.filter.imputedYear = event.selectedRowsData[0].imputedYear;
     };
     const modalStatus = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;

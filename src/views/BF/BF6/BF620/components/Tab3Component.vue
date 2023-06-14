@@ -40,6 +40,7 @@
       <DxDataGrid id="tab3-bf620" :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" dataSource "
         :show-borders=" true " key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering=" move_column "
         :allow-column-resizing=" colomn_resize " :column-auto-width=" true " noDataText="내역이 없습니다">
+        <DxPaging :enabled="false" />
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled=" true " />
         <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" />
@@ -108,7 +109,7 @@ import { computed, defineComponent, getCurrentInstance, reactive, ref, watch } f
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel, DxPaging } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import DxRadioGroup from 'devextreme-vue/radio-group';
@@ -129,8 +130,9 @@ export default defineComponent({
     DxTotalItem,
     ZoomInOutlined,
     GetStatusTable,
-    DxLoadPanel
-  },
+    DxLoadPanel,
+    DxPaging
+},
   props: {
     search: {
       type: Number,

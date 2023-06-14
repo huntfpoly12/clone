@@ -96,8 +96,6 @@ export default defineComponent({
       } else {
         filterRequest.value.imputedYear =
           props.requestFileData.filter.imputedYear;
-        filterRequest.value.imputedMonth =
-          props.requestFileData.filter.imputedMonth;
         filterRequest.value.paymentYear =
           props.requestFileData.filter.paymentYear;
         filterRequest.value.paymentMonth =
@@ -112,7 +110,14 @@ export default defineComponent({
               .value.filter.beforeProduction
               ? null
               : dataRequestFile.value.filter.productionStatuses;
-            creationWithholdingTaxTab1(dataRequestFile.value);
+            dataRequestFile.value.reportKeyInputs.forEach((item: any) => {
+              if (item) {
+                dataRequestFile.value.filter.imputedMonth = item.imputedMonth;
+                let { imputedMonth, ...obj } = item;
+                dataRequestFile.value.reportKeyInputs = { ...obj };
+                creationWithholdingTaxTab1(dataRequestFile.value);
+              }
+            });
             break;
           case "tab2":
             filterRequest.value.reportType =
@@ -123,7 +128,14 @@ export default defineComponent({
               .value.filter.beforeProduction
               ? null
               : dataRequestFile.value.filter.productionStatuses;
-            creationLocalTab2(dataRequestFile.value);
+            dataRequestFile.value.reportKeyInputs.forEach((item: any) => {
+              if (item) {
+                dataRequestFile.value.filter.imputedMonth = item.imputedMonth;
+                let { imputedMonth, ...obj } = item;
+                dataRequestFile.value.reportKeyInputs = { ...obj };
+                creationLocalTab2(dataRequestFile.value);
+              }
+            });
             break;
           default:
             break;

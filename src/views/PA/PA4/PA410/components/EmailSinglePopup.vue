@@ -45,7 +45,7 @@ export default defineComponent({
     const userInfor = reactive(store.state.auth.userInfor);
     const empployeeDetail = reactive(
       store.state.common.arrayEmployeePA410.filter(function (item: any) {
-        return item.employeeId == store.state.common.employeeIdPA410;
+        return item.employeeId_Type == store.state.common.employeeIdPA410;
       })
     );
     let emailAddress = ref(userInfor.email);

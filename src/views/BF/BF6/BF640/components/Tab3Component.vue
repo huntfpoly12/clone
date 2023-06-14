@@ -77,6 +77,7 @@
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
         >
+          <DxPaging :enabled="false" />
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxColumn
             caption="일련번호"
@@ -172,6 +173,7 @@ import {
   DxScrolling,
   DxSummary,
   DxTotalItem,
+DxPaging,
 } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from "devextreme-vue/radio-group";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
@@ -195,7 +197,8 @@ export default defineComponent({
     ElectronicFilingFileProductions,
     GetStatusTable,
     DxLoadPanel,
-  },
+    DxPaging
+},
   props: {
     search: {
       type: Number,
