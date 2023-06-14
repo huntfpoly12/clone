@@ -200,8 +200,6 @@ export default defineComponent({
     // ================== GRAPHQL=================
     //  QUERY : searchElectronicFilingFileProductions
     let {
-      refetch: refetchTable,
-      loading: loadingTable,
       onError: errorTable,
       onResult: resTable,
     } = useQuery(
@@ -213,7 +211,11 @@ export default defineComponent({
       })
     );
     resTable((val: any) => {
-      dataSource.value = val.data.searchElectronicFilingFileProductions;
+      if(dataSearch.value.manageUserId) {
+        dataSource.value = val.data.searchElectronicFilingFileProductions.filter((i: any) => i?.productionRequestUser?.id === dataSearch.value.manageUserId);
+      }else {
+        dataSource.value = val.data.searchElectronicFilingFileProductions;
+      }
       dataModalDetail.value.type = dataSearch.value.type;
       trigger.value = false;
     });

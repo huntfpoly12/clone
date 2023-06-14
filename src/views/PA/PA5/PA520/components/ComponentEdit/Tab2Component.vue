@@ -508,21 +508,21 @@ export default defineComponent({
     watch(
       () => store.state.common.actionUpdateTab2PA520,
       () => {
-        if (!isBtnYellow.value) {
+        //if (!isBtnYellow.value) {
           store.commit("common/setTab2ValidateEditPA520", false);
           actionUpdated();
           originDataDetail.value.employeeId = idRowEdit;
           trigger.value = true;
           refectchDetail();
-        } else {
+        //} else {
           // If you are filling out the form and haven't calculated it,
           // but click on the add button,
           // then reset the state of clicking on the add button with false
           if (store.state.common.addBtOnclickPA520)
             store.state.common.addBtOnclickPA520 = false;
-          store.commit("common/setTab2ValidateEditPA520", true);
-          validateCalculate.value = true;
-        }
+          // store.commit("common/setTab2ValidateEditPA520", true);
+          // validateCalculate.value = true;
+        //}
       }
     );
 

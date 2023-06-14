@@ -1,6 +1,6 @@
 <template>
-   <a-modal :visible="isError" :closable="false"  footer="" :width="500"  class="logout-confirm">
-      <div style="margin: 15px; font-size: 15px; font-weight: bold;">
+   <a-modal :visible="isError" :closable="false"  footer="" :width="500"  wrapClassName="logout-confirm" :maskStyle="{'z-index': 9999}">
+      <div style="margin: 15px; font-size: 15px; font-weight: bold;"> 
         <close-circle-filled style="color: red;"/> <span>에러 ERROR</span>
       </div>
       <div style="margin: 15px;font-weight: bold;">
@@ -54,7 +54,9 @@ export default defineComponent({
 .ant-modal-confirm-body svg {
     font-size: 50px;
 }
-
+.logout-confirm {
+  z-index: 10000;
+}
 .noIcon {
     text-align: center;
 }
