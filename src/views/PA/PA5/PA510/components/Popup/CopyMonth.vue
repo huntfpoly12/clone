@@ -1,25 +1,29 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
-        <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
-            <div class="d-flex-center">
-                <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ $filters.formatMonth(month) }}
+        <div class="mt-20 text-center">
+            <h2><b>소득자료 생성</b></h2>
+            <div style="display: inline-block;">
+                <a-form-item label="귀속/지급연월" label-align="right">
+                <div class="d-flex-center">
+                    <div class="month-custom-1 d-flex-center">
+                        귀 {{ processKey.imputedYear }}-{{ $filters.formatMonth(month) }}
+                    </div>
+                    <month-picker-box-custom :disabled="true" text="지" v-model:valueDate="month2" class="ml-5" />
                 </div>
-                <month-picker-box-custom :disabled="true" text="지" v-model:valueDate="month2" class="ml-5" />
+            </a-form-item>
+            <a-form-item label="지급일" label-align="right">
+                <date-time-box-custom ref="requiredPaymentDayCopy" width="150px" :required="true" :startDate="startDate"
+                    :finishDate="finishDate" v-model:valueDate="paymentDayCopy" />
+                <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" /> -->
+            </a-form-item>
             </div>
-        </a-form-item>
-        <a-form-item label="지급일" label-align="right">
-            <date-time-box-custom ref="requiredPaymentDayCopy" width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
-                v-model:valueDate="paymentDayCopy" />
-            <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" /> -->
-        </a-form-item>
-
-        <div class="text-align-center mt-30">
-            <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
-                @onClick="onSubmit" />
-            <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
-                @onClick="openModalCopy" />
+            <div class="text-center mt-30">
+                <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
+                    @onClick="onSubmit" />
+                <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
+                    @onClick="openModalCopy" />
+            </div>
         </div>
     </a-modal>
 
@@ -27,8 +31,8 @@
         :width="600">
         <div class="mt-30 d-flex-center center modal-copy-api">
             <span>과거내역</span>
-            <DxSelectBox :width="200" :key="resetSelect" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
-                field-template="field-data" @value-changed="updateValue" :disabled="false">
+            <DxSelectBox :width="200" :key="resetSelect" :data-source="arrDataPoint" placeholder="선택"
+                item-template="item-data" field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
                         귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
@@ -50,7 +54,7 @@
             <span>로 부터 복사하여 새로 입력합니다.</span>
         </div>
 
-        <div class="text-align-center mt-30">
+        <div class="text-center mt-30">
             <button-basic class="button-form-modal" text="아니요" :width="140" type="default" mode="outlined"
                 @onClick="setModalVisibleCopy" />
             <button-basic class="button-form-modal" text="네" :width="140" type="default" mode="contained"
@@ -126,7 +130,7 @@ export default defineComponent({
         onResult((value: any) => {
             triggerFindIncome.value = false;
             arrDataPoint.value = value.data.findIncomeProcessWageDailyStatViews
-            arrDataPoint.value.sort(function(a: any, b: any) {
+            arrDataPoint.value.sort(function (a: any, b: any) {
                 return b.imputedMonth - a.imputedMonth;
             });
         })
@@ -168,7 +172,7 @@ export default defineComponent({
             // trigger.value = true
             triggerFindIncome.value = true
         });
-        
+
         watch(() => store.state.common.pa510.actionCallGetMonthDetail, (newVal) => {
             trigger.value = true;
         })
@@ -178,7 +182,7 @@ export default defineComponent({
         //     } else {
         //         paymentDayCopy.value = parseInt(`${newVal}01}`)
         //     }
-            
+
         //     startDate.value = dayjs(`${newVal}`).startOf('month').toDate();
         //     finishDate.value = dayjs(`${newVal}`).endOf('month').toDate();
         // })
@@ -208,7 +212,7 @@ export default defineComponent({
             dataApiCopy.value.imputedMonth = value.value.imputedMonth
             dataApiCopy.value.imputedYear = value.value.imputedYear
         };
-        
+
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -281,9 +285,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.text-align-center {
-    text-align: center;
-}
 
 .button-form-modal {
     margin: 0px 5px;
