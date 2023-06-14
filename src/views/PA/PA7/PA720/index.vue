@@ -250,7 +250,6 @@
           :isColumnData="isColumnData" @onFormDone="onFormDone" @subValidate="subValidate"
           :addNewIncomeExtra="processKeyPA720.processKey" :isExpiredStatus="isExpiredStatus" />
       </a-col>
-      {{ dateType }}
     </a-row>
   </div>
   <DeletePopup @delDone="onDelDone" :modalStatus="modalDelete" @closePopup="modalDelete = false"

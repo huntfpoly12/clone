@@ -637,4 +637,7 @@ export default defineComponent({
 .mb-20 {
   margin-bottom: 20px;
 }
+:deep .dx-field.field-custom-2 .dx-field-label{
+  align-self: start;
+}
 </style>

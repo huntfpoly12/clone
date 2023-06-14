@@ -265,7 +265,7 @@
         </a-row>
       </a-spin>
     </a-col>
-    <a-col :span="10" class="form-tax form-action">
+    <a-col style="flex: 1" class="form-tax form-action">
       <a-spin
         :spinning="loadingIncomeBusiness || loadingIncomeBusinesses"
         size="large"
