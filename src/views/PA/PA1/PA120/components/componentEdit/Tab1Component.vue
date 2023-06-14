@@ -238,6 +238,7 @@
       :okText="'확인'"
       :isConfirmIcon="false"
       @checkConfirm="presidenStatus = false"
+      :width="400"
     />
   </div>
 </template>
@@ -370,7 +371,7 @@ export default defineComponent({
       employeeId: props.idRowEdit,
     });
     const getEmployeeWageTrigger = ref(false);
-    const { result: getValueDefault, loading } = useQuery(
+    const { result: getValueDefault, loading, onError: onErrorEmployee } = useQuery(
       queries.getEmployeeWage,
       originDataDetail,
       () => ({
@@ -378,6 +379,9 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
+    onErrorEmployee(()=>{
+        console.log(`output->err tab1`,)
+      })
     watch(getValueDefault, (value: any) => {
       let data = value.getEmployeeWage;
       let editRowData: any = {};
@@ -453,8 +457,10 @@ export default defineComponent({
       (value: any) => {
         if (value != 0) {
           originDataDetail.value.employeeId = value;
-          getEmployeeWageTrigger.value = true;
           store.state.common.presidentEditPA120 = false;
+          if(originDataDetail.value.employeeId){
+            getEmployeeWageTrigger.value = true;
+          }
         }
       },
       { immediate: true }

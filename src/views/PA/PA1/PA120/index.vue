@@ -442,9 +442,6 @@ export default defineComponent({
 
     //----------------compare Data----------------
 
-    const isCalculateEditPA120 = computed(
-      () => store.state.common.isCalculateEditPA120
-    );
     //function common
     const delNewRow = () => {
       dataSource.value = dataSource.value.splice(
@@ -480,6 +477,7 @@ export default defineComponent({
       } = initFormStateTabPA120.value;
       const { ...tab2 } = initFormTab2PA120.value;
       const { ...tabEdit2 } = editRowTab2PA120.value;
+      console.log(`output->tab2, tabEdit2`,tab2, tabEdit2)
       if (!initFormStateTabPA120.value.foreigner) {
         delete obj1.nationality;
         delete obj2.nationality;

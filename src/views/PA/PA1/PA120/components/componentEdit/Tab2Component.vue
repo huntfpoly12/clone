@@ -1,8 +1,8 @@
 <template>
   <div id="tab2-pa120">
     <!-- {{ initFormTab2PA120.payItems }} -->
-    <!-- {{ editRowTab2PA120.payItems }}w<br />
-    {{ initFormTab2PA120.payItems }}w -->
+    <!-- {{ editRowTab2PA120.deductionItems[3] }}w<br />
+    {{ initFormTab2PA120.deductionItems[3] }}w -->
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-spin :spinning="loadingEmployeeWage" size="large">
       <a-row class="mb-7">
@@ -549,7 +549,7 @@ export default defineComponent({
     const employeeWageParam = ref({
       companyId: companyId,
       imputedYear: globalYear.value,
-      employeeId: employeeId.value,
+      employeeId: employeeId,
     });
     const isDisableInsuranceSupport = computed(
       () => store.state.common.isDisableInsuranceSupport
@@ -708,11 +708,14 @@ export default defineComponent({
     /**
      * get Employee Wage
      */
-    const { result: resultGetEmployeeWage, loading: loadingEmployeeWage } =
+    const { result: resultGetEmployeeWage, loading: loadingEmployeeWage, onError: onErrorEmployee } =
       useQuery(queries.getEmployeeWage, employeeWageParam, () => ({
         enabled: triggerDetail.value,
         fetchPolicy: "no-cache",
       }));
+      onErrorEmployee(()=>{
+        console.log(`output->err tab2`,)
+      })
     watch(resultGetEmployeeWage, async (value) => {
       if (value) {
         let data = value.getEmployeeWage;
@@ -744,11 +747,12 @@ export default defineComponent({
           delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
           delete editRowTab2PA120.value.employeementInsuranceSupportPercent;
         }
-        if (data?.employeementReductionStartDate) {
+        editRowData.employeementReduction = data.employeementReduction;
+        if (data.employeementReduction) {
+          editRowData.employeementReductionRatePercent =
+            data.employeementReductionRatePercent;
           editRowData.employeementReductionStartDate =
             data.employeementReductionStartDate;
-        }
-        if (data?.employeementReductionFinishDate) {
           editRowData.employeementReductionFinishDate =
             data.employeementReductionFinishDate;
           let ReductionStartDate = convertToDate(
@@ -758,25 +762,18 @@ export default defineComponent({
             data.employeementReductionFinishDate
           );
           rangeDate.value = [ReductionStartDate, ReductionFinishDate];
-        } else {
-          rangeDate.value = [null, null];
-        }
-        if (data?.employeementReductionRatePercent) {
-          editRowData.employeementReductionRatePercent =
-            data.employeementReductionRatePercent;
-        } else {
-          delete initFormTab2PA120.value.employeementReductionRatePercent;
-        }
-        if (data?.employeementReductionInput) {
           editRowData.employeementReductionInput =
             data.employeementReductionInput;
         } else {
+          rangeDate.value = [null, null];
+          delete initFormTab2PA120.value.employeementReductionRatePercent;
+          delete editRowTab2PA120.value.employeementReductionRatePercent;
           delete initFormTab2PA120.value.employeementReductionInput;
+          delete editRowTab2PA120.value.employeementReductionInput;
         }
         editRowData.payItems = [];
         editRowData.deductionItems = [];
         editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
-        editRowData.employeementReduction = data.employeementReduction;
         store.state.common.rowKeyTab2PA120 = data.employeeId;
         if (data.payItems && dataConfigPayItems.value.length > 0) {
           dataConfigPayItems.value.forEach((item1: any, key: number) => {
@@ -1004,10 +1001,6 @@ export default defineComponent({
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {
-      if (countRestFirstRun.value < 1) {
-        countRestFirstRun.value++;
-        return;
-      }
       if (initFormTab2PA120.value) {
         if (!compareForm()) {
           isBtnYellow.value = true;
@@ -1065,14 +1058,14 @@ export default defineComponent({
     // change row data  globalYear.value
     watch(
       () => props.idRowEdit,
-      async (value) => {
-        employeeId.value = value;
-        configDeductionTrigger.value = true;
-        await refetchConfigDeduction();
-        configPayItemTrigger.value = true;
-        await refetchConfigPayItems();
+      async (value: any) => {
+        if( +value != 0){
+          employeeId.value = value;
+          configDeductionTrigger.value = true;
+          configPayItemTrigger.value = true;
+        }
       },
-      { immediate: true }
+      { deep: true }
     );
     watch(
       () => props.idRowEdit,

@@ -5,9 +5,9 @@
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
         <switch-basic :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'" />
-        <span style="font-size: 11px; color: #888888" class="ml-5">
-          <img src="@/assets/images/iconInfo.png" style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다.
-        </span>
+        <info-tool-tip>
+          <span>제작전은 제작요청되지 않은 상태입니다.</span>
+        </info-tool-tip>
       </a-col>
       <a-col style="display: flex">
         <div class="d-flex-center">
@@ -84,17 +84,9 @@
           width="120" />
         <DxColumn caption="제작현황" cell-template="productionStatus"/>
         <template #productionStatus=" { data }: any ">
-          <!-- <div class="d-flex-center justify-content-center"> -->
             <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
             <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
-          <!-- </div> -->
         </template>
-        <!-- <DxSummary>
-          <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
-          <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text=" reportTypeSummary " />
-          <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text=" afterDeadlineSummary " />
-          <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
-        </DxSummary> -->
       </DxDataGrid>
       <a-row class="fs-14 summary-ctn">
         <a-col span="8">
@@ -389,7 +381,7 @@ export default defineComponent({
       }
       if (event.selectedRowsData)
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
-          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
+          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId, imputedMonth: item.imputedMonth};
         });
     };
     const modalStatus = ref<boolean>(false);
