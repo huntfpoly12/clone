@@ -104,6 +104,7 @@ export default defineComponent({
                             content: props.content,
                             okText: props.okText,
                             ...icon,
+                            width: props.width,
                             class: props.isConfirmIcon ? '' : 'noIcon',
                             onOk() {
                                 emit("closePopup", false)
