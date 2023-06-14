@@ -304,7 +304,7 @@
                   </div>
                 </div>
               </a-collapse-panel>
-              <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력" >
+              <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력" forceRender>
                 <a-form-item label="출금은행" class="clr" label-align="left" :label-col=" labelCol ">
                   <bank-select-box v-model:valueInput=" formState.content.cmsBank.bankType " width="150px" />
                 </a-form-item>
@@ -487,8 +487,8 @@ export default defineComponent({
     // event close popup
     const setModalVisible = () => {
       if (
-        JSON.stringify(objDataDefault.value.content) !=
-        JSON.stringify(formState.value.content) ||
+        JSON.stringify(objDataDefault.value) !=
+        JSON.stringify(formState.value) ||
         JSON.stringify(dataSource.value) != JSON.stringify(dataSourceOld.value)
       )
         comfirmClosePopup(() => emit("closePopup", false));
@@ -906,15 +906,20 @@ export default defineComponent({
       statusPupopInfo.value = true;
     };
 
-    const lenFixedMsg = Message.getCommonMessage('105').message;
-    const checkBizNumberLen = ref(false)
-    watch(bizResNumber,(newVal: any)=>{
-      if(newVal.length !== 10 && newVal.length !==13){
+    const lenFixedMsg = Message.getCommonMessage("105").message;
+    const checkBizNumberLen = ref(false);
+    watch(bizResNumber, (newVal: any) => {
+      if (newVal != undefined && newVal != null) {
+        console.log(`output->newVal`,newVal)
+        if(newVal.length !== 10 && newVal.length !==13){
+          checkBizNumberLen.value = false;
+        }else{
+          checkBizNumberLen.value = true;
+        }
+      }else {
         checkBizNumberLen.value = false;
-      }else{
-        checkBizNumberLen.value = true;
       }
-    },{deep : true});
+    });
     return {
       selectionChanged,
       contentReady,
