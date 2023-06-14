@@ -9,7 +9,6 @@
             placeholder="숫자만 입력 가능"
             :disabled="true"
           />
-          <info-tool-tip> 최초 저장된 이후 수정 불가 </info-tool-tip>
         </div>
       </a-form-item>
       <a-form-item label="성명" label-align="right" class="label-red">
