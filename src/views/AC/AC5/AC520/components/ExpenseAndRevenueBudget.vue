@@ -221,11 +221,11 @@
     </a-row>
     <CalculationDetailsPopup :visible="state.isPopupCalculateVisible" @close-popup="handleCloseCalPopup"
       @ok="handleCloseCalPopup" :data="formState?.details" />
-    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="350">
+    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="390">
       <div>
-        <div>최종차수(본예산인 경우 전년도 최종차수) 예산액을</div>
-        <div>불러옵니다. 이미 입력된 전예산액이 있더라도 새로 불러온</div>
-        <div>전예산액이 입력됩니다. 그래도 불러오겠습니까?</div>
+        <span style="letter-spacing: 1.61px;">최종차수(본예산인 경우 전년도 최종차수) 예산액을</span><br />
+        <span >불러옵니다. 이미 입력된 전예산액이 있더라도 새로 불러온</span><br />
+        <span >전예산액이 입력됩니다. 그래도 불러오겠습니까?</span>
       </div>
       <div class="footer">
         <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'"

@@ -421,6 +421,8 @@ export default defineComponent({
       if (!firstLoad) {
         trigger.value = true;
         refetchData();
+        store.commit("common/setHasChangedPopupPA210", true);
+        return
       }
 
       let hot = wrapper.value?.hotInstance;
@@ -697,7 +699,6 @@ export default defineComponent({
         );
       await checkDisableRefund()
       await checkDisableA04A06()
-      
     };
 
     const {

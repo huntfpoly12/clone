@@ -31,7 +31,7 @@
         <button-basic
           class="ml-5"
           :text="'네. 제작요청합니다'"
-          :width="140"
+          :width="150"
           :type="'default'"
           :mode="'contained'"
           @onClick="onSubmit"

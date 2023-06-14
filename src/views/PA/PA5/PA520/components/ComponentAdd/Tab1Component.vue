@@ -298,10 +298,6 @@ export default defineComponent({
         {itemCode: 1012, amount: 0}
       ]
       mutateTab2(originDataInitTab2.value)
-      store.commit(
-        "common/setIdRowSaveDonePA520",
-        result.data.createEmployeeWageDaily.employeeId
-      );
       store.commit("common/setCheckChangeValueAddPA520", false);
       notification("success", Message.getCommonMessage("101").message);
       if (clickYearStatus.value !== ClickYearStatus.none)
@@ -309,9 +305,16 @@ export default defineComponent({
       await store.dispatch("settings/resetYearStatus");
     });
 
-    const { mutate:mutateTab2 } = useMutation(
+    const { mutate:mutateTab2 , onDone : onDoneTab2 } = useMutation(
       mutations.saveEmployeeWageDailyPayDeduction
     );
+    onDoneTab2(async (result) => { 
+      store.commit(
+        "common/setIdRowSaveDonePA520",
+        result.data.saveEmployeeWageDailyPayDeduction.employeeId
+      );
+    })
+
     //============ WATCH =================================
 
     //check if the year is changed, then confirm first if you are adding or editing data

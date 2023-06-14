@@ -13,5 +13,6 @@ mutation saveEmployeeWageDailyPayDeduction(
             input: $input
         ) {
             type
+            employeeId
           }
     }`

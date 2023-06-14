@@ -481,7 +481,6 @@ export default defineComponent({
         if (tab1IsChange.value || tab2IsChange.value) {
           store.commit('common/setModalChangeValueEditPA520', true)
           event.cancel = true
-          
         }
         store.commit('common/setAddBtOnclickPA520',false);
       

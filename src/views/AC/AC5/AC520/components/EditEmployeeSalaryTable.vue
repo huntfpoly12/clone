@@ -195,11 +195,9 @@
         </DxSummary>
       </DxDataGrid>
     </standard-form>
-    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="350">
+    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="980">
       <div>
-        <div>최종차수(본예산인 경우 전년도 최종차수) 예산액을</div>
-        <div>불러옵니다. 이미 입력된 전예산액이 있더라도 새로 불러온</div>
-        <div>전예산액이 입력됩니다. 그래도 불러오겠습니까?</div>
+        최종차수(본예산인 경우 전년도 최종차수) 전임직원수일람표를 불러옵니다. 이미 입력된 정보가 있더라도 새로 불러온 정보가 입력됩니다. 그래도 불러오겠습니까?
       </div>
       <div class="footer">
         <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'"
@@ -234,7 +232,7 @@ import {RowDraggingReorderEvent, SavingEvent} from "devextreme/ui/data_grid";
 import DataSource from 'devextreme/data/data_source';
 import mutations from '@/graphql/mutations/AC/AC5/AC520'
 import {useMutation, useQuery} from "@vue/apollo-composable";
-import {accountSubject, companyId} from "@/helpers/commonFunction";
+import {companyId} from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import {Message} from "@/configs/enum";
 import getEmployeePayTable from "@/graphql/queries/AC/AC5/AC520/getEmployeePayTable";
@@ -377,7 +375,7 @@ const handleSaving = (e: SavingEvent) => {
       totalLaborCost: formatSummaryCustom.total,
       totalDirectLaborCost: formatSummaryCustom.total1,
       totalIndirectLaborCost: formatSummaryCustom.total2,
-      accounSubjectOrder: accountSubject[0].theOrder,
+      accounSubjectOrder: JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0].theOrder,
       inputs
     }
     mutate(result)

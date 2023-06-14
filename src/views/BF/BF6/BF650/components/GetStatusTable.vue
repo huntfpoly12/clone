@@ -30,7 +30,7 @@ export default defineComponent({
             }
         })
         watch(() => props.data, (newVal) => {
-            if (newVal) {
+            if (newVal && newVal.lastProductionRequestedAt !== null) {
                 trigger.value = true;
             }
         }, { immediate: true })
