@@ -200,7 +200,7 @@
     v-if="confirmLoadNewStatus"
     :modalStatus="confirmLoadNewStatus"
     @closePopup="confirmLoadNewStatus = false"
-    @loadNewAction="loadNew"
+    @loadNewAction="loadNew(false)"
   />
 </template>
 
@@ -352,7 +352,7 @@ export default defineComponent({
     );
     // load new data when first time open popup
     onMounted(() => {
-      loadNew();
+      loadNew(true);
     });
 
     // Get IncomesForTaxWithholdingStatusReport
@@ -392,7 +392,7 @@ export default defineComponent({
       }
     });
     // The above code is used to load the data from the database to the table.
-    const loadNew = async () => {
+    const loadNew = async (firstLoad: boolean) => {
       clearAllCellValue(wrapper);
       // call api to set modified value
       originData.value = {
@@ -410,7 +410,9 @@ export default defineComponent({
       };
       trigger.value = true;
       refetchData();
-
+      if (!firstLoad) {
+        store.commit("common/setHasChangedPopupPA210", true);
+      }
       let hot = wrapper.value?.hotInstance;
       //Put in a loop to set data into each cell
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data: any) => {

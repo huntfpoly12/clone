@@ -697,7 +697,7 @@ export default defineComponent({
         );
       await checkDisableRefund()
       await checkDisableA04A06()
-      
+      store.commit("common/setHasChangedPopupPA210", true);
     };
 
     const {
