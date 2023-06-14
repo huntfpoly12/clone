@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-    :width="500">
+    :width="420">
     <standard-form class="bf-630-form-request" action="" name="request-file-630">
       <div>
         <span>선택된 내역들의 전자신고파일 제작요청하시겠습니까?</span>
@@ -14,7 +14,7 @@
       <div class="text-center mt-20">
         <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
           @onClick="setModalVisible()" />
-        <button-basic class="ml-5" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
+        <button-basic class="ml-5" :text="'네. 제작요청합니다'" :type="'default'" :mode="'contained'"
           @onClick="onSubmit" />
       </div>
     </standard-form>
@@ -28,6 +28,7 @@ import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/BF/BF6/BF630/index";
 import { cloneDeep } from "lodash";
 import { makeDataClean } from "@/helpers/commonFunction";
+import { Message } from "@/configs/enum";
 export default defineComponent({
   props: {
     modalStatus: {
@@ -116,7 +117,7 @@ export default defineComponent({
 
     // onDone tab 1
     onDoneTab1(() => {
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage("106").message);
       emit("onDoneRequest", false);
     });
     onErrorTab1((e: any) => {
@@ -124,7 +125,7 @@ export default defineComponent({
     });
     // onDone tab 2
     onDoneTab2(() => {
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage("106").message);
       emit("onDoneRequest", false);
     });
     onErrorTab2((e: any) => {
@@ -132,7 +133,7 @@ export default defineComponent({
     });
     // onDone tab 3
     onDoneTab3(() => {
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage("106").message);
       emit("onDoneRequest", false);
     });
     onErrorTab3((e: any) => {
@@ -140,7 +141,7 @@ export default defineComponent({
     });
     // onDone tab 4
     onDoneTab4(() => {
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage("106").message);
       emit("onDoneRequest", false);
     });
     onErrorTab4((e: any) => {

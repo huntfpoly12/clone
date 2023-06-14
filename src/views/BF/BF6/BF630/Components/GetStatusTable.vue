@@ -75,7 +75,6 @@ export default defineComponent({
     // Query 
     let {
       onResult: onResultTab1,
-      refetch: refetchTab1,
       loading: loadingTab1
     } = useQuery(queries.getElectronicFilingsByIncomeWagePaymentStatement, dataSearch, () => ({
       enabled: triggerTab1.value,
@@ -84,7 +83,6 @@ export default defineComponent({
 
     let {
       onResult: onResultTab2,
-      refetch: refetchTab2,
       loading: loadingTab2
     } = useQuery(queries.getElectronicFilingsByIncomeRetirementPaymentStatement, dataSearch, () => ({
       enabled: triggerTab2.value,
@@ -93,7 +91,6 @@ export default defineComponent({
 
     let {
       onResult: onResultTab3,
-      refetch: refetchTab3,
       loading: loadingTab3
     } = useQuery(queries.getElectronicFilingsByIncomeBusinessPaymentStatement, dataSearch, () => ({
       enabled: triggerTab3.value,
@@ -102,7 +99,6 @@ export default defineComponent({
 
     let {
       onResult: onResultTab4,
-      refetch: refetchTab4,
       loading: loadingTab4
     } = useQuery(queries.getElectronicFilingsByIncomeExtraPaymentStatement, dataSearch, () => ({
       enabled: triggerTab4.value,
@@ -112,54 +108,50 @@ export default defineComponent({
     // active query by TAB
     if (props.tabName == 'tab1') {
       triggerTab1.value = true
-      refetchTab1();
       onResultTab1((res: any) => {
+        triggerTab1.value = false
         if (res.data) {
           arrStatus.value = res.data.getElectronicFilingsByIncomeWagePaymentStatement[0]
           emit('productionStatusData', arrStatus.value);
         } else {
           emit('productionStatusData', null);
-        }
-        triggerTab1.value = false
+        }  
       })
     }
     if (props.tabName == 'tab2') {
       triggerTab2.value = true
-      refetchTab2();
       onResultTab2((res: any) => {
+        triggerTab2.value = false
         if (res.data) {
           arrStatus.value = res.data.getElectronicFilingsByIncomeRetirementPaymentStatement[0]
           emit('productionStatusData', arrStatus.value);
         } else {
           emit('productionStatusData', null);
         }
-        triggerTab2.value = false
       })
     }
     if (props.tabName == 'tab3') {
       triggerTab3.value = true
-      refetchTab3();
       onResultTab3((res: any) => {
+        triggerTab3.value = false
         if (res.data) {
           arrStatus.value = res.data.getElectronicFilingsByIncomeBusinessPaymentStatement[0]
           emit('productionStatusData', arrStatus.value);
         } else {
           emit('productionStatusData', null);
         }
-        triggerTab3.value = false
       })
     }
     if (props.tabName == 'tab4') {
       triggerTab4.value = true
-      refetchTab4();
       onResultTab4((res: any) => {
+        triggerTab4.value = false
         if (res.data) {
           arrStatus.value = res.data.getElectronicFilingsByIncomeExtraPaymentStatement[0]
           emit('productionStatusData', arrStatus.value);
         } else {
           emit('productionStatusData', null);
         }
-        triggerTab4.value = false
       })
     }
 
