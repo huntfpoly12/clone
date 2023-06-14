@@ -926,6 +926,7 @@ export default defineComponent({
 		};
 
 		const onUpdateValue = (employeeId: any) => {
+			localReal.value = 0;
 			originDataEmployeeWage.employeeId = employeeId;
 			triggerEmployeeWage.value = true;
 		};
