@@ -28,6 +28,7 @@
         :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
         :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
         :allowSelection="true" noDataText="내역이 없습니다">
+        <DxPaging :enabled="false" />
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
@@ -132,7 +133,7 @@ import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useApolloClient, useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel, DxPaging } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import GetStatusTable from './GetStatusTable.vue';
 import notification from '@/utils/notification';
@@ -153,8 +154,9 @@ export default defineComponent({
     DxSummary,
     DxTotalItem,
     GetStatusTable,
-    DxLoadPanel
-  },
+    DxLoadPanel,
+    DxPaging
+},
   props: {
     search: {
       type: Number,
