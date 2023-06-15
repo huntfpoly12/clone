@@ -1,39 +1,4 @@
 <template>
-	<div class="search-form">
-		<div id="components-grid-demo-flex">
-			<a-row justify="start" :gutter="[16, 8]">
-				<a-col>
-					<a-form-item label="신고구분 :">
-						<electronic-filing-type v-model:valueInput="originData.type" width="200px"
-							:disabledList="[1, 2, 7, 8, 9]"></electronic-filing-type>
-					</a-form-item>
-				</a-col>
-				<a-col>
-					<a-form-item label="제작요청일(기간)">
-						<range-date-time-box v-model:valueDate="rangeDate" width="250px"
-							:multi-calendars="true"></range-date-time-box>
-					</a-form-item>
-				</a-col>
-				<a-autocomplete>
-					<a-form-item label="제작상태">
-						<DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
-							layout="horizontal" :icon-size="12">
-							<template #radio="{ data }">
-								<production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
-								<production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
-								<production-status :typeTag="5" v-if="data == -1" padding="1px 10px" />
-							</template>
-						</DxRadioGroup>
-					</a-form-item>
-				</a-autocomplete>
-				<a-col>
-					<a-form-item label="제작요청자">
-						<list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId" />
-					</a-form-item>
-				</a-col>
-			</a-row>
-		</div>
-	</div>
 	<div class="grid-view">
 		<div class="content-grid">
 			<a-spin :spinning="loadingElectronicFiling" size="large">
@@ -42,6 +7,38 @@
 					:allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다">
 					<DxPaging :enabled="false" />
 					<DxScrolling mode="standard" show-scrollbar="always" />
+					<DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+					<DxExport :enabled="true" />
+					<DxToolbar class="search-form">
+						<DxItem template="box-action-left" location="before" />
+						<DxItem name="searchPanel" />
+						<DxItem name="exportButton" css-class="cell-button-export" />
+					</DxToolbar>
+					<template #box-action-left>
+						<div id="components-grid-demo-flex">
+							<a-form-item label="신고구분 :">
+								<electronic-filing-type v-model:valueInput="originData.type" width="200px"
+									:disabledList="[1, 2, 7, 8, 9]"></electronic-filing-type>
+							</a-form-item>
+							<a-form-item label="제작요청일(기간)">
+								<range-date-time-box v-model:valueDate="rangeDate" width="250px"
+									:multi-calendars="true"></range-date-time-box>
+							</a-form-item>
+							<a-form-item label="제작상태">
+								<DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
+									layout="horizontal" :icon-size="12">
+									<template #radio="{ data }">
+										<production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
+										<production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
+										<production-status :typeTag="5" v-if="data == -1" padding="1px 10px" />
+									</template>
+								</DxRadioGroup>
+							</a-form-item>
+							<a-form-item label="제작요청자">
+								<list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId" filterData/>
+							</a-form-item>
+						</div>
+					</template>
 					<DxColumn caption="일련번호" data-field="electronicFilingId" width="100px" alignment="center" />
 					<DxColumn caption="참고사항" data-field="referenceInformation" />
 					<DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
@@ -98,6 +95,8 @@ import {
 	DxSummary,
 	DxTotalItem,
 	DxPaging,
+	DxSearchPanel,
+	DxExport,
 } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from "devextreme-vue/radio-group";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
@@ -119,6 +118,8 @@ export default defineComponent({
 		DxTotalItem,
 		CompaniesPopup,
 		DxPaging,
+		DxSearchPanel,
+		DxExport,
 	},
 	props: {
 		activeSearch: {
@@ -257,5 +258,14 @@ export default defineComponent({
 	border-top: none;
 	padding: 7px 20px;
 	color: rgba(51, 51, 51, 0.7);
+}
+
+#components-grid-demo-flex {
+	display: flex;
+	align-items: center;
+
+	.ant-form-item {
+		margin: 0 10px 0 0;
+	}
 }
 </style>

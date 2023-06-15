@@ -150,7 +150,7 @@ export default defineComponent({
     const setFacility = (param: any) => {
       listFacilityBizTypeForUser.value = param;
       store.commit('settings/setListFacilityBizTypeForUser', param)
-      if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = param[0].facilityBusinessId;
+      if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = param[0]?.facilityBusinessId || null;
     }
     if(companyId && jwtObject.payload.aut){
       facilityBusinessTrigger.value = true;

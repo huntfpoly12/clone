@@ -50,19 +50,9 @@
         </div>
       </a-col>
       <a-col class="search-company">
-        <a-form-item label="사업자코드">
-          <!-- <biz-number-text-box width="150px" v-model:valueInput="filterBF620.companyCode" /> -->
-          <default-text-box v-model:valueInput="filterBF620.companyCode" width="150px"
-            @onChange="onChange"></default-text-box>
+        <a-form-item label="매니저리스트">
+          <list-manager-dropdown width="150px" v-model:valueInput="filterBF620.manageUserId"/>
         </a-form-item>
-        <a-form-item label="상호">
-          <default-text-box width="150px" v-model:valueInput="filterBF620.companyName"></default-text-box>
-        </a-form-item>
-        <a-row>
-          <a-form-item label="매니저리스트">
-            <list-manager-dropdown width="150px" v-model:valueInput="filterBF620.manageUserId" />
-          </a-form-item>
-        </a-row>
         <a-form-item label="영업자리스트">
           <list-sales-dropdown width="150px" v-model:valueInput="filterBF620.salesRepresentativeId" />
         </a-form-item>

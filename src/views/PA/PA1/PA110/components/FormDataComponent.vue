@@ -132,7 +132,7 @@
 											:width="'130px'" />
 										<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
 											:name="item.name" :type="3" :showTooltip="false" :subName="item.taxfreePayItemCode +
-												' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" :width="'130px'" />
+												' ' + item.taxfreePayItemName + ' ' + (item.taxFreeIncludeSubmission ? 'O' : 'X')" :width="'130px'" />
 										<deduction-items v-if="item.taxPayItemCode == null &&
 											item.taxfreePayItemCode == null
 											" :name="item.name" :type="4" subName="공제" :showTooltip="false" :width="'130px'" />
@@ -169,7 +169,8 @@
 											" :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
 									</span>
 									<div>
-										<a-tooltip v-if="statusFormAdd && dataIW.employee.employeeId" color="black" placement="top" zIndex="9999"
+										<a-tooltip v-if="statusFormAdd && dataIW.employee.employeeId" color="black"
+											placement="top" zIndex="9999"
 											:class="item.itemCode == 1012 && localIncomeBoo ? 'red' : ''"
 											:title="item.itemCode == 1012 && localIncomeBoo ? '소액징수부면제 적용' + localReal : ''">
 											<!-- <template #title>
@@ -195,44 +196,37 @@
 					</a-col>
 				</a-row>
 				<div class="text-align-center mt-20 mb-10" style="display: flex; justify-content: center">
-					<a-tooltip placement="top" :overlayStyle="{ maxWidth: '500px' }">
-						<template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
+					<a-tooltip placement="top" :overlayStyle="{ maxWidth: '500px' }" title="입력된 급여 금액으로 공제 재계산합니다.">
 						<div>
 							<button-tooltip-error
 								:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"
-								:statusChange="statusChangeFormPrice
-									" @onClick="actionDedution" />
+								:statusChange="statusChangeFormPrice" @onClick="actionDedution" />
 						</div>
 					</a-tooltip>
-					<a-tooltip placement="top">
-						<template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후
-							적용합니다</template>
+					<a-tooltip placement="top" title="4대보험 EDI 의 공제 금액이 있는 경우, 조회 후적용합니다">
 						<div>
-							<button-basic :disabled="store.state.common.pa110.statusDisabledStatus || true
-								" style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default"
+							<button-basic :disabled="store.state.common.pa110.statusDisabledStatus || true"
+								class="mr-5 ml-5" @onClick="modalInsurance = true" mode="contained" type="default"
 								text="4대보험 EDI 조회/적용" />
 						</div>
 					</a-tooltip>
-					<a-tooltip placement="top">
-						<template #title>중도퇴사자 연말정산 반영</template>
+					<a-tooltip placement="top" title="중도퇴사자 연말정산 반영">
 						<div>
-							<button-basic
+							<button-basic @onClick="actionCalculateMTS" mode="contained" type="default"
 								:disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement1"
-								style="margin: 0px 5px" @onClick="actionCalculateMTS" mode="contained" type="default"
-								text="중도정산 반영" />
+								class="mr-5 ml-5" text="중도정산 반영" />
 						</div>
 					</a-tooltip>
-					<a-tooltip placement="top">
-						<template #title>중도퇴사자 연말정산 반영분 삭제</template>
+					<a-tooltip placement="top" title="중도퇴사자 연말정산 반영분 삭제">
 						<div>
 							<button-basic
 								:disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement2"
-								style="margin: 0px 5px" @onClick="!statusFormAdd ? (modalDeteleMidTerm = true) : ''"
+								class="mr-5 ml-5" @onClick="!statusFormAdd ? (modalDeteleMidTerm = true) : ''"
 								mode="contained" type="default" text="중도정산 삭제" />
 						</div>
 					</a-tooltip>
 					<button-basic :disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"
-						style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
+						class="ml-5" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
 				</div>
 			</StandardForm>
 		</a-spin>

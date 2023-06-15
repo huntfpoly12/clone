@@ -1,15 +1,25 @@
 <template>
   <!-- {{ arrayValue }} -->
-  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :data-source="arrayValue"
-    item-template="item-data" value-expr="key" display-expr="employeeId" :value="valueEmployRes"
-    field-template="field-data" @value-changed="updateValue" :height="$config_styles.HeightInput" :disabled="disabled"
-    :dropDownOptions="{ height: '250px' }">
+  <DxSelectBox
+    :noDataText="Message.getMessage('COMMON', '901').message"
+    :width="width"
+    :data-source="arrayValue"
+    item-template="item-data"
+    value-expr="key"
+    display-expr="employeeId"
+    :value="valueEmployRes"
+    field-template="field-data"
+    @value-changed="updateValue"
+    :height="$config_styles.HeightInput"
+    :disabled="disabled"
+    :dropDownOptions="{ height: '250px' }"
+  >
     <template #field-data="{ data }">
       <div v-if="data" style="padding: 1px">
         <span class="btn-container">
           {{ data.employeeId }}
         </span>
-        <a-tooltip placement="top" zIndex="999999" v-if="data?.name.length > 15">
+        <a-tooltip placement="top" zIndex="999999">
           <template #title>
             <span>{{ checkLenTooltip(data?.name, 15) }}</span>
           </template>
@@ -17,44 +27,51 @@
             {{ checkLen(data?.name, 15) }}
           </div>
         </a-tooltip>
-        <div class="name-w-1" v-else>
-          {{ checkLen(data?.name, 15) }}
-        </div>
         <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
           <template #title>
-            <span>{{ data?.incomeTypeCode }} {{ checkLenTooltip(data?.incomeTypeName, 0) }}</span>
+            <span>{{ data?.incomeTypeCode }} {{ data?.incomeTypeName }}</span>
           </template>
-          <a-tag class="ml-5 py-1 mr-0"> {{ checkLen(data?.incomeTypeName, 21) }}</a-tag>
+          <a-tag class="ml-5 py-1 mr-0 t text-overflow">
+            {{ data?.incomeTypeName }}</a-tag
+          >
         </a-tooltip>
-        <DxTextBox style="display: none;" />
+        <DxTextBox style="display: none" />
       </div>
       <div v-else class="pt-5 pl-5">
         <span>선택</span>
-        <DxTextBox style="display: none;" />
+        <DxTextBox style="display: none" />
       </div>
-
     </template>
     <template #item-data="{ data }">
       <div class="employee-group" v-if="data.employeeId">
         <span class="btn-container">
           {{ data.employeeId }}
         </span>
-        <a-tooltip placement="top" zIndex="999999" v-if="data?.name.length > 15">
+        <a-tooltip
+          placement="top"
+          zIndex="999999"
+          v-if="data?.name.length > 15"
+        >
           <template #title>
             <span>{{ checkLenTooltip(data?.name, 15) }}</span>
           </template>
-          <div class="name-w-1">
+          <div class="name-w-1 px-3">
             {{ checkLen(data?.name, 15) }}
           </div>
         </a-tooltip>
-        <div class="name-w-1" v-else>
+        <div class="name-w-1 px-3" v-else>
           {{ checkLen(data?.name, 15) }}
         </div>
         <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
           <template #title>
-            <span>{{ data?.incomeTypeCode }} {{ checkLenTooltip(data?.incomeTypeName, 0) }}</span>
+            <span
+              >{{ data?.incomeTypeCode }}
+              {{ checkLenTooltip(data?.incomeTypeName, 0) }}</span
+            >
           </template>
-          <a-tag class="ml-5 py-2 mr-0"> {{ checkLen(data?.incomeTypeName, 21) }}</a-tag>
+          <a-tag class="ml-5 py-2 mr-0">
+            {{ checkLen(data?.incomeTypeName, 21) }}</a-tag
+          >
         </a-tooltip>
       </div>
     </template>
@@ -68,7 +85,7 @@ import { defineComponent, ref, watch, computed, getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import { Message } from "@/configs/enum"
+import { Message } from "@/configs/enum";
 export default defineComponent({
   props: {
     required: {
@@ -82,16 +99,16 @@ export default defineComponent({
     },
     arrayValue: {
       type: Array,
-      required: true
+      required: true,
     },
     nameInput: {
       type: String,
-      default: '',
+      default: "",
     },
     newLoadKey: {
       type: [String, Number],
       default: null,
-    }
+    },
   },
   components: {
     DxSelectBox,
@@ -108,32 +125,33 @@ export default defineComponent({
           emit("incomeTypeCode", val);
           valueEmployRes.value = value.value;
         }
-      })
-
+      });
     };
     watch(
       () => props.newLoadKey,
       () => {
         valueEmployRes.value = +props.newLoadKey > 0 && props.newLoadKey;
-      }, { deep: true }
+      },
+      { deep: true }
     );
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
-    const messageRequired = ref(messages.getCommonMessage('102').message);
+    const messageRequired = ref(messages.getCommonMessage("102").message);
     const checkLen = (text: String, num: number) => {
       if (text.length > num) {
-        return text.substring(0, num - 3) + '...';
+        return text.substring(0, num - 3) + "...";
       }
       return text;
     };
     const checkLenTooltip = (text: String, num: number) => {
-      return text.length > num ? text : '';
+      return text.length > num ? text : "";
     };
     return {
       updateValue,
       valueEmployRes,
       messageRequired,
-      checkLen, checkLenTooltip,
+      checkLen,
+      checkLenTooltip,
       Message,
     };
   },
@@ -150,7 +168,6 @@ export default defineComponent({
   align-items: flex-end;
 }
 
-
 .tag-status {
   background-color: red;
   color: white;
@@ -158,7 +175,6 @@ export default defineComponent({
   border-radius: 5px;
   margin: 0 5px;
 }
-
 
 .tag-status {
   background-color: red;
@@ -233,5 +249,11 @@ export default defineComponent({
     width: 24px;
   }
 }
+:deep span.ant-tag {
+  width: 210px;
+}
+:deep .dx-template-wrapper {
+  display: flex;
+  align-items: center;
+}
 </style>
-  

@@ -44,21 +44,14 @@
       </a-col>
       <a-col class="ml-30 search-company">
         <a-form-item
-          label="사업자코드"
-          label-align="left"
-          class="fix-width-label"
-        >
-          <default-text-box v-model:valueInput="dataSearch.companyCode" width="160"/>
-        </a-form-item>
-        <a-form-item label="상호" label-align="left" class="fix-width-label">
-          <default-text-box v-model:valueInput="dataSearch.companyName" width="160" />
-        </a-form-item>
-        <a-form-item
           label="매니저리스트"
           label-align="left"
           class="fix-width-label"
         >
-          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160" />
+          <list-manager-dropdown
+            v-model:valueInput="dataSearch.manageUserId"
+            width="160"
+          />
         </a-form-item>
         <a-form-item
           label="영업자리스트"
@@ -66,7 +59,8 @@
           class="fix-width-label"
         >
           <list-sales-dropdown
-            v-model:valueInput="dataSearch.salesRepresentativeId" width="160"
+            v-model:valueInput="dataSearch.salesRepresentativeId"
+            width="160"
           />
         </a-form-item>
       </a-col>
@@ -78,35 +72,7 @@
         />
       </a-col>
     </a-row>
-    <div class="title-table d-flex">
-      <a-form-item label="파일 제작 설정" label-align="left">
-        <div class="custom-note d-flex-center">
-          <switch-basic
-            v-model:valueSwitch="valueDefaultSwitch"
-            textCheck="세무대리인신고"
-            textUnCheck="납세자자진신고"
-            :disabled="true"
-          />
-          <span class="d-flex-center">
-            <info-tool-tip>
-              <span>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
-            </info-tool-tip>
-          </span>
-        </div>
-      </a-form-item>
-      <a-form-item label="제출연월일" label-align="left">
-        <div class="d-flex-center">
-          <date-time-box width="150px" v-model:valueDate="dayReport" />
-          <a-tooltip placement="topLeft" color="black">
-            <template #title>전자신고파일 제작 요청</template>
-            <div class="btn-modal-save" @click="onRequestFile">
-              <SaveOutlined class="fz-20 ml-5 action-save" />
-              <span style="margin-left: 5px">파일제작요청</span>
-            </div>
-          </a-tooltip>
-        </div>
-      </a-form-item>
-    </div>
+
     <div class="form-table">
       <a-spin :spinning="loadingTable">
         <DxDataGrid
@@ -125,6 +91,54 @@
         >
           <DxPaging :enabled="false" />
           <DxLoadPanel :enabled="true" :showPane="true" />
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem name="total-user" template="total-user" location="before" />
+            <DxItem name="request" template="request" location="after" />
+            <DxItem name="searchPanel" location="after" />
+            <DxItem name="exportButton" location="after" />
+          </DxToolbar>
+          <template #total-user>
+            <div class="title-table d-flex">
+              <a-form-item label="파일 제작 설정" label-align="left">
+                <div class="custom-note d-flex-center">
+                  <switch-basic
+                    v-model:valueSwitch="valueDefaultSwitch"
+                    textCheck="세무대리인신고"
+                    textUnCheck="납세자자진신고"
+                    :disabled="true"
+                  />
+                  <span class="d-flex-center">
+                    <info-tool-tip>
+                      <span
+                        >본 설정으로 적용된 파일로 다운로드 및 메일발송
+                        됩니다.</span
+                      >
+                    </info-tool-tip>
+                  </span>
+                </div>
+              </a-form-item>
+              <a-form-item label="제출연월일" label-align="left" class="date-group">
+                <div class="d-flex-center">
+                  <date-time-box width="150px" v-model:valueDate="dayReport" />
+                </div>
+              </a-form-item>
+            </div>
+          </template>
+          <template #request>
+            <a-tooltip placement="topLeft" color="black">
+              <template #title>전자신고파일 제작 요청</template>
+              <div class="btn-modal-save" @click="onRequestFile">
+                <SaveOutlined class="fz-20 ml-5 action-save" />
+                <span style="margin-left: 5px">파일제작요청</span>
+              </div>
+            </a-tooltip>
+          </template>
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn
             caption="사업자코드"
@@ -169,31 +183,27 @@
             </div>
           </template>
         </DxDataGrid>
-        <div
-          style="
-            border: 1px solid #ddd;
-            border-top: none;
-            width: 100%;
-            display: flex;
-            padding: 5px 0;
-          "
-          class="fs-14"
-        >
-          <div style="width: 250px; margin-left: 70px">
-            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+        <a-row class="fs-14 summary-ctn">
+          <a-col span="8">
+            <div
+              class="dx-datagrid-summary-item dx-datagrid-text-content"
+              style="max-width: 60.2%"
+            >
               전체
               <span style="font-size: 16px"
                 >[{{ filteredDataSource.length }}]</span
               >
             </div>
-          </div>
-          <div style="margin-left: 56%">
+          </a-col>
+          <a-col span="3" class="sum-item"> </a-col>
+          <a-col span="3" class="sum-item"> </a-col>
+          <a-col span="10" class="sum-item">
             <div
               class="dx-datagrid-summary-item dx-datagrid-text-content"
               v-html="productStatusSummary()"
             ></div>
-          </div>
-        </div>
+          </a-col>
+        </a-row>
       </a-spin>
     </div>
     <RequestFilePopup
@@ -216,14 +226,16 @@ import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from "vuex";
 import {
   DxDataGrid,
-  DxToolbar,
   DxSelection,
   DxColumn,
-  DxItem,
   DxScrolling,
   DxSummary,
   DxTotalItem,
-DxPaging,
+  DxPaging,
+  DxSearchPanel,
+  DxExport,
+  DxToolbar,
+  DxItem,
 } from "devextreme-vue/data-grid";
 import RequestFilePopup from "./RequestFilePopup.vue";
 import GetStatusTable from "./GetStatusTable.vue";
@@ -241,10 +253,8 @@ export default defineComponent({
   components: {
     SaveOutlined,
     DxDataGrid,
-    DxToolbar,
     DxSelection,
     DxColumn,
-    DxItem,
     DxScrolling,
     DxSummary,
     DxTotalItem,
@@ -252,8 +262,12 @@ export default defineComponent({
     GetStatusTable,
     CheckboxGroup,
     DxLoadPanel,
-    DxPaging
-},
+    DxPaging,
+    DxSearchPanel,
+    DxExport,
+    DxToolbar,
+    DxItem,
+  },
   props: {
     search: {
       type: Number,
@@ -278,9 +292,7 @@ export default defineComponent({
     const datePayment: any = ref(
       dayjs(`${dataSearch.value.paymentYear}${dataSearch.value.paymentMonth}`)
     );
-    const dayReport = ref(
-      `${dayjs().format("YYYYMM")}${dayjs().daysInMonth()}`
-    );
+    const dayReport = ref(dayjs().format("YYYYMMDD"));
     const messageDelNoItem = Message.getMessage("COMMON", "404").message;
 
     // --------------------search production status-----------------------------------------
