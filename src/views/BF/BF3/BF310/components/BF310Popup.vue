@@ -484,6 +484,7 @@ export default defineComponent({
     const rowIndexDelete = ref(0);
     const contentDelete = Message.getCommonMessage("401").message;
     const bizResNumber = ref('');
+    const statusOrigin = ref(10);
     // event close popup
     const setModalVisible = () => {
       if (
@@ -537,6 +538,7 @@ export default defineComponent({
     watch(result, (value) => {
       if (value && value.getSubscriptionRequest) {
         let data = value.getSubscriptionRequest;
+        statusOrigin.value = data.status;
         // set value license
         if (data.content.company.license) {
           imageLicenseFile.value = data.content.company
@@ -820,7 +822,7 @@ export default defineComponent({
         activeKey.value = 4;
         return;
       }
-      if(formState.value.status == 30){
+      if(formState.value.status == 30 && formState.value.status != statusOrigin.value){
         isStatusApproved.value = true;
         return;
       }
