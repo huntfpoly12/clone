@@ -25,10 +25,10 @@
             <DxExport :enabled="true" />
             <DxToolbar>
               <DxItem template="status-grid-main" location="before" />
-              <DxItem name="searchPanel" />
-              <DxItem name="exportButton" css-class="cell-button-export" />
               <DxItem location="after" template="retrieve-statements" />
               <DxItem location="after" template="slip-registration-selected" />
+              <DxItem name="searchPanel" />
+              <DxItem name="exportButton" css-class="cell-button-export" />
             </DxToolbar>
             <template #status-grid-main>
               <div class="ac-110__top-buttons">
