@@ -1,7 +1,9 @@
 .ant-pagination {
   margin-top: 10px;
 }
-
+.search {
+ 
+}
 #data-grid-demo {
   min-height: 700px;
 }
@@ -138,4 +140,10 @@
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
+}
+.gap-10 {
+  gap: 10px;
+}
+.gap-20 {
+  gap: 20px;
 }
