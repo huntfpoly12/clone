@@ -58,6 +58,7 @@
           <list-manager-dropdown
             v-model:valueInput="dataSearch.manageUserId"
             width="200px"
+            filterData
           />
         </a-form-item>
       </a-col>

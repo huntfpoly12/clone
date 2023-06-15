@@ -66,7 +66,7 @@
 					</a-col> -->
 					<a-col :span="8">
 						<a-form-item label="매니저리스트">
-							<list-manager-dropdown width="150px" v-model:valueInput="filterForm.manageUserId" filterData/>
+							<list-manager-dropdown width="150px" v-model:valueInput="filterForm.manageUserId" />
 						</a-form-item>
 						<a-form-item label="영업자리스트">
 							<list-sales-dropdown width="150px" v-model:valueInput="filterForm.salesRepresentativeId" />
