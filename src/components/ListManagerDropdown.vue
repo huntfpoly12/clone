@@ -3,7 +3,7 @@
     <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="width"
       :data-source="dataSource"
       :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
-      :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택"
+      :disabled="disabled" @value-changed="updateValue(value)" :height="height" placeholder="선택"
       :name="nameInput" field-template="field" item-template="item">
       <template #field="{ data }">
         <!-- :name="nameInput"> -->
@@ -67,7 +67,11 @@ export default defineComponent({
     isExample: {
       type: Boolean,
       default: false,
-    }
+    },
+    height: {
+      type: Number,
+      default: 28,
+    },
   },
   components: {
     DxSelectBox,

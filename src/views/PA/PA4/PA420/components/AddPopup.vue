@@ -53,7 +53,7 @@
     style="top: 20px"
   >
     <div class="header-text-title mt-20">퇴직소득자료입력</div>
-    <a-steps :current="step" type="navigation">
+    <a-steps :current="step" type="navigation" class="pointer-event">
       <a-step
         :status="step === 0 ? 'process' : 'finish'"
         title="기본정보"

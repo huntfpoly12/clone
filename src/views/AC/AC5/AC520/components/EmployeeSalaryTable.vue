@@ -227,6 +227,7 @@ import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons-vue"
 import DxSelectBox from "devextreme-vue/select-box";
 import {ValueChangedEvent} from "devextreme/ui/select_box";
 import Guid from 'devextreme/core/guid';
+import debounce from 'lodash/debounce';
 
 const emit = defineEmits(['closePopup'])
 const gridRef = ref()
@@ -327,7 +328,7 @@ onError((error) => {
 
 })
 
-const handleSaving = (e: SavingEvent) => {
+const handleSaving = debounce((e: SavingEvent) => {
   const res = formRef.value.validate();
   if (res.isValid) {
     // remove all key "key" in dataAllRow
@@ -349,7 +350,7 @@ const handleSaving = (e: SavingEvent) => {
     mutate(result)
   }
   e.cancel = true
-}
+}, 300)
 watch(() => dataAllRow.value, (val: any) => {
   if (val) {
     const initialValue = {
@@ -423,10 +424,10 @@ watch(() => dataAllRow.value, (val: any) => {
 const deleteRow = (e: any) => {
   const key_row = e?.row.key as string
   const rowIndex = e?.row.rowIndex as string
-  // e.component.deleteRow(rowIndex)
-  dataSource.value.store().remove(key_row).then(() => {
-    dataSource.value.reload()
-  })
+  e.component.deleteRow(rowIndex)
+  // dataSource.value.store().remove(key_row).then(() => {
+  //   dataSource.value.reload()
+  // })
   dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== key_row)
 }
 
@@ -487,10 +488,10 @@ function calculateSalary(data: any) {
   return filters.formatNumber(salary + allowance + dailyAllowance + retirementReserve + socialInsuranceLevy);
 }
 const addRow = () => {
-  // gridRef.value?.instance.addRow()
-  dataSource.value?.store().insert({}).then(() => {
-    dataSource.value?.reload()
-  })
+  gridRef.value?.instance.addRow()
+  // dataSource.value?.store().insert({}).then(() => {
+  //   dataSource.value?.reload()
+  // })
 }
 const actionSave = () => {
   gridRef.value?.instance.saveEditData()
@@ -513,17 +514,17 @@ const onEnterKey = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
 }
 
 const onReorder = (e: RowDraggingReorderEvent) => {
-  const data = dataSource.value?.items()
-  const newTasks = [...data];
-  newTasks.splice(e.fromIndex, 1);
-  newTasks.splice(e.toIndex, 0, e.itemData);
-  dataSource.value = new DataSource({
-      store: {
-        type: "array",
-        key: "key",
-        data: newTasks,
-      },
-    })
+  // const data = dataSource.value?.items()
+  // const newTasks = [...data];
+  // newTasks.splice(e.fromIndex, 1);
+  // newTasks.splice(e.toIndex, 0, e.itemData);
+  // dataSource.value = new DataSource({
+  //     store: {
+  //       type: "array",
+  //       key: "key",
+  //       data: newTasks,
+  //     },
+  //   })
 }
 const handleFillValuePreIndex = () => {
   state.modalFillDataPreIndex = true
