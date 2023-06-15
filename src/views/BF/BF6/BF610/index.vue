@@ -163,8 +163,12 @@
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
           noDataText="내역이 없습니다"
-          style="height: calc(100vh - 260px)"
+          style="height: calc(100vh - 340px)"
         >
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+          <DxToolbar>
+            <DxItem  name="searchPanel" />
+          </DxToolbar>
           <DxScrolling mode="standard" show-scrollbar="always" />
           <!--                  <DxSelection mode="multiple" :fixed="true" />-->
           <DxColumn caption="출력 메일" cell-template="action" />
@@ -446,7 +450,7 @@ import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
+import { DxColumn, DxDataGrid, DxScrolling, DxToolbar, DxItem, DxSearchPanel } from "devextreme-vue/data-grid";
 import { computed, reactive, ref, watch } from "vue";
 import { useStore } from "vuex";
 import PopupAddStatus from "./components/PopupAddStatus.vue";

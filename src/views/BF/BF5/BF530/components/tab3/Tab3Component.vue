@@ -1,61 +1,5 @@
 <template>
   <div class="tab-group">
-    <section>
-      <a-row :gutter="[0, 5]">
-        <a-rol class="mr-20">
-          <a-form-item label="업체명">
-            <default-text-box
-              width="150px"
-              v-model:valueInput="formState.companyName"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-15">
-          <a-form-item label="사업장관리번호">
-            <ManageIdTextBox
-              width="150px"
-              v-model:valueInput="formState.manageId"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-20">
-          <a-form-item label="상태">
-            <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="workingStatusSelectbox"
-              v-model:valueInput="formState.workingStatus"
-              displayeExpr="text"
-              valueExpr="id"
-              width="150px"
-              placeholder="선택"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-20">
-          <a-form-item label="신고종류">
-            <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="reportTypeSelectboxTab3"
-              v-model:valueInput="formState.type"
-              displayeExpr="text"
-              valueExpr="id"
-              width="150px"
-              placeholder="선택"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-col>
-          <a-form-item label="기간">
-            <range-date-time-box
-              v-model:valueDate="rangeDate"
-              width="250px"
-              :multi-calendars="true"
-              :clearable="false"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-    </section>
     <div class="content-grid">
       <a-spin :spinning="loading1 || loadingDataSource">
         <DxDataGrid
@@ -83,6 +27,7 @@
           />
           <DxExport :enabled="true" />
           <DxToolbar>
+            <DxItem location="center" template="search" css-class="search-toolbar-custom" />
             <DxItem template="btnSave" location="after" />
             <DxItem name="searchPanel" location="after" />
             <DxItem
@@ -91,6 +36,57 @@
               location="after"
             />
           </DxToolbar>
+          <template #search>
+            <div class="search-form-custom gap-0" style="height: 30px;">
+              <div class="d-flex-center">
+                  <label class="lable-item">업체명:</label>
+                  <default-text-box
+                    width="150px"
+                    v-model:valueInput="formState.companyName"
+                  />
+              </div>
+              <div class="d-flex-center">
+                <label class="lable-item">사업장관리번호</label>
+                <ManageIdTextBox
+                  width="150px"
+                  v-model:valueInput="formState.manageId"
+                />
+              </div>
+              <div class="d-flex-center">
+                <label class="lable-item">상태</label>
+                <SelectBoxCT
+                  :searchEnabled="true"
+                  :arrSelect="workingStatusSelectbox"
+                  v-model:valueInput="formState.workingStatus"
+                  displayeExpr="text"
+                  valueExpr="id"
+                  width="150px"
+                  placeholder="선택"
+                />
+              </div>
+              <div class="d-flex-center">
+                <label class="lable-item">신고종류</label>
+                <SelectBoxCT
+                  :searchEnabled="true"
+                  :arrSelect="reportTypeSelectboxTab3"
+                  v-model:valueInput="formState.type"
+                  displayeExpr="text"
+                  valueExpr="id"
+                  width="150px"
+                  placeholder="선택"
+                />
+              </div>
+              <div class="d-flex-center">
+                <label class="lable-item">기간</label>
+                <range-date-time-box
+                  v-model:valueDate="rangeDate"
+                  width="250px"
+                  :multi-calendars="true"
+                  :clearable="false"
+                />
+              </div>
+            </div>
+          </template>
           <template #btnSave>
             <div>
               <button-basic
@@ -1061,6 +1057,13 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../../style/style.scss";
+
+:deep(.dx-toolbar-center) {
+  width: calc(100% - 325px) !important;
+}
+:deep(.dx-button-has-icon .dx-button-content) {
+  padding: 5px !important;
+}
 </style>
