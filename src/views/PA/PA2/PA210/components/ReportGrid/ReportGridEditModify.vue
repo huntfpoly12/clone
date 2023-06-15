@@ -66,9 +66,9 @@
               css-class="cell-center"
             />
             <template #imputedYear-imputedMonth="{ data }">
-              <a-tooltip>
+              <a-tooltip color="blue">
                 <template #title>
-                  귀속기간{{
+                  귀속기간 {{
                     showTooltipYearMonth(
                       data.data.reportType,
                       data.data.imputedStartYearMonth,
@@ -98,9 +98,9 @@
               css-class="cell-center"
             />
             <template #paymentYear-paymentMonth="{ data }">
-              <a-tooltip>
+              <a-tooltip color="blue">
                 <template #title>
-                  지급기간{{
+                  지급기간 {{
                     showTooltipYearMonth(
                       data.data.reportType,
                       data.data.paymentStartYearMonth,
@@ -160,7 +160,7 @@
               css-class="cell-center"
             />
             <template #refund="{ data }">
-              <a-tooltip  :title="'환급신청여부'">
+              <a-tooltip  :title="'환급신청여부'" color="blue">
                   <div>
                     <switch-basic
                       v-model:valueSwitch="data.data.refund"

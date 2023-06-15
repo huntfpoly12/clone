@@ -117,7 +117,7 @@ export default defineComponent({
     }
   }
   .input-confirm {
-    margin-left: 200px;
+    margin-left: 212px;
   }
 }
 </style>
