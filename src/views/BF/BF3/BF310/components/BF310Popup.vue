@@ -337,7 +337,7 @@
                 <a-form-item label="영업관리담당" label-align="left" :label-col=" labelCol ">
                   <list-sales-dropdown v-model:valueInput="
                     formState.content.extra.salesRepresentativeId
-                  " width="200px" />
+                  " width="200px" :searchEnabled="false"/>
                 </a-form-item>
                 <a-form-item label="전달사항" label-align="left" :label-col=" labelCol ">
                   <text-area-box v-model:valueInput=" formState.content.extra.comment " :width=" 750 " :height=" 70 "

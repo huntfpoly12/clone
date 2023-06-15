@@ -1,6 +1,6 @@
 <template>
   <div v-for="option in options" :key="option.id" class="check-box-group">
-    <DxCheckBox :disabled="disabled" :value="valueCheckbox.includes(option.id)"
+    <DxCheckBox :disabled="disabled" :value="valueChecked.includes(option.id)"
       @valueChanged="onValueChanged($event, option.id)" :icon-size="size" :text="option.text"> </DxCheckBox>
     <slot></slot>
   </div>
@@ -36,10 +36,10 @@ export default defineComponent({
   setup(props, { emit }) {
     const app: any = getCurrentInstance();
     const styleCheckBox = app.appContext.config.globalProperties.$config_styles;
-    const valueChecked = ref(props.valueCheckbox ?? []);
+    const valueChecked = ref(props.valueCheckbox || []);
     const onValueChanged = (e: any, id: Number) => {
       let valueCheck: any = [];
-      let valueFirst = props.valueCheckbox ?? [];
+      let valueFirst = props.valueCheckbox || [];
       valueCheck = valueCheck.concat(valueFirst.filter((item) => valueCheck.indexOf(item) < 0));
       //   let valueCheck: any = [...props.valueCheckbox];
       if (e.value) {
@@ -50,6 +50,7 @@ export default defineComponent({
       } else {
         valueCheck.splice(valueCheck.indexOf(id), 1);
       }
+      valueChecked.value = valueCheck;
       emit('update:valueCheckbox', valueCheck);
     };
     return {
