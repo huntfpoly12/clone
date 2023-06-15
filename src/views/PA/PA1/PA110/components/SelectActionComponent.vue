@@ -26,7 +26,7 @@
         </div>
     </DxButton>
     <DxButton class="button-open-tab ml-4" style="pointer-events: all; opacity: 1;"
-        @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</DxButton>
+        @click="openTab({ name: '사원등록', url: '/pa-120', id: 'pa-120' })">사원등록</DxButton>
     <DxDropDownButton :useItemTextAsTitle="false" class="ml-4" :items="arrDropDownPayrollRegister" text="급여대장"
         @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
