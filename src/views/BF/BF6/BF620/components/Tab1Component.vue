@@ -20,13 +20,13 @@
           <DxPaging :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxLoadPanel :enabled="false" />
+          <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSearchPanel
             :visible="true"
             :highlight-case-sensitive="true"
             placeholder="검색"
           />
           <DxExport :enabled="true" />
-          <DxScrolling mode="standard" show-scrollbar="always" />
           <DxToolbar>
             <DxItem name="request" template="request" location="after" />
             <DxItem name="searchPanel" location="after" />

@@ -64,14 +64,6 @@
         </a-col>
       </a-row>
     </section>
-    <a-row class="top-table mt-10" justify="end">
-      <button-basic
-        @onClick="onSave"
-        mode="contained"
-        type="default"
-        text="상태일괄변경"
-      />
-    </a-row>
     <div class="content-grid">
       <a-spin :spinning="loading1 || loadingDataSource">
         <DxDataGrid
@@ -94,6 +86,31 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxLoadPanel :enabled="false" :showPane="true" />
           <DxPaging :page-size="1000" />
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem template="btnSave" location="after" />
+            <DxItem name="searchPanel" location="after" />
+            <DxItem
+              name="exportButton"
+              css-class="cell-button-export"
+              location="after"
+            />
+          </DxToolbar>
+          <template #btnSave>
+            <div>
+              <button-basic
+                @onClick="onSave"
+                mode="contained"
+                type="default"
+                text="상태일괄변경"
+              />
+            </div>
+          </template>
           <DxSelection
             :select-all-mode="'allPages'"
             :show-check-boxes-mode="'onClick'"
@@ -302,6 +319,10 @@ import {
   DxColumnFixing,
   DxKeyboardNavigation,
   DxPaging,
+  DxItem,
+  DxSearchPanel,
+  DxExport,
+  DxToolbar,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -346,6 +367,10 @@ export default defineComponent({
     HistoryOutlined,
     DxKeyboardNavigation,
     DxPaging,
+    DxItem,
+    DxSearchPanel,
+    DxExport,
+    DxToolbar,
   },
   props: {
     search: {
