@@ -115,7 +115,7 @@
               style="cursor: pointer"
               @click="handleOpenViewReportUrl(data.data.workId)"
             >
-              <DownloadOutlined :size="12" />
+              <DownloadOutlined :style="{fontSize: 12}" />
             </DxButton>
           </div>
         </template>

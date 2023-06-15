@@ -2,44 +2,7 @@
     <a-spin :spinning="loading" size="large">
         <div id="bf-330">
             <action-header title="서비스관리"  @actionSearch="searching" :buttonSearch="true"/>
-            <div class="search-form">
-                <div class="components-grid-demo-flex">
-                    <a-row justify="start" :gutter="[16, 8]">
-                        <a-col>
-                            <label class="lable-item"> 사업자코드 : </label>
-                            <default-text-box width="120px" v-model:valueInput="originData.filter.code" />
-                        </a-col>
-                        <a-col>
-                            <label class="lable-item">상호:</label>
-                            <default-text-box width="120px" v-model:valueInput="originData.filter.name" />
-                        </a-col>
-                        <a-col>
-                            <label class="lable-item">대표자:</label>
-                            <default-text-box width="120px" v-model:valueInput="originData.filter.presidentName" />
-                        </a-col>
-                        <a-col>
-                            <label class="lable-item">해지:</label>
-                            <switch-basic v-model:valueSwitch="originData.filter.excludeCancel" :textCheck="'제외'"
-                                :textUnCheck="'포함'" />
-                        </a-col>
-                        <a-col>
-                            <label class="lable-item">주소 :</label>
-                            <default-text-box width="120px" v-model:valueInput="originData.filter.address" />
-                        </a-col>
-                        <a-col>
-                            <label class="lable-item">매니저명 :</label>
-                            <list-manager-dropdown v-model:valueInput="originData.filter.manageUserId" width="150px"/>
-                        </a-col>
-                        <a-col>
-                            <label class="lable-item">영업자명 :</label>
-                            <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" width="150px"/>
-                        </a-col>
-                        <a-col>
-                            <CheckboxGroup :options="serviceTypeCheckbox" v-model:valueCheckbox="originData.filter.useServiceTypes" :size="'18'"/>
-                        </a-col>
-                    </a-row>
-                </div>
-            </div>
+            
             <div class="page-content">
                 <DxDataGrid id="table-main-bf330" noDataText="내역이 없습니다" :data-source="listServiceContract" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -51,16 +14,38 @@
                     <DxToolbar>
                         <DxItem name="exportButton" css-class="cell-button-export"/>
                         <DxItem template="pagination-table"/>
+                        <DxItem name="tool-search" template="tool-search" />
                         <DxItem name="searchPanel" />
-                        <!-- <DxItem name="groupPanel" />
-                        <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" /> -->
                     </DxToolbar>
                     <template #pagination-table>
                         <div  v-if="rowTable > originData.filter.rows">
                             <a-pagination v-model:current="originData.filter.page" v-model:page-size="originData.filter.rows"
                                 :total="rowTable" show-less-items @change="changePage" />
                         </div>
+                    </template>
+                    <template #tool-search>
+                      <div class="search-form">
+                          <div class="components-grid-demo-flex">
+                              <a-row justify="end">
+                                  <a-col class="ml-10">
+                                      <label class="lable-item">해지:</label>
+                                      <switch-basic v-model:valueSwitch="originData.filter.excludeCancel" :textCheck="'제외'"
+                                          :textUnCheck="'포함'" />
+                                  </a-col>
+                                  <a-col class="ml-10">
+                                      <label class="lable-item">매니저명 :</label>
+                                      <list-manager-dropdown v-model:valueInput="originData.filter.manageUserId" width="150px"/>
+                                  </a-col>
+                                  <a-col class="ml-10">
+                                      <label class="lable-item">영업자명 :</label>
+                                      <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" width="150px"/>
+                                  </a-col>
+                                  <a-col>
+                                      <CheckboxGroup :options="serviceTypeCheckbox" v-model:valueCheckbox="originData.filter.useServiceTypes" :size="'18'"/>
+                                  </a-col>
+                              </a-row>
+                          </div>
+                      </div>
                     </template>
                     <DxColumn data-field="code" caption="사업자코드" />
                     <DxColumn data-field="active" caption="상태" cell-template="active-cell" />

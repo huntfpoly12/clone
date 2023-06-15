@@ -2,7 +2,10 @@
     <a-modal :mask-closable="false" :visible="statusPupopInfo" title="" centered @cancel="setModalVisible()"
         width="1200px" footer="" :bodyStyle="{ height: '800px' }">
         <div style="overflow: scroll;height: 770px;">
-          <component v-bind:is="contentText"/>
+          <Policy1 v-if="contentText == 1"/>
+          <Policy2 v-if="contentText == 2"/>
+          <Policy3 v-if="contentText == 3"/>
+          <Policy4 v-if="contentText == 4"/>
         </div>
     </a-modal>
 </template>
@@ -33,21 +36,21 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
-        const contentText = ref<string>()
+        const contentText = ref<any>()
         watch(() => props.statusPupopInfo, (newValue) => {
             if (newValue && props.keyText) {
                 switch (props.keyText) {
                     case 1:
-                        contentText.value = 'Policy1'
+                        contentText.value = '1'
                         break;
                     case 2:
-                        contentText.value = 'Policy2'
+                        contentText.value = '2'
                         break;
                     case 3:
-                        contentText.value = 'Policy3'
+                        contentText.value = '3'
                         break;
                     case 4:
-                        contentText.value = 'Policy4'
+                        contentText.value = '4'
                         break;
                 }
             }

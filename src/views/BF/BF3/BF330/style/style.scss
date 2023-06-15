@@ -1,7 +1,15 @@
 #data-grid-demo {
     min-height: 700px;
 }
-
+#bf-330{
+  .search-form{
+    background: #ffffff;
+    padding: 0px;
+  }
+}
+// :deep .dx-datagrid-search-panel{
+//   margin-left: 0;
+// }
 .modal-note {
     max-height: 500px;
     overflow-y: auto;

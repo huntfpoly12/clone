@@ -4,49 +4,6 @@
     <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)"
       :buttonSearch="true" />
     <div id="bf-310">
-      <div class="search-form">
-        <a-row justify="end">
-          <a-col class="ml-10">
-            <label class="lable-item">서비스종류 :</label>
-            <checkbox-basic v-model:valueCheckbox="listCheckBox.accounting" :disabled="false" :size="'14'" label="회계"
-              style="margin-right: 10px" />
-            <checkbox-basic v-model:valueCheckbox="listCheckBox.withholding" :disabled="false" :size="'14'" label="원천" />
-          </a-col>
-          <a-col class="ml-10">
-            <div class="dflex custom-flex">
-              <label class="lable-item">심사상태/결과 :</label>
-              <SelectCustomField v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
-            </div>
-          </a-col>
-          <a-col class="ml-10">
-            <div class="dflex custom-flex">
-              <label class="lable-item">영업자 :</label>
-              <list-sales-dropdown width="150px" v-model:valueInput="originData.salesRepresentativeId" />
-            </div>
-          </a-col>
-
-          <!-- <a-col>
-            <div class="dflex custom-flex">
-              <label class="lable-item">상호 :</label>
-              <default-text-box width="150px" v-model:valueInput="originData.companyName" />
-            </div>
-          </a-col>
-
-          <a-col>
-            <div class="dflex custom-flex">
-              <label class="lable-item">대표자 :</label>
-              <default-text-box width="150px" v-model:valueInput="originData.presidentName" />
-            </div>
-          </a-col> -->
-          <a-col class="ml-10">
-            <div class="dflex custom-flex">
-              <label class="lable-item">신청기간 :</label>
-              <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
-                :placeholder="'시작 날짜 - 종료 날짜'" :clearable="false" :maxRange="365"/>
-            </div>
-          </a-col>
-        </a-row>
-      </div>
       <div class="page-content">
         <DxDataGrid id="table-main-bf310" noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
           :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
@@ -58,12 +15,44 @@
           <DxToolbar>
             <DxItem name="exportButton" css-class="cell-button-export" />
             <DxItem name="page" template="pagination-table" location="after" />
+            <DxItem name="tool-search" template="tool-search" />
             <DxItem name="searchPanel" />
           </DxToolbar>
           <template #pagination-table>
             <div v-if="rowTable > originData.rows">
               <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
                 show-less-items @change="changePage" />
+            </div>
+          </template>
+          <template #tool-search>
+            <div class="search-form">
+              <a-row justify="end">
+                <a-col class="ml-10">
+                  <label class="lable-item">서비스종류 :</label>
+                  <checkbox-basic v-model:valueCheckbox="listCheckBox.accounting" :disabled="false" :size="'14'" label="회계"
+                    style="margin-right: 10px" />
+                  <checkbox-basic v-model:valueCheckbox="listCheckBox.withholding" :disabled="false" :size="'14'" label="원천" />
+                </a-col>
+                <a-col class="ml-10">
+                  <div class="dflex custom-flex">
+                    <label class="lable-item">심사상태/결과 :</label>
+                    <SelectCustomField select-custom-field v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
+                  </div>
+                </a-col>
+                <a-col class="ml-10">
+                  <div class="dflex custom-flex">
+                    <label class="lable-item">영업자 :</label>
+                    <list-sales-dropdown width="150px" v-model:valueInput="originData.salesRepresentativeId" />
+                  </div>
+                </a-col>
+                <a-col class="ml-10">
+                  <div class="dflex custom-flex">
+                    <label class="lable-item">신청기간 :</label>
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
+                      :placeholder="'시작 날짜 - 종료 날짜'" :clearable="false" :maxRange="365"/>
+                  </div>
+                </a-col>
+              </a-row>
             </div>
           </template>
 
