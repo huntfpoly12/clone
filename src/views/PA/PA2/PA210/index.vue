@@ -35,7 +35,7 @@
           </DxButton>
         </template>
         <template #button-template>
-          <a-tooltip placement="topLeft">
+          <a-tooltip placement="topLeft" color="blue">
             <template #title>정기(기한후)신고서 새로 작성</template>
             <div class="custom-grade-cell">
               <DxButton icon="plus" @click="openAddNewModal" />
@@ -65,7 +65,7 @@
         <template #imputed="{ data }">
           <a-tooltip color="blue">
             <template #title>
-              귀속기간{{
+              귀속기간 {{
                 showTooltipYearMonth(
                   data.data.reportType,
                   data.data.imputedMonth,
@@ -99,7 +99,7 @@
         <template #payment="{ data }">
           <a-tooltip color="blue">
             <template #title>
-              지급기간{{
+              지급기간 {{
                 showTooltipYearMonth(
                   data.data.reportType,
                   data.data.paymentStartYearMonth,
@@ -305,7 +305,7 @@
           fixedPosition="right"
         />
         <template #add="{ data }">
-          <a-tooltip v-if="checkModify(data.data)">
+          <a-tooltip v-if="checkModify(data.data)" color="blue">
             <template #title
               >본 신고서에 대한 수정신고서를 작성합니다.</template
             >
@@ -328,7 +328,7 @@
         />
         <template #pupop="{ data }">
           <div class="custom-action" style="text-align: center">
-            <a-tooltip>
+            <a-tooltip color="blue">
               <template #title>출력 / 저장</template>
               <img
                 @click="openPopupPrint(data.data)"
@@ -656,6 +656,8 @@ export default defineComponent({
           yearEndTaxAdjustment: value.yearEndTaxAdjustment,
           imputedFinishYearMonth: value.imputedFinishYearMonth,
           paymentFinishYearMonth: value.paymentFinishYearMonth,
+          imputedStartYearMonth: value.imputedStartYearMonth,
+          paymentStartYearMonth: value.paymentStartYearMonth,
           detailId: value.detailId,
           ...value.detail,
         },
