@@ -139,7 +139,7 @@
 						format="yyyy-MM-dd HH:mm" />
 					<DxColumn caption="제작현황" cell-template="imputed" width="430" />
 					<template #imputed="{ data }">
-						<GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data"
+						<GetStatusTable :beforeProductionRequest="data.data.lastProductionRequestedAt" :data="data.data"
 							tabName="tab3"
 							@productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
 					</template>
