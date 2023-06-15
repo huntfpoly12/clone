@@ -72,6 +72,10 @@ export default defineComponent({
       type: Number,
       default: 28,
     },
+    filterData: {
+      type: Boolean,
+      default: false,
+    }
   },
   components: {
     DxSelectBox,
@@ -108,8 +112,11 @@ export default defineComponent({
       }
     );
     watch(result, (newValue: any) => {
-      // .length > 0 ? newValue.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : []
-      dataSource.value = newValue?.searchUsers?.datas;
+      if(props.filterData){
+        dataSource.value = newValue?.searchUsers?.datas.length > 0 ? newValue.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : [];
+      } else {
+        dataSource.value = newValue?.searchUsers?.datas;
+      }
     })
     const updateValue = (value: any) => {
       emit("update:valueInput", value);

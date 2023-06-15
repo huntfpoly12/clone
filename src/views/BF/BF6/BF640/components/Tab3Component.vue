@@ -20,7 +20,7 @@
       </a-col>
       <a-col>
         <a-form-item label="제작상태" label-align="left">
-          <div class="mt-7">
+          <div class="mt-2">
             <DxRadioGroup
               :data-source="typeCheckbox"
               item-template="radio"
@@ -56,7 +56,6 @@
           class="fix-width-label"
         >
           <list-manager-dropdown
-            :required="true"
             v-model:valueInput="dataSearch.manageUserId"
             width="200px"
           />
@@ -77,6 +76,16 @@
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
         >
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem name="searchPanel" location="after" />
+            <DxItem name="exportButton" location="after" />
+          </DxToolbar>
           <DxPaging :enabled="false" />
           <DxLoadPanel :enabled="true" :showPane="true" />
           <DxColumn
@@ -166,19 +175,20 @@ import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from "vuex";
 import {
   DxDataGrid,
-  DxToolbar,
   DxSelection,
   DxColumn,
-  DxItem,
   DxScrolling,
   DxSummary,
   DxTotalItem,
-DxPaging,
+  DxPaging,
+  DxToolbar,
+  DxItem,
+  DxSearchPanel,
+  DxExport,
 } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from "devextreme-vue/radio-group";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery } from "@vue/apollo-composable";
-import notification from "@/utils/notification";
 import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
 import GetStatusTable from "./GetStatusTable.vue";
 import { DxLoadPanel } from "devextreme-vue";
@@ -186,19 +196,21 @@ export default defineComponent({
   components: {
     SaveOutlined,
     DxDataGrid,
-    DxToolbar,
     DxSelection,
     DxColumn,
     DxSummary,
     DxTotalItem,
-    DxItem,
     DxScrolling,
     DxRadioGroup,
     ElectronicFilingFileProductions,
     GetStatusTable,
     DxLoadPanel,
-    DxPaging
-},
+    DxPaging,
+    DxToolbar,
+    DxItem,
+    DxSearchPanel,
+    DxExport,
+  },
   props: {
     search: {
       type: Number,

@@ -34,7 +34,7 @@
 
     .title-table {
       justify-content: space-between;
-      margin-top: 10px;
+      margin-top: 5px;
 
       .action-save {
         cursor: pointer;
@@ -69,7 +69,7 @@
 
     .title-table {
       justify-content: space-between;
-      margin-top: 10px;
+      margin-top: 5px;
 
       .action-save {
         cursor: pointer;
@@ -108,7 +108,7 @@
   .btn-modal-save {
     background-color: black;
     color: white;
-    padding: 2px 5px;
+    padding: 3.5px 5px;
     border-radius: 5px;
     margin-left: 10px;
     cursor: pointer;
@@ -146,10 +146,6 @@
     }
   }
   
-  .search-4 {
-    align-self: center;
-
-  }
 
   .production-check {
     display: grid;
@@ -192,19 +188,19 @@
 }
 }
 #tab1-bf640 {
-  height: calc(100vh - 385px) !important;
+  height: calc(100vh - 365px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
 }
 #tab2-bf640 {
-  height: calc(100vh - 385px) !important;
+  height: calc(100vh - 365px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
 }
 #tab3-bf640 {
-  height: calc(100vh - 300px) !important;
+  height: calc(100vh - 315px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }

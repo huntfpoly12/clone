@@ -87,7 +87,8 @@ import { getJwtObject } from "@bankda/jangbuda-common";
 import notification from "@/utils/notification"
 import { Message } from "@/configs/enum";
 import dayjs from "dayjs";
-dayjs
+import queries from "@/graphql/queries/BF/BF3/BF320/index";
+import { useQuery } from "@vue/apollo-composable";
 
 export default defineComponent({
   components: {
@@ -110,9 +111,13 @@ export default defineComponent({
     const userInfor = computed(() => store.getters['auth/getUserInfo'])
     const acYear = ref(dayjs().year())
     const paYear = ref(dayjs().year())
-    let listFacilityBizTypeForUser:any = ref([])
+    let listFacilityBizTypeForUser:any = ref([]);
+    const dataQuery = ref({
+      companyId
+    });
+    const facilityBusinessTrigger = ref(false);
     onMounted(() => {
-      if(jwtObject.userType != 'm' && !globalFacilityBizId.value && !acStateYear.value && !paStateYear.value){
+      if((jwtObject.userType === 'c' || jwtObject.payload?.aut) && !globalFacilityBizId.value && !acStateYear.value && !paStateYear.value){
         modalConfirm.value = true
       }
     })
@@ -142,11 +147,27 @@ export default defineComponent({
       }
     })
 
-    watch(userInfor, (value) => {
+    const setFacility = (param: any) => {
+      listFacilityBizTypeForUser.value = param;
+      store.commit('settings/setListFacilityBizTypeForUser', param)
+      if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = param[0]?.facilityBusinessId || null;
+    }
+    if(companyId && jwtObject.payload.aut){
+      facilityBusinessTrigger.value = true;
+    }
+    const {result} = useQuery(queries.getMyCompanyFacilityBusinesses,dataQuery,
+    () => ({
+        enabled: facilityBusinessTrigger.value,
+        fetchPolicy: "no-cache",
+    }))
+    watch(result, (newVal: any)=> {
+      if(newVal){
+        setFacility(newVal.getMyCompanyFacilityBusinesses);
+      }
+    })
+    watch(userInfor, (newVal: any) => {
       if(jwtObject.userType != 'm'){
-        listFacilityBizTypeForUser.value = userInfor.value.facilityBusinesses
-        store.commit('settings/setListFacilityBizTypeForUser', userInfor.value.facilityBusinesses)
-        if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = userInfor.value.facilityBusinesses[0].facilityBusinessId;
+        setFacility(newVal.facilityBusinesses);
       }
     })
 

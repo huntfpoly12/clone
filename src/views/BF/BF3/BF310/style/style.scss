@@ -1,13 +1,18 @@
 #bf-310 {
 
   .search-form {
-    >div {
+    background: #ffffff;
+    padding: 0px;
+  >div {
       width: 100%;
       justify-content: flex-end;
       align-items: center;
       margin-right: 0px;
     }
   }
+}
+:deep .dx-datagrid-search-panel{
+  margin-left: 0;
 }
 
 .pagination-table {
