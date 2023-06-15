@@ -3,14 +3,14 @@
 		<a-spin :key="countKey" :spinning="loading || loadingGetEmployeeWage" size="large">
 			<StandardForm formName="pa-110-form" ref="pa110FormRef">
 				<a-row class="row-1">
-					<a-col :span="12">
+					<a-col :span="14">
 						<a-form-item label="사원" :class="statusFormAdd ? 'red' : ''">
-							<EmploySelect :arrayValue="arrayEmploySelect" :disabled="!statusFormAdd ||
-								store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2
-								" :required="true" v-model:valueEmploy="dataIW.employee.employeeId" width="316px" @onChange="onUpdateValue" />
+							<EmploySelect :arrayValue="arrayEmploySelect" @onChange="onUpdateValue"
+								:disabled="!statusFormAdd || store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"
+								:required="true" v-model:valueEmploy="dataIW.employee.employeeId" width="310px"/>
 						</a-form-item>
 					</a-col>
-					<a-col :span="12">
+					<a-col :span="10">
 						<a-form-item label="지급일" class="red">
 							<date-time-box-custom ref="requiredPaymentDay" width="150px" :required="true"
 								:startDate="startDate" :finishDate="finishDate" v-model:valueDate="dataIW.paymentDay"
@@ -113,13 +113,14 @@
 					</a-col>
 				</a-row>
 				<div class="header-text-3">급여 / 공제</div>
+				<div class="header-text-2 header-custom">
+					<span>급여 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세
+						{{ $filters.formatCurrency(totalPayItemTaxFree) }} + 비과세
+						{{ $filters.formatCurrency(totalPayItemTax) }}</span>
+					<span>공제 {{ $filters.formatCurrency(totalDeduction) }} 원</span>
+				</div>
 				<a-row :gutter="16">
-					<a-col :span="13">
-						<div class="header-text-2">
-							급여 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세
-							{{ $filters.formatCurrency(totalPayItemTaxFree) }} + 비과세
-							{{ $filters.formatCurrency(totalPayItemTax) }}
-						</div>
+					<a-col :span="12">
 						<a-spin :spinning="loadingConfigPayItems" size="large">
 							<div class="deduction-main">
 								<div v-for="item in dataConfigPayItems" :key="item.name" class="custom-deduction">
@@ -149,10 +150,7 @@
 							</div>
 						</a-spin>
 					</a-col>
-					<a-col :span="11">
-						<div class="header-text-2">
-							공제 {{ $filters.formatCurrency(totalDeduction) }} 원
-						</div>
+					<a-col :span="12">
 						<a-spin :spinning="loadingConfigDeductions" size="large">
 							<div class="deduction-main">
 								<div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
@@ -213,7 +211,7 @@
 					<a-tooltip placement="top" title="중도퇴사자 연말정산 반영">
 						<div>
 							<button-basic @onClick="actionCalculateMTS" mode="contained" type="default"
-								:disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement1"
+								:disabled="store.state.common.pa110.statusDisabledStatus || !statusMidTermSettlement1 || statusCalculateMTS"
 								class="mr-5 ml-5" text="중도정산 반영" />
 						</div>
 					</a-tooltip>
@@ -345,6 +343,7 @@ export default defineComponent({
 
 		let statusMidTermSettlement1 = ref<boolean>(true);
 		const statusMidTermSettlement2 = computed(() => store.state.common.pa110.statusMidTermSettlement2);
+		let statusCalculateMTS = ref<boolean>(false);
 		let requiredPaymentDay = ref();
 		const startDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).startOf("month").toDate());
 		const finishDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).endOf("month").toDate());
@@ -511,7 +510,6 @@ export default defineComponent({
 				localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
 				value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
 			}
-
 			calculateTax();
 		}, { deep: true });
 
@@ -534,15 +532,12 @@ export default defineComponent({
 			localReal.value = 0
 			store.state.common.pa110.statusClickButtonAdd = false;
 			store.state.common.pa110.dataTaxPayInfo =
-				store.state.common.pa110.dataTaxPayInfo.concat(
-					JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
-				);
+				store.state.common.pa110.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
 			dataIW.value = store.state.common.pa110.dataTaxPayInfo[store.state.common.pa110.dataTaxPayInfo.length - 1];
 			dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ?
 				parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`)
 				: parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(
-					dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth())}`
-				);
+					dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth())}`);
 			store.state.common.pa110.focusedRowKey = "PA110";
 			onResetForm();
 		});
@@ -569,10 +564,7 @@ export default defineComponent({
 		});
 		watch(() => dataIW.value, (value, oldVal) => {
 			if (statusFormAdd.value) {
-				if (
-					JSON.stringify({ ...sampleDataIncomeWage }) !==
-					JSON.stringify(dataIW.value)
-				) {
+				if (JSON.stringify({ ...sampleDataIncomeWage }) !== JSON.stringify(dataIW.value)) {
 					store.state.common.pa110.statusChangeFormAdd = true;
 					// if (!store.state.common.pa110.statusRowAdd) {
 					//     store.state.common.pa110.statusChangeFormEdit = true
@@ -603,6 +595,7 @@ export default defineComponent({
 
 		watch(result, async (value) => {
 			triggerDetail.value = false;
+			statusCalculateMTS.value = false; // enable button ở giữa
 			let data = value.getIncomeWage;
 			if (data) {
 				await dataConfigPayItems.value?.map((row: any) => {
@@ -682,6 +675,7 @@ export default defineComponent({
 		});
 
 		watch(resultEmployeeWage, async (newVal: any) => {
+			statusCalculateMTS.value = false; // enable button ở giữa
 			triggerEmployeeWage.value = false;
 			if (statusFormAdd.value) {
 				dataIW.value.employee.name = newVal.getEmployeeWage.name;
@@ -764,6 +758,7 @@ export default defineComponent({
 		};
 
 		const onChangeInputDeduction = () => {
+			statusCalculateMTS.value = true; // disable button ở giữa
 			if (statusFormAdd.value) {
 				store.state.common.pa110.statusChangeFormAdd = true;
 			} else {
@@ -771,6 +766,7 @@ export default defineComponent({
 			}
 		};
 		const onChangeInputPayItem = () => {
+			statusCalculateMTS.value = true; // disable button ở giữa
 			statusChangeFormPrice.value = true;
 			if (statusFormAdd.value) {
 				store.state.common.pa110.statusChangeFormAdd = true;
@@ -1009,6 +1005,7 @@ export default defineComponent({
 			dataMidTermSettlement,
 			statusFormAdd,
 			statusChangeFormPrice,
+			statusCalculateMTS,
 		};
 	},
 });
