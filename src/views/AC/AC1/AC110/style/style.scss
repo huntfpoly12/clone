@@ -69,7 +69,9 @@
           height: 55px !important;
         }
         &-wrapper {
-          border: 1px solid #bfbfbf;
+          height: 100%;
+          overflow: hidden;
+          border: 1px solid #ddd;
         }
         &-title {
           background-color: #bdd7ee;
@@ -133,6 +135,9 @@
         }
         :deep .dx-datagrid-focus-overlay {
           visibility: hidden !important;
+        }
+        :deep .dx-datagrid-headers {
+          margin: 0 -1px;
         }
       }
     }

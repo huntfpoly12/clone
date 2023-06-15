@@ -25,7 +25,7 @@
             <span class="fz-12 pl-5">지급일변경</span>
         </div>
     </DxButton>
-    <DxButton class="button-open-tab ml-4" @click="openTab({ url: '/dashboard/pa-520', name: '일용직사원등록', id: 'pa-520' })">
+    <DxButton class="button-open-tab ml-4" @click="openTab({ url: '/pa-520', name: '일용직사원등록', id: 'pa-520' })">
         일용직사원등록</DxButton>
 
     <DxDropDownButton :useItemTextAsTitle="false" class="ml-4 action-select-1" :items="arrDropDownPayrollRegister"

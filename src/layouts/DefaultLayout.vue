@@ -418,7 +418,7 @@ export default defineComponent({
             this.openKeys = ["ac-000", "ac-600"];
           }
           if (newValue.id !== "#") {
-            this.$router.push(`/dashboard/${newValue.id}`);
+            this.$router.push(`/${newValue.id}`);
           }
         }
       },
