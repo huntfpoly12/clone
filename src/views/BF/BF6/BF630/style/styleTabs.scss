@@ -1,23 +1,23 @@
 #DxDataGrid-bf-630-tab1 {
-  height: calc(100vh - 400px) !important;
+  height: calc(100vh - 360px) !important;
   :deep .dx-freespace-row {
     display: none !important;
   }
 }
 #DxDataGrid-bf-630-tab2 {
-  height: calc(100vh - 400px) !important;
+  height: calc(100vh - 360px) !important;
   :deep .dx-freespace-row {
     display: none !important;
   }
 }
 #DxDataGrid-bf-630-tab3 {
-  height: calc(100vh - 400px) !important;
+  height: calc(100vh - 360px) !important;
   :deep .dx-freespace-row {
     display: none !important;
   }
 }
 #DxDataGrid-bf-630-tab4 {
-  height: calc(100vh - 400px) !important;
+  height: calc(100vh - 360px) !important;
   :deep .dx-freespace-row {
     display: none !important;
   }
@@ -27,6 +27,12 @@
   :deep .dx-freespace-row {
     display: none !important;
   }
+}
+:deep .dx-datagrid-search-panel {
+  margin: 0;
+}
+.custom-date .ant-form-item {
+  margin: 0;
 }
 .title-table {
   justify-content: space-between;
@@ -110,8 +116,8 @@
 .btn-modal-save {
   background-color: black;
   color: white;
-  padding: 2px 5px;
+  padding: 4px 5px;
   border-radius: 5px;
-  margin-left: 10px;
+  margin-left: 5px;
   cursor: pointer;
 }

@@ -322,25 +322,25 @@
 					<!-- <div v-if="store.state.common.pa110.dataTaxPayInfo.length" -->
 					<div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
 						class="fs-14">
-						<div style="margin-left: 70px">
+						<!-- <div> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 								<div>
 									사원수<span>[{{ store.state.common.pa110.dataTaxPayInfo.length }}]</span>
 								</div>
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </div>
+						<dividerProps> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalPay()">
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </dividerProps>
+						<div > -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </div>
+						<div > -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
 							</div>
-						</div>
+						<!-- </div> -->
 					</div>
 				</a-spin>
 			</a-col>
