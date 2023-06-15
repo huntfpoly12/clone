@@ -5,7 +5,8 @@
 			<a-spin :spinning="loadingGetAccountingProcesses">
 				<div class="grid">
 					<div v-for="(month, index) in 12" :key="index" class="items"
-						:class="{ 'items-active': monthSelected === month, 'column-hover': monthNewClick == month }" @click="selectedMonth(month)">
+						:class="{ 'items-active': monthSelected === month, 'column-hover': monthNewClick == month }"
+						@click="selectedMonth(month)">
 						<colorful-badge
 							:value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
 							:year="dataGetAccountingProcesses.find((item: any) => item.month === month)?.year || acYear"
@@ -13,64 +14,6 @@
 					</div>
 				</div>
 			</a-spin>
-			<div class="flex">
-				<div class="action">
-					<ProcessStatus
-						v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
-						:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
-						:disabled="true" />
-					<button-basic v-else mode="contained" style="width: 90px" :disabled="true">
-					</button-basic>
-					<DxButton icon="plus" class="ml-4" @click="modalHistoryAccountingProcess">
-						<a-tooltip placement="top" title="마감상태 변경이력">
-							<HistoryOutlined style="font-size: 18px" />
-						</a-tooltip>
-					</DxButton>
-					<div class="ml-10">
-						<span style="color: rgb(202, 131, 0);">(주의) 동일한 통장내역 전표는 함께 선택되며, 취소시 함께 취소됩니다.</span>
-					</div>
-				</div>
-				<div class="action">
-					<a-tooltip placement="top" color="black">
-						<template #title>전표 신규 건별 등록</template>
-						<span>
-							<DxButton class="ml-4 custom-button" type="default"
-								:disabled="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status != 10"
-								:height="$config_styles.HeightInput" @click="actionOpenModalAdd" :width="120">
-								<div class="d-flex-center">
-									<PlusOutlined style="font-size: 14px" />
-									<span class="pl-5">전표 건별 등록</span>
-								</div>
-							</DxButton>
-						</span>
-					</a-tooltip>
-					<a-tooltip placement="top" color="black">
-						<template #title>결의서 신규 엑셀 등록</template>
-						<span>
-							<DxButton class="ml-4 custom-button" type="default" disabled="true" :width="130"
-								:height="$config_styles.HeightInput">
-								<div class="d-flex-center">
-									<PlusOutlined style="font-size: 14px" />
-									<span class="pl-5">결의서 엑셀 등록</span>
-								</div>
-							</DxButton>
-						</span>
-					</a-tooltip>
-					<DxButton class="ml-4 mr-4 custom-button" type="default" :width="90"
-						:disabled="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status != 10"
-						:height="$config_styles.HeightInput" @click="actionModalDelete">
-						<div class="d-flex-center">
-							<span><checkbox-basic :valueCheckbox="true" disabled="true" /></span>
-							<span>전표취소</span>
-						</div>
-					</DxButton>
-					<DxButton icon="plus" @click="modalHistoryAccountingDocuments">
-						<a-tooltip placement="topLeft" title="전표 변경이력">
-							<HistoryOutlined style="font-size: 18px" />
-						</a-tooltip>
-					</DxButton>
-				</div>
-			</div>
 		</div>
 		<DxDrawer :opened-state-mode="'shrink'" :position="'bottom'" :reveal-mode="'expand'"
 			v-model:opened="store.state.common.ac120.statusShowFull" :height="'100%'" template="listMenu">
@@ -88,11 +31,82 @@
 						v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
 						@focused-row-changing="onFocusedRowChanging" :column-auto-width="true"
 						v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
-						@selection-changed="selectionChanged">
-						<DxRowDragging :allow-reordering="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10" :show-drag-icons="true" :on-reorder="onReorder" />
+						@toolbar-preparing="onToolbarPreparing" @selection-changed="selectionChanged">
+						<DxRowDragging
+							:allow-reordering="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10"
+							:show-drag-icons="true" :on-reorder="onReorder" />
 						<DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
 						<DxScrolling mode="standard" show-scrollbar="always" />
+						<DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
 						<DxPaging :enabled="false" />
+						<DxToolbar>
+							<DxItem template="box-action-left" location="before" />
+							<DxItem template="box-action-right" location="after" />
+							<DxItem name="searchPanel" />
+						</DxToolbar>
+						<template #box-action-left>
+							<!-- <div class="d-flex-center"> -->
+								<div class="action d-flex-center">
+									<ProcessStatus
+										v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
+										:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
+										:disabled="true" />
+									<button-basic v-else mode="contained" style="width: 90px" :disabled="true">
+									</button-basic>
+									<DxButton icon="plus" class="ml-4" @click="modalHistoryAccountingProcess">
+										<a-tooltip placement="top" title="마감상태 변경이력">
+											<HistoryOutlined style="font-size: 18px" />
+										</a-tooltip>
+									</DxButton>
+									<div class="ml-10">
+										<span style="color: rgb(202, 131, 0);">(주의) 동일한 통장내역 전표는 함께 선택되며, 취소시 함께
+											취소됩니다.</span>
+									</div>
+								</div>
+							<!-- </div> -->
+						</template>
+						<template #box-action-right>
+							<div class="action">
+								<a-tooltip placement="top" color="black">
+									<template #title>전표 신규 건별 등록</template>
+									<span>
+										<DxButton class="ml-4 custom-button" type="default"
+											:disabled="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status != 10"
+											:height="$config_styles.HeightInput" @click="actionOpenModalAdd" :width="120">
+											<div class="d-flex-center">
+												<PlusOutlined style="font-size: 14px" />
+												<span class="pl-5">전표 건별 등록</span>
+											</div>
+										</DxButton>
+									</span>
+								</a-tooltip>
+								<a-tooltip placement="top" color="black">
+									<template #title>결의서 신규 엑셀 등록</template>
+									<span>
+										<DxButton class="ml-4 custom-button" type="default" disabled="true" :width="130"
+											:height="$config_styles.HeightInput">
+											<div class="d-flex-center">
+												<PlusOutlined style="font-size: 14px" />
+												<span class="pl-5">결의서 엑셀 등록</span>
+											</div>
+										</DxButton>
+									</span>
+								</a-tooltip>
+								<DxButton class="ml-4 mr-4 custom-button" type="default" :width="90"
+									:disabled="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status != 10"
+									:height="$config_styles.HeightInput" @click="actionModalDelete">
+									<div class="d-flex-center">
+										<span><checkbox-basic :valueCheckbox="true" disabled="true" /></span>
+										<span>전표취소</span>
+									</div>
+								</DxButton>
+								<DxButton icon="plus" @click="modalHistoryAccountingDocuments">
+									<a-tooltip placement="topLeft" title="전표 변경이력">
+										<HistoryOutlined style="font-size: 18px" />
+									</a-tooltip>
+								</DxButton>
+							</div>
+						</template>
 						<DxColumn caption="일자" :allow-sorting="false" cell-template="transactionDetailDate"
 							data-field="transactionDetailDate" width="85" />
 						<template #transactionDetailDate="{ data }">
@@ -128,15 +142,18 @@
 						<template #amountCustom1="{ data }">
 							<span
 								:title="data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0">
-								{{ data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0 }}
+								{{ data.data.resolutionClassification == 1 ? $filters.formatCurrency(data.data.amount) : 0
+								}}
 							</span>
 						</template>
 
 						<DxColumn caption="지출액" :allow-sorting="false" css-class="cell-right" cell-template="amountCustom2"
 							width="80" />
 						<template #amountCustom2="{ data }">
-							<span :title="data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0">
-								{{ data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0 }}
+							<span
+								:title="data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0">
+								{{ data.data.resolutionClassification == 2 ? $filters.formatCurrency(data.data.amount) : 0
+								}}
 							</span>
 						</template>
 
@@ -161,7 +178,7 @@
 							<span :title="accountSubjects.find((item: any) => item.code == data.data.relationCode)?.name">
 								<!-- <account-code-select :valueInput="data.data.relationCode" :readOnly="true" /> -->
 								{{ accountSubjects.find((item: any) => item.code == data.data.relationCode)?.name }}
-								</span>
+							</span>
 						</template>
 
 						<DxColumn caption="자금원천" :allow-sorting="false" data-field="fundingSource" css-class="cell-left"
@@ -169,7 +186,8 @@
 						<template #fundingSource="{ data }">
 							<span
 								:title="store.state.common.ac120.arrFundingSource.find((item: any) => data.data.fundingSource == item.id)?.text">
-								{{ store.state.common.ac120.arrFundingSource.find((item: any) => data.data.fundingSource ==	item.id)?.text }}
+								{{ store.state.common.ac120.arrFundingSource.find((item: any) => data.data.fundingSource ==
+									item.id)?.text }}
 							</span>
 						</template>
 
@@ -342,6 +360,8 @@ import {
 	DxTotalItem,
 	DxRowDragging,
 	DxPaging,
+	DxSearchPanel,
+	DxToolbar,
 } from "devextreme-vue/data-grid";
 import DxDrawer from 'devextreme-vue/drawer';
 import {
@@ -365,7 +385,6 @@ import notification from "@/utils/notification";
 import DataSource from "devextreme/data/data_source";
 import { Store } from "devextreme/data";
 import { cloneDeep, isEqual } from "lodash";
-import { data } from "@/views/BF/BF6/BF630/utils";
 // import {
 // 	FullscreenOutlined,
 // 	FullscreenExitOutlined,
@@ -391,6 +410,8 @@ export default defineComponent({
 		DxRowDragging,
 		DetailComponent,
 		DxDrawer,
+		DxSearchPanel,
+		DxToolbar,
 		// FullscreenOutlined,
 		// FullscreenExitOutlined,
 	},
@@ -404,7 +425,7 @@ export default defineComponent({
 		const accountSubjects = Array()
 		dataAccountSubject.value.map((value: any) => {
 			value.codes.map((code: any) => {
-				accountSubjects.push(code) 
+				accountSubjects.push(code)
 			})
 		})
 		const clients = computed(() => store.state.settings.clients);
@@ -878,8 +899,11 @@ export default defineComponent({
 		};
 
 		const modalHistoryAccountingDocuments = () => {
-			popupData.value = { ...dataQueryGetAccountingDocuments.value };
-			modalHistoryStatuAccountingDocuments.value = true;
+			console.log(storeDataSource.value);
+			console.log(dataSource.value?.store());
+			console.log(dataSource.value?.items());
+			// popupData.value = { ...dataQueryGetAccountingDocuments.value };
+			// modalHistoryStatuAccountingDocuments.value = true;
 		};
 
 		const actionEditTaxPay = async (e: any) => {
@@ -921,12 +945,11 @@ export default defineComponent({
 
 		// ================ CUSTOM SUMMARY TABLE ============================================
 		const customCountRow = () => {
-			return `전표 건수 <span>[${totalCount.value ? totalCount.value : 0
-				}]</span>`;
+			return `전표 건수 <span>[${totalCount.value ? totalCount.value : 0}]</span>`;
 		};
 		const sumOfResolutionClassification1 = () => {
 			let total = 0;
-			storeDataSource.value?._array.forEach((item: any) => {
+			dataSource.value?.items().forEach((item: any) => {
 				if (item.resolutionClassification == 1) {
 					total += item.amount ? item.amount : 0;
 				}
@@ -935,7 +958,7 @@ export default defineComponent({
 		};
 		const sumOfResolutionClassification2 = () => {
 			let total = 0;
-			storeDataSource.value?._array.forEach((item: any) => {
+			dataSource.value?.items().forEach((item: any) => {
 				if (item.resolutionClassification == 2) {
 					total += item.amount ? item.amount : 0;
 				}
@@ -944,7 +967,7 @@ export default defineComponent({
 		};
 		const customBalance = () => {
 			let total = 0;
-			storeDataSource.value?._array.forEach((item: any, index: number) => {
+			dataSource.value?.items().forEach((item: any, index: number) => {
 				if (index == 0) {
 					if (item.resolutionClassification == 1) {
 						total += lastBalance.value + (item.amount ? item.amount : 0);
@@ -964,21 +987,24 @@ export default defineComponent({
 		const countResolutionNormalStatus = () => {
 			let totalResolutionNormalStatuTrue = 0;
 			let totalResolutionNormalStatuFalse = 0;
-			storeDataSource.value?._array.forEach((item: any) => {
+			dataSource.value?.items().forEach((item: any) => {
 				if (item.resolutionNormalStatus) {
 					totalResolutionNormalStatuTrue++;
 				} else {
 					totalResolutionNormalStatuFalse++;
 				}
 			});
-			return `정상 내역 건수 <span>[${filters.formatCurrency(
-				totalResolutionNormalStatuTrue
-			)}]</span> 비정상 내역 건 <span>[${filters.formatCurrency(
-				totalResolutionNormalStatuFalse
-			)}]</span>`;
+			return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span> 
+			비정상 내역 건 <span>[${filters.formatCurrency(totalResolutionNormalStatuFalse)}]</span>`;
 		};
 
 		const heightDrawer = ref('calc(100vh - 245px)')
+
+		const onToolbarPreparing = (e: any) => {
+			console.log(e);
+
+
+		}
 
 		return {
 			dataGetAccountingProcesses,
@@ -1027,6 +1053,7 @@ export default defineComponent({
 			changeAmountDataGrid,
 			heightDrawer,
 			monthNewClick,
+			onToolbarPreparing,
 			// statusProcess,
 		};
 	},
