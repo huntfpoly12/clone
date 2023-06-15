@@ -112,7 +112,7 @@ export default defineComponent({
       }
     );
     watch(result, (newValue: any) => {
-      if(props.filterData){
+      if(!props.filterData){
         dataSource.value = newValue?.searchUsers?.datas.length > 0 ? newValue.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : [];
       } else {
         dataSource.value = newValue?.searchUsers?.datas;

@@ -90,14 +90,6 @@
         </a-col>
       </a-row>
     </section>
-    <a-row class="top-table" justify="end">
-      <button-basic
-        @onClick="onSave"
-        mode="contained"
-        type="default"
-        text="상태일괄변경"
-      />
-    </a-row>
     <div class="content-grid">
       <a-spin :spinning="loading1 || loadingDataSource">
         <DxDataGrid
@@ -119,6 +111,31 @@
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxPaging :page-size="1000" />
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem template="btnSave" location="after" />
+            <DxItem name="searchPanel" location="after" />
+            <DxItem
+              name="exportButton"
+              css-class="cell-button-export"
+              location="after"
+            />
+          </DxToolbar>
+          <template #btnSave>
+            <div>
+              <button-basic
+                @onClick="onSave"
+                mode="contained"
+                type="default"
+                text="상태일괄변경"
+              />
+            </div>
+          </template>
           <DxLoadPanel :enabled="false" :showPane="true" />
           <DxSelection
             :select-all-mode="'allPages'"
@@ -370,7 +387,11 @@ import {
   DxSelection,
   DxLoadPanel,
   DxKeyboardNavigation,
-DxPaging,
+  DxPaging,
+  DxItem,
+  DxSearchPanel,
+  DxExport,
+  DxToolbar,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -386,7 +407,6 @@ import {
   companyConsignStatusSelectbox,
   EDIStatusSelectbox,
   formatMonth,
-  dataTableTab1,
   states1,
   completedAtFormat,
 } from "../../utils/index";
@@ -414,8 +434,12 @@ export default defineComponent({
     DxTextBox,
     DxTooltip,
     DxKeyboardNavigation,
-    DxPaging
-},
+    DxPaging,
+    DxItem,
+    DxSearchPanel,
+    DxExport,
+    DxToolbar,
+  },
   props: {
     search: {
       type: Number,
@@ -443,23 +467,25 @@ export default defineComponent({
     const companies = ref<any[]>([]);
     const globalYear = dayjs().year();
     const loadingDataSource = ref(false);
-    
+
     //-----------------------Fcn common-----------------------------------------
-    
+
     //-----------------------Get DATA SOURCE------------------------------
-    
-    const rangeDate = ref([dayjs().subtract(1, "week").format("YYYYMMDD"), dayjs().format("YYYYMMDD")]);
-    watch(rangeDate,(newVal: any,oldVal)=>{
-      let oldVal2 = oldVal.map((item:any) => +item);
-      if(JSON.stringify(newVal) !== JSON.stringify(oldVal2)){
+
+    const rangeDate = ref([
+      dayjs().subtract(1, "week").format("YYYYMMDD"),
+      dayjs().format("YYYYMMDD"),
+    ]);
+    watch(rangeDate, (newVal: any, oldVal) => {
+      let oldVal2 = oldVal.map((item: any) => +item);
+      if (JSON.stringify(newVal) !== JSON.stringify(oldVal2)) {
         adminConsignStatusParam.input = {
           fromDate: newVal[0],
           toDate: newVal[1],
         };
         adminConsignStatusTrigger.value = true;
-        getMajorInsuranceRefetch();
       }
-    })
+    });
     const dataSource = ref<any[]>([]);
     const filterDsTab1Bf530 = computed(
       () => store.state.common.filterDsTab1Bf530
@@ -499,7 +525,7 @@ export default defineComponent({
           }
         );
         dataSource.value = dataArr;
-      }else {
+      } else {
         dataSource.value = [];
       }
       if (props.onSearch) {
@@ -573,36 +599,34 @@ export default defineComponent({
 
     //-------------------------get MajorInsurance ViewURL ------------------------
 
-    const getMajorInsuranceParam = reactive<any>({
+    const getMajorInsuranceUrlParam = reactive<any>({
       companyId: null,
       imputedYear: globalYear,
     });
-    const getMajorInsuranceTrigger = ref<boolean>(false);
+    const getMajorInsuranceUrlTrigger = ref<boolean>(false);
     const {
-      onError: getMajorInsuranceError,
-      result: getMajorInsuranceResult,
-      refetch: getMajorInsuranceRefetch,
+      onError: getMajorInsuranceUrlError,
+      result: getMajorInsuranceUrlResult,
     } = useQuery(
       queries.getMajorInsuranceConsignStatusFaxFilingReportViewUrl,
-      getMajorInsuranceParam,
+      getMajorInsuranceUrlParam,
       () => ({
-        enabled: getMajorInsuranceTrigger.value,
+        enabled: getMajorInsuranceUrlTrigger.value,
         fetchPolicy: "no-cache",
       })
     );
-    watch(getMajorInsuranceResult, (newVal: any) => {
+    watch(getMajorInsuranceUrlResult, (newVal: any) => {
       let data = newVal.getMajorInsuranceConsignStatusFaxFilingReportViewUrl;
       if (data) window.open(data);
     });
-    getMajorInsuranceError((res: any) => {
+    getMajorInsuranceUrlError((res: any) => {
       notification("error", res.message);
-      getMajorInsuranceTrigger.value = false;
+      getMajorInsuranceUrlTrigger.value = false;
     });
 
     const onGetAcquistionRp = (e: any) => {
-      getMajorInsuranceParam.companyId = e;
-      getMajorInsuranceTrigger.value = true;
-      getMajorInsuranceRefetch();
+      getMajorInsuranceUrlParam.companyId = e;
+      getMajorInsuranceUrlTrigger.value = true;
     };
 
     //------------------------ACTION UPDATE TABLE--------------------------------
@@ -616,8 +640,7 @@ export default defineComponent({
     onDoneConsignStatus(() => {
       notification("success", Message.getCommonMessage("106").message);
       emit("closeModal", true);
-      getMajorInsuranceTrigger.value = true;
-      getMajorInsuranceRefetch();
+      adminConsignStatusTrigger.value = true;
     });
     onErrorConsignStatus((e: any) => {
       notification("error", e.message);

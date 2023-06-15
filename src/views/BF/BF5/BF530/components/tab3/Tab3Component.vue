@@ -56,14 +56,6 @@
         </a-col>
       </a-row>
     </section>
-    <a-row class="top-table" justify="end">
-      <button-basic
-        @onClick="onSave"
-        mode="contained"
-        type="default"
-        text="상태일괄변경"
-      />
-    </a-row>
     <div class="content-grid">
       <a-spin :spinning="loading1 || loadingDataSource">
         <DxDataGrid
@@ -84,6 +76,31 @@
         >
           <DxKeyboardNavigation :enabled="false" />
           <DxPaging :page-size="1000" />
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem template="btnSave" location="after" />
+            <DxItem name="searchPanel" location="after" />
+            <DxItem
+              name="exportButton"
+              css-class="cell-button-export"
+              location="after"
+            />
+          </DxToolbar>
+          <template #btnSave>
+            <div>
+              <button-basic
+                @onClick="onSave"
+                mode="contained"
+                type="default"
+                text="상태일괄변경"
+              />
+            </div>
+          </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection
             :select-all-mode="'allPages'"
@@ -342,6 +359,10 @@ import {
   DxColumnFixing,
   DxPaging,
   DxKeyboardNavigation,
+  DxItem,
+  DxSearchPanel,
+  DxExport,
+  DxToolbar,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -387,6 +408,10 @@ export default defineComponent({
     HistoryOutlined,
     DxPaging,
     DxKeyboardNavigation,
+    DxItem,
+    DxSearchPanel,
+    DxExport,
+    DxToolbar,
   },
   props: {
     search: {
@@ -417,7 +442,7 @@ export default defineComponent({
     //-----------------------Search with holding and data source----------------
 
     const rangeDate = ref([
-      dayjs().subtract(1, "week").format("YYYYMMDD"),
+      dayjs().subtract(1, "year").format("YYYYMMDD"),
       dayjs().format("YYYYMMDD"),
     ]);
     watch(rangeDate, (newVal: any, oldVal) => {
