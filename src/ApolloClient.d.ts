@@ -15,7 +15,7 @@ const connections: { [key: string]: any } = {}; // Hold the controller for each 
 const authMiddleware = new ApolloLink((operation, forward) => {
   const accessToken = sessionStorage.getItem('token');
   // Check if the token is expired
-  const isTokenExpired = accessToken &&  (getJwtObject(accessToken).isExpired(60000) || getJwtObject(accessToken).isExpired()) ? true : false;
+  const isTokenExpired = accessToken &&  (getJwtObject(accessToken).isExpired(60) || getJwtObject(accessToken).isExpired()) ? true : false;
   if (isTokenExpired) {
     if (!isTokenRefreshing) {
       isTokenRefreshing = true;
