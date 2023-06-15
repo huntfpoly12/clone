@@ -11,10 +11,9 @@
                     <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem location="center" template="search" css-class="search-toolbar-custom" />
-                        <DxItem name="page" template="pagination-table" />
+                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" css-class="cell-button-export"/>
-                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" />
@@ -64,12 +63,6 @@
                             </div>
                         </div>
                     </template>
-                    <template #pagination-table>
-                        <div v-if="rowTable > dataSearch.rows">
-                            <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
-                                :total="rowTable" show-less-items @change="changePage" />
-                        </div>
-                    </template>
                     <template #button-template>
                         <a-tooltip placement="top" color="black">
                             <template #title>신규</template>
@@ -115,10 +108,6 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <div class="pagination-table" v-if="rowTable > dataSearch.rows">
-                    <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
-                        :total="rowTable" show-less-items @change="changePage" />
-                </div>
             </a-spin>
         </div>
     </div>

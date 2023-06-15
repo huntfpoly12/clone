@@ -33,17 +33,7 @@
           ></CheckboxGroup>
         </div>
       </a-col>
-      <a-col>
-        <a-form-item
-          label="사업자코드"
-          label-align="left"
-          class="fix-width-label"
-        >
-          <default-text-box
-            v-model:valueInput="filter.companyCode"
-            textUppercase
-          />
-        </a-form-item>
+      <a-col :span="4">
         <a-form-item
           label="매니저리스트"
           label-align="left"
@@ -53,16 +43,8 @@
             v-model:valueInput="filter.companyServiceContractManageUserId"
           />
         </a-form-item>
-      </a-col>
-      <a-col>
-        <a-form-item label="상호" label-align="left" class="fix-width-label">
-          <default-text-box
-            v-model:valueInput="filter.companyName"
-            textUppercase
-          />
-        </a-form-item>
         <a-form-item
-          label="제작요청자"
+          label="영업자리스트"
           label-align="left"
           class="fix-width-label"
         >
@@ -131,6 +113,12 @@
           @selection-changed="selectionChanged"
           style="height: calc(100vh - 380px)"
         >
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem name="searchPanel" />
+            <DxItem location="after" name="exportButton" css-class="cell-button-export" />
+          </DxToolbar>
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn
             caption="사업자코드"
@@ -219,6 +207,8 @@ import {
   DxSummary,
   DxToolbar,
   DxTotalItem,
+  DxSearchPanel,
+  DxExport
 } from "devextreme-vue/data-grid";
 import PopupConfirmSave from "./PopupConfirmSave.vue";
 import GetStatusTable from "./GetStatusTable.vue";
@@ -240,6 +230,8 @@ export default defineComponent({
     DxTotalItem,
     PopupConfirmSave,
     GetStatusTable,
+    DxSearchPanel,
+    DxExport
   },
   props: {
     searchStep: Number,
@@ -425,12 +417,6 @@ export default defineComponent({
             (filter.companyServiceContractActive
               ? item.companyServiceContract.active
               : true) &&
-            item.company.code
-              .toLocaleLowerCase()
-              .includes(filter.companyCode.toLocaleLowerCase()) &&
-            item.company.name
-              .toLocaleLowerCase()
-              .includes(filter.companyName.toLocaleLowerCase()) &&
             (filter.companyServiceContractManageUserId === null ||
               filter.companyServiceContractManageUserId ===
                 item.companyServiceContract?.manageUserId) &&

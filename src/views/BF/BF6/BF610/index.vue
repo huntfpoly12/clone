@@ -89,29 +89,6 @@
         </a-col>
         <a-col>
           <a-form-item
-            label="사업자코드"
-            label-align="left"
-            class="mb-6 label-select"
-          >
-            <default-text-box
-              width="150px"
-              v-model:valueInput="filter.companyCode"
-              text-uppercase
-            />
-          </a-form-item>
-          <a-form-item
-            label="상호"
-            label-align="left"
-            class="mb-0 label-select"
-          >
-            <default-text-box
-              width="150px"
-              v-model:valueInput="filter.companyName"
-            />
-          </a-form-item>
-        </a-col>
-        <a-col>
-          <a-form-item
             label="매니저리스트"
             label-align="left"
             class="mb- label-select"
@@ -166,10 +143,12 @@
           style="height: calc(100vh - 340px)"
         >
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+          <DxExport :enabled="true" />
           <DxToolbar>
             <DxItem  name="searchPanel" />
+            <DxItem location="after" name="exportButton" css-class="cell-button-export" />
           </DxToolbar>
-          <DxScrolling mode="standard" show-scrollbar="always" />
+          <DxScrolling mode="standard" show-scrollbar="always" />>
           <!--                  <DxSelection mode="multiple" :fixed="true" />-->
           <DxColumn caption="출력 메일" cell-template="action" />
           <template #action="{ data }">
@@ -450,7 +429,7 @@ import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { DxColumn, DxDataGrid, DxScrolling, DxToolbar, DxItem, DxSearchPanel } from "devextreme-vue/data-grid";
+import { DxColumn, DxDataGrid, DxScrolling, DxToolbar, DxItem, DxSearchPanel, DxExport } from "devextreme-vue/data-grid";
 import { computed, reactive, ref, watch } from "vue";
 import { useStore } from "vuex";
 import PopupAddStatus from "./components/PopupAddStatus.vue";
@@ -472,8 +451,8 @@ const filter = reactive({
   rows: 10,
   paymentYearMonth: parseInt(globalYear.value + "01"), // 2
   statuses: [10, 20, 30, 40], // 7
-  companyCode: "", // 8
-  companyName: "", // 9
+  // companyCode: "", // 8
+  // companyName: "", // 9
   manageCompactUserId: null, // 10
   compactSalesRepresentativeId: null, // 11
   active: true, // 12
@@ -684,12 +663,6 @@ const searching = () => {
         (filter.afterTheDueDate
           ? item.index === 0 && item.afterDeadline === true
           : false)) &&
-      item.company.code
-        .toLocaleLowerCase()
-        .includes(filter.companyCode.toLocaleLowerCase()) &&
-      item.company.name
-        .toLocaleLowerCase()
-        .includes(filter.companyName.toLocaleLowerCase()) &&
       (filter.manageCompactUserId === null ||
         filter.manageCompactUserId ===
           item.companyServiceContract.manageCompactUser?.id) &&

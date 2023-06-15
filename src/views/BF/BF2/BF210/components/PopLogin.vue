@@ -5,7 +5,7 @@
             <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrayLog" :show-borders="true"
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxPaging :page-size="rowTable" />
+                <DxPaging :page-size="15" />
                 <DxColumn data-field="createdAt" caption="기록일시" data-type="date"
                         format="yyyy-MM-dd HH:mm"/>
                 <DxColumn data-field="success" caption="성공여부" cell-template="modal-table" />
@@ -17,10 +17,6 @@
                 <DxColumn data-field="cause" caption="오류시스템메세지" />
                 <DxColumn data-field="ip" caption="IP주소" />
             </DxDataGrid>
-            <div class="pagination-table" v-if="rowTable > 20">
-                <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
-                    show-less-items @change="changePage" />
-            </div>
             <template #footer> </template>
         </a-modal>
     </div>
@@ -46,7 +42,6 @@ export default defineComponent({
         // config grid
         const store = useStore();
         
-        const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         let trigger = ref<boolean>(false);
@@ -62,7 +57,7 @@ export default defineComponent({
         });
         const originData = ref({
             userId: 1,
-            rows: per_page,
+            rows: 10000,
             page: 1,
         })
 

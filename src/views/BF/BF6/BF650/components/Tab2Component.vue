@@ -59,6 +59,7 @@
           <list-manager-dropdown
             v-model:valueInput="dataSearch.manageUserId"
             width="200"
+            filterData
           />
         </a-form-item>
       </a-col>
@@ -77,6 +78,12 @@
         noDataText="내역이 없습니다"
         style="height: calc(100vh - 250px)"
       >
+        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+        <DxExport :enabled="true" />
+        <DxToolbar>
+          <DxItem name="searchPanel" />
+          <DxItem location="after" name="exportButton" css-class="cell-button-export" />
+        </DxToolbar>
         <DxColumn
           caption="일련번호"
           data-field="electronicFilingId"
@@ -156,6 +163,9 @@ import {
   DxScrolling,
   DxSummary,
   DxTotalItem,
+  DxSearchPanel,
+  DxExport
+
 } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from "devextreme-vue/radio-group";
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
@@ -174,6 +184,8 @@ export default defineComponent({
     DxScrolling,
     DxRadioGroup,
     ElectronicFilingFileProductions,
+    DxSearchPanel,
+    DxExport
   },
   props: {
     searchStep: Number,
