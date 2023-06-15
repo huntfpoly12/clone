@@ -31,28 +31,31 @@
             }
         }
 
-        .flex {
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        // .flex {
+        //     margin-top: 15px;
+        //     display: flex;
+        //     align-items: center;
+        //     justify-content: space-between;
 
-            .action {
-                display: flex;
-                align-items: center;
-            }
-        }
+        //     .action {
+        //         display: flex;
+        //         align-items: center;
+        //     }
+        // }
     }
     #content {
         #dataGridAc120 {
-            height: calc(100vh - 330px);
+            height: calc(100vh - 290px);
             max-width: 100% !important;
             transition: .4s;
+            :deep .dx-datagrid-search-panel {
+                margin: 0;
+            }
         }
     }
     .hiddenTable {
         transition: .4s;
-        height: calc(100vh - 690px) !important;
+        height: calc(100vh - 640px) !important;
     }
 
     .data-grid {

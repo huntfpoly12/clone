@@ -102,20 +102,6 @@
             </a-row>
         </div>
         <div class="page-content">
-            <div class="title-body">
-                <a-form-item label="서식 설정">
-                    <div class="custom-flex">
-                        <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용" textUnCheck="지급자보관용" />
-                        <a-tooltip title="본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.">
-                            <img src="@/assets/images/iconInfo.png" class="img-info" />
-                        </a-tooltip>
-                    </div>
-                </a-form-item>
-                <div class="created-date">
-                    <label class="lable-item">영수일 :</label>
-                    <date-time-box width="150px" v-model:valueDate="dateSendEmail" />
-                </div>
-            </div>
             <a-spin :spinning="loadingGetEmployeeBusinesses || loadingPrint" size="large">
                 <DxDataGrid id="DxDataGrid-pa530" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
@@ -124,9 +110,28 @@
                     <DxPaging :enabled="false" />
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxToolbar>
+                        <DxItem template="box-search-left" location="before" />
+                        <DxItem template="box-search-right" location="after" />
                         <DxItem template="pagination-send-group-mail" />
                         <DxItem template="group-print" />
                     </DxToolbar>
+                    <template #box-search-left>
+                        <a-form-item label="서식 설정">
+                            <div class="custom-flex">
+                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용"
+                                    textUnCheck="지급자보관용" />
+                                <a-tooltip title="본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.">
+                                    <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                </a-tooltip>
+                            </div>
+                        </a-form-item>
+                    </template>
+                    <template #box-search-right>
+                        <div class="created-date">
+                            <label class="lable-item">영수일 :</label>
+                            <date-time-box width="150px" v-model:valueDate="dateSendEmail" />
+                        </div>
+                    </template>
                     <template #group-print>
                         <a-tooltip placement="topRight" color="black">
                             <template #title>출력 / 저장</template>
@@ -249,7 +254,7 @@ export default defineComponent({
         const triggerPrint = ref<boolean>(false);
         const globalYear: any = computed(() => parseInt(sessionStorage.getItem("paYear") ?? "0"))
         let vModalSelectedRowKeys: any = ref([])
-        const arrCheckBoxSearch: any = reactive({...initialArrCheckBoxSearch})
+        const arrCheckBoxSearch: any = reactive({ ...initialArrCheckBoxSearch })
         const getArrPaymentYearMonth = () => {
             let arrVal = []
             if (arrCheckBoxSearch.month1.value == true)

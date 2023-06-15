@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading" size="large">
-        <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true"/>
+        <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true" />
         <div id="pa-630">
             <div class="search-form">
                 <a-row>
@@ -17,63 +17,62 @@
                 </a-row>
             </div>
             <div class="page-content">
-                <a-row class="header-group">
-                    <a-col :span="12">
+                <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA630" :show-row-lines="true" :hoverStateEnabled="true"
+                    :data-source="dataSource" :show-borders="true" @exporting="onExporting"
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    ref="gridRef" @selection-changed="selectionChanged">
+                    <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxPaging :enabled="false" />
+                    <DxToolbar>
+                        <DxItem template="box-search-left" location="before" />
+                        <DxItem template="box-search-right" location="after" />
+                        <DxItem template="send-group-mail" />
+                        <DxItem template="send-group-print" />
+                    </DxToolbar>
+                    <template #box-search-left>
                         <a-form-item label="서식 설정">
                             <div class="custom-flex">
                                 <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자 보관용'"
                                     :textUnCheck="'발행자 보관용'" />
                                 <a-tooltip color="black" placement="top">
                                     <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
-                                    <img src="@/assets/images/iconInfo.png" class="img-info"/>
+                                    <img src="@/assets/images/iconInfo.png" class="img-info" />
                                 </a-tooltip>
                             </div>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                    </template>
+                    <template #box-search-right>
                         <div class="created-date">
                             <label class="lable-item">영수일 :</label>
                             <date-time-box width="150px"
                                 v-model:valueDate="valueDefaultIncomeBusiness.input.receiptDate"></date-time-box>
                         </div>
-                    </a-col>
-                </a-row>
-                <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA630" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    ref="gridRef"
-                    @selection-changed="selectionChanged">
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
-                    <DxPaging :enabled="false" />
-                    <DxToolbar>
-                        <DxItem template="send-group-mail" />
-                        <DxItem template="send-group-print" />
-                    </DxToolbar>
+                    </template>
                     <template #send-group-mail>
-                            <DxButton @click="actionOpenPopupEmailMulti">
-                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
-                            </DxButton>
+                        <DxButton @click="actionOpenPopupEmailMulti">
+                            <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
+                        </DxButton>
                     </template>
                     <template #send-group-print>
-                            <DxButton @click="onPrintGroup">
-                                <a-tooltip title="출력 / 저장" placement="topLeft">
-                                    <img src="@/assets/images/printGroup.png" alt=""
-                                        style="width: 28px;" /> 
-                                </a-tooltip>
-                            </DxButton>
+                        <DxButton @click="onPrintGroup">
+                            <a-tooltip title="출력 / 저장" placement="topLeft">
+                                <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;" />
+                            </a-tooltip>
+                        </DxButton>
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
-                    <DxColumn :width="250" caption="성명 (상호)" css-class="cell-left" cell-template="tag" data-field="employee.employeeId"/>
+                    <DxColumn :width="250" caption="성명 (상호)" css-class="cell-left" cell-template="tag"
+                        data-field="employee.employeeId" />
                     <template #tag="{ data }">
-                            <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-                                :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-                                :foreigner="data.data.employee.foreigner" :checkStatus="false" />
+                        <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                            :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                            :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                     </template>
                     <DxColumn caption="주민등록번호" cell-template="residentId" data-field="employee.residentId" />
                     <template #residentId="{ data }">
                         <resident-id :residentId="data.data.employee?.residentId"></resident-id>
                     </template>
-                    <DxColumn caption="소득구분" cell-template="grade-cell" :width="200" data-field="employee.incomeTypeCode"/>
+                    <DxColumn caption="소득구분" cell-template="grade-cell" :width="200" data-field="employee.incomeTypeCode" />
                     <template #grade-cell="{ data }">
                         <income-type :typeCode="data.data.employee.incomeTypeCode"
                             :typeName="data.data.employee.incomeTypeName"></income-type>
@@ -81,8 +80,9 @@
                     <DxColumn caption="지급총액" data-field="paymentAmount" format="fixedPoint" />
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" format="fixedPoint" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" format="fixedPoint" />
-                    <DxColumn caption="원천징수세액 계" cell-template="sumWithholdingRuralSpecialTax" data-field="total" css-class="money-column"/>
-                    <template #sumWithholdingRuralSpecialTax="{ data }" >
+                    <DxColumn caption="원천징수세액 계" cell-template="sumWithholdingRuralSpecialTax" data-field="total"
+                        css-class="money-column" />
+                    <template #sumWithholdingRuralSpecialTax="{ data }">
                         {{ $filters.formatCurrency(data.data.total) }}
                     </template>
                     <DxColumn :width="80" cell-template="pupop" />
@@ -92,36 +92,38 @@
                                 style="width: 25px; margin-right: 3px;" />
                             <a-tooltip title="출력 / 저장" placement="topLeft">
                                 <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
-                                style="width: 25px;" />
+                                    style="width: 25px;" />
                             </a-tooltip>
                         </div>
                     </template>
                 </DxDataGrid>
                 <div v-if="dataSource.length"
-                        style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
-                        class="fs-14">
-                        <div style="margin-left: 70px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-                                <div>전체 <span>[{{ dataSource.length }}]</span></div>
-                            </div>
-                        </div>
-                        <div style="margin-left: 200px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customPaymentAmount()">
-                            </div>
-                        </div>
-                        <div style=" margin-left: 20px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customWithholdingIncomeTax()">
-                            </div>
-                        </div>
-                        <div style=" margin-left: 20px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customWithholdingLocalIncomeTax()">
-                            </div>
-                        </div>
-                        <div style=" margin-left: 20px;">
-                            <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryWRST()">
-                            </div>
+                    style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+                    class="fs-14">
+                    <div style="margin-left: 70px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                            <div>전체 <span>[{{ dataSource.length }}]</span></div>
                         </div>
                     </div>
+                    <div style="margin-left: 200px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customPaymentAmount()">
+                        </div>
+                    </div>
+                    <div style=" margin-left: 20px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                            v-html="customWithholdingIncomeTax()">
+                        </div>
+                    </div>
+                    <div style=" margin-left: 20px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                            v-html="customWithholdingLocalIncomeTax()">
+                        </div>
+                    </div>
+                    <div style=" margin-left: 20px;">
+                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryWRST()">
+                        </div>
+                    </div>
+                </div>
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="onCloseEmailMultiModal"
@@ -146,7 +148,7 @@ import {
     DxSearchPanel,
     DxToolbar,
     DxItem,
-    DxTotalItem,DxScrolling,
+    DxTotalItem, DxScrolling,
     DxSummary,
 } from "devextreme-vue/data-grid";
 import { companyId, onExportingCommon, userId } from "@/helpers/commonFunction";
@@ -295,7 +297,7 @@ export default defineComponent({
 
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.searchIncomeBusinessWithholdingReceipts.map((value: any) =>{
+                dataSource.value = value.searchIncomeBusinessWithholdingReceipts.map((value: any) => {
                     return {
                         ...value,
                         total: value.withholdingIncomeTax + value.withholdingLocalIncomeTax
@@ -348,7 +350,7 @@ export default defineComponent({
         const customTextSummaryWRST = () => {
             let sum = 0
             dataSource.value?.map((value: any) => {
-                sum+= value.withholdingLocalIncomeTax + value.withholdingIncomeTax
+                sum += value.withholdingLocalIncomeTax + value.withholdingIncomeTax
             })
             return `원천징수세액 계합계 <span>[${filters.formatCurrency(sum)}]</span>`
         }

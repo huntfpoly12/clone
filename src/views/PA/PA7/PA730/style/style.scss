@@ -1,70 +1,58 @@
 #pa-730 {
-  #gridContainerPA730 {
-    height: calc(100vh - 280px);
-    :deep .dx-datagrid-header-panel {
-      position: absolute;
-      top: -40px;
-      right: 0;
+    #gridContainerPA730 {
+        height: calc(100vh - 240px);
     }
-  }
-  :deep .dx-freespace-row {
-    display: none !important;
-  }
 
-  .custom-flex {
-    display: flex;
-    align-items: flex-start;
-    align-items: center;
-  }
-
-  .created-date {
-    float: right;
-    display: flex;
-    margin-right: 90px;
-    align-items: center;
-
-    .lable-item {
-      font-size: 14px;
+    :deep .dx-freespace-row {
+        display: none !important;
     }
-  }
 
-  .global-year {
-    margin-top: 6px;
-  }
+    .custom-flex {
+        display: flex;
+        align-items: flex-start;
+        align-items: center;
+    }
 
-  :deep(.dx-button-content){
-    padding: 3px;
-  }
+    .created-date {
+        float: right;
+        display: flex;
+        align-items: center;
 
-  .lable-item {
-    font-size: 16px;
-    font-weight: 600;
-  }
+        .lable-item {
+            font-size: 14px;
+        }
+    }
 
-  .page-content {
-    .header-group {
-      margin-top: 5px;
-      .custom-flex {
-        height: 31px;
-      }
-      
+    .global-year {
+        margin-top: 6px;
+    }
+
+    :deep(.dx-button-content) {
+        padding: 3px;
     }
 
     .lable-item {
-      font-size: 14px;
+        font-size: 16px;
+        font-weight: 600;
     }
 
-    :deep .ant-switch-checked {
-      background-color: black;
-    }
-  }
+    .page-content {
+        .lable-item {
+            font-size: 14px;
+        }
 
-  :deep .dx-datagrid-text-content {
-    white-space: break-spaces;
-    text-align: left !important;
-  }
-  :deep .dx-datagrid-text-content span {
-    font-size: 15px;
-    font-weight: bold;
-}
+        :deep .ant-switch-checked {
+            background-color: black;
+        }
+    }
+
+    :deep .dx-datagrid-text-content {
+        white-space: break-spaces;
+        text-align: left !important;
+    }
+
+    :deep .dx-datagrid-text-content span {
+        font-size: 15px;
+        font-weight: bold;
+    }
 }
