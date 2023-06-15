@@ -57,6 +57,7 @@
               <list-manager-dropdown
                 width="200px"
                 v-model:valueInput="ElecFilingFileFilter.manageUserId"
+                filterData
               />
             </a-form-item>
           </a-col>

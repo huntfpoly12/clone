@@ -390,7 +390,6 @@ export default defineComponent({
     );
     const productionCount = ref(0);
     watch(searchLocalIncomeResult, async (newVal) => {
-      loadingTable.value = true;
       let data = newVal.searchLocalIncomeTaxElectronicFilingsByYearMonth.map(
         (item: any) => {
           let arrData = {};
@@ -469,6 +468,7 @@ export default defineComponent({
           paymentMonth: filterBF620.value.paymentMonth,
           paymentYear: filterBF620.value.paymentYear,
         };
+        loadingTable.value = true;
       }
     });
     const productionStatusData = (emitVal: any, index: number) => {
@@ -669,6 +669,7 @@ export default defineComponent({
     const onRequestDone = () => {
       searchLocalIncomeRefetch();
       modalStatus.value = false;
+      loadingTable.value = true;
     };
 
     return {

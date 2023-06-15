@@ -482,6 +482,7 @@ export default defineComponent({
           paymentMonth: filterBF620.value.paymentMonth,
           paymentYear: filterBF620.value.paymentYear,
         };
+        loadingTable.value = true;
       }
     });
 
@@ -667,6 +668,7 @@ export default defineComponent({
     const onRequestDone = () => {
       searchWithholdingRefetch();
       modalStatus.value = false;
+      loadingTable.value = true;
     };
 
     return {
