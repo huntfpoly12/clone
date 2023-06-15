@@ -1,15 +1,9 @@
 #pa-530 {
     #DxDataGrid-pa530 {
-        height: calc(100vh - 310px);
+        height: calc(100vh - 270px);
 
         :deep .dx-freespace-row {
             display: none !important;
-        }
-
-        :deep .dx-datagrid-header-panel {
-            position: absolute;
-            top: -40px;
-            right: 0;
         }
     }
 
@@ -63,16 +57,7 @@
             }
         }
 
-        .created-date {
-            float: right;
-            display: flex;
-            margin-right: 90px;
-            align-items: center;
-
-            .lable-item {
-                font-size: 14px;
-            }
-        }
+        
 
         // &-right {
         //     display: flex;
@@ -83,6 +68,15 @@
         //         font-size: 14px;
         //     }
         // }
+    }
+    .created-date {
+        float: right;
+        display: flex;
+        align-items: center;
+
+        .lable-item {
+            font-size: 14px;
+        }
     }
 
     .lable-item {

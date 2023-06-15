@@ -26,8 +26,18 @@
                 </a-row>
             </div>
             <div class="page-content">
-                <a-row class="header-group">
-                    <a-col :span="12">
+                <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA430" :show-row-lines="true" :hoverStateEnabled="true"
+                    :data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
+                    <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxPaging :enabled="false" />
+                    <DxToolbar>
+                        <DxItem template="box-search-left" location="before" />
+                        <DxItem template="box-search-right" location="after" />
+                        <DxItem template="send-group-mail" />
+                        <DxItem template="send-group-print" />
+                    </DxToolbar>
+                    <template #box-search-left>
                         <a-form-item label="서식 설정">
                             <div class="custom-flex">
                                 <radio-group :arrayValue="arrayRadioType" :layoutCustom="'horizontal'"
@@ -37,23 +47,13 @@
                                 </a-tooltip>
                             </div>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                    </template>
+                    <template #box-search-right>
                         <div class="created-date">
                             <label class="lable-item">영수일 :</label>
                             <date-time-box width="150px" v-model:valueDate="dataInputReport.input.receiptDate" />
                         </div>
-                    </a-col>
-                </a-row>
-                <DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA430" :show-row-lines="true" :hoverStateEnabled="true"
-                    :data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
-                    <DxScrolling mode="standard" show-scrollbar="always" />
-                    <DxPaging :enabled="false" />
-                    <DxToolbar>
-                        <DxItem template="send-group-mail" />
-                        <DxItem template="send-group-print" />
-                    </DxToolbar>
+                    </template>
                     <template #send-group-mail>
                         <DxButton @click="actionOpenPopupEmailMulti" class="bt-email-group">
                             <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
@@ -62,8 +62,7 @@
                     <template #send-group-print>
                         <DxButton @click="onPrintGroup" class="bt-print-group">
                             <a-tooltip title="출력 / 저장" placement="topLeft">
-                                <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 28px;" />
+                                <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;" />
                             </a-tooltip>
                         </DxButton>
                     </template>

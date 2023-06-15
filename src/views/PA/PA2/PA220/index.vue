@@ -23,8 +23,19 @@
             </a-row>
         </div>
         <div class="page-content">
-            <a-row class="header-group">
-                <a-col :span="12">
+
+            <DxDataGrid id="gridContainerPA220" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                :show-borders="true" key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column"
+                noDataText="내역이 없습니다" :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged"
+                :column-auto-width="true">
+                <DxScrolling mode="standard" show-scrollbar="always" />
+                <DxToolbar>
+                    <DxItem template="box-search-left" location="before" />
+                    <DxItem template="box-search-right" location="after" />
+                    <DxItem template="pagination-send-group-mail" />
+                    <DxItem template="send-group-print" />
+                </DxToolbar>
+                <template #box-search-left>
                     <a-form-item label="서식 설정">
                         <div class="custom-flex">
                             <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
@@ -34,25 +45,14 @@
                             </a-tooltip>
                         </div>
                     </a-form-item>
-                </a-col>
-                <a-col :span="12">
+                </template>
+                <template #box-search-right>
                     <div class="created-date">
                         <label class="lable-item">작성일 :</label>
                         <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
                             dateFormat="YYYY-MM-DD" />
                     </div>
-                </a-col>
-
-            </a-row>
-            <DxDataGrid id="gridContainerPA220" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :show-borders="true" key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column"
-                noDataText="내역이 없습니다" :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged"
-                :column-auto-width="true">
-                <DxScrolling mode="standard" show-scrollbar="always" />
-                <DxToolbar>
-                    <DxItem template="pagination-send-group-mail" />
-                    <DxItem template="send-group-print" />
-                </DxToolbar>
+                </template>
                 <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
                         <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"

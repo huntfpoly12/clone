@@ -1,11 +1,6 @@
 #pa-430 {
     #gridContainerPA430 {
-        height: calc(100vh - 260px);
-        :deep .dx-datagrid-header-panel {
-            position: absolute;
-            top: -40px;
-            right: 0;
-        }
+        height: calc(100vh - 220px);
     }
 
     :deep .dx-freespace-row {
@@ -14,7 +9,6 @@
 
     .created-date {
         float: right;
-        margin-right: 90px;
         display: flex;
         align-items: center;
 
@@ -24,43 +18,12 @@
     }
 
     .page-content {
-        .header-group {
-            margin-top: 5px;
-        }
     }
 
     .lable-item {
         font-size: 16px;
         font-weight: 600;
     }
-
-    // :deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
-    //     background: white;
-    //     padding: 2px 15px;
-    //     border-radius: 5px;
-    //     color: black;
-    // }
-
-    // :deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
-    //     background: rgb(194, 56, 56);
-    //     padding: 2px 15px;
-    //     border-radius: 5px;
-    //     color: white;
-    // }
-
-    // :deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
-    //     background: #77933C;
-    //     padding: 2px 15px;
-    //     border-radius: 5px;
-    //     color: white;
-    // }
-
-    // :deep .selectRatio .dx-item-content {
-    //     background: #77933C;
-    //     padding: 2px 15px;
-    //     border-radius: 5px;
-    //     color: white;
-    // }
 
     .ant-switch-checked {
         background-color: black;
