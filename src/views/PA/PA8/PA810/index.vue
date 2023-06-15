@@ -124,7 +124,7 @@
               style="cursor: pointer"
               @click="onGetAcquistionRp(data.data.workId)"
             >
-              <DownloadOutlined :size="12" />
+              <DownloadOutlined :style="{fontSize: 12}" />
             </DxButton>
           </div>
         </template>
@@ -148,7 +148,7 @@
               style="cursor: pointer"
               @click="onGetFileStorageId(data.data.dependentsEvidenceFile.url)"
             >
-              <DownloadOutlined :size="12" />
+              <DownloadOutlined :style="{fontSize: 12}" />
             </DxButton>
           </div>
         </template>

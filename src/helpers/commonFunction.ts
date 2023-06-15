@@ -28,10 +28,10 @@ if (token) {
     userId = jwtObject.userId
     managerGrade = jwtObject.managerGrade
     screenRoleInfo = jwtObject.screenRoleInfo
-  if (userType === 'c') {
-      companyId = jwtObject.companyId
+  // if (userType === 'c') {
+      companyId = jwtObject?.companyId || null;
       startYearMonth = jwtObject.withholding?.startYearMonth
-  }
+  // }
 }
 
 
