@@ -35,7 +35,7 @@
 								</DxRadioGroup>
 							</a-form-item>
 							<a-form-item label="제작요청자">
-								<list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId" />
+								<list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId" filterData/>
 							</a-form-item>
 						</div>
 					</template>
