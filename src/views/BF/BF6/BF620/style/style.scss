@@ -10,6 +10,9 @@
       justify-content: space-between;
     }
   }
+  :deep .dx-datagrid-search-panel{
+    margin-left: 0;
+  }
 
   :deep .ant-tabs.ant-tabs-top {
     min-height: 500px;
@@ -28,7 +31,7 @@
   .btn-modal-save {
     background-color: black;
     color: white;
-    padding: 2px 5px;
+    padding: 3.5px 5px;
     border-radius: 5px;
     margin-left: 10px;
     cursor: pointer;
@@ -98,23 +101,23 @@
   }
 
   :deep .dx-button-has-text .dx-button-content {
-    padding: 0px 8px;
+    padding: 5px 8px;
   }
 }
 #tab1-bf620 {
-  height: calc(100vh - 385px) !important;
+  height: calc(100vh - 365px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
 }
 #tab2-bf620 {
-  height: calc(100vh - 385px) !important;
+  height: calc(100vh - 365px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }
 }
 #tab3-bf620 {
-  height: calc(100vh - 312px) !important;
+  height: calc(100vh - 325px) !important;
   :deep .dx-freespace-row {
       display: none !important;
   }

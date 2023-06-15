@@ -11,6 +11,7 @@
       <a-col :span="11" style="max-width: 45.34%" class="col-left">
         <a-spin :spinning="loading" size="large">
           <DxDataGrid
+            id="pa-120-gridContainer"
             :show-row-lines="true"
             :hoverStateEnabled="true"
             :data-source="dataSource"
@@ -21,7 +22,6 @@
             :column-auto-width="true"
             :onRowClick="actionEdit"
             :focused-row-enabled="true"
-            id="pa-120-gridContainer"
             :auto-navigate-to-focused-row="true"
             v-model:focused-row-key="focusedRowKey"
             ref="gridRef"
