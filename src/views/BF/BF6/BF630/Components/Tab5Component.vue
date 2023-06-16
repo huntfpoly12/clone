@@ -3,7 +3,7 @@
 		<div class="content-grid">
 			<a-spin :spinning="loadingElectronicFiling" size="large">
 				<DxDataGrid id="DxDataGrid-bf-630-tab5" :show-row-lines="true" :hoverStateEnabled="true"
-					:data-source="dataSource" :show-borders="true" class="mt-10" :allow-column-reordering="move_column"
+					:data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
 					:allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다">
 					<DxPaging :enabled="false" />
 					<DxScrolling mode="standard" show-scrollbar="always" />
@@ -35,7 +35,7 @@
 								</DxRadioGroup>
 							</a-form-item>
 							<a-form-item label="제작요청자">
-								<list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId" filterData/>
+								<list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId" filterData clearButton/>
 							</a-form-item>
 						</div>
 					</template>

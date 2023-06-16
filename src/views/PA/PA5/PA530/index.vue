@@ -108,12 +108,17 @@
                     :allow-column-resizing="colomn_resize" v-model:selected-row-keys="vModalSelectedRowKeys"
                     @selection-changed="selectionChanged" noDataText="내역이 없습니다">
                     <DxPaging :enabled="false" />
+                    <DxSelection mode="multiple" />
                     <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem template="box-search-left" location="before" />
                         <DxItem template="box-search-right" location="after" />
                         <DxItem template="pagination-send-group-mail" />
                         <DxItem template="group-print" />
+                        <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" css-class="cell-button-export" />
                     </DxToolbar>
                     <template #box-search-left>
                         <a-form-item label="서식 설정">
@@ -151,7 +156,7 @@
                             </DxButton>
                         </div>
                     </template>
-                    <DxSelection mode="multiple" />
+                    
                     <DxColumn caption="성명 (상호)" data-field="employee.employeeId" cell-template="tag" alignment="left" />
                     <template #tag="{ data }">
                         <div class="custom-action" v-if="data.data.employee.employeeId != '-1'">
@@ -167,7 +172,7 @@
                     <template #residentId="{ data }">
                         {{ data.data.employee.residentId.slice(0, 6) + '-' + data.data.employee.residentId.slice(6, 13) }}
                     </template>
-                    <DxColumn caption="비고" cell-template="four-major" width="300px" />
+                    <DxColumn caption="비고" cell-template="four-major" width="300px" data-field="employee.nationalPensionDeduction"/>
                     <template #four-major="{ data }">
                         <div class="custom-grade-cell">
                             <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -225,7 +230,7 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA5/PA530/index";
-import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxToolbar, DxScrolling, DxItem, DxSearchPanel, DxExport } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/../src/helpers/commonFunction";
 import PA530Popup from "./components/PA530Popup.vue";
@@ -235,7 +240,7 @@ import { initialArrCheckBoxSearch } from "./utils/index";
 import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton, PA530Popup
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton, PA530Popup, DxSearchPanel, DxExport
     },
     setup() {
         let dataCallApiPrint = ref()
