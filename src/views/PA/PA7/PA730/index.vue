@@ -22,12 +22,17 @@
 					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" ref="gridRef"
 					:column-auto-width="true" @selection-changed="onSelectionChanged">
 					<DxScrolling mode="standard" show-scrollbar="always" />
+					<DxPaging :enabled="false" />
+					<DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
 					<DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+                	<DxExport :enabled="true" />
 					<DxToolbar>
 						<DxItem template="box-search-left" location="before" />
 						<DxItem template="box-search-right" location="after" />
 						<DxItem template="send-group-mail" />
 						<DxItem template="send-group-print" />
+						<DxItem name="searchPanel" />
+                    	<DxItem name="exportButton" css-class="cell-button-export" />
 					</DxToolbar>
 					<template #box-search-left>
 						<a-form-item label="서식 설정">
@@ -60,7 +65,6 @@
 							</a-tooltip>
 						</DxButton>
 					</template>
-					<DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
 					<DxColumn caption="성명 (상호)" css-class="cell-left" cell-template="tag" width="200"
 						data-field="employee.employeeId" />
 					<template #tag="{ data }">
@@ -167,7 +171,7 @@ import notification from "@/utils/notification";
 import { useQuery } from '@vue/apollo-composable';
 import DxButton from 'devextreme-vue/button';
 import dayjs from 'dayjs';
-import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxScrolling, DxTotalItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxScrolling, DxTotalItem, DxExport } from 'devextreme-vue/data-grid';
 import { companyId, onExportingCommon } from "@/helpers/commonFunction";
 import queries from '../../../../graphql/queries/PA/PA7/PA730/index';
 import EmailSinglePopup from './components/PA730PopupSendSingleEmail.vue';
@@ -188,6 +192,7 @@ export default defineComponent({
 		DxTotalItem,
 		EmailSinglePopup,
 		EmailGroupPopup,
+		DxExport,
 	},
 	setup() {
 		const app: any = getCurrentInstance();

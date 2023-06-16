@@ -33,7 +33,7 @@
           ></CheckboxGroup>
         </div>
       </a-col>
-      <a-col :span="4">
+      <a-col>
         <a-form-item
           label="매니저리스트"
           label-align="left"
@@ -41,17 +41,21 @@
         >
           <list-manager-dropdown
             v-model:valueInput="filter.companyServiceContractManageUserId"
+            width="200px"
+            clearButton
           />
         </a-form-item>
+      </a-col>
+      <a-col>
         <a-form-item
           label="영업자리스트"
           label-align="left"
           class="fix-width-label"
         >
           <list-sales-dropdown
-            v-model:valueInput="
-              filter.companyServiceContractSalesRepresentativeId
-            "
+            v-model:valueInput="filter.companyServiceContractSalesRepresentativeId"
+            width="200px"
+            clearButton
           />
         </a-form-item>
       </a-col>
@@ -63,40 +67,6 @@
         />
       </a-col>
     </a-row>
-    <div class="title-table d-flex">
-      <a-form-item label="파일 제작 설정" label-align="left">
-        <div class="custom-note d-flex-center">
-          <switch-basic
-            :disabled="true"
-            v-model:valueSwitch="valueDefaultSwitch"
-            textCheck="세무대리인신고"
-            textUnCheck="납세자자진신고"
-          />
-          <info-tool-tip class="ml-5">
-            본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
-          </info-tool-tip>
-        </div>
-      </a-form-item>
-      <a-form-item label="제출연월일" label-align="left">
-        <div class="d-flex-center">
-          <date-time-box
-            width="150px"
-            dateFormat="YYYY-MM-DD"
-            v-model:valueDate="dateTime"
-          />
-          <a-tooltip placement="topLeft" color="black">
-            <template #title>전자신고파일 제작 요청</template>
-            <div
-              class="btn-modal-save"
-              @click="openModalSave()"
-            >
-              <SaveOutlined class="fz-24 ml-5 action-save" />
-              <span style="margin-left: 5px">파일제작요청</span>
-            </div>
-          </a-tooltip>
-        </div>
-      </a-form-item>
-    </div>
     <div class="form-table">
       <a-spin :spinning="loadingTable">
         <DxDataGrid
@@ -113,30 +83,68 @@
           @selection-changed="selectionChanged"
           style="height: calc(100vh - 380px)"
         >
-          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" :search-visible-columns="['CompanyNameAndAddress']"/>
           <DxExport :enabled="true" />
           <DxToolbar>
+            <DxItem location="before" template="settingExport" />
+            <DxItem location="after" template="filterSearch" />
             <DxItem name="searchPanel" />
             <DxItem location="after" name="exportButton" css-class="cell-button-export" />
           </DxToolbar>
+          <template #settingExport>
+            <DxField label="파일 제작 설정" class="field-custom-auto">
+              <div class="custom-note d-flex-center">
+                <switch-basic
+                  :disabled="true"
+                  v-model:valueSwitch="valueDefaultSwitch"
+                  textCheck="세무대리인신고"
+                  textUnCheck="납세자자진신고"
+                />
+                <info-tool-tip class="ml-5">
+                  본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
+                </info-tool-tip>
+              </div>
+            </DxField>
+          </template>
+          <template #filterSearch>
+            <DxField label="제출연월일" class="field-custom-auto">
+              <div class="d-flex-center">
+                <date-time-box
+                  width="150px"
+                  dateFormat="YYYY-MM-DD"
+                  v-model:valueDate="dateTime"
+                />
+                <a-tooltip placement="top" color="black">
+                  <template #title>전자신고파일 제작 요청</template>
+                  <div
+                    class="btn-modal-save"
+                    @click="openModalSave()"
+                  >
+                    <SaveOutlined class="fz-24 ml-5 action-save" />
+                    <span style="margin-left: 5px">파일제작요청</span>
+                  </div>
+                </a-tooltip>
+              </div>
+            </DxField>
+          </template>
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn
             caption="사업자코드"
-            cell-template="company-code"
             data-field="company.code"
+            cell-template="companyCode"
           />
-          <template #company-code="{ data }">
+          <template #companyCode="{ data }">
             {{
               `${data.data.company.code} ${
                 data.data.companyServiceContract.active ? "" : "[해지]"
               }`
             }}
           </template>
-          <DxColumn caption="상호-주소" cell-template="company" />
+          <DxColumn caption="상호-주소" data-field="CompanyNameAndAddress" cell-template="company" :calculateCellValue="calculateCompanyNameAndAddress"/>
           <template #company="{ data }">
             {{ data.data.company.name }} - {{ data.data.company.address }}
           </template>
-          <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+          <DxColumn caption="사업자등록번호" data-field="company.bizNumber" cell-template="bizNumber" />
           <template #bizNumber="{ data }">
             <span>
               {{ data.data.company.bizNumber.toString().slice(0, 3) }}-{{
@@ -517,6 +525,9 @@ export default defineComponent({
       trigger.value = true;
       refetchTable();
     };
+    const calculateCompanyNameAndAddress = (rowData: any) => {
+      return `${rowData.company.name} - ${rowData.company.address}`
+    }
     return {
       customTextSummary,
       loadingTable,
@@ -535,6 +546,7 @@ export default defineComponent({
       dateTime,
       keySelect,
       refetch,
+      calculateCompanyNameAndAddress
     };
   },
 });

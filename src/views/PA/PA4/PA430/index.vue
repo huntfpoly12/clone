@@ -31,11 +31,16 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxPaging :enabled="false" />
+                    <DxSelection mode="multiple" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem template="box-search-left" location="before" />
                         <DxItem template="box-search-right" location="after" />
                         <DxItem template="send-group-mail" />
                         <DxItem template="send-group-print" />
+                        <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" css-class="cell-button-export" />
                     </DxToolbar>
                     <template #box-search-left>
                         <a-form-item label="서식 설정">
@@ -66,7 +71,6 @@
                             </a-tooltip>
                         </DxButton>
                     </template>
-                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                     <DxColumn :width="230" caption="사원" css-class="cell-left" cell-template="employee-info"
                         data-field="employee.employeeId" />
                     <template #employee-info="{ data }">
@@ -150,29 +154,29 @@
                 <div v-if="dataSource.length"
                     style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
                     class="fs-14">
-                    <div style="margin-left: 70px;">
+                    <!-- <div style="margin-left: 70px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
                             <div v-html="employeeType1()"></div>
                         </div>
-                    </div>
-                    <div style="margin-left: 50px;">
+                    <!-- </div>
+                    <div style="margin-left: 50px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content"
                             v-html="customNonTaxableRetirementBenefits()">
                         </div>
-                    </div>
-                    <div style="margin-left: 50px;">
+                    <!-- </div>
+                    <div style="margin-left: 50px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content"
                             v-html="customTaxableRetirementBenefits()">
                         </div>
-                    </div>
-                    <div style=" margin-left: 50px;">
+                    <!-- </div>
+                    <div style=" margin-left: 50px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
                         </div>
-                    </div>
-                    <div style=" margin-left: 50px;">
+                    <!-- </div>
+                    <div style=" margin-left: 50px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
                         </div>
-                    </div>
+                    <!-- </div> -->
                 </div>
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                     :data="popupDataEmailSingle" />
@@ -195,7 +199,7 @@ import {
     DxSelection,
     DxSearchPanel,
     DxToolbar, DxScrolling,
-    DxItem, DxSummary, DxTotalItem
+    DxItem, DxSummary, DxTotalItem, DxExport
 } from "devextreme-vue/data-grid";
 import { Message } from '@/configs/enum';
 import {
@@ -206,11 +210,11 @@ import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA4/PA430/index";
 import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 import EmailMultiPopup from "./components/EmailMultiPopup.vue";
-import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import dayjs, { Dayjs } from 'dayjs';
 import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
+        DxExport,
         DxButton, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxTotalItem, EmailSinglePopup, EmailMultiPopup
     },
     setup() {

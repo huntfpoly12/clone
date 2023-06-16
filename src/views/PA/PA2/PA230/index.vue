@@ -62,6 +62,8 @@
           noDataText="내역이 없습니다"
           style="height: calc(100vh - 310px); margin-top: 100px; z-index: 0;"
         >
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" :search-visible-columns="['CompanyNameAndAddress']"/>
+          <DxExport :enabled="true" />
           <DxToolbar>
             <DxItem >
               <div class="created-date">
@@ -71,6 +73,8 @@
             </DxItem>
             <DxItem template="pagination-send-group-mail" />
             <DxItem template="send-group-print" />
+            <DxItem name="searchPanel" />
+            <DxItem name="exportButton" css-class="cell-button-export" />
           </DxToolbar>
           <template #pagination-send-group-mail>
             <div class="custom-mail-group">
@@ -310,7 +314,7 @@ import {
   DxSelection,
   DxSummary,
   DxToolbar,
-  DxTotalItem,
+  DxTotalItem, DxExport, DxSearchPanel
 } from "devextreme-vue/data-grid";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useStore } from "vuex";
