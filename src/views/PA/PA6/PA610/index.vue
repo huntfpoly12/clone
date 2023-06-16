@@ -311,7 +311,7 @@ resEmployeeBusinesses((res) => {
   if (data.length === 0) {
     resetForm()
   }
-  isNewRow.value = false
+  // if(!isClickAddRow.value) isNewRow.value = false
 });
 // get store data
 const storeDataSource = computed(() => dataSource.value?.store() as Store);
@@ -332,11 +332,11 @@ const addRow = () => {
   } else {
     if (previousRowData.value && !isEqual(previousRowData.value, dataShow.value)) {
       selectRowKeyAction.value = 0
-      isClickAddRow.value = true;
       isDiscard.value = true;
     }
   }
   isNewRow.value = true;
+  isClickAddRow.value = true;
 };
 // handle onFocusedRowChanging to row
 const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
@@ -448,7 +448,6 @@ const {
 } = useMutation(mutations.updateEmployeeBusiness);
 updateDone(async (res) => {
   await refetchData();
-
   valueCallApiGetEmployeeBusiness.incomeTypeCode = dataShow.value.incomeTypeCode;
   valueCallApiGetEmployeeBusiness.employeeId = dataShow.value.employeeId;
   previousRowData.value = { ...dataShow.value };
@@ -606,8 +605,8 @@ const handleSubmit = async () => {
   isDiscard.value = false;
   if (!res.isValid) {
     res.brokenRules[0].validator.focus();
-    store.commit('settings/setFormStatus', FormStatus.editing)
     selectRowKeyAction.value = focusedRowKey.value
+    dataGridRef.value?.refresh();
   } else {
     // if form disabled => action edit
     if (focusedRowKey && focusedRowKey.value !== 0) {

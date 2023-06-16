@@ -18,7 +18,7 @@
         key-expr="companyId"
         class="wf-100"
         :column-auto-width="true"
-        :noDataText="Message.getMessage('COMMON', '901').message"
+        noDataText="내역이 없습니다"
       >
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxColumn

@@ -1025,7 +1025,7 @@ export default defineComponent({
         case "openTab":
           openTab({
             name: "사업소득자등록",
-            url: "/dashboard/pa-610",
+            url: "/pa-610",
             id: "pa-610",
           });
           break;
