@@ -23,7 +23,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     const timeExpired = Number(getJwtObject(accessToken).p.exp) - 60000; // get time expired token - 60s
     isTokenExpired = currentTime - timeExpired >= 0
     console.groupCollapsed("%c Request api", 'color: green', operationName);
-    console.log('%c currentTime | timeExpired (s)', 'color: red;', currentTime/1000 |  timeExpired/1000);
+    console.log('%c currentTime - timeExpired (s)', 'color: red;', (currentTime - timeExpired)/1000);
     console.log('%c url', 'color: blue;', link);
     console.count();
     console.log('%c current accessToken', 'color: blue;', accessToken);
