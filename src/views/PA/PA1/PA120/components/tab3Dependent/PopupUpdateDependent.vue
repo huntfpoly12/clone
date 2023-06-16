@@ -19,7 +19,7 @@
                 v-model:valueInput="formState.relation"
                 :disabled="formState.relation == 0"
                 :required="true"
-                :itemSelected="itemSelected"
+                :itemSelected="dependantSelected"
               ></dependants-relation-select-box>
             </a-form-item>
             <a-form-item
@@ -77,6 +77,7 @@
                 :required="true"
                 :disabled="disabledButton || formState.relation == 0"
                 :ageCount="ageCount"
+                :itemSelected="deductionSelected"
               />
             </a-form-item>
             <a-form-item label="부녀자" label-align="right">
@@ -285,6 +286,10 @@ export default defineComponent({
       type: Array,
       default: [],
     },
+    deductionAll: {
+      type: Array,
+      default: [],
+    },
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -302,8 +307,8 @@ export default defineComponent({
     );
     const ageCount = ref<any>(convertAge(props.dependentItem?.residentId));
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
-    const deductionDependentCountPA120 = computed(()=>store.state.common.deductionDependentCountPA120);
-    const itemSelected = ref<any>([...props.relationAll]);
+    const dependantSelected = ref<any>([...props.relationAll]);
+    const deductionSelected = ref<any>([...props.deductionAll]);
     const setModalVisible = () => {
       if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
         emit("closePopup", false);
@@ -361,8 +366,11 @@ export default defineComponent({
     watch(
       () => props.dependentItem,
       (newVal: any) => {
-        itemSelected.value = itemSelected.value.filter(
+        dependantSelected.value = dependantSelected.value.filter(
           (item: any) => item.value !== newVal.relation
+        );
+        deductionSelected.value = deductionSelected.value.filter(
+          (item: any) => item.value !== newVal.basicDeduction
         );
         formState.relation = newVal.relation;
         formState.foreigner = newVal.foreigner;
@@ -482,8 +490,11 @@ export default defineComponent({
         consignDisabled.value = true;
       }
     });
-    itemSelected.value = itemSelected.value.filter(
+    dependantSelected.value = dependantSelected.value.filter(
       (item: any) => item.value !== formState.relation
+    );
+    deductionSelected.value = deductionSelected.value.filter(
+      (item: any) => item.value !== formState.basicDeduction
     );
     const onChange = (emitVal: any) => {
       formState.name = emitVal.toUpperCase();
@@ -505,10 +516,11 @@ export default defineComponent({
       actionDeleteFuc,
       modalStatusDelete,
       isDisabledSenior,
-      itemSelected,
+      dependantSelected,
       consignDisabled,
       vnode,
       onChange,
+      deductionSelected,
     };
   },
 });

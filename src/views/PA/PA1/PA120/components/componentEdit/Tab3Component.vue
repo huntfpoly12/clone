@@ -222,9 +222,9 @@
     </a-row>
     <PopupAddNewDependent v-if="modalAddNewDependent" :modalStatus="modalAddNewDependent"
                           @closePopup="modalAddNewDependent = false" :key="newForm" :employeeId="idRowEdit" :idRowEdit="idRowEdit"
-                          :dataSourceLen="dataSource.length" @upDateData="updateData" :relationAll="relationAll">
+                          :dataSourceLen="dataSource.length" @upDateData="updateData" :relationAll="relationAll" :deductionAll="deductionAll">
     </PopupAddNewDependent>
-    <PopupUpdateDependent v-if="modalEditStatus" :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+    <PopupUpdateDependent v-if="modalEditStatus" :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :deductionAll="deductionAll"
                           :idRowEdit="idRowEdit" :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll">
     </PopupUpdateDependent>
   </div>
@@ -294,6 +294,7 @@ export default defineComponent({
     const singleParentSummary = ref();
     const maternityAdoptionSummary = ref();
     const relationAll = ref();
+    const deductionAll = ref();
     let formStateTab3 = reactive<any>({
       ...initFormStateTab3,
     })
@@ -338,6 +339,9 @@ export default defineComponent({
         trigger.value = false;
         relationAll.value = value.getEmployeeWage.dependents.map((item: any) => ({
           value: item.relation
+        }))
+        deductionAll.value = value.getEmployeeWage.dependents.map((item: any) => ({
+          value: item.basicDeduction
         }))
         store.state.common.deductionDependentCountPA120 = value.getEmployeeWage.deductionDependentCount;
         relationSummary.value =
@@ -421,6 +425,7 @@ export default defineComponent({
       disabledType,
       dependentItem,
       relationAll,
+      deductionAll
     }
   },
 });

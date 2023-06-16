@@ -485,7 +485,7 @@ export default defineComponent({
     const contentDelete = Message.getCommonMessage("401").message;
     const bizResNumber = ref('');
     const statusOrigin = ref(10);
-    const disabledStatus = computed(()=> formState.value.status == 30 || formState.value.status == 99);
+    const disabledStatus = computed(()=> statusOrigin.value == 30 || statusOrigin.value == 99);
     // event close popup
     const setModalVisible = () => {
       if (
@@ -913,7 +913,6 @@ export default defineComponent({
     const checkBizNumberLen = ref(false);
     watch(bizResNumber, (newVal: any) => {
       if (newVal != undefined && newVal != null) {
-        console.log(`output->newVal`,newVal)
         if(newVal.length !== 10 && newVal.length !==13){
           checkBizNumberLen.value = false;
         }else{
