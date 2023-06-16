@@ -16,10 +16,26 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   const accessToken = sessionStorage.getItem('token');
   // Check if the token is expired
   const isTokenExpired = accessToken &&  (getJwtObject(accessToken).isExpired(60) || getJwtObject(accessToken).isExpired()) ? true : false;
+  const link = window.location.href;
+  const operationName = operation.operationName;
+  console.group("%c Request api", 'color: green');
+  console.log('%c url', 'color: blue;', link);
+  console.log('%c name-gql', 'color: blue;', operationName);
+  console.log('%c current accessToken', 'color: blue;', accessToken);
+  console.log('%c refreshPromise', 'color: blue;', refreshPromise);
+  console.groupEnd();
+
+  // get api call
   if (isTokenExpired) {
     if (!isTokenRefreshing) {
       isTokenRefreshing = true;
-
+      console.group("%c Token expired", 'color: red');
+      console.log('%c old-accessToken', 'color: red;', accessToken);
+      // get url browser
+     
+      let count = 0
+      console.log('%c count', 'color: red;', count++);;
+      console.groupEnd();
       // Token has expired, make a refresh login API request
       refreshPromise = refreshLogin().finally(() => {
         isTokenRefreshing = false;
@@ -28,11 +44,12 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     }
 
     return new Promise((resolve) => {
-      refreshPromise!.then(() => {
-        const newAccessToken = sessionStorage.getItem('token');
+      refreshPromise!.then((value) => {
+        console.log('%c newAccessToken', 'color: red;', value);
+        // const newAccessToken = sessionStorage.getItem('token');
         operation.setContext({
           headers: {
-            authorization: `Bearer ${newAccessToken}`,
+            authorization: `Bearer ${value}`,
           },
         });
         resolve(forward(operation));
@@ -110,7 +127,7 @@ async function refreshLogin() {
     Object.values(connections).forEach((controller: AbortController) => {
       controller.abort(); // Cancel all pending requests
     });
-    return;
+    return data.data.refreshLogin.accessToken;
   } catch (error) {
     console.error("Failed to refresh login", error);
     return Promise.reject(error);

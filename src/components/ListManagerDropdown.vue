@@ -6,18 +6,8 @@
       :disabled="disabled" @value-changed="updateValue(value)" :height="height" placeholder="선택"
       :name="nameInput" field-template="field" item-template="item">
       <template #field="{ data }">
-        <!-- :name="nameInput"> -->
-        <div v-if="data" class="text-overflow" style="padding: 4px;display: flex; align-items: center;">
-          <span class="mr-3" style="min-width: 15px;">{{ data?.username }}</span>
-          <div>
-            {{ data.name }}
-            <DxTextBox style="display: none;" />
-          </div>
-        </div>
-        <div v-else class="pt-5 pl-5">
-          <span>선택</span>
-          <DxTextBox style="display: none;" />
-        </div>
+        <DxTextBox v-if="data" :value="data && `${data?.username} ${data.name}`" :read-only="true"/>
+        <DxTextBox v-else value="선택" :read-only="true"/>
       </template>
       <template #item="{ data }">
         <div style="display: flex; align-items: center;">
@@ -133,6 +123,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .text-overflow {
+  width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
