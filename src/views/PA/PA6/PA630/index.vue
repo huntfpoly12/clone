@@ -23,11 +23,15 @@
                     ref="gridRef" @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxPaging :enabled="false" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem template="box-search-left" location="before" />
                         <DxItem template="box-search-right" location="after" />
                         <DxItem template="send-group-mail" />
                         <DxItem template="send-group-print" />
+                        <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" css-class="cell-button-export" />
                     </DxToolbar>
                     <template #box-search-left>
                         <a-form-item label="서식 설정">
@@ -100,29 +104,29 @@
                 <div v-if="dataSource.length"
                     style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
                     class="fs-14">
-                    <div style="margin-left: 70px;">
+                    <!-- <div style="margin-left: 70px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
                             <div>전체 <span>[{{ dataSource.length }}]</span></div>
                         </div>
-                    </div>
-                    <div style="margin-left: 200px;">
+                    <!-- </div>
+                    <div style="margin-left: 200px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customPaymentAmount()">
                         </div>
-                    </div>
-                    <div style=" margin-left: 20px;">
+                    <!-- </div>
+                    <div style=" margin-left: 20px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content"
                             v-html="customWithholdingIncomeTax()">
                         </div>
-                    </div>
-                    <div style=" margin-left: 20px;">
+                    <!-- </div>
+                    <div style=" margin-left: 20px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content"
                             v-html="customWithholdingLocalIncomeTax()">
                         </div>
-                    </div>
-                    <div style=" margin-left: 20px;">
+                    <!-- </div>
+                    <div style=" margin-left: 20px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryWRST()">
                         </div>
-                    </div>
+                    <!-- </div> -->
                 </div>
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
                     :data="popupDataEmailSingle" />
@@ -149,7 +153,7 @@ import {
     DxToolbar,
     DxItem,
     DxTotalItem, DxScrolling,
-    DxSummary,
+    DxSummary
 } from "devextreme-vue/data-grid";
 import { companyId, onExportingCommon, userId } from "@/helpers/commonFunction";
 import dayjs, { Dayjs } from 'dayjs';
