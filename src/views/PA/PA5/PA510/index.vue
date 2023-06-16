@@ -346,25 +346,25 @@
 					</DxDataGrid>
 					<div style="border: 1px solid #ddd; border-top: none;  width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
 						class="fs-14">
-						<div style="margin-left: 70px">
+						<!-- <div style="margin-left: 70px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 								<div>
 									사원수<span>[{{ store.state.common.pa510.dataTaxPayInfo.length }}]</span>
 								</div>
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </div>
+						<div style="margin-left: 50px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customMonthlyWage()">
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </div>
+						<div style="margin-left: 50px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </div>
+						<div style="margin-left: 50px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
 							</div>
-						</div>
+						<!-- </div> -->
 					</div>
 				</a-spin>
 			</a-col>
