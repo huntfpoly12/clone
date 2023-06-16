@@ -721,6 +721,7 @@ export default defineComponent({
         let data = value.getEmployeeWage;
         let editRowData: any = {};
         insuranceDisabled.value = data.president;
+        store.state.common.presidentEditPA120 = data.president;
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
         editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
         editRowData.longTermCareInsuranceDeduction =
@@ -966,31 +967,36 @@ export default defineComponent({
     };
 
     // watch president to disable employeementInsuranceDeduction
-
+    console.log(`output->presidentEditPA120.value`,presidentEditPA120.value)
     watch(
       () => presidentEditPA120.value,
       (newValue) => {
         if (newValue) {
           initFormTab2PA120.value.employeementInsuranceDeduction = false;
+          initFormTab2PA120.value.insuranceSupport = false;
+          delete initFormTab2PA120.value.nationalPensionSupportPercent;
+          delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
           updateDeduction();
         }
+        console.log(`output->newValue`,newValue)
         insuranceDisabled.value = newValue;
       },
       { deep: true }
     );
     
     //  // watch initFormTab2PA120 to check calculate button
-    watch(
-      () => initFormTab2PA120.value,
-      () => {
-        if (!compareForm()) {
-          isBtnYellow.value = true;
-        } else {
-          isBtnYellow.value = false;
-        }
-      },
-      { deep: true }
-    );
+    // watch(
+    //   () => initFormTab2PA120.value,
+    //   (newVal) => {
+    //     console.log(`output->newVal`,newVal)
+    //     if (!compareForm()) {
+    //       isBtnYellow.value = true;
+    //     } else {
+    //       isBtnYellow.value = false;
+    //     }
+    //   },
+    //   { deep: true }
+    // );
     const isBtnYellow = ref(false);
     const compareForm = () => {
       const { deductionItems, ...rest } = initFormTab2PA120.value;
@@ -998,10 +1004,14 @@ export default defineComponent({
         deductionItems: de2,
         ...rest2
       } = editRowTab2PA120.value;
+      console.log(`output->rest`,rest)
+      console.log(`output->rest2`,rest2)
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {
-      if (initFormTab2PA120.value) {
+      const { deductionItems, ...rest } = initFormTab2PA120.value;
+      if (rest) {
+        console.log(`output->rest`,rest)
         if (!compareForm()) {
           isBtnYellow.value = true;
         } else {
@@ -1016,9 +1026,6 @@ export default defineComponent({
       mutations.saveEmployeeWagePayDeductionReduction
     );
     const updateDeduction = () => {
-      // if (isBtnYellow.value) {
-      //   return;
-      // }
       let formFake = { ...initFormTab2PA120.value };
       let payLoadData = formFake;
       payLoadData.payItems = formFake.payItems.map((item: any) => {
@@ -1053,7 +1060,7 @@ export default defineComponent({
       isBtnYellow.value = false;
       notification("success", messageUpdate);
       store.commit("common/actionFormDonePA120");
-      store.state.common.editRowTab2PA120 = { ...initFormTab2PA120.value };
+      store.state.common.editRowTab2PA120 = JSON.parse(JSON.stringify(initFormTab2PA120.value));
     });
     // change row data  globalYear.value
     watch(
@@ -1131,7 +1138,6 @@ export default defineComponent({
       onChangeSwitch2,
       editRowTab2PA120,
       initFormTab2PA120,
-      presidentEditPA120,
       calculateVariables,
       isBtnYellow,
       triggerDetail,

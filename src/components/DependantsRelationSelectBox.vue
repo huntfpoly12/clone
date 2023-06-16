@@ -14,7 +14,19 @@
         :height="$config_styles.HeightInput"
         :name="nameInput"
         :disabled="disabled"
+        item-template="item"
       >
+        <template #item=" { data } : any ">
+            <a-tooltip zIndex="9999" placement="top" color="black">
+            <template #title>
+              <div>{{ data.label }}</div>
+            </template>
+            <div class="text-overflow">
+              {{ data.label }}
+            </div>
+          </a-tooltip>
+        <DxTextBox style="display: none;" />
+        </template>
         <DxValidator :name="nameInput">
           <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
@@ -30,6 +42,7 @@
     DependantsRelation,
     enum2Entries,
   } from "@bankda/jangbuda-common";
+  import {  DxTextBox } from 'devextreme-vue';
   
   export default defineComponent({
     props: {
@@ -66,12 +79,14 @@
       DxSelectBox,
       DxValidator,
       DxRequiredRule,
+      DxTextBox,
     },
     setup(props, { emit }) {
-  
       var dependantsRelation : any  = computed(() => {
           let dpRelation : any =  enum2Entries(DependantsRelation).map((value) => {
-            const item1 = props.itemSelected.find((item2: any)=>{return (item2.value == value[1] && value[1] == 3)}) || value[1]==0;
+            const item1 = props.itemSelected.find(
+              (item2: any)=> item2.value == value[1] && value[1] == 3
+              ) || value[1] == 0;
             return item1 ? {value: value[1], label: value[0], disabled: true} : { value: value[1], label: value[0]};
         });
         if(props.selectAll){
