@@ -6,8 +6,8 @@
       :disabled="disabled" @value-changed="updateValue(value)" :height="height" placeholder="선택"
       :name="nameInput" field-template="field" item-template="item">
       <template #field="{ data }">
-        <DxTextBox v-if="data" :value="data && `${data?.username} ${data.name}`" :read-only="true"/>
-        <DxTextBox v-else value="선택" :read-only="true"/>
+        <DxTextBox v-if="data" :value="data && `${data?.username} ${data.name}`" :read-only="!searchEnabled"/>
+        <DxTextBox v-else value="선택" :read-only="!searchEnabled"/>
       </template>
       <template #item="{ data }">
         <div style="display: flex; align-items: center;">
@@ -43,7 +43,10 @@ export default defineComponent({
       default: "",
     },
     width: String,
-    clearButton: Boolean,
+    clearButton: {
+      type: Boolean,
+      default: false,
+    },
     disabled: Boolean,
     valueInput: {
       type: Number,

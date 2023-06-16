@@ -25,7 +25,7 @@
                                 </div>
                                 <div class="d-flex-center gap-10">
                                     <label>매니저리스트:</label>
-                                    <list-manager-dropdown v-model:valueInput="originData.manageUserId" clearButton width="200px" :height="30"/>
+                                    <list-manager-dropdown v-model:valueInput="originData.manageUserId" :searchEnabled="false" clearButton  width="200px" :height="30"/>
                                 </div>
                                 <div class="d-flex-center gap-10">
                                     <label>영업자리스트:</label>
