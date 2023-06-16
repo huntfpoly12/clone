@@ -15,9 +15,12 @@ const connections: { [key: string]: any } = {}; // Hold the controller for each 
 const authMiddleware = new ApolloLink((operation, forward) => {
   const accessToken = sessionStorage.getItem('token');
   // Check if the token is expired
-  const isTokenExpired = accessToken &&  (getJwtObject.isExpired(60) || getJwtObject.isExpired()) ? true : false;
+  const isTokenExpired = accessToken &&  (getJwtObject(accessToken).isExpired(60) || getJwtObject(accessToken).isExpired()) ? true : false;
   const link = window.location.href;
   const operationName = operation.operationName;
+  console.group("accessToken", accessToken);
+  console.group("isExpired-60", getJwtObject(accessToken).isExpired(60));
+  console.group("isExpired", getJwtObject(accessToken).isExpired());
   console.group("%c Request api", 'color: green');
   console.log('%c url', 'color: blue;', link);
   console.log('%c name-gql', 'color: blue;', operationName);
