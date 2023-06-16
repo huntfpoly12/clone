@@ -133,7 +133,7 @@ export const productsPopupEdit = [
     {
         id: 1,
         color: 'white',
-        name: "중간메니저",
+        name: "중간매니저",
         type: "m",
         grade: "2",
         background: 'black',

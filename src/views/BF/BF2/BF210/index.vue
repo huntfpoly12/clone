@@ -38,26 +38,10 @@
                                     </template>
                                 </DxSelectBox>
                             </div>
-                            <div class="d-flex-center">
-                                <label class="lable-item">소속코드:</label>
-                                <default-text-box width="150px" v-model:valueInput="dataSearch.groupCode" />
-                            </div>
-                            <div class="d-flex-center">
-                                <label class="lable-item">소속명:</label>
-                                <default-text-box width="150px" v-model:valueInput="dataSearch.groupName" />
-                            </div>
-                            <div class="d-flex-center">
-                                <label class="lable-item">회원ID :</label>
-                                <default-text-box width="150px" v-model:valueInput="dataSearch.username" />
-                            </div>
-                            <div class="d-flex-center">
-                                <label class="lable-item">회원명 :</label>
-                                <default-text-box width="150px" v-model:valueInput="dataSearch.name" />
-                            </div>
+                            
                             <div class="d-flex-center">
                                 <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox1" :size="'14'" />
                                 <tag-color-use :valueUse="true" @click="changeValueCheckBox('checkBox1')"/>
-                                <div style="width: 10px;"></div>
                                 <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox2" :size="'14'" />
                                 <tag-color-use :valueUse="false" @click="changeValueCheckBox('checkBox2')"/>
                             </div>
@@ -100,7 +84,7 @@
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
-                                <a-tooltip color="black" placement="top">
+                                <a-tooltip color="black" placement="left">
                                     <template #title>로그인이력</template>
                                     <LoginOutlined @click="modalLogin(data)" />
                                 </a-tooltip>
