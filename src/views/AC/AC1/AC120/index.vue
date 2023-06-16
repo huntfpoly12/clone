@@ -71,7 +71,7 @@
 									<template #title>전표 신규 건별 등록</template>
 									<span>
 										<DxButton class="ml-4 custom-button" type="default"
-											:disabled="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status != 10"
+											:disabled="[20, 30, 40].includes(dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status)"
 											:height="$config_styles.HeightInput" @click="actionOpenModalAdd" :width="120">
 											<div class="d-flex-center">
 												<PlusOutlined style="font-size: 14px" />
@@ -93,7 +93,7 @@
 									</span>
 								</a-tooltip>
 								<DxButton class="ml-4 mr-4 custom-button" type="default" :width="90"
-									:disabled="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status != 10"
+									:disabled="[20, 30, 40].includes(dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status)"
 									:height="$config_styles.HeightInput" @click="actionModalDelete">
 									<div class="d-flex-center">
 										<span><checkbox-basic :valueCheckbox="true" disabled="true" /></span>
@@ -212,7 +212,6 @@
 								</div>
 							</div>
 						</template>
-
 						<DxColumn caption="수기 여부" :allow-sorting="false" css-class="cell-center" cell-template="handwriting"
 							width="75" />
 						<template #handwriting="{ data }">

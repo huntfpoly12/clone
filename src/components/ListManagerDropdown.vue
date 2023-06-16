@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="width"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="searchEnabled" :width="width"
       :data-source="dataSource"
       :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
       :disabled="disabled" @value-changed="updateValue(value)" :height="height" placeholder="선택"
@@ -65,6 +65,10 @@ export default defineComponent({
     filterData: {
       type: Boolean,
       default: false,
+    },
+    searchEnabled: {
+      type: Boolean,
+      default: true,
     }
   },
   components: {
