@@ -1,7 +1,7 @@
 <template>
     <action-header title="일용직근로소득원천징수영수증" @actionSearch="onSearch" :buttonSearch="true" />
     <div id="pa-220">
-        <div class="search-form">
+        <div class="search-form ml-10">
             <a-row :gutter="[24, 8]">
                 <a-col>
                     <label class="lable-item">귀속연도 :</label>
