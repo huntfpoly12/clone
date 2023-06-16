@@ -10,7 +10,7 @@
                 <a-row>
                   <a-col :span="24" style="display: flex">
                     <a-form-item label="승인상태" label-align="left" :label-col="labelCol">
-                      <subs-req-status-process-bar v-model:valueInput="formState.status" />
+                      <subs-req-status-process-bar v-model:valueInput="formState.status" :disabled="disabledStatus"/>
                     </a-form-item>
                   </a-col>
                   <a-col :span="24" style="display: flex">
@@ -64,7 +64,7 @@
                   </a-col>
                   <a-col :span="24">
                     <a-form-item label="심사메모" label-align="left" :label-col="labelCol">
-                      <text-area-box v-model:valueInput="formState.memo" width="100%" />
+                      <text-area-box v-model:valueInput="formState.memo" width="100%"  :disabled="disabledStatus"/>
                     </a-form-item>
                   </a-col>
                   <a-col :span="24">
@@ -87,28 +87,28 @@
                   <a-col :span="9">
                     <a-form-item label="상 호" class="clr" label-align="left" :label-col="{ span: 9 }">
                       <default-text-box v-model:valueInput="formState.content.company.name" width="220" :required="true"
-                        messRequired="이항목은 필수 입력사항입니다!" nameInput="companyName" />
+                        messRequired="이항목은 필수 입력사항입니다!" nameInput="companyName" :disabled="disabledStatus" />
                     </a-form-item>
                     <a-form-item label="사업자등록번호" class="clr" label-align="left" :label-col="{ span: 9 }">
-                      <biz-number-text-box :disabled="!canChangeableBizNumber"
+                      <biz-number-text-box :disabled="!canChangeableBizNumber || disabledStatus"
                         v-model:valueInput="formState.content.company.bizNumber" width="220" :required="true"
                         messRequired="이항목은 필수 입력사항입니다!" nameInput="companyBizNumber" />
                     </a-form-item>
                     <a-form-item label="사업자유형" class="clr" label-align="left" :label-col="{ span: 9 }">
                       <radio-group :arrayValue="bizTypeItems" v-model:valueRadioCheck="formState.content.company.bizType
-                        " layoutCustom="horizontal" />
+                        " layoutCustom="horizontal" :disabled="disabledStatus" />
                     </a-form-item>
                     <a-form-item :label="changeTypeCompany(formState.content.company.bizType)
                       " label-align="left" :label-col="{ span: 9 }">
                       <id-number-text-box :required="true" :isResidentId="isResidentId" v-model:valueInput="formState.content.company.residentId
-                        " width="220" />
+                        " width="220" :disabled="disabledStatus" />
                     </a-form-item>
                     <a-form-item label="주소" class="clr" label-align="left" :label-col="{ span: 9 }">
                       <a-row :gutter="[0, 4]">
                         <a-col :span="24" style="display: flex">
                           <default-text-box v-model:valueInput="formState.content.company.zipcode
                             " width="70px" :disabled="true" />
-                          <post-code-button @dataAddress="funcAddress" />
+                          <post-code-button @dataAddress="funcAddress" :disabled="true" />
                         </a-col>
                         <a-col :span="24">
                           <default-text-box v-model:valueInput="formState.content.company.roadAddress
@@ -116,52 +116,52 @@
                         </a-col>
                         <a-col :span="24">
                           <default-text-box v-model:valueInput="formState.content.company.addressExtend
-                            " width="220" placeholder="상세 주소 입력" />
+                            " width="220" placeholder="상세 주소 입력" :disabled="disabledStatus" />
                         </a-col>
                       </a-row>
                     </a-form-item>
                     <a-form-item label="연락처" class="clr" label-align="left" :label-col="{ span: 9 }">
                       <tel-text-box v-model:valueInput="formState.content.company.phone" :required="true"
-                        messRequired="이항목은 필수 입력사항입니다!" nameInput="company-phone" width="220" />
+                        messRequired="이항목은 필수 입력사항입니다!" nameInput="company-phone" width="220" :disabled="disabledStatus" />
                     </a-form-item>
                     <a-form-item label="팩 스" label-align="left" :label-col="{ span: 9 }">
-                      <text-number-box v-model:valueInput="formState.content.company.fax" width="220" />
+                      <text-number-box v-model:valueInput="formState.content.company.fax" width="220" :disabled="disabledStatus" />
                     </a-form-item>
                   </a-col>
                   <a-col :span="6">
-                    <img-upload :title="titleModal" @update-img="getUrlLicenseFile" />
+                    <img-upload :title="titleModal" @update-img="getUrlLicenseFile" :disabledImg="disabledStatus" />
                   </a-col>
                   <a-col :span="9">
                     <preview-image :dataImage="{
                       url: imageLicenseFile,
                       name: licenseFileName,
-                    }" @deleteImg="removeLicenseFile" :activePreview="true" />
+                    }" @deleteImg="removeLicenseFile" :activePreview="true" :disabled="disabledStatus" />
                   </a-col>
                 </a-row>
               </a-collapse-panel>
               <a-collapse-panel key="3" header="대표자정보">
                 <a-form-item has-feedback label="대표자명" class="clr" label-align="left" :label-col="labelCol">
                   <default-text-box v-model:valueInput="formState.content.president.name" width="200px" :required="true"
-                    messRequired="이항목은 필수 입력사항입니다!" nameInput="president-name" />
+                    messRequired="이항목은 필수 입력사항입니다!" nameInput="president-name" :disabled="disabledStatus" />
                 </a-form-item>
                 <a-form-item has-feedback label="생년월일" class="clr" label-align="left" :label-col="labelCol">
-                  <date-time-box width="200px" v-model:valueDate="formState.content.president.birthday" :required="true" :clearable="false"></date-time-box>
+                  <date-time-box width="200px" v-model:valueDate="formState.content.president.birthday" :required="true" :clearable="false" :disabled="disabledStatus"></date-time-box>
                 </a-form-item>
                 <a-form-item has-feedback label="휴대폰번호" class="clr" label-align="left" :label-col="labelCol">
                   <text-number-box v-model:valueInput="formState.content.president.mobilePhone" :required="true"
                     width="200px" placeholder="‘-’ 없이 슷자입력" messRequired="이항목은 필수 입력사항입니다!"
-                    nameInput="president-mobilePhone" />
+                    nameInput="president-mobilePhone" :disabled="disabledStatus" />
                 </a-form-item>
                 <a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']" :rules="[{ type: 'email' }]"
                   label-align="left" :label-col="labelCol">
                   <mail-text-box v-model:valueInput="formState.content.president.email" width="350px" :required="true"
-                    messRequired="이항목은 필수 입력사항입니다!" nameInput="president-email" />
+                    messRequired="이항목은 필수 입력사항입니다!" nameInput="president-email" :disabled="disabledStatus" />
                 </a-form-item>
               </a-collapse-panel>
               <a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll key-4">
                 <div style="height: 350px; overflow-y: scroll">
                   <radio-group :arrayValue="arrayRadioCheckSourceServices" v-model:valueRadioCheck="checkedAccounting"
-                    :layoutCustom="'horizontal'" />
+                    :layoutCustom="'horizontal'" :disabled="disabledStatus" />
                   <div>
                     <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                       :headStyle="{ padding: '5px', color: checkedAccounting == 1 ? 'red' : '' }"
@@ -207,11 +207,11 @@
                           <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
-                          <button-basic icon="plus" @onClick="addRow" text="추가" :disabled="checkedAccounting == 2" />
+                          <button-basic icon="plus" @onClick="addRow" text="추가" :disabled="checkedAccounting == 2 || disabledStatus"/>
                         </template>
                         <DxColumn cell-template="action" width="48" />
                         <template #action="{ data }: any">
-                          <DxButton type="ghost" style="cursor: pointer" @click="onDelete(data)">
+                          <DxButton type="ghost" style="cursor: pointer" @click="onDelete(data)" :disabled="disabledStatus" >
                             <a-tooltip zIndex="9999999" placement="top" color="black">
                               <template #title>
                                 <div>삭제</div>
@@ -230,34 +230,34 @@
                           <a-form-item label="사업분류" :label-col=" labelCol ">
                             <select-box-common :arrSelect=" facilityBizTypeCommon " :required=" true "
                               v-model:valueInput=" dataActiveRow.facilityBizType " displayeExpr="n" valueExpr="v"
-                              width="160px" />
+                              width="160px" :disabled="disabledStatus" />
                           </a-form-item>
                           <a-form-item label="사업명 (중복불가)" :label-col=" labelCol ">
                             <default-text-box v-model:valueInput=" dataActiveRow.name " :required=" true "
-                              width="160px" />
+                              width="160px" :disabled="disabledStatus" />
                           </a-form-item>
                           <a-form-item label="서비스 시작년월" :label-col=" labelCol ">
                             <month-picker-box :required=" true " v-model:valueDate=" dataActiveRow.startYearMonth "
-                              width="160px" :teleport=" true " />
+                              width="160px" :disabled="disabledStatus" :teleport=" true " />
                           </a-form-item>
                           <a-form-item label="정원수 (명)" style="display: inline-flex" :label-col=" labelCol ">
                             <number-box width="160px" :required=" true " :min=" 1 " :spinButtons=" true "
-                              v-model:valueInput=" dataActiveRow.capacity " />
+                              v-model:valueInput=" dataActiveRow.capacity " :disabled="disabledStatus" />
                           </a-form-item>
                           <a-form-item label="장기요양기관등록번호" :label-col=" labelCol ">
                             <text-number-box width="160px" :required=" true " v-model:valueInput="
                               dataActiveRow.longTermCareInstitutionNumber" :lengthFixed="11" placeholder="숫자(11자리)"
-                              :lengthFixMsg="lenFixedMsg" :maxLength="11"
+                              :lengthFixMsg="lenFixedMsg" :maxLength="11" :disabled="disabledStatus"
                               />
                           </a-form-item>
                         </a-col>
                         <a-col :span=" 6 " class="pl-12 text-color">
-                          <img-upload :title=" '장기요양기관등록증' " @update-img=" getregCardFile " />
+                          <img-upload :title=" '장기요양기관등록증' " @update-img=" getregCardFile " :disabledImg="disabledStatus" />
                         </a-col>
                         <a-col :span=" 9 ">
                           <div class="preview-img">
                             <preview-image :dataImage=" dataActiveRow.registrationCard " @deleteImg=" removeRegCardFile "
-                              :activePreview=" true " />
+                              :activePreview=" true " :disabled="disabledStatus" />
                           </div>
                         </a-col>
                       </a-row>
@@ -268,8 +268,8 @@
                           <p>부가서비스</p>
                         </a-col>
                         <a-col :span=" 12 ">
-                          <checkbox-basic v-model:valueCheckbox=" accountingServiceTypes " :disabled=" false " size="15"
-                            label="회계입력대행서비스" />
+                          <checkbox-basic v-model:valueCheckbox=" accountingServiceTypes " size="15"
+                            label="회계입력대행서비스" :disabled="disabledStatus" />
                         </a-col>
                       </a-row>
                     </div>
@@ -279,12 +279,12 @@
               <a-collapse-panel key="5" header="원천서비스신청">
                 <div>
                   <radio-group :arrayValue=" arrayRadioCheckSourceServices "
-                    v-model:valueRadioCheck=" checkedSourceService " :layoutCustom=" 'horizontal' " />
+                    v-model:valueRadioCheck=" checkedSourceService " :layoutCustom=" 'horizontal' " :disabled="disabledStatus" />
                   <div style="margin-top: 20px">
                     <a-form-item label="서비스 시작년월" :class=" { 'clr': checkedSourceService == 1 } " label-align="left"
                       :label-col=" labelCol ">
                       <div style="width: 200px">
-                        <month-picker-box :required=" true " width="120px" :disabled=" checkedSourceService == 2 "
+                        <month-picker-box :required=" true " width="120px" :disabled=" checkedSourceService == 2 || disabledStatus "
                           v-model:valueDate="
                             formState.content.withholding.startYearMonth
                           " :teleport=" true " />
@@ -294,33 +294,33 @@
                       :label-col=" labelCol ">
                       <number-box :required=" true " width="120px" :min=" 1 " :spinButtons=" true "
                         v-model:valueInput=" formState.content.withholding.capacity "
-                        :disabled=" checkedSourceService == 2 " messRequired="이항목은 필수 입력사항입니다!"
+                        :disabled=" checkedSourceService == 2 || disabledStatus " messRequired="이항목은 필수 입력사항입니다!"
                         nameInput="withholding-capacity" />
                     </a-form-item>
                     <a-form-item label="부가서비스" label-align="left" :label-col=" labelCol ">
                       <checkbox-basic label="4대보험신고서비스" v-model:valueCheckbox=" withholdingServiceTypes "
-                        :disabled=" checkedSourceService == 2 " :size=" '16' " />
+                        :disabled=" checkedSourceService == 2 || disabledStatus " :size=" '16' " />
                     </a-form-item>
                   </div>
                 </div>
               </a-collapse-panel>
               <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력" forceRender>
                 <a-form-item label="출금은행" class="clr" label-align="left" :label-col=" labelCol ">
-                  <bank-select-box v-model:valueInput=" formState.content.cmsBank.bankType " width="150px" />
+                  <bank-select-box v-model:valueInput=" formState.content.cmsBank.bankType " width="150px" :disabled="disabledStatus" />
                 </a-form-item>
                 <a-form-item label="출금계좌번호" class="clr" label-align="left" :label-col=" labelCol ">
                   <text-number-box width="250px" :required=" true "
-                    v-model:valueInput=" formState.content.cmsBank.accountNumber " nameInput="cmsBank-accountNumber" />
+                    v-model:valueInput=" formState.content.cmsBank.accountNumber " nameInput="cmsBank-accountNumber" :disabled="disabledStatus" />
                 </a-form-item>
                 <a-form-item label="예금주명" class="clr" label-align="left" :label-col=" labelCol ">
                   <default-text-box width="250px" :required=" true "
-                    v-model:valueInput=" formState.content.cmsBank.ownerName " nameInput="cmsBank-ownerName" />
+                    v-model:valueInput=" formState.content.cmsBank.ownerName " nameInput="cmsBank-ownerName" :disabled="disabledStatus" />
                 </a-form-item>
                 <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr" label-align="left"
                   :label-col=" labelCol ">
                   <text-number-box width="250px" :required=" true "
                     v-model:valueInput=" bizResNumber " nameInput="cmsBank-accountNumber" :ruleCustom="() => checkBizNumberLen"
-                      :messageRuleCustom="lenFixedMsg" :maxLength="13" />
+                      :messageRuleCustom="lenFixedMsg" :maxLength="13" :disabled="disabledStatus" />
                   <div class="noteImage">
                     <info-tool-tip>
                       예금주의 사업자등록번호 또는 주민등록번호입니다.
@@ -330,18 +330,18 @@
                 <a-form-item label="자동이체출금일자" class="clr" label-align="left" :label-col=" labelCol ">
                   <radio-group :arrayValue=" arrayRadioWithdrawDay " v-model:valueRadioCheck="
                     formState.content.cmsBank.withdrawDay
-                  " />
+                  " :disabled="disabledStatus" />
                 </a-form-item>
               </a-collapse-panel>
               <a-collapse-panel key="7" header="기타" forceRender>
                 <a-form-item label="영업관리담당" label-align="left" :label-col=" labelCol ">
                   <list-sales-dropdown v-model:valueInput="
                     formState.content.extra.salesRepresentativeId
-                  " width="200px" :searchEnabled="false"/>
+                  " width="200px" :searchEnabled="false" :disabled="disabledStatus"/>
                 </a-form-item>
                 <a-form-item label="전달사항" label-align="left" :label-col=" labelCol ">
                   <text-area-box v-model:valueInput=" formState.content.extra.comment " :width=" 750 " :height=" 70 "
-                    placeholder="전달사항입력" />
+                    placeholder="전달사항입력" :disabled="disabledStatus" />
                 </a-form-item>
               </a-collapse-panel>
             </a-collapse>
@@ -351,7 +351,7 @@
               <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible()" :width=" 120 "
                 style="margin-right: 10px" />
               <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="updateSubscriptionRequest($event)"
-                :width=" 150 " />
+                :width=" 150 " :disabled="disabledStatus"  />
             </a-col>
           </a-row>
         </standard-form>
@@ -369,7 +369,7 @@
           <button-basic class="button-form-modal" :text=" '아니요' " :type=" 'default' " :mode=" 'outlined' "
             @onClick="deleteModal = false" />
           <button-basic class="button-form-modal" :text=" '네. 삭제합니다' " :width=" 140 " :type=" 'default' "
-            :mode=" 'contained' " @onClick=" onDelConfirm " />
+            :mode=" 'contained' " @onClick=" onDelConfirm "/>
         </div>
       </standard-form>
     </a-modal>
@@ -485,6 +485,7 @@ export default defineComponent({
     const contentDelete = Message.getCommonMessage("401").message;
     const bizResNumber = ref('');
     const statusOrigin = ref(10);
+    const disabledStatus = computed(()=> formState.value.status == 30 || formState.value.status == 99);
     // event close popup
     const setModalVisible = () => {
       if (
@@ -974,6 +975,7 @@ export default defineComponent({
       isStatusApproved,onRowChangeComfirm,
       checkBizNumberLen,lenFixedMsg,
       bizResNumber,
+      disabledStatus,
     };
   },
 });
