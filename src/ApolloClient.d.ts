@@ -14,22 +14,28 @@ const connections: { [key: string]: any } = {}; // Hold the controller for each 
 
 const authMiddleware = new ApolloLink((operation, forward) => {
   const accessToken = sessionStorage.getItem('token');
-  // Check if the token is expired
-  const isTokenExpired = accessToken &&  (getJwtObject(accessToken).isExpired(60) || getJwtObject(accessToken).isExpired()) ? true : false;
-  const link = window.location.href;
-  const operationName = operation.operationName;
-  console.group("accessToken", accessToken);
-  console.group("isExpired-60", getJwtObject(accessToken).isExpired(60));
-  console.group("isExpired", getJwtObject(accessToken).isExpired());
-  console.group("%c Request api", 'color: green');
-  console.log('%c url', 'color: blue;', link);
-  console.log('%c name-gql', 'color: blue;', operationName);
-  console.log('%c current accessToken', 'color: blue;', accessToken);
-  console.log('%c refreshPromise', 'color: blue;', refreshPromise);
-  console.groupEnd();
-
+  let isTokenExpired = false;
+  let isTokenExpired2 = false;
+  if(accessToken) {
+    const link = window.location.href; // get url browser
+    const operationName = operation.operationName; // get name-gql
+    // Check if the token is expired
+    isTokenExpired = accessToken &&  (getJwtObject(accessToken).isExpired(60) || getJwtObject(accessToken).isExpired()) ? true : false;
+    const currentTime = new Date().getTime(); // get current time
+    const timeExpired = Number(getJwtObject(accessToken).p.exp) - 60000; // get time expired token - 60s
+    isTokenExpired2 = currentTime - timeExpired >= 0
+    console.group("%c Request api", 'color: green');
+    console.log('%c currentTime - timeExpired', 'color: red;', currentTime - timeExpired);
+    console.log("isExpired-60", getJwtObject(accessToken).isExpired(60));
+    console.log("isExpired", getJwtObject(accessToken).isExpired());
+    console.log('%c url', 'color: blue;', link);
+    console.log('%c name-gql', 'color: blue;', operationName);
+    console.log('%c current accessToken', 'color: blue;', accessToken);
+    console.log('%c refreshPromise', 'color: blue;', refreshPromise);
+    console.groupEnd();
+  }
   // get api call
-  if (isTokenExpired) {
+  if (isTokenExpired || isTokenExpired2) {
     if (!isTokenRefreshing) {
       isTokenRefreshing = true;
       console.group("%c Token expired", 'color: red');
