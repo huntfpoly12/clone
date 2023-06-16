@@ -14,27 +14,29 @@ const connections: { [key: string]: any } = {}; // Hold the controller for each 
 
 const authMiddleware = new ApolloLink((operation, forward) => {
   const accessToken = sessionStorage.getItem('token');
-  // Check if the token is expired
-  const isTokenExpired = accessToken &&  (getJwtObject(accessToken).isExpired(60) || getJwtObject(accessToken).isExpired()) ? true : false;
-  const link = window.location.href;
-  const operationName = operation.operationName;
-  console.group("%c Request api", 'color: green');
-  console.log('%c url', 'color: blue;', link);
-  console.log('%c name-gql', 'color: blue;', operationName);
-  console.log('%c current accessToken', 'color: blue;', accessToken);
-  console.log('%c refreshPromise', 'color: blue;', refreshPromise);
-  console.groupEnd();
-
+  let isTokenExpired = false;
+  if(accessToken) {
+    const link = window.location.href; // get url browser
+    const operationName = operation.operationName; // get name-gql
+    // Check if the token is expired
+    const currentTime = new Date().getTime(); // get current time
+    const timeExpired = Number(getJwtObject(accessToken).p.exp) - 60000; // get time expired token - 60s
+    isTokenExpired = currentTime - timeExpired >= 0
+    console.groupCollapsed("%c Request api", 'color: green', operationName);
+    console.log('%c currentTime | timeExpired (s)', 'color: red;', currentTime/1000 |  timeExpired/1000);
+    console.log('%c url', 'color: blue;', link);
+    console.count();
+    console.log('%c current accessToken', 'color: blue;', accessToken);
+    console.groupEnd();
+  }
   // get api call
   if (isTokenExpired) {
     if (!isTokenRefreshing) {
       isTokenRefreshing = true;
-      console.group("%c Token expired", 'color: red');
+      console.groupCollapsed("%c Token expired", 'color: red');
       console.log('%c old-accessToken', 'color: red;', accessToken);
       // get url browser
-     
-      let count = 0
-      console.log('%c count', 'color: red;', count++);;
+      console.count();
       console.groupEnd();
       // Token has expired, make a refresh login API request
       refreshPromise = refreshLogin().finally(() => {

@@ -50,7 +50,7 @@ const messageRequired = Message.getCommonMessage('102').message;
       <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
         <div v-if="props.isShowId" class="select-tag">{{ data[props?.valueExpr] }}</div>
         <a-tooltip zIndex="9999" placement="top" color="black">
-          <template #title v-if=" data[props?.displayeExpr].length > 10 ">
+          <template #title>
             <div>{{data[props?.displayeExpr]}}</div>
           </template>
           <div class="text-overflow" :style=" { width: `${widthCustom} - ${props.isShowId?75:44}px` } ">

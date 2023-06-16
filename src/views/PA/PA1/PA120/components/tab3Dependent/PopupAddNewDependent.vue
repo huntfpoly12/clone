@@ -20,7 +20,7 @@
                     width="200px"
                     v-model:valueInput="formState.relation"
                     :required="true"
-                    :itemSelected="itemSelected"
+                    :itemSelected="dependantSelected"
                   ></dependants-relation-select-box>
                 </a-form-item>
                 <a-form-item label="성명" label-align="right" class="red">
@@ -68,6 +68,7 @@
                     v-model:valueInput="formState.basicDeduction"
                     :ageCount="ageCount"
                     :required="true"
+                    :itemSelected="deductionSelected"
                   />
                 </a-form-item>
                 <a-form-item label="부녀자" label-align="right">
@@ -217,6 +218,10 @@ export default defineComponent({
       type: Array,
       default: [],
     },
+    deductionAll: {
+      type: Array,
+      default: [],
+    },
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -227,7 +232,8 @@ export default defineComponent({
       () => store.state.common.isForeignerPA120
     );
     const ageCount = ref();
-    const itemSelected = ref<any>([...props.relationAll]);
+    const dependantSelected = ref<any>([...props.relationAll]);
+    const deductionSelected = ref<any>([...props.deductionAll]);
     const initialFormState = {
       relation: 1,
       name: "",
@@ -240,7 +246,7 @@ export default defineComponent({
       maternityAdoption: 0,
       descendant: false,
       consignmentRelationship: null,
-      index: itemSelected.value.length + 1,
+      index: dependantSelected.value.length + 1,
     };
     const formState = reactive<any>({
       ...initialFormState,
@@ -390,11 +396,6 @@ export default defineComponent({
     watch(isForeignerPA120, (newVal: any) => {
       formState.foreigner = newVal;
     });
-    // let dpRelation : any =  enum2Entries(DependantsRelation).find((value) => {
-    //   const item1 = itemSelected.value.some((item2: any)=>{return item2.value == value[1]});
-    //   return !item1 ;
-    // }) ;
-    // check consignment
     const consignDisabled = ref(true);
     watchEffect(() => {
       if (
@@ -422,10 +423,11 @@ export default defineComponent({
       labelResidebId,
       createNewEmployeeWageDependent,
       isDisabledSenior,
-      itemSelected,
+      dependantSelected,
       consignDisabled,
       onChange,
       initFormStateTabPA120,
+      deductionSelected,
     };
   },
 });

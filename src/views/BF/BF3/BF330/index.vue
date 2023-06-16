@@ -34,11 +34,11 @@
                                   </a-col>
                                   <a-col class="ml-10">
                                       <label class="lable-item">매니저명 :</label>
-                                      <list-manager-dropdown v-model:valueInput="originData.filter.manageUserId" width="150px"/>
+                                      <list-manager-dropdown v-model:valueInput="originData.filter.manageUserId" width="165px"/>
                                   </a-col>
                                   <a-col class="ml-10">
                                       <label class="lable-item">영업자명 :</label>
-                                      <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" width="150px"/>
+                                      <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" width="165px"/>
                                   </a-col>
                                   <a-col>
                                       <CheckboxGroup :options="serviceTypeCheckbox" v-model:valueCheckbox="originData.filter.useServiceTypes" :size="'18'"/>
