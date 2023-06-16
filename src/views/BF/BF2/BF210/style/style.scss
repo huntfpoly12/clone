@@ -63,5 +63,8 @@
     align-items: center;
 }
 :deep(.dx-freespace-row) {
-  display: none !important;
+    display: none !important;
+}
+:deep(.dx-toolbar-center) {
+    width: calc(100% - 230px) !important;
 }
