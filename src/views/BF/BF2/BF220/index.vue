@@ -1,24 +1,7 @@
 <template>
     <action-header title="권한그룹관리" @actionSearch="searching" :buttonSearch="true"/>
     <div id="bf-220">
-        <div class="search-form">
-            <div id="components-grid-demo-flex">
-                <a-row justify="start" :gutter="[16, 8]">
-                    <a-col class="search">
-                        <label class="lable-item">대상회원 :</label>
-                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
-                        <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저
-                        </a-tag>
-                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
-                        <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
-                        </a-tag>
-                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
-                        <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
-                        </a-tag>
-                    </a-col>
-                </a-row>
-            </div>
-        </div>
+        
         <div class="page-content">
             <a-spin :spinning="spinning" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -29,6 +12,7 @@
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxExport :enabled="true" />
                     <DxToolbar>
+                        <DxItem location="center" template="search" css-class="search-toolbar-custom" />
                         <DxItem name="page" template="pagination-table" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" css-class="cell-button-export"/>
@@ -37,6 +21,25 @@
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" />
                     </DxToolbar>
+                    <template #search>
+                        <div class="search-form-custom gap-0" style="height: 30px;">
+                            <label class="lable-item">대상회원 :</label>
+                            <div class="d-flex-center">
+                                <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
+                                <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저</a-tag>
+                            </div>
+                            <div class="d-flex-center">
+                                <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
+                                <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
+                                </a-tag>
+                            </div>
+                            <div class="d-flex-center">
+                                <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
+                                <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
+                                </a-tag>    
+                            </div>
+                        </div>
+                    </template>
                     <template #button-template>
                       <a-tooltip placement="top" class="custom-tooltip">
                         <template #title>

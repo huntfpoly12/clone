@@ -14,12 +14,12 @@ table tr td {
 }
 
 .page-content {
-  padding: 2px 10px 10px;
+  padding: 5px 10px 10px;
 }
 
 .search-form {
-  background: #f1f3f4;
-  padding: 4px 10px 4px;
+  // background: #f1f3f4;
+  // padding: 4px 10px 4px;
 
   >div {
     width: 100%;
@@ -54,7 +54,86 @@ table tr td {
     }
   }
 }
+.dx-datagrid-search-panel {
+  margin: 0;
+}
 
+.dx-datagrid-search-panel {
+  margin: 0;
+}
+.search-toolbar-custom {
+  order: 0 !important;
+  overflow-x: auto;
+  // overflow-x: scroll;
+  // overflow-y: hidden;
+  // padding-bottom: 16px; /* Adjust this value based on your scrollbar width */
+  box-sizing: border-box;
+  // width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: start;
+  scrollbar-color: rebeccapurple green;
+  .search-form-custom {
+    // background: #f1f3f4;
+    // margin-bottom: 10px;
+      width: 100%;
+      display: flex;
+      // justify-content: flex-end;
+      align-items: center;
+      
+      // white-space: nowrap;
+      > div {
+        // width: max-content;
+        white-space: nowrap;
+        margin-right: 15px;
+      }
+     
+  }
+  ::-webkit-scrollbar {
+    height: 10px; 
+  }
+  &::-webkit-scrollbar {
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+.dx-toolbar .dx-toolbar-items-container {
+  // height: 47px;
+  margin-top: 5px;
+  .dx-toolbar-center {
+    padding-left: 0px;
+    width: calc(100% - 250px);
+    table-layout: fixed;
+  }
+}
+.dx-toolbar-center {
+  margin: 0 !important;
+  float: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.dx-toolbar-item, 
+.dx-toolbar-menu-container {
+  vertical-align: top;
+  // .dx-button-content {
+  // }
+}
+
+.order-0 {
+  order: 0 !important;
+}
+.dx-checkbox-text {
+  white-space: nowrap;
+}
 $lenght: 50;
 
 @for $i from 0 through $lenght {
@@ -122,6 +201,9 @@ $lenght: 50;
     margin-right: $i+ px;
     margin-top: $i+ px;
     margin-bottom: $i+ px;
+  }
+  .gap-#{$i} {
+    gap: $i+ px;
   }
 }
 

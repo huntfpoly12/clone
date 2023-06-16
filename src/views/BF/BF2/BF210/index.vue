@@ -1,74 +1,66 @@
 <template>
     <action-header title="회원관리" @actionSearch="searching" :buttonSearch="true"/>
     <div id="bf-210">
-        <div class="search-form">
-            <div id="components-grid-demo-flex">
-                <a-row justify="start" :gutter="[16, 8]">
-                    <a-col class="custom-flex">
-                        <label class="lable-item">회원종류 :</label>
-                        <DxSelectBox id="custom-templates" :data-source="productsValue" display-expr="name" value-expr="id"
-                            item-template="item" :height="$config_styles.HeightInput" style="width:140px"
-                            field-template="field" @value-changed="changeValueType" :value="dataSearch.type">
-                            <template #field="{ data }">
-                                <Field :fieldData="data" />
-                            </template>
-                            <template #item="{ data }">
-                                <div style=" padding: 3px;">
-                                    <div
-                                        :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
-                                        {{ data.name }}
-                                    </div>
-                                </div>
-                            </template>
-                        </DxSelectBox>
-                    </a-col>
-                    <a-col class="custom-flex">
-                        <label class="lable-item">소속코드:</label>
-                        <default-text-box width="150px" v-model:valueInput="dataSearch.groupCode" />
-                    </a-col>
-                    <a-col class="custom-flex">
-                        <label class="lable-item">소속명:</label>
-                        <default-text-box width="150px" v-model:valueInput="dataSearch.groupName" />
-                    </a-col>
-                    <a-col class="custom-flex">
-                        <label class="lable-item">회원ID :</label>
-                        <default-text-box width="150px" v-model:valueInput="dataSearch.username" />
-                    </a-col>
-                    <a-col class="custom-flex">
-                        <label class="lable-item">회원명 :</label>
-                        <default-text-box width="150px" v-model:valueInput="dataSearch.name" />
-                    </a-col>
-                    <a-col class="custom-flex">
-                        <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox1" :size="'14'" />
-                        <tag-color-use :valueUse="true" @click="changeValueCheckBox('checkBox1')"/>
-                        <div style="width: 10px;"></div>
-                        <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox2" :size="'14'" />
-                        <tag-color-use :valueUse="false" @click="changeValueCheckBox('checkBox2')"/>
-                    </a-col>
-                </a-row>
-            </div>
-        </div>
         <div class="page-content">
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: calc(100vh - 180px)">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: calc(100vh - 150px)">
                     <DxPaging :page-size="0" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
                     <DxToolbar>
-                        <DxItem name="page" template="pagination-table" />
+                        <DxItem location="center" template="search" css-class="search-toolbar-custom" />
+                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" css-class="cell-button-export"/>
-                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" />
                     </DxToolbar>
-                    <template #pagination-table>
-                        <div v-if="rowTable > dataSearch.rows">
-                            <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
-                                :total="rowTable" show-less-items @change="changePage" />
+                    <template #search>
+                        <div class="search-form-custom " >
+                            <div class="d-flex-center">
+                                <label class="lable-item">회원종류 :</label>
+                                <DxSelectBox id="custom-templates" :data-source="productsValue" display-expr="name" value-expr="id"
+                                    item-template="item" :height="$config_styles.HeightInput" style="width:140px"
+                                    field-template="field" @value-changed="changeValueType" :value="dataSearch.type">
+                                    <template #field="{ data }">
+                                        <Field :fieldData="data" />
+                                    </template>
+                                    <template #item="{ data }">
+                                        <div style=" padding: 3px;">
+                                            <div
+                                                :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
+                                                {{ data.name }}
+                                            </div>
+                                        </div>
+                                    </template>
+                                </DxSelectBox>
+                            </div>
+                            <div class="d-flex-center">
+                                <label class="lable-item">소속코드:</label>
+                                <default-text-box width="150px" v-model:valueInput="dataSearch.groupCode" />
+                            </div>
+                            <div class="d-flex-center">
+                                <label class="lable-item">소속명:</label>
+                                <default-text-box width="150px" v-model:valueInput="dataSearch.groupName" />
+                            </div>
+                            <div class="d-flex-center">
+                                <label class="lable-item">회원ID :</label>
+                                <default-text-box width="150px" v-model:valueInput="dataSearch.username" />
+                            </div>
+                            <div class="d-flex-center">
+                                <label class="lable-item">회원명 :</label>
+                                <default-text-box width="150px" v-model:valueInput="dataSearch.name" />
+                            </div>
+                            <div class="d-flex-center">
+                                <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox1" :size="'14'" />
+                                <tag-color-use :valueUse="true" @click="changeValueCheckBox('checkBox1')"/>
+                                <div style="width: 10px;"></div>
+                                <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox2" :size="'14'" />
+                                <tag-color-use :valueUse="false" @click="changeValueCheckBox('checkBox2')"/>
+                            </div>
                         </div>
                     </template>
                     <template #button-template>
@@ -116,10 +108,6 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <div class="pagination-table" v-if="rowTable > dataSearch.rows">
-                    <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
-                        :total="rowTable" show-less-items @change="changePage" />
-                </div>
             </a-spin>
         </div>
     </div>
@@ -149,7 +137,7 @@ import Field from './components/Field.vue';
 import { dataSearchIndex, productsValue } from "./utils/index";
 import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
-import { cloneDeep } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -312,7 +300,7 @@ export default defineComponent({
             checkStatus,
             productsValue,
             count,
-            loading, closePopupAdd
+            loading, closePopupAdd,
         }
     },
 });
