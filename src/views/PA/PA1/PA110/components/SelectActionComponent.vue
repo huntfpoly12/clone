@@ -141,10 +141,9 @@ export default defineComponent({
         const deleteItem = (value: any) => {
             if (props.dataRows.length) {
                 modalDelete.value = true;
-
                 popupDataDelete.value = props.dataRows
             } else {
-                notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+                notification('error', messages.getCommonMessage('404').message)
             }
         };
         const onActionAddItem = (value: any) => {
@@ -196,7 +195,7 @@ export default defineComponent({
                         popupDataEmailSinglePayrollRegister.value = props.dataRows[0]
                         modalEmailSinglePayrollRegister.value = true;
                     } else {
-                        notification('error', `항목을 하나 이상 선택해야합니다`)
+                        notification('error', Message.getCommonMessage('601').message)
                     }
                     break;
                 case 'PrintSalaryStatement':
@@ -215,7 +214,7 @@ export default defineComponent({
                         popupDataEmailSingle.value = props.dataRows[0]
                         modalEmailSingle.value = true;
                     } else {
-                        notification('error', `항목을 하나 이상 선택해야합니다`)
+                        notification('error', Message.getCommonMessage('601').message)
                     }
                     break;
                 case 'EmailMultiSalaryStatement':
