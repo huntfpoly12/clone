@@ -3,7 +3,7 @@
         <div id="bf-330">
             <action-header title="서비스관리"  @actionSearch="searching" :buttonSearch="true"/>
             
-            <div class="page-content">
+            <div class="page-content mt-7">
                 <DxDataGrid id="table-main-bf330" noDataText="내역이 없습니다" :data-source="listServiceContract" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :show-row-lines="true"  :hoverStateEnabled="true">
@@ -70,7 +70,10 @@
                         <a-tag color="black" v-if="data.data.usedWithholding === true">원천</a-tag>
                     </template>
                     <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
-                    <DxColumn data-field="canceledAt" caption="해지일자" />
+                    <DxColumn data-field="canceledAt" caption="해지일자" alignment="left"
+                      data-type="date"
+                      format="yyyy-MM-dd"
+                    />
                     <DxColumn :width="120" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action">

@@ -237,6 +237,8 @@
   padding-left: 5px;
   padding-top: 5px;
   min-height: 143px;
+  max-height: 255px;
+  overflow: scroll;
 }
 
 .custom-deduction {

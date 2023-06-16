@@ -9,7 +9,6 @@
           :data-source="filterDsTab3Bf530"
           :show-borders="true"
           key-expr="workId"
-          class="mt-10"
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
@@ -27,7 +26,7 @@
           />
           <DxExport :enabled="true" />
           <DxToolbar>
-            <DxItem location="center" template="search" css-class="search-toolbar-custom" />
+            <DxItem location="after" template="search" />
             <DxItem template="btnSave" location="after" />
             <DxItem name="searchPanel" location="after" />
             <DxItem
@@ -37,55 +36,47 @@
             />
           </DxToolbar>
           <template #search>
-            <div class="search-form-custom gap-0" style="height: 30px;">
-              <div class="d-flex-center">
-                  <label class="lable-item">업체명:</label>
-                  <default-text-box
+            <a-row :gutter="[0, 5]">
+              <a-rol class="mr-20">
+                <a-form-item label="상태">
+                  <SelectCustomField
+                    :searchEnabled="true"
+                    v-model:valueInput="formState.workingStatus"
+                    :dataSource="workingStatusSelectbox"
                     width="150px"
-                    v-model:valueInput="formState.companyName"
+                    displayeExpr="text"
+                    valueExpr="id"
+                    :isShowId="false"
+                    placeholder="선택"
                   />
-              </div>
-              <div class="d-flex-center">
-                <label class="lable-item">사업장관리번호</label>
-                <ManageIdTextBox
-                  width="150px"
-                  v-model:valueInput="formState.manageId"
-                />
-              </div>
-              <div class="d-flex-center">
-                <label class="lable-item">상태</label>
-                <SelectBoxCT
-                  :searchEnabled="true"
-                  :arrSelect="workingStatusSelectbox"
-                  v-model:valueInput="formState.workingStatus"
-                  displayeExpr="text"
-                  valueExpr="id"
-                  width="150px"
-                  placeholder="선택"
-                />
-              </div>
-              <div class="d-flex-center">
-                <label class="lable-item">신고종류</label>
-                <SelectBoxCT
-                  :searchEnabled="true"
-                  :arrSelect="reportTypeSelectboxTab3"
-                  v-model:valueInput="formState.type"
-                  displayeExpr="text"
-                  valueExpr="id"
-                  width="150px"
-                  placeholder="선택"
-                />
-              </div>
-              <div class="d-flex-center">
-                <label class="lable-item">기간</label>
-                <range-date-time-box
-                  v-model:valueDate="rangeDate"
-                  width="250px"
-                  :multi-calendars="true"
-                  :clearable="false"
-                />
-              </div>
-            </div>
+                </a-form-item>
+              </a-rol>
+              <a-rol class="mr-20">
+                <a-form-item label="신고종류">
+                  <SelectCustomField
+                    :searchEnabled="true"
+                    v-model:valueInput="formState.type"
+                    :dataSource="reportTypeSelectboxTab3"
+                    width="150px"
+                    displayeExpr="text"
+                    valueExpr="id"
+                    :isShowId="false"
+                    placeholder="선택"
+                  />
+                </a-form-item>
+              </a-rol>
+              <a-col>
+                <a-form-item label="기간">
+                  <range-date-time-box
+                    v-model:valueDate="rangeDate"
+                    width="250px"
+                    :multi-calendars="true"
+                    :clearable="false"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            
           </template>
           <template #btnSave>
             <div>
@@ -129,13 +120,13 @@
             alignment="center"
           />
           <template #workingStatus="{ data }: any">
-            <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="workingStatusSelectbox"
+            <SelectCustomField
               v-model:valueInput="data.data.workingStatus"
+              :dataSource="workingStatusSelectbox"
+              width="120px"
               displayeExpr="text"
               valueExpr="id"
-              width="120px"
+              :isShowId="false"
               placeholder="선택"
             />
           </template>
@@ -336,7 +327,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watch } from "vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from "vue";
 import queries from "@/graphql/queries/BF/BF5/BF530/index";
 import mutations from "@/graphql/mutations/BF/BF5/BF530/index";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -383,6 +381,9 @@ import dayjs from "dayjs";
 import Download from "./Download.vue";
 import History from "./History.vue";
 import SelectBoxCT from "./../SelectBoxCT.vue";
+import { nextTick } from "vue";
+import { onUpdated } from "vue";
+
 export default defineComponent({
   components: {
     DxButton,
@@ -449,7 +450,6 @@ export default defineComponent({
           toDate: newVal[1],
         };
         employeeRequestListTrigger.value = true;
-        employeeRequestListRefetch();
       }
     });
     const dataSource = ref<any[]>([...dataTableTab1]);
@@ -527,13 +527,40 @@ export default defineComponent({
             return true;
           });
         });
-        store.commit("common/filterDsTab3Bf530", arr);
+        new Promise((resolve: any) => {
+          store.commit("common/filterDsTab3Bf530", arr);
+          resolve();
+        }).then(() => {
+          // Sử dụng nextTick để đảm bảo cập nhật DOM đã hoàn thành
+          // nextTick(() => {
+          //   console.log(`output-1`);
+          //   if (filterDsTab3Bf530.value) {
+          //     // loadingDataSource.value = false;
+          //   }
+          // });
+        });
         setTimeout(() => {
+          console.log(`output-2`);
           loadingDataSource.value = false;
-        }, 50);
+        }, 0);
       },
       { deep: true }
     );
+    // onMounted(() => {
+    //   nextTick(() => {
+    //       console.log(`output- 3`);
+    //     loadingDataSource.value = false;
+    //   });
+    // });
+
+    onUpdated(() => {
+      nextTick(() => {
+        if (filterDsTab3Bf530.value) {
+          console.log(`output-4`, filterDsTab3Bf530.value);
+          // loadingDataSource.value = false;
+        }
+      });
+    });
 
     // -----------------------------HISTORY-------------------
 
@@ -984,35 +1011,35 @@ export default defineComponent({
           });
         }
       });
-      formData.forEach((item: any) => {
+      formData.forEach(async(item: any) => {
         if (item.type == 1) {
-          create1(item.field);
+          await create1(item.field);
           if (item.field.data.workingStatus == 0) {
-            cancel1(item.field.search);
+            await cancel1(item.field.search);
           }
         }
         if (item.type == 2) {
-          create2(item.field);
+          await create2(item.field);
           if (item.field.data.workingStatus == 0) {
-            cancel2(item.field.search);
+            await cancel2(item.field.search);
           }
         }
         if (item.type == 3) {
-          create3(item.field);
+          await create3(item.field);
           if (item.field.data.workingStatus == 0) {
-            cancel3(item.field.search);
+            await cancel3(item.field.search);
           }
         }
         if (item.type == 4) {
-          create4(item.field);
+          await create4(item.field);
           if (item.field.data.workingStatus == 0) {
-            cancel4(item.field.search);
+            await cancel4(item.field.search);
           }
         }
         if (item.type == 5) {
-          create5(item.field);
+          await create5(item.field);
           if (item.field.data.workingStatus == 0) {
-            cancel5(item.field.search);
+            await cancel5(item.field.search);
           }
         }
       });

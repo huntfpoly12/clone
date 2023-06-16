@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <a-spin :spinning="loading" size="large">
-    <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)"
+    <action-header title="계약정보관리&심사" @actionSearch="searching($event)"
       :buttonSearch="true" />
     <div id="bf-310">
       
@@ -31,37 +31,6 @@
                   <div class="dflex custom-flex">
                     <label class="lable-item">심사상태/결과 :</label>
                     <SelectCustomField v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
-                  </div>
-                </a-col>
-                <a-col class="ml-10">
-                  <div class="dflex custom-flex">
-                    <label class="lable-item">영업자 :</label>
-                    <list-sales-dropdown width="150px" v-model:valueInput="originData.salesRepresentativeId" />
-                  </div>
-                </a-col>
-                <a-col class="ml-10">
-                  <div class="dflex custom-flex">
-                    <label class="lable-item">신청기간 :</label>
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
-                      :placeholder="'시작 날짜 - 종료 날짜'" :clearable="false" :maxRange="365"/>
-                  </div>
-                </a-col>
-              </a-row>
-            </div>
-          </template>
-          <template #tool-search>
-            <div class="search-form">
-              <a-row justify="end">
-                <a-col class="ml-10">
-                  <label class="lable-item">서비스종류 :</label>
-                  <checkbox-basic v-model:valueCheckbox="listCheckBox.accounting" :disabled="false" :size="'14'" label="회계"
-                    style="margin-right: 10px" />
-                  <checkbox-basic v-model:valueCheckbox="listCheckBox.withholding" :disabled="false" :size="'14'" label="원천" />
-                </a-col>
-                <a-col class="ml-10">
-                  <div class="dflex custom-flex">
-                    <label class="lable-item">심사상태/결과 :</label>
-                    <SelectCustomField select-custom-field v-model:valueInput="statuses" :dataSource="subReqStatus" width="150px" :isShowId="false" placeholder="전체"/>
                   </div>
                 </a-col>
                 <a-col class="ml-10">
@@ -272,7 +241,6 @@ export default defineComponent({
     const {
       refetch: refetchData,
       loading,
-      error,
       result,
       onError,
     } = useQuery(
@@ -311,18 +279,9 @@ export default defineComponent({
       originData.finishDate = rangeDate.value[1];
       originData.statuses =
         statuses.value == 0 ? [10, 20, 30, 99] : statuses.value;
-      makeDataClean(originData);
+      makeDataClean(originData, undefined, ["arr"]);
       trigger.value = true;
       actionSearch.value = false;
-    };
-    const changePage = (e: any) => {
-      actionSearch.value = true;
-      originData.startDate = rangeDate.value[0];
-      originData.finishDate = rangeDate.value[1];
-      originData.statuses =
-        statuses.value == 0 ? [10, 20, 30, 99] : statuses.value;
-      makeDataClean(originData);
-      trigger.value = true;
     };
     watch(result, (value) => {
       trigger.value = false;
@@ -331,12 +290,6 @@ export default defineComponent({
         dataSource.value = value.searchSubscriptionRequests.datas.map((item: any)=>({...item}));
       }
     });
-    // Get api when page is changed
-    const onChangePage = (page: any, pageSize: any) => {
-      originData.page = page;
-      makeDataClean(originData);
-      trigger.value = true;
-    };
 
     const onDoneUpdate = () => {
       setTimeout(() => {
@@ -360,11 +313,9 @@ export default defineComponent({
       originData,
       statuses,
       searching,
-      changePage,
       getColorTag,
       onExporting,
       actionSearch,
-      onChangePage,
       dayjs,
       trigger,
       onDoneUpdate,

@@ -8,7 +8,7 @@
   }
 
   #tab2-bf530 {
-    height: calc(100vh - 290px) !important;
+    height: calc(100vh - 220px) !important;
 
     .dx-freespace-row {
       display: none !important;
@@ -41,7 +41,7 @@
 
   .tab1 {
     :deep .ant-form-item-label>label {
-      width: 120px;
+      // width: 120px;
     }
   }
 
@@ -142,14 +142,7 @@
   :deep .dx-datagrid-content .dx-datagrid-table .dx-row>td {
     height: 20px;
   }
-
-  // :deep .dx-scrollable-container {
-  //   overflow: visible;
-  // }
-  // :deep .dx-datagrid-rowsview .dx-row > td, .dx-datagrid-rowsview .dx-row > tr > td {
-  //   overflow: visible;
-  // }
-  // :deep .dx-datagrid-rowsview{
-  //   overflow: visible;
-  // }
+  :deep .dx-toolbar-after{
+    padding-left: 0;
+  }
 }
