@@ -64,37 +64,39 @@
       <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" alignment="right" width="80" />
     </DxDataGrid>
     <a-row class="fs-14 summary-ctn">
-      <a-col span="7">
-        <div class="dx-datagrid-summary-item dx-datagrid-text-content" style="max-width: 60.2%;">
-          사업소득자[소득구분]수
-          <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
+      <a-col class="sum-item">
+        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+          <div style="width: 160px;">
+            사업소득자[소득구분]수
+            <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
+          </div>
         </div>
       </a-col>
-      <a-col span="3" class="sum-item">
+      <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           지급액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'paymentAmount') }}]</span>
         </div>
       </a-col>
-      <a-col span="4" class="sum-item">
+      <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           필요경비합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'requiredExpenses') }}]</span>
         </div>
       </a-col>
-      <a-col span="4" class="sum-item">
+      <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           소득금액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'incomePayment') }}]</span>
         </div>
       </a-col>
-      <a-col span="3" class="sum-item">
+      <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           공제합계
           <span style="font-size: 16px;">[{{ customTextSummary() }}]</span>
         </div>
       </a-col>
-      <a-col span="5" class="sum-item">
+      <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           차인지급액합계
           <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</span>

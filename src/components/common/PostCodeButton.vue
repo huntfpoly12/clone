@@ -1,7 +1,7 @@
 <template>
   <div style="margin-left: 5px">
     <DxButton icon="search" :width="width" :text="text" type="default" styling-mode="outlined" @click="isOpen = true"
-      :height="$config_styles.HeightInput" class="post-code"/>
+      :height="$config_styles.HeightInput" class="post-code" :disabled="disabled"/>
     <a-modal v-model:visible="isOpen" footer="" :mask-closable="false">
       <div v-if="isOpen">
         <VueDaumPostcode @complete="onComplete" />
@@ -30,6 +30,10 @@ export default defineComponent({
     width: {
         type: String,
         default: "145",
+    },
+    disabled: {
+        type: Boolean,
+        default: false,
     }
   },
   data() {

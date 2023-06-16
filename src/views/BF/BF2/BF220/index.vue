@@ -6,23 +6,23 @@
             <a-spin :spinning="spinning" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxExport :enabled="true" />
                     <DxToolbar>
-                        <DxItem location="center" template="search" css-class="search-toolbar-custom" />
+                        <DxItem location="after" template="search"  />
                         <DxItem name="page" template="pagination-table" />
+                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" css-class="cell-button-export"/>
-                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" />
                     </DxToolbar>
                     <template #search>
-                        <div class="search-form-custom gap-0" style="height: 30px;">
+                        <a-row >
                             <label class="lable-item">대상회원 :</label>
                             <div class="d-flex-center">
                                 <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
@@ -38,7 +38,7 @@
                                 <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
                                 </a-tag>    
                             </div>
-                        </div>
+                        </a-row>
                     </template>
                     <template #button-template>
                       <a-tooltip placement="top" class="custom-tooltip">
@@ -56,7 +56,7 @@
                                 :total="totalRow" />
                         </div>
                     </template>
-                    <DxColumn data-field="id" caption="그룹코드" data-type="text" :fixed="true" />
+                    <DxColumn data-field="id" caption="그룹코드"/>
                     <DxColumn data-field="name" caption="그룹명" />
                     <DxColumn data-field="type" caption="대상회원" cell-template="button" />
                     <template #button="{ data }" class="custom-action">
