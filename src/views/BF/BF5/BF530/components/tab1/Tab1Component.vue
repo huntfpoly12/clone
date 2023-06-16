@@ -3,77 +3,57 @@
     <section>
       <a-row :gutter="[0, 5]">
         <a-rol class="mr-20">
-          <a-form-item label="업체명">
-            <default-text-box
-              width="150px"
-              v-model:valueInput="formState.companyName"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-20">
-          <a-form-item label="사업자등록번호">
-            <biz-number-text-box
-              width="150px"
-              v-model:valueInput="formState.companyBizNumber"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-20">
-          <a-form-item label="사업장관리번호">
-            <ManageIdTextBox
-              width="150px"
-              v-model:valueInput="formState.manageId"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-20">
           <a-form-item label="상태">
-            <SelectBoxCT
+            <SelectCustomField
               :searchEnabled="true"
-              :arrSelect="workingStatusSelectbox"
               v-model:valueInput="formState.workingStatus"
+              :dataSource="workingStatusSelectbox"
+              width="150px"
               displayeExpr="text"
               valueExpr="id"
-              width="150px"
+              :isShowId="false"
               placeholder="선택"
             />
           </a-form-item>
         </a-rol>
         <a-rol class="mr-20">
           <a-form-item label="수임상태">
-            <SelectBoxCT
+            <SelectCustomField
               :searchEnabled="true"
-              :arrSelect="companyConsignStatusSelectbox"
               v-model:valueInput="formState.companyConsignStatus"
+              :dataSource="companyConsignStatusSelectbox"
+              width="150px"
               displayeExpr="text"
               valueExpr="id"
-              width="150px"
+              :isShowId="false"
               placeholder="선택"
             />
           </a-form-item>
         </a-rol>
         <a-rol class="mr-20">
           <a-form-item label="건강ED 연계상태">
-            <SelectBoxCT
+            <SelectCustomField
               :searchEnabled="true"
-              :arrSelect="EDIStatusSelectbox"
               v-model:valueInput="formState.healthInsuranceEDIStatus"
+              :dataSource="EDIStatusSelectbox"
+              width="150px"
               displayeExpr="text"
               valueExpr="id"
-              width="150px"
+              :isShowId="false"
               placeholder="선택"
             />
           </a-form-item>
         </a-rol>
         <a-rol class="mr-20">
           <a-form-item label="연금EDI 연계상태">
-            <SelectBoxCT
+            <SelectCustomField
               :searchEnabled="true"
-              :arrSelect="EDIStatusSelectbox"
               v-model:valueInput="formState.nationalPensionEDIStatus"
+              :dataSource="EDIStatusSelectbox"
+              width="150px"
               displayeExpr="text"
               valueExpr="id"
-              width="150px"
+              :isShowId="false"
               placeholder="선택"
             />
           </a-form-item>
@@ -172,15 +152,24 @@
             :allow-sorting="false"
           />
           <template #companyConsignStatus="{ data }: any">
-            <SelectBoxCT
-              :searchEnabled="true"
+            <SelectCustomField
+              v-model:valueInput="data.data.companyConsignStatus"
+              :dataSource="companyConsignStatusSelectbox"
+              width="120px"
+              displayeExpr="text"
+              valueExpr="id"
+              :isShowId="false"
+              placeholder="선택"
+            />
+            <!-- <SelectBoxCT
+              :searchEnabled="false"
               :arrSelect="companyConsignStatusSelectbox"
               v-model:valueInput="data.data.companyConsignStatus"
               displayeExpr="text"
               valueExpr="id"
               width="120px"
               placeholder="선택"
-            />
+            /> -->
           </template>
           <DxColumn
             data-field="workingStatus"
@@ -191,7 +180,16 @@
             :allow-sorting="false"
           />
           <template #workingStatus="{ data }: any">
-            <SelectBoxCT
+            <SelectCustomField
+              v-model:valueInput="data.data.workingStatus"
+              :dataSource="workingStatusSelectbox"
+              width="120px"
+              displayeExpr="text"
+              valueExpr="id"
+              :isShowId="false"
+              placeholder="선택"
+            />
+            <!-- <SelectBoxCT
               :searchEnabled="true"
               :arrSelect="workingStatusSelectbox"
               v-model:valueInput="data.data.workingStatus"
@@ -199,7 +197,7 @@
               valueExpr="id"
               width="120px"
               placeholder="선택"
-            />
+            /> -->
           </template>
           <DxColumn caption="메모" width="135" cell-template="memo" />
           <template #memo="{ data }: any">
@@ -221,13 +219,13 @@
             :allow-sorting="false"
           />
           <template #healthInsuranceEDIStatus="{ data }: any">
-            <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="EDIStatusSelectbox"
+            <SelectCustomField
               v-model:valueInput="data.data.healthInsuranceEDIStatus"
+              :dataSource="EDIStatusSelectbox"
+              width="120px"
               displayeExpr="text"
               valueExpr="id"
-              width="120px"
+              :isShowId="false"
               placeholder="선택"
             />
           </template>
@@ -240,13 +238,13 @@
             :allow-sorting="false"
           />
           <template #nationalPensionEDIStatus="{ data }: any">
-            <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="EDIStatusSelectbox"
+            <SelectCustomField
               v-model:valueInput="data.data.nationalPensionEDIStatus"
+              :dataSource="EDIStatusSelectbox"
+              width="120px"
               displayeExpr="text"
               valueExpr="id"
-              width="120px"
+              :isShowId="false"
               placeholder="선택"
             />
           </template>
@@ -473,7 +471,7 @@ export default defineComponent({
     //-----------------------Get DATA SOURCE------------------------------
 
     const rangeDate = ref([
-      dayjs().subtract(1, "week").format("YYYYMMDD"),
+      dayjs().subtract(1, "year").format("YYYYMMDD"),
       dayjs().format("YYYYMMDD"),
     ]);
     watch(rangeDate, (newVal: any, oldVal) => {

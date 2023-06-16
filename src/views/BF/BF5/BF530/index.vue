@@ -1,7 +1,7 @@
 <template>
   <action-header title="4대보험업무관리" @actionSearch="onSearch()" :buttonSearch="true" />
   <div id="bf-530" class="px-10">
-    <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10" @change="onSearch">
+    <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10">
       <a-tab-pane key="1" tab="보험사무대행 신청현황 관리">
         <tab-1-component :search="search1" :onSearch="onSearch"></tab-1-component>
       </a-tab-pane>

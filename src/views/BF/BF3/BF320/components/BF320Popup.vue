@@ -645,12 +645,11 @@ export default defineComponent({
 
     const isChangedForm = ref(false);
     // watch changed formState
-    const stopWatch = watch(
+    watch(
       formState,
       (value: any) => {
         if (!isEqual(value, objDataDefault)) {
           isChangedForm.value = true;
-          stopWatch(); // Stop watching for changes
         } else {
           isChangedForm.value = false;
         }

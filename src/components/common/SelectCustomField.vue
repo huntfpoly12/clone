@@ -42,40 +42,40 @@ const widthCustom = computed<string>(() => {
 const messageRequired = Message.getCommonMessage('102').message;
 </script>
 <template>
-  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="widthCustom" :data-source="props.dataSource"
+  <DxSelectBox v-bind="$props" :noDataText="Message.getMessage('COMMON', '901').message" :width="widthCustom" :data-source="props.dataSource"
     :height="$config_styles.HeightInput" :display-expr="props.displayeExpr" :value-expr="props.valueExpr"
     :disabled="props.disabled" v-model="selectedValue" field-template="field"
     item-template="item" validation-message-position="bottom">
     <template #field=" { data } : any ">
       <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
-        <div v-if="props.isShowId" class="SelectCustomField-tag">{{ data[props?.valueExpr] }}</div>
+        <div v-if="props.isShowId" class="select-tag">{{ data[props?.valueExpr] }}</div>
         <a-tooltip zIndex="9999" placement="top" color="black">
           <template #title v-if=" data[props?.displayeExpr].length > 10 ">
             <div>{{data[props?.displayeExpr]}}</div>
           </template>
-          <div class="text-overflow" :style=" { width: `calc(${widthCustom} - 75px)` } ">
+          <div class="text-overflow" :style=" { width: `${widthCustom} - ${props.isShowId?75:44}px` } ">
             {{ data[props?.displayeExpr] }}
-            <DxTextBox style="display: none;" />
           </div>
         </a-tooltip>
+        <DxTextBox style="display: none;" />
       </div>
       <div v-else class="pt-5 pl-5">
-        <span>{{ props.placeholder }}</span>
+        <span style="text-align: left;">{{ props.placeholder }}</span>
         <DxTextBox style="display: none;" />
       </div>
     </template>
     <template #item=" { data } : any ">
       <div style="display: flex; align-items: center;">
-        <div v-if="props.isShowId" class="SelectCustomField-tag">{{ data[props?.valueExpr] }}</div>
+        <div v-if="props.isShowId" class="select-tag">{{ data[props?.valueExpr] }}</div>
         <a-tooltip zIndex="9999" placement="top" color="black">
           <template #title v-if=" data[props?.displayeExpr].length > 10 ">
             <div>{{ data[props?.displayeExpr] }}</div>
           </template>
           <div class="text-overflow">
             {{ data[props?.displayeExpr] }}
-            <DxTextBox style="display: none;" />
           </div>
         </a-tooltip>
+        <DxTextBox style="display: none;" />
       </div>
     </template>
     <DxValidator>
@@ -84,7 +84,7 @@ const messageRequired = Message.getCommonMessage('102').message;
   </DxSelectBox>
 </template>
 <style scoped lang="scss">
-.SelectCustomField-tag {
+.select-tag {
   border: 1px solid #d9d9d9;
   color: rgba(0, 0, 0, 0.85);
   min-width: 30px;

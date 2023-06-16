@@ -1,7 +1,7 @@
 <template>
   <DxSelectBox
     :noDataText="Message.getMessage('COMMON', '901').message"
-    :search-enabled="true"
+    :search-enabled="searchEnabled"
     :width="width"
     :data-source="dataSource"
     :show-clear-button="clearButton"
@@ -81,6 +81,10 @@ export default defineComponent({
     height: {
       type: Number,
       default: 28,
+    },
+    searchEnabled: {
+      type: Boolean,
+      default: true,
     },
   },
   components: {

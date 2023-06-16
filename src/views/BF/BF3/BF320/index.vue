@@ -17,7 +17,7 @@
                     </DxToolbar>
                     <template #search>
                         <div class="search">
-                            <div class="d-flex-center gap-20">
+                            <div class="d-flex-center gap-20 mr-15">
                                 <div class="d-flex-center gap-10">
                                     <label class="">해지:</label>
                                     <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'제외'"
@@ -25,11 +25,11 @@
                                 </div>
                                 <div class="d-flex-center gap-10">
                                     <label>매니저리스트:</label>
-                                    <list-manager-dropdown v-model:valueInput="originData.manageUserId" width="150px" :height="30"/>
+                                    <list-manager-dropdown v-model:valueInput="originData.manageUserId" clearButton width="200px" :height="30"/>
                                 </div>
                                 <div class="d-flex-center gap-10">
                                     <label>영업자리스트:</label>
-                                    <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="150px" :height="30"/>
+                                    <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="200px" :height="30"/>
                                 </div>
                             </div>
                         </div>

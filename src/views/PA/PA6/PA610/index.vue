@@ -89,7 +89,7 @@
                 </div>
               </a-form-item>
               <a-form-item label="성명(상호)" label-align="right" class="red">
-                <default-text-box v-model:valueInput="dataShow.name" width="200px" placeholder="한글,영문(대문자) 입력 가능"
+                <default-text-box :value="dataShow.name" width="200px" placeholder="한글,영문(대문자) 입력 가능"
                   :required="true" @onChange="onChangeName"/>
               </a-form-item>
               <a-form-item label="내/외국인" label-align="right" class="red">
