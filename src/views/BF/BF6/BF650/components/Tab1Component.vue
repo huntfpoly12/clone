@@ -1,6 +1,6 @@
 <template>
   <div id="step1">
-    <a-row gutter="24" class="search-form-step-1">
+    <a-row gutter="24" class="search-form-custom">
       <a-col>
         <a-form-item label="지급연월">
           <month-picker-box-custom
@@ -30,7 +30,7 @@
             :options="productionStatusesCheckbox"
             v-model:valueCheckbox="filter.productionStatuses"
             :size="18"
-          ></CheckboxGroup>
+          />
         </div>
       </a-col>
       <a-col>
@@ -81,7 +81,7 @@
           :column-auto-width="true"
           noDataText="내역이 없습니다"
           @selection-changed="selectionChanged"
-          style="height: calc(100vh - 380px)"
+          style="height: calc(100vh - 320px)"
         >
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" :search-visible-columns="['CompanyNameAndAddress']"/>
           <DxExport :enabled="true" />
@@ -194,6 +194,7 @@
     </div>
   </div>
   <PopupConfirmSave
+    v-if="modalConfirmMail"
     :modalStatus="modalConfirmMail"
     @refresh="refetch"
     @closePopup="modalConfirmMail = false"
@@ -282,7 +283,7 @@ export default defineComponent({
       queries.searchIncomeWageDailyPaymentStatementElectronicFilingsByYearMonth,
       paramSearch.value,
       () => ({
-        // enabled: trigger.value,
+        enabled: trigger.value,
         fetchPolicy: "no-cache",
       })
     );
@@ -415,24 +416,7 @@ export default defineComponent({
     watch(
       () => props.searchStep,
       (newValue) => {
-        // Array object to array value of filter.productionStatuses
-        filter.productionStatuses = Object.values(filter.productionStatuses);
-        dataSource.value = dataSourceOriginal.value.filter((item: any) => {
-          return (
-            (filter.productionStatuses.length > 0
-              ? filter.productionStatuses.includes(item.productionStatus)
-              : item.productionStatus === 3) &&
-            (filter.companyServiceContractActive
-              ? item.companyServiceContract.active
-              : true) &&
-            (filter.companyServiceContractManageUserId === null ||
-              filter.companyServiceContractManageUserId ===
-                item.companyServiceContract?.manageUserId) &&
-            (filter.companyServiceContractSalesRepresentativeId === null ||
-              filter.companyServiceContractSalesRepresentativeId ===
-                item.companyServiceContract?.salesRepresentativeId)
-          );
-        });
+        trigger.value = true;
       },
       { deep: true }
     );
@@ -483,7 +467,7 @@ export default defineComponent({
         return
       }
       modalConfirmMail.value = true;
-      if (filter.beforeProduction)
+      console.log('%c filter.beforeProduction', 'color: red;', filter.beforeProduction);
       dataModalSave.value = {
         filter: {
           paymentYear: paramSearch.value.paymentYear,
@@ -523,7 +507,7 @@ export default defineComponent({
     };
     const refetch = () => {
       trigger.value = true;
-      refetchTable();
+      // refetchTable();
     };
     const calculateCompanyNameAndAddress = (rowData: any) => {
       return `${rowData.company.name} - ${rowData.company.address}`
