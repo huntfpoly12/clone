@@ -396,7 +396,7 @@ export default defineComponent({
           if (item) {
             arrData = {
               code: item.company?.code,
-              name: item.company?.name,
+              companyName: item.company?.name,
               address: item.company?.address,
               manageUserId: item.companyServiceContract.manageUserId,
               salesRepresentativeId:

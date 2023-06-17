@@ -72,7 +72,12 @@
             {{ data.data.companyCode }}
             {{ data.data.active ? "" : "해지" }}
           </template>
-          <DxColumn caption="상호 주소" cell-template="companyName" />
+          <DxColumn
+            caption="상호 주소"
+            cell-template="companyName"
+            data-field="companyName"
+            :calculateCellValue="cellCompanyCode"
+          />
           <template #companyName="{ data }: any">
             {{ data.data.companyName }}
             {{ data.data.address }}
@@ -613,7 +618,9 @@ export default defineComponent({
         });
         filteredDataSource.value = arr;
         beforeCount.value = 1;
-        setTimeout(()=>{loadingTable.value = false},0)
+        setTimeout(() => {
+          loadingTable.value = false;
+        }, 0);
       },
       { deep: true }
     );
@@ -671,6 +678,13 @@ export default defineComponent({
       loadingTable.value = true;
     };
 
+    //------------------------------SEARCH COLUMN CUSTOM----------------------
+
+    const cellCompanyCode = (rowData: any) => {
+      console.log(`output->rowData`, rowData);
+      return `${rowData.companyName}+${rowData.address}`;
+    };
+
     return {
       filterBF620,
       searchWithholdingLoading,
@@ -691,7 +705,8 @@ export default defineComponent({
       filteredDataSource,
       productionCount,
       statusRef,
-      loadingTable
+      loadingTable,
+      cellCompanyCode,
     };
   },
 });
