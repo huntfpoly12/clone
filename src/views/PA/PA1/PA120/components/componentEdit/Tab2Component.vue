@@ -227,14 +227,14 @@
               :
             </a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"
-              ><span>{{
-                $filters.formatCurrency(totalPayItemTaxAll)
-              }}</span>
+              ><span>{{ $filters.formatCurrency(totalPayItemTaxAll) }}</span>
               원</a-col
             >
             <a-col class="ml-15" :span="12">수당 과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"
-              ><span>{{ $filters.formatCurrency(calculateVariables.totalTaxPay) }}</span>
+              ><span>{{
+                $filters.formatCurrency(calculateVariables.totalTaxPay)
+              }}</span>
               원</a-col
             >
             <a-col class="ml-15" :span="12">수당 비과세 합계:</a-col>
@@ -529,7 +529,9 @@ export default defineComponent({
       () => totalPayItemTaxAll.value - totalDeduction.value
     );
     const rangeDate = ref<RangeValue>([null, null]);
-    const deductionDependentCountPA120 = computed(()=>store.state.common.deductionDependentCountPA120);
+    const deductionDependentCountPA120 = computed(
+      () => store.state.common.deductionDependentCountPA120
+    );
     const dataConfigPayItems = ref<any>([]);
     const dataConfigDeduction = ref<any>([]);
     const triggerDetail = ref<boolean>(false);
@@ -709,14 +711,17 @@ export default defineComponent({
     /**
      * get Employee Wage
      */
-    const { result: resultGetEmployeeWage, loading: loadingEmployeeWage, onError: onErrorEmployee } =
-      useQuery(queries.getEmployeeWage, employeeWageParam, () => ({
-        enabled: triggerDetail.value,
-        fetchPolicy: "no-cache",
-      }));
-      onErrorEmployee(()=>{
-        console.log(`output->err tab2`,)
-      })
+    const {
+      result: resultGetEmployeeWage,
+      loading: loadingEmployeeWage,
+      onError: onErrorEmployee,
+    } = useQuery(queries.getEmployeeWage, employeeWageParam, () => ({
+      enabled: triggerDetail.value,
+      fetchPolicy: "no-cache",
+    }));
+    onErrorEmployee(() => {
+      console.log(`output->err tab2`);
+    });
     watch(resultGetEmployeeWage, async (value) => {
       if (value) {
         let data = value.getEmployeeWage;
@@ -728,7 +733,8 @@ export default defineComponent({
         editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
         editRowData.longTermCareInsuranceDeduction =
           data.longTermCareInsuranceDeduction;
-        editRowData.employeementInsuranceDeduction = data.employeementInsuranceDeduction;
+        editRowData.employeementInsuranceDeduction =
+          data.employeementInsuranceDeduction;
         editRowData.insuranceSupport = data.insuranceSupport;
         if (
           data?.nationalPensionSupportPercent >= 0 &&
@@ -785,7 +791,9 @@ export default defineComponent({
             );
             let value = item2Value?.amount ? item2Value.amount : 0;
             initFormTab2PA120.value.payItems[key] = { ...item1, value };
-            editRowTab2PA120.value.payItems[key] = JSON.parse(JSON.stringify({ ...item1, value }));
+            editRowTab2PA120.value.payItems[key] = JSON.parse(
+              JSON.stringify({ ...item1, value })
+            );
           });
         }
         if (data.deductionItems && dataConfigDeduction.value.length > 0) {
@@ -795,7 +803,9 @@ export default defineComponent({
             );
             let value = item2Value?.amount ? item2Value.amount : 0;
             initFormTab2PA120.value.deductionItems[key] = { ...item1, value };
-            editRowTab2PA120.value.deductionItems[key] = JSON.parse(JSON.stringify({ ...item1, value }));
+            editRowTab2PA120.value.deductionItems[key] = JSON.parse(
+              JSON.stringify({ ...item1, value })
+            );
           });
         }
         calculateVariables.totalTaxPay =
@@ -932,9 +942,11 @@ export default defineComponent({
         rangeDate.value = [null, null];
       }
     };
-    const calculateTax = () => {
-      calcPension();
-      triggerCalcIncomeWageTax.value = true;
+    const calculateTax = (e: any) => {
+      if (e) {
+        calcPension();
+        triggerCalcIncomeWageTax.value = true;
+      }
     };
     // custom data with logical
     const onChangeSwitch1 = (e: any) => {
@@ -984,7 +996,7 @@ export default defineComponent({
       },
       { deep: true }
     );
-    
+
     //  // watch initFormTab2PA120 to check calculate button
     // watch(
     //   () => initFormTab2PA120.value,
@@ -1001,10 +1013,7 @@ export default defineComponent({
     const isBtnYellow = ref(false);
     const compareForm = () => {
       const { deductionItems, ...rest } = initFormTab2PA120.value;
-      const {
-        deductionItems: de2,
-        ...rest2
-      } = editRowTab2PA120.value;
+      const { deductionItems: de2, ...rest2 } = editRowTab2PA120.value;
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {
@@ -1058,13 +1067,15 @@ export default defineComponent({
       isBtnYellow.value = false;
       notification("success", messageUpdate);
       store.commit("common/actionFormDonePA120");
-      store.state.common.editRowTab2PA120 = JSON.parse(JSON.stringify(initFormTab2PA120.value));
+      store.state.common.editRowTab2PA120 = JSON.parse(
+        JSON.stringify(initFormTab2PA120.value)
+      );
     });
     // change row data  globalYear.value
     watch(
       () => props.idRowEdit,
       async (value: any) => {
-        if( +value != 0){
+        if (+value != 0) {
           employeeId.value = value;
           configDeductionTrigger.value = true;
           configPayItemTrigger.value = true;
