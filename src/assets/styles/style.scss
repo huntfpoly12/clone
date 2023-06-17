@@ -81,17 +81,17 @@ table tr td {
       display: flex;
       // justify-content: flex-end;
       align-items: center;
-      
+
       // white-space: nowrap;
       > div {
         // width: max-content;
         white-space: nowrap;
         margin-right: 15px;
       }
-     
+
   }
   ::-webkit-scrollbar {
-    height: 10px; 
+    height: 10px;
   }
   &::-webkit-scrollbar {
     background-color: transparent;
@@ -122,7 +122,7 @@ table tr td {
   align-items: center;
   justify-content: flex-end;
 }
-// .dx-toolbar-item, 
+// .dx-toolbar-item,
 // .dx-toolbar-menu-container {
   // vertical-align: top;
   // .dx-button-content {
@@ -211,7 +211,9 @@ $lenght: 50;
 .wf-100 {
   width: 100%;
 }
-
+.h-full {
+  height: 100%;
+}
 @for $i from 1 through 50 {
   .fz-#{$i} {
     font-size: $i+ px;
@@ -390,4 +392,34 @@ $lenght: 50;
 }
 .dx-toolbar-center{
   text-align: inherit;
+}
+// style checkbox status
+.custom-checkbox1 .dx-checkbox-text,
+.custom-checkbox2 .dx-checkbox-text,
+.custom-checkbox3 .dx-checkbox-text,
+.custom-checkbox4 .dx-checkbox-text {
+  margin-left: 5px;
+  padding: 1px 20px;
+  color: white;
+  border-radius: 5px;
+}
+
+.custom-checkbox1 .dx-checkbox-text {
+  background-color: #376092;
+  box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
+  border: 3px solid rgba(255, 255, 255, 0);
+}
+.custom-checkbox2 .dx-checkbox-text {
+  background-color: #376092;
+  border: 3px solid #558ED5 !important;
+}
+
+.custom-checkbox3 .dx-checkbox-text {
+  border: 3px solid rgba(255, 255, 255, 0);
+  box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
+  background-color: #C00000;
+}
+.custom-checkbox4 .dx-checkbox-text {
+  background-color: #C00000;
+  border: 3px solid #953735 !important;
 }
