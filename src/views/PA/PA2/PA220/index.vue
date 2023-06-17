@@ -1,7 +1,7 @@
 <template>
     <action-header title="일용직근로소득원천징수영수증" @actionSearch="onSearch" :buttonSearch="true" />
     <div id="pa-220">
-        <div class="search-form ml-10">
+        <div class="search-form">
             <a-row :gutter="[24, 8]">
                 <a-col>
                     <label class="lable-item">귀속연도 :</label>
@@ -76,11 +76,11 @@
                         </DxButton>
                     </div>
                 </template>
-                <DxColumn caption="성명" cell-template="tag" data-field="employeeId" width="300px" />
+                <DxColumn caption="성명" cell-template="tag" data-field="employee.name" width="300px" />
                 <template #tag="{ data }">
                     <div class="custom-action">
-                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                            :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
+                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
+                            :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status" :foreigner="data.data.employee.foreigner"
                             :checkStatus="false" />
                     </div>
                 </template>
@@ -187,7 +187,7 @@ export default defineComponent({
 
 
         // Search
-        const searchData = ref([]);
+        // const searchData = ref([]);
         const searchParam = reactive({
             companyId: companyId,
             filter: { imputedYear: globalYear.value, leaved: null, name: null }
@@ -204,7 +204,7 @@ export default defineComponent({
 
         watch(resultSearch, (newData) => {
             searchTrigger.value = false;
-            searchData.value = newData.searchIncomeWageWithholdingReceipts;
+            dataSource.value = newData.searchIncomeWageWithholdingReceipts;
             viewUrlParam.input.type = newData.searchIncomeWageWithholdingReceipts?.employee?.type ?? viewUrlParam.input.type;
             searchParam.filter.leaved = newData.searchIncomeWageWithholdingReceipts?.leaved ?? searchParam.filter.leaved;
         })
@@ -228,8 +228,9 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         watch(resultPrint, (value) => {
+            printTrigger.value = false
             if (value) {
-                window.open(value.getIncomeBusinessWithholdingReceiptReportViewUrl)
+                window.open(value.getIncomeWageWithholdingReceiptReportViewUrl)
             }
         });
         //SEND MAIL GROUP
@@ -311,7 +312,7 @@ export default defineComponent({
             onOpenPopupEmailSingle,
             sendMailGroup,
             onExporting,
-            searchData,
+            // searchData,
             viewUrlParam,
             actionPrint,
             onPrintGroup,

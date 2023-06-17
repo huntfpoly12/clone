@@ -1,6 +1,6 @@
 <template>
     <action-header title="계약정보관리&심사"  @actionSearch="searching(activeKey)" @actionSave="saving(activeKey)" :buttonSearch="true" :buttonSave="activeKey == '5'"/>
-    <div id="bf-630" style="padding: 10px;">
+    <div id="bf-630">
       <a-tabs v-model:activeKey="activeKey" type="card" style="overflow: visible !important;">
           <a-tab-pane key="1" tab="근로소득지급명세서(기부금, 의료비)">
             <tab-1-component :activeSearch="activeSearch1"></tab-1-component>

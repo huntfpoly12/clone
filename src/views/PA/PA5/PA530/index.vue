@@ -1,7 +1,7 @@
 <template>
     <action-header title="일용직근로소득원천징수영수증" @actionSearch="searching" :buttonSearch="true" />
     <div id="pa-530">
-        <div class="search-form ml-10">
+        <div class="search-form">
             <a-row :gutter="[24, 8]">
                 <a-col :span="3">
                     <label class="lable-item">귀속연도 :</label>
@@ -157,7 +157,7 @@
                         </div>
                     </template>
                     
-                    <DxColumn caption="성명 (상호)" data-field="employee.employeeId" cell-template="tag" alignment="left" />
+                    <DxColumn caption="성명 (상호)" data-field="employee.name" cell-template="tag" alignment="left" />
                     <template #tag="{ data }">
                         <div class="custom-action" v-if="data.data.employee.employeeId != '-1'">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
