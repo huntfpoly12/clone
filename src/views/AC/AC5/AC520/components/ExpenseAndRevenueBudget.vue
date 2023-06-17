@@ -410,12 +410,14 @@ onDoneCreateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
     notification('success', Message.getCommonMessage('101').message)
-    emit('closePopup', true)
+    emit('closePopup', false)
     loading.value = false
+    emit('reload')
   }
 })
 onErrorCreateBudget((error) => {
   console.log('error', error)
+  loading.value = false
 })
 
 // update budget
@@ -423,18 +425,14 @@ const { mutate: updateBudget, onDone: onDoneUpdateBudget, onError: onErrorUpdate
 onDoneUpdateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
-    notification('success', Message.getCommonMessage('101').message)
-    
-    if(dataBudget.value?.action === ACTION.ADD) {
-      emit('closePopup', true)
-    } else {
-      emit('reload')
-    }
+    notification('success', Message.getCommonMessage('101').message)    
+    emit('reload')
     loading.value = false
   }
 })
 onErrorUpdateBudget((error) => {
   console.log('error', error)
+  loading.value = false
 })
 
 // watch
