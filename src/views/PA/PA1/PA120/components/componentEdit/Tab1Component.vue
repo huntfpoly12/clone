@@ -457,7 +457,6 @@ export default defineComponent({
       (value: any) => {
         if (value != 0) {
           originDataDetail.value.employeeId = value;
-          store.state.common.presidentEditPA120 = false;
           if(originDataDetail.value.employeeId){
             getEmployeeWageTrigger.value = true;
           }
