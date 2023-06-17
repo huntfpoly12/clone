@@ -42,7 +42,7 @@ let menuData = [
   { name: "전표", url: "/ac-120", id: "ac-120", roles: ROLE_AC000 },
   { name: "마감", url: "/ac-130", id: "ac-130", roles: ROLE_AC000 },
 
-  { name: "전표/결의", url: "#", id: "ac-210", roles: ROLE_AC000 },
+  { name: "전표/결의", url: "/ac-210", id: "ac-210", roles: ROLE_AC000 },
   { name: "예산서", url: "#", id: "ac-220", roles: ROLE_AC000 },
   { name: "결산서", url: "#", id: "ac-230", roles: ROLE_AC000 },
 

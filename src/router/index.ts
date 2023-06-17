@@ -322,6 +322,13 @@ const routes = [
         },
       },
       {
+        path: "/ac-210",
+        component: () => import("../views/AC/AC2/AC210/index.vue"),
+        meta: {
+          roles: [WorkScreenRole.ACCOUNTING_WORK.enumKey],
+        },
+      },
+      {
         path: "/ac-510",
         component: () => import("../views/AC/AC5/AC510/index.vue"),
         meta: {
