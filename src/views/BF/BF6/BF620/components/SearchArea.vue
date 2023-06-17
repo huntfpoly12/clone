@@ -22,7 +22,7 @@
             <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
-          <a-form-item label="신고주기" label-align="right" class="ml-10 mt-5" v-else>
+          <a-form-item label="신고주기" label-align="right" class="ml-10" v-else>
             <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.reportType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>

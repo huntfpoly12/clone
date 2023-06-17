@@ -536,6 +536,7 @@ export default defineComponent({
     const presidentEditPA120 = computed(
       () => store.state.common.presidentEditPA120
     );
+    const presidentOrigin = ref(false);
 
     const globalYear = ref<number>(
       parseInt(sessionStorage.getItem("paYear") ?? "0")
@@ -722,6 +723,7 @@ export default defineComponent({
         let editRowData: any = {};
         insuranceDisabled.value = data.president;
         store.state.common.presidentEditPA120 = data.president;
+        presidentOrigin.value = data.president;
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
         editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
         editRowData.longTermCareInsuranceDeduction =
@@ -967,18 +969,17 @@ export default defineComponent({
     };
 
     // watch president to disable employeementInsuranceDeduction
-    console.log(`output->presidentEditPA120.value`,presidentEditPA120.value)
+
     watch(
       () => presidentEditPA120.value,
       (newValue) => {
-        if (newValue) {
+        if (newValue && newValue != presidentOrigin.value) {
           initFormTab2PA120.value.employeementInsuranceDeduction = false;
           initFormTab2PA120.value.insuranceSupport = false;
           delete initFormTab2PA120.value.nationalPensionSupportPercent;
           delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
           updateDeduction();
         }
-        console.log(`output->newValue`,newValue)
         insuranceDisabled.value = newValue;
       },
       { deep: true }
@@ -1004,14 +1005,11 @@ export default defineComponent({
         deductionItems: de2,
         ...rest2
       } = editRowTab2PA120.value;
-      console.log(`output->rest`,rest)
-      console.log(`output->rest2`,rest2)
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {
       const { deductionItems, ...rest } = initFormTab2PA120.value;
       if (rest) {
-        console.log(`output->rest`,rest)
         if (!compareForm()) {
           isBtnYellow.value = true;
         } else {
