@@ -45,13 +45,17 @@ import { defineComponent, ref, watch } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/BF/BF6/BF650/index";
 import notification from "@/utils/notification";
+import { useStore } from "vuex";
+import { computed } from "vue";
 export default defineComponent({
   props: {
     modalStatus: Boolean,
     data: Object,
   },
   setup(props, { emit }) {
-    let mailAction = ref();
+    const store = useStore();
+    const userInfo = computed(() => store.state.auth.userInfor);
+    let mailAction = ref(userInfo.value.email);
     let dataCallApi = ref();
     const {
       mutate: sendRequestFile,
@@ -68,13 +72,6 @@ export default defineComponent({
     onError((e) => {
       //notification('error', e.message)
     });
-    watch(
-      () => props.modalStatus,
-      (newVal) => {
-        if (newVal == true)
-          mailAction.value = props.data?.emailInput.receiverAddress;
-      }
-    );
     const setModalVisible = () => {
       emit("closePopup", true);
     };

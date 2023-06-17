@@ -12,17 +12,9 @@
     }
 
     #step1 {
-        #checkBoxSearchBF650 {
-            display: flex;
-            width: 260px;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-        .search-form-step-1 {
+        .search-form-custom {
             background-color: #f1f3f4;
-            padding-top: 10px;
-            padding-left: 10px;
-            padding-bottom: 5px;
+            padding:10px;
         }
 
         :deep .custom-checkbox-search {
@@ -76,7 +68,7 @@
         }
         #checkBoxSearchBF650 {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             margin-left: 75px;
             margin-right: 10px;
             :deep .check-box-group {
