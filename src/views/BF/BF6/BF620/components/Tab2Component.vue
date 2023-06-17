@@ -71,7 +71,12 @@
           </template>
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="code" width="90" />
-          <DxColumn caption="상호 주소" cell-template="companyName" />
+          <DxColumn
+            caption="상호 주소"
+            cell-template="companyName"
+            data-field="companyName"
+            :calculateCellValue="cellCompanyCode"
+          />
           <template #companyName="{ data }: any">
             {{ data.data.companyName }}
             {{ data.data.address }}
@@ -672,6 +677,12 @@ export default defineComponent({
       loadingTable.value = true;
     };
 
+    //------------------------------SEARCH COLUMN CUSTOM----------------------
+
+    const cellCompanyCode = (rowData: any) => {
+      return `${rowData.companyName}+${rowData.address}`;
+    };
+
     return {
       filterBF620,
       searchLocalIncomeLoading,
@@ -692,6 +703,7 @@ export default defineComponent({
       productionStatusData,
       productionCount,
       loadingTable,
+      cellCompanyCode,
     };
   },
 });

@@ -1,7 +1,7 @@
 <template>
   <div id="step2">
-    <a-row gutter="24" class="search-form-step-1">
-      <a-col>
+    <a-row class="search-form-step-1">
+      <a-col class="date-group">
         <a-form-item label="지급연월" label-align="left">
           <month-picker-box-custom
             v-model:valueDate="datePayment"
@@ -10,39 +10,42 @@
           />
         </a-form-item>
       </a-col>
-      <a-col class="ml-30">
-        <a-form-item label="제작요청상태" label-align="left">
-          <div class="custom-note d-flex-center">
-            <switch-basic
-              v-model:valueSwitch="setBefore"
-              textCheck="제작요청후"
-              textUnCheck="제작요청전"
-            />
-            <a-tooltip placement="top" class="custom-tooltip">
-              <template #title>
-                제작전은 제작요청되지 않은 상태입니다.
-              </template>
-              <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
-              </div>
-            </a-tooltip>
+      <a-col class="">
+        <div class="search-production">
+          <a-form-item label="제작요청상태" label-align="left">
+            <div class="custom-note d-flex-center">
+              <switch-basic
+                v-model:valueSwitch="setBefore"
+                textCheck="제작요청후"
+                textUnCheck="제작요청전"
+              />
+              <a-tooltip placement="top" class="custom-tooltip">
+                <template #title>
+                  제작전은 제작요청되지 않은 상태입니다.
+                </template>
+                <div style="text-align: center">
+                  <img
+                    src="@/assets/images/iconInfo.png"
+                    style="width: 14px; height: 14px"
+                    class="mb-3 ml-10"
+                  />
+                </div>
+              </a-tooltip>
+            </div>
+          </a-form-item>
+          <div class="production-check">
+            <CheckboxGroup
+              :disabled="dataSearch.beforeProduction"
+              :options="productionStatusesCheckbox"
+              v-model:valueCheckbox="dataSearch.productionStatuses"
+              size="18"
+            >
+            </CheckboxGroup>
           </div>
-        </a-form-item>
-        <div class="production-check">
-          <CheckboxGroup
-            :disabled="dataSearch.beforeProduction"
-            :options="productionStatusesCheckbox"
-            v-model:valueCheckbox="dataSearch.productionStatuses"
-            size="18"
-          >
-          </CheckboxGroup>
         </div>
       </a-col>
-      <a-col class="ml-30 search-company">
+
+      <a-col class="search-company ml-10">
         <a-form-item
           label="매니저리스트"
           label-align="left"
@@ -123,21 +126,31 @@
                   </span>
                 </div>
               </a-form-item>
-              <a-form-item label="제출연월일" label-align="left" class="date-group">
-                <div class="d-flex-center">
-                  <date-time-box width="150px" v-model:valueDate="dayReport" />
-                </div>
-              </a-form-item>
             </div>
           </template>
           <template #request>
-            <a-tooltip placement="topLeft" color="black">
-              <template #title>전자신고파일 제작 요청</template>
-              <div class="btn-modal-save" @click="onRequestFile">
-                <SaveOutlined class="fz-20 ml-5 action-save" />
-                <span style="margin-left: 5px">파일제작요청</span>
-              </div>
-            </a-tooltip>
+            <a-row align="middle">
+              <a-col>
+                <a-row>
+                  <span class="mr-10">제출연월일 :</span>
+                  <span class="d-flex-center">
+                    <date-time-box
+                      width="150px"
+                      v-model:valueDate="dayReport"
+                    />
+                  </span>
+                </a-row>
+              </a-col>
+              <a-col>
+                <a-tooltip placement="top" color="black">
+                  <template #title>전자신고파일 제작 요청</template>
+                  <div class="btn-modal-save" @click="onRequestFile">
+                    <SaveOutlined class="fz-20 ml-5 action-save" />
+                    <span style="margin-left: 5px">파일제작요청</span>
+                  </div>
+                </a-tooltip>
+              </a-col>
+            </a-row>
           </template>
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn
@@ -149,7 +162,12 @@
             {{ data.data.companyCode }}
             {{ data.data.active ? "" : "해지" }}
           </template>
-          <DxColumn caption="상호 주소" cell-template="상호" />
+          <DxColumn
+            caption="상호 주소"
+            cell-template="상호"
+            data-field="companyName"
+            :calculateCellValue="cellCompanyCode"
+          />
           <template #상호="{ data }: any">
             {{ data.data.companyName }} -
             {{ data.data.address }}
@@ -623,6 +641,12 @@ export default defineComponent({
       }
     });
 
+    //------------------------------SEARCH COLUMN CUSTOM----------------------
+
+    const cellCompanyCode = (rowData: any) => {
+      return `${rowData.companyName}+${rowData.address}`;
+    };
+
     return {
       userInfor,
       activeKey: ref("1"),
@@ -650,6 +674,7 @@ export default defineComponent({
       datePayment,
       beforeCount,
       searchIncomeWageParam,
+      cellCompanyCode,
     };
   },
 });

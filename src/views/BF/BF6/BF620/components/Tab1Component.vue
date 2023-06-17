@@ -681,7 +681,6 @@ export default defineComponent({
     //------------------------------SEARCH COLUMN CUSTOM----------------------
 
     const cellCompanyCode = (rowData: any) => {
-      console.log(`output->rowData`, rowData);
       return `${rowData.companyName}+${rowData.address}`;
     };
 
