@@ -125,7 +125,8 @@ export default defineComponent({
     let filter: any = {}
 
     watch(() => props.payload, (value) => {
-      if (Object.keys(value).length) {
+      listChat.value = []
+      if (Object.keys(value).length && value.accountingProcessesSelected?.month === value.month) {
         if (inputChat.value) {
           inputChat.value.resetInputChat()
         }
@@ -187,7 +188,9 @@ export default defineComponent({
 
     const refreshForm = () => {
       inputChat.value.resetInputChat()
-      triggerGetAccountingClosingMessages.value = true
+      if (Object.keys(props.payload).length && props.payload.accountingProcessesSelected?.month === props.payload.month) {
+        triggerGetAccountingClosingMessages.value = true
+      }
       emit('refresh')
     }
 
@@ -199,7 +202,11 @@ export default defineComponent({
         fileStorageIds = filesUpload.value.map((file: any) => parseInt(file.id))
       }
       createAccountingClosingMessage({
-        ...props.payload,
+        companyId: props.payload.companyId,
+        facilityBusinessId: props.payload.facilityBusinessId,
+        fiscalYear: props.payload.fiscalYear,
+        year: props.payload.year,
+        month: props.payload.month,
         input: {
           content: !!content.value.trim() ? content.value.trim() : null,
           fileStorageIds
