@@ -2,7 +2,7 @@
     <a-spin :spinning="loading || loadingReport" size="large">
         <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true" />
         <div id="pa-430">
-            <div class="search-form ml-10">
+            <div class="search-form">
                 <a-row :gutter="20">
                     <a-col>
                         <div class="custom-flex">
@@ -72,7 +72,7 @@
                         </DxButton>
                     </template>
                     <DxColumn :width="230" caption="사원" css-class="cell-left" cell-template="employee-info"
-                        data-field="employee.employeeId" />
+                        data-field="employee.name" />
                     <template #employee-info="{ data }">
                         <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                             :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"

@@ -37,6 +37,9 @@
     display: none !important;
   }
 }
+.grid-view {
+  margin: 10px;
+}
 
 :deep .dx-datagrid-search-panel {
   margin: 0;
@@ -97,7 +100,7 @@
 //     padding-right: 10px;
 //   }
 .group-checkbox {
-  // margin-left: 120px;
+  margin-left: 120px;
 
   .checkbox-item {
     display: flex;

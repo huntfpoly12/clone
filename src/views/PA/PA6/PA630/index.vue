@@ -2,7 +2,7 @@
     <a-spin :spinning="loading" size="large">
         <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true" />
         <div id="pa-630">
-            <div class="search-form ml-10">
+            <div class="search-form">
                 <a-row>
                     <a-col :span="22">
                         <a-row :gutter="[24, 8]">
@@ -66,7 +66,7 @@
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                     <DxColumn :width="250" caption="성명 (상호)" css-class="cell-left" cell-template="tag"
-                        data-field="employee.employeeId" />
+                        data-field="employee.name" />
                     <template #tag="{ data }">
                         <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                             :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"

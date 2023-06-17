@@ -2,7 +2,7 @@
 	<a-spin :spinning="loading" size="large">
 		<action-header title="기타소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true" />
 		<div id="pa-730">
-			<div class="search-form ml-10">
+			<div class="search-form">
 				<a-row>
 					<a-col :span="22">
 						<a-row :gutter="[24, 8]">
@@ -17,7 +17,7 @@
 				</a-row>
 			</div>
 			<div class="page-content">
-				<DxDataGrid id="gridContainerPA730" :show-row-lines="true" :hoverStateEnabled="true"
+				<DxDataGrid noDataText="내역이 없습니다" id="gridContainerPA730" :show-row-lines="true" :hoverStateEnabled="true"
 					:data-source="dataSource" :show-borders="true" @exporting="onExporting"
 					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" ref="gridRef"
 					:column-auto-width="true" @selection-changed="onSelectionChanged">
@@ -66,7 +66,7 @@
 						</DxButton>
 					</template>
 					<DxColumn caption="성명 (상호)" css-class="cell-left" cell-template="tag" width="200"
-						data-field="employee.employeeId" />
+						data-field="employee.name" />
 					<template #tag="{ data }">
 						<employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
 							:idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
