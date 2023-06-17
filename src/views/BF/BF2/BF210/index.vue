@@ -4,22 +4,19 @@
         <div class="page-content">
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
+                    :show-borders="true" key-expr="id" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: calc(100vh - 150px)">
                     <DxPaging :page-size="0" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
                     <DxToolbar>
-                        <DxItem location="center" template="search" css-class="search-toolbar-custom" />
+                        <DxItem location="after" template="search" css-class="search-toolbar-custom" />
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" css-class="cell-button-export"/>
-                        <DxItem name="groupPanel" />
-                        <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" />
                     </DxToolbar>
                     <template #search>
-                        <div class="search-form-custom " >
+                        <div class="h-full d-flex-center gap-10" >
                             <div class="d-flex-center">
                                 <label class="lable-item">회원종류 :</label>
                                 <DxSelectBox id="custom-templates" :data-source="productsValue" display-expr="name" value-expr="id"
@@ -38,7 +35,7 @@
                                     </template>
                                 </DxSelectBox>
                             </div>
-                            
+
                             <div class="d-flex-center">
                                 <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox1" :size="'14'" />
                                 <tag-color-use :valueUse="true" @click="changeValueCheckBox('checkBox1')"/>
@@ -207,9 +204,6 @@ export default defineComponent({
             else
                 checkStatus.value.checkBox2 = !checkStatus.value.checkBox2
         }
-        const onExporting = (e: any) => {
-            onExportingCommon(e.component, e.cancel, '회원관리')
-        }
         const openAddNewModal = () => {
             modalAddNewStatus.value = true;
         }
@@ -262,7 +256,6 @@ export default defineComponent({
             changePage,
             rowTable,
             changeValueType,
-            onExporting,
             move_column,
             colomn_resize,
             openAddNewModal,
