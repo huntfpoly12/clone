@@ -60,7 +60,7 @@
           @cell-prepared="onCellPrepared"
           @row-prepared="onRowPrepared"
           noDataText="내역이 없습니다"
-          style="height: calc(100vh - 310px); margin-top: 100px; z-index: 0;"
+          style="height: calc(100vh - 285px); margin-top: 100px; z-index: 0;"
         >
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" :search-visible-columns="['CompanyNameAndAddress']"/>
           <DxExport :enabled="true" />

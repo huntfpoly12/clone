@@ -159,7 +159,6 @@ export default defineComponent({
                     return acc
                 }, [])
                 trigger.value = true
-                refetchPrint()
             }
         }
         return {
