@@ -119,7 +119,7 @@ export default [
         title: "W4C",
         id: "ac-200",
         subMenus: [
-          {title: "전표/결의", url: "/ac-210", id: "ac-210", roles: ROLE_AC000},
+          {title: "전표업로드", url: "/ac-210", id: "ac-210", roles: ROLE_AC000},
           {title: "예산서", url: "#", id: "ac-220", roles: ROLE_AC000},
           {title: "결산서", url: "#", id: "ac-230", roles: ROLE_AC000},
         ],
