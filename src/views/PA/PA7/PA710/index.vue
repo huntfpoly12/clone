@@ -115,15 +115,15 @@
 									:disabled="!formState.foreigner"
 									v-model:valueStayQualifiction="formState.stayQualification" />
 							</a-form-item>
-							<a-form-item :label="!formState.foreigner ? '주민등록번호' : '외국인번호 유효성'" 
-							:label-col="labelCol" class="red">
+							<a-form-item :label="!formState.foreigner ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol"
+								class="red">
 								<id-number-text-box :width="200" v-model:valueInput="formState.residentId" :required="true"
 									:foreigner="formState.foreigner" />
 							</a-form-item>
 							<a-form-item label="소득구분" :label-col="labelCol" class="red">
-								<type-code-select-box :screenCode="710" style="width: 200px"
+								<type-code-select-box :screenCode="710" :width="'200px'"
 									v-model:valueInput="formState.incomeTypeCode" @textTypeCode="textTypeCode"
-									:required="true" :disabled="statusFormUpdate">
+									:required="true" :readOnly="statusFormUpdate">
 								</type-code-select-box>
 							</a-form-item>
 							<a-form-item label="이메일" :label-col="labelCol">
@@ -274,7 +274,6 @@ export default defineComponent({
 		let confirmSave = ref(false);
 		const optionsRadio = ref([...initialOptionsRadio]);
 		let runOne = ref(true);
-		const dataYearNew = ref<number>(paYear.value);
 		// const checkClickYear = ref<Boolean>(false)
 		var disabledBlock = ref<boolean>(false);
 		const disabledBlockTable = ref<boolean>(false);
@@ -313,9 +312,9 @@ export default defineComponent({
 			disabledBlockTable.value = true;
 		});
 		const {
-			refetch: refetchDataDetail,
 			loading: loadingDetail,
 			onResult: resultDetail,
+			onError: errorGetEmployeeExtra,
 		} = useQuery(queries.getEmployeeExtra, originDataDetail, () => ({
 			fetchPolicy: "no-cache",
 			enabled: triggerDetail.value,
@@ -340,7 +339,13 @@ export default defineComponent({
 				focusedRowKey.value = data.residentId;
 			}
 			triggerDetail.value = false;
+			dataGridRef.value?.refresh();
 		});
+		errorGetEmployeeExtra((res) => {
+			triggerDetail.value = false;
+			dataGridRef.value?.refresh();
+			//notification('error', error.message)
+		})
 		const {
 			mutate: actionDelete,
 			onDone: onDoneDelete,
@@ -352,16 +357,6 @@ export default defineComponent({
 		});
 		onDoneAdd(async (data) => {
 			notification("success", Message.getMessage("COMMON", "101").message);
-			// if (checkClickYear.value) {
-			//     originData.imputedYear = dataYearNew.value
-			//     runOne.value = true;
-			//     trigger.value = true;
-			//     store.state.settings.paYear = dataYearNew.value
-			//     setTimeout(() => {
-			//         checkClickYear.value = false;
-			//     }, 500);
-			//     return;
-			// }
 			await (trigger.value = true);
 			if (statusClickButtonAdd.value && !statusClickButtonSave.value) {
 				// nếu trước đó ấn button add
@@ -430,7 +425,7 @@ export default defineComponent({
 			var res = pa710FormRef.value.validate();
 			if (!res.isValid) {
 				res.brokenRules[0].validator.focus();
-				// checkClickYear.value ? checkClickYear.value = false : '';
+				dataGridRef.value?.refresh();
 			} else {
 				let residentId = formState.value.residentId.replace("-", "");
 				let input = {
@@ -490,8 +485,7 @@ export default defineComponent({
 				dataRow.residentId + "" + dataRow.incomeTypeCode !=
 				formState.value.residentId + "" + formState.value.incomeTypeCode
 			) {
-				originDataDetail.value.employeeId =
-					e.rows[e.newRowIndex]?.data.employeeId;
+				originDataDetail.value.employeeId =	e.rows[e.newRowIndex]?.data.employeeId;
 				// originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
 				if (
 					statusFormUpdate.value == false &&
@@ -570,11 +564,12 @@ export default defineComponent({
 						listEmployeeExtra.value.length - 1
 					);
 					statusAddRow.value = true;
+					focusedRowKey.value = dataRow.residentId;
 				}
 				statusFormUpdate.value = true;
 				triggerDetail.value = true;
 			}
-			dataGridRef.value?.refresh();
+			// dataGridRef.value?.refresh();
 		};
 		const statusComfirmAdd = (val: any) => {
 			if (val) {
@@ -590,7 +585,7 @@ export default defineComponent({
 					Object.assign(formState.value, initialState);
 				}
 			}
-			dataGridRef.value?.refresh();
+			// dataGridRef.value?.refresh();
 		};
 		const addRow = () => {
 			disabledBlock.value = false;
@@ -732,6 +727,8 @@ export default defineComponent({
 </script>
 <style scoped lang="scss" src="./style/style.scss"></style>
 
-<style>.confirmDelete .anticon {
+<style>
+.confirmDelete .anticon {
 	color: black !important;
-}</style>
+}
+</style>

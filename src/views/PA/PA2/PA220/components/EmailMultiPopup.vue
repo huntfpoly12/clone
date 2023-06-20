@@ -40,7 +40,7 @@ export default defineComponent({
 			type: Object,
 			default: {},
 		},
-		incomeIds: Array,
+		dataSelect: Array,
 	},
 	components: {},
 	setup(props, { emit }) {
@@ -69,12 +69,12 @@ export default defineComponent({
 				res.brokenRules[0].validator.focus();
 			} else {
 				let employeeInputs: any = []
-				props.incomeIds?.map((value: any) => {
+				props.dataSelect?.map((value: any) => {
 					employeeInputs.push({
-						receiverName: userInfor.value?.name,
-						receiverAddress: emailAddress.value,
-						senderName: userInfor.value?.username,
-						employeeId: value
+						receiverName: value.receiverName,
+						receiverAddress: value.receiverAddress ? value.receiverAddress : emailAddress.value,
+						senderName: value.senderName,
+						employeeId: value.employeeId
 					})
 				});
 				let variables = makeDataClean({

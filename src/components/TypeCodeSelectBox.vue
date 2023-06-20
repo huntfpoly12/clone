@@ -1,7 +1,7 @@
 <template>
-    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :data-source="arrSelect" :value="valueInput" :read-only="readOnly" value-expr="key"
-        display-expr="value" field-template="field" item-template="item" :style="{ width: width }" :disabled="disabled"
-        @value-changed="updateValue">
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :data-source="arrSelect"
+        :value="valueInput" :read-only="readOnly" value-expr="key" display-expr="value" field-template="field"
+        item-template="item" :style="{ width: width }" :disabled="disabled" @value-changed="updateValue">
         <template #field="{ data }">
             <div v-if="data" class="select-content" style="padding: 3px 0px;">
                 <a-tag color="default">{{ data.key }}</a-tag>
@@ -9,7 +9,7 @@
                     <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
                     <a-tooltip placement="top" color="black" zIndex="9999999">
                         <template #title>{{ data.value }}</template>
-                        <span>{{ data.value }}</span>
+                        <div class="hidden">{{ data.value }}</div>
                     </a-tooltip>
                 </div>
             </div>
@@ -25,14 +25,14 @@
                     <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
                     <a-tooltip placement="top" color="black" zIndex="9999999">
                         <template #title>{{ data.value }}</template>
-                        <span>{{ data.value }}</span>
+                        <div class="hidden">{{ data.value }}</div>
                     </a-tooltip>
                 </div>
             </div>
         </template>
         <DxValidator :name="nameInput">
-			<DxRequiredRule v-if="required" :message="messageRequired" />
-		</DxValidator>
+            <DxRequiredRule v-if="required" :message="messageRequired" />
+        </DxValidator>
     </DxSelectBox>
 </template>
 <script lang="ts">
@@ -41,7 +41,7 @@ import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
 import { Message } from "@/configs/enum"
-import { IncomeTypeCode610, IncomeTypeCode710, enum2KeysByValueMap, getEnumKey } from "../configs/enum"
+import { IncomeTypeCode610, IncomeTypeCode710, enum2KeysByValueMap, getEnumKey } from "@/configs/enum"
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
     props: {
@@ -70,9 +70,9 @@ export default defineComponent({
             default: 610,
         },
         messRequired: {
-			type: String,
-			default: "",
-		},
+            type: String,
+            default: "",
+        },
     },
     components: {
         DxSelectBox,
@@ -83,9 +83,9 @@ export default defineComponent({
     setup(props, { emit }) {
         let arrSelect = ref(Array());
         const messageRequired = ref(Message.getMessage('COMMON', '102').message);
-		if (props.messRequired != "") {
-			messageRequired.value = props.messRequired;
-		}
+        if (props.messRequired != "") {
+            messageRequired.value = props.messRequired;
+        }
 
         if (props.screenCode == 610) {
             enum2KeysByValueMap(IncomeTypeCode610).forEach((name, id) => {
@@ -135,26 +135,11 @@ export default defineComponent({
     display: flex;
     align-items: center;
     margin-left: 5px;
-
-    .custom-text {
-        width: 120px;
-    }
 }
 
 .dx-list-item-content {
     display: flex;
 }
-
-.dx-texteditor.dx-state-readonly {
-    border-style: none;
-}
-
-/* .ant-tag span {
-    text-align: center;
-    align-items: center;
-    width: 55px;
-    height: 25px;
-} */
 
 .custom-value {
     display: flex;
@@ -162,7 +147,8 @@ export default defineComponent({
     padding: 3px 4px !important;
 }
 
-.custom-text {
+.custom-text .hidden {
+    width: 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

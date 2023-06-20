@@ -130,7 +130,6 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
         const actionOpenModalDetail = (data: any) => {
-            console.log(data);
             statusModalDetail.value = true
         }
         const actionOpenModalUpload = (data: any) => {
