@@ -58,7 +58,6 @@ export default defineComponent({
 			mutate: sendEmail,
 			onDone: onDoneAdd,
 			onError: errorSendEmail,
-			error,
 		} = useMutation(mutations.sendIncomeBusinessWithholdingReceiptReportEmail);
 		const onSubmit = (e: any) => {
 			var res = e.validationGroup.validate();
@@ -78,10 +77,6 @@ export default defineComponent({
 		errorSendEmail((e: any) => {
 			//notification('error', e.message)
 		});
-		watch(
-			() => props.modalStatus,
-			(value) => { }
-		);
 
 		return {
 			setModalVisible,

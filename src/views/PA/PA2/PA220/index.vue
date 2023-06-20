@@ -149,7 +149,7 @@
             <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                 :data="popupDataEmailSingle" />
             <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
-                :data="popupDataEmailMulti" :incomeIds="incomeIds" />
+                :data="popupDataEmailMulti" :dataSelect="dataSelect"/>
         </div>
     </div>
 </template>
@@ -261,7 +261,7 @@ export default defineComponent({
                     senderName: sessionStorage.getItem("username") ?? "",
                     receiverName: item.employee.name,
                     receiverAddress: item.employee.email,
-                    incomeId: item.incomeId
+                    employeeId: item.employeeId
                 })
                 incomeIds.value.push(item.incomeId)
             })
@@ -380,7 +380,7 @@ export default defineComponent({
             onPrintGroup,
             searchParam,
             onSearch,
-            incomeIds,
+            incomeIds, dataSelect,
             customTextSummaryInfo, customTextSummaryTotalSalary,
             customTextSummaryTaxFreeIncome, customTextSummaryDecidedTaxAmount,
             customTextSummaryPrePaidTaxAmount, customTextSummaryDeductibleTaxAmount,
