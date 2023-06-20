@@ -12,7 +12,7 @@
     @value-changed="updateValue"
     :height="$config_styles.HeightInput"
     :disabled="disabled"
-    :dropDownOptions="{ height: '250px' }"
+    :dropDownOptions="{ maxHeight: '250px', wrapperAttr: popupAttributes }"
   >
     <template #field-data="{ data }">
       <div v-if="data" style="padding: 1px">
@@ -108,6 +108,9 @@ export default defineComponent({
     newLoadKey: {
       type: [String, Number],
       default: null,
+    },
+    popupAttributes: {
+      type: Object,
     },
   },
   components: {
@@ -256,4 +259,5 @@ export default defineComponent({
   display: flex;
   align-items: center;
 }
+
 </style>

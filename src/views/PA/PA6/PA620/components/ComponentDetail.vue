@@ -231,7 +231,7 @@
           "
           class="fs-14"
         >
-          <a-col span="6" class="sum-item">
+          <a-col class="sum-item">
             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
               사업소득자[소득구분]수
               <span style="font-size: 16px"
@@ -247,13 +247,13 @@
               >
             </div>
           </a-col>
-          <a-col span="4" class="sum-item">
+          <a-col class="sum-item">
             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
               공제합계
               <span style="font-size: 16px">[{{ customTextSummary() }}]</span>
             </div>
           </a-col>
-          <a-col span="6" class="sum-item">
+          <a-col  class="sum-item">
             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
               차인지급액합계
               <span style="font-size: 16px"
@@ -274,11 +274,12 @@
             <employ-type-select
               :arrayValue="arrayEmploySelect"
               v-model:valueEmploy="dataAction.input.employeeId"
-              width="350px"
+              width="250px"
               :required="true"
               :newLoadKey="dataAction.input.employee.key"
               @incomeTypeCode="changeIncomeTypeCode"
               :disabled="disabledInput || idDisableNoData"
+              :popupAttributes="{id:'pa-620-popup'}"
             />
           </a-form-item>
           <div class="header-text-1 mb-10">소득내역</div>

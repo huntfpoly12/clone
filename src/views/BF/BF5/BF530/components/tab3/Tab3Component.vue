@@ -43,7 +43,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
                     :dataSource="workingStatusSelectbox"
-                    width="90px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -57,7 +57,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.type"
                     :dataSource="reportTypeSelectboxTab3"
-                    width="90px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -115,7 +115,7 @@
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
           <DxColumn
             caption="상태"
-            width="105"
+            width="110"
             cell-template="workingStatus"
             alignment="center"
           />
@@ -123,7 +123,7 @@
             <SelectCustomField
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
-              width="90px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -528,22 +528,11 @@ export default defineComponent({
             return true;
           });
         });
-        new Promise((resolve: any) => {
-          store.commit("common/filterDsTab3Bf530", arr);
-          resolve();
-        }).then(() => {
-          // Sử dụng nextTick để đảm bảo cập nhật DOM đã hoàn thành
-          // nextTick(() => {
-          //   console.log(`output-1`);
-          //   if (filterDsTab3Bf530.value) {
-          //     // loadingDataSource.value = false;
-          //   }
-          // });
-        });
+        store.commit("common/filterDsTab3Bf530", arr);
         setTimeout(() => {
           console.log(`output-2`);
           loadingDataSource.value = false;
-        }, 10);
+        }, 20);
       },
       { deep: true }
     );

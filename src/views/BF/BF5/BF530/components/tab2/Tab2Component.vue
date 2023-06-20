@@ -49,7 +49,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.type"
                     :dataSource="reportTypeSelectbox"
-                    width="90px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -63,7 +63,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
                     :dataSource="workingStatusSelectbox"
-                    width="90px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -102,12 +102,12 @@
           <DxColumn
             caption="일련번호"
             data-field="companyId"
-            alignment="left"
+            alignment="center"
           />
           <DxColumn
             caption="신고구분"
             data-field="type"
-            alignment="left"
+            alignment="center"
             :format="reportTypeText"
           />
           <DxColumn caption="업체명" data-field="companyName" />
@@ -119,14 +119,14 @@
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
           <DxColumn
             caption="상태"
-            width="105px"
+            width="110"
             cell-template="workingStatus"
           />
           <template #workingStatus="{ data }: any">
             <SelectCustomField
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
-              width="90px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -176,7 +176,7 @@
           </template>
           <DxColumn
             caption="접수번호"
-            width="155px"
+            width="135px"
             cell-template="acceptedNumber"
           />
           <template #acceptedNumber="{ data }: any">
