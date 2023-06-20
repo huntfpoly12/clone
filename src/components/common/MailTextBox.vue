@@ -85,7 +85,7 @@ export default defineComponent({
       emit("focusInput", e);
     }
     const ruleCustom = (e: any) => {
-      return isEmail(e.value);
+      return e.value ? isEmail(e.value) : false;
     }
     return {
       updateValue,
