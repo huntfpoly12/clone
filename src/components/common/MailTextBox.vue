@@ -4,19 +4,22 @@
     @input="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxEmailRule message="이메일 형식이 정확하지 않습니다" />
+      <DxCustomRule  :validation-callback="ruleCustom" message="이메일 형식이 정확하지 않습니다" />
     </DxValidator>
   </DxTextBox>
 </template>
 
 <script lang="ts">
+import isEmail from 'validator/lib/isEmail';
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
   DxEmailRule,
+  DxCustomRule
 } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
+
 export default defineComponent({
   props: {
     required: {
@@ -52,7 +55,9 @@ export default defineComponent({
     DxTextBox,
     DxValidator,
     DxRequiredRule,
-    DxEmailRule
+    DxEmailRule,
+    DxCustomRule
+
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
@@ -79,11 +84,15 @@ export default defineComponent({
       }
       emit("focusInput", e);
     }
+    const ruleCustom = (e: any) => {
+      return isEmail(e.value);
+    }
     return {
       updateValue,
       value,
       messageRequired,
-      onFocusIn
+      onFocusIn,
+      ruleCustom
     };
   },
 });
