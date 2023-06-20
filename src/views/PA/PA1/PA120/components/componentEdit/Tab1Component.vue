@@ -294,7 +294,9 @@ export default defineComponent({
       initFormStateTabPA120.value.roadAddress = data.roadAddress;
     };
     const messageUpdate = Message.getMessage("COMMON", "106").message;
-    const presidentOrigin = ref(false);
+    const presidentOriginPA120 = computed(
+      () => store.state.common.presidentOriginPA120
+    );
     watch(
       () => props.popupStatus,
       (newValue: any) => {
@@ -388,7 +390,7 @@ export default defineComponent({
       store.state.common.deductionDependentCountPA120 = data?.deductionDependentCount || 1;
       editRowData.name = data.name.toUpperCase();
       editRowData.foreigner = data.foreigner;
-      presidentOrigin.value = data.president;
+      store.state.common.presidentOriginPA120 = data.president;
       editRowData.president = data.president;
       editRowData.nationality = data.nationality;
       editRowData.nationalityCode = data.nationalityCode;
@@ -440,17 +442,18 @@ export default defineComponent({
       store.commit("common/actionFormErrorPA120");
     });
     onDone((res) => {
-      store.state.common.reloadEmployeeList =
-        !store.state.common.reloadEmployeeList;
       notification("success", messageUpdate);
       store.commit("common/actionFormDonePA120");
       store.state.common.isNewRowPA120 = false;
       store.commit("common/editRowPA120", initFormStateTabPA120.value);
-      if(presidentOrigin.value !== initFormStateTabPA120.value.president){
+      if(presidentOriginPA120.value !== initFormStateTabPA120.value.president){
         store.state.common.presidentEditPA120 = initFormStateTabPA120.value.president;
       } else {
         store.state.common.presidentEditPA120 = false;
       }
+      setTimeout(()=>{
+        store.state.common.presidentOriginPA120 = initFormStateTabPA120.value.president;
+      },0)
     });
     watch(
       () => props.idRowEdit,

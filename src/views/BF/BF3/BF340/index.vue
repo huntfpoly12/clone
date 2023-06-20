@@ -18,6 +18,7 @@
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
+          noDataText="내역이 없습니다" 
         >
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSearchPanel
@@ -41,7 +42,7 @@
             <DxItem name="columnChooserButton" />
           </DxToolbar>
           <template #search>
-            <div class="search-form">
+            <div class="search-form-bf340">
               <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16, 8]">
                   <a-col>
@@ -53,24 +54,6 @@
                         placeholder="전체"
                         :selectAll="true"
                       />
-                    </div>
-                  </a-col>
-                  <a-col>
-                    <div class="dflex custom-flex">
-                      <label class="lable-item">영업자명:</label>
-                      <default-text-box
-                        v-model:valueInput="originData.name"
-                        width="120px"
-                      ></default-text-box>
-                    </div>
-                  </a-col>
-                  <a-col>
-                    <div class="dflex custom-flex">
-                      <label class="lable-item">영업자코드:</label>
-                      <default-text-box
-                        v-model:valueInput="originData.code"
-                        width="120px"
-                      ></default-text-box>
                     </div>
                   </a-col>
                   <a-col>

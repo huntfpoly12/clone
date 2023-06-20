@@ -23,71 +23,75 @@
             </a-row>
         </div>
         <div class="page-content">
-            <DxDataGrid id="gridContainerPA220" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :show-borders="true" key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column"
-                noDataText="내역이 없습니다" :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged"
-                :column-auto-width="true">
-                <DxSelection mode="multiple" />
-                <DxScrolling mode="standard" show-scrollbar="always" />
-                <DxPaging :enabled="false" />
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
-                <DxExport :enabled="true" />
-                <DxToolbar>
-                    <DxItem template="box-search-left" location="before" />
-                    <DxItem template="box-search-right" location="after" />
-                    <DxItem template="pagination-send-group-mail" />
-                    <DxItem template="send-group-print" />
-                    <DxItem name="searchPanel" />
-                    <DxItem name="exportButton" css-class="cell-button-export" />
-                </DxToolbar>
-                <template #box-search-left>
-                    <a-form-item label="서식 설정">
-                        <div class="custom-flex">
-                            <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
-                                :layoutCustom="'horizontal'" valueExpr="id" />
-                            <a-tooltip title="본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.">
-                                <img src="@/assets/images/iconInfo.png" class="img-info" />
-                            </a-tooltip>
+            <a-spin :spinning="loadingSearch" size="large">
+                <DxDataGrid id="gridContainerPA220" :show-row-lines="true" :hoverStateEnabled="true"
+                    :data-source="dataSource" :show-borders="true" key-expr="employeeId" @exporting="onExporting"
+                    :allow-column-reordering="move_column" noDataText="내역이 없습니다" :allow-column-resizing="colomn_resize"
+                    @selection-changed="selectionChanged" :column-auto-width="true">
+                    <DxSelection mode="multiple" />
+                    <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxPaging :enabled="false" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+                    <DxExport :enabled="true" />
+                    <DxToolbar>
+                        <DxItem template="box-search-left" location="before" />
+                        <DxItem template="box-search-right" location="after" />
+                        <DxItem template="pagination-send-group-mail" />
+                        <DxItem template="send-group-print" />
+                        <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" css-class="cell-button-export" />
+                    </DxToolbar>
+                    <template #box-search-left>
+                        <a-form-item label="서식 설정">
+                            <div class="custom-flex">
+                                <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
+                                    :layoutCustom="'horizontal'" valueExpr="id" />
+                                <a-tooltip title="본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.">
+                                    <img src="@/assets/images/iconInfo.png" class="img-info" />
+                                </a-tooltip>
+                            </div>
+                        </a-form-item>
+                    </template>
+                    <template #box-search-right>
+                        <div class="created-date">
+                            <label class="lable-item">작성일 :</label>
+                            <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
+                                dateFormat="YYYY-MM-DD" />
                         </div>
-                    </a-form-item>
-                </template>
-                <template #box-search-right>
-                    <div class="created-date">
-                        <label class="lable-item">작성일 :</label>
-                        <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
-                            dateFormat="YYYY-MM-DD" />
-                    </div>
-                </template>
-                <template #pagination-send-group-mail>
-                    <div class="custom-mail-group">
-                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
-                                @click="sendMailGroup" />
-                        </DxButton>
-                    </div>
-                </template>
-                <template #send-group-print>
-                    <div class="custom-mail-group">
-                        <DxButton @click="onPrintGroup">
-                            <a-tooltip>
-                                <template #title>출력 / 저장</template>
-                                <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
-                            </a-tooltip>
-                        </DxButton>
-                    </div>
-                </template>
-                <DxColumn caption="성명" cell-template="tag" data-field="employee.name" width="300px" />
-                <template #tag="{ data }">
-                    <div class="custom-action">
-                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
-                            :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status" :foreigner="data.data.employee.foreigner"
-                            :checkStatus="false" />
-                    </div>
-                </template>
-                <DxColumn caption="주민등록번호" data-field="residentId" width="150px" />
-                <DxColumn caption="비고" cell-template="four-major" data-field="employee.nationalPensionDeduction"/>
-                <template #four-major="{ data }">
-                    <div>
+                    </template>
+                    <template #pagination-send-group-mail>
+                        <div class="custom-mail-group">
+                            <DxButton @click="sendMailGroup">
+                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
+                            </DxButton>
+                        </div>
+                    </template>
+                    <template #send-group-print>
+                        <div class="custom-mail-group" @click="onPrintGroup">
+                            <DxButton>
+                                <a-tooltip>
+                                    <template #title>출력 / 저장</template>
+                                    <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;" />
+                                </a-tooltip>
+                            </DxButton>
+                        </div>
+                    </template>
+                    <DxColumn caption="성명" cell-template="tag" data-field="employee.name" width="200px" />
+                    <template #tag="{ data }">
+                        <div class="custom-action">
+                            <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
+                                :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                                :foreigner="data.data.employee.foreigner" :checkStatus="false" />
+                        </div>
+                    </template>
+                    <DxColumn caption="주민등록번호" cell-template="residentId" data-field="employee.residentId" width="150px" />
+                    <template #residentId="{ data }">
+                        <resident-id :residentId="data.data.employee?.residentId"></resident-id>
+                    </template>
+                    <DxColumn caption="비고" css-class="cell-left" cell-template="four-major"
+                        data-field="employee.nationalPensionDeduction" />
+                    <template #four-major="{ data }">
+                        <!-- <div> -->
                         <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                             :typeValue="1" />
                         <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
@@ -102,36 +106,53 @@
                             :ratio="data.data.employee.employeementReductionRatePercent" />
                         <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
                             :ratio="data.data.employee.incomeTaxMagnification" />
-                    </div>
-                </template>
-                <DxColumn caption="구분" data-field="leaved" cell-template="leaved" />
-                <template #leaved="{ data }">
-                    <span class="status-blue" v-if="data.data.leaved">중도</span>
-                    <span class="status-red" v-else>계속</span>
-                </template>
-                <DxColumn caption="총급여액" data-field="totalSalary" />
-                <DxColumn caption="비과세금액" data-field="taxFreeIncome" />
-                <DxColumn caption="결정세액" data-field="decidedTaxAmount" />
-                <DxColumn caption="기납부세액 (현)" data-field="prePaidIncomeTaxAmount" />
-                <DxColumn caption="차감징수세액" data-field="deductibleIncomeTaxAmount" />
-                <DxColumn :width="80" cell-template="pupop" />
-                <template #pupop="{ data }">
-                    <div class="custom-action" style="text-align: center;">
-                        <img @click="onOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
-                            style="width: 25px; margin-right: 3px;" />
-                        <a-tooltip>
-                            <template #title>출력 / 저장</template>
-                            <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
-                                style="width: 25px;" />
-                        </a-tooltip>
+                        <!-- </div> -->
+                    </template>
+                    <DxColumn caption="구분" data-field="leaved" cell-template="leaved" />
+                    <template #leaved="{ data }">
+                        <span class="status-blue" v-if="data.data.leaved">중도</span>
+                        <span class="status-red" v-else>계속</span>
+                    </template>
+                    <DxColumn caption="총급여액" data-field="totalSalary" format="fixedPoint" />
+                    <DxColumn caption="비과세금액" data-field="taxFreeIncome" format="fixedPoint" />
+                    <DxColumn caption="결정세액" data-field="decidedTaxAmount" format="fixedPoint" />
+                    <DxColumn caption="기납부세액 (현)" data-field="prePaidIncomeTaxAmount" format="fixedPoint" />
+                    <DxColumn caption="차감징수세액" data-field="deductibleIncomeTaxAmount" format="fixedPoint" />
+                    <DxColumn :width="80" cell-template="pupop" />
+                    <template #pupop="{ data }">
+                        <div class="custom-action" style="text-align: center;">
+                            <img @click="onOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
+                                style="width: 25px; margin-right: 3px;" />
+                            <a-tooltip>
+                                <template #title>출력 / 저장</template>
+                                <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
+                                    style="width: 25px;" />
+                            </a-tooltip>
 
+                        </div>
+                    </template>
+                </DxDataGrid>
+                <div v-if="dataSource.length"
+                    style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
+                    class="fs-14">
+                    <!-- <div style="margin-left: 70px;"> -->
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryInfo()"></div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryTotalSalary()">
                     </div>
-                </template>
-            </DxDataGrid>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                        v-html="customTextSummaryTaxFreeIncome()"></div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                        v-html="customTextSummaryDecidedTaxAmount()"></div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                        v-html="customTextSummaryPrePaidTaxAmount()"></div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                        v-html="customTextSummaryDeductibleTaxAmount()"></div>
+                </div>
+            </a-spin>
             <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                 :data="popupDataEmailSingle" />
             <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
-                :data="popupDataEmailMulti" />
+                :data="popupDataEmailMulti" :incomeIds="incomeIds" />
         </div>
     </div>
 </template>
@@ -152,6 +173,8 @@ import {
 import EmailSinglePopup from "./components/EmailSinglePopup.vue"
 import EmailMultiPopup from "./components/EmailMultiPopup.vue"
 import queries from "@/graphql/queries/PA/PA2/PA220/index";
+import { Message } from "@/configs/enum";
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton, EmailSinglePopup, EmailMultiPopup, DxSearchPanel, DxExport, DxPaging
@@ -233,30 +256,17 @@ export default defineComponent({
                 window.open(value.getIncomeWageWithholdingReceiptReportViewUrl)
             }
         });
-        //SEND MAIL GROUP
-        const sendMailGroupParam = reactive({
-            companyId: companyId,
-            input: { imputedYear: globalYear.value, type: viewUrlParam.input.type, receiptDate: viewUrlParam.input.receiptDate },
-            incomeInputs: [
-                {
-                    receiverName: "",
-                    receiverAddress: "",
-                    senderName: "",
-                    incomeId: NaN,
-                },
-            ]
-        });
         const selectionChanged = (data: any) => {
             dataSelect.value = []
             incomeIds.value = []
-            data.selectedRowKeys.forEach((data: any) => {
+            data.selectedRowsData.forEach((item: any) => {
                 dataSelect.value.push({
                     senderName: sessionStorage.getItem("username") ?? "",
-                    receiverName: data.employee.name,
-                    receiverAddress: data.employee.email,
-                    incomeId: data.incomeId
+                    receiverName: item.employee.name,
+                    receiverAddress: item.employee.email,
+                    incomeId: item.incomeId
                 })
-                incomeIds.value.push(data.incomeId)
+                incomeIds.value.push(item.incomeId)
             })
         }
         const actionPrint = (data: any) => {
@@ -283,10 +293,14 @@ export default defineComponent({
         }
         const sendMailGroup = () => {
             if (dataSelect.value.length) {
-                popupDataEmailMulti.value = sendMailGroupParam;
+                popupDataEmailMulti.value = {
+                    imputedYear: globalYear.value,
+                    type: viewUrlParam.input.type,
+                    receiptDate: viewUrlParam.input.receiptDate
+                };
                 modalEmailMulti.value = true
             } else {
-                notification('error', '항목을 최소 하나 이상 선택해야합니다')
+                notification('error', Message.getCommonMessage('404').message)
             }
         }
         const onPrintGroup = () => {
@@ -294,9 +308,60 @@ export default defineComponent({
                 viewUrlParam.incomeIds = incomeIds.value
                 printTrigger.value = true;
             } else {
-                notification('error', '항목을 최소 하나 이상 선택해야합니다')
+                notification('error', Message.getCommonMessage('404').message)
             }
         };
+
+        const customTextSummaryInfo = () => {
+            let total = 0;
+            let continuee = 0;
+            let halfWay = 0;
+            dataSource.value.map((val: any) => {
+                total++;
+                if (val.employee.status !== 0) {
+                    continuee++;
+                } else {
+                    halfWay++;
+                }
+            });
+            return `전체: [${filters.formatCurrency(total)}] / 계속: [${filters.formatCurrency(continuee)}] / 중도: [${filters.formatCurrency(halfWay)}])`;
+        };
+        const customTextSummaryTotalSalary = () => {
+            let total = 0;
+            dataSource.value.map((val: any) => {
+                total = total + val.totalSalary
+            });
+            return `총급여액합계: [${filters.formatCurrency(total)}]`;
+        };
+        const customTextSummaryTaxFreeIncome = () => {
+            let total = 0;
+            dataSource.value.map((val: any) => {
+                total = total + val.taxFreeIncome
+            });
+            return `비과세금액합계: [${filters.formatCurrency(total)}]`;
+        };
+        const customTextSummaryDecidedTaxAmount = () => {
+            let total = 0;
+            dataSource.value.map((val: any) => {
+                total = total + val.decidedTaxAmount
+            });
+            return `결정세액합계: [${filters.formatCurrency(total)}]`;
+        };
+        const customTextSummaryPrePaidTaxAmount = () => {
+            let total = 0;
+            dataSource.value.map((val: any) => {
+                total = total + val.prePaidIncomeTaxAmount
+            });
+            return `기납부세액 (현)합계: [${filters.formatCurrency(total)}]`;
+        };
+        const customTextSummaryDeductibleTaxAmount = () => {
+            let total = 0;
+            dataSource.value.map((val: any) => {
+                total = total + val.deductibleIncomeTaxAmount
+            });
+            return `차감징수세액합계: [${filters.formatCurrency(total)}]`;
+        };
+
         return {
             arrayRadioDivision,
             arrayRadioType,
@@ -312,12 +377,16 @@ export default defineComponent({
             onOpenPopupEmailSingle,
             sendMailGroup,
             onExporting,
-            // searchData,
+            loadingSearch,
             viewUrlParam,
             actionPrint,
             onPrintGroup,
             searchParam,
             onSearch,
+            incomeIds,
+            customTextSummaryInfo, customTextSummaryTotalSalary,
+            customTextSummaryTaxFreeIncome, customTextSummaryDecidedTaxAmount,
+            customTextSummaryPrePaidTaxAmount, customTextSummaryDeductibleTaxAmount,
         };
     },
 });

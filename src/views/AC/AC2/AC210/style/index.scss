@@ -1,0 +1,10 @@
+.ac-210 {
+    #dataGridAC210 {
+        height: calc(100vh - 150px);
+        .button-upload {
+            :deep .dx-button-content {
+                padding: 6px;
+            }
+        }
+    }
+}
