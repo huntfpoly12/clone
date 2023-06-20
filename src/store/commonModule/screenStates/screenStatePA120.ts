@@ -13,6 +13,7 @@ const statesPA120 = {
   yearPA120: +dayjs().format("YYYY"),
   notDatasourcePA120:false,
   deductionDependentCountPA120: 1,
+  presidentOriginPA120:false,
   initFormStateTabPA120: {
     name: null,
     foreigner: false,

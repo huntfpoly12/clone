@@ -19,7 +19,7 @@
       <DxPaging :page-size="0"/>
       <DxToolbar>
         <DxItem location="after" >
-          <DxButton @click="handleFillValuePreIndex" text="전예산액 불러오기" class="d-flex-center" style="background: #337ab7; color: white; height: 100%;" />
+          <DxButton @click="handleFillValuePreIndex" text="전임직원수일람표 불러오기" class="d-flex-center" style="background: #337ab7; color: white; height: 100%;" />
         </DxItem>
         <DxItem location="after" name="addRowButton" css-class="cell-button-add">
           <a-tooltip title="임직원보수등록">

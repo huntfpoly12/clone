@@ -1,6 +1,6 @@
 <template>
   <div class="form-chat">
-    <div v-if="loadinggetGetAccountingClosingMessages" class="form-chat-loading"><a-spin size="large" /></div>
+    <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading"><a-spin size="large" /></div>
     <div ref="formTimeline" class="form-chat-timeline">
       <div v-for="(items, index) in listChat" :key="index" :id="items.createdAt">
         <div v-if="index > 0" class="form-chat-timeline-line" />
@@ -83,6 +83,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    loading: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {
     EllipsisOutlined,

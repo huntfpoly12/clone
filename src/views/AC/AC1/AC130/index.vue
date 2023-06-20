@@ -28,7 +28,7 @@
     </div>
     <a-row class="ac-130__main">
       <a-col span="14" class="ac-130__main-content">
-        <a-spin :spinning="loadinggetAccountingClosingCheckItems" size="large">
+        <a-spin :spinning="loadinggetAccountingClosingCheckItems || loadingGetAccountingProcesses" size="large">
           <div class="ac-130__main-content-check">
             <div class="ac-130__main-content-check-title">
               <b>체크사항</b>
@@ -91,7 +91,7 @@
             <ReloadOutlined class="ac-130__main-content-manager-title-btnReload" @click="refreshFormChat" />
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChat ref="formChat" :payload="{...payload, accountingProcessesSelected}" :disabled="accountingProcessesSelected?.status === 20 || !accountingProcessesSelected" />
+            <FormChat ref="formChat" :payload="{...payload, accountingProcessesSelected}" :disabled="accountingProcessesSelected?.status === 20 || !accountingProcessesSelected" :loading="loadingGetAccountingProcesses"/>
           </div>
         </div>
       </a-col>
@@ -157,7 +157,7 @@ export default defineComponent({
     const formChat = ref()
     //trigger
     let triggerAccountingProcesses = ref<boolean>(true)
-    let triggerAccountingClosingCheckItems = ref<boolean>(true)
+    let triggerAccountingClosingCheckItems = ref<boolean>(false)
 
     const accountingProcessesSelected: any = computed(() => {
       return listAccountingProcesses.value.find((item: any) => item.month === monthSelected.value) || null
@@ -195,6 +195,12 @@ export default defineComponent({
     onResAccountingProcesses((data) => {
       if (!!data.data.getAccountingProcesses && data.data.getAccountingProcesses.length) {
         listAccountingProcesses.value = data.data.getAccountingProcesses
+        if(listAccountingProcesses.value.findIndex((item: any) => item.month === monthSelected.value) >=0 ){
+          triggerAccountingClosingCheckItems.value = true
+        }else {
+          dataSource.value = {}
+          activeKey.value = []
+        }
       }
       triggerAccountingProcesses.value = false
     })
@@ -352,6 +358,7 @@ export default defineComponent({
       getStatusCashRegisterSummary,
       getStatusExpenditureBudgetSummary,
       getStatusRevenueBudgetSummary,
+      loadingGetAccountingProcesses,
       loadinggetAccountingClosingCheckItems,
       payload,
       accountingProcessesSelected,
