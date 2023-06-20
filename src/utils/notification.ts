@@ -10,6 +10,7 @@ export default (typeMessage: string, text = '') => {
                 style: {
                     marginTop: '20vh',
                 },
+                duration: 1,
             }, 2);
             break;
         case 'error':
@@ -21,7 +22,8 @@ export default (typeMessage: string, text = '') => {
                     color: 'red',
                     borderColor: 'red'
                 },
-            }, 2);
+                duration: 1,
+              }, 2);
             break;
         case 'warning':
             message.warning({
@@ -30,7 +32,8 @@ export default (typeMessage: string, text = '') => {
                 style: {
                     marginTop: '20vh',
                 },
-            }, 2);
+                duration: 1,
+              }, 2);
             break;
         case 'destroy':
               message.destroy()
@@ -42,7 +45,8 @@ export default (typeMessage: string, text = '') => {
                 style: {
                     marginTop: '20vh',
                 },
-            }, 2);
+                duration: 1,
+              }, 2);
             break;
     }
 

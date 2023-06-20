@@ -44,7 +44,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
                     :dataSource="workingStatusSelectbox"
-                    width="90px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -58,7 +58,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.companyConsignStatus"
                     :dataSource="companyConsignStatusSelectbox"
-                    width="90px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -72,7 +72,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.healthInsuranceEDIStatus"
                     :dataSource="EDIStatusSelectbox"
-                    width="90px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -86,7 +86,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.nationalPensionEDIStatus"
                     :dataSource="EDIStatusSelectbox"
-                    width="90px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -125,7 +125,7 @@
           <DxColumn
             caption="일련번호"
             data-field="companyId"
-            alignment="left"
+            alignment="center"
           />
           <DxColumn caption="업체명" data-field="companyName" />
           <DxColumn
@@ -146,35 +146,26 @@
           <DxColumn
             data-field="companyConsignStatus"
             caption="수임상태"
-            width="105"
+            width="110"
             cell-template="companyConsignStatus"
-            alignment="left"
+            alignment="center"
             :allow-sorting="false"
           />
           <template #companyConsignStatus="{ data }: any">
             <SelectCustomField
               v-model:valueInput="data.data.companyConsignStatus"
               :dataSource="companyConsignStatusSelectbox"
-              width="90px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
               placeholder="선택"
             />
-            <!-- <SelectBoxCT
-              :searchEnabled="false"
-              :arrSelect="companyConsignStatusSelectbox"
-              v-model:valueInput="data.data.companyConsignStatus"
-              displayeExpr="text"
-              valueExpr="id"
-              width="90px"
-              placeholder="선택"
-            /> -->
           </template>
           <DxColumn
             data-field="workingStatus"
             caption="상태(처리상태)"
-            width="105"
+            width="110"
             cell-template="workingStatus"
             alignment="left"
             :allow-sorting="false"
@@ -183,7 +174,7 @@
             <SelectCustomField
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
-              width="90px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -195,7 +186,7 @@
               v-model:valueInput="data.data.workingStatus"
               displayeExpr="text"
               valueExpr="id"
-              width="90px"
+              width="95px"
               placeholder="선택"
             /> -->
           </template>
@@ -213,7 +204,7 @@
           <DxColumn
             data-field="healthInsuranceEDIStatus"
             caption="건강EDI 연계상태 "
-            width="105"
+            width="110"
             cell-template="healthInsuranceEDIStatus"
             alignment="left"
             :allow-sorting="false"
@@ -222,7 +213,7 @@
             <SelectCustomField
               v-model:valueInput="data.data.healthInsuranceEDIStatus"
               :dataSource="EDIStatusSelectbox"
-              width="90px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -232,7 +223,7 @@
           <DxColumn
             data-field="nationalPensionEDIStatus"
             caption="연금EDI 연계상태 "
-            width="105"
+            width="110"
             cell-template="nationalPensionEDIStatus"
             alignment="left"
             :allow-sorting="false"
@@ -241,7 +232,7 @@
             <SelectCustomField
               v-model:valueInput="data.data.nationalPensionEDIStatus"
               :dataSource="EDIStatusSelectbox"
-              width="90px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -304,7 +295,7 @@
               }}
             </div>
           </template>
-          <DxColumn caption="팩스발송" cell-template="downD" width="105px" />
+          <DxColumn caption="팩스발송" cell-template="downD" width="110" />
           <template #downD="{ data }: any">
             <div class="d-flex justify-content-center">
               <a-popover

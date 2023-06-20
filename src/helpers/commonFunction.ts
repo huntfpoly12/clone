@@ -92,7 +92,7 @@ const convertAge = (idCart: any) => {
             const date2 = dayjs();
             return date2.diff(date1, 'year') > 0 ? date2.diff(date1, 'year') : 0;
         }
-        
+
     }else {
         return 0;
     }

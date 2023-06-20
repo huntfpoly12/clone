@@ -229,6 +229,9 @@ $lenght: 50;
 .flex-auto {
   flex: 0 0 auto;
 }
+.flex-col {
+  flex-direction: column;
+}
 .d-flex-center {
   display: flex;
   align-items: center;
@@ -241,6 +244,9 @@ $lenght: 50;
 }
 .justify-content-around {
   justify-content: space-around;
+}
+.justify-content-between {
+  justify-content: space-between;
 }
 .text-center {
   text-align: center;
@@ -453,4 +459,9 @@ $lenght: 50;
 }
 .dx-freespace-row {
   display: none !important;
+}
+#pa-620-popup {
+  span.ant-tag {
+    width: 88px;
+  }
 }
