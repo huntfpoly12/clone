@@ -2,10 +2,10 @@
     <div>
         <a-select :style="{ width: width, height: $config_styles.HeightInput }" v-model:value="data"
             :disabled="disabled" option-label-prop="children" @select="selectedValue(data)" :placeholder="placeholder"
-            class="sale-status">
+            class="sale-status" :dropdownClassName="'sale-status-dropdown'">
             <a-select-option v-for="saleStatus in saleListStatus" :key="saleStatus.value" :label="saleStatus.label"
                 :style="{ width: width }">
-                <a-tag :color="getColorTag(saleStatus.label)">{{ saleStatus.label }}</a-tag>
+                <a-tag :color="getColorTag(saleStatus.label)"  class="option-tag">{{ saleStatus.label }}</a-tag>
             </a-select-option>
         </a-select>
         <a-modal v-if="confirmStatus" v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md"
@@ -132,7 +132,7 @@ export default defineComponent({
     },
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
 .confirm-input {
     text-align: center;
     width: 100%;
@@ -144,14 +144,24 @@ export default defineComponent({
     width: 100px;
 }
 
-::v-deep .sale-status .ant-select-dropdown {
-    min-width: 100px;
-    width: 100px;
-    left: 965px;
-    top: 200px;
-}
-
 :deep(.ant-select-arrow) {
     right: 46px;
+}
+
+.rc-virtual-list {
+  .option-tag{
+  width: 80px;
+  text-align: center;
+  }
+}
+
+
+</style>
+<style>
+
+.sale-status-dropdown{
+  min-width: 100px !important;
+  width: 100px !important;
+
 }
 </style>
