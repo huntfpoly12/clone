@@ -56,7 +56,7 @@
           class="fix-width-label"
         >
           <list-manager-dropdown
-            v-model:valueInput="dataSearch.manageUserId"
+            v-model:valueInput="dataSearch.productionRequestUserId"
             width="200px"
             filterData
           />

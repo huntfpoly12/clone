@@ -31,7 +31,7 @@ export const dataSearchStep3Utils = {
     "requesteStartDate": parseInt(dayjs().subtract(1,'week').format('YYYYMMDD')),
     "requesteFinishDate": parseInt(dayjs().format('YYYYMMDD')),
     "productionStatuses": [2, -1,],
-    "manageUserId": null
+    "productionRequestUserId": null
 }
 export const productionStatusesCheckbox = [
   { id: 0, text: "제작대기",  },
