@@ -212,3 +212,9 @@
 :deep .delete_group span:first-child {
     width: 200px;
 }
+:deep .ant-switch{
+  background-color: green;
+}
+:deep .ant-switch-checked {
+  background-color: rgb(245, 86, 86);
+}

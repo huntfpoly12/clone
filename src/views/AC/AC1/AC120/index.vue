@@ -237,28 +237,21 @@
 						</template>
 					</DxDataGrid>
 					<!-- <div class="action"> -->
-					<div style="
-              border: 1px solid #ddd;
-              border-top: none;
-              background-color: #f2f5f7;
-              display: flex;
-              padding: 5px;
-              justify-content: space-around;
-            ">
-						<div>
+					<div class="custom-smmary">
+						<!-- <div> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customCountRow()"></div>
-						</div>
-						<div style="margin-left: 20px">
+						<!-- </div> -->
+						<!-- <div style="margin-left: 20px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
 								v-html="sumOfResolutionClassification1()">
 							</div>
-						</div>
-						<div style="margin-left: 20px">
+						<!-- </div>
+						<div style="margin-left: 20px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
 								v-html="sumOfResolutionClassification2()">
 							</div>
-						</div>
-						<div style="margin-left: 20px">
+						<!-- </div>
+						<div style="margin-left: 20px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 								<a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
 									<div style="display: inline">
@@ -268,11 +261,11 @@
 								</a-tooltip>
 								<div style="display: inline" v-html="customBalance()"></div>
 							</div>
-						</div>
-						<div style="margin-left: 20px">
+						<!-- </div>
+						<div style="margin-left: 20px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
 								v-html="countResolutionNormalStatus()"></div>
-						</div>
+						<!-- </div> -->
 						<!-- </div> -->
 					</div>
 				</a-spin>

@@ -35,7 +35,7 @@
 								</DxRadioGroup>
 							</a-form-item>
 							<a-form-item label="제작요청자">
-								<list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId" filterData clearButton/>
+								<list-manager-dropdown width="150px" v-model:valueInput="originData.productionRequestUserId" filterData clearButton/>
 							</a-form-item>
 						</div>
 					</template>
@@ -71,9 +71,8 @@
             <DxTotalItem cssClass="bf-630-sumary" column="일련번호" summary-type="count" display-format="전체: [{0}]" />
           </DxSummary> -->
 				</DxDataGrid>
-				<div class="DxDataGrid-bf-630-tab5-sumary">
-					<div v-html="`전체: <span style='font-size: 16px'>[${dataSource.length}]</span>`
-						"></div>
+				<div class="custom-smmary">
+					<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="`전체 <span>[${dataSource.length}]</span>`"></div>
 				</div>
 			</a-spin>
 		</div>
@@ -151,7 +150,7 @@ export default defineComponent({
 			requesteStartDate: rangeDate.value[0],
 			requesteFinishDate: rangeDate.value[1],
 			productionStatuses: [2, -1],
-			manageUserId: null,
+			productionRequestUserId: null,
 		});
 
 		// watch range date time
@@ -171,9 +170,7 @@ export default defineComponent({
 		// ============ GRAPQL ===============================
 		const {
 			result: resElectronicFiling,
-			onResult: onResElectronicFiling,
 			loading: loadingElectronicFiling,
-			refetch: refetchElectronicFiling,
 			onError: onErrorElectronicFiling,
 		} = useQuery(
 			queries.searchElectronicFilingFileProductions,
@@ -188,10 +185,8 @@ export default defineComponent({
 
 		// ===================DONE GRAPQL==================================
 		// watch result  api searchElectronicFilingFileProductions
-		onResElectronicFiling(() => {
-			trigger.value = false;
-		});
 		watch(resElectronicFiling, (value) => {
+			trigger.value = false;
 			if (value) {
 				let data = value.searchElectronicFilingFileProductions;
 				let result = Object.values(
@@ -219,7 +214,6 @@ export default defineComponent({
 			() => props.activeSearch,
 			(value) => {
 				trigger.value = true;
-				refetchElectronicFiling();
 			}
 		);
 
@@ -249,16 +243,6 @@ export default defineComponent({
 <style scoped lang="scss" src="../style/styleTabs.scss"></style>
 
 <style scoped lang="scss">
-.DxDataGrid-bf-630-tab5-sumary {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	font-weight: bold;
-	border: 1px solid #ddd;
-	border-top: none;
-	padding: 7px 20px;
-	color: rgba(51, 51, 51, 0.7);
-}
 
 #components-grid-demo-flex {
 	display: flex;

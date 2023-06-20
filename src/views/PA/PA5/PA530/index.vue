@@ -209,12 +209,12 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <div class="DxDataGrid-pa-530-sumary">
-                    <div v-html="customizeTotal()"></div>
-                    <div v-html="customizeTotalTaxPay()"></div>
-                    <div v-html="customizeTotalTaxfreePay()"></div>
-                    <div v-html="customizeIncomeTax()"></div>
-                    <div v-html="customizeDateLocalIncomeTax()"></div>
+                <div class="custom-smmary">
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customizeTotal()"></div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customizeTotalTaxPay()"></div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customizeTotalTaxfreePay()"></div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customizeIncomeTax()"></div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customizeDateLocalIncomeTax()"></div>
                 </div>
             </a-spin>
             <PA530Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
@@ -483,31 +483,31 @@ export default defineComponent({
             dataSource.value.map((val: any) => {
                 total += val.withholdingIncomeTax
             })
-            return `원천징수세액 소득세합계: <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
+            return `원천징수세액 소득세합계: <span>[${filters.formatCurrency(total)}]</span>`
         }
         const customizeDateLocalIncomeTax = () => {
             let total = 0
             dataSource.value.map((val: any) => {
                 total += val.withholdingLocalIncomeTax
             })
-            return `원천징수세액 지방소득세합계:  <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
+            return `원천징수세액 지방소득세합계:  <span>[${filters.formatCurrency(total)}]</span>`
         }
         const customizeTotal = () => {
-            return `전체: <span style="font-size: 16px !important">[${dataSource.value.length}]</span>`
+            return `전체: <span>[${dataSource.value.length}]</span>`
         }
         const customizeTotalTaxfreePay = () => {
             let total = 0
             dataSource.value.map((val: any) => {
                 total += val.totalTaxfreePay
             })
-            return `비과세소득합계:  <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
+            return `비과세소득합계:  <span>[${filters.formatCurrency(total)}]</span>`
         }
         const customizeTotalTaxPay = () => {
             let total = 0
             dataSource.value.map((val: any) => {
                 total += val.totalTaxPay
             })
-            return `과세소득합계:  <span style="font-size: 16px !important">[${filters.formatCurrency(total)}]</span>`
+            return `과세소득합계:  <span>[${filters.formatCurrency(total)}]</span>`
         }
         const actionPrint = (res: any) => {
             vModalSelectedRowKeys.value = [res]

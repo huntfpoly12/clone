@@ -101,32 +101,20 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <div v-if="dataSource.length"
-                    style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
-                    class="fs-14">
-                    <!-- <div style="margin-left: 70px;"> -->
+                <div class="custom-smmary">
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-                            <div>전체 <span>[{{ dataSource.length }}]</span></div>
+                            전체 <span>[{{ dataSource.length }}]</span>
                         </div>
-                    <!-- </div>
-                    <div style="margin-left: 200px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customPaymentAmount()">
                         </div>
-                    <!-- </div>
-                    <div style=" margin-left: 20px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content"
                             v-html="customWithholdingIncomeTax()">
                         </div>
-                    <!-- </div>
-                    <div style=" margin-left: 20px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content"
                             v-html="customWithholdingLocalIncomeTax()">
                         </div>
-                    <!-- </div>
-                    <div style=" margin-left: 20px;"> -->
                         <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryWRST()">
                         </div>
-                    <!-- </div> -->
                 </div>
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
                     :data="popupDataEmailSingle" />

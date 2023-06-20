@@ -55,7 +55,8 @@
             {{ $filters.formatDate(data.value) }}
           </template>
           <DxColumn data-field="code" caption="신청코드" />
-          <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
+          <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" 
+           />
           <template #grid-cell="{ data }">
             <a-tag style="width: 55px" :color="getColorTag(data.value)?.name">{{
               getColorTag(data.value)?.tag_name
@@ -297,6 +298,12 @@ export default defineComponent({
         trigger.value = true;
       }, 500);
     };
+
+    const cellStatus = (datarow: any) => {
+      console.log(`output->getColorTag(datarow.status)?.tag_name`,getColorTag(datarow.status)?.tag_name)
+      // return `${datarow.status}`;
+      return `${getColorTag(datarow.status)?.tag_name}`;
+    }
     return {
       loading,
       move_column,
@@ -322,6 +329,7 @@ export default defineComponent({
       listCheckBox,
       keyRefreshPopup310,
       subReqStatus,
+      cellStatus
     };
   },
 });

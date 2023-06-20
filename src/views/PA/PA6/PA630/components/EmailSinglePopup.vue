@@ -113,20 +113,4 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.custom-modal-send-email {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: center;
-  margin-top: 20px;
-
-  img {
-    width: 40px;
-    margin-right: 5px;
-  }
-
-  span {
-    padding-left: 5px;
-  }
-}
 </style>
