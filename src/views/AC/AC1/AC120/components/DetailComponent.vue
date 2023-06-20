@@ -510,7 +510,6 @@ export default defineComponent({
 					// code block
 				}
 				formData.value.amount = -formData.value.amount;
-				// emit("changeAmountDataGrid", true);
 			}
 		};
 		const openShowFull = () => {
