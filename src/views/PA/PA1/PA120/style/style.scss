@@ -40,12 +40,12 @@
     margin-left: 10px;
     border: 1px solid #d7d7d7;
     padding-top: 10px;
-    height: calc(100vh - 152px);
+    height: calc(100vh - 161px);
+    overflow: auto;
   }
   :deep .col-left {
     border: 1px solid #d7d7d7;
     padding-top: 10px;
-    padding-bottom: 10px;
   }
   .current-user {
     background-color: #d99694;

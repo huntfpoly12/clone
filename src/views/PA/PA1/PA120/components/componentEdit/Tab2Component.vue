@@ -417,7 +417,7 @@
                   <number-box-money
                     v-else
                     :textColor="
-                      item.value < 1000 && item.itemCode == 1012 ? 'red' : ''
+                      checkIncomeFirst && item.itemCode == 1012 ? 'red' : ''
                     "
                     width="130px"
                     :spinButtons="false"
@@ -538,10 +538,12 @@ export default defineComponent({
     const presidentEditPA120 = computed(
       () => store.state.common.presidentEditPA120
     );
-    const presidentOrigin = ref(false);
+    const presidentOriginPA120 = computed(
+      () => store.state.common.presidentOriginPA120
+    );
 
     const globalYear = ref<number>(
-      parseInt(sessionStorage.getItem("paYear") ?? "0")
+      parseInt(sessionStorage.getItem("paYear") || "0")
     );
     const initFormTab2PA120 = computed(
       () => store.state.common.initFormTab2PA120
@@ -563,7 +565,7 @@ export default defineComponent({
     let countRestFirstRun = ref(-1);
     const modalCalc = ref(false);
     const insuranceDisabled = ref(false);
-
+    const checkIncomeFirst = ref(false);
     // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
@@ -728,7 +730,6 @@ export default defineComponent({
         let editRowData: any = {};
         insuranceDisabled.value = data.president;
         store.state.common.presidentEditPA120 = data.president;
-        presidentOrigin.value = data.president;
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
         editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
         editRowData.longTermCareInsuranceDeduction =
@@ -741,7 +742,7 @@ export default defineComponent({
           editRowData.insuranceSupport
         ) {
           editRowData.nationalPensionSupportPercent =
-            data.nationalPensionSupportPercent ?? 0;
+            data.nationalPensionSupportPercent || 0;
         } else {
           delete initFormTab2PA120.value.nationalPensionSupportPercent;
           delete editRowTab2PA120.value.nationalPensionSupportPercent;
@@ -751,7 +752,7 @@ export default defineComponent({
           editRowData.insuranceSupport
         ) {
           editRowData.employeementInsuranceSupportPercent =
-            data.employeementInsuranceSupportPercent ?? 0;
+            data.employeementInsuranceSupportPercent || 0;
         } else {
           delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
           delete editRowTab2PA120.value.employeementInsuranceSupportPercent;
@@ -802,6 +803,9 @@ export default defineComponent({
               (item2: any) => item2.itemCode == item1.itemCode
             );
             let value = item2Value?.amount ? item2Value.amount : 0;
+            if (key == 3 && value > 10000) {
+              checkIncomeFirst.value = true;
+            }
             initFormTab2PA120.value.deductionItems[key] = { ...item1, value };
             editRowTab2PA120.value.deductionItems[key] = JSON.parse(
               JSON.stringify({ ...item1, value })
@@ -985,31 +989,24 @@ export default defineComponent({
     watch(
       () => presidentEditPA120.value,
       (newValue) => {
-        if (newValue && newValue != presidentOrigin.value) {
-          initFormTab2PA120.value.employeementInsuranceDeduction = false;
-          initFormTab2PA120.value.insuranceSupport = false;
+        if (newValue && newValue != presidentOriginPA120.value) {
+          store.state.common.isDisableInsuranceSupport = true;
           delete initFormTab2PA120.value.nationalPensionSupportPercent;
           delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
-          updateDeduction();
+          if (initFormTab2PA120.value.employeementInsuranceDeduction) {
+            editRowTab2PA120.value.deductionItems[3].value = 0;
+            initFormTab2PA120.value.employeementInsuranceDeduction = false;
+            initFormTab2PA120.value.insuranceSupport = false;
+            updateDeduction();
+          }
+        } else {
+          store.state.common.isDisableInsuranceSupport = false;
         }
         insuranceDisabled.value = newValue;
       },
       { deep: true }
     );
 
-    //  // watch initFormTab2PA120 to check calculate button
-    // watch(
-    //   () => initFormTab2PA120.value,
-    //   (newVal) => {
-    //     console.log(`output->newVal`,newVal)
-    //     if (!compareForm()) {
-    //       isBtnYellow.value = true;
-    //     } else {
-    //       isBtnYellow.value = false;
-    //     }
-    //   },
-    //   { deep: true }
-    // );
     const isBtnYellow = ref(false);
     const compareForm = () => {
       const { deductionItems, ...rest } = initFormTab2PA120.value;
@@ -1079,6 +1076,7 @@ export default defineComponent({
           employeeId.value = value;
           configDeductionTrigger.value = true;
           configPayItemTrigger.value = true;
+          checkIncomeFirst.value = false;
         }
       },
       { deep: true }
@@ -1114,6 +1112,7 @@ export default defineComponent({
         e == 1004
       ) {
         initFormTab2PA120.value.deductionItems[3].value = 0;
+        editRowTab2PA120.value.deductionItems[3].value = 0;
         return true;
       }
       return false;
@@ -1163,6 +1162,7 @@ export default defineComponent({
       vnode,
       handleFocusOut,
       insuranceDisabled,
+      checkIncomeFirst,
     };
   },
 });
