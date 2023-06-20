@@ -1,51 +1,24 @@
 <template>
-  <a-modal
-    :visible="modalStatus"
-    @cancel="setModalVisible"
-    :mask-closable="false"
-    class="confirm-md"
-    footer=""
-    :width="562"
-  >
+  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
+    :width="562">
     <standard-form action="" name="email-single-630">
       <div class="custom-modal-send-email">
         <img src="@/assets/images/email.svg" alt="" />
         <span>급여대장을</span>
-        <DxSelectBox
-          :data-source="dataSelect"
-          :style="{ width: '100px', display: 'inline-block' }"
-          v-model:value="valueSelect"
-          value-expr="value"
-          display-expr="name"
-          :required="true"
-        >
+        <DxSelectBox :data-source="dataSelect" :style="{ width: '100px', display: 'inline-block' }"
+          v-model:value="valueSelect" value-expr="value" display-expr="name" :required="true">
         </DxSelectBox>
       </div>
       <div class="custom-modal-send-email">
         <!-- <img src="@/assets/images/email.svg" alt="" /> -->
-        <mail-text-box
-          width="150px"
-          :required="true"
-          v-model:valueInput="emailAddress"
-        ></mail-text-box>
+        <mail-text-box width="150px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
         <span>로 메일을 발송하시겠습니까?</span>
       </div>
-      <div class="text-align-center mt-50">
-        <button-basic
-          class="button-form-modal"
-          :text="'아니요'"
-          :type="'default'"
-          :mode="'outlined'"
-          @onClick="setModalVisible()"
-        />
-        <button-basic
-          class="button-form-modal"
-          :text="'네. 발송합니다'"
-          :width="140"
-          :type="'default'"
-          :mode="'contained'"
-          @onClick="onSubmit"
-        />
+      <div class="text-center mt-50">
+        <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
+          @onClick="setModalVisible()" />
+        <button-basic class="ml-5" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
+          @onClick="onSubmit" />
       </div>
     </standard-form>
   </a-modal>
@@ -150,33 +123,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
-.custom-modal-send-email {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: center;
-  margin-top: 20px;
-
-  img {
-    width: 40px;
-    margin-right: 5px;
-  }
-
-  span {
-    padding: 0 5px;
-  }
-}
-
-.mt-50 {
-  margin-top: 50px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
-}
-</style>
+<style lang="scss" scoped></style>

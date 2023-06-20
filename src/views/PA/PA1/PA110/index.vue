@@ -319,28 +319,16 @@
 							{{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
 						</template>
 					</DxDataGrid>
-					<!-- <div v-if="store.state.common.pa110.dataTaxPayInfo.length" -->
-					<div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
-						class="fs-14">
-						<!-- <div> -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
-								<div>
-									사원수<span>[{{ store.state.common.pa110.dataTaxPayInfo.length }}]</span>
-								</div>
-							</div>
-						<!-- </div>
-						<dividerProps> -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalPay()">
-							</div>
-						<!-- </dividerProps>
-						<div > -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
-							</div>
-						<!-- </div>
-						<div > -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
-							</div>
-						<!-- </div> -->
+					<div class="custom-smmary">
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content">
+							사원수<span>[{{ store.state.common.pa110.dataTaxPayInfo.length }}]</span>
+						</div>
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalPay()">
+						</div>
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
+						</div>
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
+						</div>
 					</div>
 				</a-spin>
 			</a-col>

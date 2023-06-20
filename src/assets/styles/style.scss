@@ -423,3 +423,31 @@ $lenght: 50;
   background-color: #C00000;
   border: 3px solid #953735 !important;
 }
+.custom-smmary {
+  border: 1px solid #ddd;
+  border-top: none;
+  background-color: #f2f5f7;
+  display: flex;
+  padding: 5px;
+  justify-content: space-between;
+  span {
+    font-size: 15px;
+    font-weight: bold;
+  }
+}
+.custom-modal-send-email {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	justify-content: center;
+	margin-top: 20px;
+
+	img {
+		width: 40px;
+		margin-right: 5px;
+	}
+
+	span {
+		padding-left: 5px;
+	}
+}

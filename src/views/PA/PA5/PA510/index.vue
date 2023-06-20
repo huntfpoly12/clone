@@ -344,8 +344,7 @@
 							{{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
 						</template>
 					</DxDataGrid>
-					<div style="border: 1px solid #ddd; border-top: none;  width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
-						class="fs-14">
+					<div class="custom-smmary">
 						<!-- <div style="margin-left: 70px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 								<div>

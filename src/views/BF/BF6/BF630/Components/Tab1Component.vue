@@ -60,7 +60,7 @@
 	</div>
 	<div class="grid-view">
 		<div class="content-grid">
-			<a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
+			<a-spin :spinning="loadingIncomeWagePayment" size="large">
 				<DxDataGrid id="DxDataGrid-bf-630-tab1" :show-row-lines="true" :hoverStateEnabled="true"
 					:data-source="dataSource" :show-borders="true" key-expr="companyId" class="mt-10"
 					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -128,10 +128,9 @@
             <DxTotalItem cssClass="bf-630-sumary" column="제작현황" :customize-text="productStatusSummary" />
           </DxSummary> -->
 				</DxDataGrid>
-				<div class="DxDataGrid-bf-630-tab1-sumary">
-					<div v-html="`전체: <span style='font-size: 16px'>[${dataSource.length}]</span>`
-						"></div>
-					<div v-html="productStatusSummary()"></div>
+				<div class="custom-smmary">
+					<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="`전체 <span>[${dataSource.length}]</span>`"></div>
+					<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="productStatusSummary()"></div>
 				</div>
 			</a-spin>
 		</div>
@@ -200,7 +199,7 @@ export default defineComponent({
 		const move_column = computed(() => store.state.settings.move_column);
 		const colomn_resize = computed(() => store.state.settings.colomn_resize);
 		const trigger = ref<boolean>(true);
-		const triggerElecFilings = ref<boolean>(false);
+		// const triggerElecFilings = ref<boolean>(false);
 		const dateSubmission = ref(new Date().getFullYear() + 1 + "0310");
 		// for checkbox
 		const checkbox1 = ref<boolean>(false);
@@ -245,24 +244,24 @@ export default defineComponent({
 			})
 		);
 
-		const {
-			result: resElectronicFilings,
-			loading: loadingElectronicFilings,
-			refetch: refetchElectronicFilings,
-			onError: onErrorElectronicFilings,
-		} = useQuery(
-			queries.getElectronicFilingsByIncomeWagePaymentStatement,
-			{
-				input: {
-					companyId: companyId,
-					imputedYear: filterForm.imputedYear,
-				},
-			},
-			() => ({
-				enabled: triggerElecFilings.value,
-				fetchPolicy: "no-cache",
-			})
-		);
+		// const {
+		// 	result: resElectronicFilings,
+		// 	loading: loadingElectronicFilings,
+		// 	refetch: refetchElectronicFilings,
+		// 	onError: onErrorElectronicFilings,
+		// } = useQuery(
+		// 	queries.getElectronicFilingsByIncomeWagePaymentStatement,
+		// 	{
+		// 		input: {
+		// 			companyId: companyId,
+		// 			imputedYear: filterForm.imputedYear,
+		// 		},
+		// 	},
+		// 	() => ({
+		// 		enabled: triggerElecFilings.value,
+		// 		fetchPolicy: "no-cache",
+		// 	})
+		// );
 		// ===================DONE GRAPQL==================================
 		// watch result  api searchIncomeWagePaymentStatementElectronicFilingsByYear
 		watch(resIncomeWagePayment, (value: any) => {
@@ -314,16 +313,14 @@ export default defineComponent({
 		});
 
 		// watch result  api getElectronicFilingsByIncomeWagePaymentStatement
-		watch(
-			() => resElectronicFilings,
-			(value) => {
-				if (value) {
-				}
-			}
-		);
-		onErrorElectronicFilings((e) => {
-			//notification('error', e.message)
-		});
+		// watch(() => resElectronicFilings,(value) => {
+		// 		if (value) {
+		// 		}
+		// 	}
+		// );
+		// onErrorElectronicFilings((e) => {
+		// 	//notification('error', e.message)
+		// });
 
 		// watch checkbox change
 		watch(
@@ -499,11 +496,11 @@ export default defineComponent({
 					totalBeforeProduction++;
 				}
 			});
-			return `제작요청전 <span style="font-size: 16px">[${totalBeforeProduction}]</span>
-              제작대기 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 0)}]</span> 
-              제작중 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 1)}]</span> 
-              제작성공 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, 2)}]</span>
-              제작실패 <span style="font-size: 16px">[${countStatus(productionStatusArr.value, -1)}]</span> `;
+			return `제작요청전 <span>[${totalBeforeProduction}]</span>
+              제작대기 <span>[${countStatus(productionStatusArr.value, 0)}]</span> 
+              제작중 <span>[${countStatus(productionStatusArr.value, 1)}]</span> 
+              제작성공 <span>[${countStatus(productionStatusArr.value, 2)}]</span>
+              제작실패 <span>[${countStatus(productionStatusArr.value, -1)}]</span> `;
 		};
 		const productionStatusData = (emitVal: any, index: number) => {
 			countListData.value++;
@@ -639,7 +636,7 @@ export default defineComponent({
 			checkbox2,
 			checkbox3,
 			checkbox4,
-			loadingElectronicFilings,
+			// loadingElectronicFilings,
 			loadingIncomeWagePayment,
 			trigger,
 			userInfor,
@@ -659,18 +656,6 @@ export default defineComponent({
 </script>
 <style scoped lang="scss" src="../style/styleTabs.scss"></style>
 <style scoped lang="scss">
-.DxDataGrid-bf-630-tab1-sumary {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	font-weight: bold;
-	border: 1px solid #ddd;
-	border-top: none;
-	padding: 7px;
-	padding-left: 80px;
-	color: rgba(51, 51, 51, 0.7);
-}
-
 :deep(.ant-form-item-label > label) {
 	width: 110px;
 	// padding-left: 10px;
