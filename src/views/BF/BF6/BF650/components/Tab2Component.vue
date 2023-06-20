@@ -57,7 +57,7 @@
           class="fix-width-label"
         >
           <list-manager-dropdown
-            v-model:valueInput="dataSearch.manageUserId"
+            v-model:valueInput="dataSearch.productionRequestUserId"
             width="200"
             filterData
           />
@@ -223,11 +223,7 @@ export default defineComponent({
       })
     );
     resTable((val: any) => {
-      if(dataSearch.value.manageUserId) {
-        dataSource.value = val.data.searchElectronicFilingFileProductions.filter((i: any) => i?.productionRequestUser?.id === dataSearch.value.manageUserId);
-      }else {
-        dataSource.value = val.data.searchElectronicFilingFileProductions;
-      }
+      dataSource.value = val.data.searchElectronicFilingFileProductions;
       dataModalDetail.value.type = dataSearch.value.type;
       trigger.value = false;
     });
