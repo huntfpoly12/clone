@@ -64,32 +64,25 @@
                         <DxTotalItem cssClass="custom-sumary refTotalDifference" column="비고" :customize-text="checkAlone" />
                     </DxSummary> -->
 				</DxDataGrid>
-				<div style="
-            border: 1px solid #ddd;
-            border-top: none;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 20px;
-          " class="fs-14">
-					<div style="margin-left: 10px">
+				<div class="custom-smmary">
+					<!-- <div style="margin-left: 10px"> -->
 						<div class="dx-datagrid-summary-item dx-datagrid-text-content">
-							<div>
+							<!-- <div> -->
 								전체<span>[{{ dataSource?.length }}]</span>
-							</div>
+							<!-- </div> -->
 						</div>
-					</div>
-					<div style="margin-left: 60px">
+					<!-- </div>
+					<div style="margin-left: 60px"> -->
 						<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customSumAmount()"></div>
-					</div>
-					<div style="margin-left: 20px">
+					<!-- </div>
+					<div style="margin-left: 20px"> -->
 						<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 							지출액 <span>[{{ $filters.formatCurrency(amount) }}]</span>
 						</div>
-					</div>
-					<div style="margin-left: 20px">
+					<!-- </div>
+					<div style="margin-left: 20px"> -->
 						<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="checkAlone()"></div>
-					</div>
+					<!-- </div> -->
 				</div>
 			</standard-form>
 		</div>
@@ -473,8 +466,4 @@ export default defineComponent({
 .dx-datagrid-rowsview .dx-row>tr>td {
 	overflow: unset;
 }
-
-:deep .dx-datagrid-text-content span {
-	font-size: 15px;
-	font-weight: bold;
-}</style>
+</style>

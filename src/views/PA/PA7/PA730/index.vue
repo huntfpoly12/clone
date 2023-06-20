@@ -109,9 +109,7 @@
 						</div>
 					</template>
 				</DxDataGrid>
-				<div v-if="dataSource.length"
-					style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
-					class="fs-14">
+				<div class="custom-smmary">
 					<div>
 						<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 							<div>전체<span>[{{ dataSource.length }}]</span></div>

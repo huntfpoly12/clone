@@ -128,13 +128,10 @@
                                 <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
                                     style="width: 25px;" />
                             </a-tooltip>
-
                         </div>
                     </template>
                 </DxDataGrid>
-                <div v-if="dataSource.length"
-                    style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
-                    class="fs-14">
+                <div class="custom-smmary">
                     <!-- <div style="margin-left: 70px;"> -->
                     <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryInfo()"></div>
                     <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTextSummaryTotalSalary()">
@@ -324,42 +321,42 @@ export default defineComponent({
                     halfWay++;
                 }
             });
-            return `전체: [${filters.formatCurrency(total)}] / 계속: [${filters.formatCurrency(continuee)}] / 중도: [${filters.formatCurrency(halfWay)}])`;
+            return `전체 <span>[${filters.formatCurrency(total)}]</span> / 계속 <span>[${filters.formatCurrency(continuee)}]</span> / 중도 <span>[${filters.formatCurrency(halfWay)}]</span>)`;
         };
         const customTextSummaryTotalSalary = () => {
             let total = 0;
             dataSource.value.map((val: any) => {
                 total = total + val.totalSalary
             });
-            return `총급여액합계: [${filters.formatCurrency(total)}]`;
+            return `총급여액합계 <span>[${filters.formatCurrency(total)}]</span>`;
         };
         const customTextSummaryTaxFreeIncome = () => {
             let total = 0;
             dataSource.value.map((val: any) => {
                 total = total + val.taxFreeIncome
             });
-            return `비과세금액합계: [${filters.formatCurrency(total)}]`;
+            return `비과세금액합계 <span>[${filters.formatCurrency(total)}]</span>`;
         };
         const customTextSummaryDecidedTaxAmount = () => {
             let total = 0;
             dataSource.value.map((val: any) => {
                 total = total + val.decidedTaxAmount
             });
-            return `결정세액합계: [${filters.formatCurrency(total)}]`;
+            return `결정세액합계 <span>[${filters.formatCurrency(total)}]</span>`;
         };
         const customTextSummaryPrePaidTaxAmount = () => {
             let total = 0;
             dataSource.value.map((val: any) => {
                 total = total + val.prePaidIncomeTaxAmount
             });
-            return `기납부세액 (현)합계: [${filters.formatCurrency(total)}]`;
+            return `기납부세액 (현)합계 <span>[${filters.formatCurrency(total)}]</span>`;
         };
         const customTextSummaryDeductibleTaxAmount = () => {
             let total = 0;
             dataSource.value.map((val: any) => {
                 total = total + val.deductibleIncomeTaxAmount
             });
-            return `차감징수세액합계: [${filters.formatCurrency(total)}]`;
+            return `차감징수세액합계 <span>[${filters.formatCurrency(total)}]</span>`;
         };
 
         return {
