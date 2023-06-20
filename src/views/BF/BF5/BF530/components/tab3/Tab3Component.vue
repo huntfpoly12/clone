@@ -530,7 +530,6 @@ export default defineComponent({
         });
         store.commit("common/filterDsTab3Bf530", arr);
         setTimeout(() => {
-          console.log(`output-2`);
           loadingDataSource.value = false;
         }, 20);
       },

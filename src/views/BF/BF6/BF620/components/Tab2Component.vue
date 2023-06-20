@@ -199,7 +199,7 @@
             format="yyyy-MM-dd HH:mm"
             width="120"
           />
-          <DxColumn caption="제작현황" cell-template="productionStatus" />
+          <DxColumn caption="제작현황" cell-template="productionStatus" width="180" />
           <template #productionStatus="{ data }: any">
             <GetStatusTable
               :dataProcduct="data.data"

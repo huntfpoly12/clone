@@ -141,6 +141,7 @@
               :calculateCellValue="calculateIncomeTypeCodeAndName"
             />
             <template #grade-cell="{ data }: any">
+              {{ data.data.nationalPensionDeduction }}
               <div>
                 <four-major-insurance
                   v-if="data.data.nationalPensionDeduction"

@@ -199,7 +199,7 @@
             format="yyyy-MM-dd HH:mm"
             width="120"
           />
-          <DxColumn caption="제작현황" cell-template="productionStatus" />
+          <DxColumn caption="제작현황" cell-template="productionStatus" width="180" />
           <template #productionStatus="{ data }: any">
             <div class="d-flex-center">
               <GetStatusTable
@@ -213,12 +213,6 @@
               >
             </div>
           </template>
-          <!-- <DxSummary>
-          <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
-          <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text=" reportTypeSummary " />
-          <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text=" afterDeadlineSummary " />
-          <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
-        </DxSummary> -->
         </DxDataGrid>
         <a-row class="fs-14 summary-ctn">
           <a-col span="8">

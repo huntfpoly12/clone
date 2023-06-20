@@ -56,10 +56,10 @@
           </template>
           <DxColumn data-field="code" caption="신청코드" />
           <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" 
-           />
+            :calculateCellValue="cellStatus" />
           <template #grid-cell="{ data }">
-            <a-tag style="width: 55px" :color="getColorTag(data.value)?.name">{{
-              getColorTag(data.value)?.tag_name
+            <a-tag style="width: 55px" :color="getColorTag(data.data.status)?.name">{{
+              getColorTag(data.data.status)?.tag_name
             }}</a-tag>
           </template>
           <DxColumn data-field="companyCode" caption="사업자코드" css-class="cell-center" cell-template="companyCode" />
@@ -70,7 +70,7 @@
           <DxColumn data-field="companyAddress" caption="주소" />
           <DxColumn data-field="presidentName" caption="대표자" />
           <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-          <DxColumn caption="신청서비스" cell-template="acc-service" />
+          <DxColumn caption="신청서비스" cell-template="acc-service" :calculateCellValue="cellService" />
           <template #acc-service="{ data }">
             <div style="display: flex; align-items: center;">
               <div style="width: 45px;">
@@ -300,7 +300,12 @@ export default defineComponent({
     };
 
     const cellStatus = (datarow: any) => {
-      console.log(`output->getColorTag(datarow.status)?.tag_name`,getColorTag(datarow.status)?.tag_name)
+      console.log(`output->getColorTag(datarow.status)?.tag_name`,getColorTag(datarow.status))
+      // return `${datarow.status}`;
+      return `${getColorTag(datarow.status)?.tag_name}`;
+    }
+    const cellService = (datarow: any) => {
+      console.log(`output->getColorTag(datarow.status)?.tag_name`,getColorTag(datarow.status))
       // return `${datarow.status}`;
       return `${getColorTag(datarow.status)?.tag_name}`;
     }
@@ -329,7 +334,8 @@ export default defineComponent({
       listCheckBox,
       keyRefreshPopup310,
       subReqStatus,
-      cellStatus
+      cellStatus,
+      cellService,
     };
   },
 });
