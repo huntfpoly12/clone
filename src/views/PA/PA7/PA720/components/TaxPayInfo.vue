@@ -68,38 +68,38 @@
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           <div style="width: 160px;">
             사업소득자[소득구분]수
-            <span style="font-size: 16px;">[{{ dataSourceDetail.length }}]</span>
+            <div style="font-size: 16px;">[{{ dataSourceDetail.length }}]</div>
           </div>
         </div>
       </a-col>
       <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           지급액합계
-          <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'paymentAmount') }}]</span>
+          <div style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'paymentAmount') }}]</div>
         </div>
       </a-col>
       <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           필요경비합계
-          <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'requiredExpenses') }}]</span>
+          <div style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'requiredExpenses') }}]</div>
         </div>
       </a-col>
       <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           소득금액합계
-          <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'incomePayment') }}]</span>
+          <div style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'incomePayment') }}]</div>
         </div>
       </a-col>
       <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           공제합계
-          <span style="font-size: 16px;">[{{ customTextSummary() }}]</span>
+          <div style="font-size: 16px;">[{{ customTextSummary() }}]</div>
         </div>
       </a-col>
       <a-col class="sum-item">
         <div class="dx-datagrid-summary-item dx-datagrid-text-content">
           차인지급액합계
-          <span style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</span>
+          <div style="font-size: 16px;">[{{ calcSummary(dataSourceDetail, 'actualPayment') }}]</div>
         </div>
       </a-col>
     </a-row>

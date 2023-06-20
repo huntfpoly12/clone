@@ -46,28 +46,28 @@
                   <span>제작전은 제작요청되지 않은 상태입니다.</span>
                 </info-tool-tip>
               </a-col>
-              <a-col style="display: flex">
-                <div class="d-flex-center">
-                  <label class="lable-item ml-15"
-                    >작성일(지방소득세납부서):</label
-                  >
+            </a-row>
+          </template>
+          <template #request>
+            <a-row align="middle">
+              <a-col>
+                <a-row align="middle">
+                  <span class="mr-10">작성일(지방소득세납부서):</span>
                   <date-time-box
                     width="150px"
                     default="2022-12-12"
                     dateFormat="YYYY-MM-DD"
                   />
-                </div>
+                </a-row>
               </a-col>
+              <a-tooltip placement="top" color="black">
+                <template #title>전자신고파일 제작 요청</template>
+                <div class="btn-modal-save" @click="onRequestFile">
+                  <SaveOutlined class="fz-20 ml-5 action-save" />
+                  <span style="margin-left: 5px">파일제작요청</span>
+                </div>
+              </a-tooltip>
             </a-row>
-          </template>
-          <template #request>
-            <a-tooltip placement="top" color="black">
-              <template #title>전자신고파일 제작 요청</template>
-              <div class="btn-modal-save" @click="onRequestFile">
-                <SaveOutlined class="fz-20 ml-5 action-save" />
-                <span style="margin-left: 5px">파일제작요청</span>
-              </div>
-            </a-tooltip>
           </template>
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="code" width="90" />

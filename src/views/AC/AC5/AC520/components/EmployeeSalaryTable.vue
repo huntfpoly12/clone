@@ -19,7 +19,7 @@
       <DxPaging :page-size="0"/>
       <DxToolbar>
         <DxItem location="after" >
-          <DxButton @click="handleFillValuePreIndex" text="전예산액 불러오기" class="d-flex-center" style="background: #337ab7; color: white; height: 100%;" />
+          <DxButton @click="handleFillValuePreIndex" text="전임직원수일람표 불러오기" class="d-flex-center" style="background: #337ab7; color: white; height: 100%;" />
         </DxItem>
         <DxItem location="after" name="addRowButton" css-class="cell-button-add">
           <a-tooltip title="임직원보수등록">
@@ -196,38 +196,38 @@
 
 <script lang="ts" setup>
 import {
-  DxButton as DxButtonGrid,
-  DxColumn,
-  DxDataGrid,
-  DxEditing,
-  DxItem,
-  DxLookup,
-  DxPaging,
-  DxRequiredRule,
-  DxRowDragging,
-  DxSummary, DxTexts,
-  DxToolbar,
-  DxTotalItem
+DxButton as DxButtonGrid,
+DxColumn,
+DxDataGrid,
+DxEditing,
+DxItem,
+DxLookup,
+DxPaging,
+DxRequiredRule,
+DxRowDragging,
+DxSummary, DxTexts,
+DxToolbar,
+DxTotalItem
 } from 'devextreme-vue/data-grid';
 
-import {computed, reactive, ref, watch} from 'vue'
-import {useStore} from "vuex";
-import {RowDraggingReorderEvent, SavingEvent} from "devextreme/ui/data_grid";
-import DataSource from 'devextreme/data/data_source';
-import mutations from '@/graphql/mutations/AC/AC5/AC520'
-import {useMutation, useQuery} from "@vue/apollo-composable";
-import {companyId} from "@/helpers/commonFunction";
-import notification from "@/utils/notification";
-import {Message} from "@/configs/enum";
-import filters from "@/helpers/filters";
-import searchEmployeeOccupations from '@/graphql/queries/AC/AC5/AC520/searchEmployeeOccupations';
+import { Message } from "@/configs/enum";
+import mutations from '@/graphql/mutations/AC/AC5/AC520';
 import getEmployeePayTable from '@/graphql/queries/AC/AC5/AC520/getEmployeePayTable';
+import searchEmployeeOccupations from '@/graphql/queries/AC/AC5/AC520/searchEmployeeOccupations';
+import { companyId } from "@/helpers/commonFunction";
+import filters from "@/helpers/filters";
+import notification from "@/utils/notification";
+import { DeleteOutlined, PlusOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
-import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons-vue";
 import DxSelectBox from "devextreme-vue/select-box";
-import {ValueChangedEvent} from "devextreme/ui/select_box";
 import Guid from 'devextreme/core/guid';
-import debounce from 'lodash/debounce';
+import DataSource from 'devextreme/data/data_source';
+import { RowDraggingReorderEvent, SavingEvent } from "devextreme/ui/data_grid";
+import { ValueChangedEvent } from "devextreme/ui/select_box";
+import { computed, reactive, ref, watch } from 'vue';
+import { useStore } from "vuex";
+import { calculateEmployeeResult } from '../utils';
 
 const emit = defineEmits(['closePopup'])
 const gridRef = ref()
@@ -328,75 +328,29 @@ onError((error) => {
 
 })
 
-const handleSaving = debounce((e: SavingEvent) => {
-  const res = formRef.value.validate();
-  if (res.isValid) {
-    // remove all key "key" in dataAllRow
-    const inputs = dataAllRow.value.map((item: any) => {
-      const {key, ...rest} = item;
-      return rest;
-    });
-    const result = {
-      companyId,
-      facilityBusinessId: globalFacilityBizId.value,
-      fiscalYear: acYear.value,
-      index: dataBudget.value?.index ?? 0,
-      totalLaborCost: formatSummary.total,
-      totalDirectLaborCost: formatSummary.total1,
-      totalIndirectLaborCost: formatSummary.total2,
-      accounSubjectOrder: JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0].theOrder,
-      inputs
-    }
-    mutate(result)
-  }
+const handleSaving = (e: SavingEvent) => {
   e.cancel = true
-}, 300)
+    // remove all key "key" in dataAllRow
+  const inputs = e.changes.map((item: any) => {
+    const {key, ...rest} = item.data
+    return rest
+  })
+  const result = {
+    companyId,
+    facilityBusinessId: globalFacilityBizId.value,
+    fiscalYear: acYear.value,
+    index: dataBudget.value?.index ?? 0,
+    totalLaborCost: formatSummary.total,
+    totalDirectLaborCost: formatSummary.total1,
+    totalIndirectLaborCost: formatSummary.total2,
+    accounSubjectOrder: JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0].theOrder,
+    inputs
+  }
+  mutate(result)
+}
 watch(() => dataAllRow.value, (val: any) => {
   if (val) {
-    const initialValue = {
-      salary1: 0,
-      salary2: 0,
-      allowance1: 0,
-      allowance2: 0,
-      dailyAllowance1: 0,
-      dailyAllowance2: 0,
-      retirementReserve1: 0,
-      retirementReserve2: 0,
-      socialInsuranceLevy1: 0,
-      socialInsuranceLevy2: 0,
-      total1: 0,
-      total2: 0,
-      total: 0,
-    };
-    store.commit('common/setIsChangedFormAc520', val.length > 0)
-    const result = val.reduce((acc: any, item: any) => {
-      const {
-        classification,
-        salary = 0,
-        allowance = 0,
-        dailyAllowance = 0,
-        retirementReserve = 0,
-        socialInsuranceLevy = 0,
-      } = item;
-
-      if (classification === 1) {
-        acc.salary1 += salary;
-        acc.allowance1 += allowance;
-        acc.dailyAllowance1 += dailyAllowance;
-        acc.retirementReserve1 += retirementReserve;
-        acc.socialInsuranceLevy1 += socialInsuranceLevy;
-      } else if (classification === 2) {
-        acc.salary2 += salary;
-        acc.allowance2 += allowance;
-        acc.dailyAllowance2 += dailyAllowance;
-        acc.retirementReserve2 += retirementReserve;
-        acc.socialInsuranceLevy2 += socialInsuranceLevy;
-      }
-      acc.total1 = acc.salary1 + acc.allowance1 + acc.dailyAllowance1 + acc.retirementReserve1 + acc.socialInsuranceLevy1;
-      acc.total2 = acc.salary2 + acc.allowance2 + acc.dailyAllowance2 + acc.retirementReserve2 + acc.socialInsuranceLevy2;
-      acc.total = acc.total1 + acc.total2;
-      return acc;
-    }, initialValue)
+    const result = calculateEmployeeResult(val)
     Object.assign(formatSummary, result)
     const listCellFooter = document.querySelectorAll('.dx-datagrid-summary-item.dx-datagrid-text-content')
     if(listCellFooter.length > 19) {
@@ -455,18 +409,6 @@ const onCellPrepared = (e: any) => {
   }
 }
 const onRowPrepared = (e: any) => {
-  if (!e.isEditing && e.rowType === 'data') {
-    if (!dataAllRow.value.length) {
-      dataAllRow.value.push({...e.data, key: e.key})
-    } else {
-      const isRowExits = dataAllRow.value.find((item: any) => item.key === e.key)
-      if (!isRowExits) dataAllRow.value.push({...e.data, key: e.key})
-      else {
-        if (e?.removed) dataAllRow.value = dataAllRow.value.filter((item: any) => item.key !== e.key)
-        else dataAllRow.value = dataAllRow.value.map((item: any) => item.key === e.key ? {...item, ...e.data} : {...item})
-      }
-    }
-  }
   // custom text column drag of footer row
   const isFooterRow = e.rowElement.classList.contains('dx-footer-row')
   if (isFooterRow) {

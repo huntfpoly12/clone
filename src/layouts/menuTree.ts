@@ -58,7 +58,7 @@ export default [
         title: "업무마감",
         id: "bf-500",
         subMenus: [
-          {title: "회계업무마감", url: "#", id: "bf-510", roles: ROLE_BF500},
+          {title: "회계업무마감관리", url: "/bf-510", id: "bf-510", roles: ROLE_BF500},
           {title: "4대보험업무관리", url: "/bf-530", id: "bf-530", roles: ROLE_BF500},
         ],
         roles: ROLE_BF500
@@ -119,20 +119,20 @@ export default [
         title: "W4C",
         id: "ac-200",
         subMenus: [
-          {title: "전표/결의", url: "/ac-210", id: "ac-210", roles: ROLE_AC000},
-          {title: "예산서", url: "#", id: "ac-220", roles: ROLE_AC000},
-          {title: "결산서", url: "#", id: "ac-230", roles: ROLE_AC000},
+          {title: "전표업로드", url: "/ac-210", id: "ac-210", roles: ROLE_AC000},
+          // {title: "예산서", url: "#", id: "ac-220", roles: ROLE_AC000},
+          // {title: "결산서", url: "#", id: "ac-230", roles: ROLE_AC000},
         ],
         roles: ROLE_AC000
       },
-      {
-        title: "예산",
-        id: "ac-300",
-        subMenus: [
-          {title: "예산서자동작성", url: "#", id: "ac-380", roles: ROLE_AC000},
-        ],
-        roles: ROLE_AC000
-      },
+      // {
+      //   title: "예산",
+      //   id: "ac-300",
+      //   subMenus: [
+      //     {title: "예산서자동작성", url: "#", id: "ac-380", roles: ROLE_AC000},
+      //   ],
+      //   roles: ROLE_AC000
+      // },
       {
         title: "보고서",
         id: "ac-500",
