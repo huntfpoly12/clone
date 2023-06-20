@@ -107,7 +107,7 @@
               원
               <a-tooltip placement="top" class="custom-tooltip">
                 <template #title>
-                  지급액 - 공제합계.
+                  지급액 - 공제합계
                 </template>
                 <div style="text-align: center;">
                   <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />

@@ -1,11 +1,6 @@
 #pa-220 {
     #gridContainerPA220 {
-        height: calc(100vh - 230px);
-        :deep .dx-datagrid-header-panel {
-            position: absolute;
-            top: -40px;
-            right: 0;
-        }
+        height: calc(100vh - 185px);
     }
     :deep .dx-freespace-row {
         display: none !important;
@@ -38,11 +33,6 @@
             padding: 3px;
         }
     }
-    .page-content {
-        .header-group {
-            margin-top: 5px;
-        }
-    }
 
     .custom-flex {
         display: flex;
@@ -52,7 +42,6 @@
 
     .created-date {
         float: right;
-        margin-right: 90px;
         display: flex;
         align-items: center;
 
@@ -117,7 +106,7 @@
 
     .status-red,
     :deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
-        background: rgb(194, 56, 56);
+        background: rgb(76, 134, 65);
         padding: 2px 15px;
         border-radius: 5px;
         color: white;
@@ -125,7 +114,7 @@
 
     .status-blue,
     :deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
-        background: rgb(76, 134, 65);
+        background: rgb(194, 56, 56);
         padding: 2px 15px;
         border-radius: 5px;
         color: white;

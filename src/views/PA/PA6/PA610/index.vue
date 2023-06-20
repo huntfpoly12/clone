@@ -89,7 +89,7 @@
                 </div>
               </a-form-item>
               <a-form-item label="성명(상호)" label-align="right" class="red">
-                <default-text-box v-model:valueInput="dataShow.name" width="200px" placeholder="한글,영문(대문자) 입력 가능"
+                <default-text-box :value="dataShow.name" width="200px" placeholder="한글,영문(대문자) 입력 가능"
                   :required="true" @onChange="onChangeName"/>
               </a-form-item>
               <a-form-item label="내/외국인" label-align="right" class="red">
@@ -311,7 +311,7 @@ resEmployeeBusinesses((res) => {
   if (data.length === 0) {
     resetForm()
   }
-  isNewRow.value = false
+  // if(!isClickAddRow.value) isNewRow.value = false
 });
 // get store data
 const storeDataSource = computed(() => dataSource.value?.store() as Store);
@@ -332,11 +332,11 @@ const addRow = () => {
   } else {
     if (previousRowData.value && !isEqual(previousRowData.value, dataShow.value)) {
       selectRowKeyAction.value = 0
-      isClickAddRow.value = true;
       isDiscard.value = true;
     }
   }
   isNewRow.value = true;
+  isClickAddRow.value = true;
 };
 // handle onFocusedRowChanging to row
 const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
@@ -448,7 +448,6 @@ const {
 } = useMutation(mutations.updateEmployeeBusiness);
 updateDone(async (res) => {
   await refetchData();
-
   valueCallApiGetEmployeeBusiness.incomeTypeCode = dataShow.value.incomeTypeCode;
   valueCallApiGetEmployeeBusiness.employeeId = dataShow.value.employeeId;
   previousRowData.value = { ...dataShow.value };
@@ -606,8 +605,8 @@ const handleSubmit = async () => {
   isDiscard.value = false;
   if (!res.isValid) {
     res.brokenRules[0].validator.focus();
-    store.commit('settings/setFormStatus', FormStatus.editing)
     selectRowKeyAction.value = focusedRowKey.value
+    dataGridRef.value?.refresh();
   } else {
     // if form disabled => action edit
     if (focusedRowKey && focusedRowKey.value !== 0) {

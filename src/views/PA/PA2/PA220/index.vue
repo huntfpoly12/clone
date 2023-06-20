@@ -23,8 +23,24 @@
             </a-row>
         </div>
         <div class="page-content">
-            <a-row class="header-group">
-                <a-col :span="12">
+            <DxDataGrid id="gridContainerPA220" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                :show-borders="true" key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column"
+                noDataText="내역이 없습니다" :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged"
+                :column-auto-width="true">
+                <DxSelection mode="multiple" />
+                <DxScrolling mode="standard" show-scrollbar="always" />
+                <DxPaging :enabled="false" />
+                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+                <DxExport :enabled="true" />
+                <DxToolbar>
+                    <DxItem template="box-search-left" location="before" />
+                    <DxItem template="box-search-right" location="after" />
+                    <DxItem template="pagination-send-group-mail" />
+                    <DxItem template="send-group-print" />
+                    <DxItem name="searchPanel" />
+                    <DxItem name="exportButton" css-class="cell-button-export" />
+                </DxToolbar>
+                <template #box-search-left>
                     <a-form-item label="서식 설정">
                         <div class="custom-flex">
                             <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
@@ -34,25 +50,14 @@
                             </a-tooltip>
                         </div>
                     </a-form-item>
-                </a-col>
-                <a-col :span="12">
+                </template>
+                <template #box-search-right>
                     <div class="created-date">
                         <label class="lable-item">작성일 :</label>
                         <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
                             dateFormat="YYYY-MM-DD" />
                     </div>
-                </a-col>
-
-            </a-row>
-            <DxDataGrid id="gridContainerPA220" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :show-borders="true" key-expr="employeeId" @exporting="onExporting" :allow-column-reordering="move_column"
-                noDataText="내역이 없습니다" :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged"
-                :column-auto-width="true">
-                <DxScrolling mode="standard" show-scrollbar="always" />
-                <DxToolbar>
-                    <DxItem template="pagination-send-group-mail" />
-                    <DxItem template="send-group-print" />
-                </DxToolbar>
+                </template>
                 <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
                         <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
@@ -71,17 +76,16 @@
                         </DxButton>
                     </div>
                 </template>
-                <DxSelection mode="multiple" />
-                <DxColumn caption="성명" cell-template="tag" width="300px" />
+                <DxColumn caption="성명" cell-template="tag" data-field="employee.name" width="300px" />
                 <template #tag="{ data }">
                     <div class="custom-action">
-                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                            :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
+                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
+                            :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status" :foreigner="data.data.employee.foreigner"
                             :checkStatus="false" />
                     </div>
                 </template>
                 <DxColumn caption="주민등록번호" data-field="residentId" width="150px" />
-                <DxColumn caption="비고" cell-template="four-major" />
+                <DxColumn caption="비고" cell-template="four-major" data-field="employee.nationalPensionDeduction"/>
                 <template #four-major="{ data }">
                     <div>
                         <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -109,8 +113,6 @@
                 <DxColumn caption="비과세금액" data-field="taxFreeIncome" />
                 <DxColumn caption="결정세액" data-field="decidedTaxAmount" />
                 <DxColumn caption="기납부세액 (현)" data-field="prePaidIncomeTaxAmount" />
-                <!-- <DxColumn caption="기납부세액 (전)" />
-                <DxColumn caption="납부특례세액" /> -->
                 <DxColumn caption="차감징수세액" data-field="deductibleIncomeTaxAmount" />
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }">
@@ -139,7 +141,7 @@ import { useStore } from 'vuex';
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from 'dayjs';
 import { useQuery } from "@vue/apollo-composable";
-import { DxDataGrid, DxColumn, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxSelection, DxToolbar, DxScrolling, DxItem, DxSearchPanel, DxExport, DxPaging } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { radioLeaved, radioType } from "./utils/index"
 import {
@@ -152,7 +154,7 @@ import EmailMultiPopup from "./components/EmailMultiPopup.vue"
 import queries from "@/graphql/queries/PA/PA2/PA220/index";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton, EmailSinglePopup, EmailMultiPopup
+        DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton, EmailSinglePopup, EmailMultiPopup, DxSearchPanel, DxExport, DxPaging
     },
     setup() {
         const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? "0"))
@@ -185,7 +187,7 @@ export default defineComponent({
 
 
         // Search
-        const searchData = ref([]);
+        // const searchData = ref([]);
         const searchParam = reactive({
             companyId: companyId,
             filter: { imputedYear: globalYear.value, leaved: null, name: null }
@@ -193,7 +195,6 @@ export default defineComponent({
         let payloadSearchParamClear: any = ref(makeDataClean(searchParam))
         const searchTrigger = ref<boolean>(true)
         const {
-            refetch: refetchSearch,
             result: resultSearch,
             loading: loadingSearch,
         } = useQuery(queries.searchIncomeWageWithholdingReceipts, payloadSearchParamClear.value, () => ({
@@ -203,9 +204,9 @@ export default defineComponent({
 
         watch(resultSearch, (newData) => {
             searchTrigger.value = false;
-            searchData.value = newData.searchIncomeWageWithholdingReceipts;
-            viewUrlParam.input.type = newData.searchIncomeWageWithholdingReceipts?.employee?.type ?? 1;
-            searchParam.filter.leaved = newData.searchIncomeWageWithholdingReceipts?.leaved ?? null;
+            dataSource.value = newData.searchIncomeWageWithholdingReceipts;
+            viewUrlParam.input.type = newData.searchIncomeWageWithholdingReceipts?.employee?.type ?? viewUrlParam.input.type;
+            searchParam.filter.leaved = newData.searchIncomeWageWithholdingReceipts?.leaved ?? searchParam.filter.leaved;
         })
         const onSearch = () => {
             payloadSearchParamClear.value = makeDataClean(searchParam)
@@ -221,15 +222,15 @@ export default defineComponent({
         })
         const printTrigger = ref<boolean>(false);
         const {
-            refetch: refetchPrint,
             result: resultPrint,
         } = useQuery(queries.getIncomeWageWithholdingReceiptReportViewUrl, viewUrlParam, () => ({
             enabled: printTrigger.value,
             fetchPolicy: "no-cache",
         }));
         watch(resultPrint, (value) => {
+            printTrigger.value = false
             if (value) {
-                window.open(value.getIncomeBusinessWithholdingReceiptReportViewUrl)
+                window.open(value.getIncomeWageWithholdingReceiptReportViewUrl)
             }
         });
         //SEND MAIL GROUP
@@ -311,7 +312,7 @@ export default defineComponent({
             onOpenPopupEmailSingle,
             sendMailGroup,
             onExporting,
-            searchData,
+            // searchData,
             viewUrlParam,
             actionPrint,
             onPrintGroup,

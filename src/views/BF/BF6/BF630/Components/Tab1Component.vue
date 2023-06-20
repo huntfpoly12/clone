@@ -1,114 +1,64 @@
 <template>
 	<div class="search-form">
 		<a-row>
-			<a-col :span="12">
-				<a-row>
-					<a-col :span="8">
-						<a-form-item label="귀속연도">
-							<year-picker-box-custom v-model:valueDate="filterForm.imputedYear" :minYear="2022"
-								color="#a6a6a6"></year-picker-box-custom>
-						</a-form-item>
-					</a-col>
-					<a-col :span="16">
-						<div class="custom-note">
-							<a-form-item label="제작요청상태">
-								<switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작요청후'"
-									:textUnCheck="'제작요청전'" />
-							</a-form-item>
-							<a-tooltip color="black" placement="top">
-								<template #title>제작전은 제작요청되지 않은 상태입니다.</template>
-								<img src="@/assets/images/iconInfo.png" class="img-info" />
-							</a-tooltip>
-						</div>
-					</a-col>
-				</a-row>
-				<a-form-item label="제출대상구분">
-					<div class="checkbox-tab-1">
-						<span>연간(1.1~12.31)지급분</span>
-						<div class="group-checkbox">
-							<a-row :style="!filterForm.afterProduction ? 'opacity: 0.6' : ''">
-								<a-col :span="12">
-									<div class="checkbox-item">
-										<checkbox-basic v-model:valueCheckbox="checkbox1"
-											:disabled="!filterForm.afterProduction" :size="'20'" />
-										<production-status :typeTag="2" padding="0px 5px" />
-									</div>
-									<div class="checkbox-item">
-										<checkbox-basic v-model:valueCheckbox="checkbox3"
-											:disabled="!filterForm.afterProduction" :size="'20'" />
-										<production-status :typeTag="4" padding="0px 5px" />
-									</div>
-								</a-col>
-								<a-col :span="12">
-									<div class="checkbox-item">
-										<checkbox-basic v-model:valueCheckbox="checkbox2"
-											:disabled="!filterForm.afterProduction" :size="'20'" />
-										<production-status :typeTag="3" padding="0px 5px" />
-									</div>
-									<div class="checkbox-item">
-										<checkbox-basic v-model:valueCheckbox="checkbox4"
-											:disabled="!filterForm.afterProduction" :size="'20'" />
-										<production-status :typeTag="5" padding="0px 5px" />
-									</div>
-								</a-col>
-							</a-row>
-						</div>
-					</div>
+			<a-col :span="4">
+				<a-form-item label="귀속연도">
+					<year-picker-box-custom v-model:valueDate="filterForm.imputedYear" :minYear="2022"
+						color="#a6a6a6"/>
+				</a-form-item>
+				<a-form-item label="제출대상구분" class="no-bottom">
+					<span>연간(1.1~12.31)지급분</span>
 				</a-form-item>
 			</a-col>
-			<a-col :span="12">
-				<a-row>
-					<a-col :span="8">
-						<a-form-item label="사업자코드">
-							<default-text-box width="150px" v-model:valueInput="filterForm.companyCode"
-								:textUppercase="true" />
-						</a-form-item>
-						<a-form-item label="상호">
-							<default-text-box width="150px" v-model:valueInput="filterForm.companyName"></default-text-box>
-						</a-form-item>
-					</a-col>
-					<a-col :span="8">
-						<a-form-item label="매니저리스트">
-							<list-manager-dropdown width="150px" v-model:valueInput="filterForm.manageUserId" />
-						</a-form-item>
-						<a-form-item label="영업자리스트">
-							<list-sales-dropdown width="150px" v-model:valueInput="filterForm.salesRepresentativeId" />
-						</a-form-item>
-					</a-col>
-					<a-col :span="8">
-						<div style="padding-left: 50px">
-							<switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'"
-								v-model:valueSwitch="filterForm.excludeCancel" />
-						</div>
-					</a-col>
-				</a-row>
+			<a-col :span="6.5">
+				<div class="custom-note">
+					<a-form-item label="제작요청상태">
+						<switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작요청후'"
+							:textUnCheck="'제작요청전'" />
+					</a-form-item>
+					<info-tool-tip>제작전은 제작요청되지 않은 상태입니다.</info-tool-tip>
+				</div>
+				<div class="group-checkbox">
+					<a-row :style="!filterForm.afterProduction ? 'opacity: 0.6' : ''">
+
+							<div class="checkbox-item">
+								<checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="!filterForm.afterProduction"
+									:size="'20'" />
+								<production-status :typeTag="2" padding="0px 5px" />
+							</div>
+							<div class="checkbox-item">
+								<checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="!filterForm.afterProduction"
+									:size="'20'" />
+								<production-status :typeTag="4" padding="0px 5px" />
+							</div>
+							<div class="checkbox-item">
+								<checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="!filterForm.afterProduction"
+									:size="'20'" />
+								<production-status :typeTag="3" padding="0px 5px" />
+							</div>
+							<div class="checkbox-item">
+								<checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="!filterForm.afterProduction"
+									:size="'20'" />
+								<production-status :typeTag="5" padding="0px 5px" />
+							</div>
+					</a-row>
+				</div>
+			</a-col>
+			<a-col style="display: flex;">
+				<a-form-item label="매니저리스트">
+					<list-manager-dropdown width="150px" v-model:valueInput="filterForm.manageUserId" />
+				</a-form-item>
+				<a-form-item label="영업자리스트" class="ml-20">
+					<list-sales-dropdown width="150px" v-model:valueInput="filterForm.salesRepresentativeId" clearButton/>
+				</a-form-item>
+				<div class="ml-20">
+					<switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'"
+						v-model:valueSwitch="filterForm.excludeCancel" />
+				</div>
 			</a-col>
 		</a-row>
 	</div>
 	<div class="grid-view">
-		<div class="title-table d-flex">
-			<a-form-item label="파일 제작 설정" label-align="left">
-				<div class="custom-note d-flex-center">
-					<switch-basic textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true" />
-					<a-tooltip color="black" placement="top">
-						<template #title>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</template>
-						<img src="@/assets/images/iconInfo.png" class="img-info" />
-					</a-tooltip>
-				</div>
-			</a-form-item>
-			<a-form-item label="제출연월일" label-align="left">
-				<div class="d-flex-center">
-					<date-time-box width="150px" v-model:valueDate="dateSubmission" />
-					<a-tooltip placement="topLeft" color="black">
-						<template #title>전자신고파일 제작 요청</template>
-						<div class="btn-modal-save" @click="requestIncomeFile">
-							<SaveOutlined class="fz-20 ml-5 action-save" />
-							<span style="margin-left: 5px">파일제작요청</span>
-						</div>
-					</a-tooltip>
-				</div>
-			</a-form-item>
-		</div>
 		<div class="content-grid">
 			<a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
 				<DxDataGrid id="DxDataGrid-bf-630-tab1" :show-row-lines="true" :hoverStateEnabled="true"
@@ -118,7 +68,36 @@
 					<DxPaging :enabled="false" />
 					<DxScrolling mode="standard" show-scrollbar="always" />
 					<DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
-					<DxColumn caption="사업자코드" cell-template="companyCode" />
+					<DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+					<DxExport :enabled="true" />
+					<DxToolbar>
+						<DxItem template="box-action-left" location="before" />
+						<DxItem template="box-action-right" location="after" />
+						<DxItem name="searchPanel" />
+						<DxItem name="exportButton" css-class="cell-button-export" />
+					</DxToolbar>
+					<template #box-action-left>
+						<a-form-item label="파일 제작 설정" label-align="left">
+							<div class="custom-note d-flex-center">
+								<switch-basic textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true" />
+								<info-tool-tip>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</info-tool-tip>
+							</div>
+						</a-form-item>
+					</template>
+					<template #box-action-right>
+						<div class="d-flex-center custom-date">
+							<a-form-item label="제출연월일" label-align="left">
+								<date-time-box width="150px" v-model:valueDate="dateSubmission" />
+							</a-form-item>
+							<a-tooltip title="전자신고파일 제작 요청">
+								<div class="btn-modal-save" @click="requestIncomeFile">
+									<SaveOutlined class="fz-20 ml-5 action-save" />
+									<span style="margin-left: 5px">파일제작요청</span>
+								</div>
+							</a-tooltip>
+						</div>
+					</template>
+					<DxColumn caption="사업자코드" cell-template="companyCode" data-field="company.code" />
 					<template #companyCode="{ data }">
 						{{
 							data.data.companyServiceContract.active
@@ -126,12 +105,12 @@
 							: "해지"
 						}}
 					</template>
-					<DxColumn caption="상호 주소" cell-template="companyName" />
+					<DxColumn caption="상호 주소" cell-template="companyName" data-field="company.name" />
 					<template #companyName="{ data }">
 						{{ data.data.company.name }}
 						{{ data.data.company.address }}
 					</template>
-					<DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+					<DxColumn caption="사업자등록번호" cell-template="bizNumber" data-field="company.bizNumber" />
 					<template #bizNumber="{ data }">
 						{{ formatBizNumber(data.data.company.bizNumber) }}
 					</template>
@@ -139,7 +118,7 @@
 						format="yyyy-MM-dd HH:mm" />
 					<DxColumn caption="제작현황" cell-template="imputed" width="430" />
 					<template #imputed="{ data }">
-						<GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data"
+						<GetStatusTable :beforeProductionRequest="data.data.lastProductionRequestedAt" :data="data.data"
 							tabName="tab1"
 							@productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
 					</template>
@@ -176,6 +155,8 @@ import {
 	DxSummary,
 	DxTotalItem,
 	DxPaging,
+	DxSearchPanel,
+	DxExport,
 } from "devextreme-vue/data-grid";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
@@ -186,6 +167,7 @@ import dayjs, { Dayjs } from "dayjs";
 import RequestFilePopup from "./RequestFilePopup.vue";
 import GetStatusTable from "./GetStatusTable.vue";
 import { Message } from "@/configs/enum";
+import InfoToolTip from "@/components/common/InfoToolTip.vue";
 export default defineComponent({
 	components: {
 		DxCheckBox,
@@ -202,6 +184,9 @@ export default defineComponent({
 		RequestFilePopup,
 		GetStatusTable,
 		DxPaging,
+		DxSearchPanel,
+		DxExport,
+		InfoToolTip,
 	},
 	props: {
 		activeSearch: {
@@ -688,6 +673,6 @@ export default defineComponent({
 
 :deep(.ant-form-item-label > label) {
 	width: 110px;
-	padding-left: 10px;
+	// padding-left: 10px;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <DxSelectBox
     :noDataText="Message.getMessage('COMMON', '901').message"
-    :search-enabled="true"
+    :search-enabled="searchEnabled"
     :width="width"
     :data-source="dataSource"
     :show-clear-button="clearButton"
@@ -11,10 +11,11 @@
     value-expr="id"
     :disabled="disabled"
     @value-changed="updateValue(value)"
-    :height="$config_styles.HeightInput"
     placeholder="선택"
     :name="nameInput"
-    field-template="field" item-template="item">
+    field-template="field" item-template="item"
+    :height="height"
+  >
   <!-- > -->
     <template #field="{ data }">
       <div v-if="data" class="text-overflow" style="padding: 4px;display: flex; align-items: center;">
@@ -76,6 +77,14 @@ export default defineComponent({
     isExample: {
       type: Boolean,
       default: false,
+    },
+    height: {
+      type: Number,
+      default: 28,
+    },
+    searchEnabled: {
+      type: Boolean,
+      default: true,
     },
   },
   components: {

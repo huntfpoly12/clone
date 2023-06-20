@@ -14,12 +14,30 @@ const connections: { [key: string]: any } = {}; // Hold the controller for each 
 
 const authMiddleware = new ApolloLink((operation, forward) => {
   const accessToken = sessionStorage.getItem('token');
-  // Check if the token is expired
-  const isTokenExpired = accessToken &&  (getJwtObject(accessToken).isExpired(60) || getJwtObject(accessToken).isExpired()) ? true : false;
+  let isTokenExpired = false;
+  if(accessToken) {
+    const link = window.location.href; // get url browser
+    const operationName = operation.operationName; // get name-gql
+    // Check if the token is expired
+    const currentTime = new Date().getTime(); // get current time
+    const timeExpired = Number(getJwtObject(accessToken).p.exp) - 60000; // get time expired token - 60s
+    isTokenExpired = currentTime - timeExpired >= 0
+    console.groupCollapsed("%c Request api", 'color: green', operationName);
+    console.log('%c currentTime - timeExpired (s)', 'color: red;', (currentTime - timeExpired)/1000);
+    console.log('%c url', 'color: blue;', link);
+    console.count();
+    console.log('%c current accessToken', 'color: blue;', accessToken);
+    console.groupEnd();
+  }
+  // get api call
   if (isTokenExpired) {
     if (!isTokenRefreshing) {
       isTokenRefreshing = true;
-
+      console.groupCollapsed("%c Token expired", 'color: red');
+      console.log('%c old-accessToken', 'color: red;', accessToken);
+      // get url browser
+      console.count();
+      console.groupEnd();
       // Token has expired, make a refresh login API request
       refreshPromise = refreshLogin().finally(() => {
         isTokenRefreshing = false;
@@ -28,11 +46,12 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     }
 
     return new Promise((resolve) => {
-      refreshPromise!.then(() => {
-        const newAccessToken = sessionStorage.getItem('token');
+      refreshPromise!.then((value) => {
+        console.log('%c newAccessToken', 'color: red;', value);
+        // const newAccessToken = sessionStorage.getItem('token');
         operation.setContext({
           headers: {
-            authorization: `Bearer ${newAccessToken}`,
+            authorization: `Bearer ${value}`,
           },
         });
         resolve(forward(operation));
@@ -110,7 +129,7 @@ async function refreshLogin() {
     Object.values(connections).forEach((controller: AbortController) => {
       controller.abort(); // Cancel all pending requests
     });
-    return;
+    return data.data.refreshLogin.accessToken;
   } catch (error) {
     console.error("Failed to refresh login", error);
     return Promise.reject(error);

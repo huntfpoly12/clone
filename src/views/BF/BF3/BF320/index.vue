@@ -1,72 +1,37 @@
 <template>
     <action-header title="사업자관리" @actionSearch="searching" :buttonSearch="true"/>
     <div id="bf-320">
-        <div class="search-form">
-            <div id="components-grid-demo-flex">
-                <a-row justify="start" :gutter="[16, 8]">
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">
-                                사업자코드 :
-                            </label>
-                            <default-text-box v-model:valueInput="originData.code" width="130px" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">상호:</label>
-                            <default-text-box v-model:valueInput="originData.name" width="130px" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">대표자:</label>
-                            <default-text-box v-model:valueInput="originData.presidentName" width="130px" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">해지:</label>
-                        <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'제외'"
-                            :textUnCheck="'포함'" />
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">주소 :</label>
-                            <default-text-box v-model:valueInput="originData.address" width="130px" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label>매니저리스트:</label>
-                            <list-manager-dropdown v-model:valueInput="originData.manageUserId" width="150px" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label>영업자리스트:</label>
-                            <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="150px" />
-                        </div>
-                    </a-col>
-                </a-row>
-            </div>
-        </div>
         <div class="page-content">
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="responApiSearchCompanies"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: calc(100vh - 180px)" >
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" style="height: calc(100vh - 155px); margin-top: 5px;" >
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxPaging :page-size="0" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxExport :enabled="true" />
                     <DxToolbar>
-                        <DxItem name="exportButton" css-class="cell-button-export" />
-                        <DxItem name="searchPanel" />
+                        <DxItem location="after" name="exportButton" css-class="cell-button-export" />
+                        <DxItem location="after" template="search" />
+                        <DxItem location="after" name="searchPanel" cssClass="search-panel" />
                     </DxToolbar>
-                    <template #pagination-table>
-                        <div v-if="rowTable > originData.rows">
-                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                style="margin-top: 2px;" :total="rowTable" show-less-items @change="searching" />
+                    <template #search>
+                        <div class="search">
+                            <div class="d-flex-center gap-20 mr-15">
+                                <div class="d-flex-center gap-10">
+                                    <label class="">해지:</label>
+                                    <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'제외'"
+                                        :textUnCheck="'포함'" />
+                                </div>
+                                <div class="d-flex-center gap-10">
+                                    <label>매니저리스트:</label>
+                                    <list-manager-dropdown v-model:valueInput="originData.manageUserId" :searchEnabled="false" clearButton  width="200px" :height="30"/>
+                                </div>
+                                <div class="d-flex-center gap-10">
+                                    <label>영업자리스트:</label>
+                                    <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="200px" :height="30"/>
+                                </div>
+                            </div>
                         </div>
                     </template>
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />

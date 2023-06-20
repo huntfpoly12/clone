@@ -89,29 +89,6 @@
         </a-col>
         <a-col>
           <a-form-item
-            label="사업자코드"
-            label-align="left"
-            class="mb-6 label-select"
-          >
-            <default-text-box
-              width="150px"
-              v-model:valueInput="filter.companyCode"
-              text-uppercase
-            />
-          </a-form-item>
-          <a-form-item
-            label="상호"
-            label-align="left"
-            class="mb-0 label-select"
-          >
-            <default-text-box
-              width="150px"
-              v-model:valueInput="filter.companyName"
-            />
-          </a-form-item>
-        </a-col>
-        <a-col>
-          <a-form-item
             label="매니저리스트"
             label-align="left"
             class="mb- label-select"
@@ -165,7 +142,13 @@
           noDataText="내역이 없습니다"
           style="height: calc(100vh - 260px)"
         >
-          <DxScrolling mode="standard" show-scrollbar="always" />
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" :search-visible-columns="['CompanyNameAndAddress']"/>
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem  name="searchPanel" />
+            <DxItem location="after" name="exportButton" css-class="cell-button-export" />
+          </DxToolbar>
+          <DxScrolling mode="standard" show-scrollbar="always" />>
           <!--                  <DxSelection mode="multiple" :fixed="true" />-->
           <DxColumn caption="출력 메일" cell-template="action" />
           <template #action="{ data }">
@@ -196,7 +179,7 @@
               `${data.data.company.code} ${data.data.active ? "" : "[해지]"}`
             }}
           </template>
-          <DxColumn caption="상호 주소" cell-template="company" width="100" />
+          <DxColumn caption="상호 주소" data-field="CompanyNameAndAddress" cell-template="company" width="100" :calculateCellValue="calculateCompanyNameAndAddress"/>
           <template #company="{ data }">
             <a-tooltip color="black" placement="topLeft">
               <template #title>{{
@@ -446,7 +429,7 @@ import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
+import { DxColumn, DxDataGrid, DxScrolling, DxToolbar, DxItem, DxSearchPanel, DxExport } from "devextreme-vue/data-grid";
 import { computed, reactive, ref, watch } from "vue";
 import { useStore } from "vuex";
 import PopupAddStatus from "./components/PopupAddStatus.vue";
@@ -468,8 +451,8 @@ const filter = reactive({
   rows: 10,
   paymentYearMonth: parseInt(globalYear.value + "01"), // 2
   statuses: [10, 20, 30, 40], // 7
-  companyCode: "", // 8
-  companyName: "", // 9
+  // companyCode: "", // 8
+  // companyName: "", // 9
   manageCompactUserId: null, // 10
   compactSalesRepresentativeId: null, // 11
   active: true, // 12
@@ -680,12 +663,6 @@ const searching = () => {
         (filter.afterTheDueDate
           ? item.index === 0 && item.afterDeadline === true
           : false)) &&
-      item.company.code
-        .toLocaleLowerCase()
-        .includes(filter.companyCode.toLocaleLowerCase()) &&
-      item.company.name
-        .toLocaleLowerCase()
-        .includes(filter.companyName.toLocaleLowerCase()) &&
       (filter.manageCompactUserId === null ||
         filter.manageCompactUserId ===
           item.companyServiceContract.manageCompactUser?.id) &&
@@ -844,5 +821,8 @@ const convertToDate = (date: number | null) => {
   if (date === null) return null;
   return date.toString().slice(0, 4) + "-" + date.toString().slice(4);
 };
+const calculateCompanyNameAndAddress = (rowData: any) => {
+  return `${rowData.company.name} - ${rowData.company.address}`
+}
 </script>
 <style scoped lang="scss" src="./style/style.scss"></style>

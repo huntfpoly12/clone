@@ -26,7 +26,7 @@
         </div>
     </DxButton>
     <DxButton class="button-open-tab ml-4" style="pointer-events: all; opacity: 1;"
-        @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</DxButton>
+        @click="openTab({ name: '사원등록', url: '/pa-120', id: 'pa-120' })">사원등록</DxButton>
     <DxDropDownButton :useItemTextAsTitle="false" class="ml-4" :items="arrDropDownPayrollRegister" text="급여대장"
         @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
@@ -141,10 +141,9 @@ export default defineComponent({
         const deleteItem = (value: any) => {
             if (props.dataRows.length) {
                 modalDelete.value = true;
-
                 popupDataDelete.value = props.dataRows
             } else {
-                notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+                notification('error', messages.getCommonMessage('404').message)
             }
         };
         const onActionAddItem = (value: any) => {
@@ -196,7 +195,7 @@ export default defineComponent({
                         popupDataEmailSinglePayrollRegister.value = props.dataRows[0]
                         modalEmailSinglePayrollRegister.value = true;
                     } else {
-                        notification('error', `항목을 하나 이상 선택해야합니다`)
+                        notification('error', Message.getCommonMessage('601').message)
                     }
                     break;
                 case 'PrintSalaryStatement':
@@ -215,7 +214,7 @@ export default defineComponent({
                         popupDataEmailSingle.value = props.dataRows[0]
                         modalEmailSingle.value = true;
                     } else {
-                        notification('error', `항목을 하나 이상 선택해야합니다`)
+                        notification('error', Message.getCommonMessage('601').message)
                     }
                     break;
                 case 'EmailMultiSalaryStatement':

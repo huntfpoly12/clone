@@ -16,11 +16,11 @@ const store : any= createStore({
 export default store;
 
 // gọi lại hàm checkToken
-const now = dayjs().valueOf()
-const token = sessionStorage.getItem('token')
-if (token) {
-  const expirationTime = getJwtObject(token).expiredTime;
-  const timeRemaining = expirationTime - now;
-  setTimeout(() => store.dispatch('auth/checkToken'), timeRemaining);
-}
+// const now = dayjs().valueOf()
+// const token = sessionStorage.getItem('token')
+// if (token) {
+//   const expirationTime = getJwtObject(token).expiredTime;
+//   const timeRemaining = expirationTime - now;
+//   setTimeout(() => store.dispatch('auth/checkToken'), timeRemaining);
+// }
 

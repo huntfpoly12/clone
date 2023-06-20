@@ -254,7 +254,7 @@
 			</a-col>
 		</a-row>
 		<a-row :class="{ disabledBlock: statusDisabledBlock }">
-			<a-col :span="12" class="custom-layout custom-layout-table" :class="{ 'ele-opacity': checkChangeForm }">
+			<a-col :span="14" class="custom-layout custom-layout-table" :class="{ 'ele-opacity': checkChangeForm }">
 				<a-spin :spinning="loadingTaxPayInfo" size="large">
 					<DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
 						:data-source="store.state.common.pa110.dataTaxPayInfo" :show-borders="true"
@@ -277,9 +277,9 @@
 									:midTermSettlement="data.data.midTermSettlement" />
 							</div>
 						</template>
-						<DxColumn css-class="money-column" width="75" caption="급여" data-field="totalPay"
+						<DxColumn css-class="money-column" width="85" caption="급여" data-field="totalPay"
 							format="fixedPoint" />
-						<DxColumn css-class="money-column" width="75" caption="공제" cell-template="total-deduction"
+						<DxColumn css-class="money-column" width="85" caption="공제" cell-template="total-deduction"
 							data-field="totalDeduction" format="fixedPoint" />
 						<template #total-deduction="{ data }">
 							<a-tooltip placement="top">
@@ -292,7 +292,7 @@
 								</span>
 							</a-tooltip>
 						</template>
-						<DxColumn css-class="money-column" width="120" caption="차인지급액" data-field="actualPayment"
+						<DxColumn css-class="money-column" width="110" caption="차인지급액" data-field="actualPayment"
 							format="fixedPoint" />
 						<DxColumn class="min-w-240" caption="비고" cell-template="four-major-insurance" />
 						<template #four-major-insurance="{ data }">
@@ -313,7 +313,7 @@
 									:ratio="data.data.employee.incomeTaxMagnification" />
 							</div>
 						</template>
-						<DxColumn css-class="cell-center" width="52" caption="지급일" data-field="paymentDay"
+						<DxColumn css-class="cell-center" width="55" caption="지급일" data-field="paymentDay"
 							cell-template="paymentDay" />
 						<template #paymentDay="{ data }">
 							{{ $filters.formatMonth(data.data.paymentDay)?.toString().slice(-2) }}
@@ -322,29 +322,29 @@
 					<!-- <div v-if="store.state.common.pa110.dataTaxPayInfo.length" -->
 					<div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; justify-content: space-between; padding: 5px 20px;"
 						class="fs-14">
-						<div style="margin-left: 70px">
+						<!-- <div> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 								<div>
 									사원수<span>[{{ store.state.common.pa110.dataTaxPayInfo.length }}]</span>
 								</div>
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </div>
+						<dividerProps> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalPay()">
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </dividerProps>
+						<div > -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
 							</div>
-						</div>
-						<div style="margin-left: 50px">
+						<!-- </div>
+						<div > -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
 							</div>
-						</div>
+						<!-- </div> -->
 					</div>
 				</a-spin>
 			</a-col>
-			<a-col :span="12" class="custom-layout custom-form-data" style="padding-right: 0px"
+			<a-col :span="10" class="custom-layout custom-form-data" style="padding-right: 0px"
 				:class="{ disabledBlock: !store.state.common.pa110.dataTaxPayInfo.length }">
 				<FormDataComponent />
 			</a-col>

@@ -234,7 +234,7 @@
           </div>
         </DxButton>
         <div class="custom-select-tab ml-4">
-          <DxButton class="button-open-tab" @click="openTab({ name: '기타소득자등록', url: '/dashboard/pa-710', id: 'pa-710' })">
+          <DxButton class="button-open-tab" @click="openTab({ name: '기타소득자등록', url: '/pa-710', id: 'pa-710' })">
             기타소득자등록</DxButton>
         </div>
       </a-col>

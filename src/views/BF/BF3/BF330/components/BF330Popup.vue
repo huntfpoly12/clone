@@ -56,7 +56,7 @@
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                                         :show-row-lines="true" :focused-row-enabled="true"
                                         @focused-row-changed="onFocusedRowChanged" :focused-row-key="focusedRowKey"
-                                        @init-new-row="onInitRow">
+                                        @init-new-row="onInitRow" >
                                         <DxScrolling mode="standard" show-scrollbar="always" />
                                         <DxEditing :use-icons="true" :allow-adding="true"
                                             new-row-position="pageBottom" mode="cell" :confirmDelete="false"/>
@@ -65,7 +65,7 @@
                                                 css-class="cell-button-add" />
                                         </DxToolbar>
                                         <template #button-template>
-                                            <DxButton icon="plus" @click="addRow" />
+                                            <DxButton icon="plus" :disabled="!formState.info.usedAccounting" @click="addRow" />
                                         </template>
                                         <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                             cell-template="indexCell" />
@@ -121,7 +121,7 @@
                                             <div class="custom-money">
                                                 <a-form-item label="서비스 시작년월" class="red">
                                                     <month-picker-box style="float:right" width="150px" :required="true"
-                                                        v-model:valueDate="dataActiveRow.startYearMonth" />
+                                                        v-model:valueDate="dataActiveRow.startYearMonth" :teleport=" true " />
                                                         <info-tool-tip class="mt-5">
                                                           장부다에 입력할 수 있는 서비스 대상 연월을 의미합니다. (예: 서비스 시작 연월: 202304 → 202304 회계자료부터 입력가능(이전은 입력불가))
                                                         </info-tool-tip>
@@ -212,7 +212,7 @@
                                 <a-row v-if="formState.info.usedWithholding">
                                     <a-col :span="14">
                                         <a-form-item label="서비스 시작년월" class="custom-label-select red">
-                                            <month-picker-box width="150px" :required="true"
+                                            <month-picker-box width="150px" :required="true" :teleport=" true "
                                                 v-model:valueDate="formState.info.withholding.startYearMonth" />
                                         </a-form-item>
                                     </a-col>
@@ -258,12 +258,12 @@
                         <a-collapse-panel key="2" header="담당매니저/ 영업자">
                             <a-form-item label="담당매니저" class="custom-label-select">
                                 <div style="width: 200px">
-                                    <list-manager-dropdown v-model:valueInput="formState.extra.manageUserId" />
+                                    <list-manager-dropdown v-model:valueInput="formState.extra.manageUserId" :searchEnabled="false"/>
                                 </div>
                             </a-form-item>
                             <a-form-item label="영업자" class="custom-label-select">
                                 <div style="width: 200px">
-                                    <list-sales-dropdown v-model:valueInput="formState.extra.salesRepresentativeId" />
+                                    <list-sales-dropdown v-model:valueInput="formState.extra.salesRepresentativeId" :searchEnabled="false" />
                                 </div>
                             </a-form-item>
                         </a-collapse-panel>
@@ -631,6 +631,8 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             if(!formState.info.usedAccounting && !formState.info.usedWithholding){
                 notification("error", Message.getMessage('BF310', '001').message);
+                activeKey.value = 1;
+                return;
             }
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();

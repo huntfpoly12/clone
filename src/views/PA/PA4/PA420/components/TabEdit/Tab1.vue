@@ -427,7 +427,7 @@ watch(() => [
 // =============== FUNCTION ================================
 const openTabFuc = () => {
   emit('closePopup', true)
-  openTab({name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520"})
+  openTab({name: "일용직사원등록", url: "/pa-520", id: "pa-520"})
 }
 
 const submitForm = (e: any) => {

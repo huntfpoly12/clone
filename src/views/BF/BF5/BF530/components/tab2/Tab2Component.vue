@@ -1,77 +1,6 @@
 <template>
   <div class="tab-group">
-    <section>
-      <a-row :gutter="[0, 5]">
-        <a-rol class="mr-15">
-          <a-form-item label="업체명">
-            <default-text-box
-              width="150px"
-              v-model:valueInput="formState.companyName"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-15">
-          <a-form-item label="사업자등록번호">
-            <biz-number-text-box
-              width="150px"
-              v-model:valueInput="formState.companyBizNumber"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-15">
-          <a-form-item label="사업장관리번호">
-            <ManageIdTextBox
-              width="150px"
-              v-model:valueInput="formState.manageId"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-15">
-          <a-form-item label="신고종류">
-            <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="reportTypeSelectbox"
-              v-model:valueInput="formState.type"
-              displayeExpr="text"
-              valueExpr="id"
-              width="150px"
-              placeholder="선택"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-15">
-          <a-form-item label="상태">
-            <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="workingStatusSelectbox"
-              v-model:valueInput="formState.workingStatus"
-              displayeExpr="text"
-              valueExpr="id"
-              width="150px"
-              placeholder="선택"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-col>
-          <a-form-item label="기간">
-            <range-date-time-box
-              v-model:valueDate="rangeDate"
-              width="250px"
-              :multi-calendars="true"
-              :clearable="false"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-    </section>
-    <a-row class="top-table mt-10" justify="end">
-      <button-basic
-        @onClick="onSave"
-        mode="contained"
-        type="default"
-        text="상태일괄변경"
-      />
-    </a-row>
+    <section></section>
     <div class="content-grid">
       <a-spin :spinning="loading1 || loadingDataSource">
         <DxDataGrid
@@ -81,7 +10,6 @@
           :data-source="filterDsTab2Bf530"
           :show-borders="true"
           key-expr="workId"
-          class="mt-10"
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
@@ -94,6 +22,78 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxLoadPanel :enabled="false" :showPane="true" />
           <DxPaging :page-size="1000" />
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem
+              template="search"
+              location="after"
+            />
+            <DxItem template="btnSave" location="after" />
+            <DxItem name="searchPanel" location="after" />
+            <DxItem
+              name="exportButton"
+              css-class="cell-button-export"
+              location="after"
+            />
+          </DxToolbar>
+          <template #search>
+            <a-row>
+              <a-rol class="mr-15">
+                <a-form-item label="신고종류">
+                  <SelectCustomField
+                    :searchEnabled="true"
+                    v-model:valueInput="formState.type"
+                    :dataSource="reportTypeSelectbox"
+                    width="150px"
+                    displayeExpr="text"
+                    valueExpr="id"
+                    :isShowId="false"
+                    placeholder="선택"
+                  />
+                </a-form-item>
+              </a-rol>
+              <a-rol class="mr-15">
+                <a-form-item label="상태">
+                  <SelectCustomField
+                    :searchEnabled="true"
+                    v-model:valueInput="formState.workingStatus"
+                    :dataSource="workingStatusSelectbox"
+                    width="150px"
+                    displayeExpr="text"
+                    valueExpr="id"
+                    :isShowId="false"
+                    placeholder="선택"
+                  />
+                </a-form-item>
+              </a-rol>
+              <a-col>
+                <a-form-item label="기간">
+                  <range-date-time-box
+                    v-model:valueDate="rangeDate"
+                    width="250px"
+                    :multi-calendars="true"
+                    :clearable="false"
+                    teleport
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </template>
+          <template #btnSave>
+            <div>
+              <button-basic
+                @onClick="onSave"
+                mode="contained"
+                type="default"
+                text="상태일괄변경"
+              />
+            </div>
+          </template>
           <DxSelection
             :select-all-mode="'allPages'"
             :show-check-boxes-mode="'onClick'"
@@ -123,13 +123,13 @@
             cell-template="workingStatus"
           />
           <template #workingStatus="{ data }: any">
-            <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="workingStatusSelectbox"
+            <SelectCustomField
               v-model:valueInput="data.data.workingStatus"
+              :dataSource="workingStatusSelectbox"
+              width="120px"
               displayeExpr="text"
               valueExpr="id"
-              width="120px"
+              :isShowId="false"
               placeholder="선택"
             />
           </template>
@@ -302,6 +302,10 @@ import {
   DxColumnFixing,
   DxKeyboardNavigation,
   DxPaging,
+  DxItem,
+  DxSearchPanel,
+  DxExport,
+  DxToolbar,
 } from "devextreme-vue/data-grid";
 import {
   DownloadOutlined,
@@ -346,6 +350,10 @@ export default defineComponent({
     HistoryOutlined,
     DxKeyboardNavigation,
     DxPaging,
+    DxItem,
+    DxSearchPanel,
+    DxExport,
+    DxToolbar,
   },
   props: {
     search: {
@@ -377,7 +385,7 @@ export default defineComponent({
     //-----------------------Search with holding and data source----------------
 
     const rangeDate = ref([
-      dayjs().subtract(1, "week").format("YYYYMMDD"),
+      dayjs().subtract(1, "year").format("YYYYMMDD"),
       dayjs().format("YYYYMMDD"),
     ]);
     watch(rangeDate, (newVal: any, oldVal) => {
@@ -388,7 +396,6 @@ export default defineComponent({
           toDate: newVal[1],
         };
         companyRequestListTrigger.value = true;
-        companyRequestListRefetch();
       }
     });
     const dataSource = ref<any[]>([...dataTableTab1]);

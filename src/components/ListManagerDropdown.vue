@@ -1,23 +1,13 @@
 <template>
   <div>
-    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="true" :width="width"
+    <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" :search-enabled="searchEnabled" :width="width"
       :data-source="dataSource"
       :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
-      :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택"
+      :disabled="disabled" @value-changed="updateValue(value)" :height="height" placeholder="선택"
       :name="nameInput" field-template="field" item-template="item">
       <template #field="{ data }">
-        <!-- :name="nameInput"> -->
-        <div v-if="data" class="text-overflow" style="padding: 4px;display: flex; align-items: center;">
-          <span class="mr-3" style="min-width: 15px;">{{ data?.username }}</span>
-          <div>
-            {{ data.name }}
-            <DxTextBox style="display: none;" />
-          </div>
-        </div>
-        <div v-else class="pt-5 pl-5">
-          <span>선택</span>
-          <DxTextBox style="display: none;" />
-        </div>
+        <DxTextBox v-if="data" :value="data && `${data?.username} ${data.name}`" :read-only="!searchEnabled"/>
+        <DxTextBox v-else value="선택" :read-only="!searchEnabled"/>
       </template>
       <template #item="{ data }">
         <div style="display: flex; align-items: center;">
@@ -53,7 +43,10 @@ export default defineComponent({
       default: "",
     },
     width: String,
-    clearButton: Boolean,
+    clearButton: {
+      type: Boolean,
+      default: false,
+    },
     disabled: Boolean,
     valueInput: {
       type: Number,
@@ -67,6 +60,18 @@ export default defineComponent({
     isExample: {
       type: Boolean,
       default: false,
+    },
+    height: {
+      type: Number,
+      default: 28,
+    },
+    filterData: {
+      type: Boolean,
+      default: false,
+    },
+    searchEnabled: {
+      type: Boolean,
+      default: true,
     }
   },
   components: {
@@ -104,8 +109,11 @@ export default defineComponent({
       }
     );
     watch(result, (newValue: any) => {
-      // .length > 0 ? newValue.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : []
-      dataSource.value = newValue?.searchUsers?.datas;
+      if(!props.filterData){
+        dataSource.value = newValue?.searchUsers?.datas.length > 0 ? newValue.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : [];
+      } else {
+        dataSource.value = newValue?.searchUsers?.datas;
+      }
     })
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
@@ -122,6 +130,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .text-overflow {
+  width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

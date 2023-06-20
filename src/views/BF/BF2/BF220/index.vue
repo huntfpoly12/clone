@@ -1,42 +1,45 @@
 <template>
     <action-header title="권한그룹관리" @actionSearch="searching" :buttonSearch="true"/>
     <div id="bf-220">
-        <div class="search-form">
-            <div id="components-grid-demo-flex">
-                <a-row justify="start" :gutter="[16, 8]">
-                    <a-col class="search">
-                        <label class="lable-item">대상회원 :</label>
-                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
-                        <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저
-                        </a-tag>
-                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
-                        <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
-                        </a-tag>
-                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
-                        <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
-                        </a-tag>
-                    </a-col>
-                </a-row>
-            </div>
-        </div>
+        
         <div class="page-content">
             <a-spin :spinning="spinning" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxExport :enabled="true" />
                     <DxToolbar>
+                        <DxItem location="after" template="search"  />
                         <DxItem name="page" template="pagination-table" />
+                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" css-class="cell-button-export"/>
-                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" />
                     </DxToolbar>
+                    <template #search>
+                        <a-row >
+                            <label class="lable-item">대상회원 :</label>
+                            <div class="d-flex-center">
+                                <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
+                                <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저</a-tag>
+                            </div>
+                            <div class="d-flex-center">
+                                <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
+                                <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
+                                </a-tag>
+                            </div>
+                            <div class="d-flex-center">
+                                <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
+                                <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
+                                </a-tag>    
+                            </div>
+                        </a-row>
+                    </template>
                     <template #button-template>
                       <a-tooltip placement="top" class="custom-tooltip">
                         <template #title>
@@ -53,7 +56,7 @@
                                 :total="totalRow" />
                         </div>
                     </template>
-                    <DxColumn data-field="id" caption="그룹코드" data-type="text" :fixed="true" />
+                    <DxColumn data-field="id" caption="그룹코드"/>
                     <DxColumn data-field="name" caption="그룹명" />
                     <DxColumn data-field="type" caption="대상회원" cell-template="button" />
                     <template #button="{ data }" class="custom-action">

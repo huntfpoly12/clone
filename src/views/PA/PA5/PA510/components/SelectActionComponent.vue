@@ -25,7 +25,7 @@
             <span class="fz-12 pl-5">지급일변경</span>
         </div>
     </DxButton>
-    <DxButton class="button-open-tab ml-4" @click="openTab({ url: '/dashboard/pa-520', name: '일용직사원등록', id: 'pa-520' })">
+    <DxButton class="button-open-tab ml-4" @click="openTab({ url: '/pa-520', name: '일용직사원등록', id: 'pa-520' })">
         일용직사원등록</DxButton>
 
     <DxDropDownButton :useItemTextAsTitle="false" class="ml-4 action-select-1" :items="arrDropDownPayrollRegister"
@@ -201,7 +201,7 @@ export default defineComponent({
                         popupDataEmailSinglePayrollRegister.value = props.dataRows[0]
                         modalEmailSinglePayrollRegister.value = true;
                     } else {
-                        notification('error', `항목을 하나만 선택하십시오`)
+                        notification('error', Message.getCommonMessage('601').message)
                     }
                     break;
                 case 'PrintSalaryStatement':
@@ -212,7 +212,7 @@ export default defineComponent({
                         })
                         trigger.value = true;
                     } else {
-                        notification('error', Message.getCommonMessage('404').message)
+                        notification('error', messageSelectItem)
                     }
                     break;
                 case 'EmailSalaryStatement':
@@ -220,7 +220,7 @@ export default defineComponent({
                         popupDataEmailSingle.value = props.dataRows[0]
                         modalEmailSingle.value = true;
                     } else {
-                        notification('error', `항목을 하나만 선택하십시오`)
+                        notification('error', Message.getCommonMessage('601').message)
                     }
                     break;
                 case 'EmailMultiSalaryStatement':
@@ -228,7 +228,7 @@ export default defineComponent({
                         popupDataEmailMulti.value = props.dataRows
                         modalEmailMulti.value = true;
                     } else {
-                        notification('error', Message.getCommonMessage('404').message)
+                        notification('error', messageSelectItem)
                     }
                     break;
                 case 'History':

@@ -7,116 +7,255 @@
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
             <a-form-item label="신고구분 :">
-              <electronic-filing-type v-model:valueInput="ElecFilingFileFilter.type" width="200px"
-                :disabledList="[3, 4, 5, 6, 7, 8, 9]"></electronic-filing-type>
+              <electronic-filing-type
+                v-model:valueInput="ElecFilingFileFilter.type"
+                width="200px"
+                :disabledList="[3, 4, 5, 6, 7, 8, 9]"
+              ></electronic-filing-type>
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="제작요청일(기간)">
-              <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+              <range-date-time-box
+                v-model:valueDate="rangeDate"
+                width="250px"
+                :multi-calendars="true"
+              />
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="제작상태">
-              <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
-                layout="horizontal" :icon-size="12">
+              <DxRadioGroup
+                :data-source="typeCheckbox"
+                item-template="radio"
+                v-model="productionStatuses"
+                layout="horizontal"
+                :icon-size="12"
+              >
                 <template #radio="{ data }: any">
-                  <production-status :typeTag=" 0 " v-if=" data == 0 " padding="0px 10px" />
-                  <production-status :typeTag=" 4 " v-if=" data == 2 " padding="1px 10px" />
-                  <production-status :typeTag=" 5 " v-if=" data == -1 " padding="1px 10px" />
+                  <production-status
+                    :typeTag="0"
+                    v-if="data == 0"
+                    padding="0px 10px"
+                  />
+                  <production-status
+                    :typeTag="4"
+                    v-if="data == 2"
+                    padding="1px 10px"
+                  />
+                  <production-status
+                    :typeTag="5"
+                    v-if="data == -1"
+                    padding="1px 10px"
+                  />
                 </template>
               </DxRadioGroup>
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="제작요청자">
-              <list-manager-dropdown width="200px" v-model:valueInput=" ElecFilingFileFilter.manageUserId " />
+              <list-manager-dropdown
+                width="200px"
+                v-model:valueInput="ElecFilingFileFilter.manageUserId"
+                filterData
+              />
             </a-form-item>
           </a-col>
         </a-row>
       </div>
     </div>
     <div class="content-grid mt-10">
-      <DxDataGrid id="tab3-bf620" :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" dataSource "
-        :show-borders=" true " key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering=" move_column "
-        :allow-column-resizing=" colomn_resize " :column-auto-width=" true " noDataText="내역이 없습니다">
-        <DxPaging :enabled="false" />
-        <DxScrolling mode="standard" show-scrollbar="always" />
-        <DxLoadPanel :enabled=" true " />
-        <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" />
-        <DxColumn caption="참고사항" data-field="referenceInformation" />
-        <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="아이디" data-field="productionRequestUserId" alignment="left" />
-        <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus" alignment="left" />
-        <template #productionStatus=" { data }: any ">
-          <production-status :typeTag=" 2 " v-if=" data.value == 0 " padding="1px 10px" />
-          <production-status :typeTag=" 3 " v-if=" data.value == 1 " padding="1px 10px" />
-          <production-status :typeTag=" 4 " v-if=" data.value == 2 " padding="1px 10px" />
-          <production-status :typeTag=" 5 " v-if=" data.value == -1 " :message=" data.data.causeOfProductionFailure "
-            padding="1px 10px" />
-        </template>
-        <DxColumn caption="상세보기" cell-template="afterDeadline" />
-        <template #afterDeadline=" { data }: any ">
-          <div style="text-align: center">
-            <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
-              @click=" onShow(data.data.electronicFilingId) " />
-          </div>
-        </template>
-        <DxSummary>
-          <!-- <DxTotalItem column="일련번호" summary-type="count" display-format="" /> -->
-        </DxSummary>
-      </DxDataGrid>
-      <div style="border: 1px solid #ddd; border-top: none; width: 100%; display: flex; padding: 5px 0;" class="fs-14">
-        <div style="width: 250px; margin-left: 70px;">
-          <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-            전체
-            <span style="font-size: 16px;">[{{ dataSource.length }}]</span>
+      <a-spin :spinning="searchElectronicFilingLoading">
+        <DxDataGrid
+          id="tab3-bf620"
+          :show-row-lines="true"
+          :hoverStateEnabled="true"
+          :data-source="dataSource"
+          :show-borders="true"
+          key-expr="productionRequestUserId"
+          class="mt-10"
+          :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize"
+          :column-auto-width="true"
+          noDataText="내역이 없습니다"
+        >
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxExport :enabled="true" />
+          <DxToolbar>
+            <DxItem name="searchPanel" location="after" />
+            <DxItem name="exportButton" location="after" />
+          </DxToolbar>
+          <DxPaging :enabled="false" />
+          <DxScrolling mode="standard" show-scrollbar="always" />
+          <DxLoadPanel :enabled="false" />
+          <DxColumn
+            caption="일련번호"
+            data-field="electronicFilingId"
+            alignment="left"
+          />
+          <DxColumn caption="참고사항" data-field="referenceInformation" />
+          <DxColumn
+            caption="제작요청일시"
+            data-field="productionRequestedAt"
+            data-type="date"
+            format="yyyy-MM-dd HH:mm"
+          />
+          <DxColumn
+            caption="아이디"
+            data-field="productionRequestUserId"
+            alignment="left"
+          />
+          <DxColumn
+            caption="제작현황"
+            data-field="productionStatus"
+            cell-template="productionStatus"
+            alignment="left"
+          />
+          <template #productionStatus="{ data }: any">
+            <production-status
+              :typeTag="2"
+              v-if="data.value == 0"
+              padding="1px 10px"
+            />
+            <production-status
+              :typeTag="3"
+              v-if="data.value == 1"
+              padding="1px 10px"
+            />
+            <production-status
+              :typeTag="4"
+              v-if="data.value == 2"
+              padding="1px 10px"
+            />
+            <production-status
+              :typeTag="5"
+              v-if="data.value == -1"
+              :message="data.data.causeOfProductionFailure"
+              padding="1px 10px"
+            />
+          </template>
+          <DxColumn caption="상세보기" cell-template="afterDeadline" />
+          <template #afterDeadline="{ data }: any">
+            <div style="text-align: center">
+              <img
+                src="@/assets/images/searchPlus.png"
+                style="width: 20px; height: 20px; margin-top: 0px"
+                @click="onShow(data.data.electronicFilingId)"
+              />
+            </div>
+          </template>
+          <DxSummary>
+            <!-- <DxTotalItem column="일련번호" summary-type="count" display-format="" /> -->
+          </DxSummary>
+        </DxDataGrid>
+        <div
+          style="
+            border: 1px solid #ddd;
+            border-top: none;
+            width: 100%;
+            display: flex;
+            padding: 5px 0;
+          "
+          class="fs-14"
+        >
+          <div style="width: 250px; margin-left: 70px">
+            <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+              전체
+              <span style="font-size: 16px">[{{ dataSource.length }}]</span>
+            </div>
           </div>
         </div>
-      </div>
+      </a-spin>
       <!-- <div @click="onShow">Kính lúp</div> -->
     </div>
-    <a-modal :visible=" modalStatus " @cancel=" modalStatus = false " :mask-closable=" false " class="confirm-md"
-      footer="" :width=" 700 ">
-      <a-spin :spinning=" companiesInElectronicLoading ">
+    <a-modal
+      :visible="modalStatus"
+      @cancel="modalStatus = false"
+      :mask-closable="false"
+      class="confirm-md"
+      footer=""
+      :width="700"
+    >
+      <a-spin :spinning="companiesInElectronicLoading">
         <br />
-        <DxDataGrid :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" companiesInElectronicDataSource "
-          :show-borders=" true " key-expr="code" class="mt-10" :allow-column-reordering=" move_column "
-          :allow-column-resizing=" colomn_resize " :column-auto-width=" true " noDataText="내역이 없습니다">
+        <DxDataGrid
+          :show-row-lines="true"
+          :hoverStateEnabled="true"
+          :data-source="companiesInElectronicDataSource"
+          :show-borders="true"
+          key-expr="code"
+          class="mt-10"
+          :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize"
+          :column-auto-width="true"
+          noDataText="내역이 없습니다"
+        >
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="사업자코드" data-field="code" />
-          <DxColumn caption="사업자번호" cell-template="bizNumber" data-field="bizNumber" />
-          <template #bizNumber=" { data }: any ">
-            <div> {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
-              data.data.bizNumber.toString().slice(3, 5)
-              }}-{{
-              data.data.bizNumber.toString().slice(5, 10)
-              }}</div>
+          <DxColumn
+            caption="사업자번호"
+            cell-template="bizNumber"
+            data-field="bizNumber"
+          />
+          <template #bizNumber="{ data }: any">
+            <div>
+              {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
+                data.data.bizNumber.toString().slice(3, 5)
+              }}-{{ data.data.bizNumber.toString().slice(5, 10) }}
+            </div>
           </template>
           <DxColumn caption="상호" data-field="name" />
           <DxColumn caption="대표자명" data-field="presidentName" />
           <DxSummary>
-            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+            <DxTotalItem
+              column="사업자코드"
+              summary-type="count"
+              display-format="전체: {0}"
+            />
           </DxSummary>
         </DxDataGrid>
       </a-spin>
     </a-modal>
   </div>
 </template>
-  
+
 <script lang="ts">
-import { computed, defineComponent, getCurrentInstance, reactive, ref, watch } from 'vue';
-import queries from '@/graphql/queries/BF/BF6/BF620/index';
-import { useQuery } from '@vue/apollo-composable';
-import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel, DxPaging } from 'devextreme-vue/data-grid';
-import { SaveOutlined } from '@ant-design/icons-vue';
-import dayjs from 'dayjs';
-import DxRadioGroup from 'devextreme-vue/radio-group';
-import notification from '@/utils/notification';
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  reactive,
+  ref,
+  watch,
+} from "vue";
+import queries from "@/graphql/queries/BF/BF6/BF620/index";
+import { useQuery } from "@vue/apollo-composable";
+import { useStore } from "vuex";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxScrolling,
+  DxSelection,
+  DxSummary,
+  DxTotalItem,
+  DxLoadPanel,
+  DxPaging,
+  DxToolbar,
+  DxItem,
+  DxSearchPanel,
+  DxExport,
+} from "devextreme-vue/data-grid";
+import { SaveOutlined } from "@ant-design/icons-vue";
+import dayjs from "dayjs";
+import DxRadioGroup from "devextreme-vue/radio-group";
+import notification from "@/utils/notification";
 import DxButton from "devextreme-vue/button";
-import { ZoomInOutlined } from "@ant-design/icons-vue"
-import GetStatusTable from './GetStatusTable.vue';
+import { ZoomInOutlined } from "@ant-design/icons-vue";
+import GetStatusTable from "./GetStatusTable.vue";
 export default defineComponent({
   components: {
     DxButton,
@@ -131,8 +270,12 @@ export default defineComponent({
     ZoomInOutlined,
     GetStatusTable,
     DxLoadPanel,
-    DxPaging
-},
+    DxPaging,
+    DxToolbar,
+    DxItem,
+    DxSearchPanel,
+    DxExport,
+  },
   props: {
     search: {
       type: Number,
@@ -140,7 +283,10 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
+    const rangeDate: any = ref([
+      parseInt(dayjs().subtract(1, "week").format("YYYYMMDD")),
+      parseInt(dayjs().format("YYYYMMDD")),
+    ]);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const productionStatuses = ref(0);
@@ -166,10 +312,14 @@ export default defineComponent({
       //   refetch: searchElectronicFilingRefetch,
       onError: searchElectronicFilingError,
       variables,
-    } = useQuery(queries.searchElectronicFilingFileProductions, { filter: ElecFilingFileFilter }, () => ({
-      enabled: searchElectronicFilingTrigger.value,
-      fetchPolicy: 'no-cache',
-    }));
+    } = useQuery(
+      queries.searchElectronicFilingFileProductions,
+      { filter: ElecFilingFileFilter },
+      () => ({
+        enabled: searchElectronicFilingTrigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
     watch(searchElectronicFilingResult, (newVal) => {
       let data = newVal.searchElectronicFilingFileProductions;
       dataSource.value = data;
@@ -177,8 +327,8 @@ export default defineComponent({
       searchElectronicFilingTrigger.value = false;
     });
     searchElectronicFilingError((res) => {
-      notification('error', res.message)
-    })
+      notification("error", res.message);
+    });
 
     // Get Companies detail and data source
 
@@ -194,10 +344,14 @@ export default defineComponent({
       loading: companiesInElectronicLoading,
       refetch: companiesInElectronicRefetch,
       //   variables: companiesVariable,
-    } = useQuery(queries.getCompaniesInElectronicFilingFile, companiesInElectronic, () => ({
-      enabled: companiesInElectronicTrigger.value,
-      fetchPolicy: 'no-cache',
-    }));
+    } = useQuery(
+      queries.getCompaniesInElectronicFilingFile,
+      companiesInElectronic,
+      () => ({
+        enabled: companiesInElectronicTrigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
     watch(companiesInElectronicResult, (newVal) => {
       let data = newVal.getCompaniesInElectronicFilingFile;
       companiesInElectronicDataSource.value = data;
@@ -254,13 +408,13 @@ export default defineComponent({
       companiesInElectronicLoading,
       companiesInElectronicDataSource,
       styleCheckBox,
-      companiesInElectronic
+      companiesInElectronic,
     };
   },
 });
 </script>
 <style scoped lang="scss">
-@import '../style/style.scss';
+@import "../style/style.scss";
 
 :deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
   background: v-bind("styleCheckBox.ColorCheckBox");

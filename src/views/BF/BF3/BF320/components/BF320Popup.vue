@@ -637,6 +637,7 @@ export default defineComponent({
     updateDone((res) => {
       notification("success", "업데이트 완료!");
       emit("closePopup", false);
+      activeKey.value = [1]
     });
     const formarDate = (date: any) => {
       return dayjs(date).format("YYYY/MM/DD");
@@ -644,24 +645,31 @@ export default defineComponent({
 
     const isChangedForm = ref(false);
     // watch changed formState
-    const stopWatch = watch(
+    watch(
       formState,
       (value: any) => {
         if (!isEqual(value, objDataDefault)) {
           isChangedForm.value = true;
-          stopWatch(); // Stop watching for changes
+        } else {
+          isChangedForm.value = false;
         }
       },
       { immediate: false }
     );
     const setModalVisible = () => {
       if (isChangedForm.value)
-        comfirmClosePopup(() => emit("closePopup", false), {
+        comfirmClosePopup(() => {
+          emit("closePopup", false)
+          activeKey.value = [1]
+        }, {
           okText: '네', 
           cancelText: '취소',
         });
-      else emit("closePopup", false);
-      activeKey.value = [1]
+      else {
+        emit("closePopup", false);
+        activeKey.value = [1]
+      }
+      
     };
     const getImgUrl = (img: any) => {
       let resImg = {

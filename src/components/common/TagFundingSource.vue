@@ -1,22 +1,22 @@
 <template>
   <div :class="cssClass">
     <div v-if="fundingSource1" class="tag">
-      <a-tooltip :title="`자부담 ${fundingSource1}`">
+      <a-tooltip :title="`자부담 ${filters.formatNumber(Number(fundingSource1))}`">
         <div>자</div>
       </a-tooltip>
     </div>
     <div v-if="fundingSource2" class="tag">
-      <a-tooltip :title="`수익사업 ${fundingSource2}`">
+      <a-tooltip :title="`수익사업 ${filters.formatNumber(Number(fundingSource2))}`">
         <div>수</div>
       </a-tooltip>
     </div>
     <div v-if="fundingSource3" class="tag">
-      <a-tooltip :title="`보조금 ${fundingSource3}`">
+      <a-tooltip :title="`보조금 ${filters.formatNumber(Number(fundingSource3))}`">
         <div>보</div>
       </a-tooltip>
     </div>
     <div v-if="fundingSource4" class="tag">
-      <a-tooltip :title="`후원금 ${fundingSource4}`">
+      <a-tooltip :title="`후원금 ${filters.formatNumber(Number(fundingSource4))}`">
         <div>후</div>
       </a-tooltip>
     </div>
@@ -24,6 +24,7 @@
 </template>
 
 <script lang="ts">
+import filters from '@/helpers/filters';
 import {defineComponent} from 'vue'
 
 export default defineComponent({
@@ -50,7 +51,9 @@ export default defineComponent({
     },
   },
   setup() {
-    return {}
+    return {
+      filters
+    }
   }
 })
 </script>

@@ -4,14 +4,14 @@
         <div class="custom-modal">
             <div class="text-align-center">
                 <h3>공제 재계산 결과</h3>
-                    <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="data"
-                        allow-column-resizing="false"
-                        :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
-                        <!-- <DxScrolling mode="standard" show-scrollbar="always"/> -->
-                        <DxColumn caption="항목" data-field="name" width="200"/>
-                        <DxColumn caption="계산후" data-field="amountNew" width="180" format="fixedPoint"/>
-                        <DxColumn caption="원본" data-field="amount" width="180" format="fixedPoint"/>
-                    </DxDataGrid>
+                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="showData"
+                    allow-column-resizing="false" :show-borders="true" :column-auto-width="true"
+                    :onRowPrepared="changeColorRow">
+                    <!-- <DxScrolling mode="standard" show-scrollbar="always"/> -->
+                    <DxColumn caption="항목" data-field="name" width="200" />
+                    <DxColumn caption="계산후" data-field="amountNew" width="180" format="fixedPoint" />
+                    <DxColumn caption="원본" data-field="amount" width="180" format="fixedPoint" />
+                </DxDataGrid>
             </div>
         </div>
         <div class="text-align-center mt-40">
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { DxDataGrid,DxScrolling, DxColumn } from "devextreme-vue/data-grid"
+import { DxDataGrid, DxScrolling, DxColumn } from "devextreme-vue/data-grid"
 import { defineComponent, watch, ref } from 'vue'
 export default defineComponent({
     props: {
@@ -37,10 +37,21 @@ export default defineComponent({
 
     },
     components: {
-        DxDataGrid,DxScrolling,
+        DxDataGrid, DxScrolling,
         DxColumn
     },
     setup(props, { emit }) {
+        const showData = ref<any>([])
+        watch(() => props.modalStatus, (value) => {
+            if (value) {
+                showData.value = props.data?.filter((val: any) => {
+                    if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
+                        return true
+                })
+            } else {
+                showData.value = []
+            }
+        })
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -64,6 +75,7 @@ export default defineComponent({
             setModalVisible,
             onSubmit,
             changeColorRow,
+            showData
         }
     },
 })
@@ -75,6 +87,7 @@ export default defineComponent({
     // width: 100%;
     justify-content: center;
     margin-top: 20px;
+
     .title {
         background-color: #e6f7ff;
     }

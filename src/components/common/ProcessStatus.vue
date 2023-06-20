@@ -147,8 +147,8 @@ export default defineComponent({
     cursor: no-drop;
 }
 
-:deep .dx-button-text {
-    line-height: inherit;
-}
+// :deep .dx-button-text {
+//     line-height: inherit;
+// }
 </style>
 

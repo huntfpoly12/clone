@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" title="임직원보수일람표" centered @cancel="setModalVisible" :mask-closable="false"
-    :footer="false" width="1300px">
+    :footer="false" width="1400px">
     <standard-form ref="formRef">
       <a-spin :spinning="loadingGetEmployeeTable">
         <DxDataGrid ref="gridRef" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true"
@@ -18,7 +18,7 @@
           <DxPaging :page-size="0" />
           <DxToolbar>
             <DxItem location="after">
-              <DxButton :disabled="dataBudget?.status !== 10" @click="handleFillValuePreIndex" text="전예산액 불러오기"
+              <DxButton :disabled="dataBudget?.status !== 10" @click="handleFillValuePreIndex" text="전임직원수일람표 불러오기"
                 class="d-flex-center" style="background: #337ab7; color: white; height: 100%;" />
             </DxItem>
             <DxItem location="after" name="addRowButton" css-class="cell-button-add" cell-template="addRow">
@@ -35,8 +35,7 @@
             <DxItem name="saveButton">
               <a-tooltip title="저장">
                 <div>
-                  <DxButton style="background: #337ab7; color: white" @click="actionSave"
-                    :disabled="dataBudget.status !== 10">
+                  <DxButton style="background: #337ab7; color: white" :disabled="dataAllRow.length === 0 || dataBudget.status !== 10" @click="actionSave">
                     <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" />
                     저장
                   </DxButton>
@@ -104,11 +103,11 @@
               <div style="color: red">인건비구분</div>
             </a-tooltip>
           </template>
-          <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right" format="#0,###" />
-          <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right" format="#0,###" />
+          <DxColumn caption="급여" data-field="salary" data-type="number" alignment="right" format="#0,###" width="100px"/>
+          <DxColumn caption="재수당" data-field="allowance" data-type="number" alignment="right" format="#0,###" width="100px"/>
           <DxColumn caption="일용잡금" data-field="dailyAllowance" data-type="number" alignment="right" format="#0,###" />
           <DxColumn caption="퇴직금 및 퇴직적립금" data-field="retirementReserve" data-type="number" alignment="right"
-            format="#0,###" width="120px" />
+            format="#0,###" width="130px" />
           <DxColumn caption="사회보험 부담금" data-field="socialInsuranceLevy" data-type="number" alignment="right"
             format="#0,###" width="120px" />
           <DxColumn caption="계" data-field="total" alignment="right" cell-template="total" :allowEditing="false"
@@ -225,10 +224,10 @@ import DataSource from 'devextreme/data/data_source';
 import { RowDraggingReorderEvent, SavingEvent } from "devextreme/ui/data_grid";
 import { ValueChangedEvent } from "devextreme/ui/select_box";
 import cloneDeep from 'lodash/cloneDeep';
-import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import { computed, reactive, ref, watch } from 'vue';
 import { useStore } from "vuex";
+import { calculateEmployeeResult } from "./../utils";
 
 const emit = defineEmits(['closePopup'])
 const props = defineProps({
@@ -341,26 +340,38 @@ onError((error) => {
   notification('error', error.message)
 
 })
-const handleSaving = debounce((e: SavingEvent) => {
+const handleSaving = (e: SavingEvent) => {
+  e.cancel = true
+  const dataChanges = e.changes.filter((item: any) => item.type !== 'remove')
   // remove all key "key" in dataAllRow
   const inputs = dataAllRow.value.map((item: any) => {
-    const { key, ...rest } = item;
-    return rest;
-  });
+    const {key, ...rest} = item
+    if(dataChanges) {
+      const dataChange = dataChanges.find((i: any) => i.key === item.key)
+      if(dataChange) {
+        return {
+          ...rest,
+          ...dataChange.data
+        }
+      }
+    }
+    return rest
+  })
+  const resultCal = calculateEmployeeResult(inputs)
   const result = {
     companyId,
     facilityBusinessId: globalFacilityBizId.value,
     fiscalYear: acYear.value,
     index: props.index ?? 0,
-    totalLaborCost: formatSummaryCustom.total,
-    totalDirectLaborCost: formatSummaryCustom.total1,
-    totalIndirectLaborCost: formatSummaryCustom.total2,
+    totalLaborCost: resultCal.total,
+    totalDirectLaborCost: resultCal.total1,
+    totalIndirectLaborCost: resultCal.total2,
     accounSubjectOrder: JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0].theOrder,
     inputs
   }
+  console.log('%c retusl', 'color: red;', result);
   mutate(result)
-  e.cancel = true
-}, 300)
+}
 const dataAllRow: any = ref([])
 const formatSummaryCustom = reactive({
   salary1: 0,
@@ -379,49 +390,7 @@ const formatSummaryCustom = reactive({
 })
 
 watch(() => dataAllRow.value, (val, oldValue) => {
-  const initialValue = {
-    salary1: 0,
-    salary2: 0,
-    allowance1: 0,
-    allowance2: 0,
-    dailyAllowance1: 0,
-    dailyAllowance2: 0,
-    retirementReserve1: 0,
-    retirementReserve2: 0,
-    socialInsuranceLevy1: 0,
-    socialInsuranceLevy2: 0,
-    total1: 0,
-    total2: 0,
-    total: 0,
-  };
-  const result = val?.reduce((acc: any, item: any) => {
-    const {
-      classification,
-      salary = 0,
-      allowance = 0,
-      dailyAllowance = 0,
-      retirementReserve = 0,
-      socialInsuranceLevy = 0,
-    } = item;
-
-    if (classification === 1) {
-      acc.salary1 += salary;
-      acc.allowance1 += allowance;
-      acc.dailyAllowance1 += dailyAllowance;
-      acc.retirementReserve1 += retirementReserve;
-      acc.socialInsuranceLevy1 += socialInsuranceLevy;
-    } else if (classification === 2) {
-      acc.salary2 += salary;
-      acc.allowance2 += allowance;
-      acc.dailyAllowance2 += dailyAllowance;
-      acc.retirementReserve2 += retirementReserve;
-      acc.socialInsuranceLevy2 += socialInsuranceLevy;
-    }
-    acc.total1 = acc.salary1 + acc.allowance1 + acc.dailyAllowance1 + acc.retirementReserve1 + acc.socialInsuranceLevy1;
-    acc.total2 = acc.salary2 + acc.allowance2 + acc.dailyAllowance2 + acc.retirementReserve2 + acc.socialInsuranceLevy2;
-    acc.total = acc.total1 + acc.total2;
-    return acc;
-  }, initialValue)
+  const result = calculateEmployeeResult(val)
   Object.assign(formatSummaryCustom, result)
   const listCellFooter = document.querySelectorAll('.dx-datagrid-summary-item.dx-datagrid-text-content')
   if (listCellFooter.length > 19) {
@@ -527,6 +496,7 @@ const addRow = () => {
   // })
 }
 const actionSave = () => {
+  console.log('%c dataAllRow.length', 'color: red;', dataAllRow.value.length);
   gridRef.value?.instance.saveEditData()
 }
 const setEditedValue = (valueChangedEventArg: ValueChangedEvent, cellInfo: any) => {
@@ -656,6 +626,11 @@ const onFocusInLabor = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+:deep(.dx-state-disabled) {
+  .dx-button-text {
+    opacity: 1 !important;
+  }
 }
 </style>
 <style>

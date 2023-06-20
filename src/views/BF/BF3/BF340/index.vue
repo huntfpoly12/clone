@@ -6,50 +6,7 @@
       :buttonSearch="true"
     />
     <div id="bf-340">
-      <div class="search-form">
-        <div id="components-grid-demo-flex">
-          <a-row justify="start" :gutter="[16, 8]">
-            <a-col>
-              <div class="dflex custom-flex">
-                <label class="lable-item"> 영업자등급 :</label>
-                <sale-grade-select-box
-                  v-model:valueInput="saleGrade"
-                  width="120px"
-                  placeholder="전체"
-                  :selectAll="true"
-                />
-              </div>
-            </a-col>
-            <a-col>
-              <div class="dflex custom-flex">
-                <label class="lable-item">영업자명:</label>
-                <default-text-box
-                  v-model:valueInput="originData.name"
-                  width="120px"
-                ></default-text-box>
-              </div>
-            </a-col>
-            <a-col>
-              <div class="dflex custom-flex">
-                <label class="lable-item">영업자코드:</label>
-                <default-text-box
-                  v-model:valueInput="originData.code"
-                  width="120px"
-                ></default-text-box>
-              </div>
-            </a-col>
-            <a-col>
-              <div class="dflex custom-flex">
-                <label class="lable-item">상태 :</label>
-                <sale-status-select-box
-                  v-model:valueInput="saleStatus"
-                  placeholder="전체"
-                />
-              </div>
-            </a-col>
-          </a-row>
-        </div>
-      </div>
+     
       <div class="page-content">
         <DxDataGrid
           :show-row-lines="true"
@@ -70,6 +27,7 @@
           />
           <DxExport :enabled="true" />
           <DxToolbar>
+            <DxItem template="search" css-class="order-0"/>
             <DxItem location="after" template="pagination-table" />
             <DxItem name="searchPanel" />
             <DxItem name="exportButton" css-class="cell-button-export" />
@@ -82,6 +40,53 @@
             <DxItem name="addRowButton" show-text="always" />
             <DxItem name="columnChooserButton" />
           </DxToolbar>
+          <template #search>
+            <div class="search-form">
+              <div id="components-grid-demo-flex">
+                <a-row justify="start" :gutter="[16, 8]">
+                  <a-col>
+                    <div class="dflex custom-flex">
+                      <label class="lable-item"> 영업자등급 :</label>
+                      <sale-grade-select-box
+                        v-model:valueInput="saleGrade"
+                        width="120px"
+                        placeholder="전체"
+                        :selectAll="true"
+                      />
+                    </div>
+                  </a-col>
+                  <a-col>
+                    <div class="dflex custom-flex">
+                      <label class="lable-item">영업자명:</label>
+                      <default-text-box
+                        v-model:valueInput="originData.name"
+                        width="120px"
+                      ></default-text-box>
+                    </div>
+                  </a-col>
+                  <a-col>
+                    <div class="dflex custom-flex">
+                      <label class="lable-item">영업자코드:</label>
+                      <default-text-box
+                        v-model:valueInput="originData.code"
+                        width="120px"
+                      ></default-text-box>
+                    </div>
+                  </a-col>
+                  <a-col>
+                    <div class="dflex custom-flex">
+                      <label class="lable-item">상태 :</label>
+                      <sale-status-select-box
+                        v-model:valueInput="saleStatus"
+                        placeholder="전체"
+                        style="height: 30px;"
+                      />
+                    </div>
+                  </a-col>
+                </a-row>
+              </div>
+            </div>
+          </template>
           <template #button-template>
             <a-tooltip placement="topLeft">
 									<template #title>신규</template>
