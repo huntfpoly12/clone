@@ -4,7 +4,7 @@
     @input="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" @focusIn="onFocusIn">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxCustomRule  :validation-callback="ruleCustom" message="이메일 형식이 정확하지 않습니다" />
+      <DxCustomRule  :reevaluate="true" :validation-callback="ruleCustom" message="이메일 형식이 정확하지 않습니다" />
     </DxValidator>
   </DxTextBox>
 </template>
@@ -84,8 +84,9 @@ export default defineComponent({
       }
       emit("focusInput", e);
     }
-    const ruleCustom = (e: any) => {
-      return e.value ? isEmail(e.value) : false;
+    const ruleCustom = (e: any) => { 
+      if (e.value) return isEmail(e.value);
+      return true
     }
     return {
       updateValue,
