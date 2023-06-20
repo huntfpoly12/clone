@@ -475,9 +475,10 @@ export default defineComponent({
         employeeId: employeeId2,
         ...obj2
       } = initFormStateTabPA120.value;
+
       const { ...tab2 } = initFormTab2PA120.value;
       const { ...tabEdit2 } = editRowTab2PA120.value;
-      console.log(`output->tab2, tabEdit2`,tab2, tabEdit2)
+      // console.log(`output->tab2, tabEdit2`,tab2, tabEdit2)
       if (!initFormStateTabPA120.value.foreigner) {
         delete obj1.nationality;
         delete obj2.nationality;
@@ -520,6 +521,20 @@ export default defineComponent({
       return;
     };
     const tabCurrent = computed(() => {
+      const { stayQualification, employeeId, ...obj1 } = editRowPA120.value;
+      const {
+        stayQualification: stayQualification2,
+        employeeId: employeeId2,
+        ...obj2
+      } = initFormStateTabPA120.value;
+
+      if (
+        JSON.stringify(obj1) != JSON.stringify(obj2) &&
+        JSON.stringify(initFormTab2PA120.value) !=
+          JSON.stringify(editRowTab2PA120.value)
+      ) {
+        return 4;
+      }
       if (
         JSON.stringify(initFormTab2PA120.value) !=
         JSON.stringify(editRowTab2PA120.value)
@@ -531,13 +546,13 @@ export default defineComponent({
     const rowKeyTab2PA120 = computed(() => store.state.common.rowKeyTab2PA120);
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        if (tabCurrent.value == 1) {
+        if (tabCurrent.value == 1 || tabCurrent.value == 4) {
           let ele11 = document.getElementById("btn-save") as HTMLInputElement;
           ele11?.click();
           let ele12 = document.getElementById("btn-save-edit");
           ele12?.click();
         }
-        if (tabCurrent.value == 2) {
+        if (tabCurrent.value == 2 || tabCurrent.value == 4) {
           let ele21 = document.getElementById("btn-save-edit-tab2");
           ele21?.click();
           let ele22 = document.getElementById("btn-save-add-tab2");
@@ -595,10 +610,10 @@ export default defineComponent({
       compareType.value = 1;
       focusedRowKey.value = initFormStateTabPA120.value?.employeeId.toString();
       removeHoverRowKey();
-      if (tabCurrent.value == 2) {
-        store.commit("common/activeTabEditKeyPA120", "2");
-      } else {
+      if (tabCurrent.value == 1 || tabCurrent.value == 4) {
         store.commit("common/activeTabEditKeyPA120", "1");
+      } else {
+        store.commit("common/activeTabEditKeyPA120", "2");
       }
       if (dataSource.value[dataSource.value.length - 1].key != 0) {
         focusedRowKey.value =
@@ -734,11 +749,11 @@ export default defineComponent({
     });
 
     const redirectTab = () => {
-      if(initFormStateTabPA120.value.employeeId){
+      if (initFormStateTabPA120.value.employeeId) {
         idRowEdit.value = initFormStateTabPA120.value.employeeId;
         actionChangeComponent.value = 2;
       }
-    }
+    };
     return {
       loading,
       idRowEdit,
@@ -777,7 +792,6 @@ export default defineComponent({
       gridRef,
       editRowPA120,
       compareForm,
-      tabCurrent,
       rowKeyTab2PA120,
       calculateIncomeTypeCodeAndName,
       onFocusedRowChanging,

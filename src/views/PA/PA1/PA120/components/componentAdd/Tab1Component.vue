@@ -384,8 +384,6 @@ export default defineComponent({
       store.commit("common/actionFormErrorPA120");
     });
     onDoneEdit((res) => {
-      store.state.common.reloadEmployeeList =
-        !store.state.common.reloadEmployeeList;
       notification("success", messageUpdate);
       store.commit("common/actionFormDonePA120");
       store.state.common.isNewRowPA120 = false;
