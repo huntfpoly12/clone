@@ -314,27 +314,6 @@
             </div>
           </div>
         </a-spin>
-        <!-- <a-spin :spinning="loading1" size="large">
-          <div class="deduction-main">
-            <div v-for="item in dataConfigPayItems" :key="item.name" class="custom-deduction">
-              <span>
-                <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1"
-                                 subName="과세" />
-                <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2"
-                                 subName="상여(과세)" />
-                <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode" :name="item.name" :type="3"
-                                 :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-                <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name"
-                                 :type="4" subName="과세" />
-              </span>
-              <div>
-                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
-                                  :min="0" @changeInput="onCalcSum"> </number-box-money>
-                <span class="pl-5">원</span>
-              </div>
-            </div>
-          </div>
-        </a-spin> -->
       </a-col>
       <a-col class="col-3">
         <div class="header-text-2">
@@ -413,9 +392,6 @@
                   </a-tooltip>
                   <number-box-money
                     v-else
-                    :textColor="
-                      item.value < 1000 && item.itemCode == 1012 ? 'red' : ''
-                    "
                     width="130px"
                     :spinButtons="false"
                     :rtlEnabled="true"

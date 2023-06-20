@@ -123,6 +123,7 @@ export default defineComponent({
       onResultTab2((res: any) => {
         triggerTab2.value = false
         if (res.data) {
+          
           arrStatus.value = res.data.getElectronicFilingsByIncomeRetirementPaymentStatement[0]
           emit('productionStatusData', arrStatus.value);
         } else {

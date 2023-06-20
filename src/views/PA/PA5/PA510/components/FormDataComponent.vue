@@ -24,7 +24,7 @@
 						</div>
 						<a-form-item label="근무일수">
 							<number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays" width="160px"
-								:required="true" min="1" :max="31" />
+								:required="true" :min="1" :max="31" />
 						</a-form-item>
 						<a-form-item label="월급여">
 							<number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.monthlyWage"
@@ -633,7 +633,6 @@ export default defineComponent({
 							employeementInsuranceSupportPercent.value
 						)
 						: 0;
-
 				let objectData = Formula.getDailyEmployeeTax(
 					parseInt(
 						`${processKey.value.paymentYear}${processKey.value.paymentMonth}`
@@ -682,12 +681,9 @@ export default defineComponent({
 		};
 		// A function that is called when the employeeId is changed.
 		const onChange = () => {
-			if (
-				employeeWageDailyParam.employeeId !=
-				dataIncomeWageDaily.value.employee.employeeId
-			) {
-				employeeWageDailyParam.employeeId =
-					dataIncomeWageDaily.value.employee.employeeId;
+			if (employeeWageDailyParam.employeeId != dataIncomeWageDaily.value.employee.employeeId) {
+				employeeWageDailyParam.employeeId = dataIncomeWageDaily.value.employee.employeeId;
+				statusChangeFormPrice.value = false;
 				employeeWageDailyTrigger.value = true;
 			}
 		};

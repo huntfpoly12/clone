@@ -49,7 +49,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.type"
                     :dataSource="reportTypeSelectbox"
-                    width="150px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -63,7 +63,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
                     :dataSource="workingStatusSelectbox"
-                    width="150px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -75,7 +75,7 @@
                 <a-form-item label="기간">
                   <range-date-time-box
                     v-model:valueDate="rangeDate"
-                    width="250px"
+                    width="200px"
                     :multi-calendars="true"
                     :clearable="false"
                     teleport
@@ -102,12 +102,12 @@
           <DxColumn
             caption="일련번호"
             data-field="companyId"
-            alignment="left"
+            alignment="center"
           />
           <DxColumn
             caption="신고구분"
             data-field="type"
-            alignment="left"
+            alignment="center"
             :format="reportTypeText"
           />
           <DxColumn caption="업체명" data-field="companyName" />
@@ -119,14 +119,14 @@
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
           <DxColumn
             caption="상태"
-            width="135px"
+            width="110"
             cell-template="workingStatus"
           />
           <template #workingStatus="{ data }: any">
             <SelectCustomField
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
-              width="120px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -143,7 +143,7 @@
           <DxColumn
             caption="신청일"
             data-field="registeredAt"
-            width="125"
+            width="95"
             alignment="left"
             data-type="date"
             format="yyyy-MM-dd"
@@ -152,7 +152,7 @@
           <DxColumn
             caption="접수일"
             data-field="acceptedAt"
-            width="125"
+            width="95"
             data-type="date"
             format="yyyy-MM-dd"
           />
@@ -162,6 +162,7 @@
             alignment="left"
             data-type="date"
             cell-template="completedAt"
+            width="95"
           />
           <template #completedAt="{ data }">
             <div>
@@ -175,7 +176,7 @@
           </template>
           <DxColumn
             caption="접수번호"
-            width="155px"
+            width="135px"
             cell-template="acceptedNumber"
           />
           <template #acceptedNumber="{ data }: any">

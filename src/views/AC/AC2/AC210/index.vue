@@ -7,15 +7,22 @@
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+                <DxExport :enabled="true" />
                 <DxPaging :enabled="false" />
                 <DxToolbar>
                     <DxItem template="box-action-right" location="after" />
                     <DxItem name="searchPanel" />
+                    <DxItem name="exportButton" css-class="cell-button-export" />
                 </DxToolbar>
 
                 <template #box-action-right>
-                    <div class="action">
-
+                    <div class="action d-flex-center">
+                        <span class="mr-10">기간: </span>
+                        <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+                        <button-basic class="ml-5 d-flex-center button-upload" :type="'default'" >
+                            <upload-outlined :style="{ fontSize: '16px', marginRight: '5px' }" />
+                            <span>전표 업로드</span>
+                        </button-basic>
                     </div>
                 </template>
                 <DxColumn caption="NO" width="85" />
@@ -27,8 +34,6 @@
                 <DxColumn caption="전체건수" data-field="" />
 
                 <DxColumn caption="성공건수" data-field="" />
-
-                <DxColumn caption="수입액" data-field="" />
 
                 <DxColumn caption="실패건수" data-field="" />
 
@@ -62,6 +67,7 @@ import {
     DxPaging,
     DxSearchPanel,
     DxToolbar,
+    DxExport,
 } from "devextreme-vue/data-grid";
 import { Message } from "@/configs/enum";
 import filters from "@/helpers/filters";
@@ -72,6 +78,7 @@ import queries from "@/graphql/queries/AC/AC2/AC210";
 import mutations from "@/graphql/mutations/AC/AC2/AC210";
 import {
     ZoomInOutlined,
+    UploadOutlined,
 } from "@ant-design/icons-vue";
 import { companyId } from "@/helpers/commonFunction";
 import dayjs from "dayjs";
@@ -82,6 +89,7 @@ import { isEqual } from "lodash";
 export default defineComponent({
     components: {
         DxItem,
+        DxExport,
         DxDataGrid,
         DxColumn,
         DxScrolling,
@@ -89,9 +97,10 @@ export default defineComponent({
         DxButton,
         DxSearchPanel,
         DxToolbar,
-        ZoomInOutlined,
+        ZoomInOutlined, UploadOutlined,
         ModalDetail,
         ModalUpload,
+
     },
     setup() {
         const store = useStore();
@@ -101,6 +110,7 @@ export default defineComponent({
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
         const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
         const gridRefAC210 = ref(); // ref of grid
+        const rangeDate = ref()
 
         let statusModalDetail = ref<boolean>(false);
         let statusModalUpload = ref<boolean>(false);
@@ -120,7 +130,6 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
         const actionOpenModalDetail = (data: any) => {
-            console.log(data);
             statusModalDetail.value = true
         }
         const actionOpenModalUpload = (data: any) => {
@@ -135,6 +144,7 @@ export default defineComponent({
             statusModalDetail, statusModalUpload,
             move_column,
             colomn_resize,
+            rangeDate,
         };
     },
 });

@@ -53,6 +53,12 @@ export default defineComponent({
       valueChecked.value = valueCheck;
       emit('update:valueCheckbox', valueCheck);
     };
+    watch(
+      () => props.valueCheckbox,
+      (value) => {
+        valueChecked.value = value;
+      },
+    );
     return {
       styleCheckBox,
       onValueChanged,

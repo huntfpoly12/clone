@@ -1,6 +1,9 @@
 #bf-530 {
+  :deep .ant-tabs-top > .ant-tabs-nav{
+    margin-bottom: 4px;
+  }
   #tab1-bf530 {
-    height: calc(100vh - 320px) !important;
+    height: calc(100vh - 215px) !important;
 
     .dx-freespace-row {
       display: none !important;
@@ -8,7 +11,7 @@
   }
 
   #tab2-bf530 {
-    height: calc(100vh - 220px) !important;
+    height: calc(100vh - 215px) !important;
 
     .dx-freespace-row {
       display: none !important;
@@ -16,7 +19,7 @@
   }
 
   #tab3-bf530 {
-    height: calc(100vh - 225px) !important;
+    height: calc(100vh - 215px) !important;
 
     .dx-freespace-row {
       display: none !important;
@@ -24,7 +27,7 @@
   }
 
   #tab4-bf530 {
-    height: calc(100vh - 270px) !important;
+    height: calc(100vh - 265px) !important;
 
     .dx-freespace-row {
       display: none !important;
@@ -124,7 +127,8 @@
   :deep .dx-button-has-text .dx-button-content {
     padding: 5px 15px;
   }
-  :deep .dx-datagrid-search-panel{
+
+  :deep .dx-datagrid-search-panel {
     margin-left: 0;
   }
 
@@ -142,7 +146,14 @@
   :deep .dx-datagrid-content .dx-datagrid-table .dx-row>td {
     height: 20px;
   }
-  :deep .dx-toolbar-after{
+
+  :deep .dx-toolbar-after {
     padding-left: 0;
+  }
+
+  :deep .dx-widget {
+    .ant-form-item {
+      margin-bottom: 0px;
+    }
   }
 }

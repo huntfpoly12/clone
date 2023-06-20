@@ -1,75 +1,5 @@
 <template>
   <div class="tab-group tab1">
-    <section>
-      <a-row :gutter="[0, 5]">
-        <a-rol class="mr-20">
-          <a-form-item label="상태">
-            <SelectCustomField
-              :searchEnabled="true"
-              v-model:valueInput="formState.workingStatus"
-              :dataSource="workingStatusSelectbox"
-              width="150px"
-              displayeExpr="text"
-              valueExpr="id"
-              :isShowId="false"
-              placeholder="선택"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-20">
-          <a-form-item label="수임상태">
-            <SelectCustomField
-              :searchEnabled="true"
-              v-model:valueInput="formState.companyConsignStatus"
-              :dataSource="companyConsignStatusSelectbox"
-              width="150px"
-              displayeExpr="text"
-              valueExpr="id"
-              :isShowId="false"
-              placeholder="선택"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-20">
-          <a-form-item label="건강ED 연계상태">
-            <SelectCustomField
-              :searchEnabled="true"
-              v-model:valueInput="formState.healthInsuranceEDIStatus"
-              :dataSource="EDIStatusSelectbox"
-              width="150px"
-              displayeExpr="text"
-              valueExpr="id"
-              :isShowId="false"
-              placeholder="선택"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-rol class="mr-20">
-          <a-form-item label="연금EDI 연계상태">
-            <SelectCustomField
-              :searchEnabled="true"
-              v-model:valueInput="formState.nationalPensionEDIStatus"
-              :dataSource="EDIStatusSelectbox"
-              width="150px"
-              displayeExpr="text"
-              valueExpr="id"
-              :isShowId="false"
-              placeholder="선택"
-            />
-          </a-form-item>
-        </a-rol>
-        <a-col>
-          <a-form-item label="기간">
-            <range-date-time-box
-              v-model:valueDate="rangeDate"
-              width="250px"
-              :multi-calendars="true"
-              :clearable="false"
-            />
-          </a-form-item>
-        </a-col>
-      </a-row>
-    </section>
     <div class="content-grid">
       <a-spin :spinning="loading1 || loadingDataSource">
         <DxDataGrid
@@ -79,7 +9,6 @@
           :data-source="filterDsTab1Bf530"
           :show-borders="true"
           key-expr="companyId"
-          class="mt-10"
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
@@ -98,6 +27,7 @@
           />
           <DxExport :enabled="true" />
           <DxToolbar>
+            <DxItem location="after" template="search" />
             <DxItem template="btnSave" location="after" />
             <DxItem name="searchPanel" location="after" />
             <DxItem
@@ -106,6 +36,76 @@
               location="after"
             />
           </DxToolbar>
+          <template #search>
+            <a-row :gutter="[0, 5]" align="center">
+              <a-rol class="mr-20">
+                <a-form-item label="상태">
+                  <SelectCustomField
+                    :searchEnabled="true"
+                    v-model:valueInput="formState.workingStatus"
+                    :dataSource="workingStatusSelectbox"
+                    width="95px"
+                    displayeExpr="text"
+                    valueExpr="id"
+                    :isShowId="false"
+                    placeholder="선택"
+                  />
+                </a-form-item>
+              </a-rol>
+              <a-rol class="mr-20">
+                <a-form-item label="수임상태">
+                  <SelectCustomField
+                    :searchEnabled="true"
+                    v-model:valueInput="formState.companyConsignStatus"
+                    :dataSource="companyConsignStatusSelectbox"
+                    width="95px"
+                    displayeExpr="text"
+                    valueExpr="id"
+                    :isShowId="false"
+                    placeholder="선택"
+                  />
+                </a-form-item>
+              </a-rol>
+              <a-rol class="mr-20">
+                <a-form-item label="건강ED 연계상태">
+                  <SelectCustomField
+                    :searchEnabled="true"
+                    v-model:valueInput="formState.healthInsuranceEDIStatus"
+                    :dataSource="EDIStatusSelectbox"
+                    width="95px"
+                    displayeExpr="text"
+                    valueExpr="id"
+                    :isShowId="false"
+                    placeholder="선택"
+                  />
+                </a-form-item>
+              </a-rol>
+              <a-rol class="mr-20">
+                <a-form-item label="연금EDI 연계상태">
+                  <SelectCustomField
+                    :searchEnabled="true"
+                    v-model:valueInput="formState.nationalPensionEDIStatus"
+                    :dataSource="EDIStatusSelectbox"
+                    width="95px"
+                    displayeExpr="text"
+                    valueExpr="id"
+                    :isShowId="false"
+                    placeholder="선택"
+                  />
+                </a-form-item>
+              </a-rol>
+              <a-col>
+                <a-form-item label="기간">
+                  <range-date-time-box
+                    v-model:valueDate="rangeDate"
+                    width="200px"
+                    :multi-calendars="true"
+                    :clearable="false"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </template>
           <template #btnSave>
             <div>
               <button-basic
@@ -125,7 +125,7 @@
           <DxColumn
             caption="일련번호"
             data-field="companyId"
-            alignment="left"
+            alignment="center"
           />
           <DxColumn caption="업체명" data-field="companyName" />
           <DxColumn
@@ -146,35 +146,26 @@
           <DxColumn
             data-field="companyConsignStatus"
             caption="수임상태"
-            width="135"
+            width="110"
             cell-template="companyConsignStatus"
-            alignment="left"
+            alignment="center"
             :allow-sorting="false"
           />
           <template #companyConsignStatus="{ data }: any">
             <SelectCustomField
               v-model:valueInput="data.data.companyConsignStatus"
               :dataSource="companyConsignStatusSelectbox"
-              width="120px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
               placeholder="선택"
             />
-            <!-- <SelectBoxCT
-              :searchEnabled="false"
-              :arrSelect="companyConsignStatusSelectbox"
-              v-model:valueInput="data.data.companyConsignStatus"
-              displayeExpr="text"
-              valueExpr="id"
-              width="120px"
-              placeholder="선택"
-            /> -->
           </template>
           <DxColumn
             data-field="workingStatus"
             caption="상태(처리상태)"
-            width="135"
+            width="110"
             cell-template="workingStatus"
             alignment="left"
             :allow-sorting="false"
@@ -183,7 +174,7 @@
             <SelectCustomField
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
-              width="120px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -195,7 +186,7 @@
               v-model:valueInput="data.data.workingStatus"
               displayeExpr="text"
               valueExpr="id"
-              width="120px"
+              width="95px"
               placeholder="선택"
             /> -->
           </template>
@@ -213,7 +204,7 @@
           <DxColumn
             data-field="healthInsuranceEDIStatus"
             caption="건강EDI 연계상태 "
-            width="135"
+            width="110"
             cell-template="healthInsuranceEDIStatus"
             alignment="left"
             :allow-sorting="false"
@@ -222,7 +213,7 @@
             <SelectCustomField
               v-model:valueInput="data.data.healthInsuranceEDIStatus"
               :dataSource="EDIStatusSelectbox"
-              width="120px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -232,7 +223,7 @@
           <DxColumn
             data-field="nationalPensionEDIStatus"
             caption="연금EDI 연계상태 "
-            width="135"
+            width="110"
             cell-template="nationalPensionEDIStatus"
             alignment="left"
             :allow-sorting="false"
@@ -241,7 +232,7 @@
             <SelectCustomField
               v-model:valueInput="data.data.nationalPensionEDIStatus"
               :dataSource="EDIStatusSelectbox"
-              width="120px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -304,7 +295,7 @@
               }}
             </div>
           </template>
-          <DxColumn caption="팩스발송" cell-template="downD" width="100px" />
+          <DxColumn caption="팩스발송" cell-template="downD" width="110" />
           <template #downD="{ data }: any">
             <div class="d-flex justify-content-center">
               <a-popover

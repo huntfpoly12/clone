@@ -18,7 +18,7 @@
 		<DxDrawer :opened-state-mode="'shrink'" :position="'bottom'" :reveal-mode="'expand'"
 			v-model:opened="store.state.common.ac120.statusShowFull" :height="'100%'" template="listMenu">
 			<template #listMenu="{ data }">
-				<DetailComponent @changeAmountDataGrid="changeAmountDataGrid"
+				<DetailComponent
 					:statusProcess="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status" />
 			</template>
 			<div id="content" class="dx-theme-background-color">
@@ -31,7 +31,7 @@
 						v-model:focused-row-key="store.state.common.ac120.focusedRowKey" :focused-row-enabled="true"
 						@focused-row-changing="onFocusedRowChanging" :column-auto-width="true"
 						v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
-						@toolbar-preparing="onToolbarPreparing" @selection-changed="selectionChanged">
+						@selection-changed="selectionChanged">
 						<DxRowDragging
 							:allow-reordering="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10"
 							:show-drag-icons="true" :on-reorder="onReorder" />
@@ -237,28 +237,21 @@
 						</template>
 					</DxDataGrid>
 					<!-- <div class="action"> -->
-					<div style="
-              border: 1px solid #ddd;
-              border-top: none;
-              background-color: #f2f5f7;
-              display: flex;
-              padding: 5px;
-              justify-content: space-around;
-            ">
-						<div>
+					<div class="custom-smmary">
+						<!-- <div> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customCountRow()"></div>
-						</div>
-						<div style="margin-left: 20px">
+						<!-- </div> -->
+						<!-- <div style="margin-left: 20px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
 								v-html="sumOfResolutionClassification1()">
 							</div>
-						</div>
-						<div style="margin-left: 20px">
+						<!-- </div>
+						<div style="margin-left: 20px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
 								v-html="sumOfResolutionClassification2()">
 							</div>
-						</div>
-						<div style="margin-left: 20px">
+						<!-- </div>
+						<div style="margin-left: 20px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
 								<a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
 									<div style="display: inline">
@@ -268,11 +261,11 @@
 								</a-tooltip>
 								<div style="display: inline" v-html="customBalance()"></div>
 							</div>
-						</div>
-						<div style="margin-left: 20px">
+						<!-- </div>
+						<div style="margin-left: 20px"> -->
 							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
 								v-html="countResolutionNormalStatus()"></div>
-						</div>
+						<!-- </div> -->
 						<!-- </div> -->
 					</div>
 				</a-spin>
@@ -538,14 +531,6 @@ export default defineComponent({
 		watch(resGetAccountingProcesses, (value) => {
 			triggerGetAccountingProcesses.value = false;
 			dataGetAccountingProcesses.value = value.getAccountingProcesses;
-			// dataGetAccountingProcesses.value = value.getAccountingProcesses.map((value: any, index: number) => {
-			// 	console.log(value);
-			// 	value.status = index%2 == 0 ? 10 : 20
-			// 	return value
-
-			// });
-			// console.log(dataGetAccountingProcesses.value);
-
 		});
 		// 2. getAccountingDocuments
 		watch(resGetAccountingDocuments, async (value) => {
@@ -898,20 +883,10 @@ export default defineComponent({
 		};
 
 		const modalHistoryAccountingDocuments = () => {
-			console.log(storeDataSource.value);
-			console.log(dataSource.value?.store());
-			console.log(dataSource.value?.items());
-			// popupData.value = { ...dataQueryGetAccountingDocuments.value };
-			// modalHistoryStatuAccountingDocuments.value = true;
+			popupData.value = { ...dataQueryGetAccountingDocuments.value };
+			modalHistoryStatuAccountingDocuments.value = true;
 		};
 
-		const actionEditTaxPay = async (e: any) => {
-			// await (focusedRowKey.value = null)
-			// await (focusedRowKey.value = e.data.accountingDocumentId)
-		};
-		const changeAmountDataGrid = () => {
-			// calculateAmount()
-		};
 		const calculateAmount = () => {
 			dataApi.value.map((item: any, index: number) => {
 				item.balance = 0;
@@ -999,24 +974,15 @@ export default defineComponent({
 
 		const heightDrawer = ref('calc(100vh - 245px)')
 
-		const onToolbarPreparing = (e: any) => {
-			console.log(e);
-
-
-		}
-
 		return {
 			dataGetAccountingProcesses,
 			dataSource,
 			accountSubjects,
-			// totalCount,
 			monthSelected,
 			loadingGetAccountingProcesses,
 			loadingGetAccountingDocuments,
 			dataRows,
 			onFocusedRowChanging,
-			actionEditTaxPay,
-			// gridRefAC120Detail,
 			lastBalance,
 			customCountRow,
 			sumOfResolutionClassification1,
@@ -1049,11 +1015,8 @@ export default defineComponent({
 			popupData,
 			clients,
 			gridRefAC120,
-			changeAmountDataGrid,
 			heightDrawer,
 			monthNewClick,
-			onToolbarPreparing,
-			// statusProcess,
 		};
 	},
 });

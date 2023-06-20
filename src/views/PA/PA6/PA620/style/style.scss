@@ -302,6 +302,9 @@
       display: none !important;
     }
   }
+  :deep span.ant-tag{
+    width: 88px;
+  }
 }
 
 .input-text {

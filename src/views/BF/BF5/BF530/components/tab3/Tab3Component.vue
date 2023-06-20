@@ -43,7 +43,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
                     :dataSource="workingStatusSelectbox"
-                    width="150px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -57,7 +57,7 @@
                     :searchEnabled="true"
                     v-model:valueInput="formState.type"
                     :dataSource="reportTypeSelectboxTab3"
-                    width="150px"
+                    width="95px"
                     displayeExpr="text"
                     valueExpr="id"
                     :isShowId="false"
@@ -69,7 +69,7 @@
                 <a-form-item label="기간">
                   <range-date-time-box
                     v-model:valueDate="rangeDate"
-                    width="250px"
+                    width="200px"
                     :multi-calendars="true"
                     :clearable="false"
                   />
@@ -115,7 +115,7 @@
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
           <DxColumn
             caption="상태"
-            width="135px"
+            width="110"
             cell-template="workingStatus"
             alignment="center"
           />
@@ -123,7 +123,7 @@
             <SelectCustomField
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
-              width="120px"
+              width="95px"
               displayeExpr="text"
               valueExpr="id"
               :isShowId="false"
@@ -147,7 +147,7 @@
           <DxColumn
             caption="신청일"
             data-field="registeredAt"
-            width="125"
+            width="95"
             alignment="center"
             data-type="date"
             format="yyyy-MM-dd"
@@ -155,7 +155,7 @@
           <DxColumn
             caption="접수일"
             data-field="acceptedAt"
-            width="125"
+            width="95"
             data-type="date"
             format="yyyy-MM-dd"
           />
@@ -165,6 +165,7 @@
             alignment="left"
             data-type="date"
             cell-template="completedAt"
+            width="95"
           />
           <template #completedAt="{ data }">
             <div>
@@ -527,22 +528,10 @@ export default defineComponent({
             return true;
           });
         });
-        new Promise((resolve: any) => {
-          store.commit("common/filterDsTab3Bf530", arr);
-          resolve();
-        }).then(() => {
-          // Sử dụng nextTick để đảm bảo cập nhật DOM đã hoàn thành
-          // nextTick(() => {
-          //   console.log(`output-1`);
-          //   if (filterDsTab3Bf530.value) {
-          //     // loadingDataSource.value = false;
-          //   }
-          // });
-        });
+        store.commit("common/filterDsTab3Bf530", arr);
         setTimeout(() => {
-          console.log(`output-2`);
           loadingDataSource.value = false;
-        }, 0);
+        }, 20);
       },
       { deep: true }
     );
