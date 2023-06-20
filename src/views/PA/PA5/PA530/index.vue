@@ -156,7 +156,6 @@
                             </DxButton>
                         </div>
                     </template>
-                    
                     <DxColumn caption="성명 (상호)" data-field="employee.name" cell-template="tag" alignment="left" />
                     <template #tag="{ data }">
                         <div class="custom-action" v-if="data.data.employee.employeeId != '-1'">

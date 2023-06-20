@@ -22,7 +22,7 @@ let menuData = [
   { name: "서비스해지", url: "#", id: "bf-420", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey] },
   { name: "미납관리", url: "#", id: "bf-430", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey] },
 
-  { name: "회계업무마감", url: "#", id: "bf-510", roles: [] },
+  { name: "회계업무마감", url: "/bf-510", id: "bf-510", roles: ROLE_BF500 },
   { name: "4대보험업무관리", url: "/bf-530", id: "bf-530", roles: ROLE_BF500 },
 
   { name: "원천마감관리", url: "/bf-610", id: "bf-610", roles: ROLE_BF600 },
@@ -43,10 +43,10 @@ let menuData = [
   { name: "마감", url: "/ac-130", id: "ac-130", roles: ROLE_AC000 },
 
   { name: "전표업로드", url: "/ac-210", id: "ac-210", roles: ROLE_AC000 },
-  { name: "예산서", url: "#", id: "ac-220", roles: ROLE_AC000 },
-  { name: "결산서", url: "#", id: "ac-230", roles: ROLE_AC000 },
+  // { name: "예산서", url: "#", id: "ac-220", roles: ROLE_AC000 },
+  // { name: "결산서", url: "#", id: "ac-230", roles: ROLE_AC000 },
 
-  { name: "예산서 자동작성", url: "#", id: "ac-380", roles: ROLE_AC000 },
+  // { name: "예산서 자동작성", url: "#", id: "ac-380", roles: ROLE_AC000 },
 
   { name: "장부", url: "/ac-510", id: "ac-510", roles: ROLE_AC000 },
   { name: "예산서", url: "/ac-520", id: "ac-520", roles: ROLE_AC000 },

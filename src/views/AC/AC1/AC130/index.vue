@@ -91,7 +91,7 @@
             <ReloadOutlined class="ac-130__main-content-manager-title-btnReload" @click="refreshFormChat" />
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChat ref="formChat" :payload="payload" :disabled="accountingProcessesSelected?.status === 20" />
+            <FormChat ref="formChat" :payload="{...payload, accountingProcessesSelected}" :disabled="accountingProcessesSelected?.status === 20 || !accountingProcessesSelected" />
           </div>
         </div>
       </a-col>
@@ -177,16 +177,6 @@ export default defineComponent({
     const refTableExpenditureBudgetSummary = ref()
     const refTableRevenueBudgetSummary = ref()
 
-    // onMounted(() => {
-    //   setTimeout(() => {
-    //     if (refAc130Checklist.value.offsetHeight < refAc130Checklist.value.scrollHeight) {
-    //       refTableCashRegisterSummary.value.resetTable()
-    //       refTableExpenditureBudgetSummary.value.resetTable()
-    //       refTableRevenueBudgetSummary.value.resetTable()
-    //     }
-    //   }, 1000);
-    // })
-    // COMPUTED
     /// Graphql 
     /// queries
     //// getAccountingProcesses
@@ -256,7 +246,12 @@ export default defineComponent({
       if (monthSelected.value === month) return
       monthSelected.value = month
       payload.month = month
-      triggerAccountingClosingCheckItems.value = true
+      if(listAccountingProcesses.value.findIndex(((item: any) => item.month === month)) >= 0) {
+        triggerAccountingClosingCheckItems.value = true
+      }else {
+        dataSource.value = {}
+        activeKey.value = []
+      }
     }
 
     const submitChangeStatus = (value: number) => {

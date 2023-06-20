@@ -149,7 +149,7 @@
         </a-tooltip>
       </template>
       <template #mailPrint="{data}">
-        <div v-if="data.data.status && data.data.employeePaySum !== null &&  data.data.employeePaySum !== null " class="d-flex-center justify-content-center gap-6">
+        <div v-if="data.data.status && data.data.employeePaySum !== null &&  data.data.revenueBudgetSum !== null && data.data.expenditureBudgetSum !== null " class="d-flex-center justify-content-center gap-6">
           <DxButton type="ghost" @click="actionSendMail(data.data, TypeMail.BudgetSummaryTable)">
             <img src="@/assets/images/email.svg" alt="" width="18"/>
           </DxButton>

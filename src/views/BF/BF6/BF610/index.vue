@@ -140,9 +140,9 @@
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
           noDataText="내역이 없습니다"
-          style="height: calc(100vh - 340px)"
+          style="height: calc(100vh - 260px)"
         >
-          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" :search-visible-columns="['CompanyNameAndAddress']"/>
           <DxExport :enabled="true" />
           <DxToolbar>
             <DxItem  name="searchPanel" />
@@ -179,7 +179,7 @@
               `${data.data.company.code} ${data.data.active ? "" : "[해지]"}`
             }}
           </template>
-          <DxColumn caption="상호 주소" cell-template="company" width="100" />
+          <DxColumn caption="상호 주소" data-field="CompanyNameAndAddress" cell-template="company" width="100" :calculateCellValue="calculateCompanyNameAndAddress"/>
           <template #company="{ data }">
             <a-tooltip color="black" placement="topLeft">
               <template #title>{{
@@ -821,5 +821,8 @@ const convertToDate = (date: number | null) => {
   if (date === null) return null;
   return date.toString().slice(0, 4) + "-" + date.toString().slice(4);
 };
+const calculateCompanyNameAndAddress = (rowData: any) => {
+  return `${rowData.company.name} - ${rowData.company.address}`
+}
 </script>
 <style scoped lang="scss" src="./style/style.scss"></style>

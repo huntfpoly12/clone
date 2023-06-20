@@ -15,5 +15,5 @@ export const dataSearchStep2Utils = {
   requesteStartDate: parseInt(dayjs().subtract(7, 'd').format("YYYYMMDD")),
   requesteFinishDate: parseInt(dayjs().format("YYYYMMDD")),
   productionStatuses: [2, -1],
-  manageUserId: null,
+  productionRequestUserId: null
 };
