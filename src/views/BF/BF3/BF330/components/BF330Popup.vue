@@ -38,10 +38,10 @@
                                 <hr />
                                 <a-row>
                                     <a-col :span="12">
-                                        <a-form-item label="회계서비스" style="font-weight: bold">
+                                        <!-- <a-form-item label="회계서비스" style="font-weight: bold">
                                             <checkbox-basic v-model:valueCheckbox="formState.info.usedAccounting"
                                                 size="14" label="회계서비스 신청" />
-                                        </a-form-item>
+                                        </a-form-item> -->
                                     </a-col>
                                 </a-row>
                                 <div>
@@ -88,18 +88,25 @@
                                         <template #totalPrice="{ data }">
                                             {{ $filters.formatCurrency(getTotalAmount(data.data)) }}
                                         </template>
-                                        <DxColumn cell-template="action" width="48" />
+                                        <DxColumn cell-template="action" width="125" />
                                         <template #action=" { data } ">
-                                          <DxButton type="ghost" style="cursor: pointer" @click=" onDelete(data) ">
+                                          <!-- <DxButton type="ghost" style="cursor: pointer" @click=" onDelete(data) ">
                                             <a-tooltip zIndex="9999999" placement="top" color="black">
                                               <template #title>
                                                 <div>
                                                   삭제
                                                 </div>
                                               </template>
-                                              <DeleteOutlined style="font-size: 16px" />
                                             </a-tooltip>
-                                          </DxButton>
+                                          </DxButton> -->
+                                          <a-row>
+                                              <switch-basic
+                                                textCheck="이용중" textUnCheck="이용중지" style="width: 80px">
+                                              </switch-basic>
+                                              <info-tool-tip>
+                                                이용중지시 과금대상에서 제외됩니다
+                                              </info-tool-tip>
+                                        </a-row>
                                         </template>
                                     </DxDataGrid>
                                     <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length" :key="dataActiveRow.rowIndex">
@@ -204,8 +211,16 @@
                                     <a-col :span="14">
                                         <a-form-item label="원천서비스" style="font-weight: bold"
                                             class="custom-label-select">
-                                            <checkbox-basic v-model:valueCheckbox="formState.info.usedWithholding"
-                                                :disabled="false" size="14" label="원천서비스 신청" />
+                                            <!-- <checkbox-basic v-model:valueCheckbox="formState.info.usedWithholding"
+                                                :disabled="false" size="14" label="원천서비스 신청" /> -->
+                                            <a-row>
+                                                <switch-basic
+                                                  textCheck="이용중" textUnCheck="이용중지" style="width: 80px">
+                                                </switch-basic>
+                                                <info-tool-tip>
+                                                  이용중지시 과금대상에서 제외됩니다
+                                                </info-tool-tip>
+                                          </a-row>
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
