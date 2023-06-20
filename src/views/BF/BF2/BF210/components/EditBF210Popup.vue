@@ -94,7 +94,7 @@
                 </DxSelectBox>
               </a-form-item>
             </a-col>
-  
+
             <a-col :span="12">
               <a-form-item
                 label="휴대폰"
@@ -270,6 +270,7 @@ import {
   MenuOutlined,
 } from "@ant-design/icons-vue";
 import isEqual from "lodash/isEqual";
+import {Message} from "@/configs/enum";
 export default defineComponent({
   props: ["modalStatus", "data", "msg", "title", "typeHistory", "idRowEdit"],
   components: {
@@ -323,7 +324,7 @@ export default defineComponent({
     } = useMutation(mutations.updateUser);
     onDoneUpdate((e) => {
       emit("updateDone", true);
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage('106').message);
       emit("closePopup", false);
     });
     onErrorUpdate((e) => {

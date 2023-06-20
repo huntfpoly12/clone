@@ -146,7 +146,6 @@ export default defineComponent({
         const modalHistoryStatus = ref(false)
         const modalLoginStatus = ref(false)
         const modalEditStatus = ref<boolean>(false);
-        let triggerSearching = ref<boolean>(true);
         const checkStatus = ref({
             checkBox1: true,
             checkBox2: false
@@ -172,13 +171,11 @@ export default defineComponent({
             notification("error", e.message);
         });
         onResult((res) => {
-            triggerSearching.value = false;
             rowTable.value = res.data.searchUsers.totalCount
             dataSource.value = res.data.searchUsers.datas
         })
         const changePage = () => {
             makeDataClean(dataSearch.value)
-            triggerSearching.value = true
             refetchData()
         }
         const searching = () => {
@@ -239,7 +236,7 @@ export default defineComponent({
 
         const createSuccess = () => {
             makeDataClean(dataSearch.value)
-            triggerSearching.value = true
+            refetchData()
         }
         // Watch
         watch(() => modalEditStatus.value,
