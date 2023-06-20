@@ -29,7 +29,7 @@
             :disabled="!filter.beforeProduction"
             :options="productionStatusesCheckbox"
             v-model:valueCheckbox="filter.productionStatuses"
-            :size="18"
+            size="18"
           />
         </div>
       </a-col>
@@ -416,7 +416,30 @@ export default defineComponent({
     watch(
       () => props.searchStep,
       (newValue) => {
-        trigger.value = true;
+        // trigger.value = true;
+        dataSource.value = dataSourceOriginal.value.filter(
+          (item: any, index: number) => {
+            return (
+              (filter.companyServiceContractActive
+                ? item.companyServiceContract.active
+                : item) &&
+              (filter.beforeProduction
+                ? filter.productionStatuses.length > 0 //
+                  ? filter.productionStatuses.includes(item.productionStatus)
+                  : item.productionStatus === 3
+                : item.productionStatus === 3) &&
+              (filter.companyServiceContractManageUserId
+                ? item.companyServiceContract.manageUserId ===
+                  filter.companyServiceContractManageUserId
+                : item) &&
+              (filter.companyServiceContractSalesRepresentativeId
+                ? item.companyServiceContract.salesRepresentativeId ===
+                  filter.companyServiceContractSalesRepresentativeId
+                : item)
+
+            );
+          }
+        );
       },
       { deep: true }
     );
@@ -424,10 +447,8 @@ export default defineComponent({
     // watch beforeProduction of dataSearch
     watch(
       () => filter.beforeProduction,
-      () => {
-        filter.beforeProduction
-          ? (filter.productionStatuses = [0, 1, 2, -1])
-          : (filter.productionStatuses = []);
+      (value) => {
+        filter.productionStatuses = value ?  [0, 1, 2, -1] : []
       },
       { deep: true }
     );

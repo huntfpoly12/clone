@@ -498,6 +498,7 @@ createdDone(async (res) => {
       dataShow.value.employeeId = res.data.createEmployeeBusiness.employeeId
     }
     valueCallApiGetEmployeeBusiness.incomeTypeCode = dataShow.value.incomeTypeCode;
+    dataShow.value.deletable = true;
     // valueCallApiGetEmployeeBusiness.employeeId = parseInt(dataShow.value.employeeId);
     previousRowData.value = { ...dataShow.value };
     // Nếu không phải thêm row mới thì isNewRow = false
@@ -665,7 +666,7 @@ const onChangeName = (e: any) => {
   if(e) {
     dataShow.value.name = e.toUpperCase();
   }
-}; 
+};
 </script>
 <style scoped lang="scss" src="./style/style.scss"></style>
 <!-- Flow
