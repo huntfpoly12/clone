@@ -31,7 +31,7 @@
                 value: item.id,
                 label: item.id + ' | ' + item.name
               }))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px" optionFilterProp="label"
-                :disabled="menuTab.length >= MAX_TAB" @change="addMenuTab" />
+                :disabled="menuTab.length >= MAX_TAB" @change="addMenuTab" notFoundContent="내역이 없습니다"/>
             </div>
           </div>
           <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :inline-collapsed="false"

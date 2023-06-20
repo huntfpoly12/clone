@@ -56,7 +56,7 @@
             <a-form-item label="제작요청자">
               <list-manager-dropdown
                 width="200px"
-                v-model:valueInput="ElecFilingFileFilter.manageUserId"
+                v-model:valueInput="ElecFilingFileFilter.productionRequestUserId"
                 filterData
               />
             </a-form-item>
@@ -304,7 +304,7 @@ export default defineComponent({
       requesteStartDate: rangeDate.value[0],
       requesteFinishDate: rangeDate.value[1],
       productionStatuses: [2, -1],
-      manageUserId: null,
+      productionRequestUserId: 1,
     });
     const {
       result: searchElectronicFilingResult,
