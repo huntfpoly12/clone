@@ -6,240 +6,132 @@
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
-            <text-number-box
-              width="200px"
-              :required="true"
-              v-model:valueInput="employeeId"
-              placeholder="숫자만 입력 가능"
-              :disabled="true"
-            />
+            <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능"
+              :disabled="true" />
           </div>
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
           <div class="input-text">
-            <switch-basic
-              v-model:valueSwitch="initFormStateTabPA120.president"
-              textCheck="O"
-              textUnCheck="X"
-              @onChange="onChangePresident"
-              style="width: 80px"
-            ></switch-basic>
+            <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
+              @onChange="onChangePresident" style="width: 80px"></switch-basic>
             <a-tooltip placement="top" class="custom-tooltip">
-              <template #title> 대표자인 경우 고용보험 제외됩니다. </template>
+              <template #title> 대표자인 경우 고용보험 제외됩니</template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
 
         <a-form-item label="성명" label-align="right" class="red">
-          <default-text-box
-            width="200px"
-            v-model:valueInput="initFormStateTabPA120.name"
-            :required="true"
-            @onChange="onChange" 
-            placeholder="한글,영문(대문자) 입력 가능"
-          />
+          <default-text-box width="200px" v-model:valueInput="initFormStateTabPA120.name" :required="true"
+            @onChange="onChange" placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
-          <date-time-box
-            width="150px"
-            v-model:valueDate="initFormStateTabPA120.joinedAt"
-          >
+          <date-time-box width="150px" v-model:valueDate="initFormStateTabPA120.joinedAt">
           </date-time-box>
         </a-form-item>
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
-            <date-time-box
-              width="150px"
-              v-model:valueDate="initFormStateTabPA120.leavedAt"
-            >
+            <date-time-box width="150px" v-model:valueDate="initFormStateTabPA120.leavedAt">
             </date-time-box>
             <a-tooltip placement="top" class="custom-tooltip">
-              <template #title> 마지막 근무한 날. </template>
+              <template #title> 마지막 근무한 날</template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
         <a-form-item label="내/외국인" label-align="right">
-          <radio-group
-            :arrayValue="radioCheckForeigner"
-            v-model:valueRadioCheck="foreigner"
-            layoutCustom="horizontal"
-            :disabled="!initFormStateTabPA120.deletable"
-          >
+          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="initFormStateTabPA120.foreigner"
+            layoutCustom="horizontal" :disabled="!initFormStateTabPA120.deletable">
           </radio-group>
         </a-form-item>
 
         <a-row>
-          <a-form-item
-            label="외국인 국적"
-            label-align="right"
-            :class="{ red: foreigner == 1 }"
-          >
-            <country-code-select-box
-              style="width: 200px"
-              v-model:valueCountry="initFormStateTabPA120.nationalityCode"
-              @textCountry="changeTextCountry"
-              :required="initFormStateTabPA120.foreigner"
-              :disabled="!initFormStateTabPA120.foreigner"
-              :hiddenOptionKR="initFormStateTabPA120.foreigner"
-            />
+          <a-form-item label="외국인 국적" label-align="right" :class="{ red: initFormStateTabPA120.foreigner }">
+            <country-code-select-box style="width: 200px" v-model:valueCountry="initFormStateTabPA120.nationalityCode"
+              @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
+              :disabled="!initFormStateTabPA120.foreigner" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
           </a-form-item>
-          <a-form-item
-            label="외국인 체류자격"
-            label-align="right"
-            :class="{ red: foreigner == 1 }"
-          >
-            <stay-qualification-select-box
-              v-model:valueStayQualifiction="
-                initFormStateTabPA120.stayQualification
-              "
-              :disabled="foreigner == 0"
-              :required="initFormStateTabPA120.foreigner"
-            />
+          <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: initFormStateTabPA120.foreigner }">
+            <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification
+              " :disabled="!initFormStateTabPA120.foreigner" :required="initFormStateTabPA120.foreigner" />
           </a-form-item>
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box
-            :required="true"
-            v-model:valueInput="initFormStateTabPA120.residentId"
-            width="150px"
-            :foreigner="initFormStateTabPA120.foreigner"
-            :disabled="!initFormStateTabPA120.deletable"
-          >
+          <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px"
+            :foreigner="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.deletable">
           </id-number-text-box>
         </a-form-item>
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
           <div class="input-text">
-            <number-box
-              :required="true"
-              :spinButtons="true"
-              v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours"
-              width="150px"
-              :min="1"
-              :max="52"
-            ></number-box>
+            <number-box :required="true" :spinButtons="true" v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours"
+              width="150px" :min="1" :max="52"></number-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 급여명세서 및 4대보험 취득신고시 이용됩니다.
               </template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
 
         <a-form-item label="세대주여부" label-align="right">
-          <switch-basic
-            v-model:valueSwitch="initFormStateTabPA120.householder"
-            textCheck="O"
-            textUnCheck="X"
-            style="width: 80px"
-          ></switch-basic>
+          <switch-basic v-model:valueSwitch="initFormStateTabPA120.householder" textCheck="O" textUnCheck="X"
+            style="width: 80px"></switch-basic>
         </a-form-item>
 
         <a-form-item label="주소" class="clr" label-align="left">
           <div class="zip-code">
-            <default-text-box
-              v-model:valueInput="initFormStateTabPA120.roadAddress"
-              width="300px"
-              :disabled="true"
-              class="roadAddress"
-              placeholder="도로명주소"
-            />
+            <default-text-box v-model:valueInput="initFormStateTabPA120.roadAddress" width="300px" :disabled="true"
+              class="roadAddress" placeholder="도로명주소" />
             <div style="margin-left: 5px">
               <post-code-button @dataAddress="funcAddress" text="주소검색" />
             </div>
           </div>
 
-          <default-text-box
-            v-model:valueInput="initFormStateTabPA120.addressExtend"
-            width="300px"
-            placeholder="상세 주소 입력"
-          />
+          <default-text-box v-model:valueInput="initFormStateTabPA120.addressExtend" width="300px"
+            placeholder="상세 주소 입력" />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
           <div class="input-text">
-            <mail-text-box
-              v-model:valueInput="initFormStateTabPA120.email"
-              width="200px"
-              placeholder="abc@example.com"
-            >
+            <mail-text-box v-model:valueInput="initFormStateTabPA120.email" width="200px" placeholder="abc@example.com">
             </mail-text-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
               </template>
               <div style="text-align: center">
-                <img
-                  src="@/assets/images/iconInfo.png"
-                  style="width: 14px; height: 14px"
-                  class="mb-3 ml-10"
-                />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-          <SelectSearchEdit
-            v-model:valueInput="initFormStateTabPA120.department"
-            :data="arrDepartments"
-            @updateArrSelect="(value: any) => arrDepartments = [...value]"
-            width="200px"
-          />
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.department" :data="arrDepartments"
+            @updateArrSelect="(value: any) => arrDepartments = [...value]" width="200px" />
         </a-form-item>
         <a-form-item label="직위" label-align="right">
-          <SelectSearchEdit
-            v-model:valueInput="initFormStateTabPA120.responsibility"
-            :data="arrResponsibility"
-            @updateArrSelect="(value: any) => arrResponsibility = [...value]"
-            width="200px"
-          />
+          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.responsibility" :data="arrResponsibility"
+            @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
         </a-form-item>
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center">
-            <button-basic
-              text="저장"
-              type="default"
-              mode="contained"
-              :width="90"
-              id="btn-save-edit"
-              @onClick="actionUpdated"
-            />
+            <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit"
+              @onClick="actionUpdated" />
           </a-col>
         </a-row>
       </standard-form>
     </a-spin>
-    <PopupMessage
-      :modalStatus="presidenStatus"
-      @closePopup="presidenStatus = false"
-      :typeModal="'info'"
-      :title="presidentWaring"
-      :content="''"
-      :okText="'확인'"
-      :isConfirmIcon="false"
-      @checkConfirm="presidenStatus = false"
-      :width="400"
-    />
+    <PopupMessage :modalStatus="presidenStatus" @closePopup="presidenStatus = false" :typeModal="'info'"
+      :title="presidentWaring" :content="''" :okText="'확인'" :isConfirmIcon="false" @checkConfirm="presidenStatus = false"
+      :width="400" />
   </div>
 </template>
 
@@ -272,101 +164,22 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = ref<number>(
-      parseInt(sessionStorage.getItem("paYear") ?? "0")
+      parseInt(sessionStorage.getItem("paYear") || "0")
     );
-    let isForeigner = ref(false);
-    const triggerDepartments = ref(true);
-    const arrDepartments = ref<any[]>([]);
-    const arrResponsibility = ref<any[]>([]);
-    const labelResidebId = ref("주민(외국인)번호 ");
-    let formStateTab1 = reactive<any>({
-      ...initFormStateTab1,
-      joinedAt: dayjs().format("YYYY-MM-DD"),
-      leavedAt: "",
-    });
     const initFormStateTabPA120 = computed(
       () => store.state.common.initFormStateTabPA120
     );
     const editRowPA120 = computed(() => store.state.common.editRowPA120);
-    const postCode = ref();
-    const funcAddress = (data: any) => {
-      postCode.value = data.zonecode;
-      initFormStateTabPA120.value.roadAddress = data.roadAddress;
-    };
-    const messageUpdate = Message.getMessage("COMMON", "106").message;
-    const presidentOriginPA120 = computed(
+    const presidentOriginPA120 = computed(          // check xem khi lưu president có bị thay đổi ko ?
       () => store.state.common.presidentOriginPA120
     );
-    watch(
-      () => props.popupStatus,
-      (newValue: any) => {
-        if (!newValue) {
-          employeeId.value = null;
-          // residentId.value = '';
-          foreigner.value = 0;
-          Object.assign(initFormStateTabPA120.value, initFormStateTab1);
-        }
-      }
-    );
-    const foreigner = ref(
-      initFormStateTabPA120.value.foreigner == true ? 1 : 0
-    );
-    watch(foreigner, (newValue: any) => {
-      if (newValue == 1) {
-        initFormStateTabPA120.value.foreigner = true;
-        isForeigner.value = true;
-        labelResidebId.value = "외국인번호 유효성";
-      } else {
-        initFormStateTabPA120.value.foreigner = false;
-        isForeigner.value = false;
-        labelResidebId.value = "주민등록번호";
-      }
-    });
     const employeeId = ref(null);
-
-    const originData = ref({
+    const companyParam = ref({
       companyId: companyId,
     });
-    // getDepartments
-    const { onError: errorDepartments, result: resDepartments } = useQuery(
-      queries.getDepartments,
-      originData,
-      () => ({
-        enabled: triggerDepartments.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    errorDepartments((error) => {
-      //notification('error', error.message);
-    });
 
-    watch(resDepartments, (value: any) => {
-      if (value) {
-        arrDepartments.value = value.getDepartments.map((item: any) => ({
-          value: item.department,
-        }));
-      }
-    });
+    // ---------------------------get employee DATA FORM ------------------------
 
-    // getResponsibilities
-    const { onError: errorResponsibility, result: resResponsibility } =
-      useQuery(queries.getResponsibilities, originData, () => ({
-        enabled: triggerDepartments.value,
-        fetchPolicy: "no-cache",
-      }));
-
-    errorResponsibility((error) => {
-      //notification('error', error.message);
-    });
-
-    watch(resResponsibility, (value: any) => {
-      if (value) {
-        arrResponsibility.value = value.getResponsibilities.map(
-          (item: any) => ({ value: item.responsibility })
-        );
-      }
-    });
-    // get employee Information
     const originDataDetail = ref<any>({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -381,9 +194,9 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
-    onErrorEmployee(()=>{
-        console.log(`output->err tab1`,)
-      })
+    onErrorEmployee(() => {
+      // console.log(`output->err tab1`,)
+    })
     watch(getValueDefault, (value: any) => {
       let data = value.getEmployeeWage;
       let editRowData: any = {};
@@ -400,8 +213,8 @@ export default defineComponent({
       editRowData.addressExtend = data.addressExtend;
       editRowData.email = data.email;
       editRowData.employeeId = data.employeeId;
-      editRowData.joinedAt = data.joinedAt ?? NaN;
-      editRowData.leavedAt = data.leavedAt ?? NaN;
+      editRowData.joinedAt = data.joinedAt || NaN;
+      editRowData.leavedAt = data.leavedAt || NaN;
       editRowData.retirementIncome = data.retirementIncome;
       editRowData.weeklyWorkingHours = data.weeklyWorkingHours;
       editRowData.householder = data.householder;
@@ -412,8 +225,129 @@ export default defineComponent({
       store.commit("common/initFormStateTabPA120", editRowData);
       employeeId.value = data.employeeId;
       getEmployeeWageTrigger.value = false;
-      // }
     });
+    watch(
+      () => props.idRowEdit,
+      (value: any) => {
+        if (value !== 0) {
+          originDataDetail.value.employeeId = value;
+          if (originDataDetail.value.employeeId) {
+            getEmployeeWageTrigger.value = true;
+          }
+        }
+      },
+      { immediate: true }
+    );
+
+    // --------------------------get Data Departments--------------------------
+
+    const arrDepartments = ref<any>([]);
+    const { onError: errorDepartments, result: resDepartments } = useQuery(
+      queries.getDepartments,
+      companyParam,
+      () => ({
+        enabled: companyId !== null,
+        fetchPolicy: "no-cache",
+      })
+    );
+    errorDepartments((_error) => {
+      //notification('error', error.message);
+    });
+
+    watch(resDepartments, (value: any) => {
+      if (value) {
+        arrDepartments.value = value.getDepartments.map((item: any) => ({
+          value: item.department,
+        }));
+      }
+    });
+
+    // --------------------------get Data Responsibilities--------------------------
+
+    const arrResponsibility = ref<any[]>([]);
+    const { onError: errorResponsibility, result: resResponsibility } =
+      useQuery(queries.getResponsibilities, companyParam, () => ({
+        fetchPolicy: "no-cache",
+      }));
+
+    errorResponsibility((_error) => {
+      //notification('error', error.message);
+    });
+
+    watch(resResponsibility, (value: any) => {
+      if (value) {
+        arrResponsibility.value = value.getResponsibilities.map(
+          (item: any) => ({ value: item.responsibility })
+        );
+      }
+    });
+
+    // ------------------------------- HANDEL DATA IN FORM--------------------------------
+
+    const funcAddress = (data: any) => {
+      initFormStateTabPA120.value.roadAddress = data.roadAddress;
+    };
+    const messageUpdate = Message.getMessage("COMMON", "106").message;
+    watch(
+      () => props.popupStatus,
+      (newValue: any) => {
+        if (!newValue) {
+          employeeId.value = null;
+          initFormStateTabPA120.value.foreigner = false;
+          Object.assign(initFormStateTabPA120.value, initFormStateTab1);
+        }
+      }
+    );
+    const onChange = (emitVal: any) => {
+      initFormStateTabPA120.value.name = emitVal.toUpperCase();
+    };
+    // convert initFormStateTabPA120.value.name to uppercase
+    // watch(
+    //   () => initFormStateTabPA120.value.name,
+    //   (newVal: any) => {
+    //     if (newVal) {
+    //       initFormStateTabPA120.value.name = newVal.toUpperCase();
+    //     }
+    //   },
+    //   { deep: true }
+    // );
+    const changeTextCountry = (text: any) => {
+      initFormStateTabPA120.value.nationality = text;
+    };
+    //NOTIFY PRESIDENT CHANGE
+    const presidentWaring =
+      "대표자는 고용보험에서 제외됩니(기존에 선택되어있는 경우 강제로 해지됩니다)";
+    const presidenStatus = ref(false);
+    const onChangePresident = (emit: any) => {
+      if (emit) {
+        presidenStatus.value = true;
+      }
+    };
+    //track foreigners
+    const labelResidebId = ref("주민(외국인)번호 ");
+    watch(
+      () => initFormStateTabPA120.value.foreigner,
+      (newValue: any) => {
+        if (!newValue) {
+          initFormStateTabPA120.value.nationalityCode = "KR";
+          initFormStateTabPA120.value.stayQualification = null;
+          editRowPA120.value.stayQualification = null;
+          labelResidebId.value = "외국인번호 유효성";
+        } else {
+          initFormStateTabPA120.value.nationalityCode =
+            initFormStateTabPA120.value.nationalityCode == "KR"
+              ? null
+              : initFormStateTabPA120.value.nationalityCode;
+          labelResidebId.value = "주민등록번호";
+        }
+        store.state.common.isForeignerPA120 =
+          initFormStateTabPA120.value.foreigner;
+      },
+      { deep: true }
+    );
+
+    //-------------------------------ACTION FORM -----------------------------
+
     const { mutate, onError, onDone } = useMutation(
       mutations.updateEmployeeWage
     );
@@ -437,94 +371,31 @@ export default defineComponent({
         mutate(dataCallCreat);
       }
     };
-    onError((e) => {
+    onError((_e) => {
       //notification('error', e.message);
       store.commit("common/actionFormErrorPA120");
     });
-    onDone((res) => {
+    onDone((_res) => {
       notification("success", messageUpdate);
       store.commit("common/actionFormDonePA120");
       store.state.common.isNewRowPA120 = false;
       store.commit("common/editRowPA120", initFormStateTabPA120.value);
-      if(presidentOriginPA120.value !== initFormStateTabPA120.value.president){
+      if (presidentOriginPA120.value !== initFormStateTabPA120.value.president) {
         store.state.common.presidentEditPA120 = initFormStateTabPA120.value.president;
       } else {
         store.state.common.presidentEditPA120 = false;
       }
-      setTimeout(()=>{
+      setTimeout(() => {
+        //RESET origin president
         store.state.common.presidentOriginPA120 = initFormStateTabPA120.value.president;
-      },0)
+      }, 0)
     });
-    watch(
-      () => props.idRowEdit,
-      (value: any) => {
-        if (value != 0) {
-          originDataDetail.value.employeeId = value;
-          if(originDataDetail.value.employeeId){
-            getEmployeeWageTrigger.value = true;
-          }
-        }
-      },
-      { immediate: true }
-    );
-    // convert initFormStateTabPA120.value.name to uppercase
-    watch(
-      () => initFormStateTabPA120.value.name,
-      (newVal: any) => {
-        if (newVal) {
-          initFormStateTabPA120.value.name = newVal.toUpperCase();
-        }
-      },
-      { deep: true }
-    );
-    const changeTextCountry = (text: any) => {
-      initFormStateTabPA120.value.nationality = text;
-    };
-    watch(
-      () => initFormStateTabPA120.value.foreigner,
-      (newValue: any) => {
-        if (!newValue) {
-          initFormStateTabPA120.value.nationalityCode = "KR";
-          initFormStateTabPA120.value.stayQualification = null;
-          editRowPA120.value.stayQualification = null;
-          foreigner.value = 0;
-        } else {
-          foreigner.value = 1;
-          // resetFormNum.value++;
-          initFormStateTabPA120.value.nationalityCode =
-            initFormStateTabPA120.value.nationalityCode == "KR"
-              ? null
-              : initFormStateTabPA120.value.nationalityCode;
-        }
-        store.state.common.isForeignerPA120 =
-          initFormStateTabPA120.value.foreigner;
-      },
-      { deep: true }
-    );
-
-    //----------------------NOTIFY PRESIDENT CHANGE--------------------
-
-    const presidentWaring =
-      "대표자는 고용보험에서 제외됩니다. (기존에 선택되어있는 경우 강제로 해지됩니다)";
-    const presidenStatus = ref(false);
-    const onChangePresident = (emit: any) => {
-      if (emit) {
-        presidenStatus.value = true;
-      }
-    };
-    const onChange = (emitVal: any) => {
-      initFormStateTabPA120.value.name = emitVal.toUpperCase();
-    };
+    console.log(`tab1`)
     return {
       loading,
-      formStateTab1,
-      isForeigner,
       labelResidebId,
-      foreigner,
       funcAddress,
-      // residentId,
       employeeId,
-      postCode,
       radioCheckForeigner,
       arrDepartments,
       arrResponsibility,
@@ -543,7 +414,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #tab1-pa120 {
-  ::v-deep .ant-form-item-label > label {
+  ::v-deep .ant-form-item-label>label {
     width: 135px;
     padding-left: 10px;
   }

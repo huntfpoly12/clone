@@ -127,7 +127,7 @@
             cell-template="workingStatus"
           />
           <template #workingStatus="{ data }: any">
-            <SelectCustomField
+            <SelectBoxCT
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
               width="95px"
