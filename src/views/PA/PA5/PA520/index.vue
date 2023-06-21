@@ -188,11 +188,11 @@
       :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmAndSaveAdd" />
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed, onMounted, reactive, watchEffect } from "vue";
+import { ref, defineComponent, watch, computed } from "vue";
 import DxButton from "devextreme-vue/button";
 import { useStore } from "vuex";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { companyId, onExportingCommon } from "@/helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 import {
   DxDataGrid,
   DxColumn,
@@ -228,7 +228,7 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import { Message } from "@/configs/enum";
 import DataSource from "devextreme/data/data_source";
-import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
+import { ClickYearStatus } from "@/store/settingModule/types";
 export default defineComponent({
   components: {
     DxDataGrid,
