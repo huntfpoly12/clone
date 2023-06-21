@@ -302,12 +302,11 @@ export default defineComponent({
       default: () => {},
     },
   },
-  setup(props, { emit }) {
+  setup(props) {
     const store = useStore();
     const userInfor = computed(() => store.state.auth.userInfor);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const globalYear: any = +dayjs().format("YYYY");
     const dayReport = ref(dayjs().format("YYYYMM")+dayjs().daysInMonth());
     let checkBoxSearch = [...checkBoxSearchStep1];
     let valueDefaultCheckbox = ref(1);
