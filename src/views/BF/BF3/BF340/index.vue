@@ -30,13 +30,14 @@
           <DxToolbar>
             <DxItem template="search" css-class="order-0"/>
             <DxItem location="after" template="pagination-table" />
-            <DxItem name="searchPanel" />
-            <DxItem name="exportButton" css-class="cell-button-export" />
             <DxItem
               location="after"
               template="button-template"
               css-class="cell-button-add"
             />
+            <DxItem name="searchPanel" />
+            <DxItem name="exportButton" css-class="cell-button-export" />
+    
             <DxItem name="groupPanel" />
             <DxItem name="addRowButton" show-text="always" />
             <DxItem name="columnChooserButton" />
