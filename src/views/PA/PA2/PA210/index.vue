@@ -3,6 +3,7 @@
   <div class="page-content">
     <a-spin :spinning="loading" size="large">
       <DxDataGrid
+        id="dataGridPA210"
         noDataText="내역이 없습니다"
         :show-row-lines="true"
         :hoverStateEnabled="true"
