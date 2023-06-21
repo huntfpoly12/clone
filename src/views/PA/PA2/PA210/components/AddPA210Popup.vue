@@ -25,7 +25,7 @@
                         </template>
                         <DxColumn caption="귀속 연월" cell-template="imputed" />
                         <template #imputed="{ data }">
-                            <a-tooltip v-if="data.data.imputedFinishYearMonth" color="blue">
+                            <a-tooltip v-if="data.data.imputedStartYearMonth" color="blue">
                                 <template #title>
                                     귀속기간 {{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                                 </template>
@@ -43,7 +43,7 @@
                         </template>
                         <DxColumn caption="지급 연월" cell-template="payment" />
                         <template #payment="{ data }">
-                            <a-tooltip v-if="data.data.paymentFinishYearMonth" color="blue">
+                            <a-tooltip v-if="data.data.paymentStartYearMonth" color="blue">
                                 <template #title>
                                     지급기간 {{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                                 </template>
@@ -278,7 +278,7 @@ export default defineComponent({
                     }
                 }
             } else {
-                let array = value.paymentType == 1 ? arrayPaymentType1 : arrayPaymentType2
+              let array = value.paymentType == 1 ? arrayPaymentType1 : arrayPaymentType2
                 array.map((data: any, index) => {
                   if (!value.reportClassCodes.find((item: any) => item == (value.paymentType == 1 ? "반당" : "반익") + index)) {
                         // string concatenation 10th next month of paymentday

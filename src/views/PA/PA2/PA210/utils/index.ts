@@ -53,6 +53,7 @@ export const showTooltipYearMonth = (reportType: any, startYearMonth: any, finis
     if (reportType == 1) {
         return filters.formatDate(finishYearMonth.toString(), 'YYYY-MM')
     } else {
+        if (!finishYearMonth) return filters.formatDate(startYearMonth.toString(), 'YYYY-MM');
         return filters.formatDate(startYearMonth.toString(), 'YYYY-MM') + (finishYearMonth ? '~' +
         filters.formatDate(finishYearMonth.toString(), 'YYYY-MM') : '')
     }
