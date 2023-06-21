@@ -18,7 +18,6 @@
           noDataText="내역이 없습니다"
           @contentReady="onDataGridInitialized"
           >
-          <!-- @initialized="onDataGridInitialized" -->
           <DxKeyboardNavigation :enabled="false" />
           <DxPaging :page-size="1000" />
           <DxSearchPanel
@@ -531,23 +530,10 @@ export default defineComponent({
             return true;
           });
         });
-          // console.log(`output- 2`);
         store.commit("common/filterDsTab3Bf530", arr);
-        // setTimeout(() => {
-        //   loadingDataSource.value = false;
-        // }, 20);
       },
       { deep: true }
     );
-
-    onUpdated(() => {
-      nextTick(() => {
-        if (filterDsTab3Bf530.value) {
-          console.log(`output-4`, filterDsTab3Bf530.value);
-          // loadingDataSource.value = false;
-        }
-      });
-    });
     const onDataGridInitialized = (e: any) => {
       if(reachDataCount.value == 0){
         reachDataCount.value ++;
