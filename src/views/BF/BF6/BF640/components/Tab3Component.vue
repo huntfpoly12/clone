@@ -76,6 +76,7 @@
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
+          noDataText="내역이 없습니다"
         >
           <DxSearchPanel
             :visible="true"
