@@ -9,7 +9,7 @@ export default defineComponent({
     props: {
         valueCheckbox: {
             default: false,
-            type: Boolean,
+            type: [Boolean, String, Number]
         },
         disabled: {
             default: false,
