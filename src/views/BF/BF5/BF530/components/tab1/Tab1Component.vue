@@ -173,7 +173,7 @@
               alignment="center"
               :allow-sorting="false"
             />
-            <template #companyConsignStatus="{ data }: any">
+            <template #companyConsignStatus="{ data }">
               <SelectBoxCT
                 v-model:valueInput="data.data.companyConsignStatus"
                 :dataSource="companyConsignStatusSelectbox"
