@@ -1,5 +1,5 @@
 <template>
-  <DxSelectBox :search-enabled="searchEnabled" :width="width" :data-source="arrSelect" :show-clear-button="clearButton"
+  <DxSelectBox :search-enabled="searchEnabled" :width="width" :data-source="dataSource" :show-clear-button="clearButton"
     v-model="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr" :disabled="disabled"
     @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택" :name="nameInput"
     field-template="field" item-template="item">
@@ -51,18 +51,18 @@ export default defineComponent({
       default: "",
     },
     readOnly: Boolean,
-    arrSelect: Array,
+    dataSource: Array,
     nameInput: {
       type: String,
       default: '',
     },
     displayeExpr: {
       type: String,
-      default: 'label',
+      default: 'name',
     },
     valueExpr: {
       type: String,
-      default: 'value',
+      default: 'id',
     },
     searchEnabled: {
       type: Boolean,
