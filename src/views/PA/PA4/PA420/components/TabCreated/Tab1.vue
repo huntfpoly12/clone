@@ -23,7 +23,7 @@
                 지급일은 저장 후 수정불가
               </info-tool-tip>
             </div>
-  
+
           </a-form-item>
         </a-col>
         <a-col :span="12">
@@ -37,7 +37,7 @@
               </info-tool-tip>
             </div>
           </a-form-item>
-  
+
           <a-form-item label="입사일">
             <div class="d-flex-center">
               <date-time-box width="150px" :disabled="true" :valueDate="joinedAt"/>
@@ -110,7 +110,7 @@
                 v-model:valueInput="formState.prevRetiredYearsOfService.exclusionDays"
                 format="#0,###"
               />
-  
+
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
                   정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.
@@ -340,9 +340,9 @@ const {
 }));
 const employeeList = computed(() => {
   if (!resultEmployee.value) return []
-  const isJoinedBeforeSelectedMonth = (item: any) => (+item.joinedAt.toString().slice(0, 4) <= selectMonthColumn.value.imputedYear || +item.joinedAt.toString().slice(4, 6) <= selectMonthColumn.value.imputedMonth)
+  const isJoinedBeforeSelectedMonth = (item: any) => (+item.joinedAt.toString().slice(0, 6) <= Number(`${selectMonthColumn.value.imputedYear}${filters.formatMonth(selectMonthColumn.value.imputedMonth)}`))
     && !employeeIdCreated.value?.find((i:any) => i.employeeId === item.employeeId && i.employeeType === item.type)
-  const isLeavedAfterSelectedMonth = (item: any) => (+item.leavedAt.toString().slice(0, 4) >= selectMonthColumn.value.imputedYear || +item.leavedAt.toString().slice(4, 6) >= selectMonthColumn.value.imputedMonth)
+  const isLeavedAfterSelectedMonth = (item: any) => (+item.leavedAt.toString().slice(0, 6) >= Number(`${selectMonthColumn.value.imputedYear}${filters.formatMonth(selectMonthColumn.value.imputedMonth)}`))
    && !employeeIdCreated.value?.find((i:any) => i.employeeId === item.employeeId && i.employeeType === item.type);
   if (props.retirementIncome === EmployeeWageType.WAGE) { // 10
     if (props.retirementType === 1) { // 1 is leaved
