@@ -412,7 +412,7 @@ export default defineComponent({
 		const actionSaveItem = ref<number>(0);
 		const actionUpdateItem = ref<number>(0);
 		const trigger = ref<boolean>(true);
-		const triggerDataTaxPayInfo = ref<boolean>(true);
+		const triggerDataTaxPayInfo = ref<boolean>(false);
 		let status = ref();
 		const gridRefPA110 = ref(); // ref of grid
 		const dataGridRef = computed(() => gridRefPA110.value?.instance as any); // ref of grid Instance

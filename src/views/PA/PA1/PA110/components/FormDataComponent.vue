@@ -667,7 +667,7 @@ export default defineComponent({
 		watch(resCalcIncomeWageTax, async (value) => {
 			triggerCalcIncome.value = false;
 			if (value) {
-				let data = value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100)
+				let data = value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100);
 				dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = data;
 				let value1012 = Math.floor(data / 100) * 10;
 				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = value1012 > 1000 ? value1012 : 0;
@@ -679,6 +679,10 @@ export default defineComponent({
 					}
 				}
 			})
+			if (statusClickButtonActionDedution.value) { // nếu bấm nút mở modal thì mở modal
+				modalDeductions.value = true;
+				statusClickButtonActionDedution.value = false;
+			}
 		});
 
 		watch(resultEmployeeWage, async (newVal: any) => {
@@ -875,8 +879,10 @@ export default defineComponent({
 		};
 
 		// open popup deduction
+		let statusClickButtonActionDedution = ref(false);
 		const actionDedution = () => {
-			modalDeductions.value = true;
+			calculationNewAmount()
+			statusClickButtonActionDedution.value = true
 		};
 		const calculationNewAmount = () => {
 			dataConfigDeductions.value?.map((item: any) => {
