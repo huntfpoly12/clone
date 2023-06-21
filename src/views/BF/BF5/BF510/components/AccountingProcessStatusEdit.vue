@@ -40,7 +40,6 @@ const { data } = defineProps<Props>()
 const emit = defineEmits(['closePopup'])
 const status = ref(data.status);
 const visible = ref<boolean>(false);
-const showModal = ref(false)
 const arrayRadioUser = ref([
   { id: 10, text: '입력중', class: 'entering' },
   { id: 20, text: '입력마감', class: 'input' },
@@ -79,7 +78,6 @@ const query = reactive({
 const { mutate, onDone, onError } = useMutation(changeAccountingProcessStatus)
 onDone(({ data }) => {
   if (data) {
-    showModal.value = false;
     emit("closePopup", true);
   }
 })
