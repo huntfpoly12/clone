@@ -310,7 +310,7 @@ export default defineComponent({
     const datePayment: any = ref(
       dayjs(`${dataSearch.value.paymentYear}${dataSearch.value.paymentMonth}`)
     );
-    const dayReport = ref(dayjs().format("YYYYMMDD"));
+    const dayReport = ref(dayjs().format("YYYYMM")+dayjs().daysInMonth());
     const messageDelNoItem = Message.getMessage("COMMON", "404").message;
 
     // --------------------search production status-----------------------------------------

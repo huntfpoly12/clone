@@ -100,6 +100,7 @@
             caption="일련번호"
             data-field="companyId"
             alignment="center"
+            width="70"
           />
           <DxColumn
             caption="신고구분"
@@ -112,6 +113,7 @@
             caption="사업장관리번호"
             data-field="manageId"
             :format="$filters.formatManageId"
+            width="108"
           />
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
           <DxColumn

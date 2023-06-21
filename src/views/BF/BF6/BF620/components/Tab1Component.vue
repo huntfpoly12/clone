@@ -47,7 +47,7 @@
                     :textUnCheck="'납세자자진신고'"
                   />
                   <info-tool-tip>
-                    <span>제작전은 제작요청되지 않은 상태입니다.</span>
+                    <span>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
                   </info-tool-tip>
                 </a-col>
               </a-row>
