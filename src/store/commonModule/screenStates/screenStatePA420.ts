@@ -112,7 +112,7 @@ const statesPA420 = {
   // tab 1
   ...cloneDeep(INITIAL_STATE),
   employeeIdCreated: [],
-  retirementStatus: 10,
+  retirementStatus: 0,
   needToRecalculatePa420: false,
 };
 

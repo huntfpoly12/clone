@@ -15,10 +15,10 @@
           <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate" :clearable="false"
                                 v-model:valueDate="paymentDayConfig"/>
         </a-form-item>
-        <div class="text-align-center mt-30">
-          <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
-                        @onClick="onSubmit"/>
-        </div>
+      </div>
+      <div class="text-align-center mt-30">
+        <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
+                      @onClick="onSubmit"/>
       </div>
     </a-spin>
   </a-modal>
