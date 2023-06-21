@@ -177,8 +177,7 @@
                     width="170px"
                     class="mr-3"
                     v-model:valueInput="originDataUpdate.input.workingDays"
-                    @changeInput="onChangeWorkingDays"
-                    :min="1"
+                    @changeInput="onChangeWorkingDays"   
                     :max="31"
                     :required="true"
                   />
@@ -344,20 +343,12 @@ export default defineComponent({
       imputedYear: globalYear.value,
       employeeId: idRowEdit.value,
       input: {
-        ...originDataInputUpdate,
+        ... JSON.parse(JSON.stringify(originDataInputUpdate)),
       },
     });
     let trigger = ref(false);
     let dataDefaultGet = ref();
     // ================== GRAPQL ====================================
-
-    // watch(resultConfig,(resConfig)=>{
-    //   if (resConfig) {
-    //     insuranceSupport.value = resConfig.getWithholdingConfig.insuranceSupport;
-    //     originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
-    //     // store.dispatch('common/setCheckEditTab2PA520',false)
-    //   }
-    // })
 
     const { loading: loading, onResult: resWithholdingConfigPayItems } =
       useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
@@ -391,6 +382,7 @@ export default defineComponent({
       isBtnYellow.value = false;
       if (dtValue.data) {
         let res = dtValue.data.getEmployeeWageDaily;
+
         originDataUpdate.value.employeeId = res.employeeId;
         originDataUpdate.value.input.nationalPensionDeduction =
           res.nationalPensionDeduction;
@@ -539,6 +531,7 @@ export default defineComponent({
         () => originDataUpdate.value.input.insuranceSupport,
       ],
       () => {
+
         // delete item  no need in object , Just compare item watching
         let defValue = cleanObject(JSON.parse(dataDefaultGet.value).input);
         let originValue = cleanObject(
@@ -546,6 +539,8 @@ export default defineComponent({
         );
         // Compare two object if different change button color to orange
         if (JSON.stringify(defValue) !== JSON.stringify(originValue)) {
+          console.log(defValue);
+          console.log(originValue);
           isBtnYellow.value = true;
         } else {
           isBtnYellow.value = false;
@@ -611,6 +606,7 @@ export default defineComponent({
           dataDefault.dailyWage,
           dataDefault.monthlyWage
         ).incomeTax;
+
         let total6 = await Formula.getDailyEmployeeTax(
           202210,
           dataDefault.workingDays,
