@@ -476,6 +476,8 @@ export default defineComponent({
           paymentYear: filterBF620.value.paymentYear,
         };
         loadingTable.value = true;
+        console.log(`.add(1, 'month').date(10)`,`${filterBF620.value.paymentYear}${filterBF620.value.paymentMonth}`)
+        dayReport.value = dayjs(`${filterBF620.value.paymentYear}${filterBF620.value.paymentMonth}`).add(1, 'month').date(10);
       }
     });
     const productionStatusData = (emitVal: any, index: number) => {
