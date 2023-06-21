@@ -638,6 +638,7 @@ export default defineComponent({
       if (newVal) {
         dataSearch.value.paymentYear = +newVal.toString().slice(0, 4);
         dataSearch.value.paymentMonth = +newVal.toString().slice(4, 6);
+        dayReport.value = newVal.toString().slice(0, 6) +''+ dayjs(newVal.toString().slice(0, 6)).daysInMonth();
       }
     });
 
