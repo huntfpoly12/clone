@@ -349,7 +349,7 @@ export default defineComponent({
       data: dataInit,
       mergeCells: mergeCells,
       cell: [...cellPageSettings.value],
-
+      stretchH: 'all',
       width: "auto",
       licenseKey: "non-commercial-and-evaluation",
     };
@@ -877,7 +877,7 @@ export default defineComponent({
   // }
   :deep .wtHolder {
     width: 100% !important;
-    // height: 730px !important;
+
   }
 
   :deep .ht_clone_left .wtHolder {
