@@ -1,123 +1,165 @@
 <template>
-  <action-header title="4대보험업무관리" :buttonSearch="true" />
-  <a-row class="px-10 py-5" style="background: #f1f3f4;">
-    <a-col>
-      <a-form-item label="회계연월" label-align="left">
-        <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5" />
-      </a-form-item>
-      <a-form-item style="padding-left: 70px">
-        <radio-group :arrayValue="checkBoxSearch" layoutCustom="horizontal" v-model:valueRadioCheck="dataSearch.month"
-          style="" />
-      </a-form-item>
-    </a-col>
-    <a-col>
-      <a-form-item label="마감상태" label-align="left">
-        <checkbox-basic label="전체" class="mr-10" v-model:valueCheckbox="statuses.checkbox1" />
-      </a-form-item>
-      <a-form-item style="padding-left: 70px">
-        <div class="checkbox">
-          <checkbox-basic label="입력중" class="mr-10 custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1" />
-          <checkbox-basic label="입력마감" class="mr-10 custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2" />
-          <checkbox-basic label="조정중" class="mr-10 custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3" />
-          <checkbox-basic label="조정마감" class="mr-10 custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4" />
-        </div>
-      </a-form-item>
-    </a-col>
-    <a-col class="search-company">
-      <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-        <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px" />
-      </a-form-item>
-      <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-        <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px" />
-      </a-form-item>
-    </a-col>
-    <a-col class="search-4">
-      <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" />
-    </a-col>
-  </a-row>
+  <action-header title="4대보험업무관리" :buttonSearch="true" @actionSearch="searching()"/>
+  <div class="px-10 py-5" style="background: #f1f3f4;">
+    <a-space :size="16">
+      <div>
+        <a-form-item label="회계연월" label-align="left">
+          <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5"/>
+        </a-form-item>
+        <a-form-item style="padding-left: 70px">
+          <radio-group :arrayValue="checkBoxSearch" layoutCustom="horizontal" v-model:valueRadioCheck="dataSearch.month"
+                       style=""/>
+        </a-form-item>
+      </div>
+      <div>
+        <a-form-item label="마감상태" label-align="left">
+          <div class="d-flex align-items-start">
+            <div class="checkbox">
+              <checkbox-basic label="전체" class="mr-10" v-model:valueCheckbox="statuses.checkboxAll"/>
+              <checkbox-basic label="입력중" class="mr-10 custom-checkbox0" v-model:valueCheckbox="statuses.checkbox0"/>
+              <checkbox-basic label="입력중" class="mr-10 custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
+              <checkbox-basic label="입력마감" class="mr-10 custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
+              <checkbox-basic label="조정중" class="mr-10 custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
+              <checkbox-basic label="조정마감" class="mr-10 custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
+            </div>
+            <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
+          </div>
+        </a-form-item>
+      </div>
+      <div class="search-company">
+        <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
+          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
+        </a-form-item>
+        <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
+          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
+        </a-form-item>
+      </div>
+      <div class="search-4">
+        <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel"/>
+      </div>
+    </a-space>
+  </div>
+
   <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-    :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10" style="height: calc(100vh - 250px);">
-    <DxColumn data-field="code" caption="사업자코드" />
+              :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10"
+              style="height: calc(100vh - 250px);">
+    <DxColumn data-field="code" caption="사업자코드"/>
     <DxColumn data-field="name" caption="상호" width="215px"/>
     <DxColumn data-field="address" caption="주소" width="215px"/>
     <DxColumn caption="사업별 마감현황" cell-template="closingStatusByBusiness" width="250px"/>
-    <DxColumn data-field="presidentName" caption="대표자" />
-    <DxColumn data-field="phone" caption="연락처" />
-    <DxColumn data-field="presidentMobilePhone" caption="휴태폰" />
-    <DxColumn caption="담당매니저" />
-    <DxColumn data-field="manageStartDate" caption="관리시작일" cell-template="productionRequestedAt" alignment="center" width="100px"/>
+    <DxColumn data-field="presidentName" caption="대표자"/>
+    <DxColumn data-field="phone" caption="연락처"/>
+    <DxColumn data-field="presidentMobilePhone" caption="휴태폰"/>
+    <DxColumn caption="담당매니저"/>
+    <DxColumn data-field="manageStartDate" caption="관리시작일" cell-template="productionRequestedAt" alignment="center"
+              width="100px"/>
     <template #closingStatusByBusiness="{data}">
       <div class="d-flex flex-col gap-5">
-        <div v-for="(company, index) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between">
+        <div v-for="(company) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between">
           <div class="truncate" style="width: 100px">{{ company.facilityBusinessName }}</div>
-          <AccountingProcessStatusEdit :data="{
-            status: company.status,
-            index,
-            companyId: company.companyId,
-            facilityBusinessId: company.facilityBusinessId,
-            year: dataSearch.year,
-            month: dataSearch.month
-          }"/>
+          <div class="d-flex-center gap-5">
+            <AccountingProcessStatusEdit
+              :data="{
+                status: company.status,
+                companyId: data.data.companyId,
+                facilityBusinessId: company.facilityBusinessId,
+                year: dataSearch.year,
+                month: dataSearch.month
+              }"/>
+            <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
+              <div @click="redirectAc110(data.data)">
+                <RightCircleOutlined style="color: #2323da; font-size: 20px; border-radius: 10px"/>
+              </div>
+            </a-tooltip>
+          </div>
         </div>
       </div>
     </template>
-    <template #productionRequestedAt="{data}">{{data.data.manageStartDate && $filters.formatDate(data.data.manageStartDate)}}</template>
+    <template #productionRequestedAt="{data}">
+      {{ data.data.manageStartDate && $filters.formatDate(data.data.manageStartDate) }}
+    </template>
   </DxDataGrid>
 </template>
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { reactive } from 'vue';
-import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
-import { ref } from 'vue';
-import { searchCompanyAccountingDeadlines } from '@/graphql/queries/BF/BF5/BF510';
-import { useQuery } from '@vue/apollo-composable';
+import {reactive, watch, watchEffect} from 'vue';
+import {DxDataGrid, DxColumn} from 'devextreme-vue/data-grid';
+import {ref} from 'vue';
+import {searchCompanyAccountingDeadlines} from '@/graphql/queries/BF/BF5/BF510';
+import {useMutation, useQuery} from '@vue/apollo-composable';
 import DataSource from 'devextreme/data/data_source';
 import AccountingProcessStatusEdit from "./components/AccountingProcessStatusEdit.vue";
+import InfoToolTip from "@/components/common/InfoToolTip.vue";
+import {RightCircleOutlined} from '@ant-design/icons-vue';
+import router from "@/router";
+import mutations from "@/graphql/mutations/AddToken";
+
 const checkBoxSearch = [
-  { id: 1, text: '1 월' },
-  { id: 2, text: '2 월' },
-  { id: 3, text: '3 월' },
-  { id: 4, text: '4 월' },
-  { id: 5, text: '5 월' },
-  { id: 6, text: '6 월' },
-  { id: 7, text: '7 월' },
-  { id: 8, text: '8 월' },
-  { id: 9, text: '9 월' },
-  { id: 10, text: '10 월' },
-  { id: 11, text: '11 월' },
-  { id: 12, text: '12 월' },
+  {id: 1, text: '1 월'},
+  {id: 2, text: '2 월'},
+  {id: 3, text: '3 월'},
+  {id: 4, text: '4 월'},
+  {id: 5, text: '5 월'},
+  {id: 6, text: '6 월'},
+  {id: 7, text: '7 월'},
+  {id: 8, text: '8 월'},
+  {id: 9, text: '9 월'},
+  {id: 10, text: '10 월'},
+  {id: 11, text: '11 월'},
+  {id: 12, text: '12 월'},
 ]
 const statuses = reactive({
+  checkboxAll: true,
+  checkbox0: true,
   checkbox1: true,
   checkbox2: true,
   checkbox3: true,
   checkbox4: true,
 });
-
+watchEffect(() => {
+  if (statuses.checkboxAll) {
+    statuses.checkbox0 = statuses.checkbox1 = statuses.checkbox2 = statuses.checkbox3 = statuses.checkbox4 = true;
+  } else {
+    statuses.checkbox0 = statuses.checkbox1 = statuses.checkbox2 = statuses.checkbox3 = statuses.checkbox4 = false;
+  }
+})
+watchEffect(() => {
+  if (statuses.checkbox0 && statuses.checkbox1 && statuses.checkbox2 && statuses.checkbox3 && statuses.checkbox4) {
+    statuses.checkboxAll = true;
+  }
+  if (!(statuses.checkbox0 || statuses.checkbox1 || statuses.checkbox2 || statuses.checkbox3 || statuses.checkbox4)) {
+    statuses.checkboxAll = false;
+  }
+})
 const dataSource = ref<DataSource>()
 
 export interface ISearchCompanyAccountingDeadlines {
   fiscalYear: number;
   year: number;
   month: number;
-  statuses?: [number];
+  statuses?: number[];
   manageUserId?: number | null;
   salesRepresentativeId?: number | null;
   excludeCancel: boolean;
 }
+
 const dataSearch = reactive<ISearchCompanyAccountingDeadlines>({
   fiscalYear: parseInt(dayjs().format('YYYY')),
   year: parseInt(dayjs().format('YYYY')),
   month: parseInt(dayjs().format('MM')),
   excludeCancel: true,
   salesRepresentativeId: null,
-  manageUserId: null
+  manageUserId: null,
+  statuses: [1, 10, 20, 30, 40]
 })
-const { onResult, onError } = useQuery(searchCompanyAccountingDeadlines, {
+const trigger = ref(true);
+
+const {onResult, onError} = useQuery(searchCompanyAccountingDeadlines, {
   filter: dataSearch
 }, () => ({
   fetchPolicy: "no-cache",
+  enabled: trigger.value
 }))
 
 onResult((result) => {
@@ -128,7 +170,54 @@ onResult((result) => {
       data: result.data.searchCompanyAccountingDeadlines || [],
     },
   })
+  trigger.value = false
 })
+onError((error) => {
+  trigger.value = false
+  console.log(error)
+})
+const searching = () => {
+  const stt = Object.values(statuses).slice(1).reduce((acc: any, curr: any, index: number) => {
+    if (curr) {
+      acc.push(index === 0 ? 1 : index * 10);
+    }
+    return acc;
+  }, []);
+  if (stt.length) {
+    dataSearch.statuses = stt;
+  } else {
+    delete dataSearch.statuses;
+  }
+  trigger.value = true;
+}
+const userToken = ref()
+const companyInfo = reactive({
+  code: NaN,
+  name: '',
+  companyId: NaN,
+})
+const {mutate, onDone, onError: customerLoginError } = useMutation(mutations.customerWorkLogin);
+
+onDone((result: any) => {
+  userToken.value = result.data.customerWorkLogin;
+  cloneWebsite();
+})
+const redirectAc110 = (data: any) => {
+  companyInfo.companyId = data.companyId;
+  companyInfo.code = data.code;
+  companyInfo.name = data.name;
+  mutate({companyId: data.companyId})
+}
+
+const cloneWebsite = () => {
+  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
+  const currentUrl = window.location.origin.replace(/\/$/, '');
+  if(userToken.value){
+    window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}&companyName=${companyInfo.name}`, '_blank', windowFeatures);
+  }
+}
 </script>
 
 <style lang="scss" scoped>

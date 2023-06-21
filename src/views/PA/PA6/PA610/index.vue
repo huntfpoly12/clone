@@ -383,6 +383,7 @@ const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
       selectRowKeyAction.value = e.rows[e.newRowIndex].key;
     }
   }
+  isClickAddRow.value = false;
 };
 
 // handle onFocusedRowChanged to row, function run then auto set focusedRowKey

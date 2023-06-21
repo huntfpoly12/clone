@@ -17,6 +17,7 @@
           :allowSelection="true"
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
+          @contentReady="onDataGridInitialized"
         >
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
@@ -380,6 +381,7 @@ export default defineComponent({
     const dataType = ref(1);
     const globalYear = dayjs().year();
     const loadingDataSource = ref(false);
+    const reachDataCount = ref(0); // check lần đầu tiên vào màn
 
     //-----------------------Fcn common-----------------------------------------
 
@@ -480,6 +482,14 @@ export default defineComponent({
       },
       { deep: true }
     );
+    const onDataGridInitialized = (e: any) => {
+      if(reachDataCount.value == 0){
+        reachDataCount.value ++;
+      }
+      if(reachDataCount.value > 0){
+        loadingDataSource.value = false;
+      }
+    }
 
     // -----------------------------HISTORY-------------------
 
@@ -690,6 +700,7 @@ export default defineComponent({
       completedAtFormat,
       loadingDataSource,
       consignStatusText,
+      onDataGridInitialized,
     };
   },
 });

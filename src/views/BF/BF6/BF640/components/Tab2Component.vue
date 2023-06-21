@@ -131,7 +131,7 @@
           <template #request>
             <a-row align="middle">
               <a-col>
-                <a-row>
+                <a-row align="middle">
                   <span class="mr-10">제출연월일 :</span>
                   <span class="d-flex-center">
                     <date-time-box

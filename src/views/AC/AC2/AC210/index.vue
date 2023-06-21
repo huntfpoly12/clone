@@ -14,14 +14,21 @@
                     <DxItem name="searchPanel" />
                     <DxItem name="exportButton" css-class="cell-button-export" />
                 </DxToolbar>
-
                 <template #box-action-right>
                     <div class="action d-flex-center">
                         <span class="mr-10">기간: </span>
-                        <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
-                        <button-basic class="ml-5 d-flex-center button-upload" :type="'default'" >
+                        <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" :max-range="90"/>
+                        <button-basic @onClick="actionOpenModalUpload" class="ml-5 d-flex-center button-upload" :type="'default'" >
                             <upload-outlined :style="{ fontSize: '16px', marginRight: '5px' }" />
                             <span>전표 업로드</span>
+                        </button-basic>
+                        <button-basic @onClick="windowOpen('share')" class="ml-5 d-flex-center button-upload" :type="'default'" >
+                            <img class="icon_share" src="@/assets/images/icon_share.svg" />
+                            <span>뱅크다K 바로가기</span>
+                        </button-basic>
+                        <button-basic @onClick="windowOpen('addPeople')" class="ml-5 d-flex-center button-upload" :type="'default'" >
+                            <user-add-outlined :style="{ fontSize: '16px', marginRight: '5px' }"/>
+                            <span>뱅크다K 회원가입</span>
                         </button-basic>
                     </div>
                 </template>
@@ -79,6 +86,7 @@ import mutations from "@/graphql/mutations/AC/AC2/AC210";
 import {
     ZoomInOutlined,
     UploadOutlined,
+    UserAddOutlined,
 } from "@ant-design/icons-vue";
 import { companyId } from "@/helpers/commonFunction";
 import dayjs from "dayjs";
@@ -97,7 +105,7 @@ export default defineComponent({
         DxButton,
         DxSearchPanel,
         DxToolbar,
-        ZoomInOutlined, UploadOutlined,
+        ZoomInOutlined, UploadOutlined, UserAddOutlined,
         ModalDetail,
         ModalUpload,
 
@@ -110,7 +118,7 @@ export default defineComponent({
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
         const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
         const gridRefAC210 = ref(); // ref of grid
-        const rangeDate = ref()
+        const rangeDate = ref([parseInt(dayjs().subtract(1, "month").format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
 
         let statusModalDetail = ref<boolean>(false);
         let statusModalUpload = ref<boolean>(false);
@@ -135,6 +143,13 @@ export default defineComponent({
         const actionOpenModalUpload = (data: any) => {
             statusModalUpload.value = true
         }
+        const windowOpen = (data: any) => {
+            if (data == 'share') {
+                window.open('https://k.bankda.com')
+            } else {
+                window.open('https://k.bankda.com/api/member')
+            }
+        }
 
         // ================ CUSTOM SUMMARY TABLE ============================================
 
@@ -145,6 +160,7 @@ export default defineComponent({
             move_column,
             colomn_resize,
             rangeDate,
+            windowOpen,
         };
     },
 });
