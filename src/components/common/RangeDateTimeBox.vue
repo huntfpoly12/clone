@@ -2,6 +2,7 @@
   <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
               :min-date="minDate"
               :max-date="maxDate"
+              :max-range="maxRange"
               @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
               :placeholder="placeholder" :range="true"
               :multi-calendars="multiCalendars"
