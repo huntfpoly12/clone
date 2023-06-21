@@ -36,7 +36,7 @@
               v-model:valueDate="initFormStateTabPA120.leavedAt">
             </date-time-box>
             <a-tooltip placement="top" class="custom-tooltip">
-              <template #title> 마지막 근무한 날. </template>
+              <template #title> 마지막 근무한 날</template>
               <div style="text-align: center">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
               </div>
@@ -121,16 +121,6 @@
           <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.responsibility" :data="arrResponsibility"
             @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
         </a-form-item>
-        <!-- <a-form-item label="부서" label-align="right">
-          iii{{ initFormStateTabPA120.department }}
-          <custom-item-select-box width="200px" :disabled="notDatasourcePA120"
-            v-model:valueInput="initFormStateTabPA120.department" :arrSelect="arrDepartments"></custom-item-select-box>
-        </a-form-item>
-        <a-form-item label="직위" label-align="right">
-          <custom-item-select-box width="200px" :disabled="notDatasourcePA120"
-            v-model:valueInput="initFormStateTabPA120.responsibility" :id="'pa-120-2'"
-            :arrSelect="arrResponsibility"></custom-item-select-box>
-        </a-form-item> -->
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center">
             <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save"
@@ -184,7 +174,6 @@ export default defineComponent({
     const globalYear = ref<number>(
       parseInt(sessionStorage.getItem("paYear") ?? "0")
     );
-    // const yearPA120 = computed(() => store.state.common.yearPA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
     const notDatasourcePA120 = computed(
       () => store.state.common.notDatasourcePA120
@@ -228,10 +217,6 @@ export default defineComponent({
      *
      */
     const residentId = ref("");
-    // watch(residentId, (newValue: any) => {
-    //   initFormStateTabPA120.value.residentId =
-    //     newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
-    // });
     const employeeId = ref();
 
     // getDepartments
@@ -422,7 +407,6 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       store.commit("common/editRowPA120", initFormStateTabPA120.value);
       initFormStateTabPA120.value.employeeId = employeeId;
-      store.state.common.rowKeyTab2PA120 = employeeId;
       isEdit.value = true;
     });
 
