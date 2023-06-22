@@ -34,7 +34,6 @@ if (token) {
   // }
 }
 
-
 const openTab = (objTab :  any) => {
   store.state.common.activeTab = objTab
   Router.push(objTab.url);

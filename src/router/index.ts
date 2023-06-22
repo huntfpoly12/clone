@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHistory, RouteLocationNormalized} from "vue-router";
 import Login from "../views/Login.vue";
 import LoginLayout from "../layouts/LoginLayout.vue";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
@@ -8,11 +8,10 @@ import NotFound from "../views/NotFound.vue";
 import {
   AdminScreenRole,
   WorkScreenRole,
-  getJwtObject,
+  getJwtObject, JwtObject,
 } from "@bankda/jangbuda-common";
 import isEmpty from "lodash/isEmpty";
 import useCheckPermission from "@/helpers/useCheckPermission";
-import store from "@/store";
 const ALL_ROLE = [
   ...AdminScreenRole.all().map((i) => i.enumKey),
   ...WorkScreenRole.all().map((i) => i.enumKey),
@@ -470,41 +469,63 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+function hasQueryParams(route: RouteLocationNormalized) {
+  return !!Object.keys(route.query).length
+}
 router.beforeEach((to, from, next) => {
-  // const urlParams = new URLSearchParams(window.location.search);
-  // const newUserToken = urlParams.get('token');
-  // if (newUserToken) {
-  //   sessionStorage.setItem('userToken', newUserToken);
-  //   next()
-  //   return;
-  // }
-  // console.log(`output->newUserToken`,newUserToken)
   const requiresAuth = to.meta.needAuth;
   const roles = isEmpty(to.meta.roles) ? null : (to.meta.roles as string[]);
-  const token = sessionStorage.getItem("token");
-
-  const { read } = useCheckPermission(roles);
-  // check if token isExpired
-  if (token && getJwtObject(token).isExpired()) {
-    // store.dispatch("auth/checkToken");
-    console.log('%c expired router', 'color: red;',);
-  }
-
-  if (to.fullPath == "/login" && token) {
-    next("/dashboard");
-  }
-
-  if (to.fullPath == "/" && token) {
-    next("/dashboard");
-  }
-
-  if (requiresAuth && !token) {
-    next("/login");
-  } else if (requiresAuth && token && !read) {
-    next("not-found");
+  if(hasQueryParams(to)){
+    const {
+      token,
+      refreshToken,
+      year,
+      onlyView,
+      username,
+      facilityBusinessName,
+      globalFacilityBizId,
+      path
+    }  = to.query // get query params
+    if (token && refreshToken) {
+      const objectJwt = getJwtObject(token as string) // decode token
+      if(objectJwt) {
+        if (onlyView) {
+          sessionStorage.setItem('acYear', year as string)
+          sessionStorage.setItem('paYear', year as string)
+          sessionStorage.setItem('onlyView', onlyView as string)
+          sessionStorage.setItem('tabsCached', path as string)
+          sessionStorage.setItem('username', username as string)
+          sessionStorage.setItem('name', facilityBusinessName as string)
+          sessionStorage.setItem('globalFacilityBizId', globalFacilityBizId as string)
+        }
+        sessionStorage.setItem('token', token as string)
+        sessionStorage.setItem('loginExpr', objectJwt.expiredTime.toString())
+        sessionStorage.setItem('refreshToken', refreshToken as string)
+        next({ path: to.path, query: {}} ); // remove query params
+      }
+    } else {
+      next()
+    }
   } else {
-    next();
+    const token = sessionStorage.getItem("token");
+    const { read } = useCheckPermission(roles, token);
+    // check if token isExpired
+    if (token && getJwtObject(token).isExpired()) {
+      console.log('%c expired router', 'color: red;',);
+    }
+    if (to.fullPath == "/login" && token) {
+      next("/dashboard");
+    }
+    if (to.fullPath == "/" && token) {
+      next("/dashboard");
+    }
+    if (requiresAuth && !token) {
+      next("/login");
+    } else if (requiresAuth && token && !read) {
+      next("not-found");
+    } else {
+      next();
+    }
   }
 });
-
 export default router;
