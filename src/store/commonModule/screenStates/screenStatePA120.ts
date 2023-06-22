@@ -14,7 +14,8 @@ const statesPA120 = {
   notDatasourcePA120:false,
   deductionDependentCountPA120: 1,
   presidentOriginPA120:false,
-  initFormStateTabPA120: {
+  employeeIdPA120: null,
+  formStateTab1PA120: {
     name: null,
     foreigner: false,
     nationality: null,
@@ -32,9 +33,9 @@ const statesPA120 = {
     responsibility: null,
     joinedAt: dayjs().format("YYYYMMDD"),
     leavedAt: null,
-    key: "0"
+    key: "0",
 },
-  editRowPA120: {
+  formOriginTab1PA120: {
     name: null,
     foreigner: false,
     nationality: null,
@@ -54,7 +55,7 @@ const statesPA120 = {
     leavedAt: null,
     key: "0"
   },
-  initFormTab2PA120: {
+  formStateTab2PA120: {
     nationalPensionDeduction: false,
     healthInsuranceDeduction: false,
     longTermCareInsuranceDeduction: false,
@@ -65,7 +66,7 @@ const statesPA120 = {
     payItems: [],
     deductionItems: [],
   },
-  editRowTab2PA120: {
+  formOriginTab2PA120: {
     nationalPensionDeduction: false,
     healthInsuranceDeduction: false,
     longTermCareInsuranceDeduction: false,
