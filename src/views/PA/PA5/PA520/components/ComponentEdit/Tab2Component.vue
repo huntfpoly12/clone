@@ -447,7 +447,7 @@ export default defineComponent({
     watch(
       () => originDataUpdate.value,
       (newVal) => {
-        let valueConvert = JSON.parse(dataDefaultGet.value);
+        let valueConvert = dataDefaultGet.value ? JSON.parse(dataDefaultGet.value) : {};
         if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
           store.commit("common/setCheckEditTab2PA520", false);
           store.commit("settings/setFormStatus", FormStatus.none);
