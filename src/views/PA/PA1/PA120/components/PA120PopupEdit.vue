@@ -3,13 +3,13 @@
         <div id="pa-120" class="page-content">
             <a-tabs v-model:activeKey="activeTabEditKeyPA120" @change="onChangeTab" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1" forceRender>
-                    <Tab1Component :idRowEdit="idRowEdit" />
+                    <Tab1Component  />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여" forceRender>
-                    <Tab2Component :idRowEdit="idRowEdit" />
+                    <Tab2Component  />
                 </a-tab-pane>
                 <a-tab-pane key="3" tab="부양가족" >
-                    <Tab3Component :idRowEdit="idRowEdit" />
+                    <Tab3Component  />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -29,11 +29,6 @@ export default defineComponent({
         Tab2Component,
         Tab1Component,
         Tab3Component,
-    },
-    props: {
-        idRowEdit: {
-            type: Number
-        },
     },
     setup(props, { emit }) {
         const store = useStore();

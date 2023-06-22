@@ -17,27 +17,27 @@ const screenMutatePA120 = {
   presidentPA120(state: any, payload: any) {
     state.presidentPA120 = payload;
   },
-  initFormStateTabPA120(state: any, payload: any) {
-    state.initFormStateTabPA120 = {
-      ...state.initFormStateTabPA120,
+  formStateTab1PA120(state: any, payload: any) {
+    state.formStateTab1PA120 = {
+      ...state.formStateTab1PA120,
       ...payload
     }
   },
-  editRowPA120(state: any, payload: any) {
-    state.editRowPA120 = {
-      ...state.editRowPA120,
+  formOriginTab1PA120(state: any, payload: any) {
+    state.formOriginTab1PA120 = {
+      ...state.formOriginTab1PA120,
       ...payload
     }
   },
-  initFormTab2PA120(state: any, payload: any) {
-    state.initFormTab2PA120 = {
-      ...state.initFormTab2PA120,
+  formStateTab2PA120(state: any, payload: any) {
+    state.formStateTab2PA120 = {
+      ...state.formStateTab2PA120,
       ...payload
     }
   },
-  editRowTab2PA120(state: any, payload: any) {
-    state.editRowTab2PA120 = {
-      ...state.editRowTab2PA120,
+  formOriginTab2PA120(state: any, payload: any) {
+    state.formOriginTab2PA120 = {
+      ...state.formOriginTab2PA120,
       ...payload
     }
   },

@@ -86,7 +86,7 @@
                       v-model:valueSwitch="formState.singleParent"
                     />
                     <a-tooltip placement="top" class="custom-tooltip">
-                      <template #title> 부녀자 공제와 중복 공제 불가. </template>
+                      <template #title> 부녀자 공제와 중복 공제 불가</template>
                       <div style="text-align: center">
                         <img
                           src="@/assets/images/iconInfo.png"
@@ -108,7 +108,7 @@
                       :disabled="isDisabledSenior"
                     />
                     <a-tooltip placement="top" class="custom-tooltip">
-                      <template #title> 만 70세 이상. </template>
+                      <template #title> 만 70세 이상 </template>
                       <div style="text-align: center">
                         <img
                           src="@/assets/images/iconInfo.png"
@@ -143,7 +143,7 @@
                     />
                     <a-tooltip placement="top" class="custom-tooltip">
                       <template #title>
-                        7세 이상 20세 이하의 자녀인 경우 공제 대상.
+                        7세 이상 20세 이하의 자녀인 경우 공제 대상
                       </template>
                       <div style="text-align: center">
                         <img
@@ -261,8 +261,8 @@ export default defineComponent({
     const labelResidebId = ref(
       formState.foreigner ? "외국인번호 유효성" : "주민등록번호"
     );
-    const initFormStateTabPA120 = computed(
-      () => store.state.common.initFormStateTabPA120
+    const formStateTab1PA120 = computed(
+      () => store.state.common.formStateTab1PA120
     );
 
     const setModalVisible = () => {
@@ -368,7 +368,7 @@ export default defineComponent({
       } else {
         let dataNew = {
           companyId: companyId,
-          employeeId: initFormStateTabPA120.value.employeeId,
+          employeeId: formStateTab1PA120.value.employeeId,
           imputedYear: globalYear.value,
           input: {
             ...formState,
@@ -426,7 +426,7 @@ export default defineComponent({
       dependantSelected,
       consignDisabled,
       onChange,
-      initFormStateTabPA120,
+      formStateTab1PA120,
       deductionSelected,
     };
   },
