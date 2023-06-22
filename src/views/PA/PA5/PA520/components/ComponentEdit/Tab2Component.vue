@@ -539,8 +539,6 @@ export default defineComponent({
         );
         // Compare two object if different change button color to orange
         if (JSON.stringify(defValue) !== JSON.stringify(originValue)) {
-          console.log(defValue);
-          console.log(originValue);
           isBtnYellow.value = true;
         } else {
           isBtnYellow.value = false;
@@ -600,19 +598,23 @@ export default defineComponent({
                 dataDefault.employeementInsuranceSupportPercent
               )
             : 0;
-        let total5 = await Formula.getDailyEmployeeTax(
-          202210,
-          dataDefault.workingDays,
-          dataDefault.dailyWage,
-          dataDefault.monthlyWage
-        ).incomeTax;
+        let total5: any
+        let total6 : any
+        if (dataDefault.workingDays || dataDefault.dailyWage || dataDefault.monthlyWage) {
+          total5 = await Formula.getDailyEmployeeTax(
+            202210,
+            dataDefault.workingDays,
+            dataDefault.dailyWage,
+            dataDefault.monthlyWage
+          ).incomeTax;
 
-        let total6 = await Formula.getDailyEmployeeTax(
-          202210,
-          dataDefault.workingDays,
-          dataDefault.dailyWage,
-          dataDefault.monthlyWage
-        ).localIncomeTax;
+          total6 = await Formula.getDailyEmployeeTax(
+            202210,
+            dataDefault.workingDays,
+            dataDefault.dailyWage,
+            dataDefault.monthlyWage
+          ).localIncomeTax;
+        }
         let arrCallApi: any = [];
         arrDeduction.value?.map((val: any) => {
           delete val.__typename;
