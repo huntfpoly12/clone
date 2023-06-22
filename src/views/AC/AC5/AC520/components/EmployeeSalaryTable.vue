@@ -92,25 +92,25 @@
           <template #title>
             <div class="d-flex justify-content-around" >
               <div>직접비 대상 장기요양요원:</div>
-              <div v-if="globalFacilityBizId === 1">
+              <div v-if="facilityBizType === 1">
                 <div>간호(조무)사</div>
                 <div>물리(작업)치료사</div>
                 <div>사회복지사</div>
                 <div>요양보호사</div>
               </div>
-              <div v-else-if="globalFacilityBizId === 2">
+              <div v-else-if="facilityBizType === 2">
                 <div>사회복지사</div>
                 <div>요양보호사</div>
               </div>
-              <div v-else-if="globalFacilityBizId === 3">
+              <div v-else-if="facilityBizType === 3">
                 <div>사회복지사</div>
                 <div>요양보호사</div>
               </div>
-              <div v-else-if="globalFacilityBizId === 4">
+              <div v-else-if="facilityBizType === 4">
                 <div>간호(조무)사간호(조무)사</div>
                 <div>치과위생사</div>
               </div>
-              <div v-else-if="globalFacilityBizId === 5">
+              <div v-else-if="facilityBizType === 5">
                 <div>요양보호사</div>
               </div>
               <div v-else>
@@ -181,9 +181,11 @@
       </DxSummary>
     </DxDataGrid>
   </standard-form>
-  <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="980">
+  <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="500">
     <div>
-      최종차수(본예산인 경우 전년도 최종차수) 전임직원수일람표를 불러옵니다. 이미 입력된 정보가 있더라도 새로 불러온 정보가 입력됩니다. 그래도 불러오겠습니까?
+      <div>최종차수(본예산인 경우 전년도 최종차수) 예산액을 불러옵니다. 이미</div>
+      <div>입력된 전예산액이 있더라도 새로 불러온 전예산액이 입력됩니다.</div>
+      <div>그래도 불러오겠습니까?</div>
     </div>
     <div class="footer">
       <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'"
@@ -245,6 +247,7 @@ const dataBudget = computed(() => store.getters['common/getDataBudget']);
 
 const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
+const facilityBizType = computed<number>(() => parseInt(sessionStorage.getItem("facilityBizType") ?? '0'));
 
 const dataAllRow: any = ref([])
 
