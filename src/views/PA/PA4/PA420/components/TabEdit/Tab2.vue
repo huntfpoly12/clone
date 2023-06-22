@@ -7,28 +7,34 @@
         <a-form-item label="퇴직전 3개월 임금 총액 (세전)">
           <div class="d-flex-center">
             <number-box-money required width="200px" v-model:valueInput="dataFormIncomeCalculation.totalPay3Month"
-                              format="#0,###"/>
+                              format="#0,###"
+                              :disabled="retirementStatus === 20"
+            />
             <span class="pl-5">원</span>
           </div>
         </a-form-item>
         <a-form-item label="연간 상여금 총액">
           <div class="d-flex-center">
             <number-box-money required width="200px" v-model:valueInput="dataFormIncomeCalculation.totalAnualBonus"
-                              format="#0,###"/>
+                              format="#0,###"
+                              :disabled="retirementStatus === 20"
+            />
             <span class="pl-5">원</span>
           </div>
         </a-form-item>
         <a-form-item label="연차수당">
           <div class="d-flex-center">
             <number-box-money required width="200px" v-model:valueInput="dataFormIncomeCalculation.annualLeaveAllowance"
-                              format="#0,###"/>
+                              format="#0,###"
+                              :disabled="retirementStatus === 20"
+            />
             <span class="pl-5">원</span>
           </div>
         </a-form-item>
 
         <div class="mt-20 mb-20 wf-100">
           <div class="d-flex-center justify-content-center">
-            <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement"/>
+            <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement" :disabled="retirementStatus === 20"/>
             <info-tool-tip>상기 급여(수당)으로 퇴직금 계산합니다.</info-tool-tip>
           </div>
         </div>
@@ -47,7 +53,7 @@
         <a-form-item label="퇴직급여(확정)">
           <div class="d-flex-center"
                :class="definedRetirementBenefits != Number(dataIncomeRetirement) ? 'custom-input-number' : ''">
-            <number-box-money :required="false" width="200px"
+            <number-box-money :required="false" width="200px" :disabled="retirementStatus === 20"
                               v-model:valueInput="definedRetirementBenefits" format="#0,###"/>
             <span class="pl-5">원</span>
             <info-tool-tip>실제 지급된 퇴직급여를 입력합니다.</info-tool-tip>
@@ -81,7 +87,7 @@ const props = defineProps<{ dataDetail: IncomeRetirement }>()
 const store = useStore();
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
 const isDisableBtnTab1 = computed(() => store.getters["common/getIsDisableBtnTab1"]);
-
+const retirementStatus = computed(() => store.getters["common/getRetirementStatus"]);
 const dataFormOld = {
   annualLeaveAllowance: props.dataDetail.specification?.annualLeaveAllowance || 0,
   totalAnualBonus: props.dataDetail.specification?.totalAnualBonus || 0,
@@ -117,7 +123,7 @@ watch(dataFormIncomeCalculation, (value) => {
 watchEffect(() => {
   store.commit('common/setDefinedRetirementBenefits', definedRetirementBenefits.value)
   if(!isDisableBtnTab1.value) {
-    if(!definedRetirementBenefits.value) store.commit('common/setIsDisableBtnTab2', true) 
+    if(!definedRetirementBenefits.value) store.commit('common/setIsDisableBtnTab2', true)
     else {
       if(definedRetirementBenefits.value && !isEqual(dataFormIncomeCalculation, dataFormOld)) store.commit('common/setIsDisableBtnTab2', true)
       else store.commit('common/setIsDisableBtnTab2', false)

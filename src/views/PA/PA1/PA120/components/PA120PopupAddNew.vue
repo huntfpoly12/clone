@@ -15,7 +15,7 @@
               @setTabsStatus="setTabsStatus($event)"
             ></Tab1Component>
           </a-tab-pane>
-          <a-tab-pane key="2" tab="급여" :disabled="tabStatus">
+          <a-tab-pane key="2" tab="급여" :disabled="tabStatus" forceRender>
             <Tab2Component
               v-show="activeTabAddKeyPA120 == '2'"
               :employeeId="employeeId"

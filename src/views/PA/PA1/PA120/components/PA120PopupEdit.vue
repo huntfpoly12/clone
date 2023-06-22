@@ -37,6 +37,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
+        store.commit("common/activeTabEditKeyPA120", "1");
         const activeTabEditKeyPA120 = computed(()=>store.state.common.activeTabEditKeyPA120);
         const setModalVisible = () => {
             emit('closePopup', false)

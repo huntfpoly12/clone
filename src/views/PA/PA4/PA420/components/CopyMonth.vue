@@ -4,10 +4,8 @@
       <div class="title">소득자료 생성</div>
       <div style="padding-left: 70px;">
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-20">
-          <div class="d-flex-center">
-            <div class="month-custom-1 d-flex-center">
-              귀 {{ paYear }}-{{ $filters.formatMonth(attributionMonth) }}
-            </div>
+          <div class="d-flex-center gap-10">
+            <month-picker-box-custom v-model:valueDate="attributionMonth" text="귀" disabled bgColor="#A6A6A6"/>
             <month-picker-box-custom v-model:valueDate="paymentYearMonthChoose" text="지" disabled/>
           </div>
         </a-form-item>
@@ -54,7 +52,7 @@ const dataQuery = ref({companyId: companyId, imputedYear: paYear.value});
 const paymentDayConfig = ref()
 
 watchEffect(() => {
-  attributionMonth.value = selectMonthColumnOld.value.imputedMonth
+  attributionMonth.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumnOld.value.imputedMonth)}`)
   paymentYearMonthChoose.value = Number(`${paYear.value}${filters.formatMonth(selectMonthColumnOld.value.paymentMonth)}`)
 })
 
@@ -127,64 +125,18 @@ const onSubmit = (e: any) => {
 
 </script>
 <style lang="scss" scoped>
-.mt-30 {
-  margin-top: 30px;
-}
-
 .text-align-center {
   text-align: center;
 }
-
 .button-form-modal {
   margin: 0px 5px;
 }
-
-::v-deep label {
+:deep(label) {
   width: 100px;
 }
-
-::v-deep .month-custom-1 {
-  background-color: #A6A6A6;
-  padding: 5px 10px;
-  border-radius: 5px;
-  margin-right: 10px;
-  color: white;
-
-  .dp__input {
-    color: white;
-    padding: 0px;
-    border: none;
-    background-color: #A6A6A6;
-  }
-
-  .dp__icon {
-    display: none;
-  }
-}
-
 :deep.label-required {
   label {
     color: red;
-  }
-}
-
-::v-deep .month-custom-2 {
-  background-color: black;
-  padding-left: 10px;
-  border-radius: 5px;
-  margin-right: 10px;
-  color: white;
-
-  .dp__input {
-    color: white;
-    padding: 0px;
-    border: none;
-    background-color: black;
-    font-size: 14px;
-  }
-
-  .dp__icon {
-    display: none;
   }
 }
 .title {

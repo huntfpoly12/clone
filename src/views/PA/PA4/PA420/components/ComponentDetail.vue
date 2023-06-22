@@ -243,7 +243,7 @@
           caption="비고"
           cell-template="note"
           data-type="string"
-          
+
         />
         <template #note="{ data }">
           <div>
@@ -320,9 +320,7 @@
               <EditOutlined
                 class=""
                 @click="
-                  statusButton != 20
-                    ? actionEditRow(data.data.incomeId)
-                    : handleView(data.data.incomeId)
+                  actionEditRow(data.data.incomeId)
                 "
               />
             </div>
@@ -395,12 +393,6 @@
     :keyRowIndex="keyDetailRow"
     @updateSuccess="actionDeleteSuccess"
   />
-  <ViewDetail
-    v-if="modalView"
-    :modalStatus="modalView"
-    @closePopup="modalView = false"
-    :keyRowIndex="keyDetailRow"
-  />
 </template>
 <script lang="ts" setup>
 import { Message } from "@/configs/enum";
@@ -431,7 +423,6 @@ import AddPopup from "./AddPopup.vue";
 import DeletePopup from "./DeletePopup.vue";
 import EditPopup from "./EditPaymentDayPopup.vue";
 import UpdatePopup from "./UpdatePopup.vue";
-import ViewDetail from "./ViewDetail.vue";
 import dayjs from "dayjs";
 
 defineProps<{ statusButton: number; actionSave: number }>();
@@ -459,7 +450,6 @@ let statusButton = ref(retirementStatus.value);
 const modalHistory = ref<boolean>(false);
 const modalAdd = ref(false);
 const modalUpdate = ref(false);
-const modalView = ref(false);
 const modalHistoryStatus = ref<boolean>(false);
 const resetFormNum = ref(1);
 const checkActionValue = computed(() => retirementStatus.value !== 10); // disabeld button
@@ -633,10 +623,6 @@ const actionEditRow = (data: any) => {
   modalUpdate.value = true;
   keyDetailRow.value = data;
 };
-const handleView = (data: any) => {
-  modalView.value = true;
-  keyDetailRow.value = data;
-};
 const statusConfirm = () => {
   mutate({
     companyId: companyId,
@@ -669,7 +655,7 @@ errorReport(res => {
   triggerReport.value = false
   notification('error', res.message)
 })
-const handleViewPrint = (data: any) => { 
+const handleViewPrint = (data: any) => {
   console.log('%c data', 'color: red;', data);
   dataInputReport.input.type = data.retirementType;
   dataInputReport.incomeIds = [data.incomeId]

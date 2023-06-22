@@ -43,7 +43,7 @@
                   :textUnCheck="'납세자자진신고'"
                 />
                 <info-tool-tip>
-                  <span>제작전은 제작요청되지 않은 상태입니다.</span>
+                  <span>본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
                 </info-tool-tip>
               </a-col>
             </a-row>
@@ -57,6 +57,7 @@
                     width="150px"
                     default="2022-12-12"
                     dateFormat="YYYY-MM-DD"
+                    v-model:valueDate="dayReport"
                   />
                 </a-row>
               </a-col>
@@ -321,6 +322,7 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const userInfor = computed(() => store.state.auth.userInfor);
     const loadingTable = ref(true);
+    const dayReport = ref(dayjs().add(1, 'month').date(10));
 
     //-----------------------Fcn common-----------------------------------------
 
@@ -474,6 +476,8 @@ export default defineComponent({
           paymentYear: filterBF620.value.paymentYear,
         };
         loadingTable.value = true;
+        console.log(`.add(1, 'month').date(10)`,`${filterBF620.value.paymentYear}${filterBF620.value.paymentMonth}`)
+        dayReport.value = dayjs(`${filterBF620.value.paymentYear}${filterBF620.value.paymentMonth}`).add(1, 'month').date(10);
       }
     });
     const productionStatusData = (emitVal: any, index: number) => {
@@ -704,6 +708,7 @@ export default defineComponent({
       productionCount,
       loadingTable,
       cellCompanyCode,
+      dayReport,
     };
   },
 });
