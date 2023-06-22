@@ -23,10 +23,10 @@
 
                     <DxColumn caption="통장별명" data-field="" />
 
-                    <DxColumn caption="결의부분" data-field="" />
+                    <DxColumn caption="결의서종류" data-field="" />
 
-                    <DxColumn caption="수입액" data-field="" />
-                    <DxColumn caption="지출액" data-field="" />
+                    <DxColumn caption="세입액" data-field="" />
+                    <DxColumn caption="세출액" data-field="" />
                     <DxColumn caption="적요" data-field="" />
                     <DxColumn caption="계정과목" data-field="" />
                     <DxColumn caption="상대계정" data-field="" />

@@ -221,11 +221,11 @@
       </a-col>
     </a-row>
     <PopupAddNewDependent v-if="modalAddNewDependent" :modalStatus="modalAddNewDependent"
-                          @closePopup="modalAddNewDependent = false" :key="newForm" :employeeId="idRowEdit" :idRowEdit="idRowEdit"
+                          @closePopup="modalAddNewDependent = false" :key="newForm" :employeeId="employeeIdPA120" :idRowEdit="employeeIdPA120"
                           :dataSourceLen="dataSource.length" @upDateData="updateData" :relationAll="relationAll" :deductionAll="deductionAll">
     </PopupAddNewDependent>
     <PopupUpdateDependent v-if="modalEditStatus" :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :deductionAll="deductionAll"
-                          :idRowEdit="idRowEdit" :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll">
+                          :idRowEdit="employeeIdPA120" :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll">
     </PopupUpdateDependent>
   </div>
 </template>
@@ -263,10 +263,6 @@ export default defineComponent({
     ZoomInOutlined,
   },
   props: {
-    popupStatus: {
-      type: Boolean,
-      default: false,
-    },
     idRowEdit: {
       type: Number
     },
@@ -276,7 +272,6 @@ export default defineComponent({
     const store = useStore();
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
-    const trigger = ref<boolean>(true);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const modalAddNewDependent = ref<boolean>(false);
     const modalEditStatus = ref<boolean>(false);
@@ -309,34 +304,35 @@ export default defineComponent({
       dependentItem.value = val;
       modalEditStatus.value = true
     }
+    const employeeIdPA120 = computed(() => store.state.common.employeeIdPA120);
+
     // get employee independent
     const originDataDetail = ref({
       companyId: companyId,
       imputedYear: yearPA120.value,
-      employeeId: props.idRowEdit
+      employeeId: employeeIdPA120
     })
-    watch(() => props.idRowEdit, (value) => {
-      originDataDetail.value.employeeId = value;
-    })
-    watch(() => props.idRowEdit, async (newVal) => {
-      originDataDetail.value = {
-        companyId: companyId,
-        imputedYear: yearPA120.value,
-        employeeId: newVal
-      };
-      trigger.value = true;
-    }, { immediate: true })
+    // watch(() => employeeIdPA120, (value) => {
+    //   originDataDetail.value.employeeId = value;
+    // })
+    // watch(() => employeeIdPA120, async (newVal) => {
+    //   originDataDetail.value = {
+    //     companyId: companyId,
+    //     imputedYear: yearPA120.value,
+    //     employeeId: newVal
+    //   };
+    //   trigger.value = true;
+    // }, { immediate: true })
     const {
       result,
       loading,
+      refetch
     } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
-      enabled: trigger.value,
       fetchPolicy: "no-cache",
     }));
     watch(result, (value) => {
       if (value) {
         dataSource.value = value.getEmployeeWage.dependents;
-        trigger.value = false;
         relationAll.value = value.getEmployeeWage.dependents.map((item: any) => ({
           value: item.relation
         }))
@@ -384,12 +380,9 @@ export default defineComponent({
         }).length;
       }
     });
-    watch(() => props.idRowEdit, () => {
-      trigger.value = true
-    })
 
     const updateData = () => {
-      trigger.value = true;
+      refetch();
     };
     const hasStatus = (foreigner: Boolean) => {
       if (foreigner) {
@@ -425,7 +418,8 @@ export default defineComponent({
       disabledType,
       dependentItem,
       relationAll,
-      deductionAll
+      deductionAll,
+      employeeIdPA120,
     }
   },
 });

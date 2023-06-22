@@ -1,9 +1,9 @@
 <template>
   <div id="tab2-pa120">
-    <!-- {{ initFormTab2PA120.payItems }} -->
+    <!-- {{ formStateTab2PA120.payItems }} -->
     <!-- {{ checkIncomeFirst }} -->
-    <!-- {{ editRowTab2PA120.deductionItems[3] }}w<br />
-    {{ initFormTab2PA120.deductionItems[3] }}w -->
+    <!-- {{ formOriginTab2PA120.deductionItems[3] }}w<br />
+    {{ formStateTab2PA120.deductionItems[3] }}w -->
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-spin :spinning="loadingEmployeeWage" size="large">
       <a-row class="mb-7">
@@ -17,7 +17,7 @@
               <checkbox-basic
                 label="국민연금"
                 v-model:valueCheckbox="
-                  initFormTab2PA120.nationalPensionDeduction
+                  formStateTab2PA120.nationalPensionDeduction
                 "
               ></checkbox-basic>
             </span>
@@ -26,7 +26,7 @@
                 label="건강보험"
                 class="check-box-tab1"
                 v-model:valueCheckbox="
-                  initFormTab2PA120.healthInsuranceDeduction
+                  formStateTab2PA120.healthInsuranceDeduction
                 "
               ></checkbox-basic>
             </span>
@@ -36,7 +36,7 @@
                 size="18px"
                 label="고용보험"
                 v-model:valueCheckbox="
-                  initFormTab2PA120.employeementInsuranceDeduction
+                  formStateTab2PA120.employeementInsuranceDeduction
                 "
                 :disabled="insuranceDisabled"
               ></checkbox-basic>
@@ -70,7 +70,7 @@
                 textUnCheck="N"
                 class="switch-insurance"
                 :disabled="!isDisableInsuranceSupport || insuranceDisabled"
-                v-model:valueSwitch="initFormTab2PA120.insuranceSupport"
+                v-model:valueSwitch="formStateTab2PA120.insuranceSupport"
                 @onChange="onChangeSwitch1"
               ></switch-basic>
             </a-col>
@@ -81,13 +81,13 @@
               <radio-group
                 :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="
-                  initFormTab2PA120.nationalPensionSupportPercent
+                  formStateTab2PA120.nationalPensionSupportPercent
                 "
                 layoutCustom="horizontal"
                 :disabled="
-                  !initFormTab2PA120.insuranceSupport ||
+                  !formStateTab2PA120.insuranceSupport ||
                   !isDisableInsuranceSupport ||
-                  !initFormTab2PA120.nationalPensionDeduction
+                  !formStateTab2PA120.nationalPensionDeduction
                 "
               >
               </radio-group>
@@ -97,13 +97,13 @@
               <radio-group
                 :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="
-                  initFormTab2PA120.employeementInsuranceSupportPercent
+                  formStateTab2PA120.employeementInsuranceSupportPercent
                 "
                 layoutCustom="horizontal"
                 :disabled="
-                  !initFormTab2PA120.insuranceSupport ||
+                  !formStateTab2PA120.insuranceSupport ||
                   !isDisableInsuranceSupport ||
-                  !initFormTab2PA120.employeementInsuranceDeduction
+                  !formStateTab2PA120.employeementInsuranceDeduction
                 "
               ></radio-group>
             </a-col>
@@ -114,7 +114,7 @@
               <radio-group
                 :arrayValue="IncomeTaxAppRate"
                 v-model:valueRadioCheck="
-                  initFormTab2PA120.incomeTaxMagnification
+                  formStateTab2PA120.incomeTaxMagnification
                 "
                 layoutCustom="horizontal"
               ></radio-group>
@@ -150,7 +150,7 @@
                 textCheck="Y"
                 textUnCheck="N"
                 class="switch-insurance"
-                v-model:valueSwitch="initFormTab2PA120.employeementReduction"
+                v-model:valueSwitch="formStateTab2PA120.employeementReduction"
                 @onChange="onChangeSwitch2"
               ></switch-basic>
             </a-col>
@@ -163,7 +163,7 @@
                 :range="true"
                 :multi-calendars="true"
                 v-model:valueDate="rangeDate"
-                :disabled="!initFormTab2PA120.employeementReduction"
+                :disabled="!formStateTab2PA120.employeementReduction"
               >
               </date-time-box>
             </a-col>
@@ -172,10 +172,10 @@
               <radio-group
                 :arrayValue="radioCheckReductioRate"
                 v-model:valueRadioCheck="
-                  initFormTab2PA120.employeementReductionRatePercent
+                  formStateTab2PA120.employeementReductionRatePercent
                 "
                 layoutCustom="horizontal"
-                :disabled="!initFormTab2PA120.employeementReduction"
+                :disabled="!formStateTab2PA120.employeementReduction"
               ></radio-group>
             </a-col>
             <a-col span="7"> 감면입력: </a-col>
@@ -183,10 +183,10 @@
               <radio-group
                 :arrayValue="radioCheckReductionInput"
                 v-model:valueRadioCheck="
-                  initFormTab2PA120.employeementReductionInput
+                  formStateTab2PA120.employeementReductionInput
                 "
                 layoutCustom="horizontal"
-                :disabled="!initFormTab2PA120.employeementReduction"
+                :disabled="!formStateTab2PA120.employeementReduction"
               ></radio-group>
             </a-col>
           </a-row>
@@ -283,7 +283,7 @@
           <a-spin :spinning="loading1" size="large" style="height: 100%">
             <div class="deduction-main">
               <div
-                v-for="item in initFormTab2PA120.payItems"
+                v-for="item in formStateTab2PA120.payItems"
                 :key="item.name"
                 class="custom-deduction"
               >
@@ -349,7 +349,7 @@
           <a-spin :spinning="loading1 || loading3" size="large">
             <div class="deduction-main">
               <div
-                v-for="item in initFormTab2PA120.deductionItems"
+                v-for="item in formStateTab2PA120.deductionItems"
                 :key="item.name"
                 class="custom-deduction"
               >
@@ -512,9 +512,6 @@ const vnode = h("div", [
 export default defineComponent({
   components: { Datepicker, DxButton },
   props: {
-    idRowEdit: {
-      type: Number,
-    },
     isTabchange: {
       type: Boolean,
     },
@@ -522,7 +519,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const employeeId = ref(props.idRowEdit);
+    const employeeIdPA120 = computed(() => store.state.common.employeeIdPA120);
     const totalPayItemTaxFree = ref(0);
     const totalPayItemTaxAll = ref(0);
     const totalDeduction = ref(0);
@@ -543,11 +540,11 @@ export default defineComponent({
     const globalYear = ref<number>(
       parseInt(sessionStorage.getItem("paYear") || "0")
     );
-    const initFormTab2PA120 = computed(
-      () => store.state.common.initFormTab2PA120
+    const formStateTab2PA120 = computed(
+      () => store.state.common.formStateTab2PA120
     );
-    const editRowTab2PA120 = computed(
-      () => store.state.common.editRowTab2PA120
+    const formOriginTab2PA120 = computed(
+      () => store.state.common.formOriginTab2PA120
     );
 
     const isDisableInsuranceSupport = computed(
@@ -558,7 +555,7 @@ export default defineComponent({
     const msgCalc = Message.getMessage("PA120", "004");
 
     let isFirstRun = ref(true);
-    const insuranceDisabled = ref(false); // whether disabled or not initFormTab2PA120.employeementInsuranceDeduction
+    const insuranceDisabled = ref(false); // whether disabled or not formStateTab2PA120.employeementInsuranceDeduction
     const checkIncomeFirst = ref(false); // whether display colorRed in deduction 1012. Don't check when it's firstTime.
 
     // fn common
@@ -581,13 +578,13 @@ export default defineComponent({
 
     //calc RELATE PAYITEM SUM
     const onCalcSumPayItem = () => {
-      totalPayItemTaxAll.value = initFormTab2PA120.value.payItems.reduce(
+      totalPayItemTaxAll.value = formStateTab2PA120.value.payItems.reduce(
         (accumulator: any, object: any) => {
           return accumulator + object.value;
         },
         0
       );
-      calculateVariables.totalTaxPay = initFormTab2PA120.value.payItems.reduce(
+      calculateVariables.totalTaxPay = formStateTab2PA120.value.payItems.reduce(
         (accumulator: any, object: any) => {
           if (object.tax) {
             accumulator += object.value;
@@ -596,7 +593,7 @@ export default defineComponent({
         },
         0
       );
-      totalPayItemTaxFree.value = initFormTab2PA120.value.payItems.reduce(
+      totalPayItemTaxFree.value = formStateTab2PA120.value.payItems.reduce(
         (accumulator: any, object: any) => {
           if (!object.tax) {
             accumulator += object.value;
@@ -608,7 +605,7 @@ export default defineComponent({
     };
     //calc RELATE DEDUCTION SUM
     const onCalcSumDeduction = () => {
-      totalDeduction.value = initFormTab2PA120.value.deductionItems.reduce(
+      totalDeduction.value = formStateTab2PA120.value.deductionItems.reduce(
         (accumulator: any, object: any) => {
           if (!accumulator) {
             accumulator = 0;
@@ -623,12 +620,12 @@ export default defineComponent({
     };
     //Calculate Pension in DeDuction
     const calcPension = () => {
-      initFormTab2PA120.value.deductionItems?.map((item: any) => {
+      formStateTab2PA120.value.deductionItems?.map((item: any) => {
         if (item.itemCode == 1001) {
-          let total1 = initFormTab2PA120.value.nationalPensionDeduction
+          let total1 = formStateTab2PA120.value.nationalPensionDeduction
             ? calculateNationalPensionEmployee(
                 calculateVariables.totalTaxPay,
-                initFormTab2PA120.value.nationalPensionSupportPercent
+                formStateTab2PA120.value.nationalPensionSupportPercent
               )
             : 0;
           item.value = total1;
@@ -638,7 +635,7 @@ export default defineComponent({
           };
         }
         if (item.itemCode == 1002) {
-          let total2 = initFormTab2PA120.value.healthInsuranceDeduction
+          let total2 = formStateTab2PA120.value.healthInsuranceDeduction
             ? calculateHealthInsuranceEmployee(calculateVariables.totalTaxPay)
             : 0;
           item.value = total2;
@@ -648,7 +645,7 @@ export default defineComponent({
           };
         }
         if (item.itemCode == 1003) {
-          let total3 = initFormTab2PA120.value.healthInsuranceDeduction
+          let total3 = formStateTab2PA120.value.healthInsuranceDeduction
             ? calculateLongTermCareInsurance(calculateVariables.totalTaxPay)
             : 0;
           item.value = total3;
@@ -659,10 +656,10 @@ export default defineComponent({
         }
         if (item.itemCode == 1004) {
           let total4 =
-            initFormTab2PA120.value.employeementInsuranceDeduction == true
+            formStateTab2PA120.value.employeementInsuranceDeduction == true
               ? calculateEmployeementInsuranceEmployee(
                   calculateVariables.totalTaxPay,
-                  initFormTab2PA120.value.employeementInsuranceSupportPercent
+                  formStateTab2PA120.value.employeementInsuranceSupportPercent
                 )
               : 0;
           item.value = total4;
@@ -673,7 +670,7 @@ export default defineComponent({
         }
       });
       isBtnYellow.value = false;
-      if (!initFormTab2PA120.value?.employeementReductionStartDate) {
+      if (!formStateTab2PA120.value?.employeementReductionStartDate) {
         rangeDate.value = [null, null];
       }
     };
@@ -681,12 +678,11 @@ export default defineComponent({
     //------------------When employeeID change or refetch screen----------------
 
     watch(
-      () => props.idRowEdit,
+      () => employeeIdPA120,
       async (value: any) => {
         if (+value !== 0) {
           checkIncomeFirst.value = false;
           localIncomeBoo.value = false;
-          employeeId.value = value;
           employeeTrigger.value = true;
           // if(!isFirstRun.value){
           // }else {
@@ -709,7 +705,6 @@ export default defineComponent({
     const {
       result: resConfigDeduction,
       loading: loading2,
-      refetch: refetchConfigDeduction,
     } = useQuery(
       queries.getWithholdingConfigDeductionItems,
       configdeductionParam,
@@ -757,7 +752,6 @@ export default defineComponent({
     });
     const configPayItemTrigger = ref(true);
     const {
-      refetch: refetchConfigPayItems,
       result: resConfigPayItems,
       loading: loading1,
     } = useQuery(
@@ -784,8 +778,8 @@ export default defineComponent({
             };
           }
         );
-        if (props.idRowEdit) {
-          employeeWageParam.value.employeeId = props.idRowEdit;
+        if (employeeIdPA120.value) {
+          employeeWageParam.value.employeeId = employeeIdPA120;
           employeeTrigger.value = true;
           isFirstRun.value = false;
         }
@@ -800,20 +794,20 @@ export default defineComponent({
     const employeeWageParam = ref({
       companyId: companyId,
       imputedYear: globalYear.value,
-      employeeId: employeeId,
+      employeeId: employeeIdPA120,
     });
     const employeeTrigger = ref<boolean>(false);
     const {
       result: resultGetEmployeeWage,
       loading: loadingEmployeeWage,
       onError: onErrorEmployee,
-      refetch: refetchEmployeeWage,
     } = useQuery(queries.getEmployeeWage, employeeWageParam, () => ({
       enabled: employeeTrigger.value,
       fetchPolicy: "no-cache",
     }));
     onErrorEmployee(() => {});
     watch(resultGetEmployeeWage, async (value) => {
+      console.log(`output->tab2`)
       if (value) {
         let data = value.getEmployeeWage;
         let editRowData: any = {};
@@ -833,8 +827,8 @@ export default defineComponent({
           editRowData.nationalPensionSupportPercent =
             data.nationalPensionSupportPercent || 0;
         } else {
-          delete initFormTab2PA120.value.nationalPensionSupportPercent;
-          delete editRowTab2PA120.value.nationalPensionSupportPercent;
+          delete formStateTab2PA120.value.nationalPensionSupportPercent;
+          delete formOriginTab2PA120.value.nationalPensionSupportPercent;
         }
         if (
           data?.employeementInsuranceSupportPercent >= 0 &&
@@ -843,8 +837,8 @@ export default defineComponent({
           editRowData.employeementInsuranceSupportPercent =
             data.employeementInsuranceSupportPercent || 0;
         } else {
-          delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
-          delete editRowTab2PA120.value.employeementInsuranceSupportPercent;
+          delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
+          delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
         }
         editRowData.employeementReduction = data.employeementReduction;
         if (data.employeementReduction) {
@@ -865,10 +859,10 @@ export default defineComponent({
             data.employeementReductionInput;
         } else {
           rangeDate.value = [null, null];
-          delete initFormTab2PA120.value.employeementReductionRatePercent;
-          delete editRowTab2PA120.value.employeementReductionRatePercent;
-          delete initFormTab2PA120.value.employeementReductionInput;
-          delete editRowTab2PA120.value.employeementReductionInput;
+          delete formStateTab2PA120.value.employeementReductionRatePercent;
+          delete formOriginTab2PA120.value.employeementReductionRatePercent;
+          delete formStateTab2PA120.value.employeementReductionInput;
+          delete formOriginTab2PA120.value.employeementReductionInput;
         }
         editRowData.payItems = [];
         editRowData.deductionItems = [];
@@ -879,8 +873,8 @@ export default defineComponent({
               (item2: any) => item2.itemCode == item1.itemCode
             );
             let value = item2Value?.amount ? item2Value.amount : 0;
-            initFormTab2PA120.value.payItems[key] = { ...item1, value };
-            editRowTab2PA120.value.payItems[key] = JSON.parse(
+            formStateTab2PA120.value.payItems[key] = { ...item1, value };
+            formOriginTab2PA120.value.payItems[key] = JSON.parse(
               JSON.stringify({ ...item1, value })
             );
           });
@@ -894,14 +888,14 @@ export default defineComponent({
             if (key == 4 && value < 10000 && value > 0) {
               checkIncomeFirst.value = true;
             }
-            initFormTab2PA120.value.deductionItems[key] = { ...item1, value };
-            editRowTab2PA120.value.deductionItems[key] = JSON.parse(
+            formStateTab2PA120.value.deductionItems[key] = { ...item1, value };
+            formOriginTab2PA120.value.deductionItems[key] = JSON.parse(
               JSON.stringify({ ...item1, value })
             );
           });
         }
         calculateVariables.totalTaxPay =
-          initFormTab2PA120.value.payItems.reduce(
+          formStateTab2PA120.value.payItems.reduce(
             (accumulator: any, object: any) => {
               if (object.tax) {
                 accumulator += object.value;
@@ -914,12 +908,12 @@ export default defineComponent({
         onCalcSumPayItem();
         onCalcSumDeduction();
         let { payItems, deductionItems, ...obj } = editRowData;
-        store.state.common.initFormTab2PA120 = {
-          ...store.state.common.initFormTab2PA120,
+        store.state.common.formStateTab2PA120 = {
+          ...store.state.common.formStateTab2PA120,
           ...obj,
         };
-        store.state.common.editRowTab2PA120 = {
-          ...store.state.common.editRowTab2PA120,
+        store.state.common.formOriginTab2PA120 = {
+          ...store.state.common.formOriginTab2PA120,
           ...obj,
         };
         employeeTrigger.value = false;
@@ -935,7 +929,7 @@ export default defineComponent({
     const calculateVariables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
-      totalTaxPay: -1,
+      totalTaxPay: 0,
       dependentCount: deductionDependentCountPA120,
     });
     const triggerCalcIncomeWageTax = ref(false);
@@ -955,13 +949,13 @@ export default defineComponent({
       if (value) {
         let itemValue11 = Math.floor(
           (value.calculateIncomeWageTax *
-            initFormTab2PA120.value.incomeTaxMagnification) /
+            formStateTab2PA120.value.incomeTaxMagnification) /
             100
         );
         let itemValue12 = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
         localIncomeBoo.value = itemValue12 < 1000;
         localReal.value = itemValue12;
-        initFormTab2PA120.value.deductionItems.map((item: any) => {
+        formStateTab2PA120.value.deductionItems.map((item: any) => {
           if (item.itemCode == 1011) {
             item.value = itemValue11;
           }
@@ -980,31 +974,31 @@ export default defineComponent({
     // custom data with logical
     const onChangeSwitch1 = (e: any) => {
       if (e) {
-        if (initFormTab2PA120.value.nationalPensionDeduction) {
-          initFormTab2PA120.value.nationalPensionSupportPercent = 0;
+        if (formStateTab2PA120.value.nationalPensionDeduction) {
+          formStateTab2PA120.value.nationalPensionSupportPercent = 0;
         }
-        if (initFormTab2PA120.value.employeementInsuranceDeduction) {
-          initFormTab2PA120.value.employeementInsuranceSupportPercent = 0;
+        if (formStateTab2PA120.value.employeementInsuranceDeduction) {
+          formStateTab2PA120.value.employeementInsuranceSupportPercent = 0;
         }
       } else {
-        delete initFormTab2PA120.value.nationalPensionSupportPercent;
-        delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
+        delete formStateTab2PA120.value.nationalPensionSupportPercent;
+        delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
       }
     };
     const onChangeSwitch2 = (e: any) => {
       if (e) {
-        initFormTab2PA120.value.employeementReductionRatePercent = 50;
-        initFormTab2PA120.value.employeementReductionInput = 1;
+        formStateTab2PA120.value.employeementReductionRatePercent = 50;
+        formStateTab2PA120.value.employeementReductionInput = 1;
         rangeDate.value = [dayjs(), dayjs()];
-        initFormTab2PA120.value.employeementReductionStartDate =
+        formStateTab2PA120.value.employeementReductionStartDate =
           filters.formatDateToInterger(rangeDate.value[0]);
-        initFormTab2PA120.value.employeementReductionFinishDate =
+        formStateTab2PA120.value.employeementReductionFinishDate =
           filters.formatDateToInterger(rangeDate.value[1]);
       } else {
-        delete initFormTab2PA120.value.employeementReductionRatePercent;
-        delete initFormTab2PA120.value.employeementReductionInput;
-        delete initFormTab2PA120.value.employeementReductionStartDate;
-        delete initFormTab2PA120.value.employeementReductionFinishDate;
+        delete formStateTab2PA120.value.employeementReductionRatePercent;
+        delete formStateTab2PA120.value.employeementReductionInput;
+        delete formStateTab2PA120.value.employeementReductionStartDate;
+        delete formStateTab2PA120.value.employeementReductionFinishDate;
         rangeDate.value = [null, null];
       }
     };
@@ -1020,13 +1014,13 @@ export default defineComponent({
       () => presidentEditPA120.value,
       (newValue) => {
         if (newValue && newValue != presidentOriginPA120.value) {
-          delete initFormTab2PA120.value.nationalPensionSupportPercent;
-          delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
-          if (initFormTab2PA120.value.employeementInsuranceDeduction) {
-            editRowTab2PA120.value.deductionItems[3].value = 0;
-            initFormTab2PA120.value.employeementInsuranceDeduction = false;
-            initFormTab2PA120.value.insuranceSupport = false;
-            initFormTab2PA120.value.insuranceSupport = false;
+          delete formStateTab2PA120.value.nationalPensionSupportPercent;
+          delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
+          if (formStateTab2PA120.value.employeementInsuranceDeduction) {
+            formOriginTab2PA120.value.deductionItems[3].value = 0;
+            formStateTab2PA120.value.employeementInsuranceDeduction = false;
+            formStateTab2PA120.value.insuranceSupport = false;
+            formStateTab2PA120.value.insuranceSupport = false;
             updateDeduction();
           }
         }
@@ -1037,12 +1031,12 @@ export default defineComponent({
     // track has calculate when change data;
     const isBtnYellow = ref(false);
     const compareForm = () => {
-      const { deductionItems, ...rest } = initFormTab2PA120.value;
-      const { deductionItems: de2, ...rest2 } = editRowTab2PA120.value;
+      const { deductionItems, ...rest } = formStateTab2PA120.value;
+      const { deductionItems: de2, ...rest2 } = formOriginTab2PA120.value;
       return JSON.stringify(rest) == JSON.stringify(rest2);
     };
     watchEffect(() => {
-      const { deductionItems, ...rest } = initFormTab2PA120.value;
+      const { deductionItems, ...rest } = formStateTab2PA120.value;
       if (rest) {
         if (!compareForm()) {
           isBtnYellow.value = true;
@@ -1051,6 +1045,13 @@ export default defineComponent({
         }
       }
     });
+    //track deductionCount to change btn color to yellow
+    watch(deductionDependentCountPA120,(newVal: any)=>{
+      if(newVal > 0){
+        isBtnYellow.value = true;
+      }
+    })
+
     /**
      *  Save form
      */
@@ -1058,7 +1059,7 @@ export default defineComponent({
       mutations.saveEmployeeWagePayDeductionReduction
     );
     const updateDeduction = () => {
-      let formFake = { ...initFormTab2PA120.value };
+      let formFake = { ...formStateTab2PA120.value };
       let payLoadData = formFake;
       payLoadData.payItems = formFake.payItems.map((item: any) => {
         return {
@@ -1076,7 +1077,7 @@ export default defineComponent({
       const variables = {
         companyId: companyId,
         imputedYear: globalYear.value,
-        employeeId: props.idRowEdit,
+        employeeId: employeeIdPA120.value,
         input: {
           ...payLoadData,
         },
@@ -1092,31 +1093,31 @@ export default defineComponent({
       isBtnYellow.value = false;
       notification("success", messageUpdate);
       store.commit("common/actionFormDonePA120");
-      store.state.common.editRowTab2PA120 = JSON.parse(
-        JSON.stringify(initFormTab2PA120.value)
+      store.state.common.formOriginTab2PA120 = JSON.parse(
+        JSON.stringify(formStateTab2PA120.value)
       );
     });
     // pension in deduction disabled cases
     const disabledDeduction = (e: any) => {
-      if (!initFormTab2PA120.value.nationalPensionDeduction && e == 1001) {
-        initFormTab2PA120.value.deductionItems[0].value = 0;
+      if (!formStateTab2PA120.value.nationalPensionDeduction && e == 1001) {
+        formStateTab2PA120.value.deductionItems[0].value = 0;
         return true;
       }
       if (
-        !initFormTab2PA120.value.healthInsuranceDeduction &&
+        !formStateTab2PA120.value.healthInsuranceDeduction &&
         (e == 1002 || e == 1003)
       ) {
-        initFormTab2PA120.value.deductionItems[1].value = 0;
-        initFormTab2PA120.value.deductionItems[2].value = 0;
+        formStateTab2PA120.value.deductionItems[1].value = 0;
+        formStateTab2PA120.value.deductionItems[2].value = 0;
 
         return true;
       }
       if (
-        !initFormTab2PA120.value.employeementInsuranceDeduction &&
+        !formStateTab2PA120.value.employeementInsuranceDeduction &&
         e == 1004
       ) {
-        initFormTab2PA120.value.deductionItems[3].value = 0;
-        editRowTab2PA120.value.deductionItems[3].value = 0;
+        formStateTab2PA120.value.deductionItems[3].value = 0;
+        formOriginTab2PA120.value.deductionItems[3].value = 0;
         return true;
       }
       return false;
@@ -1125,7 +1126,7 @@ export default defineComponent({
     const handleFocusOut = (e: any, item: any) => {
       let valueInput = e.event.target.value;
       if (item === 1012 && valueInput < 1000) {
-        initFormTab2PA120.value.deductionItems[5].value = 0;
+        formStateTab2PA120.value.deductionItems[5].value = 0;
       }
     };
 
@@ -1150,8 +1151,8 @@ export default defineComponent({
       dataConfigDeduction,
       onChangeSwitch1,
       onChangeSwitch2,
-      editRowTab2PA120,
-      initFormTab2PA120,
+      formOriginTab2PA120,
+      formStateTab2PA120,
       calculateVariables,
       isBtnYellow,
       employeeTrigger,

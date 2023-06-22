@@ -69,7 +69,7 @@
             <template #changeRate="{ data }">
               {{ filters.formatNumber(data.data.previousAmount ? (data.data.amount/data.data.previousAmount - 1)*100: 0, 2) }}
             </template>
-            <template #outputRecord="{ data }">       
+            <template #outputRecord="{ data }">
               <a-tooltip>
                 <template #title>
                   <div v-if="data.data && data.data.details?.length > 0">
@@ -116,7 +116,7 @@
               <div class="d-flex-center">
                 <number-box-money class="flex-1 mr-5" v-model:valueInput="formState.amount"
                   width="200px" format="#0,###"
-                  :disabled="formState.code2 === '501010000'" />
+                  :disabled="formState.code2 === '501010000'|| dataBudget?.status === 20" />
                 <a-tag v-if="formState.code2 === '501010000'">임직원보수일람표 반영</a-tag>
                 <info-tool-tip v-if="formState.code2 === '501010000'">인건비 관련 예산액은 [임직원보수일람표]의 금액이 반영되며, 수정불가입니다.
                 </info-tool-tip>
@@ -221,11 +221,11 @@
     </a-row>
     <CalculationDetailsPopup :visible="state.isPopupCalculateVisible" @close-popup="handleCloseCalPopup"
       @ok="handleCloseCalPopup" :data="formState?.details" />
-    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="390">
+    <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="500">
       <div>
-        <span style="letter-spacing: 1.61px;">최종차수(본예산인 경우 전년도 최종차수) 예산액을</span><br />
-        <span >불러옵니다. 이미 입력된 전예산액이 있더라도 새로 불러온</span><br />
-        <span >전예산액이 입력됩니다. 그래도 불러오겠습니까?</span>
+        <div>최종차수(본예산인 경우 전년도 최종차수) 전임직원수일람표를 불러옵니다.</div><br />
+        <div>이미 입력된 정보가 있더라도 새로 불러온 정보가 입력됩니다. </div><br />
+        <div>그래도 불러오겠습니까?</div>
       </div>
       <div class="footer">
         <button-basic class="button-form-modal" text="아니요" :type="'default'" :mode="'outlined'"
@@ -266,10 +266,11 @@ const dataBudget = computed<Budget | null>(() => store.getters["common/getDataBu
 const typePopup = computed<ComponentCreateBudget>(() => store.getters['common/getTypeCreateBudget'])
 const acYear = computed<number>(() => (parseInt(sessionStorage.getItem("acYear") ?? '0')))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
+const facilityBizType = computed<number>(() => parseInt(sessionStorage.getItem("facilityBizType") ?? '0'));
 const summaryFundingSource = computed(() => (+formState.value?.fundingSource1 || 0) + (+formState.value?.fundingSource2 || 0) + (+formState.value?.fundingSource3 || 0) + (+formState.value?.fundingSource4 || 0))
 const dataPreIndexBudgets = computed(() => store.getters["common/getDataPreIndexBudget"])
 const facilityBizTypeToNumber = computed(() => {
-  switch (globalFacilityBizId.value) {
+  switch (facilityBizType.value) {
     case 1:
       return '49.0'
     case 2:
@@ -425,7 +426,7 @@ const { mutate: updateBudget, onDone: onDoneUpdateBudget, onError: onErrorUpdate
 onDoneUpdateBudget(({ data }) => {
   if (data) {
     store.commit('common/setIsChangedFormAc520', false)
-    notification('success', Message.getCommonMessage('101').message)    
+    notification('success', Message.getCommonMessage('101').message)
     emit('reload')
     loading.value = false
   }

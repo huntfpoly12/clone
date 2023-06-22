@@ -1,18 +1,18 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
-      <!-- {{ originDataDetail }} originDataDetail <br /> -->
-      <!-- {{ initFormStateTabPA120.residentId }} initFormStateTabPA120 <br /> -->
+      <!-- {{ getEmployeeParam }} getEmployeeParam <br />
+      {{ employeeIdPA120 }} employeeIdPA120 <br /> -->
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
-            <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능"
-              :disabled="true" />
+            <text-number-box width="200px" :required="true" v-model:valueInput="formStateTab1PA120.employeeId"
+              placeholder="숫자만 입력 가능" :disabled="true" />
           </div>
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
           <div class="input-text">
-            <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
+            <switch-basic v-model:valueSwitch="formStateTab1PA120.president" textCheck="O" textUnCheck="X"
               @onChange="onChangePresident" style="width: 80px"></switch-basic>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title> 대표자인 경우 고용보험 제외됩니</template>
@@ -24,16 +24,16 @@
         </a-form-item>
 
         <a-form-item label="성명" label-align="right" class="red">
-          <default-text-box width="200px" v-model:valueInput="initFormStateTabPA120.name" :required="true"
+          <default-text-box width="200px" v-model:valueInput="formStateTab1PA120.name" :required="true"
             @onChange="onChange" placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
-          <date-time-box width="150px" v-model:valueDate="initFormStateTabPA120.joinedAt">
+          <date-time-box width="150px" v-model:valueDate="formStateTab1PA120.joinedAt">
           </date-time-box>
         </a-form-item>
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
-            <date-time-box width="150px" v-model:valueDate="initFormStateTabPA120.leavedAt">
+            <date-time-box width="150px" v-model:valueDate="formStateTab1PA120.leavedAt">
             </date-time-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title> 마지막 근무한 날</template>
@@ -44,32 +44,32 @@
           </div>
         </a-form-item>
         <a-form-item label="내/외국인" label-align="right">
-          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="initFormStateTabPA120.foreigner"
-            layoutCustom="horizontal" :disabled="!initFormStateTabPA120.deletable">
+          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="formStateTab1PA120.foreigner"
+            layoutCustom="horizontal" :disabled="!formStateTab1PA120.deletable">
           </radio-group>
         </a-form-item>
 
         <a-row>
-          <a-form-item label="외국인 국적" label-align="right" :class="{ red: initFormStateTabPA120.foreigner }">
-            <country-code-select-box style="width: 200px" v-model:valueCountry="initFormStateTabPA120.nationalityCode"
-              @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
-              :disabled="!initFormStateTabPA120.foreigner" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
+          <a-form-item label="외국인 국적" label-align="right" :class="{ red: formStateTab1PA120.foreigner }">
+            <country-code-select-box style="width: 200px" v-model:valueCountry="formStateTab1PA120.nationalityCode"
+              @textCountry="changeTextCountry" :required="formStateTab1PA120.foreigner"
+              :disabled="!formStateTab1PA120.foreigner" :hiddenOptionKR="formStateTab1PA120.foreigner" />
           </a-form-item>
-          <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: initFormStateTabPA120.foreigner }">
-            <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification
-              " :disabled="!initFormStateTabPA120.foreigner" :required="initFormStateTabPA120.foreigner" />
+          <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: formStateTab1PA120.foreigner }">
+            <stay-qualification-select-box v-model:valueStayQualifiction="formStateTab1PA120.stayQualification
+              " :disabled="!formStateTab1PA120.foreigner" :required="formStateTab1PA120.foreigner" />
           </a-form-item>
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px"
-            :foreigner="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.deletable">
+          <id-number-text-box :required="true" v-model:valueInput="formStateTab1PA120.residentId" width="150px"
+            :foreigner="formStateTab1PA120.foreigner" :disabled="!formStateTab1PA120.deletable">
           </id-number-text-box>
         </a-form-item>
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
           <div class="input-text">
-            <number-box :required="true" :spinButtons="true" v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours"
+            <number-box :required="true" :spinButtons="true" v-model:valueInput="formStateTab1PA120.weeklyWorkingHours"
               width="150px" :min="1" :max="52"></number-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
@@ -83,25 +83,24 @@
         </a-form-item>
 
         <a-form-item label="세대주여부" label-align="right">
-          <switch-basic v-model:valueSwitch="initFormStateTabPA120.householder" textCheck="O" textUnCheck="X"
+          <switch-basic v-model:valueSwitch="formStateTab1PA120.householder" textCheck="O" textUnCheck="X"
             style="width: 80px"></switch-basic>
         </a-form-item>
 
         <a-form-item label="주소" class="clr" label-align="left">
           <div class="zip-code">
-            <default-text-box v-model:valueInput="initFormStateTabPA120.roadAddress" width="300px" :disabled="true"
+            <default-text-box v-model:valueInput="formStateTab1PA120.roadAddress" width="300px" :disabled="true"
               class="roadAddress" placeholder="도로명주소" />
             <div style="margin-left: 5px">
               <post-code-button @dataAddress="funcAddress" text="주소검색" />
             </div>
           </div>
 
-          <default-text-box v-model:valueInput="initFormStateTabPA120.addressExtend" width="300px"
-            placeholder="상세 주소 입력" />
+          <default-text-box v-model:valueInput="formStateTab1PA120.addressExtend" width="300px" placeholder="상세 주소 입력" />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
           <div class="input-text">
-            <mail-text-box v-model:valueInput="initFormStateTabPA120.email" width="200px" placeholder="abc@example.com">
+            <mail-text-box v-model:valueInput="formStateTab1PA120.email" width="200px" placeholder="abc@example.com">
             </mail-text-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
@@ -114,11 +113,11 @@
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.department" :data="arrDepartments"
+          <SelectSearchEdit v-model:valueInput="formStateTab1PA120.department" :data="arrDepartments"
             @updateArrSelect="(value: any) => arrDepartments = [...value]" width="200px" />
         </a-form-item>
         <a-form-item label="직위" label-align="right">
-          <SelectSearchEdit v-model:valueInput="initFormStateTabPA120.responsibility" :data="arrResponsibility"
+          <SelectSearchEdit v-model:valueInput="formStateTab1PA120.responsibility" :data="arrResponsibility"
             @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
         </a-form-item>
         <a-row class="mt-15">
@@ -138,21 +137,16 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
-import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
-import { radioCheckForeigner, initFormStateTab1 } from "../../utils/index";
+import { radioCheckForeigner } from "../../utils/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum";
 export default defineComponent({
   components: {},
   props: {
-    popupStatus: {
-      type: Boolean,
-      default: false,
-    },
     idRowEdit: {
       type: Number,
       default: 0,
@@ -166,29 +160,29 @@ export default defineComponent({
     const globalYear = ref<number>(
       parseInt(sessionStorage.getItem("paYear") || "0")
     );
-    const initFormStateTabPA120 = computed(
-      () => store.state.common.initFormStateTabPA120
+    const formStateTab1PA120 = computed(
+      () => store.state.common.formStateTab1PA120
     );
-    const editRowPA120 = computed(() => store.state.common.editRowPA120);
+    const formOriginTab1PA120 = computed(() => store.state.common.formOriginTab1PA120);
     const presidentOriginPA120 = computed(          // check xem khi lưu president có bị thay đổi ko ?
       () => store.state.common.presidentOriginPA120
     );
-    const employeeId = ref(null);
     const companyParam = ref({
       companyId: companyId,
     });
+    const employeeIdPA120 = computed(() => store.state.common.employeeIdPA120);
 
     // ---------------------------get employee DATA FORM ------------------------
 
-    const originDataDetail = ref<any>({
+    const getEmployeeParam = ref<any>({
       companyId: companyId,
       imputedYear: globalYear.value,
-      employeeId: props.idRowEdit,
+      employeeId: employeeIdPA120,
     });
     const getEmployeeWageTrigger = ref(false);
     const { result: getValueDefault, loading, onError: onErrorEmployee } = useQuery(
       queries.getEmployeeWage,
-      originDataDetail,
+      getEmployeeParam,
       () => ({
         enabled: getEmployeeWageTrigger.value,
         fetchPolicy: "no-cache",
@@ -198,6 +192,7 @@ export default defineComponent({
       // console.log(`output->err tab1`,)
     })
     watch(getValueDefault, (value: any) => {
+      console.log(`output->tab1`)
       let data = value.getEmployeeWage;
       let editRowData: any = {};
       store.state.common.deductionDependentCountPA120 = data?.deductionDependentCount || 1;
@@ -221,23 +216,35 @@ export default defineComponent({
       editRowData.department = data.department;
       editRowData.responsibility = data.responsibility;
       editRowData.deletable = data.deletable;
-      store.commit("common/editRowPA120", editRowData);
-      store.commit("common/initFormStateTabPA120", editRowData);
-      employeeId.value = data.employeeId;
+      store.commit("common/formOriginTab1PA120", editRowData);
+      store.commit("common/formStateTab1PA120", editRowData);
       getEmployeeWageTrigger.value = false;
     });
     watch(
-      () => props.idRowEdit,
-      (value: any) => {
-        if (value !== 0) {
-          originDataDetail.value.employeeId = value;
-          if (originDataDetail.value.employeeId) {
+      () => employeeIdPA120,
+      async (newVal: any) => {
+        if (+newVal !== 0) {
+          console.log(`output->value`, newVal.value)
+          getEmployeeParam.value.employeeId = newVal;
+          if (getEmployeeParam.value.employeeId) {
             getEmployeeWageTrigger.value = true;
           }
         }
       },
-      { immediate: true }
+      { deep: true }
     );
+    // watch(
+    //   employeeIdPA120,
+    //   (value: any) => {
+    //     if (value !== 0) {
+    //       console.log(`output->value`, value)
+    //       getEmployeeParam.value.employeeId = value;
+    //       if (getEmployeeParam.value.employeeId) {
+    //         getEmployeeWageTrigger.value = true;
+    //       }
+    //     }
+    //   }
+    // );
 
     // --------------------------get Data Departments--------------------------
 
@@ -285,34 +292,14 @@ export default defineComponent({
     // ------------------------------- HANDEL DATA IN FORM--------------------------------
 
     const funcAddress = (data: any) => {
-      initFormStateTabPA120.value.roadAddress = data.roadAddress;
+      formStateTab1PA120.value.roadAddress = data.roadAddress;
     };
     const messageUpdate = Message.getMessage("COMMON", "106").message;
-    watch(
-      () => props.popupStatus,
-      (newValue: any) => {
-        if (!newValue) {
-          employeeId.value = null;
-          initFormStateTabPA120.value.foreigner = false;
-          Object.assign(initFormStateTabPA120.value, initFormStateTab1);
-        }
-      }
-    );
     const onChange = (emitVal: any) => {
-      initFormStateTabPA120.value.name = emitVal.toUpperCase();
+      formStateTab1PA120.value.name = emitVal.toUpperCase();
     };
-    // convert initFormStateTabPA120.value.name to uppercase
-    // watch(
-    //   () => initFormStateTabPA120.value.name,
-    //   (newVal: any) => {
-    //     if (newVal) {
-    //       initFormStateTabPA120.value.name = newVal.toUpperCase();
-    //     }
-    //   },
-    //   { deep: true }
-    // );
     const changeTextCountry = (text: any) => {
-      initFormStateTabPA120.value.nationality = text;
+      formStateTab1PA120.value.nationality = text;
     };
     //NOTIFY PRESIDENT CHANGE
     const presidentWaring =
@@ -326,22 +313,22 @@ export default defineComponent({
     //track foreigners
     const labelResidebId = ref("주민(외국인)번호 ");
     watch(
-      () => initFormStateTabPA120.value.foreigner,
+      () => formStateTab1PA120.value.foreigner,
       (newValue: any) => {
         if (!newValue) {
-          initFormStateTabPA120.value.nationalityCode = "KR";
-          initFormStateTabPA120.value.stayQualification = null;
-          editRowPA120.value.stayQualification = null;
-          labelResidebId.value = "외국인번호 유효성";
-        } else {
-          initFormStateTabPA120.value.nationalityCode =
-            initFormStateTabPA120.value.nationalityCode == "KR"
-              ? null
-              : initFormStateTabPA120.value.nationalityCode;
+          formStateTab1PA120.value.nationalityCode = "KR";
+          formStateTab1PA120.value.stayQualification = null;
+          formOriginTab1PA120.value.stayQualification = null;
           labelResidebId.value = "주민등록번호";
+        } else {
+          formStateTab1PA120.value.nationalityCode =
+            formStateTab1PA120.value.nationalityCode == "KR"
+              ? null
+              : formStateTab1PA120.value.nationalityCode;
+          labelResidebId.value = "외국인번호 유효성";
         }
         store.state.common.isForeignerPA120 =
-          initFormStateTabPA120.value.foreigner;
+          formStateTab1PA120.value.foreigner;
       },
       { deep: true }
     );
@@ -357,13 +344,13 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
         store.commit("common/actionFormErrorPA120");
       } else {
-        makeDataClean(initFormStateTabPA120.value);
-        let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
+        makeDataClean(formStateTab1PA120.value);
+        let editData = JSON.parse(JSON.stringify(formStateTab1PA120.value));
         delete editData.employeeId;
         delete editData.key;
         delete editData.deletable;
         let dataCallCreat = {
-          ...originDataDetail.value,
+          ...getEmployeeParam.value,
           input: {
             ...editData,
           },
@@ -377,36 +364,35 @@ export default defineComponent({
     });
     onDone((_res) => {
       notification("success", messageUpdate);
-      store.commit("common/actionFormDonePA120");
       store.state.common.isNewRowPA120 = false;
-      store.commit("common/editRowPA120", initFormStateTabPA120.value);
-      if (presidentOriginPA120.value !== initFormStateTabPA120.value.president) {
-        store.state.common.presidentEditPA120 = initFormStateTabPA120.value.president;
+      store.commit("common/formOriginTab1PA120", formStateTab1PA120.value);
+      if (presidentOriginPA120.value !== formStateTab1PA120.value.president) {
+        store.state.common.presidentEditPA120 = formStateTab1PA120.value.president;
       } else {
+        store.commit("common/actionFormDonePA120");
         store.state.common.presidentEditPA120 = false;
       }
       setTimeout(() => {
         //RESET origin president
-        store.state.common.presidentOriginPA120 = initFormStateTabPA120.value.president;
+        store.state.common.presidentOriginPA120 = formStateTab1PA120.value.president;
       }, 0)
     });
-    console.log(`tab1`)
     return {
       loading,
       labelResidebId,
       funcAddress,
-      employeeId,
       radioCheckForeigner,
       arrDepartments,
       arrResponsibility,
       actionUpdated,
       changeTextCountry,
-      initFormStateTabPA120,
+      formStateTab1PA120,
       presidenStatus,
       presidentWaring,
       onChangePresident,
-      originDataDetail,
+      getEmployeeParam,
       onChange,
+      employeeIdPA120,
     };
   },
 });

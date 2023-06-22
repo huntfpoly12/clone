@@ -1,15 +1,15 @@
 <template>
   <action-header title="4대보험업무관리" :buttonSearch="true" @actionSearch="searching()"/>
-  <div class="px-10 py-5" style="background: #f1f3f4;">
+  <div class="filter-custom px-10 py-5">
     <a-space :size="16">
       <div>
-        <div class="d-flex-center gap-10 mb-10">
+        <div class="d-flex-center gap-10 mb-5">
           <div>회계연월:</div>
           <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5" text=""/>
           <radio-group :arrayValue="checkBoxSearch" layoutCustom="horizontal"
                        v-model:valueRadioCheck="dataSearch.month"/>
         </div>
-        <div class="d-flex-center gap-10">
+        <div class="d-flex-center gap-10" style="height: 40px">
           <div>마감상태:</div>
           <div class="d-flex-center gap-20">
             <checkbox-basic label="전체" class="mr-10" v-model:valueCheckbox="statuses.checkboxAll"/>
@@ -40,7 +40,7 @@
 
   <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
               :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10"
-              style="height: calc(100vh - 250px);">
+              style="height: calc(100vh - 180px); margin-top: 40px">
     <DxExport :enabled="true"/>
     <DxSearchPanel :visible="true" placeholder="검색" :search-visible-columns="['facilityBusinessName']"/>
     <DxToolbar>
@@ -60,8 +60,8 @@
               width="100px"/>
     <template #closingStatusByBusiness="{data}">
       <div class="d-flex flex-col gap-5">
-        <div v-for="(company) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between">
-          <div class="truncate" style="width: 100px">{{ company.facilityBusinessName }}</div>
+        <div v-for="(company) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between gap-10">
+          <div class="truncate" :title="company.facilityBusinessName" style="min-width: 50px">{{ company.facilityBusinessName }}</div>
           <div class="d-flex-center gap-5">
             <AccountingProcessStatusEdit
               :data="{
@@ -253,10 +253,18 @@ const calFacilityBusinessName = (rowData: any) => {
     }
   }
 }
-
+:deep(.dx-checkbox-container) {
+  overflow: visible;
+}
 .checkbox {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
+}
+.filter-custom {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 1;
 }
 </style>

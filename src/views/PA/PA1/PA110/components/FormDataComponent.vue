@@ -699,7 +699,7 @@ export default defineComponent({
 				dataIW.value.employee.nationalPensionSupportPercent = newVal.getEmployeeWage.nationalPensionSupportPercent;
 				dataIW.value.employee.employeementInsuranceSupportPercent = newVal.getEmployeeWage.employeementInsuranceSupportPercent;
 				dataIW.value.employee.employeementReductionRatePercent = newVal.getEmployeeWage.employeementReductionRatePercent;
-				// dataIW.value.employee.incomeTaxMagnification = newVal.getEmployeeWage.incomeTaxMagnification;
+				dataIW.value.employee.incomeTaxMagnification = newVal.getEmployeeWage.incomeTaxMagnification;
 				dataConfigPayItems.value?.map((row: any) => {
 					row.amount = 0;
 					newVal.getEmployeeWage.payItems?.map((item: any) => {
