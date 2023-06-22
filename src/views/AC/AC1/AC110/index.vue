@@ -696,6 +696,7 @@ export default defineComponent({
       loading: loadingRegisterTransactionDetailsToAccountingDocuments,
     } = useMutation(mutations.registerTransactionDetailsToAccountingDocuments);
     doneRegisterTransactionDetailsToAccountingDocuments((e) => {
+      selectedRowKeys.value = []
       triggerBankbookDetails.value = true;
       notification("success", Message.getMessage("COMMON", "106").message);
     });
