@@ -131,7 +131,7 @@
           <template #request>
             <a-row align="middle">
               <a-col>
-                <a-row>
+                <a-row align="middle">
                   <span class="mr-10">제출연월일 :</span>
                   <span class="d-flex-center">
                     <date-time-box
@@ -310,7 +310,7 @@ export default defineComponent({
     const datePayment: any = ref(
       dayjs(`${dataSearch.value.paymentYear}${dataSearch.value.paymentMonth}`)
     );
-    const dayReport = ref(dayjs().format("YYYYMMDD"));
+    const dayReport = ref(dayjs().format("YYYYMM")+dayjs().daysInMonth());
     const messageDelNoItem = Message.getMessage("COMMON", "404").message;
 
     // --------------------search production status-----------------------------------------
@@ -638,6 +638,7 @@ export default defineComponent({
       if (newVal) {
         dataSearch.value.paymentYear = +newVal.toString().slice(0, 4);
         dataSearch.value.paymentMonth = +newVal.toString().slice(4, 6);
+        dayReport.value = newVal.toString().slice(0, 6) +''+ dayjs(newVal.toString().slice(0, 6)).daysInMonth();
       }
     });
 

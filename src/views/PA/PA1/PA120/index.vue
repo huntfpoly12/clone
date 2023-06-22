@@ -141,7 +141,6 @@
               :calculateCellValue="calculateIncomeTypeCodeAndName"
             />
             <template #grade-cell="{ data }: any">
-              {{ data.data.nationalPensionDeduction }}
               <div>
                 <four-major-insurance
                   v-if="data.data.nationalPensionDeduction"
@@ -544,7 +543,6 @@ export default defineComponent({
       }
       return 1;
     });
-    const rowKeyTab2PA120 = computed(() => store.state.common.rowKeyTab2PA120);
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
         if (tabCurrent.value == 1 || tabCurrent.value == 4) {
@@ -793,7 +791,6 @@ export default defineComponent({
       gridRef,
       editRowPA120,
       compareForm,
-      rowKeyTab2PA120,
       calculateIncomeTypeCodeAndName,
       onFocusedRowChanging,
       redirectTab,

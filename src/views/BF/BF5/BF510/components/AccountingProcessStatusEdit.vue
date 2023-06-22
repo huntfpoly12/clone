@@ -2,18 +2,15 @@
   <a-popover v-model:visible="visible" trigger="click" color="#e6e6e6">
     <template #content>
       <div class="mytext">
-        <div v-if="status == 30 || status == 40">
-          <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser" v-model:valueRadioCheck="status"
+        <div>
+          <radio-group :arrayValue="arrayRadioManagerChoose" v-model:valueRadioCheck="status"
             :layoutCustom="'horizontal'" />
           <span>으로 변경하시겠습니까?</span>
-        </div>
-        <div v-else>
-          <span>입력마감시 더이상 수정불가합니다. 그래도 변경하시겠습니까?</span>
         </div>
         <div class="mt-20">
           <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="hide" />
           <button-basic class="button-form-modal" :text="'네, 변경합니다'" :width="140" :type="'default'" :mode="'contained'"
-            @onClick="submitChangeStatus" />
+            @onClick="submitChangeStatus" :disabled="status === 1" />
         </div>
       </div>
     </template>
@@ -26,10 +23,9 @@
 import { computed, reactive, ref } from "vue";
 import { userType } from "@/helpers/commonFunction";
 import { useMutation } from "@vue/apollo-composable";
-import changeBudgetStatus from "@/graphql/mutations/AC/AC5/AC520/changeBudgetStatus";
+import changeAccountingProcessStatus from "@/graphql/mutations/BF/BF5/BF510/changeAccountingProcessStatus";
 interface Props {
   data: {
-    index: number | string,
     status: number,
     companyId: string,
     facilityBusinessId: number
@@ -39,14 +35,21 @@ interface Props {
 }
 const { data } = defineProps<Props>()
 const emit = defineEmits(['closePopup'])
+console.log('data', data.status)
 const status = ref(data.status);
 const visible = ref<boolean>(false);
-const showModal = ref(false)
 const arrayRadioUser = ref([
   { id: 10, text: '입력중', class: 'entering' },
   { id: 20, text: '입력마감', class: 'input' },
 ])
+const arrayRadioManagerChoose = ref([
+  { id: 10, text: '입력중', class: 'entering' },
+  { id: 20, text: '입력마감', class: 'input' },
+  { id: 30, text: '조정중', class: 'adjusting' },
+  { id: 40, text: '조정마감', class: 'adjusted' },
+])
 const arrayRadioManager = ref([
+  { id: 1, text: '미입력', class: 'noInput' },
   { id: 10, text: '입력중', class: 'entering' },
   { id: 20, text: '입력마감', class: 'input' },
   { id: 30, text: '조정중', class: 'adjusting' },
@@ -54,32 +57,30 @@ const arrayRadioManager = ref([
 ])
 const textBtn = computed(() => {
   if (userType === 'm') {
-    return arrayRadioManager.value.find(item => item.id === status.value)?.text
+    return arrayRadioManager.value.find(item => item.id === data.status)?.text
   } else {
-    return arrayRadioUser.value.find(item => item.id === status.value)?.text
+    return arrayRadioUser.value.find(item => item.id === data.status)?.text
   }
 })
 const classBtn = computed(() => {
   if (userType === 'm') {
-    return arrayRadioManager.value.find(item => item.id === status.value)?.class
+    return arrayRadioManager.value.find(item => item.id === data.status)?.class
   } else {
-    return arrayRadioUser.value.find(item => item.id === status.value)?.class
+    return arrayRadioUser.value.find(item => item.id === data.status)?.class
   }
 })
-const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 
 const query = reactive({
   companyId: data.companyId,
-  fiscalYear: acYear.value,// acYear.value
+  fiscalYear: data.year,// acYear.value
   facilityBusinessId: data.facilityBusinessId,
-  index: data.index,
   year: data.year,
   month: data.month,
+  status: data.status,
 })
-const { mutate, onDone, onError } = useMutation(changeBudgetStatus)
+const { mutate, onDone, onError } = useMutation(changeAccountingProcessStatus)
 onDone(({ data }) => {
   if (data) {
-    showModal.value = false;
     emit("closePopup", true);
   }
 })
@@ -99,8 +100,13 @@ const submitChangeStatus = () => {
 }
 </script>
 <style lang="scss" scoped>
+.noInput {
+  background-color: #7F7F7F !important;
+  box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
+  border: 1px solid #7F7F7F;
+}
 .entering {
-  background-color: #346CB0 !important;
+  background-color: #376092 !important;
   box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
   border: 1px solid #4A7EBB;
 }

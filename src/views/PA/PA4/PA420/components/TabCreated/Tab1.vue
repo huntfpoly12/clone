@@ -23,7 +23,7 @@
                 지급일은 저장 후 수정불가
               </info-tool-tip>
             </div>
-  
+
           </a-form-item>
         </a-col>
         <a-col :span="12">
@@ -33,22 +33,22 @@
                              v-model:valueEmploy="formState.inputFormTab1.employeeId" width="300px"/>
               <info-tool-tip class="ml-5">
                 <div>대상: 사원과 일용직사</div>
-                <div>원 중 퇴직금 대상자.</div>
+                <div>원 중 퇴직금 대상자</div>
               </info-tool-tip>
             </div>
           </a-form-item>
-  
+
           <a-form-item label="입사일">
             <div class="d-flex-center">
               <date-time-box width="150px" :disabled="true" :valueDate="joinedAt"/>
               <info-tool-tip class="ml-5">
-                수정이 필요한 경우 <b @click="openNewTab" style="cursor: pointer;">[사원등록]</b>에서 수정하시기 바랍니다.
+                수정이 필요한 경우 <b @click="openNewTab" style="cursor: pointer;">[사원등록]</b>에서 수정하시기 바랍니다
               </info-tool-tip>
             </div>
           </a-form-item>
           <a-form-item label="임원여부">
             <switch-basic textCheck="O" textUnCheck="X" width="60px"
-                          v-model:valueSwitch="formState.inputFormTab1.executive"/>
+                          v-model:valueSwitch="formState.inputFormTab1.executive" />
           </a-form-item>
           <a-form-item label="퇴직사유" class="label-required">
             <select-box-common :arrSelect="arrayReasonResignationUtils" :required="true"
@@ -75,7 +75,7 @@
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
                   퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의
-                  다음날입니다.
+                  다음날입니다
                 </info-tool-tip>
               </div>
             </div>
@@ -91,7 +91,7 @@
                                     ref="prevSettlementFinishDate"/>
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
-                  퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.
+                  퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다
                 </info-tool-tip>
               </div>
             </div>
@@ -110,10 +110,10 @@
                 v-model:valueInput="formState.prevRetiredYearsOfService.exclusionDays"
                 format="#0,###"
               />
-  
+
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
-                  정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.
+                  정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다
                 </info-tool-tip>
               </div>
             </div>
@@ -126,7 +126,7 @@
               />
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
-                  정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.
+                  정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다
                 </info-tool-tip>
               </div>
             </div>
@@ -150,7 +150,7 @@
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
                   퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의
-                  다음날입니다.
+                  다음날입니다
                 </info-tool-tip>
               </div>
             </div>
@@ -164,7 +164,7 @@
                                     ref="lastSettlementFinishDate"/>
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
-                  퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.
+                  퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다
                 </info-tool-tip>
               </div>
             </div>
@@ -179,7 +179,7 @@
                           v-model:valueInput="formState.lastRetiredYearsOfService.exclusionDays"/>
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
-                  정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.
+                  정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다
                 </info-tool-tip>
               </div>
             </div>
@@ -190,7 +190,7 @@
                           v-model:valueInput="formState.lastRetiredYearsOfService.additionalDays"/>
               <div class="ml-5 d-flex-center">
                 <info-tool-tip class="ml-5">
-                  정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.
+                  정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다
                 </info-tool-tip>
               </div>
             </div>
@@ -340,9 +340,9 @@ const {
 }));
 const employeeList = computed(() => {
   if (!resultEmployee.value) return []
-  const isJoinedBeforeSelectedMonth = (item: any) => (+item.joinedAt.toString().slice(0, 4) <= selectMonthColumn.value.imputedYear || +item.joinedAt.toString().slice(4, 6) <= selectMonthColumn.value.imputedMonth)
+  const isJoinedBeforeSelectedMonth = (item: any) => (+item.joinedAt.toString().slice(0, 6) <= Number(`${selectMonthColumn.value.imputedYear}${filters.formatMonth(selectMonthColumn.value.imputedMonth)}`))
     && !employeeIdCreated.value?.find((i:any) => i.employeeId === item.employeeId && i.employeeType === item.type)
-  const isLeavedAfterSelectedMonth = (item: any) => (+item.leavedAt.toString().slice(0, 4) >= selectMonthColumn.value.imputedYear || +item.leavedAt.toString().slice(4, 6) >= selectMonthColumn.value.imputedMonth)
+  const isLeavedAfterSelectedMonth = (item: any) => (+item.leavedAt.toString().slice(0, 6) >= Number(`${selectMonthColumn.value.imputedYear}${filters.formatMonth(selectMonthColumn.value.imputedMonth)}`))
    && !employeeIdCreated.value?.find((i:any) => i.employeeId === item.employeeId && i.employeeType === item.type);
   if (props.retirementIncome === EmployeeWageType.WAGE) { // 10
     if (props.retirementType === 1) { // 1 is leaved
@@ -446,7 +446,11 @@ watchEffect(() => {
 watch(() => formState.inputFormTab1.employeeId, (value) => {
   let dataEmployee: any = employeeList.value.find((element: any) => element.employeeId == value)
   if(dataEmployee && dataEmployee.president) {
-    retirementReason.value = 4
+    if (props.retirementType === 1) {
+      retirementReason.value = 4
+    } else {
+      retirementReason.value = 5
+    }
   }
   formState.inputFormTab1.employeeType = dataEmployee?.type
   joinedAt.value = dataEmployee?.joinedAt // add join at of employee

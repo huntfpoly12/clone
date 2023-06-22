@@ -16,6 +16,7 @@
           :allowSelection="true"
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
+          @contentReady="onDataGridInitialized"
         >
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
@@ -126,12 +127,14 @@
             caption="일련번호"
             data-field="companyId"
             alignment="center"
+            width="70"
           />
           <DxColumn caption="업체명" data-field="companyName" />
           <DxColumn
             caption="사업자등록번호"
             data-field="companyBizNumber"
             :format="$filters.formatBizNumber"
+            width="108"
           />
           <DxColumn
             caption="사업장관리번호"
@@ -144,26 +147,7 @@
             width="95px"
           />
           <DxColumn
-            data-field="companyConsignStatus"
-            caption="수임상태"
-            width="110"
-            cell-template="companyConsignStatus"
-            alignment="center"
-            :allow-sorting="false"
-          />
-          <template #companyConsignStatus="{ data }: any">
-            <SelectCustomField
-              v-model:valueInput="data.data.companyConsignStatus"
-              :dataSource="companyConsignStatusSelectbox"
-              width="95px"
-              displayeExpr="text"
-              valueExpr="id"
-              :isShowId="false"
-              placeholder="선택"
-            />
-          </template>
-          <DxColumn
-            data-field="workingStatus"
+          data-field="workingStatus"
             caption="상태(처리상태)"
             width="110"
             cell-template="workingStatus"
@@ -171,25 +155,35 @@
             :allow-sorting="false"
           />
           <template #workingStatus="{ data }: any">
-            <SelectCustomField
+            <SelectBoxCT
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
               width="95px"
               displayeExpr="text"
               valueExpr="id"
-              :isShowId="false"
+              
               placeholder="선택"
+              />
+            </template>
+            <DxColumn
+              data-field="companyConsignStatus"
+              caption="수임상태"
+              width="110"
+              cell-template="companyConsignStatus"
+              alignment="center"
+              :allow-sorting="false"
             />
-            <!-- <SelectBoxCT
-              :searchEnabled="true"
-              :arrSelect="workingStatusSelectbox"
-              v-model:valueInput="data.data.workingStatus"
-              displayeExpr="text"
-              valueExpr="id"
-              width="95px"
-              placeholder="선택"
-            /> -->
-          </template>
+            <template #companyConsignStatus="{ data }">
+              <SelectBoxCT
+                v-model:valueInput="data.data.companyConsignStatus"
+                :dataSource="companyConsignStatusSelectbox"
+                width="95px"
+                displayeExpr="text"
+                valueExpr="id"
+                
+                placeholder="선택"
+              />
+            </template>
           <DxColumn caption="메모" width="135" cell-template="memo" />
           <template #memo="{ data }: any">
             <a-tooltip zIndex="9999999" placement="top" color="black">
@@ -204,39 +198,41 @@
           <DxColumn
             data-field="healthInsuranceEDIStatus"
             caption="건강EDI 연계상태 "
-            width="110"
+            width="118"
             cell-template="healthInsuranceEDIStatus"
             alignment="left"
             :allow-sorting="false"
           />
           <template #healthInsuranceEDIStatus="{ data }: any">
-            <SelectCustomField
+            <SelectBoxCT
               v-model:valueInput="data.data.healthInsuranceEDIStatus"
               :dataSource="EDIStatusSelectbox"
               width="95px"
               displayeExpr="text"
               valueExpr="id"
-              :isShowId="false"
+              
               placeholder="선택"
+              class="ml-3"
             />
           </template>
           <DxColumn
             data-field="nationalPensionEDIStatus"
             caption="연금EDI 연계상태 "
-            width="110"
+            width="118"
             cell-template="nationalPensionEDIStatus"
-            alignment="left"
+            alignment="center"
             :allow-sorting="false"
           />
           <template #nationalPensionEDIStatus="{ data }: any">
-            <SelectCustomField
+            <SelectBoxCT
               v-model:valueInput="data.data.nationalPensionEDIStatus"
               :dataSource="EDIStatusSelectbox"
               width="95px"
               displayeExpr="text"
               valueExpr="id"
-              :isShowId="false"
+              
               placeholder="선택"
+              class="ml-3"
             />
           </template>
           <DxColumn
@@ -318,9 +314,6 @@
           />
           <template #downE="{ data }: any" class="custom-action">
             <div class="d-flex justify-content-center">
-              <!-- <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
-              <DownloadOutlined :style="{fontSize: 12}"/>
-            </DxButton> -->
             </div>
           </template>
           <DxColumn cell-template="history" width="50" />
@@ -456,6 +449,7 @@ export default defineComponent({
     const companies = ref<any[]>([]);
     const globalYear = dayjs().year();
     const loadingDataSource = ref(false);
+    const reachDataCount = ref(0); // check lần đầu tiên vào màn
 
     //-----------------------Fcn common-----------------------------------------
 
@@ -548,12 +542,17 @@ export default defineComponent({
           });
         });
         store.commit("common/filterDsTab1Bf530", arr);
-        setTimeout(() => {
-          loadingDataSource.value = false;
-        }, 0);
       },
       { deep: true }
     );
+    const onDataGridInitialized = (e: any) => {
+      if(reachDataCount.value == 0){
+        reachDataCount.value ++;
+      }
+      if(reachDataCount.value > 0){
+        loadingDataSource.value = false;
+      }
+    }
 
     // -----------------------------HISTORY-------------------
 
@@ -758,6 +757,7 @@ export default defineComponent({
       dayjs,
       completedAtFormat,
       loadingDataSource,
+      onDataGridInitialized,
     };
   },
 });

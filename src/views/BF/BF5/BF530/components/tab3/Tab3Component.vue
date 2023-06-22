@@ -16,7 +16,8 @@
           :allowSelection="true"
           ref="tab3Bf520Ref"
           noDataText="내역이 없습니다"
-        >
+          @contentReady="onDataGridInitialized"
+          >
           <DxKeyboardNavigation :enabled="false" />
           <DxPaging :page-size="1000" />
           <DxSearchPanel
@@ -99,6 +100,7 @@
             caption="일련번호"
             data-field="companyId"
             alignment="center"
+            width="70"
           />
           <DxColumn
             caption="신고구분"
@@ -111,6 +113,7 @@
             caption="사업장관리번호"
             data-field="manageId"
             :format="$filters.formatManageId"
+            width="108"
           />
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
           <DxColumn
@@ -434,6 +437,7 @@ export default defineComponent({
     const dataType = ref(1);
     const globalYear = dayjs().year();
     const loadingDataSource = ref(false);
+    const reachDataCount = ref(0); // check lần đầu tiên vào màn
 
     //-----------------------Fcn common-----------------------------------------
 
@@ -529,27 +533,17 @@ export default defineComponent({
           });
         });
         store.commit("common/filterDsTab3Bf530", arr);
-        setTimeout(() => {
-          loadingDataSource.value = false;
-        }, 20);
       },
       { deep: true }
     );
-    // onMounted(() => {
-    //   nextTick(() => {
-    //       console.log(`output- 3`);
-    //     loadingDataSource.value = false;
-    //   });
-    // });
-
-    onUpdated(() => {
-      nextTick(() => {
-        if (filterDsTab3Bf530.value) {
-          console.log(`output-4`, filterDsTab3Bf530.value);
-          // loadingDataSource.value = false;
-        }
-      });
-    });
+    const onDataGridInitialized = (e: any) => {
+      if(reachDataCount.value == 0){
+        reachDataCount.value ++;
+      }
+      if(reachDataCount.value > 0){
+        loadingDataSource.value = false;
+      }
+    }
 
     // -----------------------------HISTORY-------------------
 
@@ -1069,6 +1063,7 @@ export default defineComponent({
       completedAtFormat,
       loadingDataSource,
       consignStatusText,
+      onDataGridInitialized
     };
   },
 });

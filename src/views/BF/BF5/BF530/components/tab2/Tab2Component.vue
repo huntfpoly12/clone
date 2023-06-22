@@ -17,6 +17,7 @@
           :allowSelection="true"
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
+          @contentReady="onDataGridInitialized"
         >
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
@@ -103,18 +104,21 @@
             caption="일련번호"
             data-field="companyId"
             alignment="center"
+            width="70"
           />
           <DxColumn
             caption="신고구분"
             data-field="type"
             alignment="center"
             :format="reportTypeText"
+            width="70"
           />
           <DxColumn caption="업체명" data-field="companyName" />
           <DxColumn
             caption="사업장관리번호"
             data-field="manageId"
             :format="$filters.formatManageId"
+            width="108"
           />
           <DxColumn caption="대표자명" data-field="companyPresidentName" />
           <DxColumn
@@ -123,7 +127,7 @@
             cell-template="workingStatus"
           />
           <template #workingStatus="{ data }: any">
-            <SelectCustomField
+            <SelectBoxCT
               v-model:valueInput="data.data.workingStatus"
               :dataSource="workingStatusSelectbox"
               width="95px"
@@ -380,6 +384,7 @@ export default defineComponent({
     const dataType = ref(1);
     const globalYear = dayjs().year();
     const loadingDataSource = ref(false);
+    const reachDataCount = ref(0); // check lần đầu tiên vào màn
 
     //-----------------------Fcn common-----------------------------------------
 
@@ -474,12 +479,17 @@ export default defineComponent({
           });
         });
         store.commit("common/filterDsTab2Bf530", arr);
-        setTimeout(() => {
-          loadingDataSource.value = false;
-        }, 10);
       },
       { deep: true }
     );
+    const onDataGridInitialized = (e: any) => {
+      if(reachDataCount.value == 0){
+        reachDataCount.value ++;
+      }
+      if(reachDataCount.value > 0){
+        loadingDataSource.value = false;
+      }
+    }
 
     // -----------------------------HISTORY-------------------
 
@@ -690,6 +700,7 @@ export default defineComponent({
       completedAtFormat,
       loadingDataSource,
       consignStatusText,
+      onDataGridInitialized,
     };
   },
 });

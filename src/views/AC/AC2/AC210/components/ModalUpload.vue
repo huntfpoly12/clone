@@ -2,7 +2,7 @@
     <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="500">
         <standard-form class="text-center mt-20">
             <div class="flex-center">
-                <month-picker-box width="100px" class="mr-5"/>
+                <month-picker-box width="100px" class="mr-5"  v-model:valueDate="yearMonth"/>
                 <span class="ml-5">전표를 w4c에 업로드하시겠습니까?</span>
             </div>
             <div class="text-center mt-30">
@@ -93,6 +93,7 @@ export default defineComponent({
         const countKey = ref<number>(0);
         const gridRefDetailAC210 = ref(); // ref of grid
         const modalStatusTable = ref<boolean>(false)
+        const yearMonth = ref(parseInt(dayjs().format("YYYYMM")))
         const dataSource: any = ref(new DataSource({
             store: {
                 type: "array",
@@ -136,6 +137,7 @@ export default defineComponent({
             modalStatusTable,
             cancelTable, actionOpenModalUploadTable,
             actionSubmit,
+            yearMonth,
         };
     },
 });
