@@ -6,9 +6,8 @@
 					<a-col :span="14">
 						<a-form-item label="일용직사원" :class="store.state.common.pa510.statusFormAdd ? 'red' : ''">
 							<EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.pa510.statusFormAdd ||
-								store.state.common.pa510.statusDisabledStatus
-								" v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true" @onChange="onChange"
-								:activeType20="false" width="270px" />
+								store.state.common.pa510.statusDisabledStatus" v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId"
+								:required="true" @onChange="onChangeEmploySelect" :activeType20="false" width="270px" />
 						</a-form-item>
 						<a-form-item label="지급일" class="red">
 							<date-time-box-custom ref="requiredPaymentDay" width="270px" :required="true"
@@ -415,6 +414,8 @@ export default defineComponent({
 				store.state.common.pa510.onEditItem++;
 			}
 			store.state.common.pa510.refreshDataGridRef++;
+			statusChangeFormPrice.value = false
+			calculationNewAmount(); // tính toán tiền mới
 		});
 
 		// ===================WATCH==================================
@@ -537,6 +538,7 @@ export default defineComponent({
 					});
 				});
 			}
+			await calculationNewAmount(); // tính toán tiền mới
 		}, { deep: true });
 
 		// Watching the state of the store and when it changes, it is adding a new row to the table.
@@ -612,58 +614,77 @@ export default defineComponent({
 			return price;
 		};
 		// Calculating the deduction of the employee.
+		let statusClickButtonActionDedution = ref(false);
 		const actionDedution = () => {
 			var res = pa510FormRef.value.validate();
 			if (!res.isValid) {
 				res.brokenRules[0].validator.focus();
 			} else {
-				let totalPrices = parseInt(
-					dataIncomeWageDaily.value.employee.monthlyPaycheck
-						? dataIncomeWageDaily.value.monthlyWage
-						: dataIncomeWageDaily.value.dailyWage *
-						dataIncomeWageDaily.value.workingDays
-				);
-				// let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
-				// let total2 = calculateHealthInsuranceEmployee(totalPrices)
-				// let total3 = calculateLongTermCareInsurance(totalPrices)
-				let total4 =
-					employeementInsuranceDeduction.value == true && insuranceSupport.value
-						? calculateEmployeementInsuranceEmployee(
-							totalPrices,
-							employeementInsuranceSupportPercent.value
-						)
-						: 0;
-				let objectData = Formula.getDailyEmployeeTax(
-					parseInt(
-						`${processKey.value.paymentYear}${processKey.value.paymentMonth}`
-					),
-					dataIncomeWageDaily.value.workingDays,
-					dataIncomeWageDaily.value.dailyWage,
-					dataIncomeWageDaily.value.monthlyWage
-				);
-				arrDeduction.value?.map((val: any) => {
-					val.priceNew = 0;
-					// if (val.deductionItemCode == 1001)
-					//     val.priceNew = total1
-					// if (val.deductionItemCode == 1002)
-					//     val.priceNew = total2
-					// if (val.deductionItemCode == 1003)
-					//     val.priceNew = total3
-					if (val.deductionItemCode == 1004) val.priceNew = total4;
-					if (
-						val.deductionItemCode == 1011 &&
-						Number.isInteger(objectData.incomeTax)
-					)
-						val.priceNew = objectData.incomeTax;
-					if (
-						val.deductionItemCode == 1012 &&
-						Number.isInteger(objectData.localIncomeTax)
-					)
-						val.priceNew = objectData.localIncomeTax;
-				});
-				modalDeductions.value = true;
+				statusClickButtonActionDedution.value = true
+				calculationNewAmount()
 			}
 		};
+		const calculationNewAmount = async () => {
+			if (!dataIncomeWageDaily.value.workingDays || !dataIncomeWageDaily.value.dailyWage || !dataIncomeWageDaily.value.monthlyWage) return false;
+			let totalPrices = parseInt(
+				dataIncomeWageDaily.value.employee.monthlyPaycheck
+					? dataIncomeWageDaily.value.monthlyWage
+					: dataIncomeWageDaily.value.dailyWage *
+					dataIncomeWageDaily.value.workingDays
+			);
+			// let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
+			// let total2 = calculateHealthInsuranceEmployee(totalPrices)
+			// let total3 = calculateLongTermCareInsurance(totalPrices)
+			let total4 =
+				employeementInsuranceDeduction.value == true && insuranceSupport.value
+					? calculateEmployeementInsuranceEmployee(
+						totalPrices,
+						employeementInsuranceSupportPercent.value
+					)
+					: 0;
+			let objectData = Formula.getDailyEmployeeTax(
+				parseInt(
+					`${processKey.value.paymentYear}${processKey.value.paymentMonth}`
+				),
+				dataIncomeWageDaily.value.workingDays,
+				dataIncomeWageDaily.value.dailyWage,
+				dataIncomeWageDaily.value.monthlyWage
+			);
+			await arrDeduction.value?.map((val: any) => {
+				val.priceNew = 0;
+				// if (val.deductionItemCode == 1001)
+				//     val.priceNew = total1
+				// if (val.deductionItemCode == 1002)
+				//     val.priceNew = total2
+				// if (val.deductionItemCode == 1003)
+				//     val.priceNew = total3
+				if (val.deductionItemCode == 1004) val.priceNew = total4;
+				if (
+					val.deductionItemCode == 1011 &&
+					Number.isInteger(objectData.incomeTax)
+				)
+					val.priceNew = objectData.incomeTax;
+				if (
+					val.deductionItemCode == 1012 &&
+					Number.isInteger(objectData.localIncomeTax)
+				)
+					val.priceNew = objectData.localIncomeTax;
+			});
+			
+			await arrDeduction.value?.map((item: any) => {
+				if ([1004, 1011, 1012].includes(item.itemCode)) {
+					if (item.price !== item.priceNew) {
+						statusChangeFormPrice.value = true;
+					}
+				}
+			})
+			console.log('đã vào');
+			if (statusClickButtonActionDedution.value) { // nếu bấm nút mở modal thì mở modal
+				modalDeductions.value = true;
+				statusClickButtonActionDedution.value = false;
+			}
+			// modalDeductions.value = true;
+		}
 		const updateDataDeduction = () => {
 			let total = 0;
 			arrDeduction.value?.map((val: any) => {
@@ -680,7 +701,7 @@ export default defineComponent({
 			modalInsurance.value = true;
 		};
 		// A function that is called when the employeeId is changed.
-		const onChange = () => {
+		const onChangeEmploySelect = () => {
 			if (employeeWageDailyParam.employeeId != dataIncomeWageDaily.value.employee.employeeId) {
 				employeeWageDailyParam.employeeId = dataIncomeWageDaily.value.employee.employeeId;
 				statusChangeFormPrice.value = false;
@@ -839,7 +860,7 @@ export default defineComponent({
 			actionDedution,
 			actionInsurance,
 			updateDataDeduction,
-			onChange,
+			onChangeEmploySelect,
 			loading,
 			loadingIncomeWageDaily,
 			store,
