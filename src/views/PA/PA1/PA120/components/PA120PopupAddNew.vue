@@ -9,15 +9,12 @@
         >
           <a-tab-pane key="1" tab="기본" @tabClick="onClickTab1">
             <Tab1Component
-              v-show="activeTabAddKeyPA120 == '1'"
-              :popupStatus="modalStatus"
               @employeeId="setEmployeeId"
               @setTabsStatus="setTabsStatus($event)"
             ></Tab1Component>
           </a-tab-pane>
           <a-tab-pane key="2" tab="급여" :disabled="tabStatus" forceRender>
             <Tab2Component
-              v-show="activeTabAddKeyPA120 == '2'"
               :employeeId="employeeId"
             ></Tab2Component>
           </a-tab-pane>
@@ -33,8 +30,8 @@
 import { defineComponent, computed, ref, watch } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import Tab1Component from "./componentAdd/Tab1Component.vue";
-import Tab2Component from "./componentAdd/Tab2Component.vue";
-import Tab3Component from "./componentAdd/Tab3Component.vue";
+import Tab2Component from "./componentEdit/Tab2Component.vue";
+import Tab3Component from "./componentEdit/Tab3Component.vue";
 import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
 import { useStore } from "vuex";
 export default defineComponent({
