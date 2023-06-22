@@ -30,7 +30,7 @@
     "file-saver-es": "^2.0.5",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
-    "handsontable": "^12.3.0",
+    "handsontable": "^13.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "sass": "^1.54.8",
