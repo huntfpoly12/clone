@@ -1,65 +1,8 @@
 <template>
-	<div class="search-form">
-		<a-row>
-			<a-col :span="4">
-				<a-form-item label="귀속연도">
-					<year-picker-box-custom v-model:valueDate="filterForm.imputedYear" :minYear="2022"
-						color="#a6a6a6"/>
-				</a-form-item>
-				<a-form-item label="제출대상구분" class="no-bottom">
-						<span>연간(1.1~12.31)지급분</span>
-				</a-form-item>
-			</a-col>
-			<a-col :span="6.5">
-				<div class="custom-note">
-					<a-form-item label="제작요청상태">
-						<switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작요청후'"
-							:textUnCheck="'제작요청전'" />
-					</a-form-item>
-					<info-tool-tip>제작전은 제작요청되지 않은 상태입니다.</info-tool-tip>
-				</div>
-				<div class="group-checkbox">
-					<a-row :style="!filterForm.afterProduction ? 'opacity: 0.6' : ''">
-						<div class="checkbox-item">
-							<checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="!filterForm.afterProduction"
-								:size="'20'" />
-							<production-status :typeTag="2" padding="0px 5px" />
-						</div>
-						<div class="checkbox-item">
-							<checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="!filterForm.afterProduction"
-								:size="'20'" />
-							<production-status :typeTag="4" padding="0px 5px" />
-						</div>
-						<div class="checkbox-item">
-							<checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="!filterForm.afterProduction"
-								:size="'20'" />
-							<production-status :typeTag="3" padding="0px 5px" />
-						</div>
-						<div class="checkbox-item">
-							<checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="!filterForm.afterProduction"
-								:size="'20'" />
-							<production-status :typeTag="5" padding="0px 5px" />
-						</div>
-					</a-row>
-				</div>
-			</a-col>
-			<a-col style="display: flex;">
-				<a-form-item label="매니저리스트">
-					<list-manager-dropdown width="150px" v-model:valueInput="filterForm.manageUserId" />
-				</a-form-item>
-				<a-form-item label="영업자리스트" class="ml-20">
-					<list-sales-dropdown width="150px" v-model:valueInput="filterForm.salesRepresentativeId" clearButton/>
-				</a-form-item>
-				<div class="ml-20">
-					<switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'"
-						v-model:valueSwitch="filterForm.excludeCancel" />
-				</div>
-			</a-col>
-		</a-row>
-	</div>
+	<SearchArea :rerenderReport="activeSearch" />
 	<div class="grid-view">
 		<div class="content-grid">
-			<a-spin :spinning="loadingIncomeBusinessPayment" size="large">
+			<a-spin :spinning="loadingTable" size="large">
 				<DxDataGrid id="DxDataGrid-bf-630-tab3" :show-row-lines="true" :hoverStateEnabled="true"
 					:data-source="dataSource" :show-borders="true" key-expr="companyId" class="mt-10"
 					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -111,24 +54,19 @@
 					</template>
 					<DxColumn caption="사업자등록번호" cell-template="bizNumber" data-field="company.bizNumber" />
 					<template #bizNumber="{ data }">
-						{{ formatBizNumber(data.data.company.bizNumber) }}
+						{{ $filters.formatBizNumber(data.data.company.bizNumber) }}
 					</template>
 					<DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
 						format="yyyy-MM-dd HH:mm" />
 					<DxColumn caption="제작현황" cell-template="imputed" width="430" />
 					<template #imputed="{ data }">
-						<GetStatusTable :beforeProductionRequest="data.data.lastProductionRequestedAt" :data="data.data"
-							tabName="tab3"
-							@productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
+						<GetStatusTable :data="data.data" :message="data.data.causeOfProductionFailure" />
+						<span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
 					</template>
-
-					<!-- <DxSummary>
-            <DxTotalItem cssClass="bf-630-sumary" column="사업자코드" summary-type="count" display-format="전체: [{0}]" />
-            <DxTotalItem cssClass="bf-630-sumary" column="제작현황" :customize-text="productStatusSummary" />
-          </DxSummary> -->
 				</DxDataGrid>
 				<div class="custom-smmary">
-					<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="`전체 <span>[${dataSource.length}]</span>`"></div>
+					<div class="dx-datagrid-summary-item dx-datagrid-text-content"
+						v-html="`전체 <span>[${dataSource.length}]</span>`"></div>
 					<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="productStatusSummary()"></div>
 				</div>
 			</a-spin>
@@ -141,7 +79,7 @@
 import { computed, defineComponent, reactive, ref, watch } from "vue";
 import "@vuepic/vue-datepicker/dist/main.css";
 import DxCheckBox from "devextreme-vue/check-box";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useQuery, useApolloClient } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import {
 	DxDataGrid,
@@ -159,9 +97,9 @@ import {
 import { SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
-import { companyId } from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
+import SearchArea from "./SearchArea.vue";
 import RequestFilePopup from "./RequestFilePopup.vue";
 import GetStatusTable from "./GetStatusTable.vue";
 import { Message } from "@/configs/enum";
@@ -183,6 +121,7 @@ export default defineComponent({
 		DxPaging,
 		DxSearchPanel,
 		DxExport,
+		SearchArea,
 	},
 	props: {
 		activeSearch: {
@@ -193,45 +132,28 @@ export default defineComponent({
 	setup(props, { emit }) {
 		const store = useStore();
 		const userInfor = computed(() => store.state.auth.userInfor);
-		const globalYear = new Date().getFullYear();
 		const move_column = computed(() => store.state.settings.move_column);
 		const colomn_resize = computed(() => store.state.settings.colomn_resize);
 		const trigger = ref<boolean>(true);
-		// const triggerElecFilings = ref<boolean>(false);
-		const dateSubmission = ref(globalYear + 1 + "0310");
-		// for checkbox
-		const checkbox1 = ref<boolean>(false);
-		const checkbox2 = ref<boolean>(false);
-		const checkbox3 = ref<boolean>(false);
-		const checkbox4 = ref<boolean>(false);
+		const dateSubmission = ref(new Date().getFullYear() + 1 + "0310");
+		const filterBF630 = computed(() => store.state.common.filterBF630);
 		let modalRequestFile = ref<boolean>(false);
 		let companyIds = Array();
 		const dataRequestFile = ref();
-		const filterForm = reactive({
-			afterProduction: true,
-			productionStatuses: Array(),
-			companyCode: "",
-			companyName: "",
-			manageUserId: null,
-			salesRepresentativeId: null,
-			excludeCancel: true,
-			imputedYear: dayjs().year(),
-		});
 		const dataSource = ref<any>([]);
 		const dataSourceOrigin = ref<any>([]);
-		let productionStatusArr = ref<any>([]);
-		let countListData = ref(0);
 		let payloadIncomeBusinessPayment = {
-			imputedYear: filterForm.imputedYear,
+			imputedYear: filterBF630.value.imputedYear,
 		};
-		let isFirstSearchByfilter = ref(false);
 		let selectedRowKeys = ref<any>([]);
+		const { client } = useApolloClient();
+		const productionCount = ref(0);
+		const beforeCount = ref(0);
+		const loadingTable = ref(true);
 		// ============ GRAPQL ===============================
 		const {
 			result: resIncomeBusinessPayment,
-			onResult: onResIncomeBusinessPayment,
 			loading: loadingIncomeBusinessPayment,
-			refetch: refetchIncomeBusinessPayment,
 			onError: onErrorIncomeBusinessPayment,
 		} = useQuery(
 			queries.searchIncomeBusinessPaymentStatementElectronicFilingsByYear,
@@ -242,196 +164,101 @@ export default defineComponent({
 			})
 		);
 
-		// const {
-		// 	result: resElectronicFilings,
-		// 	loading: loadingElectronicFilings,
-		// 	refetch: refetchElectronicFilings,
-		// 	onError: onErrorElectronicFilings,
-		// } = useQuery(
-		// 	queries.getElectronicFilingsByIncomeWagePaymentStatement,
-		// 	{
-		// 		input: {
-		// 			companyId: companyId,
-		// 			imputedYear: globalYear,
-		// 		},
-		// 	},
-		// 	() => ({
-		// 		enabled: triggerElecFilings.value,
-		// 		fetchPolicy: "no-cache",
-		// 	})
-		// );
+		const fetchDataStatus = async (companies: any) => {
+			if (companies.length === 0) return;
+			for (let i = 0; i < companies.length; i++) {
+				if (companies[i]) {
+					await client.query({
+						query: queries.getElectronicFilingsByIncomeRetirementPaymentStatement,
+						variables: {
+							input: {
+								companyId: companies[i].companyId,
+								imputedYear: companies[i].imputedYear,
+							}
+						},
+					}).then((res) => {
+						let data = res.data.getElectronicFilingsByIncomeRetirementPaymentStatement
+						let productionStatus = data[0].productionStatus;
+						let causeOfProductionFailure = data[0]?.causeOfProductionFailure;
+						productionCount.value--;
+						dataSourceOrigin.value.forEach((item: any) => {
+							if (item.companyId == companies[i].companyId) {
+								item.productionStatus = productionStatus;
+								if (productionStatus == -1) {
+									item.causeOfProductionFailure = causeOfProductionFailure;
+								}
+								if (productionStatus == 2) {
+									item.allowSelection = false;
+								}
+							}
+						});
+					}).catch((err: any) => err);
+				}
+			}
+		};
 		// ===================DONE GRAPQL==================================
 		// watch result  api searchIncomeBusinessPaymentStatementElectronicFilingsByYear
-		watch(resIncomeBusinessPayment, (value) => {
-			productionStatusArr.value = [];
+		watch(resIncomeBusinessPayment, async (value) => {
+			loadingTable.value = true;
+			trigger.value = false;
+			beforeCount.value = 0;
 			if (value) {
-				let data =
-					value.searchIncomeBusinessPaymentStatementElectronicFilingsByYear;
+				let data = value.searchIncomeBusinessPaymentStatementElectronicFilingsByYear;
 				let result = Object.values(
 					data.reduce((acc: any, curr: any) => {
-						if (
-							!acc[curr.companyId] ||
-							dayjs(curr.lastProductionRequestedAt).isBefore(
-								dayjs(acc[curr.companyId].lastProductionRequestedAt)
-							)
-						) {
+						if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
 							acc[curr.companyId] = curr;
 						}
 						return acc;
 					}, {})
 				);
-				dataSource.value = result.map((items: any) => {
-					if (!!items.lastProductionRequestedAt) {
-						items.afterProduction = false;
+				dataSourceOrigin.value = result.map((item: any) => {
+					item.companyCode = item.company.code;
+					item.companyName = item.company.name;
+					item.manageUserId = item.companyServiceContract.manageUserId
+					item.salesRepresentativeId = item.companyServiceContract.salesRepresentativeId;
+					item.active = item.companyServiceContract.active
+					if (item.lastProductionRequestedAt) {
+						item.beforeProduction = true;
 					} else {
-						items.afterProduction = true;
+						item.beforeProduction = false;
 					}
-					return items;
+					return item;
 				});
-				dataSourceOrigin.value = result.map((items: any) => {
-					if (!!items.lastProductionRequestedAt) {
-						items.afterProduction = true;
-					} else {
-						items.afterProduction = false;
-					}
-					return items;
-				});
-				isFirstSearchByfilter.value = result.some(
-					(item: any) => !!item.lastProductionRequestedAt
+				await fetchDataStatus(
+					dataSourceOrigin.value.map((item: any) => {
+						if (item.lastProductionRequestedAt) {
+							productionCount.value = item.lastProductionRequestedAt
+								? productionCount.value + 1
+								: productionCount.value;
+							return {
+								companyId: item.companyId,
+								imputedYear: item.imputedYear,
+								// reportId: item.reportId,
+							};
+						}
+						return;
+					})
 				);
-				if (!isFirstSearchByfilter.value) {
-					searchByFilter();
-				}
-				countListData.value = 0;
 			}
-			trigger.value = false;
+			if (productionCount.value == 0) {
+				searchByFilter();
+			}
 		});
 		onErrorIncomeBusinessPayment((e) => {
 			//notification('error', e.message)
 		});
 
-		// watch result  api getElectronicFilingsByIncomeWagePaymentStatement
-		// onErrorElectronicFilings((e) => {
-		// 	//notification('error', e.message)
-		// });
-
-		// watch checkbox change
-		watch(
-			() => checkbox1.value,
-			(value) => {
-				if (value) {
-					filterForm.productionStatuses.push(0);
-				} else {
-					filterForm.productionStatuses = filterForm.productionStatuses.filter(
-						function (item) {
-							return item !== 0;
-						}
-					);
-				}
-				if (
-					!checkbox1.value &&
-					!checkbox2.value &&
-					!checkbox3.value &&
-					!checkbox4.value
-				) {
-					filterForm.afterProduction = false;
-				}
-			}
-		);
-		watch(
-			() => checkbox2.value,
-			(value) => {
-				if (value) {
-					filterForm.productionStatuses.push(1);
-				} else {
-					filterForm.productionStatuses = filterForm.productionStatuses.filter(
-						function (item) {
-							return item !== 1;
-						}
-					);
-				}
-				if (
-					!checkbox1.value &&
-					!checkbox2.value &&
-					!checkbox3.value &&
-					!checkbox4.value
-				) {
-					filterForm.afterProduction = false;
-				}
-			}
-		);
-		watch(
-			() => checkbox3.value,
-			(value) => {
-				if (value) {
-					filterForm.productionStatuses.push(2);
-				} else {
-					filterForm.productionStatuses = filterForm.productionStatuses.filter(
-						function (item) {
-							return item !== 2;
-						}
-					);
-				}
-				if (
-					!checkbox1.value &&
-					!checkbox2.value &&
-					!checkbox3.value &&
-					!checkbox4.value
-				) {
-					filterForm.afterProduction = false;
-				}
-			}
-		);
-		watch(
-			() => checkbox4.value,
-			(value) => {
-				if (value) {
-					filterForm.productionStatuses.push(-1);
-				} else {
-					filterForm.productionStatuses = filterForm.productionStatuses.filter(
-						function (item) {
-							return item !== -1;
-						}
-					);
-				}
-				if (
-					!checkbox1.value &&
-					!checkbox2.value &&
-					!checkbox3.value &&
-					!checkbox4.value
-				) {
-					filterForm.afterProduction = false;
-				}
-			}
-		);
-
 		// watch active searching
-		watch(
-			() => props.activeSearch,
-			(value) => {
-				searchByFilter();
-			}
-		);
-
-		watch(
-			() => filterForm.imputedYear,
-			(value) => {
-				payloadIncomeBusinessPayment.imputedYear = value;
-				trigger.value = true;
-			}
-		);
-		watch(
-			() => filterForm.afterProduction,
-			(value) => {
-				checkbox1.value = value;
-				checkbox2.value = value;
-				checkbox3.value = value;
-				checkbox4.value = value;
-			},
-			{
-				immediate: true,
-			}
-		);
+		watch(() => props.activeSearch, (value) => {
+			loadingTable.value = true;
+			searchByFilter();
+		});
+		watch(() => filterBF630.value.imputedYear, (value) => {
+			payloadIncomeBusinessPayment.imputedYear = value;
+			trigger.value = true;
+			loadingTable.value = true;
+		});
 		// ----------------request file---------
 
 		const selectionChanged = (event: any) => {
@@ -449,13 +276,12 @@ export default defineComponent({
 			}
 			companyIds = selectedRowKeys.value;
 		};
-		const messageDelNoItem = Message.getMessage("COMMON", "404").message;
 		// request file popup action
 		const requestIncomeFile = () => {
 			if (companyIds.length) {
 				dataRequestFile.value = {
 					companyIds: companyIds,
-					filter: { imputedYear: filterForm.imputedYear },
+					filter: { imputedYear: filterBF630.value.imputedYear },
 					emailInput: {
 						receiverName: userInfor.value.name,
 						receiverAddress: userInfor.value.email,
@@ -463,18 +289,18 @@ export default defineComponent({
 				};
 				modalRequestFile.value = true;
 			} else {
-				notification("warning", messageDelNoItem);
+				notification("warning", Message.getMessage("COMMON", "404").message);
 			}
 		};
 
 		const countStatus = (arr: any[], type: number) => {
-			if (Object.keys(arr).length === 0 || arr.length === 0) {
-				return 0;
-			}
+			if (Object.keys(arr).length === 0 || arr.length === 0) return 0;
 			let count = arr.reduce((acc: any, crr: any) => {
-				acc[crr["productionStatus"]] = acc[crr["productionStatus"]]
-					? acc[crr["productionStatus"]] + 1
-					: 1;
+				let item =
+					typeof crr["productionStatus"] == "boolean"
+						? 0
+						: crr["productionStatus"];
+				acc[item] = acc[item] ? acc[item] + 1 : 1;
 				return acc;
 			}, {});
 			if (count[type]) {
@@ -485,135 +311,61 @@ export default defineComponent({
 		const productStatusSummary = () => {
 			let totalBeforeProduction = 0;
 			dataSource.value.forEach((items: any) => {
-				if (!items?.afterProduction) {
+				if (!items?.beforeProduction) {
 					totalBeforeProduction++;
 				}
 			});
 			return `제작요청전 <span>[${totalBeforeProduction}]</span>
-              제작대기 <span>[${countStatus(productionStatusArr.value, 0)}]</span> 
-              제작중 <span>[${countStatus(productionStatusArr.value, 1)}]</span> 
-              제작성공 <span>[${countStatus(productionStatusArr.value, 2)}]</span>
-              제작실패 <span>[${countStatus(productionStatusArr.value, -1)}]</span> `;
+              제작대기 <span>[${countStatus(dataSource.value, 0)}]</span> 
+              제작중 <span>[${countStatus(dataSource.value, 1)}]</span> 
+              제작성공 <span>[${countStatus(dataSource.value, 2)}]</span>
+              제작실패 <span>[${countStatus(dataSource.value, -1)}]</span> `;
 		};
-		const productionStatusData = (emitVal: any, index: number) => {
-			countListData.value++;
-			const lengthDataSourceAfterProduction = dataSource.value.filter(
-				(x: any) => !!x.lastProductionRequestedAt
-			).length;
-			if (countListData.value > lengthDataSourceAfterProduction) return;
-			if (emitVal !== null) {
-				productionStatusArr.value = [...productionStatusArr.value, emitVal];
-				dataSource.value[index].productionStatus = emitVal.productionStatus;
-				dataSource.value[index].afterProduction = true;
-				dataSourceOrigin.value[index].productionStatus = emitVal.productionStatus;
-				dataSourceOrigin.value[index].afterProduction = true;
-			}
-			if (countListData.value == lengthDataSourceAfterProduction) {
-				if (isFirstSearchByfilter.value) {
-					isFirstSearchByfilter.value = false;
-					searchByFilter();
-				}
-			}
-		};
-
 		const searchByFilter = async () => {
-			dataSource.value = dataSourceOrigin.value.filter((items: any) => {
-				return (
-					checkProductionStatuses(items.afterProduction, Number.isInteger(items.productionStatus) ? items.productionStatus : null)
-					&&
-					checkKeyFilter(filterForm.companyCode, items.company.code, "includes")
-					&&
-					checkKeyFilter(filterForm.companyName, items.company.name, "includes")
-					&&
-					checkKeyFilter(filterForm.manageUserId, items.companyServiceContract.manageUserId, "equal")
-					&&
-					checkKeyFilter(filterForm.salesRepresentativeId, items.companyServiceContract.salesRepresentativeId, "equal")
-					&&
-					(!filterForm.excludeCancel || filterForm.excludeCancel === items.companyServiceContract.active)
-				);
-			});
-			productionStatusArr.value = [];
-			dataSource.value.forEach((item: any) => {
-				if (Number.isInteger(item?.productionStatus)) {
-					productionStatusArr.value.push({
-						productionStatus: item.productionStatus,
-					});
-				}
-			});
-		};
-		const checkKeyFilter = (valueFilters: any, valueItems: any, type: string) => {
-			if (!valueFilters) {
-				return true;
-			} else {
-				if (type === "includes") {
-					const valueItem = valueItems.toString().toLowerCase();
-					const valueFilter = valueFilters.toString().toLowerCase().trim();
-					if (valueItem.includes(valueFilter)) {
-						return true;
-					} else {
-						return false;
+			let {
+				imputedYear,
+				// afterDeadline,
+				...compareObj
+			} = filterBF630.value;
+			let arr = dataSourceOrigin.value.filter((item: any) => {
+				return Object.keys(compareObj).every((key: any) => {
+					if (key === "productionStatuses") {
+						if (!compareObj['beforeProduction']) return compareObj['beforeProduction'] == item['beforeProduction'];
+						//error search main reason is
+						return compareObj.productionStatuses.length > 0
+							? compareObj.productionStatuses.findIndex(
+								(status: any) => status === item.productionStatus
+							) > -1
+							: true;
 					}
-				} else {
-					if (valueFilters === valueItems) {
-						return true;
-					} else {
-						return false;
+					if (compareObj[key]) {
+						return compareObj[key] == item[key];
 					}
-				}
-			}
-		};
-
-		const checkProductionStatuses = (afterProduction: boolean, productionStatus?: number | null) => {
-			if (filterForm.afterProduction) {
-				if (filterForm.afterProduction === afterProduction) {
-					if (filterForm.productionStatuses.includes(productionStatus)) {
-						return true;
-					} else {
-						return false;
-					}
-				} else {
-					return false;
-				}
-			} else {
-				if (filterForm.afterProduction === afterProduction) {
 					return true;
-				} else {
-					return false;
-				}
-			}
-		};
-
-		const formatBizNumber = (value: any) => {
-			const bizNumber = value.toString();
-			return `${bizNumber.slice(0, 3)}-${bizNumber.slice(3, 5)}-${bizNumber.slice(5)}`;
+				});
+			});
+			dataSource.value = arr;
+			beforeCount.value = 1;
+			loadingTable.value = false;
 		};
 
 		const doneRequestFile = () => {
 			modalRequestFile.value = false;
 			trigger.value = true;
-			searchByFilter();
+			loadingTable.value = true;
 		};
 		return {
-			globalYear,
-			filterForm,
 			move_column,
 			colomn_resize,
 			dataSource,
-			checkbox1,
-			checkbox2,
-			checkbox3,
-			checkbox4,
-			loadingIncomeBusinessPayment,
-			trigger,
+			loadingTable,
 			requestIncomeFile,
 			modalRequestFile,
 			dataRequestFile,
 			dateSubmission,
 			productStatusSummary,
-			productionStatusData,
 			selectionChanged,
 			selectedRowKeys,
-			formatBizNumber,
 			doneRequestFile,
 		};
 	},
@@ -621,7 +373,6 @@ export default defineComponent({
 </script>
 <style scoped lang="scss" src="../style/styleTabs.scss"></style>
 <style scoped lang="scss">
-
 :deep(.ant-form-item-label > label) {
 	width: 110px;
 	// padding-left: 10px;
