@@ -2,18 +2,15 @@
   <a-popover v-model:visible="visible" trigger="click" color="#e6e6e6">
     <template #content>
       <div class="mytext">
-        <div v-if="status == 30 || status == 40">
-          <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser" v-model:valueRadioCheck="status"
+        <div>
+          <radio-group :arrayValue="arrayRadioManagerChoose" v-model:valueRadioCheck="status"
             :layoutCustom="'horizontal'" />
           <span>으로 변경하시겠습니까?</span>
-        </div>
-        <div v-else>
-          <span>입력마감시 더이상 수정불가합니다. 그래도 변경하시겠습니까?</span>
         </div>
         <div class="mt-20">
           <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="hide" />
           <button-basic class="button-form-modal" :text="'네, 변경합니다'" :width="140" :type="'default'" :mode="'contained'"
-            @onClick="submitChangeStatus" />
+            @onClick="submitChangeStatus" :disabled="status === 1" />
         </div>
       </div>
     </template>
@@ -38,11 +35,18 @@ interface Props {
 }
 const { data } = defineProps<Props>()
 const emit = defineEmits(['closePopup'])
+console.log('data', data.status)
 const status = ref(data.status);
 const visible = ref<boolean>(false);
 const arrayRadioUser = ref([
   { id: 10, text: '입력중', class: 'entering' },
   { id: 20, text: '입력마감', class: 'input' },
+])
+const arrayRadioManagerChoose = ref([
+  { id: 10, text: '입력중', class: 'entering' },
+  { id: 20, text: '입력마감', class: 'input' },
+  { id: 30, text: '조정중', class: 'adjusting' },
+  { id: 40, text: '조정마감', class: 'adjusted' },
 ])
 const arrayRadioManager = ref([
   { id: 1, text: '미입력', class: 'noInput' },
@@ -53,19 +57,18 @@ const arrayRadioManager = ref([
 ])
 const textBtn = computed(() => {
   if (userType === 'm') {
-    return arrayRadioManager.value.find(item => item.id === status.value)?.text
+    return arrayRadioManager.value.find(item => item.id === data.status)?.text
   } else {
-    return arrayRadioUser.value.find(item => item.id === status.value)?.text
+    return arrayRadioUser.value.find(item => item.id === data.status)?.text
   }
 })
 const classBtn = computed(() => {
   if (userType === 'm') {
-    return arrayRadioManager.value.find(item => item.id === status.value)?.class
+    return arrayRadioManager.value.find(item => item.id === data.status)?.class
   } else {
-    return arrayRadioUser.value.find(item => item.id === status.value)?.class
+    return arrayRadioUser.value.find(item => item.id === data.status)?.class
   }
 })
-// const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 
 const query = reactive({
   companyId: data.companyId,
