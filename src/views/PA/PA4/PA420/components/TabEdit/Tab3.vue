@@ -24,6 +24,7 @@
                 v-model:valueInput="formState.nonTaxableRetirementBenefits"
                 format="#0,###"
                 :min="0"
+                :disabled="retirementStatus === 20"
               />
               <span class="pl-5">원</span>
             </div>
@@ -66,6 +67,7 @@
                   v-model:valueInput="formState.taxCredit"
                   format="0,###"
                   :min="0"
+                  :disabled="retirementStatus === 20"
                 />
                 <span class="pl-5">원</span>
                 <info-tool-tip>
@@ -84,6 +86,7 @@
                 v-model:valueInput="formState.prePaidDelayedTaxPaymentTaxAmount"
                 format="0,###"
                 :min="0"
+                :disabled="retirementStatus === 20"
               />
               <span class="pl-5">원</span>
               <info-tool-tip
@@ -111,6 +114,7 @@
               width="20%"
               class="mr-5"
               placeholder="연금계좌취급자"
+              :disabled="retirementStatus === 20"
             />
             <biz-number-text-box
               v-model:valueInput="
@@ -121,6 +125,7 @@
               width="20%"
               class="mr-5"
               placeholder="사업자등록번호"
+              :disabled="retirementStatus === 20"
             />
             <default-text-box
               v-model:valueInput="
@@ -131,6 +136,7 @@
               width="15%"
               class="mr-5"
               placeholder="계좌번호"
+              :disabled="retirementStatus === 20"
             />
             <date-time-box
               v-model:valueDate="
@@ -142,6 +148,7 @@
               class="mr-5"
               placeholder="입금일"
               ref="statements1Ref"
+              :disabled="retirementStatus === 20"
             />
             <number-box-money
               v-model:valueInput="
@@ -152,6 +159,7 @@
               width="20%"
               placeholder="계좌입금금액"
               :min="1"
+              :disabled="retirementStatus === 20"
             />
           </div>
           <div class="d-flex mt-5">
@@ -164,6 +172,7 @@
               width="20%"
               class="mr-5"
               placeholder="연금계좌취급자"
+              :disabled="retirementStatus === 20"
             />
             <biz-number-text-box
               v-model:valueInput="
@@ -174,6 +183,7 @@
               width="20%"
               class="mr-5"
               placeholder="사업자등록번호"
+              :disabled="retirementStatus === 20"
             />
             <default-text-box
               v-model:valueInput="
@@ -184,6 +194,7 @@
               width="15%"
               class="mr-5"
               placeholder="계좌번호"
+              :disabled="retirementStatus === 20"
             />
             <date-time-box
               v-model:valueDate="
@@ -195,6 +206,7 @@
               class="mr-5"
               placeholder="입금일"
               ref="statements2Ref"
+              :disabled="retirementStatus === 20"
             />
             <number-box-money
               v-model:valueInput="
@@ -205,6 +217,7 @@
               width="20%"
               placeholder="계좌입금금액"
               :min="1"
+              :disabled="retirementStatus === 20"
             />
           </div>
         </a-col>
@@ -214,7 +227,7 @@
             type="default"
             mode="contained"
             @onClick="handleCalculateIncomeRetirementTax"
-            :disabled="taxableRetirementBenefitsRef <= 0 || disableBtn"
+            :disabled="taxableRetirementBenefitsRef <= 0 || disableBtn || retirementStatus === 20"
           />
         </div>
 
@@ -226,9 +239,7 @@
                 :required="false"
                 width="150px"
                 disabled
-                v-model:valueInput="
-                  dataIncomeRetirementTax.taxBaseCalculation.retirementIncome
-                "
+                v-model:valueInput="dataIncomeRetirementTax.taxBaseCalculation.retirementIncome"
               />
               <span class="pl-5">원</span>
             </div>
@@ -611,6 +622,7 @@ import { FORM_STATE_TAB_3 } from "@/views/PA/PA4/PA420/utils";
 const props = defineProps<{ dataDetail: IncomeRetirement }>();
 const store = useStore();
 // const taxCalculationInputStore = computed(() => store.getters['common/getTaxCalculationInput'])
+const retirementStatus = computed(() => store.getters["common/getRetirementStatus"]);
 const retirementBenefitsStore = computed(
   () => store.getters["common/getDefinedRetirementBenefits"]
 );
