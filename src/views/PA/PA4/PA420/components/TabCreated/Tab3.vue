@@ -14,7 +14,7 @@
               />
               <span class="pl-5">원</span>
               <info-tool-tip class="ml-5">
-                실제 지급된 퇴직급여를 입력합니다.
+                실제 지급된 퇴직급여를 입력합니다
               </info-tool-tip>
             </div>
           </a-form-item>
@@ -73,7 +73,7 @@
                 <info-tool-tip class="ml-5">
                   거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서
                   그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나
-                  납부할 것이 있을 때에는 해당 금액을 기재합니다.
+                  납부할 것이 있을 때에는 해당 금액을 기재합니다
                 </info-tool-tip>
               </div>
             </div>
@@ -88,9 +88,7 @@
                 :min="0"
               />
               <span class="pl-5">원</span>
-              <info-tool-tip class="ml-5"
-                >직전 중간정산시 소득세를 입력합니다.</info-tool-tip
-              >
+              <info-tool-tip class="ml-5">직전 중간정산시 소득세를 입력합니다</info-tool-tip>
             </div>
           </a-form-item>
         </a-col>
@@ -361,10 +359,7 @@
                 "
               />
               <span class="pl-5">원</span>
-              <info-tool-tip
-                >= [환산산출세액] - [세액공제] -
-                [기납부(기과세이연)세액]</info-tool-tip
-              >
+              <info-tool-tip>= [환산산출세액] - [세액공제] - [기납부(기과세이연)세액]</info-tool-tip>
             </div>
           </a-form-item>
         </a-col>
@@ -492,10 +487,7 @@
                 "
               />
               <span class="pl-5">원</span>
-              <info-tool-tip
-                >= [신고대상세액] * [계좌입금금액합계] / [과세대상
-                퇴직급여(확정)]</info-tool-tip
-              >
+              <info-tool-tip>= [신고대상세액] * [계좌입금금액합계] / [과세대상 퇴직급여(확정)]</info-tool-tip>
             </div>
           </a-form-item>
         </a-col>

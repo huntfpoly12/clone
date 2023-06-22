@@ -390,8 +390,8 @@ const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
 const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
   if(e.row) {
     selectRowKeyAction.value = e.row?.key ?? 0;
-    dataShow.value = e.row?.data;
-    previousRowData.value = { ...e.row?.data };
+    dataShow.value = cloneDeep(e.row?.data);
+    previousRowData.value = cloneDeep(e.row?.data);
   }
 };
 
@@ -455,8 +455,6 @@ updateDone(async (res) => {
   // update when click discard
   if (!isNewRow.value) {
     focusedRowKey.value = selectRowKeyAction.value;
-    focusedRowIndex.value = 0
-
   } else {
     storeDataSource.value.insert(cloneDeep(valueDefaultAction)).then(() => {
       focusedRowKey.value = 0;
@@ -612,7 +610,7 @@ const handleSubmit = async () => {
   } else {
     // if form disabled => action edit
     if (focusedRowKey && focusedRowKey.value !== 0) {
-      focusedRowIndex.value = -1;
+      // focusedRowIndex.value = -1;
       await actionUpdate(dataUpdate.value);
     } else {
       const newDataCreate = {
