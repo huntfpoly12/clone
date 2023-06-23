@@ -2,6 +2,7 @@
   <div class="tab-group tab1">
     <div class="content-grid">
       <a-spin :spinning="loading1 || loadingDataSource">
+        <!-- {{ filterDsTab1Bf530[0] }} -->
         <DxDataGrid
           id="tab1-bf530"
           :show-row-lines="true"
@@ -17,10 +18,17 @@
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
           @contentReady="onDataGridInitialized"
+          @rowClick="handleRowClick"
         >
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxPaging :page-size="1000" />
+          <DxLoadPanel :enabled="false" :showPane="true" />
+          <DxSelection
+            :select-all-mode="'allPages'"
+            :show-check-boxes-mode="'always'"
+            mode="multiple"
+          />
           <DxSearchPanel
             :visible="true"
             :highlight-case-sensitive="true"
@@ -117,12 +125,6 @@
               />
             </div>
           </template>
-          <DxLoadPanel :enabled="false" :showPane="true" />
-          <DxSelection
-            :select-all-mode="'allPages'"
-            :show-check-boxes-mode="'onClick'"
-            mode="multiple"
-          />
           <DxColumn
             caption="일련번호"
             data-field="companyId"
@@ -140,6 +142,7 @@
             caption="사업장관리번호"
             data-field="manageId"
             :format="$filters.formatManageId"
+            width="108"
           />
           <DxColumn
             caption="대표자명"
@@ -147,11 +150,11 @@
             width="95px"
           />
           <DxColumn
-          data-field="workingStatus"
+            data-field="workingStatus"
             caption="상태(처리상태)"
             width="110"
             cell-template="workingStatus"
-            alignment="left"
+            alignment="center"
             :allow-sorting="false"
           />
           <template #workingStatus="{ data }: any">
@@ -161,29 +164,29 @@
               width="95px"
               displayeExpr="text"
               valueExpr="id"
-              
               placeholder="선택"
-              />
-            </template>
-            <DxColumn
-              data-field="companyConsignStatus"
-              caption="수임상태"
-              width="110"
-              cell-template="companyConsignStatus"
-              alignment="center"
-              :allow-sorting="false"
+              :searchEnabled="false"
             />
-            <template #companyConsignStatus="{ data }">
-              <SelectBoxCT
-                v-model:valueInput="data.data.companyConsignStatus"
-                :dataSource="companyConsignStatusSelectbox"
-                width="95px"
-                displayeExpr="text"
-                valueExpr="id"
-                
-                placeholder="선택"
-              />
-            </template>
+          </template>
+          <DxColumn
+            data-field="companyConsignStatus"
+            caption="수임상태"
+            width="110"
+            cell-template="companyConsignStatus"
+            alignment="center"
+            :allow-sorting="false"
+          />
+          <template #companyConsignStatus="{ data }">
+            <SelectBoxCT
+              v-model:valueInput="data.data.companyConsignStatus"
+              :dataSource="companyConsignStatusSelectbox"
+              width="95px"
+              displayeExpr="text"
+              valueExpr="id"
+              placeholder="선택"
+              :searchEnabled="false"
+            />
+          </template>
           <DxColumn caption="메모" width="135" cell-template="memo" />
           <template #memo="{ data }: any">
             <a-tooltip zIndex="9999999" placement="top" color="black">
@@ -200,8 +203,8 @@
             caption="건강EDI 연계상태 "
             width="118"
             cell-template="healthInsuranceEDIStatus"
-            alignment="left"
             :allow-sorting="false"
+            alignment="center"
           />
           <template #healthInsuranceEDIStatus="{ data }: any">
             <SelectBoxCT
@@ -210,9 +213,9 @@
               width="95px"
               displayeExpr="text"
               valueExpr="id"
-              
               placeholder="선택"
               class="ml-3"
+              :searchEnabled="false"
             />
           </template>
           <DxColumn
@@ -230,9 +233,9 @@
               width="95px"
               displayeExpr="text"
               valueExpr="id"
-              
               placeholder="선택"
               class="ml-3"
+              :searchEnabled="false"
             />
           </template>
           <DxColumn
@@ -251,7 +254,7 @@
             </div>
           </template>
           <DxColumn
-            caption="리포트파일다운로드"
+            caption="리포트파일"
             cell-template="downA"
             alignment="right"
           />
@@ -270,14 +273,14 @@
           <DxColumn
             caption="신청일"
             data-field="registeredAt"
-            alignment="left"
+            alignment="center"
             data-type="date"
             format="yyyy-MM-dd"
           />
           <DxColumn
             caption="완료일"
             data-field="completedAt"
-            alignment="left"
+            alignment="center"
             data-type="date"
             cell-template="completedAt"
           />
@@ -291,7 +294,12 @@
               }}
             </div>
           </template>
-          <DxColumn caption="팩스발송" cell-template="downD" width="110" />
+          <DxColumn
+            caption="팩스발송"
+            cell-template="downD"
+            width="110"
+            alignment="center"
+          />
           <template #downD="{ data }: any">
             <div class="d-flex justify-content-center">
               <a-popover
@@ -313,8 +321,7 @@
             alignment="right"
           />
           <template #downE="{ data }: any" class="custom-action">
-            <div class="d-flex justify-content-center">
-            </div>
+            <div class="d-flex justify-content-center"></div>
           </template>
           <DxColumn cell-template="history" width="50" />
           <template #history="{ data }: any" class="custom-action">
@@ -546,13 +553,13 @@ export default defineComponent({
       { deep: true }
     );
     const onDataGridInitialized = (e: any) => {
-      if(reachDataCount.value == 0){
-        reachDataCount.value ++;
+      if (reachDataCount.value == 0) {
+        reachDataCount.value++;
       }
-      if(reachDataCount.value > 0){
+      if (reachDataCount.value > 0) {
         loadingDataSource.value = false;
       }
-    }
+    };
 
     // -----------------------------HISTORY-------------------
 
@@ -567,8 +574,25 @@ export default defineComponent({
     //----------------------------SELECT ROW IN TABLES ------------------------
 
     const selectionChanged = (event: any) => {
-      let { selectedRowsData } = event;
+      let { selectedRowsData, currentDeselectedRowKeys } = event;
+      selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
+        return item !== currentDeselectedRowKeys[0];
+      });
       companies.value = selectedRowsData.map((item: any) => item.companyId);
+    };
+    const selectedRowKeys: any = ref([]);
+    const handleRowClick = (e: any) => {
+      if (
+        selectedRowKeys.value.filter((item: any) => {
+          return item === e.key;
+        }).length === 0
+      ) {
+        selectedRowKeys.value.push(e.key);
+        e.component.selectRows(selectedRowKeys.value);
+      }
+    };
+    const rowUpdating = (e: any) => {
+      console.log(`output->erowUpdating`, e);
     };
 
     //----------------------------OPEN MODAL 1 CORRECTION ------------------------
@@ -758,6 +782,9 @@ export default defineComponent({
       completedAtFormat,
       loadingDataSource,
       onDataGridInitialized,
+      handleRowClick,
+      selectedRowKeys,
+      rowUpdating,
     };
   },
 });
