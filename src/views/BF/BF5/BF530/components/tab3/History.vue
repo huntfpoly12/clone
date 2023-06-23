@@ -26,6 +26,14 @@
         >
           <DxPaging :page-size="20" />
           <DxScrolling mode="standard" show-scrollbar="always" />
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxToolbar>
+            <DxItem name="searchPanel" location="after" />
+          </DxToolbar>
           <DxColumn
             caption="기록일시"
             data-field="loggedAt"
@@ -53,7 +61,14 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import { useStore } from "vuex";
-import DxDataGrid, { DxColumn, DxScrolling, DxPaging } from "devextreme-vue/data-grid";
+import DxDataGrid, {
+  DxColumn,
+  DxScrolling,
+  DxPaging,
+  DxSearchPanel,
+  DxItem,
+  DxToolbar,
+} from "devextreme-vue/data-grid";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/common/index";
 import dayjs from "dayjs";
@@ -61,7 +76,15 @@ import notification from "@/utils/notification";
 import { workStatusText } from "../../utils";
 
 export default defineComponent({
-  components: { DxDataGrid, DxScrolling, DxColumn, DxPaging },
+  components: {
+    DxDataGrid,
+    DxScrolling,
+    DxColumn,
+    DxPaging,
+    DxSearchPanel,
+    DxItem,
+    DxToolbar
+  },
   props: {
     paramValue: {
       type: Object,

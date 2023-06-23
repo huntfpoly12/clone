@@ -192,7 +192,6 @@ export default defineComponent({
       // console.log(`output->err tab1`,)
     })
     watch(getValueDefault, (value: any) => {
-      console.log(`output->tab1`)
       let data = value.getEmployeeWage;
       let editRowData: any = {};
       store.state.common.deductionDependentCountPA120 = data?.deductionDependentCount || 1;
@@ -224,7 +223,6 @@ export default defineComponent({
       () => employeeIdPA120,
       async (newVal: any) => {
         if (+newVal !== 0) {
-          console.log(`output->value`, newVal.value)
           getEmployeeParam.value.employeeId = newVal;
           if (getEmployeeParam.value.employeeId) {
             getEmployeeWageTrigger.value = true;
@@ -233,18 +231,6 @@ export default defineComponent({
       },
       { deep: true }
     );
-    // watch(
-    //   employeeIdPA120,
-    //   (value: any) => {
-    //     if (value !== 0) {
-    //       console.log(`output->value`, value)
-    //       getEmployeeParam.value.employeeId = value;
-    //       if (getEmployeeParam.value.employeeId) {
-    //         getEmployeeWageTrigger.value = true;
-    //       }
-    //     }
-    //   }
-    // );
 
     // --------------------------get Data Departments--------------------------
 
@@ -303,7 +289,7 @@ export default defineComponent({
     };
     //NOTIFY PRESIDENT CHANGE
     const presidentWaring =
-      "대표자는 고용보험에서 제외됩니(기존에 선택되어있는 경우 강제로 해지됩니다)";
+      "대표자는 고용보험, 두루누리사회보험에서 제외됩니(기존에 선택되어있는 경우 강제로 해지됩니다)";
     const presidenStatus = ref(false);
     const onChangePresident = (emit: any) => {
       if (emit) {
