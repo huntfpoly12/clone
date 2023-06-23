@@ -107,7 +107,7 @@
                 <div>요양보호사</div>
               </div>
               <div v-else-if="facilityBizType === 4">
-                <div>간호(조무)사간호(조무)사</div>
+                <div>간호(조무)사</div>
                 <div>치과위생사</div>
               </div>
               <div v-else-if="facilityBizType === 5">
@@ -333,22 +333,35 @@ onError((error) => {
 
 const handleSaving = (e: SavingEvent) => {
   e.cancel = true
+  const dataChanges = e.changes.filter((item: any) => item.type !== 'remove')
     // remove all key "key" in dataAllRow
-  const inputs = e.changes.map((item: any) => {
-    const {key, ...rest} = item.data
+  const inputs = dataAllRow.value.map((item: any) => {
+    const {key, ...rest} = item
+    if(dataChanges) {
+      const dataChange = dataChanges.find((i: any) => i.key === item.key)
+      if(dataChange) {
+        return {
+          ...rest,
+          ...dataChange.data
+        }
+      }
+    }
     return rest
   })
+  const resultCal = calculateEmployeeResult(inputs)
+
   const result = {
     companyId,
     facilityBusinessId: globalFacilityBizId.value,
     fiscalYear: acYear.value,
     index: dataBudget.value?.index ?? 0,
-    totalLaborCost: formatSummary.total,
-    totalDirectLaborCost: formatSummary.total1,
-    totalIndirectLaborCost: formatSummary.total2,
+    totalLaborCost: resultCal.total,
+    totalDirectLaborCost: resultCal.total1,
+    totalIndirectLaborCost: resultCal.total2,
     accounSubjectOrder: JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0].theOrder,
     inputs
   }
+  console.log('result', result)
   mutate(result)
 }
 watch(() => dataAllRow.value, (val: any) => {
