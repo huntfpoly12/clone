@@ -1,7 +1,7 @@
 <template>
   <div class="tab-group">
-    <div class="search-group tab-3">
-      <div>
+    <div class="search-form tab-3">
+      <!-- <div> -->
         <!-- {{ ElecFilingFileFilter }} ElecFilingFileFilter <br />
         {{ companiesInElectronic }} companiesInElectronic <br /> -->
         <a-row justify="start" :gutter="[16, 8]">
@@ -62,7 +62,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-      </div>
+      <!-- </div> -->
     </div>
     <div class="content-grid mt-10">
       <a-spin :spinning="searchElectronicFilingLoading">

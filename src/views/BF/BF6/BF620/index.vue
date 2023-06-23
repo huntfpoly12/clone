@@ -1,7 +1,7 @@
 <template>
   <action-header title="계약정보관리&심사" @actionSearch="onSearch()" :buttonSearch="true" :buttonSave="activeKey == '5'" />
-  <div id="bf-620" class="px-10">
-    <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10" @change="onSearch">
+  <div id="bf-620" class="mt-10">
+    <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group " @change="onSearch">
       <a-tab-pane key="1" tab="원천세" >
         <tab-1-component :search="search1" v-if="activeKey==1" :onSearch="onSearch" ref="tab1Ref"></tab-1-component>
       </a-tab-pane>
