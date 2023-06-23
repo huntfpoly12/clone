@@ -1,34 +1,39 @@
 <template>
-  <div class="search-group">
+  <div class="search-form">
     <a-row>
       <a-col>
-        <div class="search-date">
+        <a-form-item label="지급연월">
+          <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
+        </a-form-item>
+        <!-- <div class="search-date">
           <span class="search-text mt-5 ml-10">지급연월:</span>
           <div>
             <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
           </div>
-        </div>
+        </div> -->
       </a-col>
-      <a-col>
-        <div class="search-date" style="flex-direction: column;">
-          <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10" v-if="tab1">
-            <span @click="onChangeCheckbox1">
-              <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
-            </span>
-            <checkbox-basic size="14" label="매월" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
+      <a-col class="ml-30">
+        <div >
+          <a-form-item label="신고주기" class="" v-if="tab1">
+            <!-- <span > -->
+              <checkbox-basic @change="onChangeCheckbox1" size="14" label="전체" class="mr-20" v-model:valueCheckbox="reportType.checkbox1" />
+            <!-- </span> -->
+            <checkbox-basic size="14" label="매월" class="mr-20" v-model:valueCheckbox="reportType.checkbox2" />
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
           </a-form-item>
-          <a-form-item label="신고구분" label-align="right" class=" ml-10" v-if="tab1">
+        </div>
+        <div>
+          <a-form-item label="신고구분" class="" v-if="tab1">
             <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
-          <a-form-item label="신고주기" label-align="right" class="ml-10" v-else>
+          <a-form-item label="신고주기" class="" v-else>
             <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.reportType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
         </div>
       </a-col>
-      <a-col>
+      <a-col class="ml-30">
         <div class="search-production">
           <a-form-item label="제작요청상태">
             <div class="input-text">
@@ -43,21 +48,21 @@
               </a-tooltip>
             </div>
           </a-form-item>
-          <div class="mt-5 production-check">
+          <div class="production-check">
             <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox"
               v-model:valueCheckbox="filterBF620.productionStatuses" size="18"> </CheckboxGroup>
           </div>
         </div>
       </a-col>
-      <a-col class="search-company">
+      <a-col class="search-company ml-30">
         <a-form-item label="매니저리스트">
-          <list-manager-dropdown width="150px" v-model:valueInput="filterBF620.manageUserId"/>
+          <list-manager-dropdown width="150px" v-model:valueInput="filterBF620.manageUserId" />
         </a-form-item>
         <a-form-item label="영업자리스트">
           <list-sales-dropdown width="150px" v-model:valueInput="filterBF620.salesRepresentativeId" />
         </a-form-item>
       </a-col>
-      <a-col class="search-4">
+      <a-col class="search-4 ml-30">
         <switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="filterBF620.active" />
       </a-col>
     </a-row>

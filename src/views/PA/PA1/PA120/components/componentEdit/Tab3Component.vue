@@ -151,8 +151,8 @@
         </a-spin>
         <div>
           <div class="header-text-3">부양가족 요약</div>
-          <a-row :gutter="12">
-            <a-col :span="12">
+          <a-row >
+            <a-col :span="12" class="pr-10">
               <div class="header-text-2">기본공제</div>
 
               <a-form-item label="본인" label-align="right">
