@@ -18,11 +18,17 @@
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
           @contentReady="onDataGridInitialized"
+          @rowClick="handleRowClick"
         >
           <DxKeyboardNavigation :enabled="false" />
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxLoadPanel :enabled="false" :showPane="true" />
           <DxPaging :page-size="1000" />
+          <DxLoadPanel :enabled="false" :showPane="true" />
+          <DxSelection
+            :select-all-mode="'allPages'"
+            :show-check-boxes-mode="'always'"
+            mode="multiple"
+          />
           <DxSearchPanel
             :visible="true"
             :highlight-case-sensitive="true"
@@ -30,10 +36,7 @@
           />
           <DxExport :enabled="true" />
           <DxToolbar>
-            <DxItem
-              template="search"
-              location="after"
-            />
+            <DxItem template="search" location="after" />
             <DxItem template="btnSave" location="after" />
             <DxItem name="searchPanel" location="after" />
             <DxItem
@@ -95,11 +98,6 @@
               />
             </div>
           </template>
-          <DxSelection
-            :select-all-mode="'allPages'"
-            :show-check-boxes-mode="'onClick'"
-            mode="multiple"
-          />
           <DxColumn
             caption="일련번호"
             data-field="companyId"
@@ -120,12 +118,8 @@
             :format="$filters.formatManageId"
             width="108"
           />
-          <DxColumn caption="대표자명" data-field="companyPresidentName" />
-          <DxColumn
-            caption="상태"
-            width="110"
-            cell-template="workingStatus"
-          />
+          <DxColumn caption="대표자명" data-field="companyPresidentName"  />
+          <DxColumn caption="상태" width="110" cell-template="workingStatus" alignment="center" />
           <template #workingStatus="{ data }: any">
             <SelectBoxCT
               v-model:valueInput="data.data.workingStatus"
@@ -138,6 +132,29 @@
             />
           </template>
           <DxColumn
+            caption="접수번호"
+            width="135px"
+            cell-template="acceptedNumber"
+            alignment="center"
+          />
+          <template #acceptedNumber="{ data }: any">
+            <default-text-box
+              :width="120"
+              v-model:valueInput="data.data.acceptedNumber"
+            />
+          </template>
+          <DxColumn caption="메모" width="135px" cell-template="memo" alignment="center" />
+          <template #memo="{ data }: any">
+            <a-tooltip zIndex="9999999" placement="top" color="black">
+              <template #title> {{ data.data.memo }} </template>
+              <div></div>
+              <default-text-box
+                :width="120"
+                v-model:valueInput="data.data.memo"
+              />
+            </a-tooltip>
+          </template>
+          <DxColumn
             caption="사무대행위탁상태"
             data-field="companyConsignStatus"
             width="125"
@@ -148,9 +165,9 @@
             caption="신청일"
             data-field="registeredAt"
             width="95"
-            alignment="left"
             data-type="date"
             format="yyyy-MM-dd"
+            alignment="center"
           >
           </DxColumn>
           <DxColumn
@@ -159,14 +176,15 @@
             width="95"
             data-type="date"
             format="yyyy-MM-dd"
+            alignment="center"
           />
           <DxColumn
             caption="완료일"
             data-field="completedAt"
-            alignment="left"
             data-type="date"
             cell-template="completedAt"
             width="95"
+            alignment="center"
           />
           <template #completedAt="{ data }">
             <div>
@@ -177,28 +195,6 @@
                 )
               }}
             </div>
-          </template>
-          <DxColumn
-            caption="접수번호"
-            width="135px"
-            cell-template="acceptedNumber"
-          />
-          <template #acceptedNumber="{ data }: any">
-            <default-text-box
-              :width="120"
-              v-model:valueInput="data.data.acceptedNumber"
-            />
-          </template>
-          <DxColumn caption="메모" width="135px" cell-template="memo" />
-          <template #memo="{ data }: any">
-            <a-tooltip zIndex="9999999" placement="top" color="black">
-              <template #title> {{ data.data.memo }} </template>
-              <div></div>
-              <default-text-box
-                :width="120"
-                v-model:valueInput="data.data.memo"
-              />
-            </a-tooltip>
           </template>
           <DxColumn
             caption="신고서다운로드"
@@ -224,7 +220,7 @@
             </div>
           </template>
 
-          <DxColumn caption="팩스발송" cell-template="downD" />
+          <DxColumn caption="팩스발송" cell-template="downD" alignment="center" />
           <template #downD="{ data }: any" class="custom-action">
             <div class="d-flex justify-content-center">
               <a-popover
@@ -483,13 +479,13 @@ export default defineComponent({
       { deep: true }
     );
     const onDataGridInitialized = (e: any) => {
-      if(reachDataCount.value == 0){
-        reachDataCount.value ++;
+      if (reachDataCount.value == 0) {
+        reachDataCount.value++;
       }
-      if(reachDataCount.value > 0){
+      if (reachDataCount.value > 0) {
         loadingDataSource.value = false;
       }
-    }
+    };
 
     // -----------------------------HISTORY-------------------
 
@@ -509,11 +505,28 @@ export default defineComponent({
     //----------------------------SELECT ROW IN TABLES ------------------------
 
     const selectionChanged = (event: any) => {
-      let { selectedRowsData } = event;
+      let { selectedRowsData, currentDeselectedRowKeys } = event;
+      selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
+        return item !== currentDeselectedRowKeys[0];
+      });
       workIds.value = selectedRowsData.map((item: any) => item.workId);
     };
+    const selectedRowKeys: any = ref([]);
+    const handleRowClick = (e: any) => {
+      if (
+        selectedRowKeys.value.filter((item: any) => {
+          return item === e.key;
+        }).length === 0
+      ) {
+        selectedRowKeys.value.push(e.key);
+        e.component.selectRows(selectedRowKeys.value);
+      }
+    };
+    const rowUpdating = (e: any) => {
+      console.log(`output->erowUpdating`, e);
+    };
 
-    //----------------------GET ViewURL------------------------
+    //----------------------GET ViewURL SQL------------------------
 
     const viewUrlParam = reactive({
       companyId: NaN,
@@ -701,6 +714,7 @@ export default defineComponent({
       loadingDataSource,
       consignStatusText,
       onDataGridInitialized,
+      handleRowClick,
     };
   },
 });

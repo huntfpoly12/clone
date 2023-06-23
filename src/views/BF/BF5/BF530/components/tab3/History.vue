@@ -24,6 +24,7 @@
           :column-auto-width="true"
           noDataText="내역이 없습니다"
         >
+          <DxPaging :page-size="20" />
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn
             caption="기록일시"
@@ -33,7 +34,7 @@
             format="yyyy-MM-dd HH:mm"
           />
           <DxColumn caption="내용" data-field="remark" />
-          <DxColumn caption="사업장관리번호" />
+          <DxColumn caption="사업장관리번호" alignment="center" />
           <DxColumn
             caption="처리상태"
             data-field="workingStatus"
@@ -52,7 +53,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import { useStore } from "vuex";
-import DxDataGrid, { DxColumn, DxScrolling } from "devextreme-vue/data-grid";
+import DxDataGrid, { DxColumn, DxScrolling, DxPaging } from "devextreme-vue/data-grid";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/common/index";
 import dayjs from "dayjs";
@@ -60,7 +61,7 @@ import notification from "@/utils/notification";
 import { workStatusText } from "../../utils";
 
 export default defineComponent({
-  components: { DxDataGrid, DxScrolling, DxColumn },
+  components: { DxDataGrid, DxScrolling, DxColumn, DxPaging },
   props: {
     paramValue: {
       type: Object,

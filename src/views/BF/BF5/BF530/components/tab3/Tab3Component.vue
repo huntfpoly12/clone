@@ -17,6 +17,7 @@
           ref="tab3Bf520Ref"
           noDataText="내역이 없습니다"
           @contentReady="onDataGridInitialized"
+          @rowClick="handleRowClick"
           >
           <DxKeyboardNavigation :enabled="false" />
           <DxPaging :page-size="1000" />
@@ -134,6 +135,28 @@
             />
           </template>
           <DxColumn
+            caption="접수번호"
+            width="135px"
+            cell-template="acceptedNumber"
+          />
+          <template #acceptedNumber="{ data }: any">
+            <default-text-box
+              :width="120"
+              v-model:valueInput="data.data.acceptedNumber"
+            />
+          </template>
+          <DxColumn caption="메모" width="135px" cell-template="memo" />
+          <template #memo="{ data }: any">
+            <a-tooltip zIndex="9999999" placement="top" color="black">
+              <template #title> {{ data.data.memo }} </template>
+              <div></div>
+              <default-text-box
+                :width="120"
+                v-model:valueInput="data.data.memo"
+              />
+            </a-tooltip>
+          </template>
+          <DxColumn
             caption="사무대행위탁상태"
             data-field="companyConsignStatus"
             width="125"
@@ -179,28 +202,6 @@
                 )
               }}
             </div>
-          </template>
-          <DxColumn
-            caption="접수번호"
-            width="135px"
-            cell-template="acceptedNumber"
-          />
-          <template #acceptedNumber="{ data }: any">
-            <default-text-box
-              :width="120"
-              v-model:valueInput="data.data.acceptedNumber"
-            />
-          </template>
-          <DxColumn caption="메모" width="135px" cell-template="memo" />
-          <template #memo="{ data }: any">
-            <a-tooltip zIndex="9999999" placement="top" color="black">
-              <template #title> {{ data.data.memo }} </template>
-              <div></div>
-              <default-text-box
-                :width="120"
-                v-model:valueInput="data.data.memo"
-              />
-            </a-tooltip>
           </template>
           <DxColumn
             caption="신고서다운로드"
@@ -490,10 +491,10 @@ export default defineComponent({
               return {
                 companyName: item.company.name,
                 companyPresidentName: item.company.presidentName,
-                manageId: item.majorInsuranceConsignStatus.manageId,
-                companyConsignStatus:
-                  item.majorInsuranceConsignStatus.companyConsignStatus,
-                visible: false,
+                // manageId: item.majorInsuranceConsignStatus.manageId,
+                // companyConsignStatus:
+                //   item.majorInsuranceConsignStatus.companyConsignStatus,
+                // visible: false,
                 ...item,
               };
             }
@@ -562,8 +563,25 @@ export default defineComponent({
     //----------------------------SELECT ROW IN TABLES ------------------------
 
     const selectionChanged = (event: any) => {
-      let { selectedRowsData } = event;
+      let { selectedRowsData, currentDeselectedRowKeys } = event;
+      selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
+        return item !== currentDeselectedRowKeys[0];
+      });
       workIds.value = selectedRowsData.map((item: any) => item.workId);
+    };
+    const selectedRowKeys: any = ref([]);
+    const handleRowClick = (e: any) => {
+      if (
+        selectedRowKeys.value.filter((item: any) => {
+          return item === e.key;
+        }).length === 0
+      ) {
+        selectedRowKeys.value.push(e.key);
+        e.component.selectRows(selectedRowKeys.value);
+      }
+    };
+    const rowUpdating = (e: any) => {
+      console.log(`output->erowUpdating`, e);
     };
 
     //----------------------GET ViewURL------------------------
@@ -1063,7 +1081,8 @@ export default defineComponent({
       completedAtFormat,
       loadingDataSource,
       consignStatusText,
-      onDataGridInitialized
+      onDataGridInitialized,
+      handleRowClick,
     };
   },
 });

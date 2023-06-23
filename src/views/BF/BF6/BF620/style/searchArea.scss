@@ -1,11 +1,11 @@
-.search-group {
-  background: #f1f3f4;
-  padding: 8px 5px;
-  margin-bottom: 10px;
+.search-form {
+  // background: #f1f3f4;
+  // padding: 8px 5px;
+  // margin-bottom: 10px;
 
   .search-date {
-    margin-right: 30px;
-    display: flex;
+    // margin-right: 30px;
+    // display: flex;
 
     .search-text {
       margin-right: 20px;
@@ -54,9 +54,9 @@
       }
     }
 
-    :deep .dx-checkbox-container {
-      margin-left: 10px;
-    }
+    // :deep .dx-checkbox-container {
+    //   margin-left: 10px;
+    // }
 
     :deep .dx-radiogroup {
       margin-left: 15px;
@@ -64,26 +64,29 @@
   }
 
   .search-production {
-    margin-right: 30px;
+    // margin-right: 30px;
 
-    :deep .ant-form-item-label>label {
-      height: 26px;
-    }
+    // :deep .ant-form-item-label>label {
+    //   height: 26px;
+    // }
 
     .production-check {
-      display: grid;
-      grid-template-columns: 50% 50%;
-      margin-left: 97px;
-      grid-column-gap: 5px;
+      display: flex;
+      align-items: center;
+      // display: grid;
+      // grid-template-columns: 50% 50%;
+      margin-left: 105px;
+      // grid-column-gap: 5px;
     }
 
     :deep .check-box-group {
       .dx-checkbox-text {
-        margin-left: 10px;
+        margin: 0 10px;
+        padding: 1px 10px;
         border-radius: 5px;
         color: white;
         text-align: center;
-        width: 90px;
+    
       }
 
       &:nth-child(1) .dx-checkbox-text {
@@ -109,9 +112,9 @@
   }
 
   .search-company {
-    margin-right: 1.5%;
-    display: grid;
-    grid-template-columns: 50% 50%;
+    // margin-right: 1.5%;
+    // display: grid;
+    // grid-template-columns: 50% 50%;
 
     :deep .ant-form-item-label>label {
       width: 120px;
