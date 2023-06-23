@@ -48,7 +48,7 @@ Object.entries(requireComponent).forEach((fileComponent) => {
   // Register component globally
   app.component(componentName,defineAsyncComponent(componentImport))
 })
-// setNewUserToken()
+setNewUserToken()
 
 app.config.globalProperties.$messages = Message;
 app.config.globalProperties.$filters = filters;

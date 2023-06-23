@@ -181,7 +181,7 @@ export default defineComponent({
           const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
           const currentUrl = window.location.origin.replace(/\/$/, '');
           if(userToken.value){
-            window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}&refreshToken=${userToken.value.accessToken}&companyName=${companyInfo.name}`, '_blank', 'noopener=yes,noreferrer=yes,');
+            window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}&companyName=${companyInfo.name}`, '_blank', windowFeatures);
           }
         }
         const {mutate, onDone, onError: customerLoginError } = useMutation(mutations.customerWorkLogin);
