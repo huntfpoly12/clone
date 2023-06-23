@@ -30,8 +30,7 @@
 								<img src="@/assets/images/iconInfo.png" style="width: 14px" />
 							</a-tooltip>
 						</div>
-						<checkbox-basic v-model:valueCheckbox="dataQueryGetAccountBookReportViewUrl.displayCode
-							" :size="'20'" />
+						<checkbox-basic v-model:valueCheckbox="displayCode" :size="'20'" />
 						<span>결산서 (세목까지 출력)</span>
 						<div>
 							<a-tooltip color="black" placement="top">
@@ -104,9 +103,8 @@ export default defineComponent({
 		const userInfor = computed(() => store.state.auth.userInfor);
 		const dataGetAccountingProcesses = ref<any>([]);
 		const monthSelected = ref(dayjs().month() + 1);
-		// const valueCheckBox = ref<boolean>(false)
 		const modalEmailSingle = ref(false);
-		const popupDataEmailSingle = ref({});
+		const popupDataEmailSingle: any = ref({});
 		const triggerGetAccountingProcesses = ref<boolean>(true);
 		const triggerGetAccountBookReportViewUrl = ref<boolean>(false);
 		const dataQueryGetAccountingProcesses = ref({
@@ -114,7 +112,7 @@ export default defineComponent({
 			fiscalYear: acYear.value,
 			facilityBusinessId: globalFacilityBizId.value,
 		});
-		const dataQueryGetAccountBookReportViewUrl = ref({
+		const dataQueryGetAccountBookReportViewUrl: any = ref({
 			companyId: companyId,
 			fiscalYear: acYear.value,
 			facilityBusinessId: globalFacilityBizId.value,
@@ -123,6 +121,7 @@ export default defineComponent({
 			type: null,
 			displayCode: false,
 		});
+		const displayCode = ref(false);
 		// =================== GRAPHQL ===================
 		// query getAccountingProcesses
 		const {
@@ -178,18 +177,19 @@ export default defineComponent({
 				companyId: companyId,
 				fiscalYear: acYear.value,
 				facilityBusinessId: globalFacilityBizId.value,
-				year: dataGetAccountingProcesses.value?.find(
-					(item: any) => item.month === monthSelected.value
-				)?.year,
+				year: dataGetAccountingProcesses.value?.find((item: any) => item.month === monthSelected.value)?.year,
 				month: monthSelected.value,
 				type: data.type,
-				displayCode: dataQueryGetAccountBookReportViewUrl.value.displayCode,
+				displayCode: displayCode.value,
 				emailInput: {
 					senderName: sessionStorage.getItem("username"),
 					receiverName: userInfor.value?.name,
 					receiverAddress: userInfor.value?.email,
 				},
 			};
+			if (data.type !== 1 && data.type !== 2) {
+				delete popupDataEmailSingle.value.displayCode
+			}
 			modalEmailSingle.value = true;
 		};
 		const selectedMonth = (month: number) => {
@@ -204,6 +204,11 @@ export default defineComponent({
 				)?.year;
 			dataQueryGetAccountBookReportViewUrl.value.month = monthSelected.value
 			dataQueryGetAccountBookReportViewUrl.value.type = data.type;
+			if (data.type !== 1 && data.type !== 2) {
+				delete dataQueryGetAccountBookReportViewUrl.value.displayCode
+			} else {
+				dataQueryGetAccountBookReportViewUrl.value.displayCode = displayCode.value
+			}
 			triggerGetAccountBookReportViewUrl.value = true;
 		};
 		return {
@@ -215,12 +220,12 @@ export default defineComponent({
 			colomn_resize,
 			dataGetAccountingProcesses,
 			loadingGetAccountingProcesses,
-			// valueCheckBox,
 			dataSourceAC510,
 			actionPrint,
 			modalEmailSingle,
 			actionOpenPopupEmailSingle,
 			popupDataEmailSingle,
+			displayCode,
 		};
 	},
 });

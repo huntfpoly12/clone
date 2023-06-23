@@ -155,14 +155,14 @@
 							<div class="deduction-main">
 								<div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
 									<span>
-										<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+										<deduction-items  v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
 											:name="item.name" :type="1" :showTooltip="false" subName="과세" />
-										<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+										<deduction-items  v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
 											:name="item.name" :type="2" :showTooltip="false" subName="상여(과세)" />
-										<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+										<deduction-items  v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
 											:name="item.name" :type="3" :showTooltip="false" :subName="item.taxfreePayItemCode +
-												' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-										<deduction-items v-if="item.taxPayItemCode == null &&
+												' ' + item.taxfreePayItemName ? item.taxfreePayItemName : '' + ' ' + item.taxFreeIncludeSubmission" />
+										<deduction-items  v-if="item.taxPayItemCode == null &&
 											item.taxfreePayItemCode == null
 											" :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
 									</span>
