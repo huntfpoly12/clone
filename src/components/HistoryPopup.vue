@@ -1,25 +1,23 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" :width="width ? width :'1024px'"
-            :mask-closable="false">
+        <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()"
+            :width="width ? width : '1024px'" :mask-closable="false">
             <a-spin
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820|| loadingPA840_1|| loadingPA840_2||
-                loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
-                loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
-                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingPA870 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments || loadingAC520 || loadingAC570 || loadingPA860">
-                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
-                    :show-borders="true" :keyExpr="keyExpr ? keyExpr : 'ts'" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                    <DxPaging page-size="15"/>
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
-                    <DxColumn caption="기록일시" data-field="loggedAt" data-type="date"
-                        format="yyyy-MM-dd HH:mm"  />
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 || loadingPA810 || loadingPA820 || loadingPA840_1 || loadingPA840_2 ||
+                    loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
+                    loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
+                    || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingPA870 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments || loadingAC520 || loadingAC570 || loadingPA860">
+                <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
+                    :data-source="dataTableShow" :show-borders="true" :keyExpr="keyExpr ? keyExpr : 'ts'"
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxPaging page-size="15" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
+                    <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxColumn caption="기록일시" data-field="loggedAtFomat" />
                     <DxColumn caption="비고" data-field="remark" />
-                    <DxColumn caption="생성일시" data-field="createdAt" data-type="date"
-                        format="yyyy-MM-dd HH:mm"/>
+                    <DxColumn caption="생성일시" data-field="createdAtFomat" />
                     <DxColumn caption="생성자ID" data-field="createdBy" />
-                    <DxColumn caption="수정일시" data-field="updatedAt" data-type="date"
-                        format="yyyy-MM-dd HH:mm" />
+                    <DxColumn caption="수정일시" data-field="updatedAtFomat" />
                     <DxColumn caption="수정자ID" data-field="updatedBy" />
                     <DxColumn caption="삭제여부" data-field="active" :width="80" />
                     <DxColumn caption="IP주소" data-field="ip" />
@@ -49,7 +47,8 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxScrolling
+    DxScrolling,
+    DxSearchPanel
 } from "devextreme-vue/data-grid";
 import { ZoomInOutlined } from '@ant-design/icons-vue';
 import { useQuery } from "@vue/apollo-composable";
@@ -62,7 +61,8 @@ export default defineComponent({
         DxColumn,
         DxPaging,
         DxScrolling,
-        ZoomInOutlined
+        ZoomInOutlined,
+        DxSearchPanel
     },
 
     setup(props, { emit }) {
@@ -109,7 +109,7 @@ export default defineComponent({
         let triggerAC110AccountingProcessLogs = ref<boolean>(false);
         let triggerAC120AccountingProcess = ref<boolean>(false);
         let triggerAC120AccountingDocuments = ref<boolean>(false);
-        const dataTableShow = ref([]);
+        const dataTableShow: any = ref([]);
 
         // config grid
         const store = useStore();
@@ -185,8 +185,8 @@ export default defineComponent({
                             break;
                         case 'cm-121':
                             dataQuery.value = {
-                              companyId: companyId,
-                              fiscalYear: globalYear
+                                companyId: companyId,
+                                fiscalYear: globalYear
                             }
                             triggerCM121.value = true;
                             break;
@@ -391,38 +391,38 @@ export default defineComponent({
                             refetchPA810();
                             break;
                         case 'pa-820':
-                          dataQuery.value = {
-                            companyId: companyId,
-                            imputedYear: globalYear,
-                            workId: props.data,
-                          };
+                            dataQuery.value = {
+                                companyId: companyId,
+                                imputedYear: globalYear,
+                                workId: props.data,
+                            };
                             triggerPA820.value = true;
                             // refetchPA820();
                             break;
                         case 'pa-830':
-                          dataQuery.value = {
-                            companyId: companyId,
-                            imputedYear: globalYear,
-                            workId: props.data,
-                          };
+                            dataQuery.value = {
+                                companyId: companyId,
+                                imputedYear: globalYear,
+                                workId: props.data,
+                            };
                             triggerPA830.value = true;
                             // refetchPA830();
                             break;
                         case 'pa-840-1':
-                          dataQuery.value = {
-                            companyId: companyId,
-                            imputedYear: globalYear,
-                            workId: props.data,
-                          };
+                            dataQuery.value = {
+                                companyId: companyId,
+                                imputedYear: globalYear,
+                                workId: props.data,
+                            };
                             triggerPA840_1.value = true;
                             refetchPA840_1();
                             break;
                         case 'pa-840-2':
-                          dataQuery.value = {
-                            companyId: companyId,
-                            imputedYear: globalYear,
-                            workId: props.data,
-                          };
+                            dataQuery.value = {
+                                companyId: companyId,
+                                imputedYear: globalYear,
+                                workId: props.data,
+                            };
                             triggerPA840_2.value = true;
                             refetchPA840_2();
                             break;
@@ -552,7 +552,7 @@ export default defineComponent({
         );
         watch(resultBf310, (value) => {
             if (value && value.getSubscriptionRequestLogs) {
-                dataTableShow.value = value.getSubscriptionRequestLogs;
+                dataTableShow.value = fomatDataField(value.getSubscriptionRequestLogs)
             }
         });
         // get getCompanyLogs 320
@@ -566,7 +566,7 @@ export default defineComponent({
         );
         watch(resultBf320, (value) => {
             if (value && value.getCompanyLogs) {
-                dataTableShow.value = value.getCompanyLogs;
+                dataTableShow.value = fomatDataField(value.getCompanyLogs)
             }
         });
 
@@ -581,7 +581,7 @@ export default defineComponent({
         );
         watch(resultBf330, (value) => {
             if (value && value.getServiceContractLogs) {
-                dataTableShow.value = value.getServiceContractLogs;
+                dataTableShow.value = fomatDataField(value.getServiceContractLogs)
             }
         });
 
@@ -596,7 +596,7 @@ export default defineComponent({
         );
         watch(resultBf340, (value) => {
             if (value && value.getSalesRepresentativeLogs) {
-                dataTableShow.value = value.getSalesRepresentativeLogs;
+                dataTableShow.value = fomatDataField(value.getSalesRepresentativeLogs)
             }
         });
 
@@ -611,7 +611,7 @@ export default defineComponent({
         );
         watch(resultBf210, (value) => {
             if (value && value.getUserLogs) {
-                dataTableShow.value = value.getUserLogs;
+                dataTableShow.value = fomatDataField(value.getUserLogs)
             }
         });
 
@@ -627,7 +627,7 @@ export default defineComponent({
 
         watch(resultCM110, (value) => {
             if (value && value.getMyCompanyUserLogs) {
-                dataTableShow.value = value.getMyCompanyUserLogs;
+                dataTableShow.value = fomatDataField(value.getMyCompanyUserLogs)
             }
         });
 
@@ -643,7 +643,7 @@ export default defineComponent({
 
         watch(resultCM121, (value) => {
             if (value && value.getBankbooksLogs) {
-                dataTableShow.value = value.getBankbooksLogs;
+                dataTableShow.value = fomatDataField(value.getBankbooksLogs)
             }
         });
 
@@ -659,7 +659,7 @@ export default defineComponent({
 
         watch(resultBF220, (value) => {
             if (value && value.getScreenRoleGroupLogs) {
-                dataTableShow.value = value.getScreenRoleGroupLogs;
+                dataTableShow.value = fomatDataField(value.getScreenRoleGroupLogs)
             }
         });
 
@@ -675,7 +675,7 @@ export default defineComponent({
 
         watch(resultPA610, (value) => {
             if (value && value.getEmployeeBusinessesLogs) {
-                dataTableShow.value = value.getEmployeeBusinessesLogs;
+                dataTableShow.value = fomatDataField(value.getEmployeeBusinessesLogs)
             }
         });
 
@@ -691,7 +691,7 @@ export default defineComponent({
         watch(resultCM130, (value) => {
             trigger130.value = false
             if (value && value.getWithholdingConfigPayItemsLogs) {
-                dataTableShow.value = value.getWithholdingConfigPayItemsLogs;
+                dataTableShow.value = fomatDataField(value.getWithholdingConfigPayItemsLogs)
             }
         });
 
@@ -707,7 +707,7 @@ export default defineComponent({
         watch(resultCMDeduction130, (value) => {
             triggerDeduction130.value = false
             if (value && value.getWithholdingConfigDeductionItemsLogs) {
-                dataTableShow.value = value.getWithholdingConfigDeductionItemsLogs;
+                dataTableShow.value = fomatDataField(value.getWithholdingConfigDeductionItemsLogs)
             }
         });
 
@@ -723,7 +723,7 @@ export default defineComponent({
         watch(resultPA710, (value) => {
             triggerPA710.value = false;
             if (value && value.getEmployeeExtrasLogs) {
-                dataTableShow.value = value.getEmployeeExtrasLogs;
+                dataTableShow.value = fomatDataField(value.getEmployeeExtrasLogs)
             }
         });
 
@@ -738,7 +738,7 @@ export default defineComponent({
         );
         watch(resultPA520, (value) => {
             if (value && value.getEmployeeWageDailiesLogs) {
-                dataTableShow.value = value.getEmployeeWageDailiesLogs;
+                dataTableShow.value = fomatDataField(value.getEmployeeWageDailiesLogs)
             }
         });
 
@@ -754,7 +754,7 @@ export default defineComponent({
         );
         watch(resultPA510, (value) => {
             if (value && value.getIncomeWageDailiesLogs) {
-                dataTableShow.value = value.getIncomeWageDailiesLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeWageDailiesLogs)
             }
         });
         // get getIncomeProcessWageDailyLogs pa-510
@@ -768,7 +768,7 @@ export default defineComponent({
         );
         watch(resultStatusPA510, (value) => {
             if (value && value.getIncomeProcessWageDailyLogs) {
-                dataTableShow.value = value.getIncomeProcessWageDailyLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeProcessWageDailyLogs)
             }
         });
 
@@ -783,7 +783,7 @@ export default defineComponent({
         );
         watch(resultStatusPA420, (value) => {
             if (value && value.getIncomeProcessRetirementLogs) {
-                dataTableShow.value = value.getIncomeProcessRetirementLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeProcessRetirementLogs)
             }
         });
 
@@ -798,7 +798,7 @@ export default defineComponent({
         );
         watch(resultPA420, (value) => {
             if (value && value.getIncomeRetirementsLogs) {
-                dataTableShow.value = value.getIncomeRetirementsLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeRetirementsLogs)
             }
         });
 
@@ -814,7 +814,7 @@ export default defineComponent({
         );
         watch(resultPA620, (value) => {
             if (value && value.getIncomeBusinessesLogs) {
-                dataTableShow.value = value.getIncomeBusinessesLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeBusinessesLogs)
             }
         });
         // get getIncomeProcessBusinessLogs pa-620
@@ -828,7 +828,7 @@ export default defineComponent({
         );
         watch(resultStatusPA620, (value) => {
             if (value && value.getIncomeProcessBusinessLogs) {
-                dataTableShow.value = value.getIncomeProcessBusinessLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeProcessBusinessLogs)
             }
         });
 
@@ -844,7 +844,7 @@ export default defineComponent({
         );
         watch(resultPA120, (value) => {
             if (value && value.getEmployeeWagesLogs) {
-                dataTableShow.value = value.getEmployeeWagesLogs;
+                dataTableShow.value = fomatDataField(value.getEmployeeWagesLogs)
             }
         });
         // get getIncomeWageLogs pa-110
@@ -858,7 +858,7 @@ export default defineComponent({
         );
         watch(resultPA110, (value) => {
             if (value && value.getIncomeWagesLogs) {
-                dataTableShow.value = value.getIncomeWagesLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeWagesLogs)
             }
         });
         // get getIncomeProcessWagesLogs pa-110
@@ -872,7 +872,7 @@ export default defineComponent({
         );
         watch(resultStatusPA110, (value) => {
             if (value && value.getIncomeProcessWageLogs) {
-                dataTableShow.value = value.getIncomeProcessWageLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeProcessWageLogs)
             }
         });
         // get getIncomeWageDailiesLogs pa-720
@@ -886,7 +886,7 @@ export default defineComponent({
         );
         watch(resultPA720, (value) => {
             if (value && value.getIncomeExtrasLogs) {
-                dataTableShow.value = value.getIncomeExtrasLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeExtrasLogs)
             }
         });
         // get incomeProcessExtra pa-720
@@ -900,7 +900,7 @@ export default defineComponent({
         );
         watch(resultStatusPA720, (value) => {
             if (value && value.getIncomeProcessExtraLogs) {
-                dataTableShow.value = value.getIncomeProcessExtraLogs;
+                dataTableShow.value = fomatDataField(value.getIncomeProcessExtraLogs)
             }
         });
 
@@ -915,7 +915,7 @@ export default defineComponent({
         );
         watch(resultPA210, (value) => {
             if (value && value.getTaxWithholdingStatusReportsLogs) {
-                dataTableShow.value = value.getTaxWithholdingStatusReportsLogs;
+                dataTableShow.value = fomatDataField(value.getTaxWithholdingStatusReportsLogs)
             }
         });
 
@@ -929,9 +929,9 @@ export default defineComponent({
             })
         );
         watch(resultPA810, (value) => {
-          if (value) {
-            dataTableShow.value = value.getMajorInsuranceCompanyEmployeeAcquisitionLogs;
-          }
+            if (value) {
+                dataTableShow.value = fomatDataField(value.getMajorInsuranceCompanyEmployeeAcquisitionLogs)
+            }
         });
 
         // get getMajorInsuranceCompanyEmployeeSalaryChangeLogs pa-830
@@ -944,9 +944,9 @@ export default defineComponent({
             })
         );
         watch(resultPA830, (value) => {
-          if (value) {
-            dataTableShow.value = value.getMajorInsuranceCompanyEmployeeSalaryChangeLogs;
-          }
+            if (value) {
+                dataTableShow.value = fomatDataField(value.getMajorInsuranceCompanyEmployeeSalaryChangeLogs)
+            }
         });
         // get pa-820
         const { result: resultPA820, loading: loadingPA820 } = useQuery(
@@ -959,7 +959,7 @@ export default defineComponent({
         );
         watch(resultPA820, (value) => {
             if (value) {
-                dataTableShow.value = value.getMajorInsuranceCompanyEmployeeLossLogs;
+                dataTableShow.value = fomatDataField(value.getMajorInsuranceCompanyEmployeeLossLogs)
             }
         });
         // get pa-840-1
@@ -973,11 +973,11 @@ export default defineComponent({
         );
         watch(resultPA840_1, (value) => {
             if (value) {
-                dataTableShow.value = value.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs;
+                dataTableShow.value = fomatDataField(value.getMajorInsuranceCompanyEmployeeLeaveOfAbsenceLogs)
             }
         });
         // get pa-840-2
-        const { result: resultPA840_2, loading: loadingPA840_2, refetch: refetchPA840_2} = useQuery(
+        const { result: resultPA840_2, loading: loadingPA840_2, refetch: refetchPA840_2 } = useQuery(
             queries.getMajorInsuranceCompanyEmployeeReturnToWorkLogs,
             dataQuery,
             () => ({
@@ -987,7 +987,7 @@ export default defineComponent({
         );
         watch(resultPA840_2, (value) => {
             if (value) {
-                dataTableShow.value = value.getMajorInsuranceCompanyEmployeeReturnToWorkLogs;
+                dataTableShow.value = fomatDataField(value.getMajorInsuranceCompanyEmployeeReturnToWorkLogs)
             }
         });
         // get pa-860
@@ -1001,11 +1001,11 @@ export default defineComponent({
         );
         watch(resultPA860, (value) => {
             if (value) {
-                dataTableShow.value = value.getMajorInsuranceConsignStatusLogs;
+                dataTableShow.value = fomatDataField(value.getMajorInsuranceConsignStatusLogs)
             }
         });
-         // get pa-870
-         const { result: resultPA870, loading: loadingPA870, refetch: refetchPA870 } = useQuery(
+        // get pa-870
+        const { result: resultPA870, loading: loadingPA870, refetch: refetchPA870 } = useQuery(
             queries.getMajorInsuranceCompanyJoinLogs,
             dataQuery,
             () => ({
@@ -1015,7 +1015,7 @@ export default defineComponent({
         );
         watch(resultPA870, (value) => {
             if (value) {
-                dataTableShow.value = value.getMajorInsuranceCompanyJoinLogs;
+                dataTableShow.value = fomatDataField(value.getMajorInsuranceCompanyJoinLogs)
             }
         });
         // get pa-880
@@ -1029,7 +1029,7 @@ export default defineComponent({
         );
         watch(resultPA880, (value) => {
             if (value) {
-                dataTableShow.value = value.getMajorInsuranceCompanyOutLogs;
+                dataTableShow.value = fomatDataField(value.getMajorInsuranceCompanyOutLogs)
             }
         });
         // get getClientLogs ac-610
@@ -1044,7 +1044,7 @@ export default defineComponent({
 
         watch(resultAC610, (value) => {
             if (value) {
-                dataTableShow.value = value.getClientLogs;
+                dataTableShow.value = fomatDataField(value.getClientLogs)
             }
             triggerAC610.value = false;
         });
@@ -1060,7 +1060,7 @@ export default defineComponent({
         );
         watch(resultAC620, (value) => {
             if (value) {
-                dataTableShow.value = value.getBackerLogs;
+                dataTableShow.value = fomatDataField(value.getBackerLogs)
             }
             triggerAC620.value = false;
         });
@@ -1075,12 +1075,12 @@ export default defineComponent({
         );
         watch(resultAC110BankbookLogs, (value) => {
             if (value) {
-                dataTableShow.value = value.getBankbookDetailLogs;
+                dataTableShow.value = fomatDataField(value.getBankbookDetailLogs)
             }
             triggerAC110BankbookDetailLogs.value = false;
         });
-         // get AccountingProcessLogs ac110
-         const { result: resultAC110AccountingProcessLogs, loading: loadingAC110AccountingProcessLogs } = useQuery(
+        // get AccountingProcessLogs ac110
+        const { result: resultAC110AccountingProcessLogs, loading: loadingAC110AccountingProcessLogs } = useQuery(
             queries.getAccountingProcessLogs,
             dataQuery,
             () => ({
@@ -1090,7 +1090,7 @@ export default defineComponent({
         );
         watch(resultAC110AccountingProcessLogs, (value) => {
             if (value) {
-                dataTableShow.value = value.getAccountingProcessLogs;
+                dataTableShow.value = fomatDataField(value.getAccountingProcessLogs)
             }
             triggerAC110AccountingProcessLogs.value = false;
         });
@@ -1106,7 +1106,7 @@ export default defineComponent({
         );
         watch(resultAC120AccountingProcess, (value) => {
             if (value) {
-                dataTableShow.value = value.getAccountingProcessLogs;
+                dataTableShow.value = fomatDataField(value.getAccountingProcessLogs)
             }
             triggerAC120AccountingProcess.value = false;
         });
@@ -1122,7 +1122,7 @@ export default defineComponent({
         );
         watch(resultAC120AccountingDocuments, (value) => {
             if (value) {
-                dataTableShow.value = value.getAccountingDocumentsLogs;
+                dataTableShow.value = fomatDataField(value.getAccountingDocumentsLogs)
             }
             triggerAC120AccountingDocuments.value = false;
         });
@@ -1139,7 +1139,7 @@ export default defineComponent({
         watch(resultAC570, (value) => {
             triggerAC570.value = false;
             if (value) {
-                dataTableShow.value = value.getBudgetSubjectTransitionsLogs;
+                dataTableShow.value = fomatDataField(value.getBudgetSubjectTransitionsLogs)
             }
         });
 
@@ -1155,10 +1155,18 @@ export default defineComponent({
         watch(resultAC520, (value) => {
             triggerAC520.value = false;
             if (value) {
-                dataTableShow.value = value.getBudgetsLogs;
+                dataTableShow.value = fomatDataField(value.getBudgetsLogs)
             }
         });
 
+        const fomatDataField = (value: any) => {
+            return value.map((items: any) => ({
+                ...items,
+                createdAtFomat: dayjs(items.createdAt).format('YYYY-MM-DD HH:mm'),
+                loggedAtFomat: dayjs(items.loggedAt).format('YYYY-MM-DD HH:mm'),
+                updatedAtFomat: dayjs(items.updatedAt).format('YYYY-MM-DD HH:mm')
+            }))
+        }
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -1166,6 +1174,7 @@ export default defineComponent({
             dataTableShow.value = [];
             emit('closePopup', false)
         }
+
         return {
             setModalVisible,
             dataTableShow,
