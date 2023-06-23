@@ -22,7 +22,16 @@
           :column-auto-width="true"
           noDataText="내역이 없습니다"
         >
+          <DxPaging :page-size="20" />
           <DxScrolling mode="standard" show-scrollbar="always" />
+          <DxSearchPanel
+            :visible="true"
+            :highlight-case-sensitive="true"
+            placeholder="검색"
+          />
+          <DxToolbar>
+            <DxItem name="searchPanel" location="after" />
+          </DxToolbar>
           <DxColumn
             caption="기록일시"
             data-field="loggedAt"
@@ -74,7 +83,7 @@
             caption="산재FAX"
             data-field="industrialAccidentInsuranceFax"
           />
-          <DxColumn caption="메모" data-field="memo" width="100"/>
+          <DxColumn caption="메모" data-field="memo" width="100" />
           <DxColumn caption="IP" data-field="ip" />
           <DxColumn caption="수정ID" data-field="updatedBy" />
         </DxDataGrid>
@@ -85,7 +94,14 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
-import DxDataGrid, { DxColumn, DxScrolling } from "devextreme-vue/data-grid";
+import DxDataGrid, {
+  DxColumn,
+  DxScrolling,
+  DxSearchPanel,
+  DxItem,
+  DxToolbar,
+  DxPaging,
+} from "devextreme-vue/data-grid";
 import queries from "@/graphql/queries/common/index";
 import { watch } from "vue";
 import { useQuery } from "@vue/apollo-composable";
@@ -93,7 +109,15 @@ import notification from "@/utils/notification";
 import { workStatusText, consignStatusText, EDIStatusText } from "../../utils";
 
 export default defineComponent({
-  components: { DxDataGrid, DxScrolling, DxColumn },
+  components: {
+    DxDataGrid,
+    DxScrolling,
+    DxColumn,
+    DxSearchPanel,
+    DxItem,
+    DxToolbar,
+    DxPaging,
+  },
   props: {
     companyIdParam: {
       type: Number,
