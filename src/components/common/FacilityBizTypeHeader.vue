@@ -80,7 +80,7 @@ import { defineComponent, ref, computed, watch, onMounted,  } from "vue";
 import { useStore } from 'vuex';
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import { companyId, setMenuTab } from "@/helpers/commonFunction";
+import { setMenuTab } from "@/helpers/commonFunction";
 import { WarningOutlined } from "@ant-design/icons-vue";
 import DxButton from 'devextreme-vue/button';
 import { getJwtObject } from "@bankda/jangbuda-common";
@@ -111,9 +111,10 @@ export default defineComponent({
     const userInfor = computed(() => store.getters['auth/getUserInfo'])
     const acYear = ref(dayjs().year())
     const paYear = ref(dayjs().year())
+    const companyId = computed(() => sessionStorage.getItem("token") ? getJwtObject(sessionStorage.getItem("token") as string).companyId : null)
     let listFacilityBizTypeForUser:any = ref([]);
     const dataQuery = ref({
-      companyId
+      companyId: companyId.value
     });
     const facilityBusinessTrigger = ref(false);
     onMounted(() => {
@@ -152,7 +153,7 @@ export default defineComponent({
       store.commit('settings/setListFacilityBizTypeForUser', param)
       if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = param[0]?.facilityBusinessId || null;
     }
-    if(companyId && jwtObject.payload.aut){
+    if(companyId.value && jwtObject.payload.aut){
       facilityBusinessTrigger.value = true;
     }
     const {result} = useQuery(queries.getMyCompanyFacilityBusinesses,dataQuery,
@@ -202,7 +203,7 @@ export default defineComponent({
 
         //get and set account subject
         if (jwtObject.userType === 'c' && globalFacilityBizId.value) {
-          store.dispatch('settings/getAccountSubject', { companyId: companyId, fiscalYear: Number(dayjs().year()), facilityBizType: parseInt(globalFacilityBizId.value) })
+          store.dispatch('settings/getAccountSubject', { companyId: companyId.value, fiscalYear: Number(dayjs().year()), facilityBizType: parseInt(globalFacilityBizId.value) })
         }
         setMenuTab([])
         store.commit('settings/setChangeFacilityBusiness')

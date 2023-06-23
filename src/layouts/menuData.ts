@@ -98,8 +98,10 @@ let menuData = [
   { name: "사업장가입신고", url: "/pa-870", id: "pa-870", roles: ROLE_PA000 },
   { name: "사업장탈퇴신고", url: "/pa-880", id: "pa-880", roles: ROLE_PA000 },
 ];
-menuData = menuData.filter(i => {
-  if (i.roles.length === 0) return false
-  return useCheckPermission(i.roles).read
-})
+if (token){
+  menuData = menuData.filter(i => {
+    if (i.roles.length === 0) return false
+    return useCheckPermission(i.roles).read
+  })
+}
 export default menuData;
