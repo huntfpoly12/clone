@@ -61,19 +61,19 @@ export default defineComponent({
     const activeSavingTab5 = ref(0)
     const searching = (tabNumber: any) => {
       switch (tabNumber) {
-        case '1':
+        case 1:
           activeSearch1.value++
           break;
-        case '2':
+        case 2:
           activeSearch2.value++
           break;
-        case '3':
+        case 3:
           activeSearch3.value++
           break;
-        case '4':
+        case 4:
           activeSearch4.value++
           break;
-        case '5':
+        case 5:
           activeSearch5.value++
           break;
         default:
