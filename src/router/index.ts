@@ -12,6 +12,7 @@ import {
 } from "@bankda/jangbuda-common";
 import isEmpty from "lodash/isEmpty";
 import useCheckPermission from "@/helpers/useCheckPermission";
+
 const ALL_ROLE = [
   ...AdminScreenRole.all().map((i) => i.enumKey),
   ...WorkScreenRole.all().map((i) => i.enumKey),
@@ -475,51 +476,45 @@ function hasQueryParams(route: RouteLocationNormalized) {
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.meta.needAuth;
   const roles = isEmpty(to.meta.roles) ? null : (to.meta.roles as string[]);
-  if(hasQueryParams(to)){
+  if (hasQueryParams(to) && to.query.token && to.query.refreshToken) {
     const {
       token,
       refreshToken,
       year,
-      onlyView,
       username,
       facilityBusinessName,
       globalFacilityBizId,
-      path
-    }  = to.query // get query params
-    if (token && refreshToken) {
-      const objectJwt = getJwtObject(token as string) // decode token
-      if(objectJwt) {
-        if (onlyView) {
-          sessionStorage.setItem('acYear', year as string)
-          sessionStorage.setItem('paYear', year as string)
-          sessionStorage.setItem('onlyView', onlyView as string)
-          sessionStorage.setItem('tabsCached', path as string)
-          sessionStorage.setItem('username', username as string)
-          sessionStorage.setItem('name', facilityBusinessName as string)
-          sessionStorage.setItem('globalFacilityBizId', globalFacilityBizId as string)
-        }
-        sessionStorage.setItem('token', token as string)
-        sessionStorage.setItem('loginExpr', objectJwt.expiredTime.toString())
-        sessionStorage.setItem('refreshToken', refreshToken as string)
-        next({ path: to.path, query: {}} ); // remove query params
+      path,
+      month
+    } = to.query // get query params
+    const objectJwt = getJwtObject(token as string) // decode token
+    if (objectJwt) {
+      sessionStorage.setItem('token', token as string)
+      sessionStorage.setItem('loginExpr', objectJwt.expiredTime.toString())
+      sessionStorage.setItem('refreshToken', refreshToken as string)
+      sessionStorage.setItem('tabsCached', path as string)
+
+      if (globalFacilityBizId) {
+        sessionStorage.setItem('acYear', year as string)
+        sessionStorage.setItem('paYear', year as string)
+        sessionStorage.setItem('month', month as string)
+        sessionStorage.setItem('username', username as string)
+        sessionStorage.setItem('name', facilityBusinessName as string)
+        sessionStorage.setItem('globalFacilityBizId', globalFacilityBizId as string)
       }
-    } else {
-      next()
     }
-  } else {
+    next({path: to.path}); // remove query params
+  }
+  else {
     const token = sessionStorage.getItem("token");
-    const { read } = useCheckPermission(roles, token);
+    const {read} = useCheckPermission(roles, token);
     // check if token isExpired
     if (token && getJwtObject(token).isExpired()) {
       console.log('%c expired router', 'color: red;',);
     }
-    if (to.fullPath == "/login" && token) {
+    if ((to.fullPath == "/login" || to.fullPath == "/") && token) {
       next("/dashboard");
-    }
-    if (to.fullPath == "/" && token) {
-      next("/dashboard");
-    }
-    if (requiresAuth && !token) {
+    } else if (requiresAuth && !token) {
       next("/login");
     } else if (requiresAuth && token && !read) {
       next("not-found");

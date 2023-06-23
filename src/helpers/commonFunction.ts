@@ -223,11 +223,11 @@ const calcSummary = (arr: any[], property1: string,) => {
 const setNewUserToken = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
-  const companyName:any = urlParams.get('companyName')||'';
+  // const companyName:any = urlParams.get('companyName')||'';
     if (token) {
-      sessionStorage.setItem('token', token);
-      sessionStorage.setItem('companyName', companyName);
-      sessionStorage.setItem('tabsCached', 'Example');
+      // sessionStorage.setItem('token', token);
+      // sessionStorage.setItem('companyName', companyName);
+      // sessionStorage.setItem('tabsCached', 'Example');
       const url = window.location.href;
       const baseUrl = url.split('?')[0];
       window.location.assign(baseUrl);

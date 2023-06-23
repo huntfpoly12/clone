@@ -400,7 +400,7 @@
 </template>
 <script lang="ts">
 import { useStore } from "vuex";
-import { defineComponent, ref, reactive, computed, watch, nextTick } from "vue";
+import {defineComponent, ref, reactive, computed, watch, nextTick, watchEffect} from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
@@ -447,11 +447,13 @@ import {
   ResolutionClassification,
   FundingSource,
   LetterOfApprovalType, getJwtObject,
+  FacilityBizType
 } from "@bankda/jangbuda-common";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import dayjs from "dayjs";
 import { cloneDeep, isEqual } from "lodash";
 import DxCheckBox from 'devextreme-vue/check-box';
+import getMyCompanyFacilityBusinesses from "@/graphql/queries/CM/CM110/getMyCompanyFacilityBusinesses";
 
 export default defineComponent({
   components: {
@@ -484,6 +486,7 @@ export default defineComponent({
     DxCheckBox
   },
   setup() {
+    // window.location.reload();
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -557,7 +560,8 @@ export default defineComponent({
     let isModalNoteItemDetail = ref(false);
     let transactionSelected: any = ref();
     let dataStatementOfGoodsItems: any = ref();
-    let monthSelected: any = ref(dayjs().month() + 1);
+    const month = sessionStorage.getItem('month') && Math.abs(Number(sessionStorage.getItem('month'))) < 13 ? Number(sessionStorage.getItem('month')) : dayjs().month() + 1;
+    let monthSelected: any = ref(month);
     let valueAccountSubjectClassification = ref(null);
     let valueFundingSource = ref(null);
     const refFormDetailAc110: any = ref();
@@ -621,8 +625,29 @@ export default defineComponent({
     })
 
     const isProgressingFiles = ref(false)
+    const triggerGetMyCompanyFacilityBusinesses = ref(false)
     // -------------- GRAPHQL --------------
     // queries
+    const {onResult} = useQuery(getMyCompanyFacilityBusinesses, {companyId: companyId.value},
+      () => ({
+        fetchPolicy: "no-cache",
+        enabled: triggerGetMyCompanyFacilityBusinesses.value
+      }))
+    onResult((result) => {
+      const companyFacilityBiz = result?.data?.getMyCompanyFacilityBusinesses?.find((item: any) => item.facilityBusinessId === globalFacilityBizId.value)
+      console.log('companyFacilityBiz', companyFacilityBiz)
+      if (companyFacilityBiz) {
+        if(!sessionStorage.getItem('facilityBizType')) {
+          // window.location.reload()
+        }
+        sessionStorage.setItem('facilityBizType', companyFacilityBiz.facilityBizType)
+      }
+    })
+    watchEffect(() => {
+      if(!sessionStorage.getItem('facilityBizType')) {
+        triggerGetMyCompanyFacilityBusinesses.value = true
+      }
+    })
     const {
       result: resAccountingProcesses,
       // onResult: onResAccountingProcesses,

@@ -73,7 +73,7 @@
             <date-time-box-custom width="150px"
                                   :disabled="!interimPaymentTab1 || retirementStatus === 20"
                                   :startDate="dayjs(String(formState.prevRetiredYearsOfService.settlementStartDate)).add(1, 'day')"
-                                  :finishDate="finishDateRetirement"
+                                  :finishDate="finishDateRetirement && dayjs(String(finishDateRetirement))"
                                   v-model:valueDate="formState.prevRetiredYearsOfService.settlementFinishDate"
                                   ref="prevSettlementFinishDate"/>
             <info-tool-tip>
