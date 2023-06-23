@@ -469,6 +469,7 @@ watch(interimPaymentTab1, (value) => {
   } else {
     formState.prevRetiredYearsOfService.settlementStartDate = cloneDeep(joinedAt.value)
     formState.incomeCalculationInput.settlementStartDate = cloneDeep(joinedAt.value)
+    formState.lastRetiredYearsOfService.settlementStartDate = ''
   }
 })
 watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: any) => {
