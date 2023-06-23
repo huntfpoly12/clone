@@ -60,7 +60,7 @@
               width="100px"/>
     <template #closingStatusByBusiness="{data}">
       <div class="d-flex flex-col gap-5">
-        <div v-for="(company) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between gap-10">
+        <div v-for="(company, index) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between gap-10">
           <div class="truncate" :title="company.facilityBusinessName" style="min-width: 50px">{{ company.facilityBusinessName }}</div>
           <div class="d-flex-center gap-5">
             <AccountingProcessStatusEdit
@@ -74,7 +74,7 @@
               @closePopup="closePopup"
             />
             <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
-              <div @click="redirectAc110(data.data)">
+              <div @click="redirectAc110(data.data, index)">
                 <RightCircleOutlined style="color: #2323da; font-size: 20px; border-radius: 10px"/>
               </div>
             </a-tooltip>
@@ -99,8 +99,8 @@ import DataSource from 'devextreme/data/data_source';
 import AccountingProcessStatusEdit from "./components/AccountingProcessStatusEdit.vue";
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
 import {RightCircleOutlined} from '@ant-design/icons-vue';
-import router from "@/router";
 import mutations from "@/graphql/mutations/AddToken";
+import {ISearchCompanyAccountingDeadlines} from "@/views/BF/BF5/BF510/types";
 
 const checkBoxSearch = [
   {id: 1, text: '1 월'},
@@ -141,15 +141,7 @@ watchEffect(() => {
 })
 const dataSource = ref<DataSource>()
 
-export interface ISearchCompanyAccountingDeadlines {
-  fiscalYear: number;
-  year: number;
-  month: number;
-  statuses?: number[];
-  manageUserId?: number | null;
-  salesRepresentativeId?: number | null;
-  excludeCancel: boolean;
-}
+
 
 const dataSearch = reactive<ISearchCompanyAccountingDeadlines>({
   fiscalYear: parseInt(dayjs().format('YYYY')),
@@ -197,22 +189,31 @@ const searching = () => {
   }
   trigger.value = true;
 }
-const userToken = ref()
+const userToken = reactive({
+  accessToken: '',
+  refreshToken: ''
+})
 const companyInfo = reactive({
   code: NaN,
-  name: '',
+  username: '',
   companyId: NaN,
+  facilityBusinessId: 0,
+  facilityBusinessName: ''
 })
 const {mutate, onDone, onError: customerLoginError} = useMutation(mutations.customerWorkLogin);
 
 onDone((result: any) => {
-  userToken.value = result.data.customerWorkLogin;
+  userToken.accessToken = result.data.customerWorkLogin.accessToken;
+  userToken.refreshToken = result.data.customerWorkLogin.refreshToken;
   cloneWebsite();
 })
-const redirectAc110 = (data: any) => {
+const redirectAc110 = (data: any, index: number) => {
+  console.log('data', data)
   companyInfo.companyId = data.companyId;
   companyInfo.code = data.code;
-  companyInfo.name = data.name;
+  companyInfo.username = data.name;
+  companyInfo.facilityBusinessId = data.compactAccountingProcesses[index].facilityBusinessId;
+  companyInfo.facilityBusinessName = data.compactAccountingProcesses[index].facilityBusinessName;
   mutate({companyId: data.companyId})
 }
 
@@ -221,8 +222,9 @@ const cloneWebsite = () => {
   const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
   const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
   const currentUrl = window.location.origin.replace(/\/$/, '');
-  if (userToken.value) {
-    window.open(`${currentUrl}/dashboard?token=${userToken.value.accessToken}&companyName=${companyInfo.name}`, '_blank', windowFeatures);
+  if (userToken.refreshToken && userToken.accessToken) {
+    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&username=${companyInfo.username}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${companyInfo.facilityBusinessName}&year=${dataSearch.year}&path=AC110&onlyView=true`
+    window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,');
   }
 }
 const closePopup = (e: boolean) => {

@@ -35,7 +35,6 @@ interface Props {
 }
 const { data } = defineProps<Props>()
 const emit = defineEmits(['closePopup'])
-console.log('data', data.status)
 const status = ref(data.status);
 const visible = ref<boolean>(false);
 const arrayRadioUser = ref([

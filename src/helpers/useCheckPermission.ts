@@ -1,6 +1,5 @@
 import { JwtObject, UserType, getJwtObject } from "@bankda/jangbuda-common";
-let token = sessionStorage.getItem("token");
-export default function useCheckPermission(roles: string[] | null) {
+export default function useCheckPermission(roles: string[] | null, token: string | null = sessionStorage.getItem("token") ) {
   // get JwtObject from token
   if (!token || !roles || roles.length === 0) {
     return { read: false, write: false }
@@ -15,7 +14,7 @@ export default function useCheckPermission(roles: string[] | null) {
     const userType = jwtObject.userType
     // return read and write permission
     if (userType === UserType.CUSTOMER) {
-      
+
       return {
         read: roles.some((item) => readWorkScreenRoles?.includes(item)),
         write: roles.some((item) => writeWorkScreenRoles?.includes(item))
