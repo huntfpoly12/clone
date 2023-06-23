@@ -1,7 +1,7 @@
 <template>
   <action-header title="계약정보관리&심사" @actionSearch="searching(activeKey)" @actionSave="saving(activeKey)"
     :buttonSearch="true" :buttonSave="activeKey == 5" />
-  <div id="bf-630">
+  <div id="bf-630" class="mt-10">
     <a-tabs v-model:activeKey="activeKey" type="card" style="overflow: visible !important;">
       <a-tab-pane :key="1" tab="근로소득지급명세서(기부금, 의료비)">
         <tab-1-component :activeSearch="activeSearch1" v-if="activeKey == 1"></tab-1-component>
@@ -61,19 +61,19 @@ export default defineComponent({
     const activeSavingTab5 = ref(0)
     const searching = (tabNumber: any) => {
       switch (tabNumber) {
-        case '1':
+        case 1:
           activeSearch1.value++
           break;
-        case '2':
+        case 2:
           activeSearch2.value++
           break;
-        case '3':
+        case 3:
           activeSearch3.value++
           break;
-        case '4':
+        case 4:
           activeSearch4.value++
           break;
-        case '5':
+        case 5:
           activeSearch5.value++
           break;
         default:
