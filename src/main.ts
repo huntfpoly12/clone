@@ -48,7 +48,7 @@ Object.entries(requireComponent).forEach((fileComponent) => {
   // Register component globally
   app.component(componentName,defineAsyncComponent(componentImport))
 })
-setNewUserToken()
+// setNewUserToken()
 
 app.config.globalProperties.$messages = Message;
 app.config.globalProperties.$filters = filters;
@@ -59,4 +59,4 @@ app.config.warnHandler = () => {}; // tắt cảnh báo vue
 app.use(globalDirectives)
 app.use(router);
 app.use(store);
-app.use(Antd).mount("#app"); 
+app.use(Antd).mount("#app");

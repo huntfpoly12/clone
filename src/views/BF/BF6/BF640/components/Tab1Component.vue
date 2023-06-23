@@ -307,7 +307,7 @@ export default defineComponent({
     const userInfor = computed(() => store.state.auth.userInfor);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const dayReport = ref(dayjs().format("YYYYMM")+dayjs().daysInMonth());
+    const dayReport = ref(`${dayjs().year()}0802`);
     let checkBoxSearch = [...checkBoxSearchStep1];
     let valueDefaultCheckbox = ref(1);
     let valueDefaultSwitch = ref(true);
@@ -642,17 +642,17 @@ export default defineComponent({
      *    If it is the first report of the year, the reporting date will be August 2 of this year.
      *   If the report is year - end, the reporting date will be February 1 of the following year
      */
-    // watch(
-    //   () => dataSearch.value.paymentHalfYear,
-    //   (newVal) => {
-    //     if (newVal == 1) {
-    //       dayReport.value = `${globalYear.value}0802`;
-    //     } else {
-    //       dayReport.value = `${globalYear.value + 1}0201`;
-    //     }
-    //   },
-    //   { deep: true }
-    // );
+    watch(
+      () => dataSearch.value.paymentHalfYear,
+      (newVal) => {
+        if (newVal == 1) {
+          dayReport.value = `${dayjs().year()}0802`;
+        } else {
+          dayReport.value = `${dayjs().year() + 1}0201`;
+        }
+      },
+      { deep: true }
+    );
 
     // const productionStatusData = (emitVal: any) => {
     //     defaultDataSource.value.map((item : any)=>{

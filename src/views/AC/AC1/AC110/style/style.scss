@@ -67,6 +67,7 @@
         padding-right: 10px;
         :deep(.dx-toolbar .dx-toolbar-items-container) {
           height: 55px !important;
+          margin-top: 1px;
         }
         &-wrapper {
           height: 100%;
@@ -75,6 +76,7 @@
         }
         &-title {
           background-color: #bdd7ee;
+          height: 34px;
           padding: 3px 5px;
           display: flex;
           align-items: center;

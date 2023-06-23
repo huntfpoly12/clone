@@ -290,12 +290,12 @@ export default defineComponent({
     const modalAddNewDependent = ref<boolean>(false);
     const modalEditStatus = ref<boolean>(false);
     const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
-    const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120)
+    const formStateTab1PA120 = computed(() => store.state.common.formStateTab1PA120)
 
     const originDataDetail = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
-      employeeId: initFormStateTabPA120.value.employeeId,
+      employeeId: formStateTab1PA120.value.employeeId,
     });
     const { refetch, result, loading } = useQuery(
       queries.getEmployeeWage,
@@ -312,7 +312,7 @@ export default defineComponent({
     const singleParentSummary = ref();
     const maternityAdoptionSummary = ref();
     const editForm = ref();
-    const idRowEdit = ref(initFormStateTabPA120.value.employeeId);
+    const idRowEdit = ref(formStateTab1PA120.value.employeeId);
     const newForm = ref(0);
     const relationAll = ref();
     watch(result, (value) => {

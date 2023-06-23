@@ -73,3 +73,6 @@
 :deep(.dx-datagrid-summary-item ) {
   font-size: 14px;
 }
+:deep(.dx-checkbox-container) {
+  overflow: visible;
+}

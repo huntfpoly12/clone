@@ -137,7 +137,7 @@
           <a-col :span="9" :offset="9">
             <div style="display: flex;">
               <button-basic class="button-form-modal" text="로그아웃" :width="90" :type="'default'" :mode="'contained'"  @onClick="logout"/>
-            </div>         
+            </div>
           </a-col>
         </a-row>
     </a-modal>

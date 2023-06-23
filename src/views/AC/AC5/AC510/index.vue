@@ -202,6 +202,7 @@ export default defineComponent({
 				dataGetAccountingProcesses.value?.find(
 					(item: any) => item.month === monthSelected.value
 				)?.year;
+			dataQueryGetAccountBookReportViewUrl.value.month = monthSelected.value
 			dataQueryGetAccountBookReportViewUrl.value.type = data.type;
 			triggerGetAccountBookReportViewUrl.value = true;
 		};

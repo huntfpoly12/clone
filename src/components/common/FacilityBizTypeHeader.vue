@@ -16,14 +16,14 @@
             <a-row  class="item-row ac-settings">
               <a-col  :span="24" >
                 <div style="display: flex;">
-                  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" width="195px" :data-source="listFacilityBizTypeForUser" 
-                    v-model:value="facilityBiz"  :display-expr="'name'" :value-expr="'facilityBusinessId'" 
+                  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" width="195px" :data-source="listFacilityBizTypeForUser"
+                    v-model:value="facilityBiz"  :display-expr="'name'" :value-expr="'facilityBusinessId'"
                   :height="$config_styles.HeightInput"  placeholder="사업유형 선택" :disabled="!infos" style="margin-right: 2px;">
                   <DxValidator>
                         <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
                     </DxValidator>
                   </DxSelectBox>
-      
+
                   <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" v-model:value="acYear" :items="acArrYear"  width="70px" :disabled="!infos" placeholder="년" :height="$config_styles.HeightInput">
                     <DxValidator>
                         <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
@@ -37,7 +37,7 @@
               <a-col :span="24">
                 <div style="display: flex;">
                   <span style="width: 195px;" :class="!info ? 'opacity': ''" > 원천업무 귀속연도 선택 </span>
-                  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" v-model:value="paYear" :items="paArrYear" width="70px" :disabled="!info" placeholder="년" :height="$config_styles.HeightInput">              
+                  <DxSelectBox :noDataText="Message.getMessage('COMMON', '901').message" v-model:value="paYear" :items="paArrYear" width="70px" :disabled="!info" placeholder="년" :height="$config_styles.HeightInput">
                     <DxValidator>
                         <DxRequiredRule :message=" Message.getMessage('COMMON', '102').message" />
                     </DxValidator>
@@ -60,15 +60,15 @@
         <a-col :span="9" :offset="paStateYear && acStateYear ? 8 : 9">
           <div style="display: flex;">
             <button-basic v-if="paStateYear && acStateYear" class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="handleCancel" style="margin-right: 10px;"/>
-            <DxButton 
+            <DxButton
               :width="74"
-              @click="handleOk" 
-              styling-mode="contained"  
-              :style="{ color: $config_styles.ColorButtonDefault, backgroundColor: '#0078D7', border: $config_styles.BorderButtonDefault }" 
+              @click="handleOk"
+              styling-mode="contained"
+              :style="{ color: $config_styles.ColorButtonDefault, backgroundColor: '#0078D7', border: $config_styles.BorderButtonDefault }"
               :height="$config_styles.HeightInput"
-              :text="paStateYear && acStateYear ? '네' : '확인'" 
+              :text="paStateYear && acStateYear ? '네' : '확인'"
             />
-          </div>         
+          </div>
         </a-col>
       </a-row>
       </standard-form>
@@ -80,7 +80,7 @@ import { defineComponent, ref, computed, watch, onMounted,  } from "vue";
 import { useStore } from 'vuex';
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import { companyId, setMenuTab } from "@/helpers/commonFunction";
+import { setMenuTab } from "@/helpers/commonFunction";
 import { WarningOutlined } from "@ant-design/icons-vue";
 import DxButton from 'devextreme-vue/button';
 import { getJwtObject } from "@bankda/jangbuda-common";
@@ -111,9 +111,10 @@ export default defineComponent({
     const userInfor = computed(() => store.getters['auth/getUserInfo'])
     const acYear = ref(dayjs().year())
     const paYear = ref(dayjs().year())
+    const companyId = computed(() => sessionStorage.getItem("token") ? getJwtObject(sessionStorage.getItem("token") as string).companyId : null)
     let listFacilityBizTypeForUser:any = ref([]);
     const dataQuery = ref({
-      companyId
+      companyId: companyId.value
     });
     const facilityBusinessTrigger = ref(false);
     onMounted(() => {
@@ -125,7 +126,7 @@ export default defineComponent({
       if(facilityBiz.value && infos){
           let act = infos?.find(item => item.id == facilityBiz.value)
           const year :any = act?.startYearMonth.toString().substring(0, 4);
-          const currentYear = dayjs().year(); 
+          const currentYear = dayjs().year();
           let startYear = parseInt(year);
           const yearArray = [];
           for (startYear; startYear <= currentYear; startYear++) {
@@ -137,7 +138,7 @@ export default defineComponent({
     const paArrYear = computed(()=>{
       if(info){
           const year :any = info?.startYearMonth.toString().substring(0, 4);
-          const currentYear = dayjs().year(); 
+          const currentYear = dayjs().year();
           let startYear = parseInt(year);
           const yearArray = [];
           for (startYear; startYear <= currentYear; startYear++) {
@@ -152,7 +153,7 @@ export default defineComponent({
       store.commit('settings/setListFacilityBizTypeForUser', param)
       if (!(paStateYear.value && acStateYear.value)) facilityBiz.value = param[0]?.facilityBusinessId || null;
     }
-    if(companyId && jwtObject.payload.aut){
+    if(companyId.value && jwtObject.payload.aut){
       facilityBusinessTrigger.value = true;
     }
     const {result} = useQuery(queries.getMyCompanyFacilityBusinesses,dataQuery,
@@ -178,7 +179,7 @@ export default defineComponent({
         notification('warning', 'you have not selected base project and allocation year')
       }
     }
-    const handleOk = () => { 
+    const handleOk = () => {
       var res = settingFacilityBizType.value.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
@@ -187,6 +188,7 @@ export default defineComponent({
         if (infos) {
           let dt = listFacilityBizTypeForUser.value.find((item: any) => item.facilityBusinessId == facilityBiz.value)
           sessionStorage.setItem("globalFacilityBizId", facilityBiz.value)
+          sessionStorage.setItem("facilityBizType", dt.facilityBizType)
           sessionStorage.setItem("name", dt.name)
           sessionStorage.setItem("acYear", acYear.value.toString())
           acStateYear.value = sessionStorage.getItem("acYear")
@@ -201,7 +203,7 @@ export default defineComponent({
 
         //get and set account subject
         if (jwtObject.userType === 'c' && globalFacilityBizId.value) {
-          store.dispatch('settings/getAccountSubject', { companyId: companyId, fiscalYear: Number(dayjs().year()), facilityBizType: parseInt(globalFacilityBizId.value) })
+          store.dispatch('settings/getAccountSubject', { companyId: companyId.value, fiscalYear: Number(dayjs().year()), facilityBizType: parseInt(globalFacilityBizId.value) })
         }
         setMenuTab([])
         store.commit('settings/setChangeFacilityBusiness')
@@ -263,7 +265,7 @@ p {
   margin-top: 15px;
 }
 .opacity{
-  opacity: 50%;  
+  opacity: 50%;
 }
 .warning-text{
   p{

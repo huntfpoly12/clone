@@ -404,7 +404,7 @@ import { defineComponent, ref, reactive, computed, watch, nextTick } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
-import { companyId, makeDataClean } from "@/helpers/commonFunction";
+import {makeDataClean } from "@/helpers/commonFunction";
 import ProcessStatus from "@/components/common/ProcessStatus.vue";
 import {
   DxItem,
@@ -446,7 +446,7 @@ import {
   BankBookUseType,
   ResolutionClassification,
   FundingSource,
-  LetterOfApprovalType,
+  LetterOfApprovalType, getJwtObject,
 } from "@bankda/jangbuda-common";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import dayjs from "dayjs";
@@ -487,7 +487,7 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
+    const companyId = computed(() => sessionStorage.getItem("token") ? getJwtObject(sessionStorage.getItem("token") as string).companyId : null)
     const acYear = computed(() =>
       parseInt(sessionStorage.getItem("acYear") ?? "0")
     );
@@ -564,14 +564,14 @@ export default defineComponent({
     let isModalConfirmChangeData = ref(false);
     let itemChange: any = ref(null);
     const payloadGetTransactionDetails: any = reactive({
-      companyId: companyId,
+      companyId: companyId.value,
       fiscalYear: acYear.value,
       facilityBusinessId: globalFacilityBizId.value,
       bankbookDetailDate: null,
       bankbookDetailId: null,
     });
     const payloadGetAccountingProcessLogs: any = reactive({
-      companyId: companyId,
+      companyId: companyId.value,
       fiscalYear: acYear.value,
       facilityBusinessId: globalFacilityBizId.value,
       year: acYear.value,
@@ -632,7 +632,7 @@ export default defineComponent({
     } = useQuery(
       queries.getAccountingProcesses,
       {
-        companyId: companyId,
+        companyId: companyId.value,
         fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
       },
@@ -696,6 +696,7 @@ export default defineComponent({
       loading: loadingRegisterTransactionDetailsToAccountingDocuments,
     } = useMutation(mutations.registerTransactionDetailsToAccountingDocuments);
     doneRegisterTransactionDetailsToAccountingDocuments((e) => {
+      selectedRowKeys.value = []
       triggerBankbookDetails.value = true;
       notification("success", Message.getMessage("COMMON", "106").message);
     });
@@ -1065,7 +1066,7 @@ export default defineComponent({
     const handleConfirmRetrieveStatements = () => {
       isModalRetrieveStatements.value = false;
       syncBankbookDetails({
-        companyId: companyId,
+        companyId: companyId.value,
         fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         year: acYear.value,
@@ -1085,7 +1086,7 @@ export default defineComponent({
       });
       isModalSlipRegistrationSelected.value = false;
       registerTransactionDetailsToAccountingDocuments({
-        companyId: companyId,
+        companyId: companyId.value,
         fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         keys: keys,
@@ -1103,7 +1104,7 @@ export default defineComponent({
       });
       isModalSlipRegistrantion.value = false;
       registerTransactionDetailsToAccountingDocuments({
-        companyId: companyId,
+        companyId: companyId.value,
         fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         keys: keys,
@@ -1120,7 +1121,7 @@ export default defineComponent({
       });
       isModalSlipCancellation.value = false;
       unregisterTransactionDetailsToAccountingDocuments({
-        companyId: companyId,
+        companyId: companyId.value,
         fiscalYear: acYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         bankbookDetailDate,
