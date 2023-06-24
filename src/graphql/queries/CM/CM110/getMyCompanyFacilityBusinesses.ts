@@ -8,5 +8,6 @@ export default gql`
                 facilityBusinessId
                 name
                 startYearMonth
+                facilityBizType
             }
         }`

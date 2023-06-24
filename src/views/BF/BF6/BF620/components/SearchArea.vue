@@ -15,9 +15,9 @@
       <a-col class="ml-30">
         <div >
           <a-form-item label="신고주기" class="" v-if="tab1">
-            <!-- <span > -->
-              <checkbox-basic @change="onChangeCheckbox1" size="14" label="전체" class="mr-20" v-model:valueCheckbox="reportType.checkbox1" />
-            <!-- </span> -->
+            <span @click="onChangeCheckbox1">
+              <checkbox-basic  size="14" label="전체" class="mr-20" v-model:valueCheckbox="reportType.checkbox1" />
+            </span>
             <checkbox-basic size="14" label="매월" class="mr-20" v-model:valueCheckbox="reportType.checkbox2" />
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
           </a-form-item>
@@ -115,7 +115,7 @@ export default defineComponent({
     watch(
       () => [reportType.value.checkbox2, reportType.value.checkbox3],
       ([newVal2, newVal3]) => {
-        if (newVal2 && newVal3 && props.tab1) {
+        if (newVal2 && newVal3) {
           reportType.value.checkbox1 = true;
           filterBF620.value.reportType = null;
           return;
@@ -147,7 +147,6 @@ export default defineComponent({
         filterBF620.value.paymentMonth = +month2.value.toString().slice(4, 6);
       }
     });
-
     // watch beforeProduction
 
     watch(() => filterBF620.value.beforeProduction, (newVal: any) => {
