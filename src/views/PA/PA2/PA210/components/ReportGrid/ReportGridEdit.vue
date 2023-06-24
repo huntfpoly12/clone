@@ -573,7 +573,7 @@ export default defineComponent({
           "initTable"
         );
       await checkDisableRefund()
-      await checkDisableA04A06()
+      if(dataSource.value[0].status == 10) await checkDisableA04A06()
     };
 
     const {
