@@ -64,8 +64,8 @@
             </DxDataGrid>
         </a-spin>
     </div>
-    <ModalDetail :modalStatus="statusModalDetail" @closePopup="statusModalDetail = false"></ModalDetail>
-    <ModalUpload :modalStatus="statusModalUpload" @closePopup="statusModalUpload = false"></ModalUpload>
+    <ModalDetail :modalStatus="statusModalDetail" @closePopup="statusModalDetail = false" :requestId="requestId"></ModalDetail>
+    <ModalUpload :modalStatus="statusModalUpload" @closePopup="statusModalUpload = false" @resetTable="searching()"></ModalUpload>
 </template>
 <script lang="ts">
 import { useStore } from "vuex";
@@ -124,7 +124,7 @@ export default defineComponent({
         const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
         const gridRefAC210 = ref(); // ref of grid
         const rangeDate = ref([parseInt(dayjs().subtract(1, "month").format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
-
+        let requestId = ref<number>()
         let statusModalDetail = ref<boolean>(false);
         let statusModalUpload = ref<boolean>(false);
         let triggerSearchAccountingDocumentW4cUploads = ref<boolean>(true);
@@ -177,6 +177,7 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
         const actionOpenModalDetail = (data: any) => {
+            requestId.value = data.requestId
             statusModalDetail.value = true
         }
         const actionOpenModalUpload = (data: any) => {
@@ -207,6 +208,7 @@ export default defineComponent({
             windowOpen,
             searching,
             loadingSearchAccountingDocumentW4cUploads,
+            requestId,
         };
     },
 });
