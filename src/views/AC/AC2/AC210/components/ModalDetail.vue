@@ -1,8 +1,8 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1650">
         <div class="mt-20" :key="countKey">
-            <a-spin :spinning="false">
-                <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="accountingDocumentId" :show-row-lines="true"
+            <a-spin :spinning="loadingGetAccountingDocumentW4cUploadItems">
+                <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="requestId" :show-row-lines="true"
                     :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefDetailAC210"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
@@ -85,6 +85,7 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
+        requestId: Number,
     },
 
     setup(props, { emit }) {
@@ -97,12 +98,13 @@ export default defineComponent({
         const gridRefDetailAC210 = ref(); // ref of grid
         let triggerGetAccountingDocumentW4cUploadItems = ref<boolean>(false);
         const argumentGetAccountingDocumentW4cUploadItems = ref({
-
+            companyId: companyId,
+            requestId: props.requestId
         }); 
         const dataSource: any = ref(new DataSource({
             store: {
                 type: "array",
-                key: "accountingDocumentId",
+                key: "requestId",
                 data: [],
             },
             requireTotalCount: true,
@@ -129,7 +131,21 @@ export default defineComponent({
 
         // ================== WATCH ================
         watch(() => props.modalStatus, (newValue, old) => {
-
+            if (newValue) {
+                argumentGetAccountingDocumentW4cUploadItems.value
+                triggerGetAccountingDocumentW4cUploadItems.value = true;
+            }
+        });
+        watch(resGetAccountingDocumentW4cUploadItems, (value) => {
+            triggerGetAccountingDocumentW4cUploadItems.value = false;
+            dataSource.value = new DataSource({
+                store: {
+                    type: "array",
+                    key: "requestId",
+                    data: value.getAccountingDocumentW4cUploadItems,
+                },
+                requireTotalCount: true,
+            });
         });
 
         // ================ FUNCTION ============================================
@@ -144,6 +160,7 @@ export default defineComponent({
             countKey,
             store,
             dataSource, gridRefDetailAC210,
+            loadingGetAccountingDocumentW4cUploadItems,
         };
     },
 });
