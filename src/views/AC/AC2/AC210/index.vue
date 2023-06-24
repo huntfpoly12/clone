@@ -1,5 +1,5 @@
 <template>
-    <action-header :buttonDelete="false" :buttonSearch="true" @actionSearch="searching($event)" :buttonSave="false" :buttonPrint="false" />
+    <action-header :buttonDelete="false" :buttonSearch="true" @actionSearch="searching()" :buttonSave="false" :buttonPrint="false" />
     <div class="ac-210 page-content">
         <a-spin :spinning="loadingSearchAccountingDocumentW4cUploads">
             <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="requestId" :show-row-lines="true"
