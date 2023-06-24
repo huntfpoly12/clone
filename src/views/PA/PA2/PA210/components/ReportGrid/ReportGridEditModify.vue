@@ -403,6 +403,7 @@ export default defineComponent({
     });
     // The above code is used to load the data from the database to the table.
     const loadNew = async (firstLoad: boolean) => {
+      let oldPropsData : any = props.dataReport[0]
       clearAllCellValue(wrapper);
       // call api to set modified value
       originData.value = {
@@ -415,7 +416,7 @@ export default defineComponent({
           reportType: dataSource.value[0].reportType,
           index: dataSource.value[0].index,
           paymentType: dataSource.value[0].paymentType,
-          yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+          yearEndTaxAdjustment: oldPropsData.yearEndTaxAdjustment,
         },
       };
       if (!firstLoad) {

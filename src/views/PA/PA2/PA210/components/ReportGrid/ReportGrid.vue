@@ -138,7 +138,7 @@
                 cell-template="yearEndTaxAdjustment"
                 css-class="cell-center"
               />
-              <template #yearEndTaxAdjustment="{ data }">
+              <template #yearEndTaxAdjustment="{ data }">{{ data.data.yearEndTaxAdjustment }}
                 <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"  :disabled="true"/>
               </template>
               <DxColumn
@@ -303,7 +303,7 @@ export default defineComponent({
     },
     dataReport: {
       type: Array,
-      default: [],
+      default: Array(),
     },
   },
   components: {
@@ -329,6 +329,11 @@ export default defineComponent({
     const confirmLoadNewStatus = ref<boolean>(false);
     const firstTimeLoad = ref<boolean>(false);
     const cellPageSettings = ref<any>(cellsSetting);
+
+    const trigger = ref<boolean>(false);
+    const dataSource = ref<any>(JSON.parse(JSON.stringify(props.dataReport)));
+    const originData = ref();
+
     // The above code is setting up the hot table.
     const hotSettings = {
       comments: true,
@@ -402,10 +407,6 @@ export default defineComponent({
       licenseKey: "non-commercial-and-evaluation",
     };
 
-    const trigger = ref<boolean>(false);
-    const dataSource = ref<any>(JSON.parse(JSON.stringify(props.dataReport)));
-    const originData = ref();
-
     const setModalVisible = () => {
       emit("closePopup", false);
     };
@@ -414,13 +415,6 @@ export default defineComponent({
       clearAllCellValue(wrapper);
       loadNew(true);
     });
-
-    watch(
-      () => props.dataReport,
-      (newValue) => {
-        dataSource.value = newValue;
-      }
-    );
 
     // Get IncomesForTaxWithholdingStatusReport
     const {
@@ -464,6 +458,7 @@ export default defineComponent({
 
     // A function that is called when the user clicks on the "Load New" button.
     const loadNew = async (firstLoad: boolean) => {
+      let oldPropsData : any = props.dataReport[0]
       clearAllCellValue(wrapper);
       originData.value = {
         companyId: companyId,
@@ -475,7 +470,7 @@ export default defineComponent({
           reportType: dataSource.value[0].reportType,
           index: dataSource.value[0].index,
           paymentType: dataSource.value[0].paymentType,
-          yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+          yearEndTaxAdjustment: oldPropsData.yearEndTaxAdjustment,
         },
       };
       trigger.value = true;
@@ -789,5 +784,9 @@ export default defineComponent({
   .mytooltip {
     margin-left: -45px;
   }
+
+}
+.ant-modal-close {
+  height: 43px !important;
 }
 </style>
