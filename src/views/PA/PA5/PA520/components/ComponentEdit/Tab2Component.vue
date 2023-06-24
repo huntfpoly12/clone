@@ -255,7 +255,7 @@
           mode="contained"
           class="ml-5"
           @onClick="actionUpdated"
-          id="action-update"
+          id="action-update-tab2"
         />
       </div>
       <div style="text-align: center; margin-top: 15px">
@@ -440,8 +440,6 @@ export default defineComponent({
       refectchDetail();
       emit("closePopup", false);
       notification("success", Message.getCommonMessage("106").message);
-      if (clickYearStatus.value !== ClickYearStatus.none)
-        store.commit("settings/setCurrentYear");
     });
     // ================== WATCH ====================================
     watch(

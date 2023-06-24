@@ -9,8 +9,8 @@
         </a-form-item>
         <a-form-item label="귀속/지급연월">
           <div class="d-flex-center">
-            <month-picker-box-custom v-model:valueDate="attributionDate" text="귀" bgColor="gray" :disabled="retirementStatus === 20"/>
-            <month-picker-box-custom v-model:valueDate="paymentYearAndMonth" text="지" :disabled="retirementStatus === 20"/>
+            <month-picker-box-custom v-model:valueDate="attributionDate" text="귀" bgColor="gray" disabled/>
+            <month-picker-box-custom v-model:valueDate="paymentYearAndMonth" text="지" disabled/>
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="label-required">
@@ -73,7 +73,7 @@
             <date-time-box-custom width="150px"
                                   :disabled="!interimPaymentTab1 || retirementStatus === 20"
                                   :startDate="dayjs(String(formState.prevRetiredYearsOfService.settlementStartDate)).add(1, 'day')"
-                                  :finishDate="finishDateRetirement"
+                                  :finishDate="finishDateRetirement && dayjs(String(finishDateRetirement))"
                                   v-model:valueDate="formState.prevRetiredYearsOfService.settlementFinishDate"
                                   ref="prevSettlementFinishDate"/>
             <info-tool-tip>
@@ -245,7 +245,7 @@ const emit = defineEmits(['closePopup', 'nextPage'])
 const prevRetiredYearsOfService = props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService
 const lastRetiredYearsOfService = props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService
 const prevRetirementBenefitStatus = props.dataDetail.specification?.specificationDetail.prevRetirementBenefitStatus
-const FORM_STATE_OLD = cloneDeep({
+const FORM_STATE_OLD: any = cloneDeep({
   prevRetiredYearsOfService: {
     settlementStartDate: prevRetiredYearsOfService?.settlementStartDate || null,
     settlementFinishDate: prevRetiredYearsOfService?.settlementFinishDate || null,
@@ -390,18 +390,20 @@ watch(interimPaymentTab1, (value) => {
     formState.lastRetiredYearsOfService.settlementStartDate = cloneDeep(props.dataDetail.employee?.joinedAt) as number | null
   } else {
     formState.prevRetiredYearsOfService = cloneDeep(FORM_STATE_OLD.prevRetiredYearsOfService)
+    formState.prevRetiredYearsOfService.settlementStartDate = props.dataDetail.employee?.joinedAt
+    formState.lastRetiredYearsOfService.settlementStartDate = ''
   }
 })
 
-watch(() => formState.prevRetiredYearsOfService.settlementStartDate, (value: any) => {
-  if (value) {
-
-    formState.incomeCalculationInput.settlementStartDate = value
-    if (+value >= Number(formState.prevRetiredYearsOfService.settlementFinishDate)) {
-      formState.prevRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
-    }
-  }
-});
+// watch(() => formState.prevRetiredYearsOfService.settlementStartDate, (value: any) => {
+//   if (value) {
+//
+//     formState.incomeCalculationInput.settlementStartDate = value
+//     if (+value >= Number(formState.prevRetiredYearsOfService.settlementFinishDate)) {
+//       formState.prevRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
+//     }
+//   }
+// });
 watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: any) => {
   if (value && +value > Number(formState.lastRetiredYearsOfService.settlementStartDate)) {
     formState.lastRetiredYearsOfService.settlementStartDate = value

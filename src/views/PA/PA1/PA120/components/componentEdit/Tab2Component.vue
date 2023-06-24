@@ -511,12 +511,6 @@ const vnode = h("div", [
 ]);
 export default defineComponent({
   components: { Datepicker, DxButton },
-  props: {
-    isTabchange: {
-      type: Boolean,
-    },
-    modalStatus: Boolean,
-  },
   setup(props, { emit }) {
     const store = useStore();
     const employeeIdPA120 = computed(() => store.state.common.employeeIdPA120);
@@ -559,7 +553,7 @@ export default defineComponent({
     const checkIncomeFirst = ref(false); // whether display colorRed in deduction 1012. Don't check when it's firstTime.
 
     // fn common
-
+    
     const convertToDate = (date: number | null) => {
       if (date === null) {
         return dayjs();
@@ -702,10 +696,7 @@ export default defineComponent({
       imputedYear: globalYear.value,
       useOnly: true,
     });
-    const {
-      result: resConfigDeduction,
-      loading: loading2,
-    } = useQuery(
+    const { result: resConfigDeduction, loading: loading2 } = useQuery(
       queries.getWithholdingConfigDeductionItems,
       configdeductionParam,
       () => ({
@@ -751,10 +742,7 @@ export default defineComponent({
       useOnly: true,
     });
     const configPayItemTrigger = ref(true);
-    const {
-      result: resConfigPayItems,
-      loading: loading1,
-    } = useQuery(
+    const { result: resConfigPayItems, loading: loading1 } = useQuery(
       queries.getWithholdingConfigPayItems,
       configPayItemsParam,
       () => ({
@@ -807,7 +795,7 @@ export default defineComponent({
     }));
     onErrorEmployee(() => {});
     watch(resultGetEmployeeWage, async (value) => {
-      console.log(`output->tab2`)
+      // console.log(`output->tab2`)
       if (value) {
         let data = value.getEmployeeWage;
         let editRowData: any = {};
@@ -821,7 +809,7 @@ export default defineComponent({
           data.employeementInsuranceDeduction;
         editRowData.insuranceSupport = data.insuranceSupport;
         if (
-          data?.nationalPensionSupportPercent >= 0 &&
+          data?.nationalPensionSupportPercent !== null &&
           editRowData.insuranceSupport
         ) {
           editRowData.nationalPensionSupportPercent =
@@ -831,7 +819,7 @@ export default defineComponent({
           delete formOriginTab2PA120.value.nationalPensionSupportPercent;
         }
         if (
-          data?.employeementInsuranceSupportPercent >= 0 &&
+          data?.employeementInsuranceSupportPercent !== null &&
           editRowData.insuranceSupport
         ) {
           editRowData.employeementInsuranceSupportPercent =
@@ -924,8 +912,8 @@ export default defineComponent({
      * Calculate Income Wage Tax API
      */
 
-    const localIncomeBoo = ref(false);
-    const localReal = ref(0);
+    const localIncomeBoo = ref(false); // check deduction 1012 > 0 và 1011 < 1000 thì hiện tooltip
+    const localReal = ref(0); // giá trị thực của deduction 1012
     const calculateVariables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -953,7 +941,7 @@ export default defineComponent({
             100
         );
         let itemValue12 = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
-        localIncomeBoo.value = itemValue12 < 1000;
+        localIncomeBoo.value = itemValue12 < 1000 && itemValue11 > 0;
         localReal.value = itemValue12;
         formStateTab2PA120.value.deductionItems.map((item: any) => {
           if (item.itemCode == 1011) {
@@ -1002,14 +990,14 @@ export default defineComponent({
         rangeDate.value = [null, null];
       }
     };
-    //Calculate all pension in dection
+    //Calculate all pension in dection (tính toán toàn bộ lương hưu)
     const calculateTax = (e: any) => {
       if (e) {
         calcPension();
         triggerCalcIncomeWageTax.value = true;
       }
     };
-    // watch president to disable employeementInsuranceDeduction
+    // watch president to disable employeementInsuranceDeduction and calculate the related value
     watch(
       () => presidentEditPA120.value,
       (newValue) => {
@@ -1017,10 +1005,18 @@ export default defineComponent({
           delete formStateTab2PA120.value.nationalPensionSupportPercent;
           delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
           if (formStateTab2PA120.value.employeementInsuranceDeduction) {
-            formOriginTab2PA120.value.deductionItems[3].value = 0;
+            let total1 = formStateTab2PA120.value.nationalPensionDeduction
+              ? calculateNationalPensionEmployee(
+                  calculateVariables.totalTaxPay,
+                  formStateTab2PA120.value.nationalPensionSupportPercent
+                )
+              : 0;
+            formStateTab2PA120.value.deductionItems[0].value = total1
+            formStateTab2PA120.value.deductionItems[3].value = 0;
+            formOriginTab2PA120.value.deductionItems = JSON.parse(JSON.stringify(formStateTab2PA120.value.deductionItems));
             formStateTab2PA120.value.employeementInsuranceDeduction = false;
             formStateTab2PA120.value.insuranceSupport = false;
-            formStateTab2PA120.value.insuranceSupport = false;
+            onCalcSumDeduction();
             updateDeduction();
           }
         }
@@ -1046,15 +1042,16 @@ export default defineComponent({
       }
     });
     //track deductionCount to change btn color to yellow
-    watch(deductionDependentCountPA120,(newVal: any)=>{
-      if(newVal > 0){
+    watch(deductionDependentCountPA120, (newVal: any) => {
+      if (newVal > 0) {
         isBtnYellow.value = true;
       }
-    })
+    });
 
     /**
      *  Save form
      */
+
     const { mutate, onError, onDone } = useMutation(
       mutations.saveEmployeeWagePayDeductionReduction
     );
@@ -1118,6 +1115,8 @@ export default defineComponent({
       ) {
         formStateTab2PA120.value.deductionItems[3].value = 0;
         formOriginTab2PA120.value.deductionItems[3].value = 0;
+        // delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
+        // delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
         return true;
       }
       return false;

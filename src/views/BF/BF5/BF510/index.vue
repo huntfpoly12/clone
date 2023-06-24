@@ -223,8 +223,8 @@ const cloneWebsite = () => {
   const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
   const currentUrl = window.location.origin.replace(/\/$/, '');
   if (userToken.refreshToken && userToken.accessToken) {
-    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&username=${companyInfo.username}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${companyInfo.facilityBusinessName}&year=${dataSearch.year}&path=AC110&onlyView=true`
-    window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,');
+    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&username=${companyInfo.username}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${companyInfo.facilityBusinessName}&year=${dataSearch.year}&month=${dataSearch.month}&path=AC110`
+    window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,' + windowFeatures);
   }
 }
 const closePopup = (e: boolean) => {

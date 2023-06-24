@@ -18,7 +18,7 @@
       <div class="text-center">
         <a-spin :spinning="loading" size="large" />
       </div>
-      <keep-alive v-if="dataDetail.incomeId !== 0">
+      <keep-alive v-if="dataDetail">
         <template v-if="step === 0">
           <Tab1
             @closePopup="setModalVisible"
@@ -31,7 +31,7 @@
           <Tab2 :data-detail="dataDetail" />
         </template>
         <template v-else>
-          <Tab3 ref="formEditTab3" :data-detail="dataDetail" />
+          <Tab3 ref="formEditTab3" :data-detail="dataDetail.specification" />
         </template>
       </keep-alive>
     </div>
@@ -101,9 +101,7 @@ const step = ref(0);
 const valueNextStep = ref(0);
 const isDataFormChange = ref(false);
 const statusModal = ref(props.modalStatus);
-const dataDetail = reactive<IncomeRetirement>(
-  cloneDeep(dataDefaultDetailUtils)
-);
+const dataDetail = ref<IncomeRetirement | null>(null);
 
 const variableGetDetail: any = ref({
   companyId: companyId,
@@ -138,7 +136,7 @@ const {
 }));
 resultGetDetail(async (newValue) => {
   if (newValue && newValue.data) {
-    Object.assign(dataDetail, newValue.data.getIncomeRetirement);
+    dataDetail.value = newValue.data.getIncomeRetirement
     // if prevRetiredYearsOfService or prevRetirementBenefitStatus is null then assign it with a default value
     if (
       newValue.data.getIncomeRetirement.specification.specificationDetail
