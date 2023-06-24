@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="false" size="large">
     <div id="pa-520" class="page-content">
-      <a-tabs v-model:activeKey="currentTabKey" type="card" @change="handleChangeTab">
+      <a-tabs v-model:activeKey="currentTabKey" type="card">
         <a-tab-pane key="1" tab="기본" class="tab1">
           <Tab1Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" />
         </a-tab-pane>
@@ -11,17 +11,6 @@
       </a-tabs>
     </div>
   </a-spin>
-
-  <!--  xử lý popup riêng cho trường hợp chuyển tab -->
-  <PopupMessage
-    :modalStatus="modalConfirmChangeTab"
-    typeModal="confirm"
-    :content="Message.getCommonMessage('501').message"
-    okText="네"
-    cancelText="아니오"
-    @checkConfirm="confirmSaveEdit($event,currentTabKey)"
-    @closePopup="closePopupConfirmChangeTab($event,currentTabKey)"
-  />
 </template>
 
 <script lang="ts">
@@ -42,8 +31,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const tab1IsChange = computed(() => store.getters['common/checkChangeValueEditTab1PA520']);
-    const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
     const modalConfirmChangeTab = ref(false);
     const currentTabKey = ref('1');
 
@@ -55,45 +42,12 @@ export default defineComponent({
       emit('closePopup', false);
     };
 
-    const handleChangeTab = (key : string) => {
-      if (isTabChangeAllowed()) {
-        currentTabKey.value = key;
-      }
-    };
-
-    const isTabChangeAllowed = () => {
-      if (tab1IsChange.value || tab2IsChange.value) {
-        modalConfirmChangeTab.value = true;
-        return false;
-      }
-      return true;
-    };
-
-    
-    const confirmSaveEdit = async (confirmed : boolean, currentTab: string) => {
-      if (confirmed) {
-        if (tab1IsChange.value) {
-          store.state.common.actionUpdateTab1PA520++;
-        } else {
-          store.state.common.actionUpdateTab2PA520++;
-        }
-        modalConfirmChangeTab.value = false;
-        currentTabKey.value = currentTab == '1' ? '2' : '1';
-      }
-    };
-    const closePopupConfirmChangeTab = (event: boolean, currentTab: string) => {
-      currentTabKey.value = currentTab == '1' ? '2' : '1';
-      modalConfirmChangeTab.value = false;
-    }
     return {
       setModalVisible,
-      handleChangeTab,
       Message,
       store,
       currentTabKey,
-      confirmSaveEdit,
-      modalConfirmChangeTab,
-      closePopupConfirmChangeTab
+      modalConfirmChangeTab
     };
   },
 });
