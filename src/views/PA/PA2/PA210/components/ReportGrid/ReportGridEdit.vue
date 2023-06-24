@@ -412,6 +412,7 @@ export default defineComponent({
     });
     // The above code is used to fill the data into the table.
     const loadNew = async (firstLoad: boolean) => {
+      let oldPropsData : any = props.dataReport[0]
       clearAllCellValue(wrapper);
       // call api to set modified value
       originData.value = {
@@ -424,7 +425,7 @@ export default defineComponent({
           reportType: dataSource.value[0].reportType,
           index: dataSource.value[0].index,
           paymentType: dataSource.value[0].paymentType,
-          yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+          yearEndTaxAdjustment: oldPropsData.yearEndTaxAdjustment,
         },
       };
       if (!firstLoad) {
@@ -915,5 +916,8 @@ export default defineComponent({
   .mytooltip {
     margin-left: -45px;
   }
+}
+:deep .ant-modal-close-x {
+  height: 43px !important;
 }
 </style>
