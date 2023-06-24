@@ -138,7 +138,7 @@
                 cell-template="yearEndTaxAdjustment"
                 css-class="cell-center"
               />
-              <template #yearEndTaxAdjustment="{ data }">{{ data.data.yearEndTaxAdjustment }}
+              <template #yearEndTaxAdjustment="{ data }">
                 <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"  :disabled="true"/>
               </template>
               <DxColumn
