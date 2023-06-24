@@ -175,7 +175,7 @@
           type="default"
           mode="contained"
           @onClick="actionUpdated()"
-          id="action-update"
+          id="action-update-tab1"
         />
       </div>
     </standard-form>

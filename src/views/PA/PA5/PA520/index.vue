@@ -562,8 +562,15 @@ export default defineComponent({
     const actionUpdate = (currentTab: number) => {
       if (currentTab == 1) {
         store.state.common.actionUpdateTab1PA520++;
-      } else {
+      }
+      if (currentTab == 2) {
         store.state.common.actionUpdateTab2PA520++;
+      }
+      if (currentTab == 0) {
+        let elTab1 = document.getElementById("action-update-tab1") as HTMLInputElement;
+        elTab1?.click();
+        let elTab2 = document.getElementById("action-update-tab2") as HTMLInputElement;
+        elTab2?.click();
       }
     };
 
@@ -574,8 +581,14 @@ export default defineComponent({
     const comfirmAndSaveEdit = async (res: any) => {
       //store.dispatch('settings/resetYearStatus')
       if (res == true) {
-        tab1IsChange.value
-          ? await actionUpdate(1) : await actionUpdate(2);
+
+        if (tab1IsChange.value && tab2IsChange.value) {
+          await actionUpdate(0) // click save cả hai tab
+        } else {
+          if (tab1IsChange.value) await actionUpdate(1)
+          if (tab2IsChange.value) await actionUpdate(2)
+        }
+
         const hasValidator = await store.dispatch('common/hasValidator')
         if (hasValidator) {
           if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setClickYearStatus',ClickYearStatus.none)
