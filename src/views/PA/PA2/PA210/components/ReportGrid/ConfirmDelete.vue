@@ -57,6 +57,7 @@ import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification";
 import { companyId } from "@/helpers/commonFunction";
+import { useStore } from "vuex";
 export default defineComponent({
   components: {},
   props: {
@@ -65,6 +66,7 @@ export default defineComponent({
     reportId: Number,
   },
   setup(props, { emit }) {
+    const store = useStore();
     const textComfirm = ref("");
     const disabledBtn = ref<boolean>(true);
     const setModalVisible = () => {
@@ -80,6 +82,7 @@ export default defineComponent({
       onError: errUpdate,
     } = useMutation(mutations.deleteTaxWithholdingStatusReport);
     doneUpdate(() => {
+      store.commit("common/setHasChangedPopupPA210", false);
       notification("success", `보고서가 삭제되었습니다!`);
       setModalVisible();
     });
