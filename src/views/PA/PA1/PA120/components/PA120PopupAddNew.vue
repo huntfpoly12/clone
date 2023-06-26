@@ -7,7 +7,7 @@
           @change="onChangeTab"
           type="card"
         >
-          <a-tab-pane key="1" tab="기본" @tabClick="onClickTab1">
+          <a-tab-pane key="1" tab="기본">
             <Tab1Component
               @employeeId="setEmployeeId"
               @setTabsStatus="setTabsStatus($event)"
@@ -41,10 +41,6 @@ export default defineComponent({
     Tab2Component,
     Tab3Component,
   },
-  props: {
-    modalStatus: Boolean,
-    isDestoy: Boolean,
-  },
   setup(props, { emit }) {
     const tabStatus = ref(true);
     const activeTabAddKeyPA120 = ref("1");
@@ -65,9 +61,6 @@ export default defineComponent({
       }
       // store.commit('common/activeTabAddKeyPA120', e)
     };
-    const onClickTab1 = () => {
-      emit("redirectTab");
-    }
     return {
       setModalVisible,
       setEmployeeId,
@@ -78,7 +71,6 @@ export default defineComponent({
       setTabsStatus,
       onChangeTab,
       activeTabAddKeyPA120,
-      onClickTab1,
     };
   },
 });

@@ -209,10 +209,12 @@ export default defineComponent({
       store.commit("common/formStateTab1PA120", editRowData);
       getEmployeeWageTrigger.value = false;
     });
+    //reset state when change employee id
     watch(
       () => employeeIdPA120,
       async (newVal: any) => {
         if (+newVal !== 0) {
+          presidenStatus.value = false;
           getEmployeeParam.value.employeeId = newVal;
           if (getEmployeeParam.value.employeeId) {
             getEmployeeWageTrigger.value = true;
@@ -236,7 +238,6 @@ export default defineComponent({
     errorDepartments((_error) => {
       //notification('error', error.message);
     });
-
     watch(resDepartments, (value: any) => {
       if (value) {
         arrDepartments.value = value.getDepartments.map((item: any) => ({

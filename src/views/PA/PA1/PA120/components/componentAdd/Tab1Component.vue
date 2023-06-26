@@ -1,7 +1,6 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
-      {{ isEdit }}
       <standard-form formName="tab1-pa120" :disabled="true">
         <a-form-item label="사번(코드)" label-align="right">
           <div class="input-text">
@@ -275,9 +274,7 @@ export default defineComponent({
     const companyParam = ref({
       companyId: companyId,
     });
-    const presidentOriginPA120 = computed(          // check xem khi lưu president có bị thay đổi ko ?
-      () => store.state.common.presidentOriginPA120
-    );
+    store.commit("common/createSucessTab1PA120", false);
 
     // --------------------------get Data Departments--------------------------
 
@@ -333,15 +330,6 @@ export default defineComponent({
     const changeTextCountry = (text: any) => {
       formStateTab1PA120.value.nationality = text;
     };
-    //NOTIFY PRESIDENT CHANGE
-    const presidentWaring =
-      "대표자는 고용보험, 두루누리사회보험에서 제외됩니(기존에 선택되어있는 경우 강제로 해지됩니다)";
-    const presidenStatus = ref(false);
-    const onChangePresident = (emit: any) => {
-      if (emit) {
-        presidenStatus.value = true;
-      }
-    };
     //track foreigners
     const labelResidebId = ref("주민등록번호");
     watch(
@@ -369,7 +357,6 @@ export default defineComponent({
 
     let dataDefaultTab2: any = ref({ ...initFormStateTab2 }); // dataForm của tab 2
     // createEmployeeWage tab 1 api
-    const isEdit = ref(false);
     const {
       mutate: createEmployeeWage,
       loading: loading,
@@ -388,7 +375,6 @@ export default defineComponent({
         dataDefaultTab2.value.healthInsuranceDeduction = true;
         dataDefaultTab2.value.employeementInsuranceDeduction = true;
       }
-      store.state.common.presidentOriginPA120 = formStateTab1PA120.value.president;
       mutate({
         companyId,
         imputedYear: globalYear.value,
@@ -400,7 +386,6 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       store.commit("common/formOriginTab1PA120", formStateTab1PA120.value);
       formStateTab1PA120.value.employeeId = employeeId;
-      isEdit.value = true;
     });
 
     onError((error) => {
@@ -501,34 +486,9 @@ export default defineComponent({
       mutations.saveEmployeeWagePayDeductionReduction
     );
     onDoneSaveEmployee(() => {
+      store.commit("common/createSucessTab1PA120", true);
       store.commit("common/actionFormDonePA120");
     });
-    //api edit ở tab 1 sau khi người dùng đã tạo
-    const {
-      mutate: mutateEdit,
-      onError: onErrEdit,
-      onDone: onDoneEdit,
-    } = useMutation(mutations.updateEmployeeWage);
-    onErrEdit((e) => {
-      //notification('error', e.message);
-      store.commit("common/actionFormErrorPA120");
-    });
-    onDoneEdit((res) => {
-      notification("success", messageUpdate);
-      store.state.common.isNewRowPA120 = false;
-      store.commit("common/formOriginTab1PA120", formStateTab1PA120.value);
-      if (presidentOriginPA120.value !== formStateTab1PA120.value.president) {
-        store.state.common.presidentEditPA120 = formStateTab1PA120.value.president;
-      } else {
-        store.commit("common/actionFormDonePA120");
-        store.state.common.presidentEditPA120 = false;
-      }
-      setTimeout(() => {
-        //RESET origin president
-        store.state.common.presidentOriginPA120 = formStateTab1PA120.value.president;
-      }, 0)
-    });
-
     const formParam = reactive({
       companyId,
       imputedYear: globalYear,
@@ -547,8 +507,6 @@ export default defineComponent({
         delete formData.key;
         delete formData.deletable;
         delete formData.employeeId;
-        // if (isEdit.value) {
-        // }
         makeDataClean(formData);
         let dataNew: any = {
           ...formParam,
@@ -558,22 +516,9 @@ export default defineComponent({
             leavedAt: formStateTab1PA120.value.leavedAt,
           },
         };
-        if (!isEdit.value) {
-          createEmployeeWage(dataNew);
-        } else {
-          dataNew.employeeId = +formStateTab1PA120.value.employeeId;
-          mutateEdit(dataNew);
-        }
+        createEmployeeWage(dataNew);
       }
     };
-
-    watch(
-      () => formStateTab1PA120.value.president,
-      (newValue) => {
-        store.commit("common/presidentPA120", newValue);
-      },
-      { immediate: true }
-    );
     return {
       companyId,
       loading,
@@ -583,13 +528,11 @@ export default defineComponent({
       radioCheckForeigner,
       radioCheckHouseholder,
       initFormStateTab1,
-      activeKey: ref("1"),
       createNewEmployeeWage,
       arrDepartments,
       arrResponsibility,
       changeTextCountry,
       onChange,
-      isEdit,
       isNewRowPA120,
       notDatasourcePA120,
     };
