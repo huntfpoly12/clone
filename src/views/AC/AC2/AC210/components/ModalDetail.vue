@@ -14,9 +14,12 @@
                     </DxToolbar>
                     <DxColumn caption="사업명" width="85" data-field="facilityBusinessName"/>
 
-                    <DxColumn caption="일자" data-field="transactionDetailDate" data-type="date" format="yyyy-MM-dd"/>
+                    <DxColumn caption="일자" data-field="transactionDetailDate" css-class="cell-left" cell-template="transactionDetailDate"/>
+                    <template #transactionDetailDate="{ data }">
+                        {{ $filters.formatDate(data.data.transactionDetailDate) }}
+                    </template>
 
-                    <DxColumn caption="순번" data-field="index" />
+                    <DxColumn caption="순번" data-field="index" css-class="cell-left"/>
 
                     <DxColumn caption="결의번호" data-field="resolutionNumber" />
 
@@ -24,22 +27,22 @@
 
                     <DxColumn caption="통장별명" data-field="bankbookNickname" />
 
-                    <DxColumn caption="결의서종류" data-field="resolutionType" />
+                    <DxColumn caption="결의서종류" data-field="resolutionType" css-class="cell-left"/>
 
-                    <DxColumn caption="세입액" data-field="revenue" />
-                    <DxColumn caption="세출액" data-field="expenditure" />
-                    <DxColumn caption="적요" data-field="summary" format="fixedPoint"/>
+                    <DxColumn caption="세입액" data-field="revenue" format="fixedPoint"/>
+                    <DxColumn caption="세출액" data-field="expenditure" format="fixedPoint"/>
+                    <DxColumn caption="적요" data-field="summary"/>
                     <DxColumn caption="계정과목" data-field="theOrder" cell-template="theOrder-accountCode"/>
                     <template #theOrder-accountCode="{ data }">
                         {{ data.data.theOrder }}-{{ data.data.accountCode }}
                     </template>
                     <DxColumn caption="상대계정" data-field="relationCode" />
-                    <DxColumn caption="자금원천" data-field="fundingSource" />
+                    <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left"/>
                     <DxColumn caption="거래처" data-field="clientName" />
                     <DxColumn caption="결과" data-field="success" cell-template="success-result"/>
                     <template #success-result="{ data }">
                         <a-tag v-if="data.data.success" color="#4F6228">성공</a-tag>
-                        <a-tag v-else color="#C00000">{{data.data.result}}</a-tag>
+                        <a-tag v-else-if="data.data.result" color="#C00000">{{data.data.result}}</a-tag>
                     </template>
                 </DxDataGrid>
             </a-spin>

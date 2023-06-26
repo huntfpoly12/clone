@@ -95,6 +95,7 @@ import {
   DxItem,
   DxPaging
 } from 'devextreme-vue/data-grid';
+import EnterCusAccModal from './components/EnterCusAccModal.vue';
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
@@ -109,11 +110,21 @@ import { reactive } from 'vue';
 import mutations from "@/graphql/mutations/AddToken/index";
 export default defineComponent({
     components: {
-        DxPaging,
-        DxDataGrid, DxColumn, DxButton, DxExport, DxSearchPanel, DxToolbar, DxItem, DxScrolling,
-        BF320Popup, HistoryPopup,
-        EditOutlined, HistoryOutlined
-    },
+    DxPaging,
+    DxDataGrid,
+    DxColumn,
+    DxButton,
+    DxExport,
+    DxSearchPanel,
+    DxToolbar,
+    DxItem,
+    DxScrolling,
+    BF320Popup,
+    HistoryPopup,
+    EditOutlined,
+    HistoryOutlined,
+    EnterCusAccModal
+},
     setup() {
         // config grid
         const store = useStore();

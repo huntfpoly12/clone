@@ -34,10 +34,10 @@
       </div>
       <div class="d-flex-center gap-10">
         <DxField label="매니저리스트"  class="field-custom-auto">
-          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
+          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
         </DxField>
         <DxField label="영업자리스트" class="field-custom-auto">
-          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId"/>
+          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
         </DxField>
         <div>
           <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" width="100px"/>
@@ -73,18 +73,25 @@
           <div v-for="(company, index) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between gap-10">
             <div class="truncate" :title="company.facilityBusinessName" style="min-width: 50px">{{ company.facilityBusinessName }}</div>
             <div class="d-flex-center gap-5">
-              <AccountingProcessStatusEdit
-                :data="{
-                status: company.status,
-                companyId: data.data.companyId,
-                facilityBusinessId: company.facilityBusinessId,
-                year: dataSearch.year,
-                month: dataSearch.month
-              }"
-                @closePopup="closePopup"
+              <ProcessStatus
+                v-model:valueStatus="company.status"
+                :dataRow="{
+                  companyId: data.data.companyId,
+                  fiscalYear: dataSearch.year,
+                  facilityBusinessId: company.facilityBusinessId,
+                  year: dataSearch.year,
+                  month: dataSearch.month
+                }"
+                :arrayChoose="[
+                  { id: 10, text: '입력중', class: 'entering' },
+                  { id: 20, text: '입력마감', class: 'input' },
+                  { id: 30, text: '조정중', class: 'adjusting' },
+                  { id: 40, text: '조정마감', class: 'adjusted' },
+                ]"
+                @checkConfirmRowTable="submitChangeStatus"
               />
               <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
-                <div @click="redirectAc110(data.data, index)">
+                <div @click="redirectAc110(data.data, index as number)">
                   <RightCircleOutlined style="color: #2323da; font-size: 20px; border-radius: 10px"/>
                 </div>
               </a-tooltip>
@@ -101,18 +108,17 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import {reactive, watch, watchEffect} from 'vue';
-import {DxDataGrid, DxColumn, DxExport, DxSearchPanel, DxItem, DxToolbar, DxPaging} from 'devextreme-vue/data-grid';
-import {ref} from 'vue';
+import {reactive, ref, watchEffect} from 'vue';
+import {DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxSearchPanel, DxToolbar} from 'devextreme-vue/data-grid';
 import {searchCompanyAccountingDeadlines} from '@/graphql/queries/BF/BF5/BF510';
 import {useMutation, useQuery} from '@vue/apollo-composable';
 import DataSource from 'devextreme/data/data_source';
-import AccountingProcessStatusEdit from "./components/AccountingProcessStatusEdit.vue";
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
 import {RightCircleOutlined} from '@ant-design/icons-vue';
 import mutations from "@/graphql/mutations/AddToken";
 import {ISearchCompanyAccountingDeadlines} from "@/views/BF/BF5/BF510/types";
 import DxCheckBox from "devextreme-vue/check-box";
+import changeAccountingProcessStatus from "@/graphql/mutations/BF/BF5/BF510/changeAccountingProcessStatus";
 
 const checkBoxSearch = [
   {id: 1, text: '01'},
@@ -176,7 +182,7 @@ onError((error) => {
   console.log(error)
 })
 const searching = () => {
-  const stt = Object.values(statuses).slice(1).reduce((acc: any, curr: any, index: number) => {
+  const stt = Object.values(statuses).reduce((acc: any, curr: any, index: number) => {
     if (curr) {
       acc.push(index === 0 ? 1 : index * 10);
     }
@@ -239,6 +245,22 @@ const handleSelectMonth = (month: number) => {
 const handleClickAll = () => {
   statuses.checkbox0 = statuses.checkbox1 = statuses.checkbox2 = statuses.checkbox3 = statuses.checkbox4 = checkboxAll.value;
 }
+const { mutate: mutateChangeStatus, onDone: onDoneChangeStatus, onError: onErrorChangeStatus } = useMutation(changeAccountingProcessStatus)
+
+onDoneChangeStatus(({ data }) => {
+  trigger.value = true;
+})
+onErrorChangeStatus((error) => {
+  console.log('error', error)
+  trigger.value = true;
+})
+const submitChangeStatus = (value: any) => {
+  console.log('e', value)
+  mutateChangeStatus({
+    ...value
+  })
+}
+
 </script>
 
 <style lang="scss" scoped>

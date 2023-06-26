@@ -5,6 +5,7 @@ export default gql`
       companyId
       ts
       manageId
+      workingStatus
       partnerId
       companyConsignStatus
       nationalPensionEDIStatus
