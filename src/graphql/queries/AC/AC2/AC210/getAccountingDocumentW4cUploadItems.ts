@@ -3,7 +3,6 @@ export default gql`
   query getAccountingDocumentW4cUploadItems(
     $companyId: Int!
     $requestId: Int!
-    $finishDate: Int!
   ) {
     getAccountingDocumentW4cUploadItems(
       companyId: $companyId

@@ -553,7 +553,7 @@ export default defineComponent({
     const checkIncomeFirst = ref(false); // whether display colorRed in deduction 1012. Don't check when it's firstTime.
 
     // fn common
-    
+
     const convertToDate = (date: number | null) => {
       if (date === null) {
         return dayjs();
@@ -671,22 +671,17 @@ export default defineComponent({
 
     //------------------When employeeID change or refetch screen----------------
 
-    watch(
-      () => employeeIdPA120,
-      async (value: any) => {
-        if (+value !== 0) {
-          console.log(`output->value`,value)
-          checkIncomeFirst.value = false;
-          localIncomeBoo.value = false;
-          employeeTrigger.value = true;
-          // if(!isFirstRun.value){
-          // }else {
-          //   isFirstRun.value = false;
-          // }
-        }
-      },
-      { deep: true }
-    );
+    watch(employeeIdPA120, async (value: any) => {
+      if (+value !== 0) {
+        checkIncomeFirst.value = false;
+        localIncomeBoo.value = false;
+        employeeTrigger.value = true;
+        // if(!isFirstRun.value){
+        // }else {
+        //   isFirstRun.value = false;
+        // }
+      }
+    });
 
     //----------------- get Deduction Data---------------------------
 
@@ -1012,9 +1007,11 @@ export default defineComponent({
                   formStateTab2PA120.value.nationalPensionSupportPercent
                 )
               : 0;
-            formStateTab2PA120.value.deductionItems[0].value = total1
+            formStateTab2PA120.value.deductionItems[0].value = total1;
             formStateTab2PA120.value.deductionItems[3].value = 0;
-            formOriginTab2PA120.value.deductionItems = JSON.parse(JSON.stringify(formStateTab2PA120.value.deductionItems));
+            formOriginTab2PA120.value.deductionItems = JSON.parse(
+              JSON.stringify(formStateTab2PA120.value.deductionItems)
+            );
             formStateTab2PA120.value.employeementInsuranceDeduction = false;
             formStateTab2PA120.value.insuranceSupport = false;
             onCalcSumDeduction();

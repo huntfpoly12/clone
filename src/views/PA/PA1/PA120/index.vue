@@ -20,7 +20,7 @@
             :allow-column-reordering="move_column"
             :allow-column-resizing="colomn_resize"
             :column-auto-width="true"
-            :onRowClick="actionEdit"
+            :onRowClick="onClickRow"
             :focused-row-enabled="true"
             :auto-navigate-to-focused-row="true"
             v-model:focused-row-key="focusedRowKey"
@@ -119,7 +119,6 @@
                 :status="data.data.status"
                 :foreigner="data.data.foreigner"
                 :checkStatus="false"
-                @toolTopErorr="toolTopErorr"
                 :employeeId="data.data.employeeId"
               />
             </template>
@@ -198,11 +197,8 @@
         <!-- <input v-model="focusedRowKey"/> -->
       </a-col>
       <a-col :span="13" class="col-right">
-        <PA120PopupAddNewVue
-          v-if="actionChangeComponent == 1"
-          :key="addComponentKey"
-        />
-        <PA120PopupEdit v-if="actionChangeComponent == 2" />
+        <PA120PopupAddNewVue v-if="tabType == 1" :key="addComponentKey" />
+        <PA120PopupEdit v-if="tabType == 2" />
       </a-col>
     </a-row>
     <a-modal
@@ -314,7 +310,7 @@ export default defineComponent({
     const store = useStore();
     const contentDelete = Message.getMessage("PA120", "002").message;
     const { move_column, colomn_resize } = store.state.settings;
-    const actionChangeComponent = ref(2);
+    const tabType = ref(2); // 1 is add, 2 is edit.
     const totalUserOnl = ref(0);
     const totalUserOff = ref(0);
     const globalYear = ref<number>(
@@ -348,8 +344,9 @@ export default defineComponent({
     const createSucessTab1PA120 = computed(
       () => store.state.common.createSucessTab1PA120
     );
-    //2 is row click. 1 is add button click. 3 is;
+    //2 is row click. 1 is add button click. 3 is add button click and save by itself. ;
     const compareType = ref(2);
+    const focusedRowKey = ref(formStateTab1PA120.value.employeeId);
 
     //-----------------get employee wages and data source --------------------------------
 
@@ -373,32 +370,40 @@ export default defineComponent({
     });
     watch(result, (value) => {
       const data = value.getEmployeeWages;
-      dataSource.value = data.map((item: any) => ({
-        ...item,
-        key: item.employeeId.toString(),
-      }));
+      // count user
+      totalUserOnl.value = 0;
+      totalUserOff.value = 0;
+      dataSource.value = data.map((item: any) => {
+        if (item.status != 0) {
+          totalUserOnl.value++;
+        } else {
+          totalUserOff.value++;
+        }
+        return {
+          ...item,
+          key: item.employeeId.toString(),
+        };
+      });
       store.state.common.notDatasourcePA120 = false;
       if (compareType.value == 3) {
         addNewRow();
         return;
       }
       if (data.length > 0 && isFirstRun.value) {
-        actionChangeComponent.value = 2;
+        tabType.value = 2;
         store.state.common.employeeIdPA120 = data[0].employeeId;
         focusedRowKey.value = dataSource.value[0].key;
         isFirstRun.value = false;
         idRowFake.value = data[0].employeeId;
       }
       if (data.length == 0) {
-        actionChangeComponent.value = 1;
+        tabType.value = 1;
         store.commit("common/formStateTab1PA120", initFormStateTab1);
         store.commit("common/formOriginTab1PA120", initFormStateTab1);
         store.state.common.notDatasourcePA120 = true;
       }
       employeeWagesTrigger.value = false;
     });
-    // addcomponent
-    const addComponentKey = ref(1);
 
     // -------------------OPEN HISTORY -------------------
 
@@ -430,7 +435,7 @@ export default defineComponent({
     successDelete((e) => {
       notification("success", messageDel);
       isFirstRun.value = true;
-      actionChangeComponent.value = 2;
+      tabType.value = 2;
       employeeWagesTrigger.value = true;
       delStatus.value = false;
     });
@@ -440,6 +445,8 @@ export default defineComponent({
 
     //----------------compare Data----------------
 
+    // tab 1 key to reset form validatation.
+    const addComponentKey = ref(1);
     const rowChangeStatus = ref<Boolean>(false); // Change in row permission status
     // xóa row mới tạo
     const delNewRow = () => {
@@ -448,22 +455,20 @@ export default defineComponent({
         dataSource.value.length - 1
       );
       store.commit("common/formStateTab1PA120", initFormStateTab1);
-      addComponentKey.value++;
       store.state.common.isNewRowPA120 = false;
-      compareType.value = 2;
     };
     // thêm row mới
     const addNewRow = () => {
-      actionChangeComponent.value = 1;
-      addComponentKey.value++;
       store.commit("common/formStateTab1PA120", initFormStateTab1);
       store.commit("common/formOriginTab1PA120", initFormStateTab1);
+      tabType.value = 1;
       store.state.common.isNewRowPA120 = true;
       compareType.value = 1;
-      setTimeout(() => {
-        dataSource.value = dataSource.value.concat([formStateTab1PA120.value]);
-        focusedRowKey.value = formStateTab1PA120.value.key;
-      }, 0);
+      addComponentKey.value++;
+      // setTimeout(()=>{
+      dataSource.value = dataSource.value.concat([formStateTab1PA120.value]);
+      focusedRowKey.value = formStateTab1PA120.value.key;
+      // },0)
     };
     const compareForm = () => {
       const { stayQualification, employeeId, ...obj1 } =
@@ -488,6 +493,7 @@ export default defineComponent({
       }
       return false;
     };
+    // click button add in the top of the table
     const openAddNewModal = async () => {
       compareType.value = 3;
       if (isNewRowPA120.value) {
@@ -495,14 +501,6 @@ export default defineComponent({
           rowChangeStatus.value = true;
           return;
         }
-        store.commit("common/formStateTab1PA120", initFormStateTab1);
-        dataSource.value = dataSource.value.splice(
-          0,
-          dataSource.value.length - 1
-        );
-        dataSource.value = dataSource.value.concat([formStateTab1PA120.value]);
-        addComponentKey.value++;
-        store.state.common.notDatasourcePA120 = false;
         return;
       }
       if (!compareForm()) {
@@ -515,7 +513,7 @@ export default defineComponent({
       store.state.common.notDatasourcePA120 = false;
       return;
     };
-    const tabCurrent = computed(() => {
+    const notSaveType = computed(() => {
       const { stayQualification, employeeId, ...obj1 } =
         formOriginTab1PA120.value;
       const {
@@ -523,7 +521,7 @@ export default defineComponent({
         employeeId: employeeId2,
         ...obj2
       } = formStateTab1PA120.value;
-
+      // Both tab 1 and tab 2 is different.
       if (
         JSON.stringify(obj1) != JSON.stringify(obj2) &&
         JSON.stringify(formStateTab2PA120.value) !=
@@ -531,37 +529,39 @@ export default defineComponent({
       ) {
         return 4;
       }
+      // only tab 2 is different.
       if (
         JSON.stringify(formStateTab2PA120.value) !=
         JSON.stringify(formOriginTab2PA120.value)
       ) {
         return 2;
       }
+      // only tab 2 is different.
       return 1;
     });
+    // Thực hiện chờ đợi việc api call xong khi notSaveType == 4.
     async function waitForApiCall() {
-      // Thực hiện chờ đợi
       return new Promise((resolve: any) => {
         const unwatch = watch(actionFormDonePA120, () => {
           unwatch();
           resolve();
         });
-        // Simulate API call hoặc có thể sử dụng hàm callback khi API call thành công
       });
     }
+    // allow API to be called? when notSaveType == 4.
     const hasCallGetAllApi = ref(true);
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        if (tabCurrent.value == 2 || tabCurrent.value == 4) {
+        hasCallGetAllApi.value = true;
+        if (notSaveType.value == 2 || notSaveType.value == 4) {
           let ele21 = document.getElementById("btn-save-edit-tab2");
           ele21?.click();
-          hasCallGetAllApi.value = true;
         }
-        if (tabCurrent.value == 4) {
+        if (notSaveType.value == 4) {
           hasCallGetAllApi.value = false;
           await waitForApiCall();
         }
-        if (tabCurrent.value == 1 || tabCurrent.value == 4) {
+        if (notSaveType.value == 1 || notSaveType.value == 4) {
           let ele11 = document.getElementById("btn-save") as HTMLInputElement;
           ele11?.click();
           let ele12 = document.getElementById("btn-save-edit");
@@ -569,36 +569,38 @@ export default defineComponent({
         }
       } else {
         removeHoverRowKey();
+        // remove new row at bottom of the table
         if (isNewRowPA120.value) {
           dataSource.value = dataSource.value.splice(
             0,
             dataSource.value.length - 1
           );
         }
+        // add new row
         if (compareType.value == 1 || compareType.value == 3) {
           addNewRow();
           return;
         }
+        // access selected row in the table.
         if (compareType.value == 2) {
           store.state.common.employeeIdPA120 = idRowFake.value;
           store.state.common.isNewRowPA120 = false;
-          actionChangeComponent.value = 2;
+          tabType.value = 2;
           focusedRowKey.value = idRowFake.value.toString();
         }
         compareType.value = 2;
       }
     };
-    // when submit form done
+
+    // ------------------when submit form done-----------------------
+
     const actionFormDonePA120 = computed(
       () => store.getters["common/actionFormDonePA120"]
     );
     watch(actionFormDonePA120, () => {
-      console.log(
-        `output->createSucessTab1PA120.value`,
-        createSucessTab1PA120.value
-      );
+      // switch to edit tab
       if (createSucessTab1PA120.value) {
-        actionChangeComponent.value = 2;
+        tabType.value = 2;
       }
       if (!hasCallGetAllApi.value) {
         return;
@@ -607,6 +609,7 @@ export default defineComponent({
         employeeWagesTrigger.value = true;
         return;
       }
+      // redirect to new selected row or current row.
       focusedRowKey.value =
         compareType.value == 1
           ? formStateTab1PA120.value.employeeId.toString()
@@ -618,10 +621,12 @@ export default defineComponent({
           ? formStateTab1PA120.value.employeeId
           : idRowFake.value;
       if (compareType.value == 2) {
-        actionChangeComponent.value = 2;
+        tabType.value = 2;
       }
     });
-    //submit error
+
+    // ------------------when submit form error-----------------------
+
     const actionFormErrorPA120 = computed(
       () => store.state.common.actionFormErrorPA120
     );
@@ -629,7 +634,8 @@ export default defineComponent({
       compareType.value = 1;
       focusedRowKey.value = formStateTab1PA120.value?.employeeId.toString();
       removeHoverRowKey();
-      if (tabCurrent.value == 1 || tabCurrent.value == 4) {
+      // check what tab is valid and redirect to it.
+      if (notSaveType.value == 1 || notSaveType.value == 4) {
         store.commit("common/activeTabEditKeyPA120", "1");
       } else {
         store.commit("common/activeTabEditKeyPA120", "2");
@@ -638,16 +644,18 @@ export default defineComponent({
         focusedRowKey.value = formStateTab1PA120.value?.employeeId.toString();
       }
     });
-    //edit row
-    const actionEdit = (data: any) => {
+
+    //click row in the table
+
+    const onClickRow = (data: any) => {
       compareType.value = 2;
       if (isNewRowPA120.value) {
         if (compareForm()) {
           delNewRow();
-          store.state.common.employeeIdPA120 = data.data.employeeId;
-          if (actionChangeComponent.value == 1) {
-            actionChangeComponent.value = 2;
+          if (tabType.value == 1) {
+            tabType.value = 2;
           }
+          store.state.common.employeeIdPA120 = data.data.employeeId;
           return;
         }
         rowChangeStatus.value = true;
@@ -661,37 +669,12 @@ export default defineComponent({
       } else {
         store.state.common.employeeIdPA120 = data.data.employeeId;
         idRowFake.value = data.data.employeeId;
-        if (actionChangeComponent.value == 1) {
-          actionChangeComponent.value = 2;
+        if (tabType.value == 1) {
+          tabType.value = 2;
         }
       }
     };
 
-    watch(result, (value) => {
-      if (value) {
-        totalUserOnl.value = 0;
-        totalUserOff.value = 0;
-        dataSource.value.map((val: any) => {
-          if (val.status != 0) {
-            totalUserOnl.value++;
-          } else {
-            totalUserOff.value++;
-          }
-        });
-        employeeWagesTrigger.value = false;
-      }
-    });
-
-    //tooltip residentId
-    const isResidentIdError = reactive<any>({});
-    const toolTopErorr = (val: any) => {
-      isResidentIdError[val.id] = val.isError;
-    };
-    //focus Row
-    const focusedRowKey = ref(formStateTab1PA120.value.employeeId);
-    const activeTabEditKeyPA120 = computed(
-      () => store.state.common.activeTabEditKeyPA120
-    );
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return `${
         rowData.nationalPensionDeduction +
@@ -703,23 +686,6 @@ export default defineComponent({
         rowData.incomeTaxMagnification
       }`;
     }
-
-    // get config
-
-    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
-    const { result: resultConfig } = useQuery(
-      queryCM130.getWithholdingConfig,
-      dataQuery,
-      () => ({
-        fetchPolicy: "no-cache",
-      })
-    );
-    watch(resultConfig, (newVal) => {
-      if (newVal) {
-        store.state.common.isDisableInsuranceSupport =
-          newVal.getWithholdingConfig.insuranceSupport;
-      }
-    });
 
     //-----------------------hover when click diff row----------------
 
@@ -743,9 +709,8 @@ export default defineComponent({
       if (element) dataGridRef.value?.refresh();
     };
 
-    // get config
+    // get config common in cm-130 to set default values.
 
-    const withholdingTrigger = ref(true);
     const dataQueryCm130 = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -754,7 +719,6 @@ export default defineComponent({
       queryCM130.getWithholdingConfig,
       dataQueryCm130,
       () => ({
-        enabled: withholdingTrigger.value,
         fetchPolicy: "no-cache",
       })
     );
@@ -762,15 +726,15 @@ export default defineComponent({
       if (newVal) {
         store.state.common.isDisableInsuranceSupport =
           newVal.getWithholdingConfig.insuranceSupport;
-        withholdingTrigger.value = false;
       }
     });
+
     return {
       loading,
-      actionChangeComponent,
+      tabType,
       delStatus,
       dataSource,
-      actionEdit,
+      onClickRow,
       actionDelete,
       actionDeleteFuc,
       modalHistory,
@@ -783,10 +747,7 @@ export default defineComponent({
       move_column,
       colomn_resize,
       addComponentKey,
-      toolTopErorr,
-      isResidentIdError,
       focusedRowKey,
-      activeTabEditKeyPA120,
       formStateTab1PA120,
       isNewRowPA120,
       initFormStateTab1,
