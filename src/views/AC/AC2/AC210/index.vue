@@ -1,8 +1,8 @@
 <template>
-    <action-header :buttonDelete="false" :buttonSearch="true" :buttonSave="false" :buttonPrint="false" />
+    <action-header :buttonDelete="false" :buttonSearch="true" @actionSearch="searching()" :buttonSave="false" :buttonPrint="false" />
     <div class="ac-210 page-content">
-        <a-spin :spinning="false">
-            <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="accountingDocumentId" :show-row-lines="true"
+        <a-spin :spinning="loadingSearchAccountingDocumentW4cUploads">
+            <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="requestId" :show-row-lines="true"
                 :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC210"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
@@ -32,35 +32,40 @@
                         </button-basic>
                     </div>
                 </template>
-                <DxColumn caption="NO" width="85" />
+                <DxColumn caption="NO" width="85" data-field="requestId" css-class="cell-left"/>
 
-                <DxColumn caption="요청일시" data-field="" />
+                <DxColumn caption="요청일시" data-field="requedtedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
 
-                <DxColumn caption="내용" data-field="" />
+                <DxColumn caption="내용" data-field="month" cell-template="year-month" css-class="cell-left"/>
+                <template #year-month="{ data }">
+                    <span>전표 {{ data.data.year }}-{{ data.data.month }} 업로드 </span>
+                </template>
 
-                <DxColumn caption="전체건수" data-field="" />
+                <DxColumn caption="전체건수" data-field="totalCount" format="fixedPoint"/>
 
-                <DxColumn caption="성공건수" data-field="" />
+                <DxColumn caption="성공건수" data-field="successCount" format="fixedPoint"/>
 
-                <DxColumn caption="실패건수" data-field="" />
+                <DxColumn caption="실패건수" data-field="failCount" format="fixedPoint"/>
 
-                <DxColumn caption="상세조회" data-field="" cell-template="zoom" />
+                <DxColumn caption="미실행건수" data-field="unexecutedCount" format="fixedPoint"/>
+
+                <DxColumn caption="상세조회" data-field="" cell-template="zoom" css-class="cell-center" width="100"/>
                 <template #zoom="{ data }">
                     <DxButton class="ml-3" @click="actionOpenModalDetail(data.data)">
                         <ZoomInOutlined :style="{ fontSize: '20px', color: 'black' }" />
                     </DxButton>
                 </template>
 
-                <DxColumn caption="결과" data-field="" />
+                <DxColumn caption="결과" data-field="result" />
 
-                <DxColumn caption="상태" data-field="" />
+                <DxColumn caption="상태" data-field="status" />
 
-                <DxColumn caption="비고" data-field="" />
+                <!-- <DxColumn caption="비고" data-field="" /> -->
             </DxDataGrid>
         </a-spin>
     </div>
-    <ModalDetail :modalStatus="statusModalDetail" @closePopup="statusModalDetail = false"></ModalDetail>
-    <ModalUpload :modalStatus="statusModalUpload" @closePopup="statusModalUpload = false"></ModalUpload>
+    <ModalDetail :modalStatus="statusModalDetail" @closePopup="statusModalDetail = false" :requestId="requestId"></ModalDetail>
+    <ModalUpload :modalStatus="statusModalUpload" @closePopup="statusModalUpload = false" @resetTable="searching()"></ModalUpload>
 </template>
 <script lang="ts">
 import { useStore } from "vuex";
@@ -119,25 +124,60 @@ export default defineComponent({
         const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
         const gridRefAC210 = ref(); // ref of grid
         const rangeDate = ref([parseInt(dayjs().subtract(1, "month").format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
-
+        let requestId = ref<number>()
         let statusModalDetail = ref<boolean>(false);
         let statusModalUpload = ref<boolean>(false);
-
+        let triggerSearchAccountingDocumentW4cUploads = ref<boolean>(true);
         const dataSource: any = ref(new DataSource({
             store: {
                 type: "array",
-                key: "accountingDocumentId",
+                key: "requestId",
                 data: [],
             },
             requireTotalCount: true,
         }));
+        const argumentSearchAccountingDocumentW4cUploads = ref({
+            companyId: companyId,
+            startDate: rangeDate.value[0],
+            finishDate: rangeDate.value[1],
+        })
 
         // =================== GRAPHQL ===================
+        // query SearchAccountingDocumentW4cUploads
+		const {
+			result: resSearchAccountingDocumentW4cUploads,
+			loading: loadingSearchAccountingDocumentW4cUploads,
+			onError: errorSearchAccountingDocumentW4cUploads,
+		} = useQuery(
+			queries.searchAccountingDocumentW4cUploads,
+			argumentSearchAccountingDocumentW4cUploads.value,
+			() => ({
+				enabled: triggerSearchAccountingDocumentW4cUploads.value,
+				fetchPolicy: "no-cache",
+			})
+		);
+		errorSearchAccountingDocumentW4cUploads((e) => {
+            triggerSearchAccountingDocumentW4cUploads.value = false;
+			//notification('error', e.message)
+		});
+
 
         // ================== WATCH ================
+        watch(resSearchAccountingDocumentW4cUploads, (value) => {
+			triggerSearchAccountingDocumentW4cUploads.value = false;
+            dataSource.value = new DataSource({
+				store: {
+					type: "array",
+					key: "requestId",
+					data: value.searchAccountingDocumentW4cUploads,
+				},
+				requireTotalCount: true,
+			});
+		});
 
         // ================ FUNCTION ============================================
         const actionOpenModalDetail = (data: any) => {
+            requestId.value = data.requestId
             statusModalDetail.value = true
         }
         const actionOpenModalUpload = (data: any) => {
@@ -150,6 +190,11 @@ export default defineComponent({
                 window.open('https://k.bankda.com/api/member')
             }
         }
+        const searching = () => {
+            argumentSearchAccountingDocumentW4cUploads.value.startDate = rangeDate.value[0]
+            argumentSearchAccountingDocumentW4cUploads.value.finishDate = rangeDate.value[1]
+            triggerSearchAccountingDocumentW4cUploads.value = true
+        }
 
         // ================ CUSTOM SUMMARY TABLE ============================================
 
@@ -161,6 +206,9 @@ export default defineComponent({
             colomn_resize,
             rangeDate,
             windowOpen,
+            searching,
+            loadingSearchAccountingDocumentW4cUploads,
+            requestId,
         };
     },
 });

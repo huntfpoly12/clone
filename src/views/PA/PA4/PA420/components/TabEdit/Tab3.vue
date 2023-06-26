@@ -616,12 +616,12 @@ import { Message } from "@/configs/enum";
 import { useStore } from "vuex";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import { IncomeRetirement } from "@/views/PA/PA4/PA420/types";
+import { IncomeRetirementSpecification } from "@/views/PA/PA4/PA420/types";
 import { FORM_STATE_TAB_3 } from "@/views/PA/PA4/PA420/utils";
 
-const props = defineProps<{ dataDetail: IncomeRetirement }>();
+const {dataDetail} = defineProps<{ dataDetail: IncomeRetirementSpecification }>();
 const store = useStore();
-// const taxCalculationInputStore = computed(() => store.getters['common/getTaxCalculationInput'])
+const taxCalculationInputStore = computed(() => store.getters['common/getTaxCalculationInput'])
 const retirementStatus = computed(() => store.getters["common/getRetirementStatus"]);
 const retirementBenefitsStore = computed(
   () => store.getters["common/getDefinedRetirementBenefits"]
@@ -643,10 +643,10 @@ const disableBtn = ref(false);
 const FORM_STATE_OLD = {
   calculationOfDeferredRetirementIncomeTax: {
     totalAmount:
-      props.dataDetail.specification?.specificationDetail
+      dataDetail.specificationDetail
         .calculationOfDeferredRetirementIncomeTax?.totalAmount || 0,
     statements: [
-      props.dataDetail.specification?.specificationDetail
+      dataDetail.specificationDetail
         .calculationOfDeferredRetirementIncomeTax?.statements?.[0] || {
         pensionAccountHolder: "",
         bizNumber: "",
@@ -654,7 +654,7 @@ const FORM_STATE_OLD = {
         depositDate: null,
         accountDepositAmount: "",
       },
-      props.dataDetail.specification?.specificationDetail
+      dataDetail.specificationDetail
         .calculationOfDeferredRetirementIncomeTax?.statements?.[1] || {
         pensionAccountHolder: "",
         bizNumber: "",
@@ -665,26 +665,27 @@ const FORM_STATE_OLD = {
     ],
   },
   nonTaxableRetirementBenefits: Number(
-    props.dataDetail.specification?.nonTaxableRetirementBenefits
+    dataDetail.nonTaxableRetirementBenefits
   ),
-  taxCredit: props.dataDetail.specification?.specificationDetail.taxAmountCalculation.taxCredit,
-  prePaidDelayedTaxPaymentTaxAmount: props.dataDetail.specification?.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
-  prevRetirementBenefitStatus: props.dataDetail.specification?.specificationDetail.prevRetirementBenefitStatus,
-  prevRetiredYearsOfService: props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService,
-  lastRetiredYearsOfService: props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService,
+  taxCredit: dataDetail.specificationDetail.taxAmountCalculation.taxCredit,
+  prePaidDelayedTaxPaymentTaxAmount: dataDetail.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
+  prevRetirementBenefitStatus: dataDetail.specificationDetail.prevRetirementBenefitStatus,
+  prevRetiredYearsOfService: dataDetail.specificationDetail.prevRetiredYearsOfService,
+  lastRetiredYearsOfService: dataDetail.specificationDetail.lastRetiredYearsOfService,
 };
+
 const initialIncomeRetirementTax_old = computed(() =>
   cloneDeep({
     taxBaseCalculation:
-      props.dataDetail.specification?.specificationDetail.taxBaseCalculation,
+      dataDetail.specificationDetail.taxBaseCalculation,
     taxAmountCalculation:
-      props.dataDetail.specification?.specificationDetail.taxAmountCalculation,
+      dataDetail.specificationDetail.taxAmountCalculation,
     calculationOfDeferredRetirementIncomeTax: {
       totalAmount:
-        props.dataDetail.specification?.specificationDetail
+        dataDetail.specificationDetail
           .calculationOfDeferredRetirementIncomeTax?.totalAmount || 0,
       statements: [
-        props.dataDetail.specification?.specificationDetail
+        dataDetail.specificationDetail
           .calculationOfDeferredRetirementIncomeTax?.statements?.[0] || {
           pensionAccountHolder: "",
           bizNumber: "",
@@ -692,7 +693,7 @@ const initialIncomeRetirementTax_old = computed(() =>
           depositDate: null,
           accountDepositAmount: "",
         },
-        props.dataDetail.specification?.specificationDetail
+        dataDetail.specificationDetail
           .calculationOfDeferredRetirementIncomeTax?.statements?.[1] || {
           pensionAccountHolder: "",
           bizNumber: "",
@@ -703,12 +704,12 @@ const initialIncomeRetirementTax_old = computed(() =>
       ],
     },
     deductibleWithholdingTax:
-      props.dataDetail.specification?.specificationDetail
+      dataDetail.specificationDetail
         .deductibleWithholdingTax,
     taxAmountToBeReported:
-      props.dataDetail.specification?.specificationDetail.taxAmountToBeReported,
+      dataDetail.specificationDetail.taxAmountToBeReported,
     retirementIncomeTax:
-      props.dataDetail.specification?.specificationDetail.retirementIncomeTax,
+      dataDetail.specificationDetail.retirementIncomeTax,
   })
 );
 const formState = reactive(cloneDeep(FORM_STATE_OLD));
@@ -875,21 +876,19 @@ const handleCalculateIncomeRetirementTax = () => {
         ...FORM_STATE_OLD.lastRetiredYearsOfService,
       },
     };
-
     if (interimPaymentTab1.value) {
       result = {
         ...result,
         prevRetiredYearsOfService: {
-          ...FORM_STATE_OLD.prevRetiredYearsOfService,
-          paymentDate: FORM_STATE_OLD.prevRetiredYearsOfService?.paymentDate,
+          ...taxCalculationInputStore.value.prevRetiredYearsOfService,
         },
       };
-      if (
-        FORM_STATE_OLD.prevRetirementBenefitStatus?.nonTaxableRetirementBenefits
-      ) {
-        result.prevRetirementBenefitStatus =
-          FORM_STATE_OLD.prevRetirementBenefitStatus;
+      if (FORM_STATE_OLD.prevRetirementBenefitStatus?.nonTaxableRetirementBenefits) {
+        result.prevRetirementBenefitStatus = FORM_STATE_OLD.prevRetirementBenefitStatus;
+      } else {
+        delete result.prevRetirementBenefitStatus;
       }
+
     } else {
       // delete key prevRetiredYearsOfService, prevRetirementBenefitStatus
       delete result.prevRetiredYearsOfService;

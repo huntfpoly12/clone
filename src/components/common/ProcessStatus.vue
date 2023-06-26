@@ -54,10 +54,12 @@ export default defineComponent({
         const currentBt = ref(props.valueStatus);
         const showModal = ref(false)
         const arrayRadioUser = ref([
+            { id: 1, text: '미입력', class: 'noInput' },
             { id: 10, text: '입력중', class: 'entering' },
             { id: 20, text: '입력마감', class: 'input' },
         ])
         const arrayRadioManager = ref([
+            { id: 1, text: '미입력', class: 'noInput' },
             { id: 10, text: '입력중', class: 'entering' },
             { id: 20, text: '입력마감', class: 'input' },
             { id: 30, text: '조정중', class: 'adjusting' },
@@ -102,6 +104,11 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
+.noInput {
+  background-color: #7F7F7F !important;
+  box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
+  border: 1px solid #7F7F7F;
+}
 .entering {
     background-color: #346CB0 !important;
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;

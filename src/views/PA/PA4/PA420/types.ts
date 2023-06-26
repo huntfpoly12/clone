@@ -263,7 +263,7 @@ export type IncomeRetirement = {
   prevPaymentDay?: Maybe<Scalars['Int']>;
   retirementBenefits: Scalars['Int'];
   retirementType: Scalars['Int'];
-  specification?: Maybe<IncomeRetirementSpecification>;
+  specification: IncomeRetirementSpecification;
   taxableRetirementBenefits: Scalars['Int'];
   totalDeduction: Scalars['Int'];
   withholdingIncomeTax: Scalars['Int'];

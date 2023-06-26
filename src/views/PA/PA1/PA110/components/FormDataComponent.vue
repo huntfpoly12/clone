@@ -139,7 +139,7 @@
 											" :name="item.name" :type="4" subName="공제" :showTooltip="false" :width="'130px'" />
 									</span>
 									<div>
-										<number-box-money
+										<number-box-money format="#0,###"
 											:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"
 											width="130px" @changeInput="onChangeInputPayItem" :spinButtons="false"
 											:rtlEnabled="false" v-model:valueInput="item.amount" :min="0">
@@ -155,37 +155,31 @@
 							<div class="deduction-main">
 								<div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
 									<span>
-										<deduction-items  v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+										<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
 											:name="item.name" :type="1" :showTooltip="false" subName="과세" />
-										<deduction-items  v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+										<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
 											:name="item.name" :type="2" :showTooltip="false" subName="상여(과세)" />
-										<deduction-items  v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+										<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
 											:name="item.name" :type="3" :showTooltip="false" :subName="item.taxfreePayItemCode +
 												' ' + item.taxfreePayItemName ? item.taxfreePayItemName : '' + ' ' + item.taxFreeIncludeSubmission" />
-										<deduction-items  v-if="item.taxPayItemCode == null &&
+										<deduction-items v-if="item.taxPayItemCode == null &&
 											item.taxfreePayItemCode == null
 											" :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
 									</span>
 									<div>
-										<a-tooltip v-if="statusFormAdd && dataIW.employee.employeeId" color="black"
-											placement="top" zIndex="9999"
-											:class="item.itemCode == 1012 && localIncomeBoo ? 'red' : ''"
-											:title="item.itemCode == 1012 && localIncomeBoo ? '소액징수부면제 적용' + localReal : ''">
-											<!-- <template #title>
-                                            소액징수부면제 적용 {{ localReal }}
-                                        </template> -->
+										<a-tooltip zIndex="9999" :class="checkShowRed(item) ? 'red' : ''"
+											:title="checkShowRed(item) ? '소액징수부면제 적용' + localReal : ''">
 											<span>
-												<number-box-money width="130px" :spinButtons="false"
-													v-model:valueInput="item.amount" @changeInput="onChangeInputDeduction"
-													:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2
-														" format="#0,###" />
+												<number-box-money width="130px" :spinButtons="false" format="#0,###"
+													v-model:valueInput="item.amount" @changeInput="onChangeInputDeduction(item)"
+													:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2" />
 											</span>
 										</a-tooltip>
-										<number-box-money v-else
+										<!-- <number-box-money
 											:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"
 											width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false"
 											v-model:valueInput="item.amount" format="#0,###">
-										</number-box-money>
+										</number-box-money> -->
 										<span class="pl-5">원</span>
 									</div>
 								</div>
@@ -289,25 +283,25 @@ export default defineComponent({
 		const triggerConfigPayItems = ref<boolean>(true);
 		const triggerConfigDeductions = ref<boolean>(true);
 		const dataIW: any = ref(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
-		const originCalculateMidTermSettlement = ref({
+		const originCalculateMidTermSettlement = {
 			companyId: companyId,
 			processKey: computed(() => processKey.value),
 			paymentDay: 1,
 			employeeId: null,
-		})
-		const dataMidTermSettlement = ref({
+		}
+		const dataMidTermSettlement = {
 			companyId: companyId,
 			processKey: computed(() => processKey.value),
 			paymentDay: 1,
 			employeeId: null,
 			data: [{}],
-		});
+		};
 		const dataConfigPayItems: any = ref([]);
 		const dataConfigDeductions: any = ref([]);
 		const dataEmployeeWageDailies: any = ref([]);
 
 		const countKey: any = ref(0);
-		const localIncomeBoo = ref(false);
+		// const localIncomeBoo = ref(false);
 		const localReal = ref(0);
 		const originDataEmployeeWage = {
 			companyId: companyId,
@@ -505,11 +499,11 @@ export default defineComponent({
 		});
 
 		watch(() => dataConfigDeductions.value, (value) => {
-			if (statusFormAdd.value) {
-				localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
-				localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
-				value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
-			}
+			// if (statusFormAdd.value) {
+			// 	localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
+			// 	localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
+			// 	value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
+			// }
 			calculateTax();
 		}, { deep: true });
 
@@ -529,7 +523,7 @@ export default defineComponent({
 		});
 
 		watch(() => store.state.common.pa110.addRow, (newVal) => {
-			localReal.value = 0
+			// localReal.value = 0
 			store.state.common.pa110.statusClickButtonAdd = false;
 			store.state.common.pa110.dataTaxPayInfo =
 				store.state.common.pa110.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
@@ -611,7 +605,12 @@ export default defineComponent({
 					row.amount = 0;
 					data.deductionItems?.map((item: any) => {
 						if (row.itemCode == item.itemCode) {
-							row.amount = item.amount;
+							if (item.itemCode == 1012 && item.amount < 1000) { // nếu nhỏ hơn 1000 thì show red
+								row.amount = 0;
+								localReal.value = item.amount;
+							} else {
+								row.amount = item.amount;
+							}
 						}
 					});
 				});
@@ -670,7 +669,9 @@ export default defineComponent({
 				let data = value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100);
 				dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = data;
 				let value1012 = Math.floor(data / 100) * 10;
-				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = value1012 > 1000 ? value1012 : 0;
+				localReal.value = value1012 >= 1000 ? 0 : value1012;
+				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = value1012 >= 1000 ? value1012 : 0;
+				// dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(data / 100) * 10;
 			}
 			await dataConfigDeductions.value?.map((item: any) => {
 				if ([1001, 1002, 1003, 1004, 1011, 1012].includes(item.itemCode)) {
@@ -712,7 +713,12 @@ export default defineComponent({
 					row.amount = 0;
 					newVal.getEmployeeWage.deductionItems?.map((item: any) => {
 						if (row.itemCode == item.itemCode) {
-							row.amount = item.amount;
+							if (item.itemCode == 1012 && item.amount < 1000) { // nếu nhỏ hơn 1000 thì show red
+								row.amount = 0;
+								localReal.value = item.amount;
+							} else {
+								row.amount = item.amount;
+							}
 						}
 					});
 				});
@@ -726,25 +732,25 @@ export default defineComponent({
 
 		watch(resultCalculateMidTermSettlement, (data: any) => {
 			triggerCalculateMidTermSettlement.value = false;
-			dataMidTermSettlement.value.data = []
+			dataMidTermSettlement.data = []
 			dataConfigDeductions.value.map((item: any) => {
 				if ([1031].includes(item.itemCode)) {
-					dataMidTermSettlement.value.data.push({
+					dataMidTermSettlement.data.push({
 						name: item.name,
 						amount: item.amount,
 						amountNew: data.calculateMidTermSettlement?.deductibleIncomeTaxAmount
 					});
 				}
 				if ([1032].includes(item.itemCode)) {
-					dataMidTermSettlement.value.data.push({
+					dataMidTermSettlement.data.push({
 						name: item.name,
 						amount: item.amount,
 						amountNew: data.calculateMidTermSettlement?.deductibleLocalIncomeTaxAmount
 					});
 				}
 			});
-			dataMidTermSettlement.value.employeeId = dataIW.value.employee.employeeId
-			dataMidTermSettlement.value.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1
+			dataMidTermSettlement.employeeId = dataIW.value.employee.employeeId
+			dataMidTermSettlement.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1
 			modalMidTermSettlement.value = true
 		})
 		// ======================= FUNCTION ================================
@@ -768,7 +774,10 @@ export default defineComponent({
 			}
 		};
 
-		const onChangeInputDeduction = () => {
+		const onChangeInputDeduction = (data: any) => {
+			if (data.itemCode == 1012) {
+				localReal.value = data.amount;
+			}
 			statusCalculateMTS.value = true; // disable button ở giữa
 			if (statusFormAdd.value) {
 				store.state.common.pa110.statusChangeFormAdd = true;
@@ -920,8 +929,8 @@ export default defineComponent({
 		}
 
 		const actionCalculateMTS = () => {
-			originCalculateMidTermSettlement.value.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1
-			originCalculateMidTermSettlement.value.employeeId = dataIW.value.employee.employeeId
+			originCalculateMidTermSettlement.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1
+			originCalculateMidTermSettlement.employeeId = dataIW.value.employee.employeeId
 			triggerCalculateMidTermSettlement.value = true;
 		}
 		const updateDataDeduction = async () => {
@@ -934,7 +943,7 @@ export default defineComponent({
 
 		const onUpdateValue = (employeeId: any) => {
 			if (originDataEmployeeWage.employeeId != dataIW.value.employee.employeeId) {
-				localReal.value = 0;
+				// localReal.value = 0;
 				originDataEmployeeWage.employeeId = employeeId;
 				statusChangeFormPrice.value = false;
 				triggerEmployeeWage.value = true;
@@ -979,6 +988,18 @@ export default defineComponent({
 				paymentDay: parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1,
 				employeeId: dataIW.value.employee.employeeId,
 			});
+			// checkShowRed.value = false;
+		}
+		const checkShowRed = (data: any) => { // check hiển thị input đỏ và tooltips
+			if (dataIW.value.employee.employeeId && data.itemCode == 1012) {
+				if (data.amount == localReal.value && localReal.value == 0) {
+					return false;
+				}
+				if (data.amount <= 1000) {
+					return true
+				}
+			}
+			return false
 		}
 
 		return {
@@ -1019,13 +1040,14 @@ export default defineComponent({
 			startDate,
 			finishDate,
 			requiredPaymentDay,
-			localIncomeBoo,
+			// localIncomeBoo,
 			localReal, actionCalculateMTS,
 			confirmDeleteMidTermSettlement,
 			dataMidTermSettlement,
 			statusFormAdd,
 			statusChangeFormPrice,
 			statusCalculateMTS,
+			checkShowRed,
 		};
 	},
 });

@@ -86,7 +86,7 @@
                     <div>요양보호사</div>
                   </div>
                   <div v-else-if="facilityBizType === 4">
-                    <div>간호(조무)사간호(조무)사</div>
+                    <div>간호(조무)사</div>
                     <div>치과위생사</div>
                   </div>
                   <div v-else-if="facilityBizType === 5">

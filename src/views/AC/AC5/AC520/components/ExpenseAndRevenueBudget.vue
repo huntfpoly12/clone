@@ -223,8 +223,8 @@
       @ok="handleCloseCalPopup" :data="formState?.details" />
     <a-modal :visible="state.modalFillDataPreIndex" :mask-closable="false" :footer="false" :closable="false" :width="500">
       <div>
-        <div>최종차수(본예산인 경우 전년도 최종차수) 전임직원수일람표를 불러옵니다.</div><br />
-        <div>이미 입력된 정보가 있더라도 새로 불러온 정보가 입력됩니다. </div><br />
+        <div>최종차수(본예산인 경우 전년도 최종차수) 전임직원수일람표를 불러옵니다.</div>
+        <div>이미 입력된 정보가 있더라도 새로 불러온 정보가 입력됩니다. </div>
         <div>그래도 불러오겠습니까?</div>
       </div>
       <div class="footer">

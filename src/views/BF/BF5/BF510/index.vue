@@ -1,97 +1,108 @@
 <template>
   <action-header title="4대보험업무관리" :buttonSearch="true" @actionSearch="searching()"/>
-  <div class="filter-custom px-10 py-5">
+  <div class="px-10 py-5">
+    <div class="d-flex-center gap-10 mb-5">
+      <div class="d-flex-center gap-10">
+        <div>회계연월:</div>
+        <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5" text=""/>
+      </div>
+      <div class="month-container">
+        <div v-for="(month) in checkBoxSearch" :key="month.id" class="month"
+             :class="{ 'active': dataSearch.month === month.id }" @click="handleSelectMonth(month.id)">
+          {{ `${dataSearch.year} - ${month.text}` }}
+        </div>
+      </div>
+    </div>
     <a-space :size="16">
       <div>
-        <div class="d-flex-center gap-10 mb-5">
-          <div>회계연월:</div>
-          <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5" text=""/>
-          <radio-group :arrayValue="checkBoxSearch" layoutCustom="horizontal"
-                       v-model:valueRadioCheck="dataSearch.month"/>
-        </div>
         <div class="d-flex-center gap-10" style="height: 40px">
           <div>마감상태:</div>
-          <div class="d-flex-center gap-20">
-            <checkbox-basic label="전체" class="mr-10" v-model:valueCheckbox="statuses.checkboxAll"/>
+          <div class="d-flex-center gap-10">
+            <div @click="handleClickAll" class="checkbox-all">
+              <DxCheckBox class="mr-10 " v-model:value="checkboxAll" icon-size="16" text="전체" />
+            </div>
             <div class="d-flex">
-              <checkbox-basic label="미입력" class=" custom-checkbox0" v-model:valueCheckbox="statuses.checkbox0"/>
+              <checkbox-basic label="미입력" class="custom-checkbox0" v-model:valueCheckbox="statuses.checkbox0"/>
               <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
             </div>
-            <checkbox-basic label="입력중" class="mr-10 custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
-            <checkbox-basic label="입력마감" class="mr-10 custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
-            <checkbox-basic label="조정중" class="mr-10 custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
-            <checkbox-basic label="조정마감" class="mr-10 custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
+            <checkbox-basic label="입력중" class=" custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
+            <checkbox-basic label="입력마감" class=" custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
+            <checkbox-basic label="조정중" class=" custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
+            <checkbox-basic label="조정마감" class=" custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
           </div>
         </div>
       </div>
-      <div class="search-company">
-        <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
-        </a-form-item>
-        <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
-        </a-form-item>
+      <div class="d-flex-center gap-10">
+        <DxField label="매니저리스트"  class="field-custom-auto">
+          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
+        </DxField>
+        <DxField label="영업자리스트" class="field-custom-auto">
+          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId"/>
+        </DxField>
+        <div>
+          <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" width="100px"/>
+        </div>
       </div>
-      <div class="search-4">
-        <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel"/>
-      </div>
+
     </a-space>
   </div>
-
-  <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-              :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10"
-              style="height: calc(100vh - 180px); margin-top: 40px">
-    <DxExport :enabled="true"/>
-    <DxSearchPanel :visible="true" placeholder="검색" :search-visible-columns="['facilityBusinessName']"/>
-    <DxToolbar>
-      <DxItem name="searchPanel"/>
-      <DxItem name="exportButton" css-class="cell-button-export"/>
-    </DxToolbar>
-    <DxColumn data-field="code" caption="사업자코드"/>
-    <DxColumn data-field="name" caption="상호" width="215px"/>
-    <DxColumn data-field="address" caption="주소" width="215px"/>
-    <DxColumn data-field="facilityBusinessName" caption="사업별 마감현황" cell-template="closingStatusByBusiness" width="250px"
-              :calculateCellValue="calFacilityBusinessName"/>
-    <DxColumn data-field="presidentName" caption="대표자"/>
-    <DxColumn data-field="phone" caption="연락처"/>
-    <DxColumn data-field="presidentMobilePhone" caption="휴태폰"/>
-    <DxColumn caption="담당매니저" data-field="manageCompactUser.name"/>
-    <DxColumn data-field="manageStartDate" caption="관리시작일" cell-template="productionRequestedAt" alignment="center"
-              width="100px"/>
-    <template #closingStatusByBusiness="{data}">
-      <div class="d-flex flex-col gap-5">
-        <div v-for="(company, index) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between gap-10">
-          <div class="truncate" :title="company.facilityBusinessName" style="min-width: 50px">{{ company.facilityBusinessName }}</div>
-          <div class="d-flex-center gap-5">
-            <AccountingProcessStatusEdit
-              :data="{
+  <a-spin :spinning="loading">
+    <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10"
+                style="height: calc(100vh - 180px)">
+      <DxPaging :page-size="0"/>
+      <DxExport :enabled="true"/>
+      <DxSearchPanel :visible="true" placeholder="검색" :search-visible-columns="['facilityBusinessName']"/>
+      <DxToolbar>
+        <DxItem name="searchPanel"/>
+        <DxItem name="exportButton" css-class="cell-button-export"/>
+      </DxToolbar>
+      <DxColumn data-field="code" caption="사업자코드"/>
+      <DxColumn data-field="name" caption="상호" width="215px"/>
+      <DxColumn data-field="address" caption="주소" width="215px"/>
+      <DxColumn data-field="facilityBusinessName" caption="사업별 마감현황" cell-template="closingStatusByBusiness" width="250px"
+                :calculateCellValue="calFacilityBusinessName"/>
+      <DxColumn data-field="presidentName" caption="대표자"/>
+      <DxColumn data-field="phone" caption="연락처"/>
+      <DxColumn data-field="presidentMobilePhone" caption="휴태폰"/>
+      <DxColumn caption="담당매니저" data-field="manageCompactUser.name"/>
+      <DxColumn data-field="manageStartDate" caption="관리시작일" cell-template="productionRequestedAt" alignment="center"
+                width="100px"/>
+      <template #closingStatusByBusiness="{data}">
+        <div class="d-flex flex-col gap-5">
+          <div v-for="(company, index) in data.data.compactAccountingProcesses" class="d-flex-center justify-content-between gap-10">
+            <div class="truncate" :title="company.facilityBusinessName" style="min-width: 50px">{{ company.facilityBusinessName }}</div>
+            <div class="d-flex-center gap-5">
+              <AccountingProcessStatusEdit
+                :data="{
                 status: company.status,
                 companyId: data.data.companyId,
                 facilityBusinessId: company.facilityBusinessId,
                 year: dataSearch.year,
                 month: dataSearch.month
               }"
-              @closePopup="closePopup"
-            />
-            <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
-              <div @click="redirectAc110(data.data, index)">
-                <RightCircleOutlined style="color: #2323da; font-size: 20px; border-radius: 10px"/>
-              </div>
-            </a-tooltip>
+                @closePopup="closePopup"
+              />
+              <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
+                <div @click="redirectAc110(data.data, index)">
+                  <RightCircleOutlined style="color: #2323da; font-size: 20px; border-radius: 10px"/>
+                </div>
+              </a-tooltip>
+            </div>
           </div>
         </div>
-      </div>
-    </template>
-    <template #productionRequestedAt="{data}">
-      {{ data.data.manageStartDate && $filters.formatDate(data.data.manageStartDate) }}
-    </template>
-  </DxDataGrid>
+      </template>
+      <template #productionRequestedAt="{data}">
+        {{ data.data.manageStartDate && $filters.formatDate(data.data.manageStartDate) }}
+      </template>
+    </DxDataGrid>
+  </a-spin>
 </template>
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import {reactive, watch, watchEffect} from 'vue';
-import {DxDataGrid, DxColumn, DxExport, DxSearchPanel, DxItem, DxToolbar} from 'devextreme-vue/data-grid';
+import {DxDataGrid, DxColumn, DxExport, DxSearchPanel, DxItem, DxToolbar, DxPaging} from 'devextreme-vue/data-grid';
 import {ref} from 'vue';
 import {searchCompanyAccountingDeadlines} from '@/graphql/queries/BF/BF5/BF510';
 import {useMutation, useQuery} from '@vue/apollo-composable';
@@ -101,23 +112,24 @@ import InfoToolTip from "@/components/common/InfoToolTip.vue";
 import {RightCircleOutlined} from '@ant-design/icons-vue';
 import mutations from "@/graphql/mutations/AddToken";
 import {ISearchCompanyAccountingDeadlines} from "@/views/BF/BF5/BF510/types";
+import DxCheckBox from "devextreme-vue/check-box";
 
 const checkBoxSearch = [
-  {id: 1, text: '1 월'},
-  {id: 2, text: '2 월'},
-  {id: 3, text: '3 월'},
-  {id: 4, text: '4 월'},
-  {id: 5, text: '5 월'},
-  {id: 6, text: '6 월'},
-  {id: 7, text: '7 월'},
-  {id: 8, text: '8 월'},
-  {id: 9, text: '9 월'},
-  {id: 10, text: '10 월'},
-  {id: 11, text: '11 월'},
-  {id: 12, text: '12 월'},
+  {id: 1, text: '01'},
+  {id: 2, text: '02'},
+  {id: 3, text: '03'},
+  {id: 4, text: '04'},
+  {id: 5, text: '05'},
+  {id: 6, text: '06'},
+  {id: 7, text: '07'},
+  {id: 8, text: '08'},
+  {id: 9, text: '09'},
+  {id: 10, text: '10'},
+  {id: 11, text: '11'},
+  {id: 12, text: '12'},
 ]
+const checkboxAll = ref(true);
 const statuses = reactive({
-  checkboxAll: true,
   checkbox0: true,
   checkbox1: true,
   checkbox2: true,
@@ -125,23 +137,11 @@ const statuses = reactive({
   checkbox4: true,
 });
 watchEffect(() => {
-  if (statuses.checkboxAll) {
-    statuses.checkbox0 = statuses.checkbox1 = statuses.checkbox2 = statuses.checkbox3 = statuses.checkbox4 = true;
-  } else {
-    statuses.checkbox0 = statuses.checkbox1 = statuses.checkbox2 = statuses.checkbox3 = statuses.checkbox4 = false;
-  }
+    checkboxAll.value = statuses.checkbox0 && statuses.checkbox1 && statuses.checkbox2 && statuses.checkbox3 && statuses.checkbox4;
 })
-watchEffect(() => {
-  if (statuses.checkbox0 && statuses.checkbox1 && statuses.checkbox2 && statuses.checkbox3 && statuses.checkbox4) {
-    statuses.checkboxAll = true;
-  }
-  if (!(statuses.checkbox0 || statuses.checkbox1 || statuses.checkbox2 || statuses.checkbox3 || statuses.checkbox4)) {
-    statuses.checkboxAll = false;
-  }
-})
+
+
 const dataSource = ref<DataSource>()
-
-
 
 const dataSearch = reactive<ISearchCompanyAccountingDeadlines>({
   fiscalYear: parseInt(dayjs().format('YYYY')),
@@ -154,7 +154,7 @@ const dataSearch = reactive<ISearchCompanyAccountingDeadlines>({
 })
 const trigger = ref(true);
 
-const {onResult, onError} = useQuery(searchCompanyAccountingDeadlines, {
+const {onResult, onError, loading} = useQuery(searchCompanyAccountingDeadlines, {
   filter: dataSearch
 }, () => ({
   fetchPolicy: "no-cache",
@@ -208,7 +208,6 @@ onDone((result: any) => {
   cloneWebsite();
 })
 const redirectAc110 = (data: any, index: number) => {
-  console.log('data', data)
   companyInfo.companyId = data.companyId;
   companyInfo.code = data.code;
   companyInfo.username = data.name;
@@ -223,8 +222,8 @@ const cloneWebsite = () => {
   const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
   const currentUrl = window.location.origin.replace(/\/$/, '');
   if (userToken.refreshToken && userToken.accessToken) {
-    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&username=${companyInfo.username}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${companyInfo.facilityBusinessName}&year=${dataSearch.year}&path=AC110&onlyView=true`
-    window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,');
+    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&username=${companyInfo.username}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${companyInfo.facilityBusinessName}&year=${dataSearch.year}&month=${dataSearch.month}&path=AC110`
+    window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,' + windowFeatures);
   }
 }
 const closePopup = (e: boolean) => {
@@ -234,12 +233,16 @@ const closePopup = (e: boolean) => {
 const calFacilityBusinessName = (rowData: any) => {
   return rowData.compactAccountingProcesses ? rowData.compactAccountingProcesses.map((item: any) => item.facilityBusinessName).join(' ') : ''
 }
+const handleSelectMonth = (month: number) => {
+  dataSearch.month = month
+}
+const handleClickAll = () => {
+  statuses.checkbox0 = statuses.checkbox1 = statuses.checkbox2 = statuses.checkbox3 = statuses.checkbox4 = checkboxAll.value;
+}
 </script>
 
 <style lang="scss" scoped>
 :deep(.dx-widget .dx-collection) {
-  //display: grid;
-  //grid-template-columns: repeat(12, 1fr);
   .dx-radiobutton {
     display: flex;
     align-items: center;
@@ -257,16 +260,41 @@ const calFacilityBusinessName = (rowData: any) => {
 }
 :deep(.dx-checkbox-container) {
   overflow: visible;
+  justify-content: center;
 }
 .checkbox {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
-.filter-custom {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  z-index: 1;
+.month-container {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  .month {
+    border: 1px solid #bfbfbf;
+    border-left: none;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    &:first-child {
+      border-left: 1px solid #bfbfbf;
+    }
+    &.active {
+      background-color: #d1e1f8;
+    }
+  }
+}
+:deep(.dx-checkbox-text) {
+  width: 70px;
+  height: 24px;
+}
+:deep(.checkbox-all) {
+  height: 24px;
+  .dx-checkbox-text {
+    width: auto;
+    height: 100%;
+  }
 }
 </style>
