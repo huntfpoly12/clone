@@ -157,7 +157,9 @@ export default defineComponent({
         } = useMutation(mutations.registerAccountingDocumentW4cUpload);
 
         doneRegisterAccountingDocumentW4cUpload((e: any) => {
-
+            modalStatusTable.value = false;
+            emit("closePopup", false);
+            emit("resetTable", true);
         });
         errorRegisterAccountingDocumentW4cUpload((e) => {
             //notification('error', e.message)
@@ -173,13 +175,10 @@ export default defineComponent({
             triggerGetFacilityBusinessAccountingProcesses.value = false;
             statusButtonSubmit.value = true;
             value.getFacilityBusinessAccountingProcesses.map((item: any) => {
-                console.log(item);
-                
                 if (item.status != 40) {
                     statusButtonSubmit.value = false;
                 }
             })
-
             dataSource.value = new DataSource({
                 store: {
                     type: "array",
