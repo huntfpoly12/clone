@@ -6,131 +6,240 @@
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
-            <text-number-box width="200px" :required="true" v-model:valueInput="formStateTab1PA120.employeeId"
-              placeholder="숫자만 입력 가능" :disabled="true" />
+            <text-number-box
+              width="200px"
+              :required="true"
+              v-model:valueInput="formStateTab1PA120.employeeId"
+              placeholder="숫자만 입력 가능"
+              :disabled="true"
+            />
           </div>
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
           <div class="input-text">
-            <switch-basic v-model:valueSwitch="formStateTab1PA120.president" textCheck="O" textUnCheck="X"
-              @onChange="onChangePresident" style="width: 80px"></switch-basic>
+            <switch-basic
+              v-model:valueSwitch="formStateTab1PA120.president"
+              textCheck="O"
+              textUnCheck="X"
+              @onChange="onChangePresident"
+              style="width: 80px"
+            ></switch-basic>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title> 대표자인 경우 고용보험 제외됩니</template>
               <div style="text-align: center">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+                <img
+                  src="@/assets/images/iconInfo.png"
+                  style="width: 14px; height: 14px"
+                  class="mb-3 ml-10"
+                />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
 
         <a-form-item label="성명" label-align="right" class="red">
-          <default-text-box width="200px" v-model:valueInput="formStateTab1PA120.name" :required="true"
-            @onChange="onChange" placeholder="한글,영문(대문자) 입력 가능" />
+          <default-text-box
+            width="200px"
+            v-model:valueInput="formStateTab1PA120.name"
+            :required="true"
+            @onChange="onChange"
+            placeholder="한글,영문(대문자) 입력 가능"
+          />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
-          <date-time-box width="150px" v-model:valueDate="formStateTab1PA120.joinedAt">
+          <date-time-box
+            width="150px"
+            v-model:valueDate="formStateTab1PA120.joinedAt"
+          >
           </date-time-box>
         </a-form-item>
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
-            <date-time-box width="150px" v-model:valueDate="formStateTab1PA120.leavedAt">
+            <date-time-box
+              width="150px"
+              v-model:valueDate="formStateTab1PA120.leavedAt"
+            >
             </date-time-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title> 마지막 근무한 날</template>
               <div style="text-align: center">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+                <img
+                  src="@/assets/images/iconInfo.png"
+                  style="width: 14px; height: 14px"
+                  class="mb-3 ml-10"
+                />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
         <a-form-item label="내/외국인" label-align="right">
-          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="formStateTab1PA120.foreigner"
-            layoutCustom="horizontal" :disabled="!formStateTab1PA120.deletable">
+          <radio-group
+            :arrayValue="radioCheckForeigner"
+            v-model:valueRadioCheck="formStateTab1PA120.foreigner"
+            layoutCustom="horizontal"
+            :disabled="!formStateTab1PA120.deletable"
+          >
           </radio-group>
         </a-form-item>
 
         <a-row>
-          <a-form-item label="외국인 국적" label-align="right" :class="{ red: formStateTab1PA120.foreigner }">
-            <country-code-select-box style="width: 200px" v-model:valueCountry="formStateTab1PA120.nationalityCode"
-              @textCountry="changeTextCountry" :required="formStateTab1PA120.foreigner"
-              :disabled="!formStateTab1PA120.foreigner" :hiddenOptionKR="formStateTab1PA120.foreigner" />
+          <a-form-item
+            label="외국인 국적"
+            label-align="right"
+            :class="{ red: formStateTab1PA120.foreigner }"
+          >
+            <country-code-select-box
+              style="width: 200px"
+              v-model:valueCountry="formStateTab1PA120.nationalityCode"
+              @textCountry="changeTextCountry"
+              :required="formStateTab1PA120.foreigner"
+              :disabled="!formStateTab1PA120.foreigner"
+              :hiddenOptionKR="formStateTab1PA120.foreigner"
+            />
           </a-form-item>
-          <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: formStateTab1PA120.foreigner }">
-            <stay-qualification-select-box v-model:valueStayQualifiction="formStateTab1PA120.stayQualification
-              " :disabled="!formStateTab1PA120.foreigner" :required="formStateTab1PA120.foreigner" />
+          <a-form-item
+            label="외국인 체류자격"
+            label-align="right"
+            :class="{ red: formStateTab1PA120.foreigner }"
+          >
+            <stay-qualification-select-box
+              v-model:valueStayQualifiction="
+                formStateTab1PA120.stayQualification
+              "
+              :disabled="!formStateTab1PA120.foreigner"
+              :required="formStateTab1PA120.foreigner"
+            />
           </a-form-item>
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box :required="true" v-model:valueInput="formStateTab1PA120.residentId" width="150px"
-            :foreigner="formStateTab1PA120.foreigner" :disabled="!formStateTab1PA120.deletable">
+          <id-number-text-box
+            :required="true"
+            v-model:valueInput="formStateTab1PA120.residentId"
+            width="150px"
+            :foreigner="formStateTab1PA120.foreigner"
+            :disabled="!formStateTab1PA120.deletable"
+          >
           </id-number-text-box>
         </a-form-item>
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
           <div class="input-text">
-            <number-box :required="true" :spinButtons="true" v-model:valueInput="formStateTab1PA120.weeklyWorkingHours"
-              width="150px" :min="1" :max="52"></number-box>
+            <number-box
+              :required="true"
+              :spinButtons="true"
+              v-model:valueInput="formStateTab1PA120.weeklyWorkingHours"
+              width="150px"
+              :min="1"
+              :max="52"
+            ></number-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 급여명세서 및 4대보험 취득신고시 이용됩니다.
               </template>
               <div style="text-align: center">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+                <img
+                  src="@/assets/images/iconInfo.png"
+                  style="width: 14px; height: 14px"
+                  class="mb-3 ml-10"
+                />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
 
         <a-form-item label="세대주여부" label-align="right">
-          <switch-basic v-model:valueSwitch="formStateTab1PA120.householder" textCheck="O" textUnCheck="X"
-            style="width: 80px"></switch-basic>
+          <switch-basic
+            v-model:valueSwitch="formStateTab1PA120.householder"
+            textCheck="O"
+            textUnCheck="X"
+            style="width: 80px"
+          ></switch-basic>
         </a-form-item>
 
         <a-form-item label="주소" class="clr" label-align="left">
           <div class="zip-code">
-            <default-text-box v-model:valueInput="formStateTab1PA120.roadAddress" width="300px" :disabled="true"
-              class="roadAddress" placeholder="도로명주소" />
+            <default-text-box
+              v-model:valueInput="formStateTab1PA120.roadAddress"
+              width="300px"
+              :disabled="true"
+              class="roadAddress"
+              placeholder="도로명주소"
+            />
             <div style="margin-left: 5px">
               <post-code-button @dataAddress="funcAddress" text="주소검색" />
             </div>
           </div>
 
-          <default-text-box v-model:valueInput="formStateTab1PA120.addressExtend" width="300px" placeholder="상세 주소 입력" />
+          <default-text-box
+            v-model:valueInput="formStateTab1PA120.addressExtend"
+            width="300px"
+            placeholder="상세 주소 입력"
+          />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
           <div class="input-text">
-            <mail-text-box v-model:valueInput="formStateTab1PA120.email" width="200px" placeholder="abc@example.com">
+            <mail-text-box
+              v-model:valueInput="formStateTab1PA120.email"
+              width="200px"
+              placeholder="abc@example.com"
+            >
             </mail-text-box>
             <a-tooltip placement="top" class="custom-tooltip">
               <template #title>
                 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
               </template>
               <div style="text-align: center">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
+                <img
+                  src="@/assets/images/iconInfo.png"
+                  style="width: 14px; height: 14px"
+                  class="mb-3 ml-10"
+                />
               </div>
             </a-tooltip>
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-          <SelectSearchEdit v-model:valueInput="formStateTab1PA120.department" :data="arrDepartments"
-            @updateArrSelect="(value: any) => arrDepartments = [...value]" width="200px" />
+          <SelectSearchEdit
+            v-model:valueInput="formStateTab1PA120.department"
+            :data="arrDepartments"
+            @updateArrSelect="(value: any) => arrDepartments = [...value]"
+            width="200px"
+          />
         </a-form-item>
         <a-form-item label="직위" label-align="right">
-          <SelectSearchEdit v-model:valueInput="formStateTab1PA120.responsibility" :data="arrResponsibility"
-            @updateArrSelect="(value: any) => arrResponsibility = [...value]" width="200px" />
+          <SelectSearchEdit
+            v-model:valueInput="formStateTab1PA120.responsibility"
+            :data="arrResponsibility"
+            @updateArrSelect="(value: any) => arrResponsibility = [...value]"
+            width="200px"
+          />
         </a-form-item>
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center">
-            <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit"
-              @onClick="actionUpdated" />
+            <button-basic
+              text="저장"
+              type="default"
+              mode="contained"
+              :width="90"
+              id="btn-save-edit"
+              @onClick="actionUpdated"
+            />
           </a-col>
         </a-row>
       </standard-form>
     </a-spin>
-    <PopupMessage :modalStatus="presidenStatus" @closePopup="presidenStatus = false" :typeModal="'info'"
-      :title="presidentWaring" :content="''" :okText="'확인'" :isConfirmIcon="false" @checkConfirm="presidenStatus = false"
-      :width="400" />
+    <PopupMessage
+      :modalStatus="presidenStatus"
+      @closePopup="presidenStatus = false"
+      :typeModal="'info'"
+      :title="presidentWaring"
+      :content="''"
+      :okText="'확인'"
+      :isConfirmIcon="false"
+      @checkConfirm="presidenStatus = false"
+      :width="400"
+    />
   </div>
 </template>
 
@@ -145,26 +254,20 @@ import { radioCheckForeigner } from "../../utils/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum";
 export default defineComponent({
-  components: {},
-  props: {
-    idRowEdit: {
-      type: Number,
-      default: 0,
-    },
-    openPopup: {
-      type: Number,
-    },
-  },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = ref<number>(
       parseInt(sessionStorage.getItem("paYear") || "0")
     );
+    const messageUpdate = Message.getMessage("COMMON", "106").message;
     const formStateTab1PA120 = computed(
       () => store.state.common.formStateTab1PA120
     );
-    const formOriginTab1PA120 = computed(() => store.state.common.formOriginTab1PA120);
-    const presidentOriginPA120 = computed(          // check xem khi lưu president có bị thay đổi ko ?
+    const formOriginTab1PA120 = computed(
+      () => store.state.common.formOriginTab1PA120
+    );
+    // check xem khi lưu president có bị thay đổi ko ?
+    const presidentOriginPA120 = computed(
       () => store.state.common.presidentOriginPA120
     );
     const companyParam = ref({
@@ -177,24 +280,25 @@ export default defineComponent({
     const getEmployeeParam = ref<any>({
       companyId: companyId,
       imputedYear: globalYear.value,
-      employeeId: employeeIdPA120,
+      employeeId: employeeIdPA120.value,
     });
-    const getEmployeeWageTrigger = ref(false);
-    const { result: getValueDefault, loading, onError: onErrorEmployee } = useQuery(
-      queries.getEmployeeWage,
-      getEmployeeParam,
-      () => ({
-        enabled: getEmployeeWageTrigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
+    const getEmployeeWageTrigger = ref(getEmployeeParam.value.employeeId !== null);
+    const {
+      result: getValueDefault,
+      loading,
+      onError: onErrorEmployee,
+    } = useQuery(queries.getEmployeeWage, getEmployeeParam, () => ({
+      enabled: getEmployeeWageTrigger.value,
+      fetchPolicy: "no-cache",
+    }));
     onErrorEmployee(() => {
       // console.log(`output->err tab1`,)
-    })
+    });
     watch(getValueDefault, (value: any) => {
       let data = value.getEmployeeWage;
       let editRowData: any = {};
-      store.state.common.deductionDependentCountPA120 = data?.deductionDependentCount || 1;
+      store.state.common.deductionDependentCountPA120 =
+        data?.deductionDependentCount || 1;
       editRowData.name = data.name.toUpperCase();
       editRowData.foreigner = data.foreigner;
       store.state.common.presidentOriginPA120 = data.president;
@@ -219,18 +323,6 @@ export default defineComponent({
       store.commit("common/formStateTab1PA120", editRowData);
       getEmployeeWageTrigger.value = false;
     });
-    watch(
-      () => employeeIdPA120,
-      async (newVal: any) => {
-        if (+newVal !== 0) {
-          getEmployeeParam.value.employeeId = newVal;
-          if (getEmployeeParam.value.employeeId) {
-            getEmployeeWageTrigger.value = true;
-          }
-        }
-      },
-      { deep: true }
-    );
 
     // --------------------------get Data Departments--------------------------
 
@@ -246,7 +338,6 @@ export default defineComponent({
     errorDepartments((_error) => {
       //notification('error', error.message);
     });
-
     watch(resDepartments, (value: any) => {
       if (value) {
         arrDepartments.value = value.getDepartments.map((item: any) => ({
@@ -280,7 +371,6 @@ export default defineComponent({
     const funcAddress = (data: any) => {
       formStateTab1PA120.value.roadAddress = data.roadAddress;
     };
-    const messageUpdate = Message.getMessage("COMMON", "106").message;
     const onChange = (emitVal: any) => {
       formStateTab1PA120.value.name = emitVal.toUpperCase();
     };
@@ -352,16 +442,29 @@ export default defineComponent({
       notification("success", messageUpdate);
       store.state.common.isNewRowPA120 = false;
       store.commit("common/formOriginTab1PA120", formStateTab1PA120.value);
+      // check president difference to save in tab 2 [if true]
       if (presidentOriginPA120.value !== formStateTab1PA120.value.president) {
-        store.state.common.presidentEditPA120 = formStateTab1PA120.value.president;
+        store.state.common.presidentEditPA120 =
+          formStateTab1PA120.value.president;
       } else {
         store.commit("common/actionFormDonePA120");
         store.state.common.presidentEditPA120 = false;
       }
       setTimeout(() => {
         //RESET origin president
-        store.state.common.presidentOriginPA120 = formStateTab1PA120.value.president;
-      }, 0)
+        store.state.common.presidentOriginPA120 =
+          formStateTab1PA120.value.president;
+      }, 0);
+    });
+
+    //reset state when change employee id
+
+    watch(employeeIdPA120, async (newVal: any) => {
+      if (+newVal !== 0) {
+        presidenStatus.value = false;
+        getEmployeeParam.value.employeeId = newVal;
+        getEmployeeWageTrigger.value = true;
+      }
     });
     return {
       loading,
@@ -386,7 +489,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #tab1-pa120 {
-  ::v-deep .ant-form-item-label>label {
+  ::v-deep .ant-form-item-label > label {
     width: 135px;
     padding-left: 10px;
   }

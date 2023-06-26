@@ -139,7 +139,7 @@
 											" :name="item.name" :type="4" subName="공제" :showTooltip="false" :width="'130px'" />
 									</span>
 									<div>
-										<number-box-money
+										<number-box-money format="#0,###"
 											:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"
 											width="130px" @changeInput="onChangeInputPayItem" :spinButtons="false"
 											:rtlEnabled="false" v-model:valueInput="item.amount" :min="0">
@@ -155,32 +155,31 @@
 							<div class="deduction-main">
 								<div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
 									<span>
-										<deduction-items  v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+										<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
 											:name="item.name" :type="1" :showTooltip="false" subName="과세" />
-										<deduction-items  v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+										<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
 											:name="item.name" :type="2" :showTooltip="false" subName="상여(과세)" />
-										<deduction-items  v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+										<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
 											:name="item.name" :type="3" :showTooltip="false" :subName="item.taxfreePayItemCode +
 												' ' + item.taxfreePayItemName ? item.taxfreePayItemName : '' + ' ' + item.taxFreeIncludeSubmission" />
-										<deduction-items  v-if="item.taxPayItemCode == null &&
+										<deduction-items v-if="item.taxPayItemCode == null &&
 											item.taxfreePayItemCode == null
 											" :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
 									</span>
 									<div>
-										<!-- {{ checkShowRed(item) }}
 										<a-tooltip zIndex="9999" :class="checkShowRed(item) ? 'red' : ''"
 											:title="checkShowRed(item) ? '소액징수부면제 적용' + localReal : ''">
 											<span>
-												<number-box-money width="130px" :spinButtons="false"
-													v-model:valueInput="item.amount" @changeInput="onChangeInputDeduction"
-													:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"/>
+												<number-box-money width="130px" :spinButtons="false" format="#0,###"
+													v-model:valueInput="item.amount" @changeInput="onChangeInputDeduction(item)"
+													:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2" />
 											</span>
-										</a-tooltip> -->
-										<number-box-money
+										</a-tooltip>
+										<!-- <number-box-money
 											:disabled="store.state.common.pa110.statusDisabledStatus || statusMidTermSettlement2"
 											width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false"
 											v-model:valueInput="item.amount" format="#0,###">
-										</number-box-money>
+										</number-box-money> -->
 										<span class="pl-5">원</span>
 									</div>
 								</div>
@@ -500,11 +499,11 @@ export default defineComponent({
 		});
 
 		watch(() => dataConfigDeductions.value, (value) => {
-			if (statusFormAdd.value) {
-				// localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
-				// localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
-				value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
-			}
+			// if (statusFormAdd.value) {
+			// 	localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
+			// 	localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
+			// 	value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
+			// }
 			calculateTax();
 		}, { deep: true });
 
@@ -606,7 +605,12 @@ export default defineComponent({
 					row.amount = 0;
 					data.deductionItems?.map((item: any) => {
 						if (row.itemCode == item.itemCode) {
-							row.amount = item.amount;
+							if (item.itemCode == 1012 && item.amount < 1000) { // nếu nhỏ hơn 1000 thì show red
+								row.amount = 0;
+								localReal.value = item.amount;
+							} else {
+								row.amount = item.amount;
+							}
 						}
 					});
 				});
@@ -664,9 +668,10 @@ export default defineComponent({
 			if (value) {
 				let data = value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100);
 				dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = data;
-				// let value1012 = Math.floor(data / 100) * 10;
-				// dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = value1012 > 1000 ? value1012 : 0;
-				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(data / 100) * 10;
+				let value1012 = Math.floor(data / 100) * 10;
+				localReal.value = value1012 >= 1000 ? 0 : value1012;
+				dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = value1012 >= 1000 ? value1012 : 0;
+				// dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(data / 100) * 10;
 			}
 			await dataConfigDeductions.value?.map((item: any) => {
 				if ([1001, 1002, 1003, 1004, 1011, 1012].includes(item.itemCode)) {
@@ -707,7 +712,10 @@ export default defineComponent({
 				dataConfigDeductions.value?.map((row: any) => {
 					row.amount = 0;
 					newVal.getEmployeeWage.deductionItems?.map((item: any) => {
-						if (row.itemCode == item.itemCode) {
+						if (item.itemCode == 1012 && item.amount < 1000) { // nếu nhỏ hơn 1000 thì show red
+							row.amount = 0;
+							localReal.value = item.amount;
+						} else {
 							row.amount = item.amount;
 						}
 					});
@@ -764,7 +772,10 @@ export default defineComponent({
 			}
 		};
 
-		const onChangeInputDeduction = () => {
+		const onChangeInputDeduction = (data: any) => {
+			if (data.itemCode == 1012) {
+				localReal.value = data.amount;
+			}
 			statusCalculateMTS.value = true; // disable button ở giữa
 			if (statusFormAdd.value) {
 				store.state.common.pa110.statusChangeFormAdd = true;
@@ -978,8 +989,10 @@ export default defineComponent({
 			// checkShowRed.value = false;
 		}
 		const checkShowRed = (data: any) => { // check hiển thị input đỏ và tooltips
-			console.log(data);
 			if (dataIW.value.employee.employeeId && data.itemCode == 1012) {
+				if (data.amount == localReal.value && localReal.value == 0) {
+					return false;
+				}
 				if (data.amount <= 1000) {
 					return true
 				}
