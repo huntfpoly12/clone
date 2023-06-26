@@ -8,7 +8,7 @@
     :width="'80%'"
     title="변경이력"
   >
-    <section class="mt-20">
+    <section>
       <a-spin :spinning="loading1">
         <DxDataGrid
           :show-row-lines="true"
@@ -16,7 +16,6 @@
           :data-source="dataSource"
           :show-borders="true"
           key-expr="loggedAt"
-          class="mt-10"
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
@@ -47,7 +46,12 @@
             :format="consignStatusText"
             alignment="center"
           />
-          <DxColumn caption="처리상태" data-field="workingStatus" />
+          <DxColumn
+            caption="처리상태"
+            data-field="workingStatus"
+            alignment="center"
+            :format="workStatusText"
+          />
           <DxColumn
             caption="연금EDI상태"
             data-field="nationalPensionEDIStatus"
