@@ -145,16 +145,6 @@ import { radioCheckForeigner } from "../../utils/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum";
 export default defineComponent({
-  components: {},
-  props: {
-    idRowEdit: {
-      type: Number,
-      default: 0,
-    },
-    openPopup: {
-      type: Number,
-    },
-  },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = ref<number>(
@@ -219,10 +209,12 @@ export default defineComponent({
       store.commit("common/formStateTab1PA120", editRowData);
       getEmployeeWageTrigger.value = false;
     });
+    //reset state when change employee id
     watch(
       () => employeeIdPA120,
       async (newVal: any) => {
         if (+newVal !== 0) {
+          presidenStatus.value = false;
           getEmployeeParam.value.employeeId = newVal;
           if (getEmployeeParam.value.employeeId) {
             getEmployeeWageTrigger.value = true;
@@ -246,7 +238,6 @@ export default defineComponent({
     errorDepartments((_error) => {
       //notification('error', error.message);
     });
-
     watch(resDepartments, (value: any) => {
       if (value) {
         arrDepartments.value = value.getDepartments.map((item: any) => ({

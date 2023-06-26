@@ -1,4 +1,4 @@
-<!-- eslint-disable vue/multi-word-component-names -->
+<!-- eslint-disable vue/multi-word-component-names
 <template>
   <div id="tab23-pa120">
     <div class="header-text-3" style="margin-bottom: 0">부양가족 상세</div>
@@ -488,4 +488,4 @@ export default defineComponent({
   max-height: 300px;
 }
 </style>
-
+ -->

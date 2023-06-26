@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div id="tab2-pa120">
     <!-- {{ formStateTab2PA120.deductionItems }}w -->
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
@@ -1001,4 +1001,4 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 @import "../../style/style.scss";
-</style>
+</style> -->
