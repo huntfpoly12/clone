@@ -97,6 +97,7 @@
                                                   삭제
                                                 </div>
                                               </template>
+                                              <DeleteOutlined style="font-size: 16px" />
                                             </a-tooltip>
                                           </DxButton>
                                           <!-- <a-row>

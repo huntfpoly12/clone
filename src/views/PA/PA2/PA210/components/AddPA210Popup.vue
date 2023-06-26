@@ -12,14 +12,15 @@
                         :data-source="dataReports" :show-borders="true" key-expr="reportId"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
-                        :onRowClick="onSelectionChanged" @row-prepared="onRowPrepared">
+                        :onRowClick="onSelectionChanged" @row-prepared="onRowPrepared"
+                        @focused-row-changing="onFocusedRowChanging">
                         <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxColumn caption="선택" cell-template="radioCheck" />
                         <template #radioCheck="{ data }">
                             <div class="text-align-center pt-8">
                                 <input type="radio" name="radioCheck" 
                                 :checked="!disableRadio(data.data.imputedYear,data.data.imputedMonth) && focusedRowKey == data.data.reportId ? true : false" 
-                                :disabled="disableRadio(data.data.imputedYear,data.data.imputedMonth)"
+                                :disabled="disableRadio(data.data.imputedYear,data.data.imputedMonth) || indexRowDisable.includes(data.rowIndex)"
                                 />
                             </div>
                         </template>
@@ -89,7 +90,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue";
+import { ref, defineComponent, watch, computed, nextTick } from "vue";
 import dayjs from "dayjs";
 import ReportGrid from "./ReportGrid/ReportGrid.vue";
 import DxButton from "devextreme-vue/button";
@@ -211,8 +212,9 @@ export default defineComponent({
                 refund: false,
             },
         ];
+        const indexRowDisable: any = ref([])
         const afterDeadline = ref(false)
-        const focusedRowKey = ref(null);
+        const focusedRowKey:any = ref(null);
         // ===================WATCH==================================
       watch(() => props.dataPopupAdd, (value: any) => {
             loading.value = true;
@@ -277,10 +279,31 @@ export default defineComponent({
                         }
                     }
                 }
+                // check  tháng để focus row  nếu nó là tháng 1 thì focus row đầu luôn.  nếu mà tháng khác thì trừ 1 đơn vị
+                let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 || parseInt(startYearMonth.toString().slice(-2)) == 12 ? 0 : parseInt(startYearMonth.toString().slice(-2)) - 1
+                focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
             } else {
+                focusedRowKey.value = null
+                indexRowDisable.value = []
               let array = value.paymentType == 1 ? arrayPaymentType1 : arrayPaymentType2
+                const arrayPaymentTypeCreated = array.filter((_, i) => value.reportClassCodes.some((codes: any) => Number(codes.slice(-1)) === i ))
+                let countRow = -1
                 array.map((data: any, index) => {
                   if (!value.reportClassCodes.find((item: any) => item == (value.paymentType == 1 ? "반당" : "반익") + index)) {
+                        countRow++
+                        if(value.paymentType == 1) {
+                            if(arrayPaymentTypeCreated.some((items: any) => data.imputedStartYearMonth === items.imputedStartYearMonth || data.imputedFinishYearMonth === items.imputedFinishYearMonth)){
+                                indexRowDisable.value.push(countRow)
+                            }else if(focusedRowKey.value === null){
+                                focusedRowKey.value = index
+                            }
+                        }else {
+                            if(arrayPaymentTypeCreated.some((items: any) => data.paymentStartYearMonth === items.paymentStartYearMonth || data.paymentFinishYearMonth === items.paymentFinishYearMonth)){
+                                indexRowDisable.value.push(countRow)
+                            }else if(focusedRowKey.value === null){
+                                focusedRowKey.value = index
+                            }
+                        }
                         // string concatenation 10th next month of paymentday
                         const subDate = parseInt(
                                                   globalYear.value.toString() + // year
@@ -310,13 +333,15 @@ export default defineComponent({
           }
           
           dtReport.value = dataReports.value.length ? [dataReports.value[0]] : []
-          // check  tháng để focus row  nếu nó là tháng 1 thì focus row đầu luôn.  nếu mà tháng khác thì trừ 1 đơn vị
-          let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 || parseInt(startYearMonth.toString().slice(-2)) == 12 ? 0 : parseInt(startYearMonth.toString().slice(-2)) - 1
-          focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
           loading.value = false;
         }, { deep: true })
 
         // ===================FUNCTION===============================
+        const onFocusedRowChanging = (event: any) => {
+            if(indexRowDisable.value.includes(event.newRowIndex)){
+                event.cancel = true
+            }
+        }
         const onSubmit = (e: any) => {
             resetComponent.value++;
             dtReport.value[0].afterDeadline = afterDeadline.value
@@ -386,7 +411,9 @@ export default defineComponent({
             showTooltipYearMonth,
             closeAllPopupAdd,
             closeAllPopupAddWhenDone,
-            onRowPrepared
+            onRowPrepared,
+            indexRowDisable,
+            onFocusedRowChanging
         };
     },
 });
