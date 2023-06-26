@@ -215,7 +215,7 @@
                 class=""
                 style="cursor: pointer"
                 @click="
-                  onGetAcquistionRp(
+                  onGetViewUrl(
                     data.data.workId,
                     data.data.companyId,
                     data.data.type
@@ -266,7 +266,7 @@
           />
           <template #downE="{ data }: any" class="custom-action">
             <div class="d-flex justify-content-center">
-              <!-- <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
+              <!-- <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetViewUrl(data.data.workId) ">
               <DownloadOutlined :style="{fontSize: 12}"/>
             </DxButton> -->
             </div>
@@ -309,23 +309,23 @@
       :dataType="dataType"
     />
     <popup-message
-      :modalStatus="downModal1"
-      @closePopup="downModal1 = false"
+      :modalStatus="viewUrlPopup"
+      @closePopup="viewUrlPopup = false"
       title="다운로드받은 신고의 상태를 ‘완료’로 전환하시겠습니까?"
       content=""
       okText="네"
       cancelText="아니오"
-      @checkConfirm="downConfirm1"
+      @checkConfirm="viewUrlConfirm"
       typeModal="confirm"
     />
     <popup-message
-      :modalStatus="downModal2"
-      @closePopup="downModal2 = false"
+      :modalStatus="downloadPopup"
+      @closePopup="downloadPopup = false"
       title="다운로드받은 신고의 상태를 ‘완료’로 전환하시겠습니까?"
       content=""
       okText="네"
       cancelText="아니오"
-      @checkConfirm="downConfirm2"
+      @checkConfirm="downConfirm"
       typeModal="confirm"
     />
   </div>
@@ -491,10 +491,10 @@ export default defineComponent({
               return {
                 companyName: item.company.name,
                 companyPresidentName: item.company.presidentName,
-                // manageId: item.majorInsuranceConsignStatus.manageId,
-                // companyConsignStatus:
-                //   item.majorInsuranceConsignStatus.companyConsignStatus,
-                // visible: false,
+                manageId: item.majorInsuranceConsignStatus.manageId,
+                companyConsignStatus:
+                  item.majorInsuranceConsignStatus.companyConsignStatus,
+                visible: false,
                 ...item,
               };
             }
@@ -579,9 +579,6 @@ export default defineComponent({
         selectedRowKeys.value.push(e.key);
         e.component.selectRows(selectedRowKeys.value);
       }
-    };
-    const rowUpdating = (e: any) => {
-      console.log(`output->erowUpdating`, e);
     };
 
     //----------------------GET ViewURL------------------------
@@ -733,10 +730,10 @@ export default defineComponent({
         type5ViewUrlTrigger.value = false;
       }
     });
-    const downModal1 = ref(false);
-    const downModal2 = ref(false);
+    const viewUrlPopup = ref(false);
+    const downloadPopup = ref(false);
     const typeViewUrl = ref(1);
-    const onGetAcquistionRp = (
+    const onGetViewUrl = (
       workId: number,
       companyId: number,
       type: number
@@ -747,7 +744,7 @@ export default defineComponent({
         workId: workId,
       };
       viewUrlType.value = type;
-      downModal1.value = true;
+      viewUrlPopup.value = true;
     };
     const callApiUrl = () => {
       if (viewUrlType.value === 1) {
@@ -766,7 +763,7 @@ export default defineComponent({
         type5ViewUrlTrigger.value = true;
       }
     };
-    const downConfirm1 = (e: any) => {
+    const viewUrlConfirm = (e: any) => {
       if (e) {
         typeViewUrl.value = 1;
         callApiUrl();
@@ -817,10 +814,10 @@ export default defineComponent({
         companyId: data.companyId,
         workId: data.workId,
       };
-      downModal2.value = true;
+      downloadPopup.value = true;
       downLoadParam.value = data;
     };
-    const downConfirm2 = (e: any) => {
+    const downConfirm = (e: any) => {
       if (e) {
         typeViewUrl.value = 2;
         callApiUrl();
@@ -1061,14 +1058,14 @@ export default defineComponent({
       EDIStatusSelectbox,
       states1,
       reportTypeSelectbox2,
-      onGetAcquistionRp,
+      onGetViewUrl,
       onOpenLogs,
       modalHistory,
       onSave,
       tab3Bf520Ref,
-      downModal1,
-      downConfirm1,
-      downModal2,
+      viewUrlPopup,
+      viewUrlConfirm,
+      downloadPopup,
       dataType,
       paramValue,
       loading1,
@@ -1077,7 +1074,7 @@ export default defineComponent({
       urlDownLoad,
       reportTypeTextTab3,
       dayjs,
-      downConfirm2,
+      downConfirm,
       completedAtFormat,
       loadingDataSource,
       consignStatusText,
