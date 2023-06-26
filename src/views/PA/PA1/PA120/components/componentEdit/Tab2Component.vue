@@ -570,7 +570,7 @@ export default defineComponent({
 
     //------------------------------------- FUN CALCULATION--------------------------------------------------------
 
-    //calc RELATE PAYITEM SUM
+    //calc the RELATED PAYITEM SUM
     const onCalcSumPayItem = () => {
       totalPayItemTaxAll.value = formStateTab2PA120.value.payItems.reduce(
         (accumulator: any, object: any) => {
@@ -597,7 +597,7 @@ export default defineComponent({
         0
       );
     };
-    //calc RELATE DEDUCTION SUM
+    //calc the RELATED DEDUCTION SUM
     const onCalcSumDeduction = () => {
       totalDeduction.value = formStateTab2PA120.value.deductionItems.reduce(
         (accumulator: any, object: any) => {
@@ -675,6 +675,7 @@ export default defineComponent({
       () => employeeIdPA120,
       async (value: any) => {
         if (+value !== 0) {
+          console.log(`output->value`,value)
           checkIncomeFirst.value = false;
           localIncomeBoo.value = false;
           employeeTrigger.value = true;

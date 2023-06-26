@@ -145,16 +145,6 @@ import { radioCheckForeigner } from "../../utils/index";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum";
 export default defineComponent({
-  components: {},
-  props: {
-    idRowEdit: {
-      type: Number,
-      default: 0,
-    },
-    openPopup: {
-      type: Number,
-    },
-  },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = ref<number>(
