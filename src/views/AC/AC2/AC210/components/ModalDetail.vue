@@ -31,7 +31,7 @@
                     <DxColumn caption="결의서종류" data-field="resolutionType" css-class="cell-left"
                         cell-template="resolutionType" />
                     <template #resolutionType="{ data }">
-                        {{ arrResolutionType.find((item) => data.data.resolutionType == item.id)?.text }}
+                        {{ arrResolutionType.find((item: any) => data.data.resolutionType == item.id)?.text }}
                     </template>
 
                     <DxColumn caption="세입액" data-field="revenue" format="fixedPoint" />
@@ -50,7 +50,7 @@
                     <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource"
                         css-class="cell-left" />
                     <template #fundingSource="{ data }">
-                        {{ arrFundingSource.find((item) => item.id == data.data.fundingSource)?.text }}
+                        {{ arrFundingSource.find((item: any) => item.id == data.data.fundingSource)?.text }}
                     </template>
                     <DxColumn caption="거래처" data-field="clientName" />
                     <DxColumn caption="결과" data-field="success" cell-template="success-result" />
