@@ -47,6 +47,10 @@ export default defineComponent({
         heightBtn: {
           type: Number,
           default: 30
+        },
+        noOptionNoInput: {
+            type: Boolean,
+            required: false
         }
     },
     setup(props, { emit }) {
@@ -65,6 +69,10 @@ export default defineComponent({
             { id: 30, text: '조정중', class: 'adjusting' },
             { id: 40, text: '조정마감', class: 'adjusted' },
         ])
+        if (props.noOptionNoInput) {
+            arrayRadioUser.value.splice(0, 1);
+            arrayRadioManager.value.splice(0, 1);
+        }
         const setModalVisible = () => {
             value.value = props.valueStatus
             showModal.value = false;

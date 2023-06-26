@@ -12,14 +12,15 @@
                     <DxToolbar>
                         <DxItem name="searchPanel" />
                     </DxToolbar>
-                    <DxColumn caption="사업명" width="85" data-field="facilityBusinessName"/>
+                    <DxColumn caption="사업명" width="85" data-field="facilityBusinessName" />
 
-                    <DxColumn caption="일자" data-field="transactionDetailDate" css-class="cell-left" cell-template="transactionDetailDate"/>
+                    <DxColumn caption="일자" data-field="transactionDetailDate" css-class="cell-left"
+                        cell-template="transactionDetailDate" />
                     <template #transactionDetailDate="{ data }">
                         {{ $filters.formatDate(data.data.transactionDetailDate) }}
                     </template>
 
-                    <DxColumn caption="순번" data-field="index" css-class="cell-left"/>
+                    <DxColumn caption="순번" data-field="index" css-class="cell-left" />
 
                     <DxColumn caption="결의번호" data-field="resolutionNumber" />
 
@@ -27,22 +28,35 @@
 
                     <DxColumn caption="통장별명" data-field="bankbookNickname" />
 
-                    <DxColumn caption="결의서종류" data-field="resolutionType" css-class="cell-left"/>
-
-                    <DxColumn caption="세입액" data-field="revenue" format="fixedPoint"/>
-                    <DxColumn caption="세출액" data-field="expenditure" format="fixedPoint"/>
-                    <DxColumn caption="적요" data-field="summary"/>
-                    <DxColumn caption="계정과목" data-field="theOrder" cell-template="theOrder-accountCode"/>
-                    <template #theOrder-accountCode="{ data }">
-                        {{ data.data.theOrder }}-{{ data.data.accountCode }}
+                    <DxColumn caption="결의서종류" data-field="resolutionType" css-class="cell-left"
+                        cell-template="resolutionType" />
+                    <template #resolutionType="{ data }">
+                        {{ arrResolutionType.find((item) => data.data.resolutionType == item.id)?.text }}
                     </template>
-                    <DxColumn caption="상대계정" data-field="relationCode" />
-                    <DxColumn caption="자금원천" data-field="fundingSource" css-class="cell-left"/>
+
+                    <DxColumn caption="세입액" data-field="revenue" format="fixedPoint" />
+                    <DxColumn caption="세출액" data-field="expenditure" format="fixedPoint" />
+                    <DxColumn caption="적요" data-field="summary" />
+                    <DxColumn caption="계정과목" data-field="theOrder" css-class="cell-left"
+                        cell-template="theOrder-accountCode" />
+                    <template #theOrder-accountCode="{ data }">
+                        {{ data.data.theOrder }}-
+                        {{ accountSubjects.find((item) => item.code == data.data.accountCode)?.name }}
+                    </template>
+                    <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
+                    <template #relationCode="{ data }">
+                        {{ accountSubjects.find((item) => item.code == data.data.relationCode)?.name }}
+                    </template>
+                    <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource"
+                        css-class="cell-left" />
+                    <template #fundingSource="{ data }">
+                        {{ arrFundingSource.find((item) => item.id == data.data.fundingSource)?.text }}
+                    </template>
                     <DxColumn caption="거래처" data-field="clientName" />
-                    <DxColumn caption="결과" data-field="success" cell-template="success-result"/>
+                    <DxColumn caption="결과" data-field="success" cell-template="success-result" />
                     <template #success-result="{ data }">
                         <a-tag v-if="data.data.success" color="#4F6228">성공</a-tag>
-                        <a-tag v-else-if="data.data.result" color="#C00000">{{data.data.result}}</a-tag>
+                        <a-tag v-else-if="data.data.result" color="#C00000">{{ data.data.result }}</a-tag>
                     </template>
                 </DxDataGrid>
             </a-spin>
@@ -52,15 +66,11 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
-import { useQuery, useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/AC/AC2/AC210";
+import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC2/AC210";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from "vuex";
-import dayjs from "dayjs";
 import notification from "@/utils/notification";
-import { Message } from "@/configs/enum";
-import filters from "@/helpers/filters";
 import DxButton from "devextreme-vue/button";
 import {
     DxItem,
@@ -72,8 +82,12 @@ import {
     DxToolbar,
 } from "devextreme-vue/data-grid";
 import DataSource from "devextreme/data/data_source";
+import {
+    ResolutionType,
+    FundingSource,
+    enum2Entries,
+} from "@bankda/jangbuda-common";
 export default defineComponent({
-
     components: {
         DxItem,
         DxDataGrid,
@@ -96,15 +110,34 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? "0"));
-        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
+        const arrResolutionType = computed(() => {
+            let item: any = enum2Entries(ResolutionType).map((value) => ({
+                id: value[1],
+                text: value[0],
+            }));
+            return item;
+        });
+        const arrFundingSource = computed(() => {
+            let item: any = enum2Entries(FundingSource).map((value) => ({
+                id: value[1],
+                text: value[0],
+            }));
+            return item;
+        });
+        const dataAccountSubject = ref(JSON.parse(sessionStorage.getItem("accountSubject") ?? '[]'))
+        const accountSubjects = Array()
+        dataAccountSubject.value.map((value: any) => {
+            value.codes.map((code: any) => {
+                accountSubjects.push(code)
+            })
+        })
         const countKey = ref<number>(0);
         const gridRefDetailAC210 = ref(); // ref of grid
         let triggerGetAccountingDocumentW4cUploadItems = ref<boolean>(false);
         const argumentGetAccountingDocumentW4cUploadItems = ref({
             companyId: companyId,
             requestId: props.requestId
-        }); 
+        });
         const dataSource: any = ref(new DataSource({
             store: {
                 type: "array",
@@ -116,22 +149,22 @@ export default defineComponent({
 
         // =================== GRAPHQL ===================
         // query getAccountingDocumentW4cUploadItems
-		const {
-			result: resGetAccountingDocumentW4cUploadItems,
-			loading: loadingGetAccountingDocumentW4cUploadItems,
-			onError: errorGetAccountingDocumentW4cUploadItems,
-		} = useQuery(
-			queries.getAccountingDocumentW4cUploadItems,
-			argumentGetAccountingDocumentW4cUploadItems.value,
-			() => ({
-				enabled: triggerGetAccountingDocumentW4cUploadItems.value,
-				fetchPolicy: "no-cache",
-			})
-		);
-		errorGetAccountingDocumentW4cUploadItems((e) => {
+        const {
+            result: resGetAccountingDocumentW4cUploadItems,
+            loading: loadingGetAccountingDocumentW4cUploadItems,
+            onError: errorGetAccountingDocumentW4cUploadItems,
+        } = useQuery(
+            queries.getAccountingDocumentW4cUploadItems,
+            argumentGetAccountingDocumentW4cUploadItems.value,
+            () => ({
+                enabled: triggerGetAccountingDocumentW4cUploadItems.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        errorGetAccountingDocumentW4cUploadItems((e) => {
             triggerGetAccountingDocumentW4cUploadItems.value = false;
-			//notification('error', e.message)
-		});
+            //notification('error', e.message)
+        });
 
         // ================== WATCH ================
         watch(() => props.modalStatus, (newValue, old) => {
@@ -165,6 +198,9 @@ export default defineComponent({
             store,
             dataSource, gridRefDetailAC210,
             loadingGetAccountingDocumentW4cUploadItems,
+            arrResolutionType,
+            accountSubjects,
+            arrFundingSource,
         };
     },
 });
