@@ -712,11 +712,13 @@ export default defineComponent({
 				dataConfigDeductions.value?.map((row: any) => {
 					row.amount = 0;
 					newVal.getEmployeeWage.deductionItems?.map((item: any) => {
-						if (item.itemCode == 1012 && item.amount < 1000) { // nếu nhỏ hơn 1000 thì show red
-							row.amount = 0;
-							localReal.value = item.amount;
-						} else {
-							row.amount = item.amount;
+						if (row.itemCode == item.itemCode) {
+							if (item.itemCode == 1012 && item.amount < 1000) { // nếu nhỏ hơn 1000 thì show red
+								row.amount = 0;
+								localReal.value = item.amount;
+							} else {
+								row.amount = item.amount;
+							}
 						}
 					});
 				});

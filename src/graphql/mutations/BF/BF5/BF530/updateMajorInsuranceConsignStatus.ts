@@ -2,9 +2,20 @@ import gql from "graphql-tag";
 export default gql`
   mutation updateMajorInsuranceConsignStatus(
     $companyId: Int!
-    $input: MajorInsuranceConsignStatusInput!
+    $companyConsignStatus: Int!
+    $nationalPensionEDIStatus: Int!
+    $healthInsuranceEDIStatus: Int!
+    $workingStatus: Int!
+    $memo: String!
   ) {
-    updateMajorInsuranceConsignStatus(companyId: $companyId, input: $input) {
+    updateMajorInsuranceConsignStatus(
+      companyId: $companyId
+      companyConsignStatus: $companyConsignStatus
+      nationalPensionEDIStatus: $nationalPensionEDIStatus
+      healthInsuranceEDIStatus: $healthInsuranceEDIStatus
+      workingStatus: $workingStatus
+      memo: $memo
+    ) {
       companyId
       manageId
       partnerId

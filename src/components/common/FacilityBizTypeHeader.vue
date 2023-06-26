@@ -200,9 +200,8 @@ export default defineComponent({
           sessionStorage.setItem("paYear", paYear.value.toString())
           paStateYear.value = sessionStorage.getItem("paYear")
         }
-
         //get and set account subject
-        if (jwtObject.userType === 'c' && globalFacilityBizId.value) {
+        if (globalFacilityBizId.value) {
           store.dispatch('settings/getAccountSubject', { companyId: companyId.value, fiscalYear: Number(dayjs().year()), facilityBizType: parseInt(globalFacilityBizId.value) })
         }
         setMenuTab([])
