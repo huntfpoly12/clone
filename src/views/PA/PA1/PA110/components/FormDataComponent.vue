@@ -167,7 +167,6 @@
 											" :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
 									</span>
 									<div>
-										{{ checkShowRed(item) }}
 										<a-tooltip zIndex="9999" :class="checkShowRed(item) ? 'red' : ''"
 											:title="checkShowRed(item) ? '소액징수부면제 적용' + localReal : ''">
 											<span>
