@@ -372,7 +372,9 @@ export default defineComponent({
       }
     );
     onMounted(() => {
-      loadNew(true);
+      setTimeout(() => {
+        loadNew(true);
+      }, 200)
     });
 
     // Get IncomesForTaxWithholdingStatusReport

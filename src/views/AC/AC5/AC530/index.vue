@@ -3,10 +3,10 @@
   <div class="ac-530">
     <div class="ac-530-month">
       <span class="ac-530-month-period">기간</span>
-      <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="startMonth.month" :min="minMonth" :max="endMonth.month <= maxMonth ? endMonth.month : maxMonth" />
+      <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="startMonth.month" :min="minMonth" :max="endMonth.month" />
       <ProcessStatus :valueStatus="startMonth.status" disabled/>
       <span class="mr-5 ml-5">~</span>
-      <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="endMonth.month" :min="startMonth.month >= minMonth ? startMonth.month : minMonth" :max="maxMonth"/>
+      <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="endMonth.month" :max="endMonth.month"/>
       <ProcessStatus :valueStatus="endMonth.status" disabled/>
       <a-tooltip color="black" placement="top">
         <template #title>조정마감된 월만 해당 (조정마감이 아닌 월은 제외).</template>
@@ -91,7 +91,7 @@ export default defineComponent({
         accountingReportType: accountingReportType.value
       }
     ])
-      
+
     let payload: any = ref({
       companyId: companyId,
       fiscalYear: acYear.value,
@@ -152,14 +152,14 @@ export default defineComponent({
     onErrorgetStatementOfGoverbmentSubsidiesReportViewUrl((data: any) => {
       triggerGetStatementOfGoverbmentSubsidiesReportViewUrl.value = false
     })
-    
+
     ////// WATCH
     watch(() => [startMonth.value.month, endMonth.value.month], (value) => {
       if(value[0]){
         startMonth.value = listAccountingProcesses.value.find((item: any) => item.month === value[0])
       }
-      if(value[1]){ 
-        endMonth.value = listAccountingProcesses.value.find((item: any) => item.month === value[1]) 
+      if(value[1]){
+        endMonth.value = listAccountingProcesses.value.find((item: any) => item.month === value[1])
       }
     })
 
@@ -182,7 +182,7 @@ export default defineComponent({
       payload.value.displayClient = displayClient.value,
       payload.value.displayBankbookSummary = displayBankbookSummary.value
     }
-    
+
     const fomatYearMonth = (year: number, month: number)  => {
       if(!year || !month) return
       const monthFomat = month < 10 ? '0'+month.toString() : month.toString()

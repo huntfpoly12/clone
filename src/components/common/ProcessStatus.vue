@@ -1,7 +1,7 @@
 <template>
     <span v-if="disabled">
-        <span v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(currentBt == item.id)" :width="90" :height="heightBtn" :text="item.text" :class="item.class"
+        <span v-for="item in arrayChoose" :key="item.id">
+            <button-basic v-if="(currentBt == item.id as any)" :width="90" :height="heightBtn" :text="item.text" :class="item.class"
                 class="buttonModal disabled-button-process">
             </button-basic>
         </span>
@@ -9,7 +9,7 @@
     <a-popover v-else trigger="click" v-model:visible="showModal" color="#e6e6e6">
         <template #content>
             <div class="mytext">
-                <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
+                <radio-group :arrayValue="userType == 'm' ? arrayChoose : arrayRadioUser"
                     v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
                 <span>으로 변경하시겠습니까?</span>
                 <div class="mt-20">
@@ -41,7 +41,7 @@ export default defineComponent({
             required: false
         },
         dataRow: {
-            type: Array,
+            type: Object,
             required: false
         },
         heightBtn: {
@@ -51,11 +51,21 @@ export default defineComponent({
         noOptionNoInput: {
             type: Boolean,
             required: false
+        },
+        arrayChoose: {
+          type: Array<any>,
+          default: [
+            { id: 1, text: '미입력', class: 'noInput' },
+            { id: 10, text: '입력중', class: 'entering' },
+            { id: 20, text: '입력마감', class: 'input' },
+            { id: 30, text: '조정중', class: 'adjusting' },
+            { id: 40, text: '조정마감', class: 'adjusted' },
+          ]
         }
     },
     setup(props, { emit }) {
         const value = ref(props.valueStatus);
-        const currentBt = ref(props.valueStatus);
+        const currentBt: any = ref(props.valueStatus);
         const showModal = ref(false)
         const arrayRadioUser = ref([
             { id: 1, text: '미입력', class: 'noInput' },
@@ -71,7 +81,7 @@ export default defineComponent({
         ])
         if (props.noOptionNoInput) {
             arrayRadioUser.value.splice(0, 1);
-            arrayRadioManager.value.splice(0, 1);
+            props.arrayChoose.splice(0, 1);
         }
         const setModalVisible = () => {
             value.value = props.valueStatus

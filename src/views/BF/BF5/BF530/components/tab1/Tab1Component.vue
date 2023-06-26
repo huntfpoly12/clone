@@ -643,7 +643,7 @@ export default defineComponent({
 
     //------------------------ACTION UPDATE TABLE--------------------------------
 
-    //updateConsignStatus
+    //update ConsignStatus
     const {
       mutate: creationConsignStatus,
       onDone: onDoneConsignStatus,
@@ -657,33 +657,33 @@ export default defineComponent({
     onErrorConsignStatus((e: any) => {
       notification("error", e.message);
     });
-    //updateConsignMemo
-    const {
-      mutate: creationConsignMemo,
-      onDone: onDoneConsignMemo,
-      onError: onErrorConsignMemo,
-    } = useMutation(mutations.updateMajorInsuranceConsignMemo);
-    onDoneConsignMemo(() => {
-      notification("success", Message.getCommonMessage("106").message);
-      emit("closeModal", true);
-    });
-    onErrorConsignMemo((e: any) => {
-      notification("error", e.message);
-    });
-    //updateConsignWorkingStatus
-    const {
-      mutate: creationConsignWorkingStatus,
-      onDone: onDoneConsignWorkingStatus,
-      onError: onErrorConsignWorkingStatus,
-    } = useMutation(mutations.updateMajorInsuranceConsignWorkingStatus);
-    onDoneConsignWorkingStatus(() => {
-      notification("success", Message.getCommonMessage("106").message);
-      emit("closeModal", true);
-    });
-    onErrorConsignWorkingStatus((e: any) => {
-      notification("error", e.message);
-    });
-    //cancelConsignWorkingStatus
+    // //update ConsignMemo
+    // const {
+    //   mutate: creationConsignMemo,
+    //   onDone: onDoneConsignMemo,
+    //   onError: onErrorConsignMemo,
+    // } = useMutation(mutations.updateMajorInsuranceConsignMemo);
+    // onDoneConsignMemo(() => {
+    //   notification("success", Message.getCommonMessage("106").message);
+    //   emit("closeModal", true);
+    // });
+    // onErrorConsignMemo((e: any) => {
+    //   notification("error", e.message);
+    // });
+    // //update ConsignWorkingStatus
+    // const {
+    //   mutate: creationConsignWorkingStatus,
+    //   onDone: onDoneConsignWorkingStatus,
+    //   onError: onErrorConsignWorkingStatus,
+    // } = useMutation(mutations.updateMajorInsuranceConsignWorkingStatus);
+    // onDoneConsignWorkingStatus(() => {
+    //   notification("success", Message.getCommonMessage("106").message);
+    //   emit("closeModal", true);
+    // });
+    // onErrorConsignWorkingStatus((e: any) => {
+    //   notification("error", e.message);
+    // });
+    //cancel ConsignWorkingStatus
     const {
       mutate: cancelConsignWorkingStatus,
       onDone: onDoneConsignWorkingStatus2,
@@ -706,11 +706,11 @@ export default defineComponent({
           return formConsignStatus.push({
             field: {
               companyId: item.companyId,
-              input: {
-                companyConsignStatus: item.companyConsignStatus,
-                healthInsuranceEDIStatus: item.healthInsuranceEDIStatus,
-                nationalPensionEDIStatus: item.nationalPensionEDIStatus,
-              },
+              companyConsignStatus: item.companyConsignStatus,
+              healthInsuranceEDIStatus: item.healthInsuranceEDIStatus,
+              nationalPensionEDIStatus: item.nationalPensionEDIStatus,
+              workingStatus: item.workingStatus,
+              memo: item.memo,
             },
             workingStatus: item.workingStatus,
           });
@@ -725,33 +725,35 @@ export default defineComponent({
         }
         creationConsignStatus(item.field);
       });
-      let formConsignMemo: any[] = [];
-      filterDsTab1Bf530.value.forEach((item: any) => {
-        if (
-          companies.value.some((item1: any) => item.companyId == item1) &&
-          item.memo
-        ) {
-          return formConsignMemo.push({
-            companyId: item.companyId,
-            memo: item.memo,
-          });
-        }
-      });
-      formConsignMemo.forEach((item: any) => {
-        creationConsignMemo(item);
-      });
-      let formConsignWorkingStatus: any[] = [];
-      filterDsTab1Bf530.value.forEach((item: any) => {
-        if (companies.value.some((item1: any) => item.companyId == item1)) {
-          return formConsignWorkingStatus.push({
-            companyId: item.companyId,
-            workingStatus: item.workingStatus,
-          });
-        }
-      });
-      formConsignWorkingStatus.forEach((item: any) => {
-        creationConsignWorkingStatus(item);
-      });
+
+      // let formConsignMemo: any[] = [];
+      // filterDsTab1Bf530.value.forEach((item: any) => {
+      //   if (
+      //     companies.value.some((item1: any) => item.companyId == item1) &&
+      //     item.memo
+      //   ) {
+      //     return formConsignMemo.push({
+      //       companyId: item.companyId,
+      //       memo: item.memo,
+      //     });
+      //   }
+      // });
+      // formConsignMemo.forEach((item: any) => {
+      //   creationConsignMemo(item);
+      // });
+
+      // let formConsignWorkingStatus: any[] = [];
+      // filterDsTab1Bf530.value.forEach((item: any) => {
+      //   if (companies.value.some((item1: any) => item.companyId == item1)) {
+      //     return formConsignWorkingStatus.push({
+      //       companyId: item.companyId,
+      //       workingStatus: item.workingStatus,
+      //     });
+      //   }
+      // });
+      // formConsignWorkingStatus.forEach((item: any) => {
+      //   creationConsignWorkingStatus(item);
+      // });
     };
     return {
       formState,

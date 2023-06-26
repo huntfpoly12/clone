@@ -8,7 +8,7 @@
     :width="'60%'"
     title="변경이력"
   >
-    <section class="mt-20">
+    <section>
       <a-spin :spinning="loading1 || loading2">
         <DxDataGrid
           :show-row-lines="true"
@@ -16,7 +16,6 @@
           :data-source="dataSource"
           :show-borders="true"
           key-expr="ts"
-          class="mt-10"
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
