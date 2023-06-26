@@ -17,29 +17,32 @@ const screenMutatePA120 = {
   presidentPA120(state: any, payload: any) {
     state.presidentPA120 = payload;
   },
+  createSucessTab1PA120(state: any, payload: any) {
+    state.createSucessTab1PA120 = payload;
+  },
   formStateTab1PA120(state: any, payload: any) {
     state.formStateTab1PA120 = {
       ...state.formStateTab1PA120,
-      ...payload
-    }
+      ...payload,
+    };
   },
   formOriginTab1PA120(state: any, payload: any) {
     state.formOriginTab1PA120 = {
       ...state.formOriginTab1PA120,
-      ...payload
-    }
+      ...payload,
+    };
   },
   formStateTab2PA120(state: any, payload: any) {
     state.formStateTab2PA120 = {
       ...state.formStateTab2PA120,
-      ...payload
-    }
+      ...payload,
+    };
   },
   formOriginTab2PA120(state: any, payload: any) {
     state.formOriginTab2PA120 = {
       ...state.formOriginTab2PA120,
-      ...payload
-    }
+      ...payload,
+    };
   },
 };
 

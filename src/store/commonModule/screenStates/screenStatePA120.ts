@@ -15,6 +15,7 @@ const statesPA120 = {
   deductionDependentCountPA120: 1,
   presidentOriginPA120:false,
   employeeIdPA120: null,
+  createSucessTab1PA120: false,
   formStateTab1PA120: {
     name: null,
     foreigner: false,
