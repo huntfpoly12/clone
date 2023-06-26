@@ -32,11 +32,11 @@
                         </button-basic>
                     </div>
                 </template>
-                <DxColumn caption="NO" width="85" data-field="requestId"/>
+                <DxColumn caption="NO" width="85" data-field="requestId" css-class="cell-left"/>
 
                 <DxColumn caption="요청일시" data-field="requedtedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
 
-                <DxColumn caption="내용" data-field="month" cell-template="year-month"/>
+                <DxColumn caption="내용" data-field="month" cell-template="year-month" css-class="cell-left"/>
                 <template #year-month="{ data }">
                     <span>전표 {{ data.data.year }}-{{ data.data.month }} 업로드 </span>
                 </template>
@@ -49,7 +49,7 @@
 
                 <DxColumn caption="미실행건수" data-field="unexecutedCount" format="fixedPoint"/>
 
-                <DxColumn caption="상세조회" data-field="" cell-template="zoom" />
+                <DxColumn caption="상세조회" data-field="" cell-template="zoom" css-class="cell-center" width="100"/>
                 <template #zoom="{ data }">
                     <DxButton class="ml-3" @click="actionOpenModalDetail(data.data)">
                         <ZoomInOutlined :style="{ fontSize: '20px', color: 'black' }" />

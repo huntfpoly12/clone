@@ -1,6 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1650">
         <div class="mt-20" :key="countKey">
+            <h1 class="text-center mb-0">업로드 요청 내역 및 결과</h1>
             <a-spin :spinning="loadingGetAccountingDocumentW4cUploadItems">
                 <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="requestId" :show-row-lines="true"
                     :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefDetailAC210"
@@ -132,7 +133,7 @@ export default defineComponent({
         // ================== WATCH ================
         watch(() => props.modalStatus, (newValue, old) => {
             if (newValue) {
-                argumentGetAccountingDocumentW4cUploadItems.value
+                argumentGetAccountingDocumentW4cUploadItems.value.requestId = props.requestId
                 triggerGetAccountingDocumentW4cUploadItems.value = true;
             }
         });
