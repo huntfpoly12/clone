@@ -1,11 +1,11 @@
 <template>
-  <a-spin :spinning="newDateLoading || loadingIncomeExtra || loadingEmployeeExtras" size="large">
+  <a-spin :spinning=" loadingIncomeExtra " size="large">
     <standard-form formName="pa-720-form" ref="pa720FormRef">
       <a-row>
         <a-col :span="24">
           <a-form-item label="기타소득자" label-align="right" class="red">
-            <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput"
-              :arrayValue="arrayEmploySelect" v-model:valueEmploy="formPA720.input.employeeId" width="350px"
+            <employ-type-select :disabled="isEdit || !hasDataSource || isExpiredStatus || idDisableInput"
+              :arrayValue="employSelect" v-model:valueEmploy="formPA720.input.employeeId" width="350px"
               :required="true" :newLoadKey="formPA720.input.employee.key" @incomeTypeCode="changeIncomeTypeCode" />
           </a-form-item>
         </a-col>
@@ -27,7 +27,7 @@
             <div>
               <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
                 :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
-                :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" />
+                :disabled="isEdit || !hasDataSource || isExpiredStatus || idDisableInput" />
               <div v-if="isLoopDayPA720" class="error-group">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
             </div>
           </a-form-item>
@@ -177,7 +177,7 @@ export default defineComponent({
     isLoadNewForm: {
       type: Boolean,
     },
-    isColumnData: {
+    hasDataSource: {
       type: Boolean,
       default: false,
     },
@@ -207,15 +207,14 @@ export default defineComponent({
     // });
     const isEdit = ref(false);
     const getEmployeeExtrasTrigger = ref<boolean>(true);
-    const newDateLoading = ref<boolean>(false);
     const inputDateTax = computed(() => {
-      if (props.isColumnData) {
+      if (props.hasDataSource) {
         return processKeyPA720.value.processKey.imputedYear + '-' + formatMonth(processKeyPA720.value.processKey.imputedMonth);
       }
       return '';
     });
     const paymentDateTax = computed(() => {
-      if (props.isColumnData) {
+      if (props.hasDataSource) {
         return processKeyPA720.value.processKey.paymentYear + '-' + formatMonth(processKeyPA720.value.processKey.paymentMonth);
       }
       return '';
@@ -235,10 +234,10 @@ export default defineComponent({
     const isNewRowPA720 = computed(() => store.state.common.isNewRowPA720);
     const isClickEditDiffPA720 = computed(() => store.state.common.isClickEditDiffPA720);
     const idDisableInput = computed(() => {
-      if (props.isColumnData && !isEdit.value && !isNewRowPA720.value) {
+      if (props.hasDataSource && !isEdit.value && !isNewRowPA720.value) {
         return true;
       }
-      if (!props.isColumnData || props.isExpiredStatus) {
+      if (!props.hasDataSource || props.isExpiredStatus) {
         return true
       }
       return false;
@@ -263,6 +262,8 @@ export default defineComponent({
       let day = dayjs(`${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.paymentMonth}`).endOf('month').toDate();
       return day;
     });
+    // employee arr
+    const employSelect = computed(() => store.state.common.employSelect);
     //-------------------------get incom extra detail ------------------------
 
     watch(
@@ -312,33 +313,32 @@ export default defineComponent({
       )}${data.paymentDay}`;
       store.commit('common/formPA720', editRowData)
       store.commit('common/formEditPA720', editRowData);
-      newDateLoading.value = loadingIncomeExtra.value;
     });
     onErrorIncomeExtra((res: any) => {
-      newDateLoading.value = loadingIncomeExtra.value;
+      console.log(`output->res`,res);
     });
 
     //----------------------------get employee extras --------------------------------
 
-    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
-    const savePA710 = computed(() => store.state.common.savePA710);
-    const getEmployeeExtrasParams = reactive({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-    });
-    const arrayEmploySelect = ref<any>([]);
-    const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras, loading: loadingEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
-      fetchPolicy: 'no-cache',
-    }));
-    watch(resultEmployeeExtras, (newValue: any) => {
-      arrayEmploySelect.value = newValue.getEmployeeExtras.map((item: any) => ({
-        ...item, key: item.employeeId
-      }));
-    });
+    // const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
+    // const savePA710 = computed(() => store.state.common.savePA710);
+    // const getEmployeeExtrasParams = reactive({
+    //   companyId: companyId,
+    //   imputedYear: globalYear.value,
+    // });
+    // const arrayEmploySelect = ref<any>([]);
+    // const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras, loading: loadingEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+    //   fetchPolicy: 'no-cache',
+    // }));
+    // watch(resultEmployeeExtras, (newValue: any) => {
+    //   arrayEmploySelect.value = newValue.getEmployeeExtras.map((item: any) => ({
+    //     ...item, key: item.employeeId
+    //   }));
+    // });
 
-    watch(savePA710, () => {
-      refetchEmployeeExtras();
-    })
+    // watch(savePA710, () => {
+    //   refetchEmployeeExtras();
+    // })
 
     //-------------------------- mutation create and edit income SUBMIT FORM ------------------------
 
@@ -441,8 +441,7 @@ export default defineComponent({
       changeIncomeTypeCode,
       taxRateOptions,
       isEdit,
-      arrayEmploySelect,
-      newDateLoading,
+      employSelect,
       incomeAmount,
       incomeTax,
       localIncomeTax,
@@ -455,12 +454,10 @@ export default defineComponent({
       getEmployeeExtrasTrigger,
       formEditPA720,
       pa720FormRef,
-      getEmployeeExtrasParams,
       onSubmitForm,
       resetForm,
       triggerIncomeExtra,
       idDisableInput,
-      loadingEmployeeExtras,
       isClickEditDiffPA720,
       startDate, finishDate, dayDate,
       processKeyPA720,isLoopDayPA720,

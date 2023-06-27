@@ -225,7 +225,7 @@ import {
   CaretRightOutlined
 } from "@ant-design/icons-vue";
 import { getJwtObject } from '@bankda/jangbuda-common';
-import { openTab, setMenuTab } from "@/helpers/commonFunction";
+import {companyId, openTab, setMenuTab} from "@/helpers/commonFunction";
 import useCheckPermission from "@/helpers/useCheckPermission";
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
@@ -583,13 +583,18 @@ export default defineComponent({
       store.commit('auth/setTokenInfo', jwtObject)
 
       // store.commit('auth/setTokenInfo',jwtObject)
-
+      const codes = sessionStorage.getItem("accountSubject")
+      const globalFacilityBizId = sessionStorage.getItem("globalFacilityBizId")
+      const acYear = sessionStorage.getItem("acYear")
+      if (!codes && acYear && globalFacilityBizId) {
+        store.dispatch("settings/getAccountSubject", {companyId: jwtObject.companyId, fiscalYear: +acYear, facilityBizType: +globalFacilityBizId})
+      }
       // open first menu route dashboard
       if (route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
         if (ENVIRONMENT === 'DEVELOP' || true) {
           openTab(tabDashboard)
         }
-        nextTick(() => {
+        await nextTick(() => {
           let count = 0
           menuItems.forEach(item => {
             const { read } = useCheckPermission(item.roles)

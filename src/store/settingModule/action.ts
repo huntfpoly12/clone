@@ -34,22 +34,19 @@ const actions: ActionTree<SettingState, any> = {
     commit('setFormStatus', FormStatus.none)
   },
   getAccountSubject: ({commit,state}, data: PayLoadAccSubject) => {
-    let accountSubjects: any = ref();
     const {
-        loading,
-        result 
+      onResult
     } = useQuery(queries.getAccoountSubjects,data, () => ({
         fetchPolicy: "no-cache",
     }));
-    if (loading) {
-      watch(result, value => {
-        if (value) {
-          commit('setAccoountSubjects',value.getAccoountSubjects) 
-        }
-          
-      }) 
-    }
-     
+    onResult((result) => {
+      if (result.errors) {
+        console.log(result.errors);
+      } else {
+        commit('setAccoountSubjects',result.data.getAccoountSubjects)
+      }
+    })
+
 }
 };
 

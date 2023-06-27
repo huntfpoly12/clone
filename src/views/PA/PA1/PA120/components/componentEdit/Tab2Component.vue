@@ -280,64 +280,62 @@
             {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 +
             비과세 {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
           </div>
-          <a-spin :spinning="loading1" size="large" style="height: 100%">
-            <div class="deduction-main">
-              <div
-                v-for="item in formStateTab2PA120.payItems"
-                :key="item.name"
-                class="custom-deduction"
-              >
-                <span>
-                  <deduction-items
-                    v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                    :name="item.name"
-                    :type="1"
-                    subName="과세"
-                  />
-                  <deduction-items
-                    v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                    :name="item.name"
-                    :type="2"
-                    subName="상여(과세)"
-                  />
-                  <deduction-items
-                    v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                    :name="item.name"
-                    :type="3"
-                    :subName="
-                      item.taxfreePayItemCode +
-                      ' ' +
-                      item.taxfreePayItemName +
-                      ' ' +
-                      (item.taxFreeIncludeSubmission ? 'O' : 'X')
-                    "
-                  />
-                  <deduction-items
-                    v-if="
-                      item.taxPayItemCode == null &&
-                      item.taxfreePayItemCode == null
-                    "
-                    :name="item.name"
-                    :type="4"
-                    subName="과세"
-                  />
-                </span>
-                <div>
-                  <number-box-money
-                    width="130px"
-                    :spinButtons="false"
-                    :rtlEnabled="true"
-                    v-model:valueInput="item.value"
-                    :min="0"
-                    @changeInput="onCalcSumPayItem"
-                    format="#0,###"
-                  >
-                  </number-box-money>
-                  <span class="pl-5">원</span>
-                </div>
+          <div class="deduction-main">
+            <div
+              v-for="item in formStateTab2PA120.payItems"
+              :key="item.name"
+              class="custom-deduction"
+            >
+              <span>
+                <deduction-items
+                  v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                  :name="item.name"
+                  :type="1"
+                  subName="과세"
+                />
+                <deduction-items
+                  v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                  :name="item.name"
+                  :type="2"
+                  subName="상여(과세)"
+                />
+                <deduction-items
+                  v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                  :name="item.name"
+                  :type="3"
+                  :subName="
+                    item.taxfreePayItemCode +
+                    ' ' +
+                    item.taxfreePayItemName +
+                    ' ' +
+                    (item.taxFreeIncludeSubmission ? 'O' : 'X')
+                  "
+                />
+                <deduction-items
+                  v-if="
+                    item.taxPayItemCode == null &&
+                    item.taxfreePayItemCode == null
+                  "
+                  :name="item.name"
+                  :type="4"
+                  subName="과세"
+                />
+              </span>
+              <div>
+                <number-box-money
+                  width="130px"
+                  :spinButtons="false"
+                  :rtlEnabled="true"
+                  v-model:valueInput="item.value"
+                  :min="0"
+                  @changeInput="onCalcSumPayItem"
+                  format="#0,###"
+                >
+                </number-box-money>
+                <span class="pl-5">원</span>
               </div>
             </div>
-          </a-spin>
+          </div>
         </a-col>
         <a-col class="col-3">
           <div class="header-text-2">
@@ -346,95 +344,93 @@
               >{{ $filters.formatCurrency(totalDeduction) }} 원</span
             >
           </div>
-          <a-spin :spinning="loading1 || loading3" size="large">
-            <div class="deduction-main">
-              <div
-                v-for="item in formStateTab2PA120.deductionItems"
-                :key="item.name"
-                class="custom-deduction"
-              >
-                <span>
-                  <deduction-items
-                    v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                    :name="item.name"
-                    :type="1"
-                    subName="공제"
-                  />
-                  <deduction-items
-                    v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                    :name="item.name"
-                    :type="2"
-                    subName="공제"
-                  />
-                  <deduction-items
-                    v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                    :name="item.name"
-                    :type="3"
-                    :subName="
-                      item.taxfreePayItemCode +
-                      ' ' +
-                      item.taxfreePayItemName +
-                      ' ' +
-                      item.taxFreeIncludeSubmission
-                    "
-                  />
-                  <deduction-items
-                    v-if="
-                      item.taxPayItemCode == null &&
-                      item.taxfreePayItemCode == null
-                    "
-                    :name="item.name"
-                    :type="4"
-                    subName="공제"
-                  />
-                </span>
-                <div>
-                  <a-tooltip
-                    color="black"
-                    placement="top"
-                    v-if="item.itemCode == 1012 && localIncomeBoo"
-                    zIndex="9999"
-                  >
-                    <template #title>
-                      소액징수부면제 적용 {{ localReal }}
-                    </template>
-                    <span>
-                      <number-box-money
-                        :textColor="
-                          localIncomeBoo && item.itemCode == 1012 ? 'red' : ''
-                        "
-                        class="red"
-                        width="130px"
-                        :spinButtons="false"
-                        :rtlEnabled="true"
-                        v-model:valueInput="item.value"
-                        :min="1000"
-                        @changeInput="onCalcSumDeduction"
-                        :disabled="disabledDeduction(item.itemCode)"
-                        format="#0,###"
-                      />
-                    </span>
-                  </a-tooltip>
-                  <number-box-money
-                    v-else
-                    :textColor="
-                      checkIncomeFirst && item.itemCode == 1012 ? 'red' : ''
-                    "
-                    width="130px"
-                    :spinButtons="false"
-                    :rtlEnabled="true"
-                    v-model:valueInput="item.value"
-                    :min="0"
-                    @changeInput="onCalcSumDeduction"
-                    :disabled="disabledDeduction(item.itemCode)"
-                    format="#0,###"
-                    @onFocusOut="(e: any) => handleFocusOut(e, item.itemCode)"
-                  />
-                  <span class="pl-5">원</span>
-                </div>
+          <div class="deduction-main">
+            <div
+              v-for="item in formStateTab2PA120.deductionItems"
+              :key="item.name"
+              class="custom-deduction"
+            >
+              <span>
+                <deduction-items
+                  v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                  :name="item.name"
+                  :type="1"
+                  subName="공제"
+                />
+                <deduction-items
+                  v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                  :name="item.name"
+                  :type="2"
+                  subName="공제"
+                />
+                <deduction-items
+                  v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                  :name="item.name"
+                  :type="3"
+                  :subName="
+                    item.taxfreePayItemCode +
+                    ' ' +
+                    item.taxfreePayItemName +
+                    ' ' +
+                    item.taxFreeIncludeSubmission
+                  "
+                />
+                <deduction-items
+                  v-if="
+                    item.taxPayItemCode == null &&
+                    item.taxfreePayItemCode == null
+                  "
+                  :name="item.name"
+                  :type="4"
+                  subName="공제"
+                />
+              </span>
+              <div>
+                <a-tooltip
+                  color="black"
+                  placement="top"
+                  v-if="item.itemCode == 1012 && localIncomeBoo"
+                  zIndex="9999"
+                >
+                  <template #title>
+                    소액징수부면제 적용 {{ localReal }}
+                  </template>
+                  <span>
+                    <number-box-money
+                      :textColor="
+                        localIncomeBoo && item.itemCode == 1012 ? 'red' : ''
+                      "
+                      class="red"
+                      width="130px"
+                      :spinButtons="false"
+                      :rtlEnabled="true"
+                      v-model:valueInput="item.value"
+                      :min="1000"
+                      @changeInput="onCalcSumDeduction"
+                      :disabled="disabledDeduction(item.itemCode)"
+                      format="#0,###"
+                    />
+                  </span>
+                </a-tooltip>
+                <number-box-money
+                  v-else
+                  :textColor="
+                    checkIncomeFirst && item.itemCode == 1012 ? 'red' : ''
+                  "
+                  width="130px"
+                  :spinButtons="false"
+                  :rtlEnabled="true"
+                  v-model:valueInput="item.value"
+                  :min="0"
+                  @changeInput="onCalcSumDeduction"
+                  :disabled="disabledDeduction(item.itemCode)"
+                  format="#0,###"
+                  @onFocusOut="(e: any) => handleFocusOut(e, item.itemCode)"
+                />
+                <span class="pl-5">원</span>
               </div>
             </div>
-          </a-spin>
+          </div>
         </a-col>
       </a-row>
       <a-row style="margin-top: 20px" justify="center">
@@ -548,12 +544,16 @@ export default defineComponent({
     const modalCalc = ref(false);
     const msgCalc = Message.getMessage("PA120", "004");
 
-    let isFirstRun = ref(true);
     const insuranceDisabled = ref(false); // whether disabled or not formStateTab2PA120.employeementInsuranceDeduction
     const checkIncomeFirst = ref(false); // whether display colorRed in deduction 1012. Don't check when it's firstTime.
 
-    // fn common
+    // data common
+    const deductionItemsPA120 = computed(
+      () => store.state.common.deductionItemsPA120
+    );
+    const payItemsPA120 = computed(() => store.state.common.payItemsPA120);
 
+    // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
         return dayjs();
@@ -614,22 +614,28 @@ export default defineComponent({
     };
     //Calculate Pension in DeDuction
     const calcPension = () => {
-      formStateTab2PA120.value.deductionItems?.map((item: any) => {
+      formStateTab2PA120.value.deductionItems.map((item: any) => {
         if (item.itemCode == 1001) {
-          let total1 = formStateTab2PA120.value.nationalPensionDeduction
+          let total1 = formStateTab2PA120.value?.nationalPensionDeduction
             ? calculateNationalPensionEmployee(
                 calculateVariables.totalTaxPay,
                 formStateTab2PA120.value.nationalPensionSupportPercent
               )
             : 0;
           item.value = total1;
+          console.log(
+            `output->calculateVariables.totalTaxPay`,
+            total1,
+            calculateVariables.totalTaxPay,
+            formStateTab2PA120.value.nationalPensionSupportPercent
+          );
           return {
             itemCode: 1001,
             amount: total1,
           };
         }
         if (item.itemCode == 1002) {
-          let total2 = formStateTab2PA120.value.healthInsuranceDeduction
+          let total2 = formStateTab2PA120.value?.healthInsuranceDeduction
             ? calculateHealthInsuranceEmployee(calculateVariables.totalTaxPay)
             : 0;
           item.value = total2;
@@ -639,7 +645,7 @@ export default defineComponent({
           };
         }
         if (item.itemCode == 1003) {
-          let total3 = formStateTab2PA120.value.healthInsuranceDeduction
+          let total3 = formStateTab2PA120.value?.healthInsuranceDeduction
             ? calculateLongTermCareInsurance(calculateVariables.totalTaxPay)
             : 0;
           item.value = total3;
@@ -649,13 +655,12 @@ export default defineComponent({
           };
         }
         if (item.itemCode == 1004) {
-          let total4 =
-            formStateTab2PA120.value.employeementInsuranceDeduction == true
-              ? calculateEmployeementInsuranceEmployee(
-                  calculateVariables.totalTaxPay,
-                  formStateTab2PA120.value.employeementInsuranceSupportPercent
-                )
-              : 0;
+          let total4 = formStateTab2PA120.value?.employeementInsuranceDeduction
+            ? calculateEmployeementInsuranceEmployee(
+                calculateVariables.totalTaxPay,
+                formStateTab2PA120.value.employeementInsuranceSupportPercent
+              )
+            : 0;
           item.value = total4;
           return {
             itemCode: 1004,
@@ -669,105 +674,13 @@ export default defineComponent({
       }
     };
 
-    //------------------When employeeID change or refetch screen----------------
+    //------------------When employeeID change or refetch component----------------
 
     watch(employeeIdPA120, async (value: any) => {
       if (+value !== 0) {
         checkIncomeFirst.value = false;
         localIncomeBoo.value = false;
         employeeTrigger.value = true;
-        // if(!isFirstRun.value){
-        // }else {
-        //   isFirstRun.value = false;
-        // }
-      }
-    });
-
-    //----------------- get Deduction Data---------------------------
-
-    const dataConfigDeduction = ref<any>([]);
-    const configDeductionTrigger = ref(true);
-    const configdeductionParam = ref({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      useOnly: true,
-    });
-    const { result: resConfigDeduction, loading: loading2 } = useQuery(
-      queries.getWithholdingConfigDeductionItems,
-      configdeductionParam,
-      () => ({
-        enabled: configDeductionTrigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    watch(resConfigDeduction, (value) => {
-      if (value) {
-        dataConfigDeduction.value =
-          value.getWithholdingConfigDeductionItems.filter((item: any) => {
-            if (item.itemCode == 1001) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1002) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1003) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1004) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1011) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1012) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-          });
-        configDeductionTrigger.value = false;
-      }
-    });
-
-    /**
-     * get Withholding Config PayItems
-     */
-
-    const dataConfigPayItems = ref<any>([]);
-    const configPayItemsParam = ref({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      useOnly: true,
-    });
-    const configPayItemTrigger = ref(true);
-    const { result: resConfigPayItems, loading: loading1 } = useQuery(
-      queries.getWithholdingConfigPayItems,
-      configPayItemsParam,
-      () => ({
-        enabled: configPayItemTrigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    watch(resConfigPayItems, async (value) => {
-      if (value) {
-        dataConfigPayItems.value = value.getWithholdingConfigPayItems.map(
-          (item: any) => {
-            return {
-              itemCode: item.itemCode,
-              name: item.name,
-              tax: item.tax,
-              taxPayItemCode: item.taxPayItemCode,
-              taxfreePayItemCode: item.taxfreePayItemCode,
-              taxfreePayItemName: item.taxfreePayItemName,
-              taxFreeIncludeSubmission: item.taxFreeIncludeSubmission,
-              value: 0,
-            };
-          }
-        );
-        if (employeeIdPA120.value) {
-          employeeWageParam.value.employeeId = employeeIdPA120;
-          employeeTrigger.value = true;
-          isFirstRun.value = false;
-        }
-        configPayItemTrigger.value = false;
       }
     });
 
@@ -804,26 +717,25 @@ export default defineComponent({
         editRowData.employeementInsuranceDeduction =
           data.employeementInsuranceDeduction;
         editRowData.insuranceSupport = data.insuranceSupport;
-        if (
-          data?.nationalPensionSupportPercent !== null &&
-          editRowData.insuranceSupport
-        ) {
-          editRowData.nationalPensionSupportPercent =
-            data.nationalPensionSupportPercent || 0;
-        } else {
-          delete formStateTab2PA120.value.nationalPensionSupportPercent;
-          delete formOriginTab2PA120.value.nationalPensionSupportPercent;
-        }
-        if (
-          data?.employeementInsuranceSupportPercent !== null &&
-          editRowData.insuranceSupport
-        ) {
-          editRowData.employeementInsuranceSupportPercent =
-            data.employeementInsuranceSupportPercent || 0;
-        } else {
-          delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
-          delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
-        }
+        editRowData.nationalPensionSupportPercent =
+          data.nationalPensionSupportPercent;
+        editRowData.employeementInsuranceSupportPercent =
+          data.employeementInsuranceSupportPercent;
+        // if (
+        //   data?.nationalPensionSupportPercent !== null &&
+        //   editRowData.insuranceSupport
+        // ) {
+        // } else {
+        //   // formStateTab2PA120.value.nationalPensionSupportPercent = null;
+        // }
+        // if (
+        //   data?.employeementInsuranceSupportPercent !== null &&
+        //   editRowData.insuranceSupport
+        // ) {
+        // } else {
+        //   formStateTab2PA120.value.employeementInsuranceSupportPercent = null;
+        //   delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
+        // }
         editRowData.employeementReduction = data.employeementReduction;
         if (data.employeementReduction) {
           editRowData.employeementReductionRatePercent =
@@ -851,8 +763,8 @@ export default defineComponent({
         editRowData.payItems = [];
         editRowData.deductionItems = [];
         editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
-        if (data.payItems && dataConfigPayItems.value.length > 0) {
-          dataConfigPayItems.value.forEach((item1: any, key: number) => {
+        if (data.payItems && payItemsPA120.value.length > 0) {
+          payItemsPA120.value.forEach((item1: any, key: number) => {
             const item2Value = data.payItems.find(
               (item2: any) => item2.itemCode == item1.itemCode
             );
@@ -863,8 +775,8 @@ export default defineComponent({
             );
           });
         }
-        if (data.deductionItems && dataConfigDeduction.value.length > 0) {
-          dataConfigDeduction.value.forEach((item1: any, key: number) => {
+        if (data.deductionItems && deductionItemsPA120.value.length > 0) {
+          deductionItemsPA120.value.forEach((item1: any, key: number) => {
             let item2Value = data.deductionItems.find(
               (item2: any) => item2.itemCode == item1.itemCode
             );
@@ -965,8 +877,8 @@ export default defineComponent({
           formStateTab2PA120.value.employeementInsuranceSupportPercent = 0;
         }
       } else {
-        delete formStateTab2PA120.value.nationalPensionSupportPercent;
-        delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
+        formStateTab2PA120.value.nationalPensionSupportPercent = null;
+        formStateTab2PA120.value.employeementInsuranceSupportPercent = null;
       }
     };
     const onChangeSwitch2 = (e: any) => {
@@ -998,8 +910,8 @@ export default defineComponent({
       () => presidentEditPA120.value,
       (newValue) => {
         if (newValue && newValue != presidentOriginPA120.value) {
-          delete formStateTab2PA120.value.nationalPensionSupportPercent;
-          delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
+          formStateTab2PA120.value.nationalPensionSupportPercent = null;
+          formStateTab2PA120.value.employeementInsuranceSupportPercent = null;
           if (formStateTab2PA120.value.employeementInsuranceDeduction) {
             let total1 = formStateTab2PA120.value.nationalPensionDeduction
               ? calculateNationalPensionEmployee(
@@ -1113,8 +1025,6 @@ export default defineComponent({
       ) {
         formStateTab2PA120.value.deductionItems[3].value = 0;
         formOriginTab2PA120.value.deductionItems[3].value = 0;
-        // delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
-        // delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
         return true;
       }
       return false;
@@ -1128,8 +1038,6 @@ export default defineComponent({
     };
 
     return {
-      loading1,
-      loading2,
       loadingEmployeeWage,
       rangeDate,
       totalPayItemTaxFree,
@@ -1144,8 +1052,6 @@ export default defineComponent({
       radioCheckReductionInput,
       IncomeTaxAppRate,
       companyId,
-      dataConfigPayItems,
-      dataConfigDeduction,
       onChangeSwitch1,
       onChangeSwitch2,
       formOriginTab2PA120,
