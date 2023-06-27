@@ -899,7 +899,7 @@ export default defineComponent({
 		const calculationNewAmount = () => {
 			dataConfigDeductions.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
-					let total1 = (dataIW.value.employee.nationalPensionDeduction && isNumber(dataIW.value.employee.nationalPensionSupportPercent))
+					let total1 = dataIW.value?.employee?.nationalPensionDeduction
 						? calculateNationalPensionEmployee(
 							totalPayItemTaxFree.value,
 							dataIW.value.employee.nationalPensionSupportPercent)
@@ -907,19 +907,19 @@ export default defineComponent({
 					item.amountNew = total1;
 				}
 				if (item.itemCode == 1002) {
-					let total2 = dataIW.value.employee.healthInsuranceDeduction
+					let total2 = dataIW.value?.employee?.healthInsuranceDeduction
 						? calculateHealthInsuranceEmployee(totalPayItemTaxFree.value)
 						: 0;
 					item.amountNew = total2;
 				}
 				if (item.itemCode == 1003) {
-					let total3 = dataIW.value.employee.healthInsuranceDeduction
+					let total3 = dataIW.value?.employee?.healthInsuranceDeduction
 						? calculateLongTermCareInsurance(totalPayItemTaxFree.value)
 						: 0;
 					item.amountNew = total3;
 				}
 				if (item.itemCode == 1004) {
-					let total4 = (dataIW.value.employee.employeementInsuranceDeduction && isNumber(dataIW.value.employee.employeementInsuranceSupportPercent))
+					let total4 = dataIW.value?.employee?.employeementInsuranceDeduction
 						? calculateEmployeementInsuranceEmployee(
 							totalPayItemTaxFree.value,
 							dataIW.value.employee.employeementInsuranceSupportPercent)

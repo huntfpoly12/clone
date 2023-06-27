@@ -289,7 +289,7 @@ export default defineComponent({
       setModalVisible();
       setModalVisibleCopy();
       notification("success", messageCopyDone);
-      emit("loadingTable");
+      emit("closePopup", true);
     });
 
     // ---------------------fn modal --------------------
@@ -316,7 +316,7 @@ export default defineComponent({
         paymentYear: parseInt(month2.value.toString().slice(0, 4)),
         paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
       };
-      emit("dataAddIncomeProcess", dateTarget);
+      emit("addMonthSuccess", dateTarget);
       processKeyPA720.value.processKey = dateTarget;
       let day = paymentDayPA720.value.toString().slice(-2);
       store.state.common.paymentDayPA720 = +day;

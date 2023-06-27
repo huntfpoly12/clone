@@ -224,12 +224,11 @@ const setNewUserToken = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
   const companyName:any = urlParams.get('companyName')||'';
-    if (token) {
-      // sessionStorage.setItem('token', token);
+  const refreshToken = urlParams.get('refreshToken') || ''
+  const url = window.location.href;
+  const baseUrl = url.split('?')[0];
+    if (token && refreshToken) {
       sessionStorage.setItem('companyName', companyName);
-      // sessionStorage.setItem('tabsCached', 'Example');
-      const url = window.location.href;
-      const baseUrl = url.split('?')[0];
       window.location.assign(baseUrl);
     }
 }

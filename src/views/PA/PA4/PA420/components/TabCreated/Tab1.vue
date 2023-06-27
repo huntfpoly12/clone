@@ -478,7 +478,9 @@ watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: an
     // formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
   }
 });
-
+watchEffect(() => {
+  if(interimPaymentTab1.value) formState.incomeCalculationInput.settlementStartDate = formState.prevRetiredYearsOfService.settlementStartDate
+})
 watch(() => formState.lastRetiredYearsOfService.settlementStartDate, (value: any) => {
   if (!interimPaymentTab1.value) formState.incomeCalculationInput.settlementStartDate = value
   // else if (value && +value > +formState.prevRetiredYearsOfService.settlementFinishDate) {
