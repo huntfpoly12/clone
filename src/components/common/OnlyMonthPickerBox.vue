@@ -52,21 +52,21 @@ export default defineComponent({
     Datepicker,
   },
   setup(props, { emit }) {
-    const date: any = ref()
-    date.value = {
+    const date: any = ref({
       month: props.valueMonth ? parseInt(dayjs(props.valueMonth.toString()).format('MM')) - 1 : 0,
       year: new Date().getFullYear()
-    }
-
+    })
     const monthMinMax = computed(() => {
       const year = new Date().getFullYear()
       let resultMin: string | Date = ''
       let resultMax: string | Date = ''
       if (!!props.min && parseInt(props.min.toString()) >= 1 && parseInt(props.min.toString()) <= 12) {
-        resultMin = new Date(`${year}-${props.min.toString().length === 2 ? props.min.toString() : '0' + props.min.toString()}-15`)
+        resultMin = new Date(`${year}-${props.min.toString().length === 2 ? props.min.toString() : '0' + props.min.toString()}-1`)
       }
       if (!!props.max && parseInt(props.max.toString()) >= 1 && parseInt(props.max.toString()) <= 12) {
-        resultMax = new Date(`${year}-${props.max.toString().length === 2 ? props.max.toString() : '0' + props.max.toString()}-25`)
+        // get last day of month by year and month
+        const lastDay = dayjs(`${year}-${props.max.toString().length === 2 ? props.max.toString() : '0' + props.max.toString()}-1`).daysInMonth()
+        resultMax = new Date(`${year}-${props.max.toString().length === 2 ? props.max.toString() : '0' + props.max.toString()}-${lastDay}`)
       }
       return {
         min: resultMin,
@@ -77,7 +77,6 @@ export default defineComponent({
     watch(
       () => props.valueMonth,
       (newValue) => {
-
         if (newValue) {
           date.value = {
             month: parseInt(dayjs(newValue.toString()).format('MM')) - 1,
@@ -94,9 +93,7 @@ export default defineComponent({
         let month = modelData.month + 1;
         month = month > 9 ? month : "0" + month.toString();
         emit("update:valueMonth", parseInt(month));
-      } else {
-        emit("update:valueMonth", null);
-      }
+      } 
     };
     return {
       handleDate,
@@ -106,7 +103,7 @@ export default defineComponent({
     };
   },
 });
-</script> 
+</script>
 <style lang="scss" scoped>
 .picker-only-month {
   width: 70px;
