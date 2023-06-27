@@ -291,7 +291,7 @@ export default defineComponent({
 		}
 		const dataMidTermSettlement = {
 			companyId: companyId,
-			processKey: computed(() => processKey.value),
+			processKey: processKey.value,
 			paymentDay: 1,
 			employeeId: null,
 			data: [{}],
@@ -751,6 +751,7 @@ export default defineComponent({
 			});
 			dataMidTermSettlement.employeeId = dataIW.value.employee.employeeId
 			dataMidTermSettlement.paymentDay = parseInt(dataIW.value.paymentDay?.toString().slice(6, 8)) ?? 1
+			dataMidTermSettlement.processKey = processKey.value
 			modalMidTermSettlement.value = true
 		})
 		// ======================= FUNCTION ================================
