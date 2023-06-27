@@ -490,11 +490,10 @@ export default defineComponent({
             (item: any) => {
               return {
                 companyName: item.company.name,
-                companyPresidentName: item.company.presidentName,
-                manageId: item.majorInsuranceConsignStatus.manageId,
+                companyPresidentName: item.company?.presidentName,
+                manageId: item.majorInsuranceConsignStatus?.manageId,
                 companyConsignStatus:
-                  item.majorInsuranceConsignStatus.companyConsignStatus,
-                visible: false,
+                  item.majorInsuranceConsignStatus?.companyConsignStatus,
                 ...item,
               };
             }
