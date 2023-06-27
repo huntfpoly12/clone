@@ -394,6 +394,9 @@ watch(interimPaymentTab1, (value) => {
     formState.lastRetiredYearsOfService.settlementStartDate = ''
   }
 })
+watchEffect(() => {
+  if(interimPaymentTab1.value) formState.incomeCalculationInput.settlementStartDate = formState.prevRetiredYearsOfService.settlementStartDate
+})
 
 // watch(() => formState.prevRetiredYearsOfService.settlementStartDate, (value: any) => {
 //   if (value) {

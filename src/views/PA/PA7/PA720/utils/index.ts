@@ -75,3 +75,4 @@ export const paymentDayPA720 = computed(() => {
   let newDay = day > daysInMonth || day == 0 ? daysInMonth : day;
   return newDay;
 });
+export const toNumber = (num: any) => (!num ? '' : num);

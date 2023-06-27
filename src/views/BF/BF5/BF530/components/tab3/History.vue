@@ -41,7 +41,6 @@
             format="yyyy-MM-dd HH:mm"
           />
           <DxColumn caption="내용" data-field="remark" />
-          <DxColumn caption="사업장관리번호" alignment="center" />
           <DxColumn
             caption="처리상태"
             data-field="workingStatus"

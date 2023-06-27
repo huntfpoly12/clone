@@ -551,9 +551,7 @@ export default defineComponent({
     const deductionItemsPA120 = computed(
       () => store.state.common.deductionItemsPA120
     );
-    const payItemsPA120 = computed(
-      () => store.state.common.payItemsPA120
-    );
+    const payItemsPA120 = computed(() => store.state.common.payItemsPA120);
 
     // fn common
     const convertToDate = (date: number | null) => {
@@ -616,22 +614,28 @@ export default defineComponent({
     };
     //Calculate Pension in DeDuction
     const calcPension = () => {
-      formStateTab2PA120.value.deductionItems?.map((item: any) => {
+      formStateTab2PA120.value.deductionItems.map((item: any) => {
         if (item.itemCode == 1001) {
-          let total1 = formStateTab2PA120.value.nationalPensionDeduction
+          let total1 = formStateTab2PA120.value?.nationalPensionDeduction
             ? calculateNationalPensionEmployee(
                 calculateVariables.totalTaxPay,
                 formStateTab2PA120.value.nationalPensionSupportPercent
               )
             : 0;
           item.value = total1;
+          console.log(
+            `output->calculateVariables.totalTaxPay`,
+            total1,
+            calculateVariables.totalTaxPay,
+            formStateTab2PA120.value.nationalPensionSupportPercent
+          );
           return {
             itemCode: 1001,
             amount: total1,
           };
         }
         if (item.itemCode == 1002) {
-          let total2 = formStateTab2PA120.value.healthInsuranceDeduction
+          let total2 = formStateTab2PA120.value?.healthInsuranceDeduction
             ? calculateHealthInsuranceEmployee(calculateVariables.totalTaxPay)
             : 0;
           item.value = total2;
@@ -641,7 +645,7 @@ export default defineComponent({
           };
         }
         if (item.itemCode == 1003) {
-          let total3 = formStateTab2PA120.value.healthInsuranceDeduction
+          let total3 = formStateTab2PA120.value?.healthInsuranceDeduction
             ? calculateLongTermCareInsurance(calculateVariables.totalTaxPay)
             : 0;
           item.value = total3;
@@ -651,13 +655,12 @@ export default defineComponent({
           };
         }
         if (item.itemCode == 1004) {
-          let total4 =
-            formStateTab2PA120.value.employeementInsuranceDeduction == true
-              ? calculateEmployeementInsuranceEmployee(
-                  calculateVariables.totalTaxPay,
-                  formStateTab2PA120.value.employeementInsuranceSupportPercent
-                )
-              : 0;
+          let total4 = formStateTab2PA120.value?.employeementInsuranceDeduction
+            ? calculateEmployeementInsuranceEmployee(
+                calculateVariables.totalTaxPay,
+                formStateTab2PA120.value.employeementInsuranceSupportPercent
+              )
+            : 0;
           item.value = total4;
           return {
             itemCode: 1004,
@@ -678,97 +681,8 @@ export default defineComponent({
         checkIncomeFirst.value = false;
         localIncomeBoo.value = false;
         employeeTrigger.value = true;
-        // if(!isFirstRun.value){
-        // }else {
-        //   isFirstRun.value = false;
-        // }
       }
     });
-
-    //----------------- get Deduction Data---------------------------
-
-    // const dataConfigDeduction = ref<any>([]);
-    // const configDeductionTrigger = ref(true);
-    
-    
-    // const { result: resConfigDeduction, loading: loading2 } = useQuery(
-    //   queries.getWithholdingConfigDeductionItems,
-    //   configdeductionParam,
-    //   () => ({
-    //     enabled: configDeductionTrigger.value,
-    //     fetchPolicy: "no-cache",
-    //   })
-    // );
-    // watch(resConfigDeduction, (value) => {
-    //   if (value) {
-    //     dataConfigDeduction.value =
-    //       value.getWithholdingConfigDeductionItems.filter((item: any) => {
-    //         if (item.itemCode == 1001) {
-    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
-    //         }
-    //         if (item.itemCode == 1002) {
-    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
-    //         }
-    //         if (item.itemCode == 1003) {
-    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
-    //         }
-    //         if (item.itemCode == 1004) {
-    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
-    //         }
-    //         if (item.itemCode == 1011) {
-    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
-    //         }
-    //         if (item.itemCode == 1012) {
-    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
-    //         }
-    //       });
-    //     configDeductionTrigger.value = false;
-    //   }
-    // });
-
-    /**
-     * get Withholding Config PayItems
-     */
-
-    // const dataConfigPayItems = ref<any>([]);
-    // const configPayItemsParam = ref({
-    //   companyId: companyId,
-    //   imputedYear: globalYear.value,
-    //   useOnly: true,
-    // });
-    // const configPayItemTrigger = ref(true);
-    // const { result: resConfigPayItems, loading: loading1 } = useQuery(
-    //   queries.getWithholdingConfigPayItems,
-    //   configPayItemsParam,
-    //   () => ({
-    //     enabled: configPayItemTrigger.value,
-    //     fetchPolicy: "no-cache",
-    //   })
-    // );
-    // watch(resConfigPayItems, async (value) => {
-    //   if (value) {
-    //     dataConfigPayItems.value = value.getWithholdingConfigPayItems.map(
-    //       (item: any) => {
-    //         return {
-    //           itemCode: item.itemCode,
-    //           name: item.name,
-    //           tax: item.tax,
-    //           taxPayItemCode: item.taxPayItemCode,
-    //           taxfreePayItemCode: item.taxfreePayItemCode,
-    //           taxfreePayItemName: item.taxfreePayItemName,
-    //           taxFreeIncludeSubmission: item.taxFreeIncludeSubmission,
-    //           value: 0,
-    //         };
-    //       }
-    //     );
-    //     if (employeeIdPA120.value) {
-    //       employeeWageParam.value.employeeId = employeeIdPA120;
-    //       employeeTrigger.value = true;
-    //       isFirstRun.value = false;
-    //     }
-    //     configPayItemTrigger.value = false;
-    //   }
-    // });
 
     /**
      * get Employee Wage
@@ -803,26 +717,25 @@ export default defineComponent({
         editRowData.employeementInsuranceDeduction =
           data.employeementInsuranceDeduction;
         editRowData.insuranceSupport = data.insuranceSupport;
-        if (
-          data?.nationalPensionSupportPercent !== null &&
-          editRowData.insuranceSupport
-        ) {
-          editRowData.nationalPensionSupportPercent =
-            data.nationalPensionSupportPercent || 0;
-        } else {
-          delete formStateTab2PA120.value.nationalPensionSupportPercent;
-          delete formOriginTab2PA120.value.nationalPensionSupportPercent;
-        }
-        if (
-          data?.employeementInsuranceSupportPercent !== null &&
-          editRowData.insuranceSupport
-        ) {
-          editRowData.employeementInsuranceSupportPercent =
-            data.employeementInsuranceSupportPercent || 0;
-        } else {
-          delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
-          delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
-        }
+        editRowData.nationalPensionSupportPercent =
+          data.nationalPensionSupportPercent;
+        editRowData.employeementInsuranceSupportPercent =
+          data.employeementInsuranceSupportPercent;
+        // if (
+        //   data?.nationalPensionSupportPercent !== null &&
+        //   editRowData.insuranceSupport
+        // ) {
+        // } else {
+        //   // formStateTab2PA120.value.nationalPensionSupportPercent = null;
+        // }
+        // if (
+        //   data?.employeementInsuranceSupportPercent !== null &&
+        //   editRowData.insuranceSupport
+        // ) {
+        // } else {
+        //   formStateTab2PA120.value.employeementInsuranceSupportPercent = null;
+        //   delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
+        // }
         editRowData.employeementReduction = data.employeementReduction;
         if (data.employeementReduction) {
           editRowData.employeementReductionRatePercent =
@@ -964,8 +877,8 @@ export default defineComponent({
           formStateTab2PA120.value.employeementInsuranceSupportPercent = 0;
         }
       } else {
-        delete formStateTab2PA120.value.nationalPensionSupportPercent;
-        delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
+        formStateTab2PA120.value.nationalPensionSupportPercent = null;
+        formStateTab2PA120.value.employeementInsuranceSupportPercent = null;
       }
     };
     const onChangeSwitch2 = (e: any) => {
@@ -997,8 +910,8 @@ export default defineComponent({
       () => presidentEditPA120.value,
       (newValue) => {
         if (newValue && newValue != presidentOriginPA120.value) {
-          delete formStateTab2PA120.value.nationalPensionSupportPercent;
-          delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
+          formStateTab2PA120.value.nationalPensionSupportPercent = null;
+          formStateTab2PA120.value.employeementInsuranceSupportPercent = null;
           if (formStateTab2PA120.value.employeementInsuranceDeduction) {
             let total1 = formStateTab2PA120.value.nationalPensionDeduction
               ? calculateNationalPensionEmployee(
@@ -1112,8 +1025,6 @@ export default defineComponent({
       ) {
         formStateTab2PA120.value.deductionItems[3].value = 0;
         formOriginTab2PA120.value.deductionItems[3].value = 0;
-        // delete formStateTab2PA120.value.employeementInsuranceSupportPercent;
-        // delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
         return true;
       }
       return false;

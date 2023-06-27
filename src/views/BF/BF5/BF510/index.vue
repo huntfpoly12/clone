@@ -193,6 +193,7 @@ const searching = () => {
   } else {
     delete dataSearch.statuses;
   }
+  dataSearch.fiscalYear = dataSearch.year;
   trigger.value = true;
 }
 const userToken = reactive({
@@ -228,7 +229,7 @@ const cloneWebsite = () => {
   const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
   const currentUrl = window.location.origin.replace(/\/$/, '');
   if (userToken.refreshToken && userToken.accessToken) {
-    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&username=${companyInfo.username}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${companyInfo.facilityBusinessName}&year=${dataSearch.year}&month=${dataSearch.month}&path=AC110`
+    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&username=${encodeURIComponent(companyInfo.username)}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${encodeURIComponent(companyInfo.facilityBusinessName)}&year=${dataSearch.year}&month=${dataSearch.month}&path=AC110`
     window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,' + windowFeatures);
   }
 }
