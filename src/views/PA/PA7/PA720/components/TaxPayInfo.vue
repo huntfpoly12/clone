@@ -160,7 +160,6 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    addItemClick: Boolean,
     saveToNewRow: {
       type: Function,
       default: () => { },
@@ -209,7 +208,6 @@ export default defineComponent({
       if (firsTimeRow.value && res.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.getIncomeExtras[0]?.incomeId } });
-        // firsTimeRow.value = false;
       }
       if (!firsTimeRow.value && res) {
         if (props.compareType == 3) {
@@ -284,9 +282,6 @@ export default defineComponent({
     // set key again
     const focusedRowKey = ref<Number | null>(1);
     const loadIndexInit = ref<Number>(0); // check click same row?
-    watch(() => props.addItemClick, (newVal) => {
-      loadIndexInit.value = -1;
-    }, { deep: true })
     const onRowClick = (e: any) => {
       if (!props.compareForm() && !firsTimeRow.value) {
         e.component.selectRows(formPA720.value.input.incomeId, true);
@@ -340,6 +335,7 @@ export default defineComponent({
     const selectRow = (val: any) => {
       dataGridRef.value.selectRows(val, true)
     }
+    
     const checkLen = (text: String, num: number) => {
       if (text.replace(/\s/g, "").length > num) {
         return text.substring(0, num - 2) + ' ' + '...';
