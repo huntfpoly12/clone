@@ -3,7 +3,7 @@
     <a-spin :spinning="false" size="large">
       <div id="pa-120">
         <a-tabs
-          v-model:activeKey="activeTabAddKeyPA120"
+          v-model:activeKey="activeKey"
           @change="onChangeTab"
           type="card"
         >
@@ -43,7 +43,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const tabStatus = ref(true);
-    const activeTabAddKeyPA120 = ref("1");
+    const activeKey = ref("1");
     const employeeId = ref();
     const setModalVisible = () => {
       emit("closePopup", false);
@@ -59,7 +59,6 @@ export default defineComponent({
       if(e == 1){
         emit("redirectTab");
       }
-      // store.commit('common/activeTabAddKeyPA120', e)
     };
     return {
       setModalVisible,
@@ -70,7 +69,7 @@ export default defineComponent({
       tabStatus,
       setTabsStatus,
       onChangeTab,
-      activeTabAddKeyPA120,
+      activeKey,
     };
   },
 });

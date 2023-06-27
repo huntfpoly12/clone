@@ -1,6 +1,5 @@
 <template>
   <div id="tab1-pa120">
-    <a-spin :spinning="loading" size="large">
       <standard-form formName="tab1-pa120" :disabled="true">
         <a-form-item label="사번(코드)" label-align="right">
           <div class="input-text">
@@ -233,7 +232,6 @@
           </a-col>
         </a-row>
       </standard-form>
-    </a-spin>
   </div>
 </template>
 <script lang="ts">
@@ -269,10 +267,9 @@ export default defineComponent({
       //disabled all form
       () => store.state.common.notDatasourcePA120
     );
-    const messageUpdate = Message.getMessage("COMMON", "106").message;
     const messageCreate = Message.getMessage("COMMON", "101").message;
     const companyParam = ref({
-      companyId: companyId,
+      companyId,
     });
     store.commit("common/createSucessTab1PA120", false);
 
@@ -359,7 +356,6 @@ export default defineComponent({
     // createEmployeeWage tab 1 api
     const {
       mutate: createEmployeeWage,
-      loading: loading,
       onDone: onDoneAdd,
       onError,
     } = useMutation(mutations.createEmployeeWage);
@@ -428,7 +424,7 @@ export default defineComponent({
      *  get Withouthoulding Config deduction
      */
     const deductionTrigger = ref(true);
-    const { result: resConfigDeduction, loading: loading2 } = useQuery(
+    const { result: resConfigDeduction } = useQuery(
       queriesPA120.getWithholdingConfigDeductionItems,
       originDataDetail,
       () => ({
@@ -521,7 +517,6 @@ export default defineComponent({
     };
     return {
       companyId,
-      loading,
       formStateTab1PA120,
       labelResidebId,
       funcAddress,

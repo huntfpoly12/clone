@@ -9,6 +9,7 @@ import screenActionAC520 from './screenActions/screenActionAC520';
 import {ActionTree} from "vuex";
 import {TypeCommonState} from "@/store/commonModule/index";
 import screenActionPA410 from './screenActions/screenActionPA410';
+import screenActionPA120 from './screenActions/screenActionPA120';
 const actions: ActionTree<TypeCommonState, any> = {
     getListEmployee: (context: any, originData: any) => {
 
@@ -51,7 +52,8 @@ const actions: ActionTree<TypeCommonState, any> = {
     ...screenActionPA520,
     ...screenActionPA410,
     ...screenActionPA420,
-    ...screenActionAC520
+    ...screenActionAC520,
+    ...screenActionPA120,
   };
 
   export default actions;

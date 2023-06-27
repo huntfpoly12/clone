@@ -1,13 +1,9 @@
 import dayjs from "dayjs";
 const statesPA120 = {
-  arrayRoweditedPA120: [],
   actionFormDonePA120: 1,
   actionFormErrorPA120: 1,
-  keyActivePA120: 0,
   activeTabEditKeyPA120: '1',
-  activeTabAddKeyPA120: '1',
   isForeignerPA120: false,
-  presidentPA120: false,
   presidentEditPA120: false,
   isDisableInsuranceSupport: false,
   yearPA120: +dayjs().format("YYYY"),
@@ -79,11 +75,9 @@ const statesPA120 = {
     deductionItems: [],
   },
 
-  isCompareEditPA120: true,
   isNewRowPA120: false,
-  isAddFormErrorPA120: false,
-  isChangeConfigPayItemsPA120: false,
-  isCalculateEditPA120: true,
+  deductionItemsPA120: [],
+  payItemsPA120: [],
 };
 
 export default statesPA120;

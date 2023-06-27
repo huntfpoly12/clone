@@ -418,13 +418,13 @@ watch(() => formState.lastRetiredYearsOfService.settlementFinishDate, (value: an
   formState.incomeCalculationInput.settlementFinishDate = value
 });
 watch(() => [
-  formState.prevRetiredYearsOfService.additionalDays,
+  // formState.prevRetiredYearsOfService.additionalDays,
   formState.lastRetiredYearsOfService.additionalDays
 ], () => {
-  formState.incomeCalculationInput.additionalDays = +formState.prevRetiredYearsOfService.additionalDays + +formState.lastRetiredYearsOfService.additionalDays
+  formState.incomeCalculationInput.additionalDays = +formState.lastRetiredYearsOfService.additionalDays
 })
 watch(() => [
-  formState.prevRetiredYearsOfService.exclusionDays,
+  // formState.prevRetiredYearsOfService.exclusionDays,
   formState.lastRetiredYearsOfService.exclusionDays
 ], () => {
   formState.incomeCalculationInput.exclusionDays = +formState.lastRetiredYearsOfService.exclusionDays

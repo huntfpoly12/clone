@@ -5,17 +5,8 @@ const screenMutatePA120 = {
   actionFormErrorPA120(state: any) {
     state.actionFormErrorPA120++;
   },
-  keyActivePA120(state: any, data: Number) {
-    state.keyActivePA120 = data;
-  },
   activeTabEditKeyPA120(state: any, payload: any) {
     state.activeTabEditKeyPA120 = payload;
-  },
-  activeTabAddKeyPA120(state: any, payload: any) {
-    state.activeTabAddKeyPA120 = payload;
-  },
-  presidentPA120(state: any, payload: any) {
-    state.presidentPA120 = payload;
   },
   createSucessTab1PA120(state: any, payload: any) {
     state.createSucessTab1PA120 = payload;
@@ -43,6 +34,12 @@ const screenMutatePA120 = {
       ...state.formOriginTab2PA120,
       ...payload,
     };
+  },
+  deductionItemsPA120(state: any, payload: any) {
+    state.deductionItemsPA120 = payload;
+  },
+  payItemsPA120(state: any, payload: any) {
+    state.payItemsPA120 = payload;
   },
 };
 

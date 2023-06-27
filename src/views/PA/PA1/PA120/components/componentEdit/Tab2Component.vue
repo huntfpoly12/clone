@@ -280,64 +280,62 @@
             {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 +
             비과세 {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
           </div>
-          <a-spin :spinning="loading1" size="large" style="height: 100%">
-            <div class="deduction-main">
-              <div
-                v-for="item in formStateTab2PA120.payItems"
-                :key="item.name"
-                class="custom-deduction"
-              >
-                <span>
-                  <deduction-items
-                    v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                    :name="item.name"
-                    :type="1"
-                    subName="과세"
-                  />
-                  <deduction-items
-                    v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                    :name="item.name"
-                    :type="2"
-                    subName="상여(과세)"
-                  />
-                  <deduction-items
-                    v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                    :name="item.name"
-                    :type="3"
-                    :subName="
-                      item.taxfreePayItemCode +
-                      ' ' +
-                      item.taxfreePayItemName +
-                      ' ' +
-                      (item.taxFreeIncludeSubmission ? 'O' : 'X')
-                    "
-                  />
-                  <deduction-items
-                    v-if="
-                      item.taxPayItemCode == null &&
-                      item.taxfreePayItemCode == null
-                    "
-                    :name="item.name"
-                    :type="4"
-                    subName="과세"
-                  />
-                </span>
-                <div>
-                  <number-box-money
-                    width="130px"
-                    :spinButtons="false"
-                    :rtlEnabled="true"
-                    v-model:valueInput="item.value"
-                    :min="0"
-                    @changeInput="onCalcSumPayItem"
-                    format="#0,###"
-                  >
-                  </number-box-money>
-                  <span class="pl-5">원</span>
-                </div>
+          <div class="deduction-main">
+            <div
+              v-for="item in formStateTab2PA120.payItems"
+              :key="item.name"
+              class="custom-deduction"
+            >
+              <span>
+                <deduction-items
+                  v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                  :name="item.name"
+                  :type="1"
+                  subName="과세"
+                />
+                <deduction-items
+                  v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                  :name="item.name"
+                  :type="2"
+                  subName="상여(과세)"
+                />
+                <deduction-items
+                  v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                  :name="item.name"
+                  :type="3"
+                  :subName="
+                    item.taxfreePayItemCode +
+                    ' ' +
+                    item.taxfreePayItemName +
+                    ' ' +
+                    (item.taxFreeIncludeSubmission ? 'O' : 'X')
+                  "
+                />
+                <deduction-items
+                  v-if="
+                    item.taxPayItemCode == null &&
+                    item.taxfreePayItemCode == null
+                  "
+                  :name="item.name"
+                  :type="4"
+                  subName="과세"
+                />
+              </span>
+              <div>
+                <number-box-money
+                  width="130px"
+                  :spinButtons="false"
+                  :rtlEnabled="true"
+                  v-model:valueInput="item.value"
+                  :min="0"
+                  @changeInput="onCalcSumPayItem"
+                  format="#0,###"
+                >
+                </number-box-money>
+                <span class="pl-5">원</span>
               </div>
             </div>
-          </a-spin>
+          </div>
         </a-col>
         <a-col class="col-3">
           <div class="header-text-2">
@@ -346,95 +344,93 @@
               >{{ $filters.formatCurrency(totalDeduction) }} 원</span
             >
           </div>
-          <a-spin :spinning="loading1 || loading3" size="large">
-            <div class="deduction-main">
-              <div
-                v-for="item in formStateTab2PA120.deductionItems"
-                :key="item.name"
-                class="custom-deduction"
-              >
-                <span>
-                  <deduction-items
-                    v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                    :name="item.name"
-                    :type="1"
-                    subName="공제"
-                  />
-                  <deduction-items
-                    v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                    :name="item.name"
-                    :type="2"
-                    subName="공제"
-                  />
-                  <deduction-items
-                    v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                    :name="item.name"
-                    :type="3"
-                    :subName="
-                      item.taxfreePayItemCode +
-                      ' ' +
-                      item.taxfreePayItemName +
-                      ' ' +
-                      item.taxFreeIncludeSubmission
-                    "
-                  />
-                  <deduction-items
-                    v-if="
-                      item.taxPayItemCode == null &&
-                      item.taxfreePayItemCode == null
-                    "
-                    :name="item.name"
-                    :type="4"
-                    subName="공제"
-                  />
-                </span>
-                <div>
-                  <a-tooltip
-                    color="black"
-                    placement="top"
-                    v-if="item.itemCode == 1012 && localIncomeBoo"
-                    zIndex="9999"
-                  >
-                    <template #title>
-                      소액징수부면제 적용 {{ localReal }}
-                    </template>
-                    <span>
-                      <number-box-money
-                        :textColor="
-                          localIncomeBoo && item.itemCode == 1012 ? 'red' : ''
-                        "
-                        class="red"
-                        width="130px"
-                        :spinButtons="false"
-                        :rtlEnabled="true"
-                        v-model:valueInput="item.value"
-                        :min="1000"
-                        @changeInput="onCalcSumDeduction"
-                        :disabled="disabledDeduction(item.itemCode)"
-                        format="#0,###"
-                      />
-                    </span>
-                  </a-tooltip>
-                  <number-box-money
-                    v-else
-                    :textColor="
-                      checkIncomeFirst && item.itemCode == 1012 ? 'red' : ''
-                    "
-                    width="130px"
-                    :spinButtons="false"
-                    :rtlEnabled="true"
-                    v-model:valueInput="item.value"
-                    :min="0"
-                    @changeInput="onCalcSumDeduction"
-                    :disabled="disabledDeduction(item.itemCode)"
-                    format="#0,###"
-                    @onFocusOut="(e: any) => handleFocusOut(e, item.itemCode)"
-                  />
-                  <span class="pl-5">원</span>
-                </div>
+          <div class="deduction-main">
+            <div
+              v-for="item in formStateTab2PA120.deductionItems"
+              :key="item.name"
+              class="custom-deduction"
+            >
+              <span>
+                <deduction-items
+                  v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                  :name="item.name"
+                  :type="1"
+                  subName="공제"
+                />
+                <deduction-items
+                  v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                  :name="item.name"
+                  :type="2"
+                  subName="공제"
+                />
+                <deduction-items
+                  v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                  :name="item.name"
+                  :type="3"
+                  :subName="
+                    item.taxfreePayItemCode +
+                    ' ' +
+                    item.taxfreePayItemName +
+                    ' ' +
+                    item.taxFreeIncludeSubmission
+                  "
+                />
+                <deduction-items
+                  v-if="
+                    item.taxPayItemCode == null &&
+                    item.taxfreePayItemCode == null
+                  "
+                  :name="item.name"
+                  :type="4"
+                  subName="공제"
+                />
+              </span>
+              <div>
+                <a-tooltip
+                  color="black"
+                  placement="top"
+                  v-if="item.itemCode == 1012 && localIncomeBoo"
+                  zIndex="9999"
+                >
+                  <template #title>
+                    소액징수부면제 적용 {{ localReal }}
+                  </template>
+                  <span>
+                    <number-box-money
+                      :textColor="
+                        localIncomeBoo && item.itemCode == 1012 ? 'red' : ''
+                      "
+                      class="red"
+                      width="130px"
+                      :spinButtons="false"
+                      :rtlEnabled="true"
+                      v-model:valueInput="item.value"
+                      :min="1000"
+                      @changeInput="onCalcSumDeduction"
+                      :disabled="disabledDeduction(item.itemCode)"
+                      format="#0,###"
+                    />
+                  </span>
+                </a-tooltip>
+                <number-box-money
+                  v-else
+                  :textColor="
+                    checkIncomeFirst && item.itemCode == 1012 ? 'red' : ''
+                  "
+                  width="130px"
+                  :spinButtons="false"
+                  :rtlEnabled="true"
+                  v-model:valueInput="item.value"
+                  :min="0"
+                  @changeInput="onCalcSumDeduction"
+                  :disabled="disabledDeduction(item.itemCode)"
+                  format="#0,###"
+                  @onFocusOut="(e: any) => handleFocusOut(e, item.itemCode)"
+                />
+                <span class="pl-5">원</span>
               </div>
             </div>
-          </a-spin>
+          </div>
         </a-col>
       </a-row>
       <a-row style="margin-top: 20px" justify="center">
@@ -548,12 +544,18 @@ export default defineComponent({
     const modalCalc = ref(false);
     const msgCalc = Message.getMessage("PA120", "004");
 
-    let isFirstRun = ref(true);
     const insuranceDisabled = ref(false); // whether disabled or not formStateTab2PA120.employeementInsuranceDeduction
     const checkIncomeFirst = ref(false); // whether display colorRed in deduction 1012. Don't check when it's firstTime.
 
-    // fn common
+    // data common
+    const deductionItemsPA120 = computed(
+      () => store.state.common.deductionItemsPA120
+    );
+    const payItemsPA120 = computed(
+      () => store.state.common.payItemsPA120
+    );
 
+    // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
         return dayjs();
@@ -669,7 +671,7 @@ export default defineComponent({
       }
     };
 
-    //------------------When employeeID change or refetch screen----------------
+    //------------------When employeeID change or refetch component----------------
 
     watch(employeeIdPA120, async (value: any) => {
       if (+value !== 0) {
@@ -685,91 +687,88 @@ export default defineComponent({
 
     //----------------- get Deduction Data---------------------------
 
-    const dataConfigDeduction = ref<any>([]);
-    const configDeductionTrigger = ref(true);
-    const configdeductionParam = ref({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      useOnly: true,
-    });
-    const { result: resConfigDeduction, loading: loading2 } = useQuery(
-      queries.getWithholdingConfigDeductionItems,
-      configdeductionParam,
-      () => ({
-        enabled: configDeductionTrigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    watch(resConfigDeduction, (value) => {
-      if (value) {
-        dataConfigDeduction.value =
-          value.getWithholdingConfigDeductionItems.filter((item: any) => {
-            if (item.itemCode == 1001) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1002) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1003) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1004) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1011) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-            if (item.itemCode == 1012) {
-              return { itemCode: item.itemCode, name: item.name, value: 0 };
-            }
-          });
-        configDeductionTrigger.value = false;
-      }
-    });
+    // const dataConfigDeduction = ref<any>([]);
+    // const configDeductionTrigger = ref(true);
+    
+    
+    // const { result: resConfigDeduction, loading: loading2 } = useQuery(
+    //   queries.getWithholdingConfigDeductionItems,
+    //   configdeductionParam,
+    //   () => ({
+    //     enabled: configDeductionTrigger.value,
+    //     fetchPolicy: "no-cache",
+    //   })
+    // );
+    // watch(resConfigDeduction, (value) => {
+    //   if (value) {
+    //     dataConfigDeduction.value =
+    //       value.getWithholdingConfigDeductionItems.filter((item: any) => {
+    //         if (item.itemCode == 1001) {
+    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
+    //         }
+    //         if (item.itemCode == 1002) {
+    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
+    //         }
+    //         if (item.itemCode == 1003) {
+    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
+    //         }
+    //         if (item.itemCode == 1004) {
+    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
+    //         }
+    //         if (item.itemCode == 1011) {
+    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
+    //         }
+    //         if (item.itemCode == 1012) {
+    //           return { itemCode: item.itemCode, name: item.name, value: 0 };
+    //         }
+    //       });
+    //     configDeductionTrigger.value = false;
+    //   }
+    // });
 
     /**
      * get Withholding Config PayItems
      */
 
-    const dataConfigPayItems = ref<any>([]);
-    const configPayItemsParam = ref({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      useOnly: true,
-    });
-    const configPayItemTrigger = ref(true);
-    const { result: resConfigPayItems, loading: loading1 } = useQuery(
-      queries.getWithholdingConfigPayItems,
-      configPayItemsParam,
-      () => ({
-        enabled: configPayItemTrigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    watch(resConfigPayItems, async (value) => {
-      if (value) {
-        dataConfigPayItems.value = value.getWithholdingConfigPayItems.map(
-          (item: any) => {
-            return {
-              itemCode: item.itemCode,
-              name: item.name,
-              tax: item.tax,
-              taxPayItemCode: item.taxPayItemCode,
-              taxfreePayItemCode: item.taxfreePayItemCode,
-              taxfreePayItemName: item.taxfreePayItemName,
-              taxFreeIncludeSubmission: item.taxFreeIncludeSubmission,
-              value: 0,
-            };
-          }
-        );
-        if (employeeIdPA120.value) {
-          employeeWageParam.value.employeeId = employeeIdPA120;
-          employeeTrigger.value = true;
-          isFirstRun.value = false;
-        }
-        configPayItemTrigger.value = false;
-      }
-    });
+    // const dataConfigPayItems = ref<any>([]);
+    // const configPayItemsParam = ref({
+    //   companyId: companyId,
+    //   imputedYear: globalYear.value,
+    //   useOnly: true,
+    // });
+    // const configPayItemTrigger = ref(true);
+    // const { result: resConfigPayItems, loading: loading1 } = useQuery(
+    //   queries.getWithholdingConfigPayItems,
+    //   configPayItemsParam,
+    //   () => ({
+    //     enabled: configPayItemTrigger.value,
+    //     fetchPolicy: "no-cache",
+    //   })
+    // );
+    // watch(resConfigPayItems, async (value) => {
+    //   if (value) {
+    //     dataConfigPayItems.value = value.getWithholdingConfigPayItems.map(
+    //       (item: any) => {
+    //         return {
+    //           itemCode: item.itemCode,
+    //           name: item.name,
+    //           tax: item.tax,
+    //           taxPayItemCode: item.taxPayItemCode,
+    //           taxfreePayItemCode: item.taxfreePayItemCode,
+    //           taxfreePayItemName: item.taxfreePayItemName,
+    //           taxFreeIncludeSubmission: item.taxFreeIncludeSubmission,
+    //           value: 0,
+    //         };
+    //       }
+    //     );
+    //     if (employeeIdPA120.value) {
+    //       employeeWageParam.value.employeeId = employeeIdPA120;
+    //       employeeTrigger.value = true;
+    //       isFirstRun.value = false;
+    //     }
+    //     configPayItemTrigger.value = false;
+    //   }
+    // });
 
     /**
      * get Employee Wage
@@ -851,8 +850,8 @@ export default defineComponent({
         editRowData.payItems = [];
         editRowData.deductionItems = [];
         editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
-        if (data.payItems && dataConfigPayItems.value.length > 0) {
-          dataConfigPayItems.value.forEach((item1: any, key: number) => {
+        if (data.payItems && payItemsPA120.value.length > 0) {
+          payItemsPA120.value.forEach((item1: any, key: number) => {
             const item2Value = data.payItems.find(
               (item2: any) => item2.itemCode == item1.itemCode
             );
@@ -863,8 +862,8 @@ export default defineComponent({
             );
           });
         }
-        if (data.deductionItems && dataConfigDeduction.value.length > 0) {
-          dataConfigDeduction.value.forEach((item1: any, key: number) => {
+        if (data.deductionItems && deductionItemsPA120.value.length > 0) {
+          deductionItemsPA120.value.forEach((item1: any, key: number) => {
             let item2Value = data.deductionItems.find(
               (item2: any) => item2.itemCode == item1.itemCode
             );
@@ -1128,8 +1127,6 @@ export default defineComponent({
     };
 
     return {
-      loading1,
-      loading2,
       loadingEmployeeWage,
       rangeDate,
       totalPayItemTaxFree,
@@ -1144,8 +1141,6 @@ export default defineComponent({
       radioCheckReductionInput,
       IncomeTaxAppRate,
       companyId,
-      dataConfigPayItems,
-      dataConfigDeduction,
       onChangeSwitch1,
       onChangeSwitch2,
       formOriginTab2PA120,
