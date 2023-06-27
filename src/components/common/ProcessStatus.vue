@@ -48,6 +48,10 @@ export default defineComponent({
           type: Number,
           default: 30
         },
+        noOptionNoInput: {
+            type: Boolean,
+            required: false
+        },
         arrayChoose: {
           type: Array<any>,
           default: [
@@ -75,6 +79,10 @@ export default defineComponent({
             { id: 30, text: '조정중', class: 'adjusting' },
             { id: 40, text: '조정마감', class: 'adjusted' },
         ])
+        if (props.noOptionNoInput) {
+            arrayRadioUser.value.splice(0, 1);
+            props.arrayChoose.splice(0, 1);
+        }
         const setModalVisible = () => {
             value.value = props.valueStatus
             showModal.value = false;

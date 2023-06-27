@@ -27,6 +27,7 @@
           }}
         </div>
         <process-status
+          noOptionNoInput
           v-model:valueStatus="statusButton"
           @checkConfirm="statusConfirm"
           :disabled="statusButton !== 10 && statusButton !== 20"

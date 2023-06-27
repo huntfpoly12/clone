@@ -50,6 +50,7 @@
         />
         <template #process-status="{ data }">
           <process-status
+            noOptionNoInput
             v-model:valueStatus="data.data.status"
             :dataRow="data.data"
             @checkConfirmRowTable="changeStatusRowTable"
