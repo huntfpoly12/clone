@@ -254,6 +254,7 @@ import { sampleDataIncomeWage } from "../utils/index";
 import { Message } from "@/configs/enum";
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
+import { isNumber } from "lodash";
 export default defineComponent({
 	components: {
 		DxButton,
@@ -590,6 +591,7 @@ export default defineComponent({
 		watch(result, async (value) => {
 			triggerDetail.value = false;
 			statusCalculateMTS.value = false; // enable button ở giữa
+			originDataEmployeeWage.employeeId = null;
 			let data = value.getIncomeWage;
 			if (data) {
 				await dataConfigPayItems.value?.map((row: any) => {
@@ -897,7 +899,7 @@ export default defineComponent({
 		const calculationNewAmount = () => {
 			dataConfigDeductions.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
-					let total1 = dataIW.value.employee.nationalPensionDeduction
+					let total1 = (dataIW.value.employee.nationalPensionDeduction && isNumber(dataIW.value.employee.nationalPensionSupportPercent))
 						? calculateNationalPensionEmployee(
 							totalPayItemTaxFree.value,
 							dataIW.value.employee.nationalPensionSupportPercent)
@@ -917,7 +919,7 @@ export default defineComponent({
 					item.amountNew = total3;
 				}
 				if (item.itemCode == 1004) {
-					let total4 = dataIW.value.employee.employeementInsuranceDeduction
+					let total4 = (dataIW.value.employee.employeementInsuranceDeduction && isNumber(dataIW.value.employee.employeementInsuranceSupportPercent))
 						? calculateEmployeementInsuranceEmployee(
 							totalPayItemTaxFree.value,
 							dataIW.value.employee.employeementInsuranceSupportPercent)
