@@ -1,6 +1,6 @@
 <template>
     <span v-if="disabled">
-        <span v-for="item in arrayChoose" :key="item.id">
+        <span v-for="item in arrayRadioManager" :key="item.id">
             <button-basic v-if="(currentBt == item.id as any)" :width="90" :height="heightBtn" :text="item.text" :class="item.class"
                 class="buttonModal disabled-button-process">
             </button-basic>
@@ -9,7 +9,7 @@
     <a-popover v-else trigger="click" v-model:visible="showModal" color="#e6e6e6">
         <template #content>
             <div class="mytext">
-                <radio-group :arrayValue="userType == 'm' ? arrayChoose : arrayRadioUser"
+                <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
                     v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
                 <span>으로 변경하시겠습니까?</span>
                 <div class="mt-20">
@@ -72,16 +72,17 @@ export default defineComponent({
             { id: 10, text: '입력중', class: 'entering' },
             { id: 20, text: '입력마감', class: 'input' },
         ])
-        const arrayRadioManager = ref([
-            { id: 1, text: '미입력', class: 'noInput' },
-            { id: 10, text: '입력중', class: 'entering' },
-            { id: 20, text: '입력마감', class: 'input' },
-            { id: 30, text: '조정중', class: 'adjusting' },
-            { id: 40, text: '조정마감', class: 'adjusted' },
-        ])
+        // const arrayRadioManager = ref([
+        //     { id: 1, text: '미입력', class: 'noInput' },
+        //     { id: 10, text: '입력중', class: 'entering' },
+        //     { id: 20, text: '입력마감', class: 'input' },
+        //     { id: 30, text: '조정중', class: 'adjusting' },
+        //     { id: 40, text: '조정마감', class: 'adjusted' },
+        // ])
+        const arrayRadioManager: any = ref([])
         if (props.noOptionNoInput) {
-            arrayRadioUser.value.splice(0, 1);
-            props.arrayChoose.splice(0, 1);
+            arrayRadioUser.value = arrayRadioUser.value.filter(item => item.id !== 1);
+            arrayRadioManager.value = props.arrayChoose.filter(item => item.id !== 1);
         }
         const setModalVisible = () => {
             value.value = props.valueStatus
