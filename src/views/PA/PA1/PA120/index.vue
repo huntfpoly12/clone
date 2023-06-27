@@ -318,6 +318,15 @@ export default defineComponent({
     );
     const messageSave = Message.getMessage("COMMON", "501").message;
     const messageDel = Message.getMessage("COMMON", "402").message;
+    // get data common
+    const configdeductionParam = ref({
+      companyId: companyId,
+      imputedYear: globalYear,
+      useOnly: true,
+    });
+    store.dispatch("common/deductionItemsPA120", configdeductionParam.value);
+    store.dispatch("common/payItemsPA120", configdeductionParam.value);
+
     // form data tab 1
     const formStateTab1PA120 = computed(
       () => store.state.common.formStateTab1PA120
@@ -417,12 +426,12 @@ export default defineComponent({
     const delStatus = ref(false);
     const idDelete = ref();
     const {
-      mutate: actionDelete,
+      mutate: mutateDelete,
       onError: errorDelete,
       onDone: successDelete,
     } = useMutation(mutations.deleteEmployeeWage);
     const statusComfirm = (res: any) => {
-      actionDelete({
+      mutateDelete({
         companyId: companyId,
         imputedYear: globalYear.value,
         employeeId: idDelete.value,
@@ -445,7 +454,7 @@ export default defineComponent({
 
     //----------------compare Data----------------
 
-    // tab 1 key to reset form validatation.
+    // tab1's key to reset form validatation.
     const addComponentKey = ref(1);
     const rowChangeStatus = ref<Boolean>(false); // Change in row permission status
     // xóa row mới tạo
@@ -493,7 +502,7 @@ export default defineComponent({
       }
       return false;
     };
-    // click button add in the top of the table
+    // click add button in the top of the table
     const openAddNewModal = async () => {
       compareType.value = 3;
       if (isNewRowPA120.value) {
@@ -548,8 +557,9 @@ export default defineComponent({
         });
       });
     }
-    // allow API to be called? when notSaveType == 4.
+    // allow API of dataSource to be called? when notSaveType == 4.
     const hasCallGetAllApi = ref(true);
+    // handle when it has confirm result.
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
         hasCallGetAllApi.value = true;
@@ -633,7 +643,6 @@ export default defineComponent({
     watch(actionFormErrorPA120, () => {
       compareType.value = 1;
       focusedRowKey.value = formStateTab1PA120.value?.employeeId.toString();
-      removeHoverRowKey();
       // check what tab is valid and redirect to it.
       if (notSaveType.value == 1 || notSaveType.value == 4) {
         store.commit("common/activeTabEditKeyPA120", "1");
@@ -645,7 +654,7 @@ export default defineComponent({
       }
     });
 
-    //click row in the table
+    //---------------------click row in the table---------------------
 
     const onClickRow = (data: any) => {
       compareType.value = 2;
@@ -675,6 +684,8 @@ export default defineComponent({
       }
     };
 
+    // ----------------custom column to search------------------------
+
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return `${
         rowData.nationalPensionDeduction +
@@ -692,19 +703,21 @@ export default defineComponent({
     const gridRef = ref(); // ref of grid
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     const onFocusedRowChanging = (e: any) => {
-      const rowElement = document.querySelector(
-        `[aria-rowindex="${e.newRowIndex + 1}"]`
-      );
+      // const rowElement = document.querySelector(
+      //   `[aria-rowindex="${e.newRowIndex + 1}"]`
+      // );
+      var rowElement = e.rowElement;
       if (focusedRowKey.value == e.rows[e.newRowIndex].key) {
         e.cancel = true;
         return;
       }
       if (!compareForm()) {
-        rowElement?.classList.add("dx-state-hover-custom");
+        rowElement?.addClass("dx-state-hover-custom");
         e.cancel = true;
       }
     };
     const removeHoverRowKey = () => {
+      console.log(`output-111111`,111111)
       const element = document.querySelector(".dx-state-hover-custom");
       if (element) dataGridRef.value?.refresh();
     };
@@ -735,7 +748,7 @@ export default defineComponent({
       delStatus,
       dataSource,
       onClickRow,
-      actionDelete,
+      mutateDelete,
       actionDeleteFuc,
       modalHistory,
       contentDelete,
