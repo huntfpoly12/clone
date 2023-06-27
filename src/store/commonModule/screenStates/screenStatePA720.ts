@@ -66,6 +66,7 @@ let statesPA720 = {
   isClickEditDiffPA720: false,
   isLoopDayPA720: false,
   dayArrPA720: [],
+  employSelect: [],
 };
 
 export default statesPA720;

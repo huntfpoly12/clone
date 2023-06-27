@@ -24,6 +24,9 @@ const screenMutatePA720 = {
   },
   selectedRowKeysPA720(state: any, payload: any){
     state.selectedRowKeysPA720 = [payload]
+  },
+  employSelect(state: any, payload: any){
+    state.employSelect = payload;
   }
 };
 
