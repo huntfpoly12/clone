@@ -494,12 +494,14 @@ router.beforeEach((to, from, next) => {
       sessionStorage.setItem('loginExpr', objectJwt.expiredTime.toString())
       sessionStorage.setItem('refreshToken', refreshToken as string)
       sessionStorage.setItem('tabsCached', path as string)
-      sessionStorage.setItem('acYear', year as string)
-      sessionStorage.setItem('paYear', year as string)
-      sessionStorage.setItem('month', month as string)
-      sessionStorage.setItem('username', decodeURIComponent(username as string))
-      sessionStorage.setItem('name', decodeURIComponent(facilityBusinessName as string))
-      sessionStorage.setItem('globalFacilityBizId', globalFacilityBizId as string)
+      if(globalFacilityBizId) {
+        sessionStorage.setItem('acYear', year as string)
+        sessionStorage.setItem('paYear', year as string)
+        sessionStorage.setItem('month', month as string)
+        sessionStorage.setItem('username', decodeURIComponent(username as string))
+        sessionStorage.setItem('name', decodeURIComponent(facilityBusinessName as string))
+        sessionStorage.setItem('globalFacilityBizId', globalFacilityBizId as string)
+      }
     }
     next(); // remove query params
   }
