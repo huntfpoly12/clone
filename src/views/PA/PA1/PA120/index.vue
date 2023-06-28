@@ -562,7 +562,6 @@ export default defineComponent({
     // handle when it has confirm result.
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        hasCallGetAllApi.value = true;
         if (notSaveType.value == 2 || notSaveType.value == 4) {
           let ele21 = document.getElementById("btn-save-edit-tab2");
           ele21?.click();
@@ -571,6 +570,7 @@ export default defineComponent({
           hasCallGetAllApi.value = false;
           await waitForApiCall();
         }
+        hasCallGetAllApi.value = true;
         if (notSaveType.value == 1 || notSaveType.value == 4) {
           let ele11 = document.getElementById("btn-save") as HTMLInputElement;
           ele11?.click();
@@ -717,7 +717,6 @@ export default defineComponent({
       }
     };
     const removeHoverRowKey = () => {
-      console.log(`output-111111`,111111)
       const element = document.querySelector(".dx-state-hover-custom");
       if (element) dataGridRef.value?.refresh();
     };

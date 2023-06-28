@@ -482,6 +482,7 @@ export default defineComponent({
       mutations.saveEmployeeWagePayDeductionReduction
     );
     onDoneSaveEmployee(() => {
+      store.state.common.employeeIdPA120 = formStateTab1PA120.value.employeeId;
       store.commit("common/createSucessTab1PA120", true);
       store.commit("common/actionFormDonePA120");
     });

@@ -1,5 +1,5 @@
 <template>
-  <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
+  <a-spin :spinning="loadingIncomeExtras" size="large">
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
       :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
@@ -42,9 +42,9 @@
       <template #paymentDay="{ data }">
         {{ formatMonth(data.data.paymentDay) }}
       </template>
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" alignment="right"  width="80"/>
-      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" alignment="right"  width="80"/>
-      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" alignment="right"  width="80"/>
+      <DxColumn caption="지급액" data-field="paymentAmount" :format="$filters.formatCurrency" alignment="right"  width="80"/>
+      <DxColumn caption="필요경비" data-field="requiredExpenses" :format="$filters.formatCurrency" alignment="right"  width="80"/>
+      <DxColumn caption="소득금액" data-field="incomePayment" :format="$filters.formatCurrency" alignment="right"  width="80"/>
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot"/>
       <template #taxRateSlot="{ data }">
         {{ data.value }}%
@@ -61,7 +61,7 @@
           </span>
         </a-tooltip>
       </template>
-      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" alignment="right" width="80" />
+      <DxColumn caption="차인지급액" data-field="actualPayment" :format="$filters.formatCurrency" alignment="right" width="80" />
     </DxDataGrid>
     <a-row class="fs-14 summary-ctn">
       <a-col class="sum-item">
@@ -155,11 +155,6 @@ export default defineComponent({
     changeFommDone: {
       type: Number,
     },
-    isRunOnce: Boolean,
-    isChangeRow: {
-      type: Boolean,
-      default: false,
-    },
     saveToNewRow: {
       type: Function,
       default: () => { },
@@ -169,10 +164,6 @@ export default defineComponent({
       type: Function,
       default: () => { },
     },
-    // editTaxParamFake: {
-    //   type: Object,
-    //   default: { incomeId: 0 },
-    // }
   },
   setup(props, { emit }) {
     let dataSourceDetail = ref([]);
@@ -255,9 +246,6 @@ export default defineComponent({
       });
       return filters.formatCurrency(total);
     };
-    const formateMoney = (options: any) => {
-      return filters.formatCurrency(options.value);
-    };
     const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
       if (e.selectedRowsData.length > 0) {
@@ -283,6 +271,9 @@ export default defineComponent({
     const focusedRowKey = ref<Number | null>(1);
     const loadIndexInit = ref<Number>(0); // check click same row?
     const onRowClick = (e: any) => {
+      if(e.key === "99axbzkk"){
+        return;
+      }
       if (!props.compareForm() && !firsTimeRow.value) {
         e.component.selectRows(formPA720.value.input.incomeId, true);
       }
@@ -382,7 +373,6 @@ export default defineComponent({
       checkLen, checkLenTooltip,
       loadingIncomeExtras,
       customTextSummary,
-      formateMoney,
       selectionChanged,
       incomeIdDels,
       paymentData,
