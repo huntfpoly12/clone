@@ -82,12 +82,6 @@
                   year: dataSearch.year,
                   month: dataSearch.month
                 }"
-                :arrayChoose="[
-                  { id: 10, text: '입력중', class: 'entering' },
-                  { id: 20, text: '입력마감', class: 'input' },
-                  { id: 30, text: '조정중', class: 'adjusting' },
-                  { id: 40, text: '조정마감', class: 'adjusted' },
-                ]"
                 @checkConfirmRowTable="submitChangeStatus"
               />
               <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
