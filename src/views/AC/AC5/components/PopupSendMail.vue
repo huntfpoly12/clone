@@ -68,7 +68,7 @@ export default defineComponent({
     } = useMutation(mutations530.sendStatementOfGoverbmentSubsidiesReportEmail);
     doneSendStatementOfGoverbmentSubsidiesReportEmail((data) => {
       notification("success", Message.getCommonMessage("801").message);
-      email.value = ''
+      email.value = userInfo.value?.email || ''
       keyRefreshForm.value++
       emit('closePopup')
     })
