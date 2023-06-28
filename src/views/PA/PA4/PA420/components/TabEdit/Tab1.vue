@@ -32,7 +32,7 @@
         <a-form-item label="입사일">
           <div class="d-flex-center">
             <date-time-box width="130px" disabled="true" :valueDate="employee.joinedAt"/>
-            <info-tool-tip>수정이 필요한 경우 <span style="cursor: pointer; color: #5353f1;" @click="openTabFuc">[사원등록]</span> 에서 수정하시기 바랍니다</info-tool-tip>
+            <info-tool-tip>수정이 필요한 경우 <b style="cursor: pointer; color: #5353f1;" @click="openTabFuc">[사원등록]</b> 에서 수정하시기 바랍니다</info-tool-tip>
           </div>
         </a-form-item>
         <a-form-item label="임원여부">
@@ -438,9 +438,9 @@ watch(() => [
 // =============== FUNCTION ================================
 const openTabFuc = () => {
   if (props.dataDetail.retirementType === EmployeeWageType.WAGE) {
-    window.open('pa-110')
-  } else {
     window.open('pa-520')
+  } else {
+    window.open('pa-110')
   }
 }
 
