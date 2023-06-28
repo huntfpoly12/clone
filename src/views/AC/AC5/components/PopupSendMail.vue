@@ -43,7 +43,7 @@ export default defineComponent({
     const store = useStore();
     const userInfo = computed(() => store.state.auth.userInfor);
     const email = ref('')
-    
+
     watch(() => userInfo.value, (value) => {
       email.value = value?.email || ''
     },{
@@ -53,7 +53,7 @@ export default defineComponent({
 
     let keyRefreshForm = ref(0)
     const closePopup = () => {
-      email.value = ''
+      email.value = userInfo.value?.email || ''
       keyRefreshForm.value++
       emit('closePopup')
     }
@@ -109,8 +109,6 @@ export default defineComponent({
     errorSendCostStatementReportEmail(e => {
       console.log('errorSendCostStatementReportEmail', e);
     })
-
-
     const sendEmail = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
@@ -121,8 +119,8 @@ export default defineComponent({
         ...props.dataPopup,
         emailInput: {
           receiverName: userInfo?.value?.name,
-          receiverAddress: userInfo?.value?.email,
-          senderName: email.value
+          receiverAddress: email.value,
+          senderName: userInfo?.value?.email
         }
       }
       if (props.type === 'AC530') {
