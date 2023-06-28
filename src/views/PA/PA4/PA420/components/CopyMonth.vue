@@ -75,7 +75,7 @@ watch(resultConfig, (value) => {
     let month = selectMonthColumnOld.value.paymentMonth
     let payment_day = 0;
     let payment_month = month;
-    let payment_year = 0;
+    let payment_year = paYear.value;
     if(value.getWithholdingConfig.paymentType !== 1 && month < 12){
       payment_month = month + 1
     }
@@ -83,7 +83,6 @@ watch(resultConfig, (value) => {
       payment_year = paYear.value + 1
       payment_month = 1
     }
-    payment_year = paYear.value
     if(value.getWithholdingConfig.paymentDay === 0 || value.getWithholdingConfig.paymentDay && value.getWithholdingConfig.paymentDay > +dayjs(start_date).endOf('month').format('DD')) {
       payment_day = +dayjs(`${payment_year}-${payment_month}`).endOf('month').format('DD')
     } else {
