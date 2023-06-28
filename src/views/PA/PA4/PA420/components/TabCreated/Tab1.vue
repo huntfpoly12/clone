@@ -42,7 +42,7 @@
             <div class="d-flex-center">
               <date-time-box width="150px" :disabled="true" :valueDate="joinedAt"/>
               <info-tool-tip class="ml-5">
-                수정이 필요한 경우 <b @click="openNewTab" style="cursor: pointer;">[사원등록]</b>에서 수정하시기 바랍니다
+                수정이 필요한 경우 <b @click="openNewTab" style="cursor: pointer; color: #5353f1;">[사원등록]</b>에서 수정하시기 바랍니다
               </info-tool-tip>
             </div>
           </a-form-item>
@@ -282,11 +282,8 @@ import queries from "@/graphql/queries/PA/PA4/PA420";
 import {companyId} from "@/helpers/commonFunction";
 import DateTimeBoxCustom from "@/components/common/DateTimeBoxCustom.vue";
 import NumberBoxMoney from "@/components/common/NumberBoxMoney.vue";
+import {EmployeeWageType} from "./../../types";
 
-enum EmployeeWageType {
-  WAGE = 10,
-  WAGEDaily = 20,
-}
 
 interface Props {
   retirementIncome: EmployeeWageType,
@@ -475,7 +472,9 @@ watch(interimPaymentTab1, (value) => {
 watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: any) => {
   if (value && +value > +formState.lastRetiredYearsOfService.settlementStartDate) {
     formState.lastRetiredYearsOfService.settlementStartDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
-    // formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
+  }
+  if (value && +value > Number(formState.lastRetiredYearsOfService.settlementFinishDate)) {
+    formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
   }
 });
 watchEffect(() => {
@@ -516,7 +515,11 @@ watch(() => paymentYearAndMonth.value, (val) => {
 })
 // =============== FUNCTION ================================
 const openNewTab = () => {
-  window.open('pa-120')
+  if (props.retirementIncome === EmployeeWageType.WAGE) {
+    window.open('pa-110')
+  } else {
+    window.open('pa-520')
+  }
 };
 const submitForm = (e: any) => {
   // validate input date time

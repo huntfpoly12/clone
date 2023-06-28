@@ -33,7 +33,6 @@ import Tab1Component from "./componentAdd/Tab1Component.vue";
 import Tab2Component from "./componentEdit/Tab2Component.vue";
 import Tab3Component from "./componentEdit/Tab3Component.vue";
 import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
-import { useStore } from "vuex";
 export default defineComponent({
   components: {
     DxSelectBox,
@@ -55,7 +54,6 @@ export default defineComponent({
       tabStatus.value = data;
     };
     const onChangeTab = (e: any) => {
-      console.log(`output->e`,e)
       if(e == 1){
         emit("redirectTab");
       }

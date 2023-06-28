@@ -47,10 +47,7 @@
         />
         <DxButton
           @click="onItemClick('history')"
-          :disabled="
-            (statusButton !== 10 && statusButton !== 20) ||
-            !hasDataIncRetirements
-          "
+          :disabled="statusButton === 0 || !hasDataIncRetirements"
         >
           <a-tooltip placement="top">
             <template #title>퇴직소득자료 변경이력</template>
@@ -61,10 +58,7 @@
         </DxButton>
         <DxButton
           @click="onItemClick('historyEdit')"
-          :disabled="
-            (statusButton !== 10 && statusButton !== 20) ||
-            !hasDataIncRetirements
-          "
+          :disabled="statusButton === 0 || !hasDataIncRetirements"
         >
           <a-tooltip placement="left">
             <template #title>퇴직소득 마감 상태 변경이력</template>

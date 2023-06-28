@@ -1,3 +1,7 @@
+export enum EmployeeWageType {
+  WAGE = 10,
+  WAGEDaily = 20,
+}
 export type Maybe<T> = T | null;
 export type Scalars = {
   ID: string;
