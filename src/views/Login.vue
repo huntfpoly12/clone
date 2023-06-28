@@ -34,7 +34,7 @@
       <a-row>
           <a-col :span="5">
             <a-spin :spinning="signinLoading" size="small">
-              <button class="primary" type="submit">로그인</button>
+              <button class="primary" type="submit" id="submitLogin">로그인</button>
             </a-spin>
           </a-col>
           <a-col>
