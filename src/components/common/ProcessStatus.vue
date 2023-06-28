@@ -83,6 +83,8 @@ export default defineComponent({
         if (props.noOptionNoInput) {
             arrayRadioUser.value = arrayRadioUser.value.filter(item => item.id !== 1);
             arrayRadioManager.value = props.arrayChoose.filter(item => item.id !== 1);
+        } else {
+            arrayRadioManager.value = props.arrayChoose
         }
         const setModalVisible = () => {
             value.value = props.valueStatus

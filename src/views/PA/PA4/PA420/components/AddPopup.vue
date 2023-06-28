@@ -79,7 +79,7 @@
             :retirement-type="retirementType"
             @nextPage="step++"
           />
-          <Tab2  v-else-if="step === 1" :dataDetail="dataDetail"/>
+          <Tab2 v-else-if="step === 1" :dataDetail="dataDetail"/>
           <Tab3 v-else/>
       </keep-alive>
     </div>
@@ -126,13 +126,10 @@ import {useStore} from "vuex";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import {Message} from "@/configs/enum";
 import dayjs from "dayjs";
-import { IncomeRetirement } from "../types";
+import {EmployeeWageType, IncomeRetirement} from "../types";
 import { dataDefaultDetailUtils } from "../utils";
 import cloneDeep from "lodash/cloneDeep";
-enum EmployeeWageType {
-  WAGE = 10,
-  WAGEDaily = 20,
-}
+
 interface Props {
   modalStatus: boolean,
 }
