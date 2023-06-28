@@ -56,6 +56,7 @@ import PopupSendMail from '../components/PopupSendMail.vue'
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC5/AC560";
 import {companyId} from "@/helpers/commonFunction";
+import dayjs from "dayjs";
 
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"));
 const globalFacilityBizId = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
@@ -66,12 +67,12 @@ const triggerGetCostStatementReportViewUrl = ref(false)
 const startMonth = reactive({
   month: 0,
   status: 1,
-  yearMonth: 0
+  yearMonth: Number(dayjs().format('YYYYMM'))
 })
 const endMonth = reactive({
   month: 0,
   status: 1,
-  yearMonth: 0
+  yearMonth: Number(dayjs().format('YYYYMM'))
 })
 const displayMonthlySummary = ref(false)
 const accountingReportType = ref(11)
@@ -108,7 +109,7 @@ const {
   queries.getAccountingProcesses,
   {
     companyId: companyId,
-    fiscalYear: 2024,
+    fiscalYear: acYear.value,
     facilityBusinessId: globalFacilityBizId.value,
   },
   () => ({
