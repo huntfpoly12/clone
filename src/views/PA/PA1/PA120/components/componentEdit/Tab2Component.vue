@@ -623,12 +623,6 @@ export default defineComponent({
               )
             : 0;
           item.value = total1;
-          console.log(
-            `output->calculateVariables.totalTaxPay`,
-            total1,
-            calculateVariables.totalTaxPay,
-            formStateTab2PA120.value.nationalPensionSupportPercent
-          );
           return {
             itemCode: 1001,
             amount: total1,
@@ -676,7 +670,7 @@ export default defineComponent({
 
     //------------------When employeeID change or refetch component----------------
 
-    watch(employeeIdPA120, async (value: any) => {
+    watch(employeeIdPA120, (value: any) => {
       if (+value !== 0) {
         checkIncomeFirst.value = false;
         localIncomeBoo.value = false;
@@ -704,7 +698,6 @@ export default defineComponent({
     }));
     onErrorEmployee(() => {});
     watch(resultGetEmployeeWage, async (value) => {
-      // console.log(`output->tab2`)
       if (value) {
         let data = value.getEmployeeWage;
         let editRowData: any = {};
