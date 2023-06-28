@@ -139,18 +139,12 @@
           <template #reportType="{ data }: any">
             <div class="d-flex-center justify-content-center">
               <div
-                v-if="data.data.reportType == 1"
-                class="px-3 py-4 report-tag-black"
-              >
-                매월
-              </div>
-              <div
-                v-if="data.data.reportType == 6"
-                class="px-3 py-4 report-tag-gray"
-              >
-                반기
-              </div>
-              <div v-else></div>
+              :class="
+                data.data.reportType == 6 ? 'tag-custom-1' : 'tag-custom-2'
+              "
+            >
+              {{ data.data.reportType == 6 ? "반기" : "매월" }}
+            </div>
             </div>
           </template>
           <DxColumn
