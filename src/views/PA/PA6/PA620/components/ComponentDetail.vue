@@ -1194,7 +1194,7 @@ export default defineComponent({
     const onSave = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid || isLoopDay.value) {
-        res.brokenRules[0].validator.focus();
+        res.brokenRules[0]?.validator?.focus();
         resetOnError();
       } else {
         let params = JSON.parse(JSON.stringify(dataAction.value));
