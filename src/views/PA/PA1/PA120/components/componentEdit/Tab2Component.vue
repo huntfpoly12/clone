@@ -553,6 +553,8 @@ export default defineComponent({
     );
     const payItemsPA120 = computed(() => store.state.common.payItemsPA120);
 
+    const dataGetEmployeeWagePA120 = computed(() => store.state.common.dataGetEmployeeWagePA120);
+
     // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
@@ -669,83 +671,162 @@ export default defineComponent({
     };
 
     //------------------When employeeID change or refetch component----------------
-
+    let loadingEmployeeWage = ref<boolean>(false)
     watch(employeeIdPA120, (value: any) => {
       if (+value !== 0) {
         checkIncomeFirst.value = false;
         localIncomeBoo.value = false;
-        employeeTrigger.value = true;
+        // employeeTrigger.value = true;
       }
+    });
+    watch(dataGetEmployeeWagePA120, (value: any) => {
+      loadingEmployeeWage.value = true
+      getData()
     });
 
     /**
      * get Employee Wage
      */
 
-    const employeeWageParam = ref({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      employeeId: employeeIdPA120,
-    });
-    const employeeTrigger = ref<boolean>(false);
-    const {
-      result: resultGetEmployeeWage,
-      loading: loadingEmployeeWage,
-      onError: onErrorEmployee,
-    } = useQuery(queries.getEmployeeWage, employeeWageParam, () => ({
-      enabled: employeeTrigger.value,
-      fetchPolicy: "no-cache",
-    }));
-    onErrorEmployee(() => {});
-    watch(resultGetEmployeeWage, async (value) => {
-      if (value) {
-        let data = value.getEmployeeWage;
+    // const employeeWageParam = ref({
+    //   companyId: companyId,
+    //   imputedYear: globalYear.value,
+    //   employeeId: employeeIdPA120,
+    // });
+    // const employeeTrigger = ref<boolean>(false);
+    // const {
+    //   result: resultGetEmployeeWage,
+    //   loading: loadingEmployeeWage,
+    //   onError: onErrorEmployee,
+    // } = useQuery(queries.getEmployeeWage, employeeWageParam, () => ({
+    //   enabled: employeeTrigger.value,
+    //   fetchPolicy: "no-cache",
+    // }));
+    // onErrorEmployee(() => {
+    //   employeeTrigger.value = false;
+    // });
+    // watch(resultGetEmployeeWage, async (value) => {
+    //   employeeTrigger.value = false;
+      
+    //   if (value) {
+    //     let data = value.getEmployeeWage;
+    //     let editRowData: any = {};
+    //     insuranceDisabled.value = data.president;
+    //     store.state.common.presidentEditPA120 = data.president;
+    //     editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
+    //     editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
+    //     editRowData.longTermCareInsuranceDeduction =
+    //       data.longTermCareInsuranceDeduction;
+    //     editRowData.employeementInsuranceDeduction =
+    //       data.employeementInsuranceDeduction;
+    //     editRowData.insuranceSupport = data.insuranceSupport;
+    //     editRowData.nationalPensionSupportPercent =
+    //       data.nationalPensionSupportPercent;
+    //     editRowData.employeementInsuranceSupportPercent =
+    //       data.employeementInsuranceSupportPercent;
+    //     editRowData.employeementReduction = data.employeementReduction;
+    //     if (data.employeementReduction) {
+    //       editRowData.employeementReductionRatePercent =
+    //         data.employeementReductionRatePercent;
+    //       editRowData.employeementReductionStartDate =
+    //         data.employeementReductionStartDate;
+    //       editRowData.employeementReductionFinishDate =
+    //         data.employeementReductionFinishDate;
+    //       let ReductionStartDate = convertToDate(
+    //         data.employeementReductionStartDate
+    //       );
+    //       let ReductionFinishDate = convertToDate(
+    //         data.employeementReductionFinishDate
+    //       );
+    //       rangeDate.value = [ReductionStartDate, ReductionFinishDate];
+    //       editRowData.employeementReductionInput =
+    //         data.employeementReductionInput;
+    //     } else {
+    //       rangeDate.value = [null, null];
+    //       delete formStateTab2PA120.value.employeementReductionRatePercent;
+    //       delete formOriginTab2PA120.value.employeementReductionRatePercent;
+    //       delete formStateTab2PA120.value.employeementReductionInput;
+    //       delete formOriginTab2PA120.value.employeementReductionInput;
+    //     }
+    //     editRowData.payItems = [];
+    //     editRowData.deductionItems = [];
+    //     editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
+        
+    //     if (data.payItems && payItemsPA120.value.length > 0) {
+          
+    //       payItemsPA120.value.forEach((item1: any, key: number) => {
+    //         const item2Value = data.payItems.find(
+    //           (item2: any) => item2.itemCode == item1.itemCode
+    //         );
+    //         let value = item2Value?.amount ? item2Value.amount : 0;
+    //         formStateTab2PA120.value.payItems[key] = { ...item1, value };
+    //         formOriginTab2PA120.value.payItems[key] = JSON.parse(
+    //           JSON.stringify({ ...item1, value })
+    //         );
+    //       });
+    //     }
+    //     if (data.deductionItems && deductionItemsPA120.value.length > 0) {
+    //       deductionItemsPA120.value.forEach((item1: any, key: number) => {
+    //         let item2Value = data.deductionItems.find(
+    //           (item2: any) => item2.itemCode == item1.itemCode
+    //         );
+    //         let value = item2Value?.amount ? item2Value.amount : 0;
+    //         if (key == 4 && value < 10000 && value > 0) {
+    //           checkIncomeFirst.value = true;
+    //         }
+    //         formStateTab2PA120.value.deductionItems[key] = { ...item1, value };
+    //         formOriginTab2PA120.value.deductionItems[key] = JSON.parse(
+    //           JSON.stringify({ ...item1, value })
+    //         );
+    //       });
+    //     }
+    //     calculateVariables.totalTaxPay =
+    //       formStateTab2PA120.value.payItems.reduce(
+    //         (accumulator: any, object: any) => {
+    //           if (object.tax) {
+    //             accumulator += object.value;
+    //           }
+    //           return accumulator;
+    //         },
+    //         0
+    //       );
+    //     isBtnYellow.value = false;
+    //     onCalcSumPayItem();
+    //     onCalcSumDeduction();
+    //     let { payItems, deductionItems, ...obj } = editRowData;
+    //     store.state.common.formStateTab2PA120 = {
+    //       ...store.state.common.formStateTab2PA120,
+    //       ...obj,
+    //     };
+    //     store.state.common.formOriginTab2PA120 = {
+    //       ...store.state.common.formOriginTab2PA120,
+    //       ...obj,
+    //     };
+        
+    //   }
+    // });
+
+    const getData = async () => {
+        let data = dataGetEmployeeWagePA120.value;
         let editRowData: any = {};
         insuranceDisabled.value = data.president;
         store.state.common.presidentEditPA120 = data.president;
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
         editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
-        editRowData.longTermCareInsuranceDeduction =
-          data.longTermCareInsuranceDeduction;
-        editRowData.employeementInsuranceDeduction =
-          data.employeementInsuranceDeduction;
+        editRowData.longTermCareInsuranceDeduction =  data.longTermCareInsuranceDeduction;
+        editRowData.employeementInsuranceDeduction = data.employeementInsuranceDeduction;
         editRowData.insuranceSupport = data.insuranceSupport;
-        editRowData.nationalPensionSupportPercent =
-          data.nationalPensionSupportPercent;
-        editRowData.employeementInsuranceSupportPercent =
-          data.employeementInsuranceSupportPercent;
-        // if (
-        //   data?.nationalPensionSupportPercent !== null &&
-        //   editRowData.insuranceSupport
-        // ) {
-        // } else {
-        //   // formStateTab2PA120.value.nationalPensionSupportPercent = null;
-        // }
-        // if (
-        //   data?.employeementInsuranceSupportPercent !== null &&
-        //   editRowData.insuranceSupport
-        // ) {
-        // } else {
-        //   formStateTab2PA120.value.employeementInsuranceSupportPercent = null;
-        //   delete formOriginTab2PA120.value.employeementInsuranceSupportPercent;
-        // }
+        editRowData.nationalPensionSupportPercent = data.nationalPensionSupportPercent;
+        editRowData.employeementInsuranceSupportPercent = data.employeementInsuranceSupportPercent;
         editRowData.employeementReduction = data.employeementReduction;
         if (data.employeementReduction) {
-          editRowData.employeementReductionRatePercent =
-            data.employeementReductionRatePercent;
-          editRowData.employeementReductionStartDate =
-            data.employeementReductionStartDate;
-          editRowData.employeementReductionFinishDate =
-            data.employeementReductionFinishDate;
-          let ReductionStartDate = convertToDate(
-            data.employeementReductionStartDate
-          );
-          let ReductionFinishDate = convertToDate(
-            data.employeementReductionFinishDate
-          );
+          editRowData.employeementReductionRatePercent = data.employeementReductionRatePercent;
+          editRowData.employeementReductionStartDate = data.employeementReductionStartDate;
+          editRowData.employeementReductionFinishDate = data.employeementReductionFinishDate;
+          let ReductionStartDate = convertToDate(data.employeementReductionStartDate);
+          let ReductionFinishDate = convertToDate(data.employeementReductionFinishDate);
           rangeDate.value = [ReductionStartDate, ReductionFinishDate];
-          editRowData.employeementReductionInput =
-            data.employeementReductionInput;
+          editRowData.employeementReductionInput = data.employeementReductionInput;
         } else {
           rangeDate.value = [null, null];
           delete formStateTab2PA120.value.employeementReductionRatePercent;
@@ -805,10 +886,10 @@ export default defineComponent({
           ...store.state.common.formOriginTab2PA120,
           ...obj,
         };
-        employeeTrigger.value = false;
-      }
-    });
-
+        setTimeout(() => {
+          loadingEmployeeWage.value = false
+        }, 200);
+    }
     /**
      * Calculate Income Wage Tax API
      */
@@ -1051,7 +1132,6 @@ export default defineComponent({
       formStateTab2PA120,
       calculateVariables,
       isBtnYellow,
-      employeeTrigger,
       isDisableInsuranceSupport,
       compareForm,
       onCalcSumPayItem,

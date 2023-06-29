@@ -274,7 +274,7 @@ export default defineComponent({
       companyId: companyId,
     });
     const employeeIdPA120 = computed(() => store.state.common.employeeIdPA120);
-
+    
     // ---------------------------get employee DATA FORM ------------------------
 
     const getEmployeeParam = ref<any>({
@@ -295,7 +295,9 @@ export default defineComponent({
       // console.log(`output->err tab1`,)
     });
     watch(getValueDefault, (value: any) => {
+      getEmployeeWageTrigger.value = false;
       let data = value.getEmployeeWage;
+      store.state.common.dataGetEmployeeWagePA120 = data
       let editRowData: any = {};
       store.state.common.deductionDependentCountPA120 =
         data?.deductionDependentCount || 1;
@@ -321,7 +323,6 @@ export default defineComponent({
       editRowData.deletable = data.deletable;
       store.commit("common/formOriginTab1PA120", editRowData);
       store.commit("common/formStateTab1PA120", editRowData);
-      getEmployeeWageTrigger.value = false;
     });
 
     // --------------------------get Data Departments--------------------------
