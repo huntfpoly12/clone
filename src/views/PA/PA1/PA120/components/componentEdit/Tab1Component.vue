@@ -292,7 +292,6 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }));
     onErrorEmployee(() => {
-      // console.log(`output->err tab1`,)
     });
     watch(getValueDefault, (value: any) => {
       getEmployeeWageTrigger.value = false;

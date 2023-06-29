@@ -39,8 +39,6 @@ export default defineComponent({
     const onValueChanged = (e: any, id: Number) => {
       let valueCheck: any = [];
       valueCheck = valueCheck.concat(props.valueCheckbox.filter((item) => valueCheck.indexOf(item) < 0));
-      console.log('valueCheck',valueCheck);
-      
       if (e.value) {
         if (valueCheck.indexOf(id) > -1) {
           return;
@@ -49,8 +47,6 @@ export default defineComponent({
       } else {
         valueCheck.splice(valueCheck.indexOf(id), 1);
       }
-      console.log(valueCheck);
-      
       emit('update:valueCheckbox', valueCheck);
     };
     return {

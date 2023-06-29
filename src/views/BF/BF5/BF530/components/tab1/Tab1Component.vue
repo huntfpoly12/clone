@@ -592,7 +592,6 @@ export default defineComponent({
       }
     };
     const rowUpdating = (e: any) => {
-      console.log(`output->erowUpdating`, e);
     };
 
     //----------------------------OPEN MODAL 1 CORRECTION ------------------------
