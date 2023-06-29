@@ -68,7 +68,7 @@ export default defineComponent({
     } = useMutation(mutations530.sendStatementOfGoverbmentSubsidiesReportEmail);
     doneSendStatementOfGoverbmentSubsidiesReportEmail((data) => {
       notification("success", Message.getCommonMessage("801").message);
-      email.value = ''
+      email.value = userInfo.value?.email || ''
       keyRefreshForm.value++
       emit('closePopup')
     })
@@ -85,7 +85,7 @@ export default defineComponent({
     } = useMutation(mutations540.sendPreliminaryStatementOfUseReportEmail);
     doneSendPreliminaryStatementOfUseReportEmail((data) => {
       notification("success", Message.getCommonMessage("801").message);
-      email.value = ''
+      email.value = userInfo.value?.email || ''
       keyRefreshForm.value++
       emit('closePopup')
     })
@@ -102,7 +102,7 @@ export default defineComponent({
     } = useMutation(mutations550.sendCostStatementReportEmail);
     doneSendCostStatementReportEmail((data) => {
       notification("success", Message.getCommonMessage("801").message);
-      email.value = ''
+      email.value = userInfo.value?.email || ''
       keyRefreshForm.value++
       emit('closePopup')
     })
