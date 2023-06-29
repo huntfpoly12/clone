@@ -484,9 +484,8 @@ router.beforeEach((to, from, next) => {
       path,
       year,
       month,
-      username,
+      companyName,
       facilityBusinessName,
-
     } = to.query // get query params
     const objectJwt = getJwtObject(token as string) // decode token
     if (objectJwt) {
@@ -498,7 +497,7 @@ router.beforeEach((to, from, next) => {
         sessionStorage.setItem('acYear', year as string)
         sessionStorage.setItem('paYear', year as string)
         sessionStorage.setItem('month', month as string)
-        sessionStorage.setItem('username', decodeURIComponent(username as string))
+        sessionStorage.setItem('companyName', decodeURIComponent(companyName as string))
         sessionStorage.setItem('name', decodeURIComponent(facilityBusinessName as string))
         sessionStorage.setItem('globalFacilityBizId', globalFacilityBizId as string)
       }

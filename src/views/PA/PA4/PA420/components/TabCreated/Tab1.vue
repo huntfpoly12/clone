@@ -516,9 +516,9 @@ watch(() => paymentYearAndMonth.value, (val) => {
 // =============== FUNCTION ================================
 const openNewTab = () => {
   if (props.retirementIncome === EmployeeWageType.WAGE) {
-    window.open('pa-110')
-  } else {
     window.open('pa-520')
+  } else {
+    window.open('pa-110')
   }
 };
 const submitForm = (e: any) => {
