@@ -315,7 +315,6 @@ export default defineComponent({
       store.commit('common/formEditPA720', editRowData);
     });
     onErrorIncomeExtra((res: any) => {
-      console.log(`output->res`,res);
     });
 
     //-------------------------- mutation create and edit income SUBMIT FORM ------------------------

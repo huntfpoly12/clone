@@ -77,20 +77,15 @@ export default defineComponent({
 
 		watch(() => filterBF630.value.beforeProduction, (newVal: any) => {
 			if (!newVal) {
-				console.log(11);
 				filterBF630.value.productionStatuses = [];
 			} else {
-				console.log(12);
 				filterBF630.value.productionStatuses = [0, 1, 2, -1];
 			}
 		}, { deep: true })
 		watch(() => filterBF630.value.productionStatuses, (newVal: any) => {
 			if (newVal.length) {
-				console.log(21);
-				
 				filterBF630.value.beforeProduction = true;
 			} else {
-				console.log(22);
 				filterBF630.value.beforeProduction = false;
 			}
 		}, { deep: true })

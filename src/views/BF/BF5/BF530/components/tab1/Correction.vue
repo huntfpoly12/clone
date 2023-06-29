@@ -176,7 +176,6 @@ export default defineComponent({
     };
 
     const rowUpdating = (e: any) => {
-      console.log(`output->e`,e)
     }
     return {
       onSubmit,

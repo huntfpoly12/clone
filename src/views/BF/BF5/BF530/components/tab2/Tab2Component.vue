@@ -201,7 +201,7 @@
             cell-template="downA"
             alignment="right"
           />
-          <template #downA="{ data }: any" class="custom-action">
+          <template #downA="{ data }: any">
             <div class="d-flex justify-content-center">
               <DxButton
                 type="ghost"
@@ -221,7 +221,7 @@
           </template>
 
           <DxColumn caption="팩스발송" cell-template="downD" alignment="center" />
-          <template #downD="{ data }: any" class="custom-action">
+          <template #downD="{ data }: any">
             <div class="d-flex justify-content-center">
               <a-popover
                 v-model:visible="data.data.visible"
@@ -241,7 +241,7 @@
             cell-template="downE"
             alignment="right"
           />
-          <template #downE="{ data }: any" class="custom-action">
+          <template #downE="{ data }: any">
             <div class="d-flex justify-content-center">
               <!-- <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
               <DownloadOutlined :style="{fontSize: 12}"/>
@@ -249,7 +249,7 @@
             </div>
           </template>
           <DxColumn cell-template="history" />
-          <template #history="{ data }: any" class="custom-action">
+          <template #history="{ data }: any">
             <div class="d-flex justify-content-center">
               <DxButton
                 type="ghost"
@@ -521,9 +521,6 @@ export default defineComponent({
         selectedRowKeys.value.push(e.key);
         e.component.selectRows(selectedRowKeys.value);
       }
-    };
-    const rowUpdating = (e: any) => {
-      console.log(`output->erowUpdating`, e);
     };
 
     //----------------------GET ViewURL SQL------------------------

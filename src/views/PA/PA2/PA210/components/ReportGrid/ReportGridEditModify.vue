@@ -166,7 +166,7 @@
                       v-model:valueSwitch="data.data.refund"
                       :textCheck="'O'"
                       :textUnCheck="'X'"
-                      :disabled="disabledRefund"
+                      :disabled="disabledRefund || dataSource[0].status != 10"
                       />
                   </div>
               </a-tooltip>
