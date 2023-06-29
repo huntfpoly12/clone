@@ -183,7 +183,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalEmailSingle = ref(false)
         const modalEmailMulti = ref(false)
-        const dataSource: any = ref({})
+        const dataSource: any = ref([])
         // const amountFormat = ref({ currency: 'VND', useGrouping: true })
         const originData = ref({
             companyId: companyId,
