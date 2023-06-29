@@ -482,10 +482,12 @@ router.beforeEach((to, from, next) => {
       refreshToken,
       globalFacilityBizId,
       path,
+      typeLogin,
       year,
       month,
       companyName,
       facilityBusinessName,
+      companyId
     } = to.query // get query params
     const objectJwt = getJwtObject(token as string) // decode token
     if (objectJwt) {
@@ -493,11 +495,13 @@ router.beforeEach((to, from, next) => {
       sessionStorage.setItem('loginExpr', objectJwt.expiredTime.toString())
       sessionStorage.setItem('refreshToken', refreshToken as string)
       sessionStorage.setItem('tabsCached', path as string)
+      sessionStorage.setItem('typeLogin', typeLogin as string)
       if(globalFacilityBizId) {
         sessionStorage.setItem('acYear', year as string)
         sessionStorage.setItem('paYear', year as string)
         sessionStorage.setItem('month', month as string)
         sessionStorage.setItem('companyName', decodeURIComponent(companyName as string))
+        sessionStorage.setItem('companyId', companyId as string)
         sessionStorage.setItem('name', decodeURIComponent(facilityBusinessName as string))
         sessionStorage.setItem('globalFacilityBizId', globalFacilityBizId as string)
       }

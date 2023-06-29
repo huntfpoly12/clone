@@ -97,7 +97,7 @@
             <select-box-common
               :arrSelect="managerCompactUserList"
               v-model:valueInput="filter.manageCompactUserId"
-              displayeExpr="name"
+              displayeExpr="username"
               valueExpr="id"
               width="150px"
             />
@@ -791,21 +791,17 @@ const customTextSummaryRegular = () => `
 const managerCompactUserList = computed(() =>
   dataOrigin.value
     ?.map((i: any) => ({
-      name: i.companyServiceContract.manageCompactUser?.name,
+      username: `${i.companyServiceContract.manageCompactUser?.username} ${i.companyServiceContract.manageCompactUser?.name}`,
       id: i.companyServiceContract.manageCompactUser?.id,
     }))
     .filter(
-      (item: any, index: number, self: any) =>
-        index ===
-        self.findIndex(
-          (t: any) => t.id === item.id && t.name === item.name && !!t.name
-        )
+      (item: any, index: number, self: any) => item.id && index === self.findIndex((t: any) => t.id === item.id && t.username === item.username && !!t.username)
     )
 );
 const managerSalesRepresentative = computed(() =>
   dataOrigin.value
     ?.map((i: any) => ({
-      name: i.companyServiceContract.compactSalesRepresentative?.name,
+      name: `${i.companyServiceContract.compactSalesRepresentative?.code} ${i.companyServiceContract.compactSalesRepresentative?.name}`,
       id: i.companyServiceContract.compactSalesRepresentative?.id,
     }))
     .filter(

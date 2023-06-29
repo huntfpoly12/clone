@@ -12,7 +12,7 @@
       <div class="ac-130__top-status">
         <ProcessAccountingStatus v-if="accountingProcessesSelected?.status || 0"
           :preventChange="isPreventChangeProcessStatus" :status="accountingProcessesSelected?.status || 0"
-          :disabled="[20,30,40].includes(accountingProcessesSelected?.status)"
+
           @submitChangeStatus="submitChangeStatus" />
         <button-basic v-else mode="contained" style="width: 90px" :disabled="true">
         </button-basic>
@@ -178,7 +178,7 @@ export default defineComponent({
     const refTableExpenditureBudgetSummary = ref()
     const refTableRevenueBudgetSummary = ref()
 
-    /// Graphql 
+    /// Graphql
     /// queries
     //// getAccountingProcesses
     const {
