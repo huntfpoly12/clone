@@ -13,6 +13,7 @@
       <div class="user-info">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
+        <div @click="openTabBoard" class="cursor-pointer">소통판</div>
         <account-infor></account-infor>
       </div>
     </a-layout-header>
@@ -210,6 +211,7 @@ import {
   AC520,
   Test,
   Example,
+  CommunicationBoard
 } from "./screenComponents";
 
 import {
@@ -312,6 +314,7 @@ export default defineComponent({
     CaretRightOutlined,
     DxSortable,
     DxTabs,
+    CommunicationBoard
   },
   created() {
     const tabsCached = sessionStorage.getItem('tabsCached')
@@ -496,6 +499,7 @@ export default defineComponent({
       if (this.activeTab.id === "ac-610") return 'AC610';
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "ac-630") return 'AC630';
+      if (this.activeTab.id === "communication-board") return 'CommunicationBoard';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
@@ -837,7 +841,10 @@ export default defineComponent({
         openKeys.value = latestOpenKey ? [latestOpenKey] : [];
       }
     }
-
+    const openTabBoard = () => {
+      router.push('/communication-board')
+      openTab({ id: 'communication-board', name: 'Communication Board', url: '/communication-board' })
+    }
     return {
       onSearch,
       addMenuTab,
@@ -861,7 +868,8 @@ export default defineComponent({
       MAX_TAB,
       count,
       logout,
-      ENVIRONMENT
+      ENVIRONMENT,
+      openTabBoard
     }
   },
 });

@@ -99,6 +99,7 @@ export default defineComponent({
         })
         errorPrint(res => {
             notification('error', res.message)
+            trigger.value = false
         })
 
          /*
@@ -141,7 +142,6 @@ export default defineComponent({
                     return acc
                 }, [])
                 trigger.value = true
-                refetchPrint()
             }
         }
         return {
