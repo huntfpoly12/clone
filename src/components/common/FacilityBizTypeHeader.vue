@@ -244,12 +244,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 .popup-content{
   padding: 10px 10px 10px 10px;
-  margin: 0px 30px;
 }
 .facilityBizType-header{
   display: flex;
   align-items: center;
-  margin-right: 20px;
   &-label {
     margin-right: 10px;
   }

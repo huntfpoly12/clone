@@ -419,6 +419,13 @@ const routes = [
           roles: [WorkScreenRole.ACCOUNTING_WORK.enumKey],
         },
       },
+      {
+        path: "/communication-board",
+        component: () => import("../views/CommunicationBoard/index.vue"),
+        meta: {
+          roles: ALL_ROLE,
+        },
+      },
     ],
   },
   {
