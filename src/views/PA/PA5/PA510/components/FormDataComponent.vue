@@ -678,7 +678,6 @@ export default defineComponent({
 					}
 				}
 			})
-			console.log('đã vào');
 			if (statusClickButtonActionDedution.value) { // nếu bấm nút mở modal thì mở modal
 				modalDeductions.value = true;
 				statusClickButtonActionDedution.value = false;
