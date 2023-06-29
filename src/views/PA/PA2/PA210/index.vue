@@ -351,9 +351,11 @@
     </a-spin>
   </div>
   <AddPA210Popup
+    v-if="modalAddNewStatus"
     :modalStatus="modalAddNewStatus"
     @closePopup="closePopupAddNew"
     :dataPopupAdd="dataPopupAdd"
+    :dataSourceIndex="dataSource"
   />
   <HistoryPopup
     :modalStatus="modalHistoryStatus"
