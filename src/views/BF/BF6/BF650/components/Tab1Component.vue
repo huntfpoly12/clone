@@ -407,6 +407,7 @@ export default defineComponent({
         paramSearch.value.paymentMonth = parseInt(
           value.toString().slice(4, 6)
         );
+        dateTime.value = dayjs(`${value}01`).endOf("month");
         trigger.value = true
       },
       { deep: true }

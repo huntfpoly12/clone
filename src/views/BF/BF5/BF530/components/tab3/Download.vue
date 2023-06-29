@@ -131,7 +131,6 @@ export default defineComponent({
       () => props.payload,
       (newVal: any) => {
         if (newVal) {
-          console.log(`output->newVal`,newVal)
           dataSource.value.forEach((item: any) => {
             if (item.typeId == props.payload.type) {
               item.subject =

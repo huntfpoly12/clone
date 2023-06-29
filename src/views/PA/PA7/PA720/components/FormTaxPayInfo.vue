@@ -28,7 +28,7 @@
               <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
                 :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
                 :disabled="isEdit || !hasDataSource || isExpiredStatus || idDisableInput" />
-              <div v-if="isLoopDayPA720" class="error-group">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
+              <div v-if="isLoopDayPA720" class="error-group" style="max-width: 150px;">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
             </div>
           </a-form-item>
           <div class="input-text">
@@ -315,30 +315,7 @@ export default defineComponent({
       store.commit('common/formEditPA720', editRowData);
     });
     onErrorIncomeExtra((res: any) => {
-      console.log(`output->res`,res);
     });
-
-    //----------------------------get employee extras --------------------------------
-
-    // const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
-    // const savePA710 = computed(() => store.state.common.savePA710);
-    // const getEmployeeExtrasParams = reactive({
-    //   companyId: companyId,
-    //   imputedYear: globalYear.value,
-    // });
-    // const arrayEmploySelect = ref<any>([]);
-    // const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras, loading: loadingEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
-    //   fetchPolicy: 'no-cache',
-    // }));
-    // watch(resultEmployeeExtras, (newValue: any) => {
-    //   arrayEmploySelect.value = newValue.getEmployeeExtras.map((item: any) => ({
-    //     ...item, key: item.employeeId
-    //   }));
-    // });
-
-    // watch(savePA710, () => {
-    //   refetchEmployeeExtras();
-    // })
 
     //-------------------------- mutation create and edit income SUBMIT FORM ------------------------
 
@@ -349,7 +326,7 @@ export default defineComponent({
       var res = e.validationGroup.validate();
       if (!res.isValid || isLoopDayPA720.value) {
         emit('subValidate');
-        res.brokenRules[0].validator.focus();
+        res.brokenRules[0]?.validator?.focus();
         store.state.common.isErrorFormPA720 = true;
 
       } else {

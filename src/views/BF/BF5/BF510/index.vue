@@ -82,12 +82,6 @@
                   year: dataSearch.year,
                   month: dataSearch.month
                 }"
-                :arrayChoose="[
-                  { id: 10, text: '입력중', class: 'entering' },
-                  { id: 20, text: '입력마감', class: 'input' },
-                  { id: 30, text: '조정중', class: 'adjusting' },
-                  { id: 40, text: '조정마감', class: 'adjusted' },
-                ]"
                 @checkConfirmRowTable="submitChangeStatus"
               />
               <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
@@ -202,7 +196,7 @@ const userToken = reactive({
 })
 const companyInfo = reactive({
   code: NaN,
-  username: '',
+  companyName: '',
   companyId: NaN,
   facilityBusinessId: 0,
   facilityBusinessName: ''
@@ -217,7 +211,7 @@ onDone((result: any) => {
 const redirectAc110 = (data: any, index: number) => {
   companyInfo.companyId = data.companyId;
   companyInfo.code = data.code;
-  companyInfo.username = data.name;
+  companyInfo.companyName = data.name;
   companyInfo.facilityBusinessId = data.compactAccountingProcesses[index].facilityBusinessId;
   companyInfo.facilityBusinessName = data.compactAccountingProcesses[index].facilityBusinessName;
   mutate({companyId: data.companyId})
@@ -229,7 +223,7 @@ const cloneWebsite = () => {
   const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
   const currentUrl = window.location.origin.replace(/\/$/, '');
   if (userToken.refreshToken && userToken.accessToken) {
-    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&username=${encodeURIComponent(companyInfo.username)}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${encodeURIComponent(companyInfo.facilityBusinessName)}&year=${dataSearch.year}&month=${dataSearch.month}&path=AC110`
+    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&companyName=${encodeURIComponent(companyInfo.companyName)}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${encodeURIComponent(companyInfo.facilityBusinessName)}&year=${dataSearch.year}&month=${dataSearch.month}&path=AC110`
     window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,' + windowFeatures);
   }
 }

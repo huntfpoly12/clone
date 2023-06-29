@@ -277,8 +277,6 @@ const { refetch, onResult, loading } = useQuery(
 );
 
 onResult((res) => {
-  console.log("res", res);
-
   dataSource.value = res.data.getMajorInsuranceCompanyEmployeeAcquisitions;
 });
 

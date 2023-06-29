@@ -78,6 +78,7 @@ const statesPA120 = {
   isNewRowPA120: false,
   deductionItemsPA120: [],
   payItemsPA120: [],
+  dataGetEmployeeWagePA120: [],
 };
 
 export default statesPA120;

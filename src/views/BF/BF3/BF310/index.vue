@@ -300,13 +300,9 @@ export default defineComponent({
     };
 
     const cellStatus = (datarow: any) => {
-      console.log(`output->getColorTag(datarow.status)?.tag_name`,getColorTag(datarow.status))
-      // return `${datarow.status}`;
       return `${getColorTag(datarow.status)?.tag_name}`;
     }
     const cellService = (datarow: any) => {
-      console.log(`output->getColorTag(datarow.status)?.tag_name`,getColorTag(datarow.status))
-      // return `${datarow.status}`;
       return `${getColorTag(datarow.status)?.tag_name}`;
     }
     return {
