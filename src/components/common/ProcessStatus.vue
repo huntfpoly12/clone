@@ -48,7 +48,7 @@ export default defineComponent({
           type: Number,
           default: 30
         },
-        optionNoInput: {
+        noOptionNoInput: {
             type: Boolean,
             default: true
         },
@@ -80,7 +80,7 @@ export default defineComponent({
         //     { id: 40, text: '조정마감', class: 'adjusted' },
         // ])
         const arrayRadioManager: any = ref([])
-        if (props.optionNoInput) {
+        if (props.noOptionNoInput) {
             arrayRadioUser.value = arrayRadioUser.value.filter(item => item.id !== 1);
             arrayRadioManager.value = props.arrayChoose.filter(item => item.id !== 1);
         } else {

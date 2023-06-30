@@ -152,22 +152,27 @@
           <!--                  <DxSelection mode="multiple" :fixed="true" />-->
           <DxColumn caption="출력 메일" cell-template="action" />
           <template #action="{ data }">
-            <a-tooltip>
-              <template #title>출력 / 저장</template>
+            <div class="d-flex-center gap-5" >
+              <a-tooltip>
+                <template #title>출력 / 저장</template>
+                <div :class="!data.data.active ? 'cursor-not-allowed' : ''">
+                  <img
+                    src="@/assets/images/print.svg"
+                    alt=""
+                    style="width: 25px"
+                    @click="data.data.active && actionPrint(data.data)"
+                  />
+                </div>
+              </a-tooltip>
               <img
-                src="@/assets/images/print.svg"
+                src="@/assets/images/email.svg"
                 alt=""
                 style="width: 25px"
-                @click="actionPrint(data.data)"
+                :class="!data.data.active ? 'cursor-not-allowed' : ''"
+                @click="data.data.active && actionSendEmail(data.data)"
               />
-            </a-tooltip>
+            </div>
 
-            <img
-              src="@/assets/images/email.svg"
-              alt=""
-              style="width: 25px"
-              @click="actionSendEmail(data.data)"
-            />
           </template>
           <DxColumn
             caption="사업자코드"
@@ -197,6 +202,7 @@
                 v-model:valueStatus="data.data.status"
                 :dataRow="data.data"
                 @checkConfirmRowTable="changeStatusRowTable"
+                :disabled="!data.data.active"
               />
               <div class="pl-5 pr-5" v-if="data.data.active">
                 <a-tooltip color="black" placement="topLeft">
