@@ -158,7 +158,9 @@
 							</a-col>
 							<a-col :span="12">
 								<a-form-item label="물품내역수">
-									<default-text-box :disabled="true" v-model:valueInput="formData.goodsCount"
+									<default-text-box v-if="formData.resolutionClassification != 1" :disabled="true" v-model:valueInput="formData.goodsCount"
+										width="150px" />
+									<default-text-box v-else :disabled="true" :valueInput="0"
 										width="150px" />
 								</a-form-item>
 							</a-col>
