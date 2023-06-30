@@ -97,7 +97,7 @@
             <select-box-common
               :arrSelect="managerCompactUserList"
               v-model:valueInput="filter.manageCompactUserId"
-              displayeExpr="name"
+              displayeExpr="username"
               valueExpr="id"
               width="150px"
             />
@@ -152,22 +152,27 @@
           <!--                  <DxSelection mode="multiple" :fixed="true" />-->
           <DxColumn caption="출력 메일" cell-template="action" />
           <template #action="{ data }">
-            <a-tooltip>
-              <template #title>출력 / 저장</template>
+            <div class="d-flex-center gap-5" >
+              <a-tooltip>
+                <template #title>출력 / 저장</template>
+                <div :class="!data.data.active ? 'cursor-not-allowed' : ''">
+                  <img
+                    src="@/assets/images/print.svg"
+                    alt=""
+                    style="width: 25px"
+                    @click="data.data.active && actionPrint(data.data)"
+                  />
+                </div>
+              </a-tooltip>
               <img
-                src="@/assets/images/print.svg"
+                src="@/assets/images/email.svg"
                 alt=""
                 style="width: 25px"
-                @click="actionPrint(data.data)"
+                :class="!data.data.active ? 'cursor-not-allowed' : ''"
+                @click="data.data.active && actionSendEmail(data.data)"
               />
-            </a-tooltip>
+            </div>
 
-            <img
-              src="@/assets/images/email.svg"
-              alt=""
-              style="width: 25px"
-              @click="actionSendEmail(data.data)"
-            />
           </template>
           <DxColumn
             caption="사업자코드"
@@ -197,6 +202,7 @@
                 v-model:valueStatus="data.data.status"
                 :dataRow="data.data"
                 @checkConfirmRowTable="changeStatusRowTable"
+                :disabled="!data.data.active"
               />
               <div class="pl-5 pr-5" v-if="data.data.active">
                 <a-tooltip color="black" placement="topLeft">
@@ -791,21 +797,17 @@ const customTextSummaryRegular = () => `
 const managerCompactUserList = computed(() =>
   dataOrigin.value
     ?.map((i: any) => ({
-      name: i.companyServiceContract.manageCompactUser?.name,
+      username: `${i.companyServiceContract.manageCompactUser?.username} ${i.companyServiceContract.manageCompactUser?.name}`,
       id: i.companyServiceContract.manageCompactUser?.id,
     }))
     .filter(
-      (item: any, index: number, self: any) =>
-        index ===
-        self.findIndex(
-          (t: any) => t.id === item.id && t.name === item.name && !!t.name
-        )
+      (item: any, index: number, self: any) => item.id && index === self.findIndex((t: any) => t.id === item.id && t.username === item.username && !!t.username)
     )
 );
 const managerSalesRepresentative = computed(() =>
   dataOrigin.value
     ?.map((i: any) => ({
-      name: i.companyServiceContract.compactSalesRepresentative?.name,
+      name: `${i.companyServiceContract.compactSalesRepresentative?.code} ${i.companyServiceContract.compactSalesRepresentative?.name}`,
       id: i.companyServiceContract.compactSalesRepresentative?.id,
     }))
     .filter(

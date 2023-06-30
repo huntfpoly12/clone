@@ -47,7 +47,7 @@
                 css-class="cell-center"
               />
               <template #status="{ data }">
-                <process-status v-model:valueStatus="data.data.status" noOptionNoInput/>
+                <process-status v-model:valueStatus="data.data.status"/>
                 <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
                             :dataRow="data.data"/> -->
               </template>

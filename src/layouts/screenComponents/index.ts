@@ -175,6 +175,9 @@ const AC630 = defineAsyncComponent(() =>
 const AC520 = defineAsyncComponent(() =>
     import("@/views/AC/AC5/AC520/index.vue")
 );
+const CommunicationBoard = defineAsyncComponent(() =>
+    import("@/views/CommunicationBoard/index.vue")
+);
 
 export {
     BF310,
@@ -234,5 +237,6 @@ export {
     AC630,
     AC520,
     Test,
-    Example
+    Example,
+    CommunicationBoard
 }

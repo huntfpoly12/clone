@@ -49,7 +49,7 @@
   <a-spin :spinning="loading">
     <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10"
-                style="height: calc(100vh - 180px)">
+                style="height: calc(100vh - 240px)">
       <DxPaging :page-size="0"/>
       <DxExport :enabled="true"/>
       <DxSearchPanel :visible="true" placeholder="검색" :search-visible-columns="['facilityBusinessName']"/>
@@ -82,6 +82,7 @@
                   year: dataSearch.year,
                   month: dataSearch.month
                 }"
+                :noOptionNoInput="false"
                 @checkConfirmRowTable="submitChangeStatus"
               />
               <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
@@ -223,7 +224,7 @@ const cloneWebsite = () => {
   const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
   const currentUrl = window.location.origin.replace(/\/$/, '');
   if (userToken.refreshToken && userToken.accessToken) {
-    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&companyName=${encodeURIComponent(companyInfo.companyName)}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${encodeURIComponent(companyInfo.facilityBusinessName)}&year=${dataSearch.year}&month=${dataSearch.month}&path=AC110`
+    const newTab = `${currentUrl}/ac-110?token=${userToken.accessToken}&refreshToken=${userToken.refreshToken}&companyId=${companyInfo.companyId}&companyName=${encodeURIComponent(companyInfo.companyName)}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${encodeURIComponent(companyInfo.facilityBusinessName)}&year=${dataSearch.year}&month=${dataSearch.month}&path=AC110&typeLogin=custom`
     window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,' + windowFeatures);
   }
 }

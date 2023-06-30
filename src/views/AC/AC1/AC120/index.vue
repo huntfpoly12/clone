@@ -201,7 +201,7 @@
 
 						<DxColumn caption="증빙" :allow-sorting="false" data-field="proofCount" width="50" />
 
-						<DxColumn caption="물품 내역" :allow-sorting="false" cell-template="normality" css-class="cell-center"
+						<DxColumn caption="물품내역" :allow-sorting="false" cell-template="normality" css-class="cell-center"
 							width="75" />
 						<template #normality="{ data }">
 							<div v-if="data.data.resolutionClassification != 1">
