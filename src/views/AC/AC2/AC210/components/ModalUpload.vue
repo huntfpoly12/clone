@@ -38,7 +38,7 @@
                         cell-template="facilityBusinessName-status" />
                     <template #facilityBusinessName-status="{ data }">
                         <span class="mr-20">{{ data.data.facilityBusinessName }}</span>
-                        <ProcessStatus :valueStatus="data.data.status" disabled />
+                        <ProcessStatus :noOptionNoInput="false" :valueStatus="data.data.status" disabled />
                     </template>
 
                     <DxColumn caption="업로드 가능 여부" css-class="cell-left" data-field="status" cell-template="status" />

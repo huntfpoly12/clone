@@ -12,25 +12,26 @@
     @value-changed="updateValue"
     :height="$config_styles.HeightInput"
     :disabled="disabled"
+    :read-only="readOnly"
     :dropDownOptions="{ maxHeight: '250px', wrapperAttr: popupAttributes }"
   >
     <template #field-data="{ data }">
-      <div v-if="data" style="padding: 1px">
+      <div v-if="data" class="employee-group" style="padding: 1px">
         <span class="btn-container">
           {{ data.employeeId }}
         </span>
-        <a-tooltip placement="top" zIndex="999999">
-          <template #title>
+        <a-tooltip placement="top" zIndex="999999" :title="data?.name">
+          <!-- <template #title>
             <span>{{ checkLenTooltip(data?.name, 15) }}</span>
-          </template>
-          <div class="name-w-1">
-            {{ checkLen(data?.name, 15) }}
+          </template> -->
+          <div class="name-w-1 px-3">
+            {{ data?.name }}
           </div>
         </a-tooltip>
-        <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
-          <template #title>
+        <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName" :title="data?.incomeTypeCode + ' ' + data?.incomeTypeName">
+          <!-- <template #title>
             <span>{{ data?.incomeTypeCode }} {{ data?.incomeTypeName }}</span>
-          </template>
+          </template> -->
           <a-tag class="ml-5 py-1 mr-0 t text-overflow">
             {{ data?.incomeTypeName }}</a-tag
           >
@@ -50,27 +51,27 @@
         <a-tooltip
           placement="top"
           zIndex="999999"
-          v-if="data?.name.length > 15"
+          :title="data?.name"
         >
-          <template #title>
+          <!-- <template #title>
             <span>{{ checkLenTooltip(data?.name, 15) }}</span>
-          </template>
+          </template> -->
           <div class="name-w-1 px-3">
-            {{ checkLen(data?.name, 15) }}
+            {{ data?.name }}
           </div>
         </a-tooltip>
-        <div class="name-w-1 px-3" v-else>
+        <!-- <div class="name-w-1 px-3" v-else>
           {{ checkLen(data?.name, 15) }}
-        </div>
-        <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
-          <template #title>
+        </div> -->
+        <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName" :title="data?.incomeTypeCode + ' ' + data?.incomeTypeName">
+          <!-- <template #title>
             <span
               >{{ data?.incomeTypeCode }}
               {{ checkLenTooltip(data?.incomeTypeName, 0) }}</span
             >
-          </template>
+          </template> -->
           <a-tag class="ml-5 py-2 mr-0">
-            {{ checkLen(data?.incomeTypeName, 21) }}</a-tag
+            {{ data?.incomeTypeName }}</a-tag
           >
         </a-tooltip>
       </div>
@@ -94,6 +95,7 @@ export default defineComponent({
     },
     width: String,
     disabled: Boolean,
+    readOnly: Boolean,
     valueEmploy: {
       type: Number,
     },
@@ -166,45 +168,10 @@ export default defineComponent({
   box-shadow: 0 0 3px blue;
 }
 
-.main {
-  display: flex;
-  align-items: flex-end;
-}
-
-.tag-status {
-  background-color: red;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 5px;
-  margin: 0 5px;
-}
-
-.tag-status {
-  background-color: red;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 5px;
-  margin: 0 5px;
-}
-
-.tag-foreigner {
-  background-color: orange;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 5px;
-  margin: 0 5px;
-}
-
-.display-none {
-  display: none;
-}
-
-.jtf-center {
-  justify-content: center;
-}
-
 .employee-group {
-  padding: 0 10px;
+  // padding: 0 10px;
+  display: flex;
+  align-items: center;
 }
 
 .btn-container {
@@ -234,30 +201,39 @@ export default defineComponent({
   }
 }
 
-.name-w {
-  width: 70px;
-  display: inline-block;
-}
-
 .name-w-1 {
-  display: inline-block;
+  // display: -webkit-inline-box;
+  text-align: center;
+  // max-width: 40%;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 :deep .dx-button-content {
   display: inline-flex;
   align-items: center;
-  padding: 0px 7px 1px !important;
+  // padding: 0px 5px  !important;
 
-  .dx-dropdowneditor-icon {
-    width: 24px;
-  }
+  // .dx-dropdowneditor-icon {
+  //   width: 24px;
+  // }
 }
 :deep span.ant-tag {
-  width: 210px;
+  // width: 210px;
+  // max-width: 50%;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 :deep .dx-template-wrapper {
   display: flex;
   align-items: center;
+}
+:deep .dx-dropdowneditor-field-template-wrapper, :deep .dx-template-wrapper {
+  width: 80%;
 }
 
 </style>

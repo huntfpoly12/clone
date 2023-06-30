@@ -33,6 +33,7 @@
             <template #status-grid-main>
               <div class="ac-110__top-buttons">
                 <ProcessStatus
+                :noOptionNoInput="false"
                   v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
                   :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
                   :disabled="true" />
