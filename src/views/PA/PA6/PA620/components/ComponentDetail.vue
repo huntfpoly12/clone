@@ -25,7 +25,6 @@
         class="btn-date"
       />
       <process-status
-        noOptionNoInput
         v-model:valueStatus="statusButton"
         @checkConfirm="statusComfirm"
         v-if="!isDisabledForm"

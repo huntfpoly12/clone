@@ -216,7 +216,7 @@
         <DxButton :text="'지 ' + paymentDate"
           :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
         <ProcessStatus v-model:value-status="statusParam.status" :disabled="statusParam.status > 20 || !compareForm()"
-          @checkConfirm="mutateChangeStatus(statusParam)" noOptionNoInput />
+          @checkConfirm="mutateChangeStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
         <DxButton class="ml-4" icon="plus" @click="openAddNewModal" :disabled="!hasDataSource || isExpiredStatus" />

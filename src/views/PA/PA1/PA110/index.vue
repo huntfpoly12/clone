@@ -238,7 +238,7 @@
 					<DxButton :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
 						:style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
 					<ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" :disabled="status == 30 ||
-						status == 40 || checkChangeForm" noOptionNoInput/>
+						status == 40 || checkChangeForm"/>
 				</div>
 				<div v-else>
 					<DxButton text="귀" :style="{ color: 'white', backgroundColor: 'gray' }"
