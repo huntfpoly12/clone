@@ -635,7 +635,7 @@ export default defineComponent({
 		);
 
 		watch(() => status.value, (newVal) => {
-			if (userType != "m" && (newVal == 20 || newVal == 30 || newVal == 40)) {
+			if (userType != "m" && (newVal == 30 || newVal == 40)) {
 				store.state.common.pa110.statusDisabledStatus = true;
 			} else {
 				store.state.common.pa110.statusDisabledStatus = false;

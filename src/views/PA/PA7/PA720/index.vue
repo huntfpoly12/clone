@@ -208,8 +208,7 @@
       </a-spin>
     </div>
 
-    <a-row :class="{ 'ele-opacity': !compareForm() }"
-      style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
+    <a-row :class="{ 'ele-opacity': !compareForm() }" class="option-action">
       <a-col>
         <DxButton :text="'귀 ' + inputDate"
           :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
@@ -252,13 +251,13 @@
         </div>
       </a-col>
     </a-row>
-    <a-row class="content-btm" style="flex-flow: row nowrap">
-      <a-col :class="{ 'ele-opacity': !compareForm(), 'col-tax': true }" class="custom-layout">
+    <a-row>
+      <a-col :span="15" :class="{ 'ele-opacity': !compareForm() }" class="table-tax">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax" :isFirstRun="isFirstRun"
           :changeFommDone="changeFommDone" :saveToNewRow="saveToNewRow" :compareType="compareType"
           :compareForm="compareForm" />
       </a-col>
-      <a-col :span="11" class="custom-layout form-tax">
+      <a-col :span="9" class="form-tax">
         <FormTaxPayInfo ref="formTaxRef" :key="formKey" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
           :hasDataSource="hasDataSource" @onFormDone="onFormDone" @subValidate="subValidate"
           :addNewIncomeExtra="processKeyPA720.processKey" :isExpiredStatus="isExpiredStatus" />
@@ -686,7 +685,7 @@ export default defineComponent({
       notification('error', res.message);
     })
     //check to disable all input
-    const isExpiredStatus = computed(() => statusParam.value.status > 10)
+    const isExpiredStatus = computed(() => statusParam.value.status > 20)
 
     // -------------------- Delete item in tax table --------------------
 
