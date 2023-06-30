@@ -4,10 +4,10 @@
     <div class="ac-540-month">
       <span class="ac-540-month-period">기간</span>
       <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="startMonth.month" :min="minMonth" :max="maxStartMonth"/>
-      <ProcessStatus :valueStatus="startMonth.status" disabled/>
+      <ProcessStatus :noOptionNoInput="false" :valueStatus="startMonth.status" disabled/>
       <span class="mr-5 ml-5">~</span>
       <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="endMonth.month" :max="maxMonth"/>
-      <ProcessStatus :valueStatus="endMonth.status" disabled/>
+      <ProcessStatus :noOptionNoInput="false" :valueStatus="endMonth.status" disabled/>
       <a-tooltip color="black" placement="top">
         <template #title>조정마감된 월만 해당 (조정마감이 아닌 월은 제외).</template>
         <img src="@/assets/images/iconInfo.png" class="img-info"/>
