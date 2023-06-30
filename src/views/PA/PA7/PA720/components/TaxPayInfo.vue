@@ -11,7 +11,9 @@
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left"/>
       <template #tag="{ data }">
-        <div>
+        <employ-type-select :readOnly="true"
+              :arrayValue="employSelect" v-model:valueEmploy="data.data.employeeId" :newLoadKey="data.data.employeeId"/>
+        <!-- <div>
           <div v-if="data.data.employeeId" class="d-flex-center">
             <span class="btn-container">
               {{ data.data.employeeId }}
@@ -36,7 +38,7 @@
           </a-tooltip>
         </div>
         <div v-else></div>
-      </div>
+      </div> -->
       </template>
       <DxColumn caption="지급일" width="55" alignment="left" data-field="paymentDay" cell-template="paymentDay" />
       <template #paymentDay="{ data }">
@@ -364,6 +366,7 @@ export default defineComponent({
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return rowData.withholdingIncomeTax + rowData.withholdingLocalIncomeTax;
     }
+    const employSelect = computed(() => store.state.common.employSelect);
     return {
       rowTable,
       per_page,
@@ -387,7 +390,7 @@ export default defineComponent({
       onFocusedRowChanging,
       taxPayDataRef,
       removeHoverRowKey,
-      store,
+      store, employSelect,
       changeDayDataPA720,
       selectRow, calcSummary,
       calculateIncomeTypeCodeAndName

@@ -1,19 +1,19 @@
 <template>
-  <a-spin :spinning=" loadingIncomeExtra " size="large">
+  <a-spin :spinning="loadingIncomeExtra" size="large">
     <standard-form formName="pa-720-form" ref="pa720FormRef">
       <a-row>
         <a-col :span="24">
           <a-form-item label="기타소득자" label-align="right" class="red">
-            <employ-type-select :disabled="isEdit || !hasDataSource || isExpiredStatus || idDisableInput"
-              :arrayValue="employSelect" v-model:valueEmploy="formPA720.input.employeeId" width="350px"
-              :required="true" :newLoadKey="formPA720.input.employee.key" @incomeTypeCode="changeIncomeTypeCode" />
+            <employ-type-select :width="500" :disabled="isEdit || !hasDataSource || isExpiredStatus || idDisableInput"
+              :arrayValue="employSelect" v-model:valueEmploy="formPA720.input.employeeId" :required="true"
+              :newLoadKey="formPA720.input.employee.key" @incomeTypeCode="changeIncomeTypeCode" />
           </a-form-item>
         </a-col>
         <a-col span="24">
-          <div class="header-text-1 mb-10">소득내역</div>
+          <div class="header-text-1 mb-10 mt-10">소득내역</div>
         </a-col>
-        <a-col :span="12" class="input-group-4" style="padding-right: 5px">
-          <a-form-item label="귀속/지급연월" style="display: flex">
+        <a-col :span="13" class="input-group-left">
+          <a-form-item label="귀속/지급연월">
             <div class="d-flex-center">
               <DxButton :text="'귀 ' + inputDateTax"
                 :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
@@ -23,38 +23,37 @@
                 class="btn-date" />
             </div>
           </a-form-item>
-          <a-form-item label="지급일" class="red mt-15">
-            <div>
-              <date-time-box-custom width="148px" class="mr-5" :required="true" :startDate="startDate"
-                :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
-                :disabled="isEdit || !hasDataSource || isExpiredStatus || idDisableInput" />
-              <div v-if="isLoopDayPA720" class="error-group" style="max-width: 150px;">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
-            </div>
+          <a-form-item label="지급일" class="red mt-10">
+            <date-time-box-custom width="148px" :required="true" :startDate="startDate" :finishDate="finishDate"
+              v-model:valueDate="dayDate" :clearable="false"
+              :disabled="isEdit || !hasDataSource || isExpiredStatus || idDisableInput" />
+            <div v-if="isLoopDayPA720" class="error-group" style="max-width: 150px;">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>
           </a-form-item>
-          <div class="input-text">
-            <a-form-item label="지급액" class="red mt-10">
+          <a-form-item label="지급액" class="red mt-10">
+            <div class="d-flex-center">
               <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
                 v-model:valueInput="formPA720.input.paymentAmount" :required="true" :disabled="idDisableInput"
                 format="0,###" />
-              <span class="ml-3">원</span>
-            </a-form-item>
-          </div>
-          <div class="input-text">
-            <a-form-item label="필요경비" class="red">
+              <span class="pl-5">원</span>
+            </div>
+          </a-form-item>
+          <a-form-item label="필요경비" class="red mt-10">
+            <div class="d-flex-center">
               <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
                 v-model:valueInput="formPA720.input.requiredExpenses" :disabled="idDisableInput" class="red"
                 format="0,###" />
-              <span class="ml-3">원</span>
-            </a-form-item>
-          </div>
-          <div class="input-text">
-            <a-form-item label="소득금액">
+              <span class="pl-5">원</span>
+            </div>
+          </a-form-item>
+          <a-form-item label="소득금액" class="mt-10">
+            <div class="d-flex-center">
               <number-box-money width="150px" :min="0" max="2147483647" :required="true" v-model:valueInput="incomeAmount"
                 :disabled="true" format="0,###" />
-              <span class="ml-3">원</span>
-            </a-form-item>
-          </div>
-          <a-form-item label="세율" class="red">
+              <span class="pl-5">원</span>
+            </div>
+
+          </a-form-item>
+          <a-form-item label="세율" class="red mt-10">
             <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" v-model="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
               :required="true" :disabled="idDisableInput">
@@ -72,7 +71,7 @@
             </DxSelectBox>
           </a-form-item>
         </a-col>
-        <a-col class="input-group-4" :span=" 12 " style="padding-left: 5px">
+        <a-col :span="11" class="input-group-right">
           <div class="header-text-2 mb-10">
             공제합계
             <b>{{
@@ -80,20 +79,26 @@
               formPA720.input.withholdingLocalIncomeTax)
               }}</b>원
           </div>
-          <div class="input-text">
-            <a-form-item label="소득세(공제)">
-              <number-box-money :disabled=" idDisableInput " style="margin-left: 20px; width: 150px"
-                v-model:valueInput=" formPA720.input.withholdingIncomeTax " format="0,###" :min=" 0 " />
-              <span class="ml-3">원</span>
+          <!-- <div class="input-text"> -->
+            <a-form-item label="소득세(공제)" class="mb-10">
+              <div class="d-flex-center">
+                <number-box-money :disabled=" idDisableInput " v-model:valueInput=" formPA720.input.withholdingIncomeTax "
+                format="0,###" :min=" 0" :width="140"/>
+              <span class="ml-5">원</span>
+              </div>
+              
             </a-form-item>
-          </div>
-          <div class="input-text">
-            <a-form-item label="지방소득세(공제)">
-              <number-box-money :disabled=" idDisableInput " style="margin-left: 20px; width: 150px"
+          <!-- </div> -->
+          <!-- <div class="input-text"> -->
+            <a-form-item label="지방소득세(공제)" class="mb-10">
+              <div class="d-flex-center">
+                <number-box-money :disabled=" idDisableInput " :width="140"
                 v-model:valueInput=" formPA720.input.withholdingLocalIncomeTax " format="0,###" :min=" 0 " />
-              <span class="ml-3">원</span>
+              <span class="ml-5">원</span>
+              </div>
+              
             </a-form-item>
-          </div>
+          <!-- </div> -->
           <div class="top-con">
             <div class="header-text-2 mb-10 d-flex">
               차인지급액
@@ -397,7 +402,7 @@ export default defineComponent({
       }
       return text;
     };
-  
+
     const changeIncomeTypeCode = (emitVal: any) => {
       formPA720.value.input.employee = emitVal;
     };
@@ -437,7 +442,7 @@ export default defineComponent({
       idDisableInput,
       isClickEditDiffPA720,
       startDate, finishDate, dayDate,
-      processKeyPA720,isLoopDayPA720,
+      processKeyPA720, isLoopDayPA720,
     };
   },
 });

@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="ac-130__top-status">
-        <ProcessAccountingStatus v-if="accountingProcessesSelected?.status || 0"
+        <ProcessAccountingStatus :noOptionNoInput="false" v-if="accountingProcessesSelected?.status || 0"
           :preventChange="isPreventChangeProcessStatus" :status="accountingProcessesSelected?.status || 0"
 
           @submitChangeStatus="submitChangeStatus" />

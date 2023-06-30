@@ -48,6 +48,7 @@
 							<!-- <div class="d-flex-center"> -->
 								<div class="action d-flex-center">
 									<ProcessStatus
+										:noOptionNoInput="false"
 										v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
 										:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
 										:disabled="true" />
