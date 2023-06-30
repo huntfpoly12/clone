@@ -8,7 +8,7 @@
           <div class="d-flex-center">
             <number-box-money required width="200px" v-model:valueInput="dataFormIncomeCalculation.totalPay3Month"
                               format="#0,###"
-                              :disabled="retirementStatus === 20 || retirementStatus === 40"
+                              :disabled="retirementStatus !== 10"
             />
             <span class="pl-5">원</span>
           </div>
@@ -17,7 +17,7 @@
           <div class="d-flex-center">
             <number-box-money required width="200px" v-model:valueInput="dataFormIncomeCalculation.totalAnualBonus"
                               format="#0,###"
-                              :disabled="retirementStatus === 20 || retirementStatus === 40"
+                              :disabled="retirementStatus !== 10"
             />
             <span class="pl-5">원</span>
           </div>
@@ -26,7 +26,7 @@
           <div class="d-flex-center">
             <number-box-money required width="200px" v-model:valueInput="dataFormIncomeCalculation.annualLeaveAllowance"
                               format="#0,###"
-                              :disabled="retirementStatus === 20 || retirementStatus === 40"
+                              :disabled="retirementStatus !== 10"
             />
             <span class="pl-5">원</span>
           </div>
@@ -34,7 +34,7 @@
 
         <div class="mt-20 mb-20 wf-100">
           <div class="d-flex-center justify-content-center">
-            <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement" :disabled="retirementStatus === 20 || retirementStatus === 40"/>
+            <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement" :disabled="retirementStatus !== 10"/>
             <info-tool-tip>상기 급여(수당)으로 퇴직금 계산합니다.</info-tool-tip>
           </div>
         </div>
@@ -53,7 +53,7 @@
         <a-form-item label="퇴직급여(확정)">
           <div class="d-flex-center"
                :class="definedRetirementBenefits != Number(dataIncomeRetirement) ? 'custom-input-number' : ''">
-            <number-box-money :required="false" width="200px" :disabled="retirementStatus === 20 || retirementStatus === 40"
+            <number-box-money :required="false" width="200px" :disabled="retirementStatus !== 10"
                               v-model:valueInput="definedRetirementBenefits" format="#0,###"/>
             <span class="pl-5">원</span>
             <info-tool-tip>실제 지급된 퇴직급여를 입력합니다.</info-tool-tip>
