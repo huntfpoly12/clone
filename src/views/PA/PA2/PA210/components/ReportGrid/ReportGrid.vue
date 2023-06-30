@@ -471,6 +471,7 @@ export default defineComponent({
           index: dataSource.value[0].index,
           paymentType: dataSource.value[0].paymentType,
           yearEndTaxAdjustment: oldPropsData.yearEndTaxAdjustment,
+          reportClassCode : dataSource.value[0].reportClassCode
         },
       };
       trigger.value = true;

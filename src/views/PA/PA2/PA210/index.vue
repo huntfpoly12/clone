@@ -69,7 +69,7 @@
               귀속기간 {{
                 showTooltipYearMonth(
                   data.data.reportType,
-                  data.data.imputedMonth,
+                  data.data.imputedStartYearMonth,
                   data.data.imputedFinishYearMonth
                 )
               }}

@@ -282,6 +282,10 @@ export default defineComponent({
                       }
                   }
               }
+              // check  tháng để focus row  nếu nó là tháng 1 thì focus row đầu luôn.  nếu mà tháng khác thì trừ 1 đơn vị
+              let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 || parseInt(startYearMonth.toString().slice(-2)) == 12 ? 0 :               parseInt(startYearMonth.toString().slice(-2)) - 1
+              dtReport.value = dataReports.value.length ? [dataReports.value[forcusMonth]] : []
+              focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
           } else {
             let array = value.paymentType == 1 ? arrayPaymentType1 : arrayPaymentType2
               array.map((data: any, index) => {
@@ -313,12 +317,55 @@ export default defineComponent({
                   }
               })
         }
-        
-    
-        // check  tháng để focus row  nếu nó là tháng 1 thì focus row đầu luôn.  nếu mà tháng khác thì trừ 1 đơn vị
-        let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 || parseInt(startYearMonth.toString().slice(-2)) == 12 ? 0 : parseInt(startYearMonth.toString().slice(-2)) - 1
-        dtReport.value = dataReports.value.length ? [dataReports.value[forcusMonth]] : []
-        focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
+        // kiểm tra những row đã được tạo tại index để check xem nên disable row nào khi tạo mới
+        dataReports.value.forEach((element: any) => {
+          if (value.paymentType == 1 ) {
+            const existData1_06: any = props.dataSourceIndex.find((item: any) => item.reportClassCode == '반당1');
+            const existData1_02: any = props.dataSourceIndex.find((item: any) => item.reportClassCode == '반당0' || item.reportClassCode == '반당2');
+            // nếu đã tạo  "반당1" thì disable "반당0" và "반당2"
+            if (existData1_06 && (element.reportClassCode !== '반당0' || element.reportClassCode !== '반당2')) {
+              dtReport.value = dataReports.value.length ? [element] : []
+              focusedRowKey.value = dataReports.value.length ? element.reportId : null
+            }
+            // nếu đã tạo  "반당0" hoặc "반당2" thì disable "반당1"
+            if (existData1_02 && element.reportClassCode !== '반당1') {
+              dtReport.value = dataReports.value.length ? [element] : []
+              focusedRowKey.value = dataReports.value.length ? element.reportId : null
+            }
+
+            // nếu chưa tạo một data  nào thì set forcus như bình thường 
+            if (!existData1_06 &&  !existData1_02) {
+              let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 || parseInt(startYearMonth.toString().slice(-2)) == 12 ? 0 :               parseInt(startYearMonth.toString().slice(-2)) - 1
+              dtReport.value = dataReports.value.length ? [dataReports.value[forcusMonth]] : []
+              focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
+            }
+          }
+
+
+          if (value.paymentType == 2 ) {
+            const existData1_06: any = props.dataSourceIndex.find((item: any) => item.reportClassCode == '반익1');
+            const existData1_02: any = props.dataSourceIndex.find((item: any) => item.reportClassCode == '반익0' || item.reportClassCode == '반익2');
+            // nếu đã tạo  "반당1" thì disable "반당0" và "반당2"
+            if (existData1_06 && (element.reportClassCode !== '반익0' || element.reportClassCode !== '반익2')) {
+              dtReport.value = dataReports.value.length ? [element] : []
+              focusedRowKey.value = dataReports.value.length ? element.reportId : null
+            }
+            // nếu đã tạo  "반당0" hoặc "반당2" thì disable "반당1"
+            if (existData1_02 && element.reportClassCode !== '반익1') {
+              dtReport.value = dataReports.value.length ? [element] : []
+              focusedRowKey.value = dataReports.value.length ? element.reportId : null
+            }
+
+            // nếu chưa tạo một data  nào thì set forcus như bình thường 
+            if (!existData1_06 &&  !existData1_02) {
+              let forcusMonth = parseInt(startYearMonth.toString().slice(-2)) == 1 || parseInt(startYearMonth.toString().slice(-2)) == 12 ? 0 :               parseInt(startYearMonth.toString().slice(-2)) - 1
+              dtReport.value = dataReports.value.length ? [dataReports.value[forcusMonth]] : []
+              focusedRowKey.value = dataReports.value.length ? dataReports.value[forcusMonth].reportId : null
+            }
+          }
+
+        });
+
         loading.value = false;
       }, { deep: true ,immediate: true })
 
@@ -403,8 +450,6 @@ export default defineComponent({
 
         return stYMonth < startYearMonth 
       }
-
-
 
       return {
           globalYear, move_column, colomn_resize, dayjs,
