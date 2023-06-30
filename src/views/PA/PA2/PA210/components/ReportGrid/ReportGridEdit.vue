@@ -59,6 +59,7 @@
                   v-model:valueStatus="data.data.status"
                   :dataRow="data.data"
                   @checkConfirmRowTable="changeStatusRowTable"
+                  :disabled="dataSource[0].status != 10"
                 />
                 <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
                             :dataRow="data.data"/> -->
@@ -428,6 +429,7 @@ export default defineComponent({
           index: dataSource.value[0].index,
           paymentType: dataSource.value[0].paymentType,
           yearEndTaxAdjustment: oldPropsData.yearEndTaxAdjustment,
+          reportClassCode : dataSource.value[0].reportClassCode
         },
       };
       if (!firstLoad) {
