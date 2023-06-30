@@ -437,7 +437,7 @@ watch(() => [
 
 // =============== FUNCTION ================================
 const openTabFuc = () => {
-  if (props.dataDetail.retirementType === EmployeeWageType.WAGE) {
+  if (props.dataDetail.employeeType === EmployeeWageType.WAGE) {
     window.open('pa-520')
   } else {
     window.open('pa-110')

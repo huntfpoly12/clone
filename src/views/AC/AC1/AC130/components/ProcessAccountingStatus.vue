@@ -1,5 +1,5 @@
 <template>
-  <span v-if="(disabled || status == 20)">
+  <span v-if="userType === 'c' && status != 10">
     <span v-for="item in arrayRadioManager" :key="item.id">
       <button-basic v-if="(status == item.id)" :width="100" :text="item.text" :class="item.class"
         class="buttonModal ProcessAccountingStatus-disabled">
@@ -9,7 +9,7 @@
   <a-popover v-else trigger="click" v-model:visible="showModal" color="#e6e6e6">
     <template #content>
       <div class="mytext">
-        <div v-if="status == 30 || status == 40">
+        <div v-if="status == 30 || status == 40 || userType === 'm'">
           <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser" v-model:valueRadioCheck="statusBinding"
             :layoutCustom="'horizontal'" />
           <span>으로 변경하시겠습니까?</span>

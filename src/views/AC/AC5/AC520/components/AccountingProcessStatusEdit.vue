@@ -1,8 +1,8 @@
 <template>
-  <a-popover v-model:visible="visible" :trigger="data.status !== 20 && data.revenueBudgetSum !== null && data.expenditureBudgetSum !== null ? 'click' :''" color="#e6e6e6">
+  <a-popover v-model:visible="visible" :trigger="data.status === 10 && data.revenueBudgetSum !== null && data.expenditureBudgetSum !== null || userType === 'm' ? 'click' :''" color="#e6e6e6">
     <template #content>
       <div class="mytext">
-        <div v-if="status == 30 || status == 40">
+        <div v-if="status == 30 || status == 40 || userType === 'm'">
           <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
                        v-model:valueRadioCheck="status" :layoutCustom="'horizontal'"/>
           <span>으로 변경하시겠습니까?</span>
@@ -18,8 +18,8 @@
         </div>
       </div>
     </template>
-    <div>
-      <button-basic :width="100" :text="textBtn" :class="classBtn"
+    <div class="d-flex-center justify-content-center">
+      <button-basic :width="95" :text="textBtn" :class="classBtn"
                     class="buttonModal" @onClick="click">
       </button-basic>
     </div>
@@ -64,18 +64,10 @@ export default defineComponent({
       {id: 40, text: '조정마감', class: 'adjusted'},
     ])
     const textBtn = computed(() => {
-      if (userType === 'm') {
-        return arrayRadioManager.value.find(item => item.id === status.value)?.text
-      } else {
-        return arrayRadioUser.value.find(item => item.id === status.value)?.text
-      }
+      return arrayRadioManager.value.find(item => item.id === status.value)?.text
     })
     const classBtn = computed(() => {
-      if (userType === 'm') {
-        return arrayRadioManager.value.find(item => item.id === status.value)?.class
-      } else {
-        return arrayRadioUser.value.find(item => item.id === status.value)?.class
-      }
+      return arrayRadioManager.value.find(item => item.id === status.value)?.class
     })
     const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
     const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))

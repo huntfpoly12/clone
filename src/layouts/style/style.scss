@@ -222,6 +222,7 @@
 
 .user-info {
 	display: flex;
+	gap: 20px;
 }
 #icon-menu{
     height: 30px;
@@ -248,4 +249,7 @@
 .logout-confirm  .ant-modal-body{
   padding: 7px;
 
+}
+.cursor-pointer {
+	cursor: pointer;
 }

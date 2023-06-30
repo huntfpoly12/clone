@@ -57,12 +57,14 @@ export default gql`
       }
       companyServiceContract {
         compactSalesRepresentative {
+          code
           name
           id
         }
         manageCompactUser {
           name
           id
+          username
         }
       }
       detail {

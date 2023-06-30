@@ -225,10 +225,14 @@ const setNewUserToken = () => {
   const token = urlParams.get('token');
   const companyName:any = urlParams.get('companyName')||'';
   const refreshToken = urlParams.get('refreshToken') || ''
+  const typeLogin = urlParams.get('typeLogin') || ''
+  const companyId = urlParams.get('companyId') || ''
   const url = window.location.href;
   const baseUrl = url.split('?')[0];
     if (token && refreshToken) {
       sessionStorage.setItem('companyName', companyName);
+      sessionStorage.setItem('typeLogin', typeLogin);
+      sessionStorage.setItem('companyId', companyId);
       window.location.assign(baseUrl);
     }
 }
