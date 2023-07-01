@@ -500,11 +500,6 @@ export default defineComponent({
 		});
 
 		watch(() => dataConfigDeductions.value, (value) => {
-			// if (statusFormAdd.value) {
-			// 	localIncomeBoo.value = value.find((item: any) => item.itemCode == 1012).amount < 1000;
-			// 	localReal.value = value.find((item: any) => item.itemCode == 1012).amount ? value.find((item: any) => item.itemCode == 1012).amount : localReal.value;
-			// 	value.find((item: any) => item.itemCode == 1012).amount = value.find((item: any) => item.itemCode == 1012).amount < 1000 ? 0 : value.find((item: any) => item.itemCode == 1012).amount;
-			// }
 			calculateTax();
 		}, { deep: true });
 
@@ -524,7 +519,6 @@ export default defineComponent({
 		});
 
 		watch(() => store.state.common.pa110.addRow, (newVal) => {
-			// localReal.value = 0
 			store.state.common.pa110.statusClickButtonAdd = false;
 			store.state.common.pa110.dataTaxPayInfo =
 				store.state.common.pa110.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
