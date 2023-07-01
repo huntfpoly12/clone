@@ -426,6 +426,13 @@ const routes = [
           roles: ALL_ROLE,
         },
       },
+      {
+        path: "/announcement",
+        component: () => import("../views/Announcement/User/index.vue"),
+        meta: {
+          roles: ALL_ROLE,
+        },
+      },
     ],
   },
   {
