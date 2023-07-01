@@ -925,8 +925,8 @@ export default defineComponent({
         // localIncomeBoo.value = itemValue12 < 1000 && itemValue11 > 0;
         let value1012 = Math.floor(itemValue11 / 100) * 10;
 				localReal.value = value1012 >= 1000 ? 0 : value1012;
-        formStateTab2PA120.value.deductionItems.find((item: any) => item.itemCode == 1011).amountNew = itemValue11;
-        formStateTab2PA120.value.deductionItems.find((item: any) => item.itemCode == 1012).amountNew = value1012 >= 1000 ? value1012 : 0;
+        formStateTab2PA120.value.deductionItems.find((item: any) => item.itemCode == 1011).value = itemValue11;
+        formStateTab2PA120.value.deductionItems.find((item: any) => item.itemCode == 1012).value = value1012 >= 1000 ? value1012 : 0;
         // formStateTab2PA120.value.deductionItems.map((item: any) => {
         //   if (item.itemCode == 1011) {
         //     item.value = itemValue11;
