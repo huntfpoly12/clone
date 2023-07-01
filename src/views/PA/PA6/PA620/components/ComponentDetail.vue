@@ -389,7 +389,7 @@ export default defineComponent({
       if (!statusButton.value) {
         return false;
       }
-      return +statusButton.value > 10 ? true : false;
+      return +statusButton.value > 20 ? true : false;
     });
     const messageUpdate = Message.getMessage("COMMON", "106").message;
     const idDisableNoData = computed(() => {
