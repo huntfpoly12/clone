@@ -211,7 +211,8 @@ import {
   AC520,
   Test,
   Example,
-  CommunicationBoard
+  CommunicationBoard,
+  Announcement,
 } from "./screenComponents";
 
 import {
@@ -314,7 +315,8 @@ export default defineComponent({
     CaretRightOutlined,
     DxSortable,
     DxTabs,
-    CommunicationBoard
+    CommunicationBoard,
+    Announcement,
   },
   created() {
     const tabsCached = sessionStorage.getItem('tabsCached')
@@ -500,6 +502,7 @@ export default defineComponent({
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "ac-630") return 'AC630';
       if (this.activeTab.id === "communication-board") return 'CommunicationBoard';
+      if (this.activeTab.id === "announcement") return 'announcement';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
