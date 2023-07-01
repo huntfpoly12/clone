@@ -179,7 +179,7 @@ const CommunicationBoard = defineAsyncComponent(() =>
     import("@/views/CommunicationBoard/index.vue")
 );
 const Announcement = defineAsyncComponent(() =>
-    import("@/views/Announcement/user/index.vue")
+    import("@/views/Announcement/User/index.vue")
 );
 
 export {
