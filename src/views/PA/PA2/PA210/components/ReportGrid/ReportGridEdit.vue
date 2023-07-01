@@ -19,7 +19,7 @@
               alt=""
               class="ml-3"
               @click="actionConfirmDelete"
-              v-if="dataSource[0].status == 10"
+              v-if="dataSource[0].status >= 20"
             />
             <img
               style="width: 31px; cursor: pointer"
@@ -27,14 +27,14 @@
               alt=""
               class="ml-3"
               @click="updateTaxWithholding"
-              v-if="dataSource[0].status == 10"
+              v-if="dataSource[0].status >= 20"
             />
             <button-basic
               :width="150"
               text="새로불러오기"
               class="btn-get-income"
               @onClick="actionConfirmLoadNew"
-              :disabled="dataSource[0].status != 10"
+              :disabled="dataSource[0].status > 20"
             ></button-basic>
           </div>
           <div class="table-detail">
@@ -194,7 +194,7 @@
           <hot-table
             ref="wrapper"
             :settings="hotSettings"
-            :readOnly="dataSource[0].status != 10"
+            :readOnly="dataSource[0].status > 20"
           ></hot-table>
         </div>
       </div>

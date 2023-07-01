@@ -288,7 +288,7 @@
           >
             <div v-if="!loading">
               <zoom-in-outlined
-                v-if="data.data.status != 10"
+                v-if="data.data.status > 20"
                 :style="{ fontSize: '20px', color: 'black' }"
               />
               <edit-outlined
