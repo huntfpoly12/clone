@@ -1,9 +1,8 @@
 <template>
   <action-header title="사업소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
-  <div id="pa-620">
-    <div class="page-content">
+  <div id="pa-620" class="page-content">
       <a-row>
-        <a-col :span="24" class="mt-10" :class="{ 'ele-opacity': !isCompareForm }">
+        <a-col :span="24" :class="{ 'ele-opacity': !isCompareForm }">
           <a-spin :spinning="loadingGetIncomeProcessBusinesses" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
               key-expr="companyId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -262,7 +261,6 @@
         <CopyMonth :modalStatus="modalCopy" @closePopup="onCloseCopy" :monthVal="dataModalCopy"
           @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess" :dateType="dateType" />
       </a-row>
-    </div>
   </div>
 </template>
 <script lang="ts">

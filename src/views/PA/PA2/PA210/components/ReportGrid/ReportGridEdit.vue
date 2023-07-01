@@ -19,7 +19,7 @@
               alt=""
               class="ml-3"
               @click="actionConfirmDelete"
-              v-if="dataSource[0].status >= 20"
+              v-if="arrStatusShowBtn.includes(dataSource[0].status)"
             />
             <img
               style="width: 31px; cursor: pointer"
@@ -27,14 +27,14 @@
               alt=""
               class="ml-3"
               @click="updateTaxWithholding"
-              v-if="dataSource[0].status >= 20"
+              v-if="arrStatusShowBtn.includes(dataSource[0].status)"
             />
             <button-basic
               :width="150"
               text="새로불러오기"
               class="btn-get-income"
               @onClick="actionConfirmLoadNew"
-              :disabled="dataSource[0].status > 20"
+              :disabled="!arrStatusShowBtn.includes(dataSource[0].status)"
             ></button-basic>
           </div>
           <div class="table-detail">
@@ -59,7 +59,7 @@
                   v-model:valueStatus="data.data.status"
                   :dataRow="data.data"
                   @checkConfirmRowTable="changeStatusRowTable"
-                  :disabled="dataSource[0].status != 10"
+                  :disabled="!arrStatusShowBtn.includes(dataSource[0].status)"
                 />
                 <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
                             :dataRow="data.data"/> -->
@@ -170,7 +170,7 @@
                       v-model:valueSwitch="data.data.refund"
                       :textCheck="'O'"
                       :textUnCheck="'X'"
-                      :disabled="disabledRefund || dataSource[0].status != 10"
+                      :disabled="disabledRefund || !arrStatusShowBtn.includes(dataSource[0].status)"
                       />
                   </div>
                 </a-tooltip>
@@ -183,7 +183,7 @@
               <template #submission-date="{ data }">
                 <date-time-box
                   v-model:valueDate="data.data.submissionDate"
-                  :disabled="dataSource[0].status != 10"
+                  :disabled="!arrStatusShowBtn.includes(dataSource[0].status)"
                   :teleport="true"
                 ></date-time-box>
               </template>
@@ -284,6 +284,7 @@ export default defineComponent({
     const firstTimeLoad = ref<boolean>(false);
     const cellNegativeNumber = [[5, 7], [9, 7], [31, 7]]
     const cellPageSettings = ref<any>(cellsSetting);
+    const arrStatusShowBtn = [10,20]
     // The above code is setting up the hot table.
     const hotSettings = {
       comments: true,
@@ -835,7 +836,8 @@ export default defineComponent({
       confirmStatus,
       showTooltipYearMonth,
       changeStatusRowTable,
-      disabledRefund
+      disabledRefund,
+      arrStatusShowBtn
     };
   },
 });

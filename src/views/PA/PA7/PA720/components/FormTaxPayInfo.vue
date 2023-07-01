@@ -24,7 +24,7 @@
             </div>
           </a-form-item>
           <a-form-item label="지급일" class="red mt-10">
-            <date-time-box-custom width="148px" :required="true" :startDate="startDate" :finishDate="finishDate"
+            <date-time-box-custom width="150px" :required="true" :startDate="startDate" :finishDate="finishDate"
               v-model:valueDate="dayDate" :clearable="false"
               :disabled="isEdit || !hasDataSource || isExpiredStatus || idDisableInput" />
             <div v-if="isLoopDayPA720" class="error-group" style="max-width: 150px;">동일 소득자의 동일 지급일로 중복 등록 불가합니다.</div>

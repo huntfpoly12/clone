@@ -68,11 +68,21 @@
     text-decoration: underline;
   }
 
-  :deep .form-action {
-    label {
-      width: 120px;
+  :deep .income-details {
+
+    .input-group-left .ant-form-item-label {
+      label {
+        width: 110px;
+      }
+    }
+    .input-group-right .ant-form-item-label {
+      label {
+        width: 120px;
+      }
     }
   }
+
+
 
   .header-text-1 {
     background-color: #558ED5;
@@ -156,7 +166,7 @@
     white-space: pre-wrap;
   }
 
-  :deep .dx-button-content {
+  :deep .option-action .dx-button-content {
     padding: 5px;
     display: inline-flex;
     align-items: center;
@@ -234,20 +244,20 @@
       }
     }
 
-    div.dx-button-content {
-      padding: 0px 10px 2px;
-    }
+    // div.dx-button-content {
+    //   padding: 0px 10px 2px;
+    // }
   }
 
-  :deep div.dx-button-content {
-    .dx-dropdowneditor-icon {
-      width: 24px;
-    }
+  // :deep div.dx-button-content {
+  //   .dx-dropdowneditor-icon {
+  //     width: 24px;
+  //   }
 
-    .dx-dropdowneditor-icon::before {
-      margin-left: -4px;
-    }
-  }
+  //   .dx-dropdowneditor-icon::before {
+  //     margin-left: -4px;
+  //   }
+  // }
 
   :deep .btn-date {
     div.dx-button-content {
@@ -279,32 +289,31 @@
   }
 
   :deep .col-tax {
-    height: calc(100vh - 300px);
-    border: 1px solid #d7d7d7;
-    margin-top: 10px;
+    // height: calc(100vh - 300px);
+    // border: 1px solid #d7d7d7;
+    // margin-top: 10px;
     margin-right: 10px;
-    padding-top: 10px;
+    // padding-top: 10px;
     flex: 1;
   }
 
   :deep .form-tax {
     border: 1px solid #d7d7d7;
-    margin-top: 10px;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    // margin-top: 10px;
+    padding: 10px;
   }
 
   #tax-pay-620 {
-    height: calc(100vh - 347px) !important;
+    height: calc(100vh - 320px) !important;
 
     :deep .dx-freespace-row {
       display: none !important;
     }
   }
-  :deep span.ant-tag{
-    width: 88px;
-  }
+
+  // :deep span.ant-tag{
+  //   width: 88px;
+  // }
 }
 
 .input-text {
@@ -316,6 +325,7 @@
   text-align: right;
   flex: 1;
 }
+
 .name-w {
   width: 70px;
   display: inline-block;
