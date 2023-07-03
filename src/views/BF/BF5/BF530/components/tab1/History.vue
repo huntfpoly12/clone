@@ -39,7 +39,7 @@
             format="yyyy-MM-dd HH:mm"
           />
           <DxColumn caption="내용" data-field="remark" />
-          <DxColumn caption="사업장관리번호" data-field="manageId" />
+          <DxColumn caption="사업장관리번호" data-field="manageId" :format="$filters.formatBizNumber"/>
           <DxColumn
             caption="수임상태"
             data-field="companyConsignStatus"
