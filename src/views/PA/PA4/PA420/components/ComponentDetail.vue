@@ -29,7 +29,7 @@
         <process-status
           v-model:valueStatus="statusButton"
           @checkConfirm="statusConfirm"
-          :disabled="statusButton !== 10 && statusButton !== 20"
+          :disabled="statusButton !== 10 && statusButton !== 20 && userType !== 'm'"
         />
       </div>
       <div class="table-detail-right">
@@ -393,7 +393,7 @@ import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import getIncomeRetirementWithholdingReceiptReportViewUrl from "@/graphql/queries/PA/PA4/PA430/getIncomeRetirementWithholdingReceiptReportViewUrl";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import filters from "@/helpers/filters";
 import notification from "@/utils/notification";
 import {
