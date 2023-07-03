@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="ac-130__top-status">
-        <ProcessAccountingStatus v-if="accountingProcessesSelected?.status || 0"
+        <ProcessAccountingStatus :noOptionNoInput="false" v-if="accountingProcessesSelected?.status || 0"
           :preventChange="isPreventChangeProcessStatus" :status="accountingProcessesSelected?.status || 0"
 
           @submitChangeStatus="submitChangeStatus" />
@@ -92,7 +92,7 @@
             <ReloadOutlined class="ac-130__main-content-manager-title-btnReload" @click="refreshFormChat" />
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChat ref="formChat" :payload="{...payload, accountingProcessesSelected}" :disabled="accountingProcessesSelected?.status === 20 || !accountingProcessesSelected" :loading="loadingGetAccountingProcesses"/>
+            <FormChat ref="formChat" :payload="{...payload, accountingProcessesSelected}" :disabled="[20, 30, 40].includes(accountingProcessesSelected?.status) || !accountingProcessesSelected" :loading="loadingGetAccountingProcesses"/>
           </div>
         </div>
       </a-col>

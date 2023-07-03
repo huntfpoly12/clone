@@ -387,32 +387,23 @@
               </span>
               <div>
                 <a-tooltip
-                  color="black"
-                  placement="top"
-                  v-if="item.itemCode == 1012 && localIncomeBoo"
                   zIndex="9999"
+                  :title="checkShowRed(item) ? '소액징수부면제 적용' + localReal : ''"
                 >
-                  <template #title>
-                    소액징수부면제 적용 {{ localReal }}
-                  </template>
                   <span>
                     <number-box-money
-                      :textColor="
-                        localIncomeBoo && item.itemCode == 1012 ? 'red' : ''
-                      "
-                      class="red"
+                      :textColor="checkShowRed(item) ? 'red' : ''"
                       width="130px"
                       :spinButtons="false"
                       :rtlEnabled="true"
                       v-model:valueInput="item.value"
-                      :min="1000"
-                      @changeInput="onCalcSumDeduction"
+                      @changeInput="onCalcSumDeduction(item)"
                       :disabled="disabledDeduction(item.itemCode)"
                       format="#0,###"
                     />
                   </span>
                 </a-tooltip>
-                <number-box-money
+                <!-- <number-box-money
                   v-else
                   :textColor="
                     checkIncomeFirst && item.itemCode == 1012 ? 'red' : ''
@@ -426,7 +417,7 @@
                   :disabled="disabledDeduction(item.itemCode)"
                   format="#0,###"
                   @onFocusOut="(e: any) => handleFocusOut(e, item.itemCode)"
-                />
+                /> -->
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -545,7 +536,7 @@ export default defineComponent({
     const msgCalc = Message.getMessage("PA120", "004");
 
     const insuranceDisabled = ref(false); // whether disabled or not formStateTab2PA120.employeementInsuranceDeduction
-    const checkIncomeFirst = ref(false); // whether display colorRed in deduction 1012. Don't check when it's firstTime.
+    // const checkIncomeFirst = ref(false); // whether display colorRed in deduction 1012. Don't check when it's firstTime.
 
     // data common
     const deductionItemsPA120 = computed(
@@ -600,15 +591,18 @@ export default defineComponent({
       );
     };
     //calc the RELATED DEDUCTION SUM
-    const onCalcSumDeduction = () => {
+    const onCalcSumDeduction = (data: any) => {
+      if (data?.itemCode == 1012) {
+				localReal.value = data?.value;
+			}
       totalDeduction.value = formStateTab2PA120.value.deductionItems.reduce(
         (accumulator: any, object: any) => {
-          if (!accumulator) {
-            accumulator = 0;
-          }
-          if (!object.value) {
-            object.value = 0;
-          }
+          // if (!accumulator) {
+          //   accumulator = 0;
+          // }
+          // if (!object.value) {
+          //   object.value = 0;
+          // }
           return accumulator + object.value;
         },
         0
@@ -674,8 +668,8 @@ export default defineComponent({
     let loadingEmployeeWage = ref<boolean>(false)
     watch(employeeIdPA120, (value: any) => {
       if (+value !== 0) {
-        checkIncomeFirst.value = false;
-        localIncomeBoo.value = false;
+        // checkIncomeFirst.value = false;
+        // localIncomeBoo.value = false;
         // employeeTrigger.value = true;
       }
     });
@@ -839,31 +833,40 @@ export default defineComponent({
         editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
         if (data.payItems && payItemsPA120.value.length > 0) {
           payItemsPA120.value.forEach((item1: any, key: number) => {
-            const item2Value = data.payItems.find(
-              (item2: any) => item2.itemCode == item1.itemCode
-            );
+            const item2Value = data.payItems.find((item2: any) => item2.itemCode == item1.itemCode);
             let value = item2Value?.amount ? item2Value.amount : 0;
             formStateTab2PA120.value.payItems[key] = { ...item1, value };
-            formOriginTab2PA120.value.payItems[key] = JSON.parse(
-              JSON.stringify({ ...item1, value })
-            );
+            // formOriginTab2PA120.value.payItems[key] = JSON.parse(
+            //   JSON.stringify({ ...item1, value })
+            // );
           });
         }
+        console.log(formStateTab2PA120.value.payItems);
+        
+        formOriginTab2PA120.value.payItems = JSON.parse(JSON.stringify(formStateTab2PA120.value.payItems));
         if (data.deductionItems && deductionItemsPA120.value.length > 0) {
           deductionItemsPA120.value.forEach((item1: any, key: number) => {
-            let item2Value = data.deductionItems.find(
-              (item2: any) => item2.itemCode == item1.itemCode
-            );
-            let value = item2Value?.amount ? item2Value.amount : 0;
-            if (key == 4 && value < 10000 && value > 0) {
-              checkIncomeFirst.value = true;
+            let item2Value = data.deductionItems.find((item2: any) => item2.itemCode == item1.itemCode);
+            let value = 0;
+            console.log(item2Value);
+            if (item2Value) {
+              if (item2Value.itemCode == 1012 && item2Value.amount < 1000) { // nếu nhỏ hơn 1000 thì show red
+                localReal.value = item2Value.amount;
+              } else {
+                value = item2Value?.amount ? item2Value.amount : 0;
+              }
             }
+            
+            // if (key == 4 && value < 10000 && value > 0) {
+            //   checkIncomeFirst.value = true;
+            // }
             formStateTab2PA120.value.deductionItems[key] = { ...item1, value };
-            formOriginTab2PA120.value.deductionItems[key] = JSON.parse(
-              JSON.stringify({ ...item1, value })
-            );
+            // formOriginTab2PA120.value.deductionItems[key] = JSON.parse(
+            //   JSON.stringify({ ...item1, value })
+            // );
           });
         }
+        formOriginTab2PA120.value.deductionItems = JSON.parse(JSON.stringify(formStateTab2PA120.value.deductionItems));
         calculateVariables.totalTaxPay =
           formStateTab2PA120.value.payItems.reduce(
             (accumulator: any, object: any) => {
@@ -876,7 +879,7 @@ export default defineComponent({
           );
         isBtnYellow.value = false;
         onCalcSumPayItem();
-        onCalcSumDeduction();
+        onCalcSumDeduction(null);
         let { payItems, deductionItems, ...obj } = editRowData;
         store.state.common.formStateTab2PA120 = {
           ...store.state.common.formStateTab2PA120,
@@ -894,7 +897,7 @@ export default defineComponent({
      * Calculate Income Wage Tax API
      */
 
-    const localIncomeBoo = ref(false); // check deduction 1012 > 0 và 1011 < 1000 thì hiện tooltip
+    // const localIncomeBoo = ref(false); // check deduction 1012 > 0 và 1011 < 1000 thì hiện tooltip
     const localReal = ref(0); // giá trị thực của deduction 1012
     const calculateVariables = reactive({
       companyId: companyId,
@@ -917,26 +920,25 @@ export default defineComponent({
 
     watch(resCalcIncomeWageTax, (value) => {
       if (value) {
-        let itemValue11 = Math.floor(
-          (value.calculateIncomeWageTax *
-            formStateTab2PA120.value.incomeTaxMagnification) /
-            100
-        );
+        let itemValue11 = value.calculateIncomeWageTax * (formStateTab2PA120.value.incomeTaxMagnification / 100);
         let itemValue12 = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
-        localIncomeBoo.value = itemValue12 < 1000 && itemValue11 > 0;
-        localReal.value = itemValue12;
-        formStateTab2PA120.value.deductionItems.map((item: any) => {
-          if (item.itemCode == 1011) {
-            item.value = itemValue11;
-          }
-          if (item.itemCode == 1012) {
-            item.value = itemValue12 < 1000 ? 0 : itemValue12;
-          }
-        });
+        // localIncomeBoo.value = itemValue12 < 1000 && itemValue11 > 0;
+        let value1012 = Math.floor(itemValue11 / 100) * 10;
+				localReal.value = value1012 >= 1000 ? 0 : value1012;
+        formStateTab2PA120.value.deductionItems.find((item: any) => item.itemCode == 1011).value = itemValue11;
+        formStateTab2PA120.value.deductionItems.find((item: any) => item.itemCode == 1012).value = value1012 >= 1000 ? value1012 : 0;
+        // formStateTab2PA120.value.deductionItems.map((item: any) => {
+        //   if (item.itemCode == 1011) {
+        //     item.value = itemValue11;
+        //   }
+        //   if (item.itemCode == 1012) {
+        //     item.value = itemValue12 < 1000 ? 0 : itemValue12;
+        //   }
+        // });
       }
       triggerCalcIncomeWageTax.value = false;
       onCalcSumPayItem();
-      onCalcSumDeduction();
+      onCalcSumDeduction(null);
     });
 
     //---------------------HANDLE FORM--------------------------------
@@ -1000,7 +1002,7 @@ export default defineComponent({
             );
             formStateTab2PA120.value.employeementInsuranceDeduction = false;
             formStateTab2PA120.value.insuranceSupport = false;
-            onCalcSumDeduction();
+            onCalcSumDeduction(null);
             updateDeduction();
           }
         }
@@ -1049,6 +1051,12 @@ export default defineComponent({
         };
       });
       payLoadData.deductionItems = formFake.deductionItems.map((item: any) => {
+        if (checkShowRed({ itemCode: item.itemCode, value: item.value})) {
+          return {
+            itemCode: item.itemCode,
+            amount: localReal.value,
+          };
+        }
         return {
           itemCode: item.itemCode,
           amount: item.value,
@@ -1104,12 +1112,25 @@ export default defineComponent({
       return false;
     };
     // force dection 1012 must be greater than 1000
-    const handleFocusOut = (e: any, item: any) => {
-      let valueInput = e.event.target.value;
-      if (item === 1012 && valueInput < 1000) {
-        formStateTab2PA120.value.deductionItems[5].value = 0;
-      }
-    };
+    // const handleFocusOut = (e: any, item: any) => {
+    //   let valueInput = e.event.target.value;
+    //   if (item === 1012 && valueInput < 1000) {
+    //     formStateTab2PA120.value.deductionItems[5].value = 0;
+    //   }
+    // };
+    const checkShowRed = (data: any) => { // check hiển thị input đỏ và tooltips
+      console.log(data);
+      
+			if (data.itemCode == 1012) {
+				if (data.value == localReal.value && localReal.value == 0) {
+					return false;
+				}
+				if (data.value <= 1000) {
+					return true
+				}
+			}
+			return false
+		}
 
     return {
       loadingEmployeeWage,
@@ -1136,15 +1157,16 @@ export default defineComponent({
       compareForm,
       onCalcSumPayItem,
       onCalcSumDeduction,
-      localIncomeBoo,
+      // localIncomeBoo,
       localReal,
       disabledDeduction,
       modalCalc,
       msgCalc,
       vnode,
-      handleFocusOut,
+      // handleFocusOut,
       insuranceDisabled,
-      checkIncomeFirst,
+      // checkIncomeFirst,
+      checkShowRed,
     };
   },
 });

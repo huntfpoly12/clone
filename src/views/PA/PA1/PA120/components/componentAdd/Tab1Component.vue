@@ -351,7 +351,6 @@ export default defineComponent({
     );
 
     //-------------------------------ACTION FORM -----------------------------
-
     let dataDefaultTab2: any = ref({ ...initFormStateTab2 }); // dataForm của tab 2
     // createEmployeeWage tab 1 api
     const {
@@ -371,6 +370,19 @@ export default defineComponent({
         dataDefaultTab2.value.healthInsuranceDeduction = true;
         dataDefaultTab2.value.employeementInsuranceDeduction = true;
       }
+      
+      dataDefaultTab2.value.payItems = store.state.common.payItemsPA120.map((item: any) => {
+          return {
+            itemCode: item.itemCode,
+            amount: 0,
+          };
+        });
+      dataDefaultTab2.value.deductionItems = store.state.common.deductionItemsPA120.map((item: any) => {
+          return {
+            itemCode: item.itemCode,
+            amount: 0,
+          };
+        });
       mutate({
         companyId,
         imputedYear: globalYear.value,
@@ -390,93 +402,95 @@ export default defineComponent({
     });
 
     // gọi thêm api ở tab 2 để save khi president == true
-    const originDataDetail = ref({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      useOnly: true,
-    });
-    const payItemTrigger = ref(true);
-    const { result: resConfigPayItems } = useQuery(
-      queriesPA120.getWithholdingConfigPayItems,
-      originDataDetail,
-      () => ({
-        fetchPolicy: "no-cache",
-        enabled: payItemTrigger.value,
-      })
-    );
-    watch(resConfigPayItems, (value) => {
-      if (value) {
-        let data = value.getWithholdingConfigPayItems;
-        let dataConfigPayItem = data.map((item: any) => {
-          return {
-            itemCode: item.itemCode,
-            amount: 0,
-          };
-        });
-        dataDefaultTab2.value.payItems = JSON.parse(
-          JSON.stringify(dataConfigPayItem)
-        );
-        payItemTrigger.value = false;
-      }
-    });
+    // const originDataDetail = ref({
+    //   companyId: companyId,
+    //   imputedYear: globalYear.value,
+    //   useOnly: true,
+    // });
+    // const payItemTrigger = ref(true);
+    // const { result: resConfigPayItems } = useQuery(
+    //   queriesPA120.getWithholdingConfigPayItems,
+    //   originDataDetail,
+    //   () => ({
+    //     fetchPolicy: "no-cache",
+    //     enabled: payItemTrigger.value,
+    //   })
+    // );
+    // watch(resConfigPayItems, (value) => {
+    //   console.log(11111223223);
+      
+    //   if (value) {
+    //     let data = value.getWithholdingConfigPayItems;
+    //     let dataConfigPayItem = data.map((item: any) => {
+    //       return {
+    //         itemCode: item.itemCode,
+    //         amount: 0,
+    //       };
+    //     });
+    //     dataDefaultTab2.value.payItems = JSON.parse(
+    //       JSON.stringify(dataConfigPayItem)
+    //     );
+    //     payItemTrigger.value = false;
+    //   }
+    // });
 
     /**
      *  get Withouthoulding Config deduction
      */
-    const deductionTrigger = ref(true);
-    const { result: resConfigDeduction } = useQuery(
-      queriesPA120.getWithholdingConfigDeductionItems,
-      originDataDetail,
-      () => ({
-        fetchPolicy: "no-cache",
-        enabled: deductionTrigger.value,
-      })
-    );
-    watch(resConfigDeduction, (value) => {
-      if (value) {
-        let data = value.getWithholdingConfigDeductionItems;
-        for (var i = 0; i < data.length; i++) {
-          var item = data[i];
-          if (item.itemCode == 1001) {
-            dataDefaultTab2.value.deductionItems.push({
-              itemCode: item.itemCode,
-              amount: 0,
-            });
-          }
-          if (item.itemCode == 1002) {
-            dataDefaultTab2.value.deductionItems.push({
-              itemCode: item.itemCode,
-              amount: 0,
-            });
-          }
-          if (item.itemCode == 1003) {
-            dataDefaultTab2.value.deductionItems.push({
-              itemCode: item.itemCode,
-              amount: 0,
-            });
-          }
-          if (item.itemCode == 1004) {
-            dataDefaultTab2.value.deductionItems.push({
-              itemCode: item.itemCode,
-              amount: 0,
-            });
-          }
-          if (item.itemCode == 1011) {
-            dataDefaultTab2.value.deductionItems.push({
-              itemCode: item.itemCode,
-              amount: 0,
-            });
-          }
-          if (item.itemCode == 1012) {
-            dataDefaultTab2.value.deductionItems.push({
-              itemCode: item.itemCode,
-              amount: 0,
-            });
-          }
-        }
-        deductionTrigger.value = false;
-      }
-    });
+    // const deductionTrigger = ref(true);
+    // const { result: resConfigDeduction } = useQuery(
+    //   queriesPA120.getWithholdingConfigDeductionItems,
+    //   originDataDetail,
+    //   () => ({
+    //     fetchPolicy: "no-cache",
+    //     enabled: deductionTrigger.value,
+    //   })
+    // );
+    // watch(resConfigDeduction, (value) => {
+    //   if (value) {
+    //     let data = value.getWithholdingConfigDeductionItems;
+    //     for (var i = 0; i < data.length; i++) {
+    //       var item = data[i];
+    //       if (item.itemCode == 1001) {
+    //         dataDefaultTab2.value.deductionItems.push({
+    //           itemCode: item.itemCode,
+    //           amount: 0,
+    //         });
+    //       }
+    //       if (item.itemCode == 1002) {
+    //         dataDefaultTab2.value.deductionItems.push({
+    //           itemCode: item.itemCode,
+    //           amount: 0,
+    //         });
+    //       }
+    //       if (item.itemCode == 1003) {
+    //         dataDefaultTab2.value.deductionItems.push({
+    //           itemCode: item.itemCode,
+    //           amount: 0,
+    //         });
+    //       }
+    //       if (item.itemCode == 1004) {
+    //         dataDefaultTab2.value.deductionItems.push({
+    //           itemCode: item.itemCode,
+    //           amount: 0,
+    //         });
+    //       }
+    //       if (item.itemCode == 1011) {
+    //         dataDefaultTab2.value.deductionItems.push({
+    //           itemCode: item.itemCode,
+    //           amount: 0,
+    //         });
+    //       }
+    //       if (item.itemCode == 1012) {
+    //         dataDefaultTab2.value.deductionItems.push({
+    //           itemCode: item.itemCode,
+    //           amount: 0,
+    //         });
+    //       }
+    //     }
+    //     deductionTrigger.value = false;
+    //   }
+    // });
     //api save tab 2
     const { mutate, onDone: onDoneSaveEmployee } = useMutation(
       mutations.saveEmployeeWagePayDeductionReduction

@@ -1,55 +1,25 @@
 <template>
-  <div
-    class="d-flex-center mt-10 title-action"
-    :class="{ 'ele-opacity': !compareForm() }"
-  >
+  <div class="d-flex-center mt-10 title-action" :class="{ 'ele-opacity': !compareForm() }">
     <div>
-      <DxButton
-        :text="'귀 ' + inputDateTax"
-        :disabled="isDisabledForm"
-        :style="{
-          color: 'white',
-          backgroundColor: 'gray',
-          height: $config_styles.HeightInput,
-        }"
-        class="btn-date"
-      />
-      <DxButton
-        :text="'지 ' + paymentDateTax"
-        :disabled="isDisabledForm"
-        :style="{
-          color: 'white',
-          backgroundColor: 'black',
-          height: $config_styles.HeightInput,
-        }"
-        class="btn-date"
-      />
-      <process-status
-        v-model:valueStatus="statusButton"
-        @checkConfirm="statusComfirm"
-        v-if="!isDisabledForm"
-        :disabled="statusButton == 30 || statusButton == 40 || !compareForm()"
-      />
+      <DxButton :text="'귀 ' + inputDateTax" :disabled="isDisabledForm" :style="{
+        color: 'white',
+        backgroundColor: 'gray',
+        height: $config_styles.HeightInput,
+      }" class="btn-date" />
+      <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm" :style="{
+        color: 'white',
+        backgroundColor: 'black',
+        height: $config_styles.HeightInput,
+      }" class="btn-date" />
+      <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm"
+        :disabled="(statusButton == 30 || statusButton == 40 || !compareForm()) && userType !== 'm'" />
     </div>
-    <div class="d-flex">
-      <DxButton
-        class="ml-3"
-        icon="plus"
-        @click="openAddNewModal"
-        :disabled="isDisabledForm || isExpiredStatus"
-      />
-      <DxButton
-        class="ml-3"
-        icon="trash"
-        @click="deleteItem"
-        :disabled="isDisabledForm || isExpiredStatus || isNewRow"
-      />
-      <DxButton
-        class="ml-4 d-flex"
-        style="cursor: pointer"
-        @click="modalHistory = true"
-        :disabled="isDisabledForm"
-      >
+    <div class="d-flex option-action">
+      <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || isExpiredStatus" />
+      <DxButton class="ml-3" @click="deleteItem" :disabled="isDisabledForm || isExpiredStatus || isNewRow">
+        <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
+      </DxButton>
+      <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true" :disabled="isDisabledForm">
         <a-tooltip placement="top">
           <template #title>사업소득자료 변경이력</template>
           <div style="text-align: center" @click="onItemClick('history')">
@@ -57,146 +27,72 @@
           </div>
         </a-tooltip>
       </DxButton>
-      <DxButton
-        class="ml-4"
-        style="cursor: pointer"
-        @click="modalHistoryStatus = true"
-        :disabled="isDisabledForm"
-      >
+      <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true" :disabled="isDisabledForm">
         <a-tooltip placement="top">
           <template #title>사업소득 마감상태 변경이력</template>
           <div style="text-align: center" @click="onItemClick('historyEdit')">
-            <img
-              src="@/assets/images/icon_status_history.png"
-              alt=""
-              class="icon_status_history"
-            />
+            <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
           </div>
         </a-tooltip>
       </DxButton>
-      <DxButton
-        @click="editPaymentDate"
-        class="ml-4 custom-button-checkbox"
-        :disabled="isDisabledForm || isExpiredStatus || isNewRow"
-      >
+      <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox"
+        :disabled="isDisabledForm || isExpiredStatus || isNewRow">
         <div class="d-flex-center">
           <checkbox-basic :valueCheckbox="true" :disabled="true" />
           <span class="fz-12 pl-5">지급일변경</span>
         </div>
       </DxButton>
       <div class="custom-select-tab ml-4">
-        <DxButton class="button-open-tab" @click="onItemClick('openTab')"
-          >사업소득자등록</DxButton
-        >
+        <DxButton class="button-open-tab" @click="onItemClick('openTab')">사업소득자등록</DxButton>
       </div>
     </div>
   </div>
-  <a-row style="flex-flow: row nowrap">
-    <a-col
-      class="col-tax"
-      :class="{ 'ele-opacity': !compareForm() }"
-    >
+  <a-row class="mt-10">
+    <a-col span="15" class="col-tax" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="loadingIncomeBusinesses" size="large">
-        <DxDataGrid
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="dataSourceDetail"
-          :show-borders="true"
-          key-expr="incomeId"
-          :allow-column-reordering="move_column"
-          :onRowClick="onRowClick"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-          :focused-row-enabled="true"
-          @selection-changed="selectionChanged"
-          v-model:focused-row-key="focusedRowKey"
-          v-model:selected-row-keys="selectedRowKeys"
-          ref="gridRef"
-          @focused-row-changing="onFocusedRowChanging"
-          id="tax-pay-620"
-          noDataText="내역이 없습니다"
-        >
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
+          key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
+          @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
+          v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging"
+          id="tax-pay-620" noDataText="내역이 없습니다">
           <DxSelection select-all-mode="allPages" mode="multiple" />
-          <DxColumn
-            caption="사업소득자 [소득구분]"
-            cell-template="tag"
-            data-field="employeeId"
-            alignment="left"
-          />
+          <DxColumn caption="사업소득자 [소득구분]" cell-template="tag" data-field="employeeId" alignment="left" />
           <template #tag="{ data }">
-            <div v-if="data.data.employeeId">
+            <div v-if="data.data.employeeId" class="d-flex-center">
               <span class="btn-container">
                 {{ data.data.employeeId }}
               </span>
-              <a-tooltip
-                placement="top"
-                zIndex="999999"
-                v-if="data.data?.employee?.name.length > 20"
-              >
-                <template #title>
-                  <span>{{
-                    checkLenTooltip(data.data?.employee?.name, 0)
-                  }}</span>
-                </template>
-                <div class="name-w-1">
-                  {{ checkLen(data.data?.employee?.name, 20) }}
+              <a-tooltip placement="top" zIndex="999999" :title="data.data?.employee?.name">
+                <div class="name-w-1 text-overflow mr-5 ml-5">
+                  {{ data.data?.employee?.name }}
                 </div>
               </a-tooltip>
-              <div class="name-w-1" v-else>
-                {{ checkLen(data.data?.employee?.name, 20) }}
-              </div>
-              <a-tooltip
-                placement="top"
-                zIndex="999999"
-                v-if="data.data?.employee?.incomeTypeName"
-              >
-                <template #title>
-                  <span>{{ data.data?.employee?.incomeTypeCode }}</span>
-                </template>
-                <a-tag class="py-1 mr-0">
-                  {{ checkLen(data.data?.employee?.incomeTypeName, 15) }}</a-tag
-                >
+              <!-- <div class="name-w-1 text-overflow" v-else>
+            {{ data.data?.employee?.name }}
+          </div> -->
+              <a-tooltip placement="top" zIndex="999999"
+                :title="data.data?.employee?.incomeTypeCode + ' ' + data.data?.employee?.incomeTypeName">
+                <a-tag class="py-1 mr-0 text-overflow">{{ data.data?.employee?.incomeTypeName }}</a-tag>
               </a-tooltip>
             </div>
             <div v-else></div>
+            <!-- <employ-type-select :readOnly="true"
+              :arrayValue="arrayEmploySelect" v-model:valueEmploy="data.data.employeeId" :newLoadKey="data.data.employeeId"/> -->
           </template>
-          <DxColumn
-            width="80px"
-            caption="지급일"
-            data-field="paymentDay"
-            cell-template="paymentDay"
-          />
+          <DxColumn width="80px" caption="지급일" data-field="paymentDay" cell-template="paymentDay" />
           <template #paymentDay="{ data }">
             {{ formatMonth(data.data.paymentDay) }}
           </template>
-          <DxColumn
-            caption="지급액"
-            width="100px"
-            data-field="paymentAmount"
-            :format="amountFormat"
-            data-type="string"
-            alignment="right"
-          />
-          <DxColumn
-            caption="세율"
-            width="60px"
-            data-field="taxRate"
-            cell-template="taxRateSlot"
-            alignment="left"
-          />
+          <DxColumn caption="지급액" width="100px" data-field="paymentAmount" :format="amountFormat" data-type="string"
+            alignment="right" />
+          <DxColumn caption="세율" width="60px" data-field="taxRate" cell-template="taxRateSlot" alignment="left" />
           <template #taxRateSlot="{ data }"> {{ data.value }}% </template>
-          <DxColumn
-            caption="공제"
-            cell-template="income-tax"
-            data-field="withholdingLocalIncomeTax"
-            width="100px"
-            alignment="right"
-            :calculateCellValue="calculateIncomeTypeCodeAndName"
-          />
+          <DxColumn caption="공제" cell-template="income-tax" data-field="withholdingLocalIncomeTax" width="100px"
+            alignment="right" :calculateCellValue="calculateIncomeTypeCodeAndName" />
           <template #income-tax="{ data }">
             <a-tooltip placement="top">
-              <template #title
-                >소득세
+              <template #title>소득세
                 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} /
                 지방소득세
                 {{
@@ -207,44 +103,31 @@
                 {{
                   $filters.formatCurrency(
                     data.data.withholdingIncomeTax +
-                      data.data.withholdingLocalIncomeTax
+                    data.data.withholdingLocalIncomeTax
                   )
                 }}
               </span>
             </a-tooltip>
           </template>
-          <DxColumn
-            caption="차인지급액"
-            width="120px"
-            data-field="actualPayment"
-            data-type="string"
-            :format="amountFormat"
-            alignment="right"
-          />
+          <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string" :format="amountFormat"
+            alignment="right" />
         </DxDataGrid>
-        <a-row
-          style="
+        <a-row style="
             border: 1px solid #ddd;
             border-top: none;
             display: flex;
             padding: 5px 10px;
-          "
-          class="fs-14"
-        >
+          " class="fs-14">
           <a-col class="sum-item">
             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
               사업소득자[소득구분]수
-              <span style="font-size: 16px"
-                >[{{ dataSourceDetail.length }}]</span
-              >
+              <span style="font-size: 16px">[{{ dataSourceDetail.length }}]</span>
             </div>
           </a-col>
           <a-col class="sum-item">
             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
               지급액합계
-              <span style="font-size: 16px"
-                >[{{ calcSummary(dataSourceDetail, "paymentAmount") }}]</span
-              >
+              <span style="font-size: 16px">[{{ calcSummary(dataSourceDetail, "paymentAmount") }}]</span>
             </div>
           </a-col>
           <a-col class="sum-item">
@@ -253,138 +136,87 @@
               <span style="font-size: 16px">[{{ customTextSummary() }}]</span>
             </div>
           </a-col>
-          <a-col  class="sum-item">
+          <a-col class="sum-item">
             <div class="dx-datagrid-summary-item dx-datagrid-text-content">
               차인지급액합계
-              <span style="font-size: 16px"
-                >[{{ calcSummary(dataSourceDetail, "actualPayment") }}]</span
-              >
+              <span style="font-size: 16px">[{{ calcSummary(dataSourceDetail, "actualPayment") }}]</span>
             </div>
           </a-col>
         </a-row>
       </a-spin>
     </a-col>
-    <a-col span="10" class="form-tax form-action">
-      <a-spin
-        :spinning="loadingIncomeBusiness || loadingIncomeBusinesses"
-        size="large"
-      >
+    <a-col span="9" class="form-tax form-action">
+      <a-spin :spinning="loadingIncomeBusiness || loadingIncomeBusinesses" size="large">
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
-            <employ-type-select
-              :arrayValue="arrayEmploySelect"
-              v-model:valueEmploy="dataAction.input.employeeId"
-              width="250px"
-              :required="true"
-              :newLoadKey="dataAction.input.employee.key"
-              @incomeTypeCode="changeIncomeTypeCode"
-              :disabled="disabledInput || idDisableNoData"
-              :popupAttributes="{id:'pa-620-popup'}"
-            />
+            <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
+              :required="true" :newLoadKey="dataAction.input.employee.key"
+              @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || idDisableNoData"
+              :popupAttributes="{ id: 'pa-620-popup' }" />
           </a-form-item>
-          <div class="header-text-1 mb-10">소득내역</div>
+          <div class="header-text-1 mb-10 mt-10">소득내역</div>
           <div class="income-details">
             <a-row>
-              <a-col :span="13">
+              <a-col :span="13"  class="input-group-left">
                 <a-form-item label="귀속/지급연월" label-align="right">
-                  <div class="d-flex-center">
-                    <DxButton
-                      :text="'귀 ' + inputDateTax"
-                      :disabled="isDisabledForm"
-                      :style="{
-                        color: 'white',
-                        backgroundColor: 'gray',
-                        height: $config_styles.HeightInput,
-                      }"
-                      class="btn-date"
-                    />
-                    <DxButton
-                      :text="'지 ' + paymentDateTax"
-                      :disabled="isDisabledForm"
-                      :style="{
-                        color: 'white',
-                        backgroundColor: 'black',
-                        height: $config_styles.HeightInput,
-                      }"
-                      class="btn-date"
-                    />
-                  </div>
+                  <!-- <div class="d-flex-center"> -->
+                    <DxButton :text="'귀 ' + inputDateTax" :disabled="isDisabledForm" :style="{
+                      color: 'white',
+                      backgroundColor: 'gray',
+                      height: $config_styles.HeightInput,
+                    }" class="btn-date" />
+                    <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm" :style="{
+                      color: 'white',
+                      backgroundColor: 'black',
+                      height: $config_styles.HeightInput,
+                    }" class="btn-date" />
+                  <!-- </div> -->
                 </a-form-item>
                 <a-form-item label="지급일" label-align="right" class="red">
-                  <div>
-                    <date-time-box-custom
-                      width="148px"
-                      class="mr-5"
-                      :required="true"
-                      :startDate="startDate"
-                      :finishDate="finishDate"
-                      v-model:valueDate="dayDate"
-                      :clearable="false"
-                      :disabled="disabledInput || idDisableNoData"
-                    />
-                    <div v-if="isLoopDay" class="error-group">
+                  <!-- <div> -->
+                    <date-time-box-custom width="150px" class="mr-5" :required="true" :startDate="startDate"
+                      :finishDate="finishDate" v-model:valueDate="dayDate" :clearable="false"
+                      :disabled="disabledInput || idDisableNoData" />
+                    <div v-if="isLoopDay" class="error-group" style="max-width: 150px;">
                       동일 소득자의 동일 지급일로 중복 등록 불가합니다.
                     </div>
-                  </div>
+                  <!-- </div> -->
                 </a-form-item>
                 <a-form-item label="지급액" label-align="right" class="red">
                   <div class="d-flex-center">
-                    <number-box-money
-                      :min="0"
-                      width="150px"
-                      class="mr-5"
-                      :max="2147483647"
-                      :disabled="idDisableNoData"
-                      v-model:valueInput="dataAction.input.paymentAmount"
-                      @changeInput="caclInput"
-                      :required="true"
-                      format="0,###"
-                    />
+                    <number-box-money :min="0" width="150px" class="mr-5" :max="2147483647" :disabled="idDisableNoData"
+                      v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true"
+                      format="0,###" />
                     원
                   </div>
                 </a-form-item>
                 <a-form-item label="세율" label-align="right"> 3% </a-form-item>
               </a-col>
-              <a-col :span="11">
+              <a-col :span="11"  class="input-group-right">
                 <div class="header-text-2 mb-10">
                   공제합계
                   <b>
                     {{
                       $filters.formatCurrency(
                         dataAction.input.withholdingIncomeTax +
-                          dataAction.input.withholdingLocalIncomeTax
+                        dataAction.input.withholdingLocalIncomeTax
                       )
-                    }} </b
-                  >원
+                    }} </b>원
                 </div>
                 <div>
                   <a-form-item label="소득세(공제)" label-align="right">
                     <div class="d-flex-center">
-                      <number-box-money
-                        :min="0"
-                        width="150px"
-                        class="mr-5"
-                        :disabled="idDisableNoData"
-                        v-model:valueInput="
-                          dataAction.input.withholdingIncomeTax
-                        "
-                        format="0,###"
-                      />
+                      <number-box-money :min="0" width="135px" class="mr-5" :disabled="idDisableNoData"
+                        v-model:valueInput="dataAction.input.withholdingIncomeTax
+                          " format="0,###" />
                       원
                     </div>
                   </a-form-item>
                   <a-form-item label="지방소득세(공제)" label-align="right">
                     <div class="d-flex-center">
-                      <number-box-money
-                        :min="0"
-                        width="150px"
-                        class="mr-5"
-                        :disabled="idDisableNoData"
-                        v-model:valueInput="
-                          dataAction.input.withholdingLocalIncomeTax
-                        "
-                        format="0,###"
-                      />
+                      <number-box-money :min="0" width="135px" class="mr-5" :disabled="idDisableNoData"
+                        v-model:valueInput="dataAction.input.withholdingLocalIncomeTax
+                          " format="0,###" />
                       원
                     </div>
                   </a-form-item>
@@ -395,16 +227,11 @@
                     <b class="ml-5">
                       {{
                         $filters.formatCurrency(dataAction.input.actualPayment)
-                      }}</b
-                    >원
+                      }}</b>원
                     <a-tooltip placement="top" class="custom-tooltip">
                       <template #title> 지급액 - 공제합계 </template>
                       <div style="text-align: center">
-                        <img
-                          src="@/assets/images/iconInfo.png"
-                          style="width: 14px; height: 14px"
-                          class="mb-3 ml-10"
-                        />
+                        <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3 ml-10" />
                       </div>
                     </a-tooltip>
                   </div>
@@ -413,62 +240,25 @@
             </a-row>
           </div>
           <a-row justify="center" class="my-10 mt-20">
-            <button-basic
-              text="저장"
-              type="default"
-              mode="contained"
-              :width="90"
-              @onClick="onSave($event)"
-              id="save-js-620"
-              size="large"
-              class="ml-4"
-              :disabled="idDisableNoData"
-            >
+            <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="onSave($event)" id="save-js-620"
+              size="large" class="ml-4" :disabled="idDisableNoData">
             </button-basic>
           </a-row>
         </StandardForm>
       </a-spin>
     </a-col>
   </a-row>
-  <DeletePopup
-    :modalStatus="modalDelete"
-    @closePopup="actionDeleteSuccess"
-    :data="popupDataDelete"
-    :processKey="paramIncomeBusinesses.processKey"
-  />
-  <HistoryPopup
-    :modalStatus="modalHistory"
-    @closePopup="modalHistory = false"
-    :data="paramIncomeBusinesses.processKey"
-    title="변경이력"
-    typeHistory="pa-620"
-  />
-  <HistoryPopup
-    :modalStatus="modalHistoryStatus"
-    @closePopup="modalHistoryStatus = false"
-    :data="paramIncomeBusinesses.processKey"
-    title="변경이력"
-    typeHistory="pa-620-status"
-  />
-  <EditPopup
-    :modalStatus="modalEdit"
-    @closePopup="actionEditSuccess"
-    :data="editParam"
-    :processKey="paramIncomeBusinesses.processKey"
-    :dataUpdate="changeDayData"
-    :dayArr="dayArr"
-  />
-  <PopupMessage
-    :modalStatus="rowChangeStatus"
-    @closePopup="rowChangeStatus = false"
-    typeModal="confirm"
-    :title="titleModalConfirm"
-    content=""
-    cancelText="아니요"
-    okText="네"
-    @checkConfirm="onRowChangeComfirm"
-    :isConfirmIcon="false"
-  />
+  <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+    :processKey="paramIncomeBusinesses.processKey" />
+  <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="paramIncomeBusinesses.processKey"
+    title="변경이력" typeHistory="pa-620" />
+  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+    :data="paramIncomeBusinesses.processKey" title="변경이력" typeHistory="pa-620-status" />
+  <EditPopup :modalStatus="modalEdit" @closePopup="actionEditSuccess" :data="editParam"
+    :processKey="paramIncomeBusinesses.processKey" :dataUpdate="changeDayData" :dayArr="dayArr" />
+  <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" typeModal="confirm"
+    :title="titleModalConfirm" content="" cancelText="아니요" okText="네" @checkConfirm="onRowChangeComfirm"
+    :isConfirmIcon="false" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -495,7 +285,7 @@ import {
   DeleteOutlined,
   SaveOutlined,
 } from "@ant-design/icons-vue";
-import { calcSummary, companyId, openTab } from "@/helpers/commonFunction";
+import { calcSummary, companyId, openTab, userType } from "@/helpers/commonFunction";
 import { dataActionUtils } from "../utils/index";
 import { Formula } from "@bankda/jangbuda-common";
 import notification from "@/utils/notification";
@@ -748,11 +538,9 @@ export default defineComponent({
         dataAction.value.input = rowData;
         dataActionEdit.value.input = { ...JSON.parse(JSON.stringify(rowData)) };
         disabledInput.value = true;
-        dayDate.value = `${
-          processKeyPA620.value.paymentYear
-        }${filters.formatMonth(processKeyPA620.value.paymentMonth)}${
-          data.paymentDay
-        }`;
+        dayDate.value = `${processKeyPA620.value.paymentYear
+          }${filters.formatMonth(processKeyPA620.value.paymentMonth)}${data.paymentDay
+          }`;
       } else {
         resetForm();
       }
@@ -819,11 +607,9 @@ export default defineComponent({
     //function common
     const resetForm = async () => {
       await pa620FormRef.value.resetValidate();
-      dayDate.value = `${
-        processKeyPA620.value.paymentYear
-      }${filters.formatMonth(processKeyPA620.value.paymentMonth)}${
-        paymentDayPA620.value
-      }`;
+      dayDate.value = `${processKeyPA620.value.paymentYear
+        }${filters.formatMonth(processKeyPA620.value.paymentMonth)}${paymentDayPA620.value
+        }`;
       dataAction.value.input = {
         ...dataActionUtils.input,
         paymentDay: paymentDayPA620.value,
@@ -1392,6 +1178,7 @@ export default defineComponent({
       isLoopDay,
       calculateIncomeTypeCodeAndName,
       dayArr,
+      userType
     };
   },
 });

@@ -474,7 +474,7 @@ watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: an
     formState.lastRetiredYearsOfService.settlementStartDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
   }
   if (value && +value > Number(formState.lastRetiredYearsOfService.settlementFinishDate)) {
-    formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
+    formState.lastRetiredYearsOfService.settlementFinishDate = null
   }
 });
 watchEffect(() => {
@@ -482,10 +482,10 @@ watchEffect(() => {
 })
 watch(() => formState.lastRetiredYearsOfService.settlementStartDate, (value: any) => {
   if (!interimPaymentTab1.value) formState.incomeCalculationInput.settlementStartDate = value
-  // else if (value && +value > +formState.prevRetiredYearsOfService.settlementFinishDate) {
-  //   formState.lastRetiredYearsOfService.settlementStartDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
-  //   // formState.lastRetiredYearsOfService.settlementFinishDate = Number(dayjs(String(value)).add(1, 'day').format('YYYYMMDD'))
-  // }
+
+  if (value && +value >= Number(formState.lastRetiredYearsOfService.settlementFinishDate)) {
+    formState.lastRetiredYearsOfService.settlementFinishDate = null
+  }
 });
 watch(() => formState.lastRetiredYearsOfService.settlementFinishDate, (value: any) => {
   formState.incomeCalculationInput.settlementFinishDate = value
@@ -516,9 +516,9 @@ watch(() => paymentYearAndMonth.value, (val) => {
 // =============== FUNCTION ================================
 const openNewTab = () => {
   if (props.retirementIncome === EmployeeWageType.WAGE) {
-    window.open('pa-520')
+    window.open('pa-120')
   } else {
-    window.open('pa-110')
+    window.open('pa-520')
   }
 };
 const submitForm = (e: any) => {

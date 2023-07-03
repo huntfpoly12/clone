@@ -60,7 +60,7 @@
                 class="mr-5"
                 v-model:valueMonth="dataStateAC580.imputedYear"
               />
-              <ProcessStatus :disabled="true" :valueStatus="30" />
+              <ProcessStatus :noOptionNoInput="false" :disabled="true" :valueStatus="30" />
             </div>
           </a-form-item>
         </a-col>
@@ -71,7 +71,7 @@
               class="mr-5"
               v-model:valueMonth="dataStateAC580.monthEnd"
             />
-            <ProcessStatus :disabled="true" :valueStatus="10" />
+            <ProcessStatus :noOptionNoInput="false" :disabled="true" :valueStatus="10" />
             <img
               src="@/assets/images/iconInfoGray.png"
               alt=""

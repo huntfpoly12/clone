@@ -60,7 +60,7 @@
             </DxButton>
           </div>
         </template>
-        <template #action=" { data }: any " class="custom-action">
+        <template #action="{ data }" class="custom-action">
           <div class="custom-action" style="margin-left: 5px;">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.type, data.data.workId) ">
@@ -74,7 +74,7 @@
                 </a-tooltip>
               </DxButton>
               <DxButton type="ghost" style="cursor: pointer" @click=" actionDelete(data.data.type, data.data.workId) "
-                v-if=" data.data.workingStatus != 0 ">
+                        v-if="data.data.workingStatus === 1 || data.data.workingStatus === 2">
                 <a-tooltip zIndex="9999999" placement="top" color="black">
                   <template #title>
                     <div>
@@ -91,14 +91,9 @@
         <!--        <DxScrolling column-rendering-mode="virtual"/>-->
       </DxDataGrid>
     </a-spin>
-
-    <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
-      :content=" contentDelete.message " :okText=" contentDelete.yes " :cancelText=" contentDelete.no "
-      @checkConfirm=" handleDelete " />
     <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
       :typeHistory=" typeHistory " />
     <CreatePA840Popup v-if=" modalCreate " @closeModal=" onCloseModal " />
-    <!--    <PopupMessage :modalStatus="isDelete"  @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />-->
   </div>
 </template>
 
@@ -127,6 +122,7 @@ import mutations from '@/graphql/mutations/PA/PA8/PA840/index';
 import queries from '@/graphql/queries/PA/PA8/PA840/index';
 import notification from '@/utils/notification';
 import { watch } from 'vue';
+import deletePopup from "@/utils/deletePopup";
 
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
@@ -142,7 +138,6 @@ enum dataSourceType {
 const store = useStore();
 const { per_page, move_column, colomn_resize } = store.state.settings;
 const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
-const dataType = ref(4);
 const dataSourceCount = ref(0);
 const dataSource = ref([]);
 
@@ -236,23 +231,13 @@ const onOpenLogs = (type: number, e: any) => {
 };
 
 //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
-
-const contentDelete = Message.getCommonMessage('303');
-const deleteMesDone = Message.getCommonMessage('302').message;
-const modalDelete = ref(false);
-const cancelCompanyParam = reactive({
-  companyId: companyId,
-  imputedYear: globalYear,
-  workId: NaN,
-})
-//--dataType == 4--
 const {
   mutate: cancelLeaveOfAbsenceMutate,
   onDone: cancelLeaveOfAbsenceOnDone,
   onError: cancelLeaveOfAbsenceError,
 } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeLeaveOfAbsence);
 cancelLeaveOfAbsenceOnDone(() => {
-  notification('success', deleteMesDone);
+  notification("success", Message.getMessage("COMMON", "302").message);
   companyEmployeeLeaveOfAbsencesRefetch();
 });
 cancelLeaveOfAbsenceError((res) => {
@@ -272,23 +257,27 @@ cancelReturnToWorkError((res) => {
   notification('error', res.message);
 })
 const actionDelete = (type: number, workId: number) => {
-  modalDelete.value = true;
-  cancelCompanyParam.workId = workId;
-  if (type === 4) {
-    dataType.value = type;
-  }
-  if (type === 5) {
-    dataType.value = type;
-  }
-}
-const handleDelete = (e: boolean) => {
-  modalDelete.value = false;
-  if (e && dataType.value === 4) {
-    cancelLeaveOfAbsenceMutate(cancelCompanyParam);
-  }
-  if (e && dataType.value === 5) {
-    cancelReturnToWorkMutate(cancelCompanyParam);
-  }
+  deletePopup({
+    callback: () => {
+      if (type === 4) {
+        cancelLeaveOfAbsenceMutate({
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          workId,
+        });
+      }
+      if (type === 5) {
+        cancelReturnToWorkMutate({
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          workId,
+        });
+      }
+    },
+    message: Message.getCommonMessage("303").message,
+    cancelText: Message.getCommonMessage("303").no,
+    okText: Message.getCommonMessage("303").yes,
+  });
 }
 
 //--------------------------get ReportViewUrl ---------------------

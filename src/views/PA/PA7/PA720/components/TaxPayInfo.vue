@@ -11,32 +11,27 @@
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" data-field="employeeId" cell-template="tag" alignment="left"/>
       <template #tag="{ data }">
-        <div>
+        <!-- <employ-type-select :readOnly="true"
+              :arrayValue="employSelect" v-model:valueEmploy="data.data.employeeId" :newLoadKey="data.data.employeeId"/> -->
+        <!-- <div> -->
           <div v-if="data.data.employeeId" class="d-flex-center">
             <span class="btn-container">
               {{ data.data.employeeId }}
             </span>
-            <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.name.length > 4">
-            <template #title>
-              <span>{{ checkLenTooltip(data.data?.employee?.name, 0) }}</span>
-            </template>
-            <div class="name-w-1 text-overflow">
+            <a-tooltip placement="top" zIndex="999999" :title="data.data?.employee?.name">
+            <div class="name-w-1 text-overflow mr-5 ml-5">
               {{ data.data?.employee?.name }}
             </div>
           </a-tooltip>
-          <div class="name-w-1 text-overflow" v-else>
+          <!-- <div class="name-w-1 text-overflow" v-else>
             {{ data.data?.employee?.name }}
-          </div>
-          <a-tooltip placement="top" zIndex="999999" v-if="data.data?.employee?.incomeTypeName">
-            <template #title>
-              <span>{{ data.data?.employee?.incomeTypeCode }} {{ checkLenTooltip(data.data?.employee?.incomeTypeName, 0)
-              }}</span>
-            </template>
-            <a-tag class="py-1 mr-0 text-overflow"> {{ data.data?.employee?.incomeTypeName }}</a-tag>
+          </div> -->
+          <a-tooltip placement="top" zIndex="999999" :title="data.data?.employee?.incomeTypeCode + ' ' + data.data?.employee?.incomeTypeName">
+            <a-tag class="py-1 mr-0 text-overflow">{{ data.data?.employee?.incomeTypeName }}</a-tag>
           </a-tooltip>
         </div>
         <div v-else></div>
-      </div>
+      <!-- </div> -->
       </template>
       <DxColumn caption="지급일" width="55" alignment="left" data-field="paymentDay" cell-template="paymentDay" />
       <template #paymentDay="{ data }">
@@ -364,6 +359,7 @@ export default defineComponent({
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return rowData.withholdingIncomeTax + rowData.withholdingLocalIncomeTax;
     }
+    const employSelect = computed(() => store.state.common.employSelect);
     return {
       rowTable,
       per_page,
@@ -387,7 +383,7 @@ export default defineComponent({
       onFocusedRowChanging,
       taxPayDataRef,
       removeHoverRowKey,
-      store,
+      store, employSelect,
       changeDayDataPA720,
       selectRow, calcSummary,
       calculateIncomeTypeCodeAndName

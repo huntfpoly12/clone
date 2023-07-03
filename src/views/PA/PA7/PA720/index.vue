@@ -208,14 +208,13 @@
       </a-spin>
     </div>
 
-    <a-row :class="{ 'ele-opacity': !compareForm() }"
-      style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
+    <a-row :class="{ 'ele-opacity': !compareForm() }" class="option-action">
       <a-col>
         <DxButton :text="'귀 ' + inputDate"
           :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
         <DxButton :text="'지 ' + paymentDate"
           :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
-        <ProcessStatus v-model:value-status="statusParam.status" :disabled="statusParam.status > 20 || !compareForm()"
+        <ProcessStatus v-model:value-status="statusParam.status" :disabled="(statusParam.status > 20 || !compareForm() ) && userType !== 'm'"
           @checkConfirm="mutateChangeStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
@@ -252,13 +251,13 @@
         </div>
       </a-col>
     </a-row>
-    <a-row class="content-btm" style="flex-flow: row nowrap">
-      <a-col :class="{ 'ele-opacity': !compareForm(), 'col-tax': true }" class="custom-layout">
+    <a-row>
+      <a-col :span="15" :class="{ 'ele-opacity': !compareForm() }" class="table-tax">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax" :isFirstRun="isFirstRun"
           :changeFommDone="changeFommDone" :saveToNewRow="saveToNewRow" :compareType="compareType"
           :compareForm="compareForm" />
       </a-col>
-      <a-col :span="11" class="custom-layout form-tax">
+      <a-col :span="9" class="form-tax">
         <FormTaxPayInfo ref="formTaxRef" :key="formKey" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
           :hasDataSource="hasDataSource" @onFormDone="onFormDone" @subValidate="subValidate"
           :addNewIncomeExtra="processKeyPA720.processKey" :isExpiredStatus="isExpiredStatus" />
@@ -284,7 +283,7 @@ import { ref, defineComponent, watch, computed, reactive } from 'vue';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { companyId, openTab, startYearMonth } from '@/helpers/commonFunction';
+import { companyId, openTab, startYearMonth, userType } from '@/helpers/commonFunction';
 import { DxDataGrid, DxColumn, DxScrolling, DxMasterDetail } from 'devextreme-vue/data-grid';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -527,7 +526,7 @@ export default defineComponent({
     };
     //on add row
     const rowChangeStatus = ref<Boolean>(false);
-    // click add button 
+    // click add button
     const openAddNewModal = async () => {
       compareType.value = 3;
       if (isNewRowPA720.value) {
@@ -686,7 +685,7 @@ export default defineComponent({
       notification('error', res.message);
     })
     //check to disable all input
-    const isExpiredStatus = computed(() => statusParam.value.status > 10)
+    const isExpiredStatus = computed(() => (userType !== 'm' && statusParam.value.status > 20) || (userType === 'm' && statusParam.value.status > 30))
 
     // -------------------- Delete item in tax table --------------------
 
@@ -922,8 +921,9 @@ export default defineComponent({
       customColumnClass,
       isClickAddMonthDiff, isClickMonthDiff,
       disableAddMonth,
+      userType
     };
   },
 });
-</script> 
+</script>
 <style lang="scss" scoped src="./style/style.scss" ></style>

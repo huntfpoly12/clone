@@ -13,7 +13,7 @@
       <div class="user-info">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
-        <div @click="openTabBoard" class="cursor-pointer">소통판</div>
+        <div v-if="userType === 'm'" @click="openTabBoard" class="cursor-pointer">소통판</div>
         <account-infor></account-infor>
       </div>
     </a-layout-header>
@@ -211,7 +211,8 @@ import {
   AC520,
   Test,
   Example,
-  CommunicationBoard
+  CommunicationBoard,
+  Announcement,
 } from "./screenComponents";
 
 import {
@@ -227,7 +228,7 @@ import {
   CaretRightOutlined
 } from "@ant-design/icons-vue";
 import { getJwtObject } from '@bankda/jangbuda-common';
-import {companyId, openTab, setMenuTab} from "@/helpers/commonFunction";
+import {companyId, openTab, setMenuTab, userType} from "@/helpers/commonFunction";
 import useCheckPermission from "@/helpers/useCheckPermission";
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
@@ -314,7 +315,8 @@ export default defineComponent({
     CaretRightOutlined,
     DxSortable,
     DxTabs,
-    CommunicationBoard
+    CommunicationBoard,
+    Announcement,
   },
   created() {
     const tabsCached = sessionStorage.getItem('tabsCached')
@@ -500,6 +502,7 @@ export default defineComponent({
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "ac-630") return 'AC630';
       if (this.activeTab.id === "communication-board") return 'CommunicationBoard';
+      if (this.activeTab.id === "announcement") return 'announcement';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
@@ -869,7 +872,8 @@ export default defineComponent({
       count,
       logout,
       ENVIRONMENT,
-      openTabBoard
+      openTabBoard,
+      userType
     }
   },
 });

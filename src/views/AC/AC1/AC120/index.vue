@@ -48,6 +48,7 @@
 							<!-- <div class="d-flex-center"> -->
 								<div class="action d-flex-center">
 									<ProcessStatus
+										:noOptionNoInput="false"
 										v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
 										:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
 										:disabled="true" />
@@ -968,7 +969,7 @@ export default defineComponent({
 					totalResolutionNormalStatuFalse++;
 				}
 			});
-			return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span> 
+			return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span>
 			비정상 내역 건 <span>[${filters.formatCurrency(totalResolutionNormalStatuFalse)}]</span>`;
 		};
 

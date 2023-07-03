@@ -1,12 +1,6 @@
 #pa-720 {
   margin-top: 10px;
 
-  :deep .ant-form-item-label {
-    >label {
-      width: 100px;
-    }
-  }
-
   .top-content {
     margin-bottom: 10px;
     padding: 2px 4px;
@@ -77,11 +71,6 @@
 
   :deep .dx-show-invalid-badge {
     margin-left: 0px !important;
-    // display: inline-block !important;
-  }
-
-  :deep .ant-form-item-label>label {
-    width: 117px;
   }
 
   :deep .dx-master-detail-cell {
@@ -128,15 +117,12 @@
     }
   }
 
-  :deep .input-group-4 {
-    .ant-form-item-control {
-      flex: 1
-    }
+  :deep .input-group-left .ant-form-item-label>label {
+    width: 100px;
+  }
 
-    .ant-form-item-control-input-content {
-      display: flex;
-      align-items: center;
-    }
+  :deep .input-group-right .ant-form-item-label>label {
+    width: 115px;
   }
 
   :deep .dx-datagrid-text-content {
@@ -166,10 +152,17 @@
     }
   }
 
-  :deep .dx-button-content {
-    padding: 6px;
-    display: inline-flex;
-    align-items: center;
+  .option-action {
+    border: 1px solid #d7d7d7;
+    padding: 10px;
+    margin: 10px 0;
+    justify-content: space-between;
+
+    :deep .dx-button-content {
+      padding: 6px;
+      display: inline-flex;
+      align-items: center;
+    }
   }
 
   .button-open-tab {
@@ -223,7 +216,7 @@
     }
 
     div.dx-button-content {
-      padding: 0px 6px 1px;
+      padding: 0px 7px;
 
       .dx-dropdowneditor-icon {
         width: 24px;
@@ -258,32 +251,23 @@
     padding: 0;
   }
 
-  :deep .col-tax {
-    height: calc(100vh - 300px);
-    border: 1px solid #d7d7d7;
-    margin-top: 10px;
-    margin-right: 10px;
-    padding-top: 10px;
-    flex: 1;
+  :deep .table-tax {
+    padding-right: 10px;
   }
 
   :deep .form-tax {
     border: 1px solid #d7d7d7;
-    margin-top: 10px;
-    padding: 10px 10px 10px 10px;
+    padding: 10px;
   }
 
   #tax-pay-720 {
-    height: calc(100vh - 368px) !important;
+    height: calc(100vh - 345px) !important;
 
     .dx-freespace-row {
       display: none !important;
     }
 
-    
-  }
-  :deep span.ant-tag {
-    width: 210px;
+
   }
 
   .sum-item {
@@ -302,18 +286,6 @@
     padding: 5px 10px;
     min-height: 57px;
     align-items: center;
-  }
-
-  .name-w {
-    width: 70px;
-    display: inline-block;
-  }
-
-  .name-w-1 {
-    display: inline-block;
-    text-align: center;
-    margin: 0 5px;
-    width: 47px;
   }
 
 }
