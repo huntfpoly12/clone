@@ -53,7 +53,7 @@
             v-model:valueStatus="data.data.status"
             :dataRow="data.data"
             @checkConfirmRowTable="changeStatusRowTable"
-            :disabled="data.data.status == 40 || data.data.status == 30"
+            :disabled="(data.data.status == 40 || data.data.status == 30) && userType !== 'm'"
           />
         </template>
         <DxColumn
@@ -397,7 +397,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
 import dayjs from "dayjs";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -734,6 +734,7 @@ export default defineComponent({
       checkModify,
       showTooltipYearMonth,
       onRowClick,
+      userType
     };
   },
 });

@@ -405,7 +405,7 @@ import {defineComponent, ref, reactive, computed, watch, nextTick, watchEffect} 
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
-import {makeDataClean } from "@/helpers/commonFunction";
+import { makeDataClean, userType } from "@/helpers/commonFunction";
 import ProcessStatus from "@/components/common/ProcessStatus.vue";
 import {
   DxItem,
@@ -604,11 +604,7 @@ export default defineComponent({
     });
     const isReadonlyByAccountingProcessesStatus = computed(() => {
       const status = listAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0
-      if (status === 20 || status === 30 || status === 40) {
-        return true
-      } else {
-        return false
-      }
+      return status !== 10 && userType !== 'm';
     })
     let isSelectAll = computed(() => {
       const valueSelect = selectedRowKeys.value.length
@@ -1499,7 +1495,8 @@ export default defineComponent({
       refFormDetailAc110,
       keyRefreshGridDetailAc,
       changeInput,
-      isReadonlyByAccountingProcessesStatus
+      isReadonlyByAccountingProcessesStatus,
+      userType
     };
   },
 });

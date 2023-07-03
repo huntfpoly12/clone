@@ -129,6 +129,7 @@
               valueExpr="id"
               :isShowId="false"
               placeholder="선택"
+              :search-enabled="false"
             />
           </template>
           <DxColumn

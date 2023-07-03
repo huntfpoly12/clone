@@ -11,7 +11,7 @@
     <a-row>
       <a-col span="17" class="table-left">
         <div class="d-flex-center justify-content-end mb-5">
-          <DxButton type="default" @click="handleFillValuePreIndex" :disabled="dataBudget?.status !== 10" text="전예산액 불러오기" />
+          <DxButton type="default" @click="handleFillValuePreIndex" :disabled="!isEdit" text="전예산액 불러오기" />
           </div>
         <a-spin :spinning="loading">
           <DxDataGrid :load-panel="false" :show-row-lines="true" :hoverStateEnabled="true" :show-borders="true" :data-source="dataSource"
@@ -105,7 +105,7 @@
           <DxField :label="dataBudget?.index === 0 ? `전년도` : `${(dataBudget?.index || 0) - 1} 차 추경`">
             <div class="d-flex">
               <div class="d-flex-center">
-                <number-box-money :disabled="dataBudget?.status === 20" class="flex-1 mr-5" :min="0" width="200px" format="#0,###"
+                <number-box-money :disabled="!isEdit" class="flex-1 mr-5" :min="0" width="200px" format="#0,###"
                   v-model:valueInput="formState.previousAmount" />
                 <a-tag v-if="formState.code2 === '501010000'">임직원보수일람표 반영</a-tag>
               </div>
@@ -116,7 +116,7 @@
               <div class="d-flex-center">
                 <number-box-money class="flex-1 mr-5" v-model:valueInput="formState.amount"
                   width="200px" format="#0,###"
-                  :disabled="formState.code2 === '501010000'|| dataBudget?.status === 20" />
+                  :disabled="formState.code2 === '501010000'|| !isEdit" />
                 <a-tag v-if="formState.code2 === '501010000'">임직원보수일람표 반영</a-tag>
                 <info-tool-tip v-if="formState.code2 === '501010000'">인건비 관련 예산액은 [임직원보수일람표]의 금액이 반영되며, 수정불가입니다.
                 </info-tool-tip>
@@ -172,32 +172,32 @@
           </DxField>
           <DxField label="자부담">
             <div class="d-flex-center gap-10">
-              <number-box-money :disabled="dataBudget?.status === 20" placeholder="" v-model:valueInput="formState.fundingSource1" width="200px" />
-              <DxButton icon="back" type="default" :disabled="dataBudget?.status === 20"
+              <number-box-money :disabled="!isEdit" placeholder="" v-model:valueInput="formState.fundingSource1" width="200px" />
+              <DxButton icon="back" type="default" :disabled="!isEdit"
                 :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource1')" />
             </div>
           </DxField>
           <DxField label="수익사업">
             <div class="d-flex-center gap-10">
-              <number-box-money :disabled="dataBudget?.status === 20" placeholder="" v-model:valueInput="formState.fundingSource2" width="200px" />
-              <DxButton icon="back" type="default" :disabled="dataBudget?.status === 20"
+              <number-box-money :disabled="!isEdit" placeholder="" v-model:valueInput="formState.fundingSource2" width="200px" />
+              <DxButton icon="back" type="default" :disabled="!isEdit"
                 :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource2')" />
             </div>
           </DxField>
           <DxField label="보조금">
             <div class="d-flex-center gap-10">
-              <number-box-money :disabled="dataBudget?.status === 20" placeholder="" v-model:valueInput="formState.fundingSource3" width="200px" />
-              <DxButton icon="back" type="default" :disabled="dataBudget?.status === 20"
+              <number-box-money :disabled="!isEdit" placeholder="" v-model:valueInput="formState.fundingSource3" width="200px" />
+              <DxButton icon="back" type="default" :disabled="!isEdit"
                 :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource3')" />
             </div>
           </DxField>
           <DxField label="후원금">
             <div class="d-flex-center gap-10">
-              <number-box-money :disabled="dataBudget?.status === 20" placeholder="" v-model:valueInput="formState.fundingSource4" width="200px" />
-              <DxButton icon="back" type="default" :disabled="dataBudget?.status === 20"
+              <number-box-money :disabled="!isEdit" placeholder="" v-model:valueInput="formState.fundingSource4" width="200px" />
+              <DxButton icon="back" type="default" :disabled="!isEdit"
                 :text="`${dataBudget && dataBudget.index > 0 ? `${dataBudget.index} 차 추경` : `당해년도`} 예산액 입력`"
                 @click="fillFundingSource('fundingSource4')" />
             </div>
@@ -209,7 +209,7 @@
                   {{ dataBudget?.index == 0 ? `당해년도` : `${dataBudget?.index}차 추경` }} 예산액 {{filters.formatNumber(formState.amount)}} 과 자금원천 합계 {{filters.formatNumber(summaryFundingSource)}} 는 일치해하지 않기에 저장불가합니다.
                 </template>
                 <div>
-                  <DxButton type="default" :disabled="summaryFundingSource !== formState.amount || dataBudget?.status === 20" @click="handleSubmit"
+                  <DxButton type="default" :disabled="summaryFundingSource !== formState.amount || !isEdit" @click="handleSubmit"
                     text="저장" />
                 </div>
               </a-tooltip>
@@ -241,7 +241,7 @@
 import { Message } from "@/configs/enum";
 import mutations from '@/graphql/mutations/AC/AC5/AC520';
 import queries from "@/graphql/queries/AC/AC5/AC520";
-import { accountSubject, companyId } from "@/helpers/commonFunction";
+import { accountSubject, companyId, userType } from "@/helpers/commonFunction";
 import filters from '@/helpers/filters';
 import notification from "@/utils/notification";
 import CalculationDetailsPopup from "@/views/AC/AC5/AC520/components/CalculationDetailsPopup.vue";
@@ -305,6 +305,7 @@ const initialForm = {
 const formState = ref({...initialForm});
 const previousRowData = ref();
 const isChangedForm = computed(() => !isEqual(previousRowData.value, formState.value))
+const isEdit = computed(() => (userType !== 'm' && dataBudget.value?.status === 10) || (userType === 'm' && dataBudget.value?.status !== 40))
 const dataSource = ref()
 const codes = JSON.parse(sessionStorage.getItem("accountSubject") || '')?.[0]?.codes
 const codesPreIndexBudget = ref()

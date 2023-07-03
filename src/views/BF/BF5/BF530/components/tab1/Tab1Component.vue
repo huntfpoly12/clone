@@ -13,8 +13,9 @@
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
+          :selected-row-keys="selectedRowKeys"
           @selection-changed="selectionChanged"
-          :allowSelection="true"
+
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
           @contentReady="onDataGridInitialized"
@@ -548,11 +549,14 @@ export default defineComponent({
             return true;
           });
         });
+        console.log('%c arr', 'color: red',arr)
         store.commit("common/filterDsTab1Bf530", arr);
+        tab1Bf520Ref.value.instance.clearSelection();
       },
       { deep: true }
     );
     const onDataGridInitialized = (e: any) => {
+      console.log('%c reachDataCount', 'color: red',reachDataCount.value)
       if (reachDataCount.value == 0) {
         reachDataCount.value++;
       }
@@ -575,10 +579,12 @@ export default defineComponent({
 
     const selectionChanged = (event: any) => {
       let { selectedRowsData, currentDeselectedRowKeys } = event;
-      selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
-        return item !== currentDeselectedRowKeys[0];
-      });
+      // selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
+      //   return item !== currentDeselectedRowKeys[0];
+      // });
+      console.log('%c selectedRowsData', 'color: red',  selectedRowsData)
       companies.value = selectedRowsData.map((item: any) => item.companyId);
+      selectedRowKeys.value = selectedRowsData.map((item: any) => item.companyId);
     };
     const selectedRowKeys: any = ref([]);
     const handleRowClick = (e: any) => {
@@ -589,6 +595,10 @@ export default defineComponent({
       ) {
         selectedRowKeys.value.push(e.key);
         e.component.selectRows(selectedRowKeys.value);
+      } else {
+        selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
+          return item !== e.key;
+        });
       }
     };
     const rowUpdating = (e: any) => {
