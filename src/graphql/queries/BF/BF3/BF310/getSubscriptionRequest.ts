@@ -99,6 +99,7 @@ query getSubscriptionRequest($id: Int!) {
         ownerName
         ownerBizNumber
         withdrawDay
+        ownerResidentId
       }
       extra{
         salesRepresentativeId
