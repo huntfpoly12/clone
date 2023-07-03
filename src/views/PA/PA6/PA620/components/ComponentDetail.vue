@@ -12,7 +12,7 @@
         height: $config_styles.HeightInput,
       }" class="btn-date" />
       <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm"
-        :disabled="statusButton == 30 || statusButton == 40 || !compareForm()" />
+        :disabled="(statusButton == 30 || statusButton == 40 || !compareForm()) && userType !== 'm'" />
     </div>
     <div class="d-flex option-action">
       <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || isExpiredStatus" />
@@ -285,7 +285,7 @@ import {
   DeleteOutlined,
   SaveOutlined,
 } from "@ant-design/icons-vue";
-import { calcSummary, companyId, openTab } from "@/helpers/commonFunction";
+import { calcSummary, companyId, openTab, userType } from "@/helpers/commonFunction";
 import { dataActionUtils } from "../utils/index";
 import { Formula } from "@bankda/jangbuda-common";
 import notification from "@/utils/notification";
@@ -1178,6 +1178,7 @@ export default defineComponent({
       isLoopDay,
       calculateIncomeTypeCodeAndName,
       dayArr,
+      userType
     };
   },
 });

@@ -251,7 +251,7 @@
 					<DxButton :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
 						:style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
 					<ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-						:disabled="status == 30 || status == 40 || checkChangeForm"/>
+						:disabled="(status == 30 || status == 40 || checkChangeForm)  && userType !== 'm'"/>
 				</div>
 				<div v-else>
 					<DxButton text="귀" :style="{ color: 'white', backgroundColor: 'gray' }"
@@ -670,7 +670,7 @@ export default defineComponent({
 			}
 		});
 		watch(() => status.value, (newVal) => {
-			if (userType != "m" && (newVal == 30 || newVal == 40)) {
+			if ((userType != "m" && newVal == 30 || newVal == 40) || (userType == "m" && newVal == 40)) {
 				store.state.common.pa510.statusDisabledStatus = true;
 			} else {
 				store.state.common.pa510.statusDisabledStatus = false;
@@ -930,6 +930,7 @@ export default defineComponent({
 			classObjectDetail,
 			checkShowTagStatus,
 			checkChangeForm,
+      userType
 		};
 	},
 });

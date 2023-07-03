@@ -8,7 +8,10 @@
           :allow-column-resizing="colomn_resize" :column-auto-width="true" noDataText="내역이 없습니다"
           @cell-prepared="onCellPrepared" @row-prepared="onRowPrepared" @saving="handleSaving" style="height: 70vh">
           <DxRowDragging :allow-reordering="true" :show-drag-icons="true" name="drag" :on-reorder="onReorder" />
-          <DxEditing mode="batch" :allow-adding="true" :allow-deleting="dataBudget?.status !== 20" :allow-updating="dataBudget?.status !== 20" :use-icons="true"
+          <DxEditing mode="batch" :allow-adding="true"
+                     :allow-deleting="isEdit"
+                     :allow-updating="isEdit"
+                     :use-icons="true"
             new-row-position="last">
             <DxTexts add-row="임직원보수등록" />
             <DxTexts save-all-changes="저장" />
@@ -18,14 +21,14 @@
           <DxPaging :page-size="0" />
           <DxToolbar>
             <DxItem location="after">
-              <DxButton :disabled="dataBudget?.status !== 10" @click="handleFillValuePreIndex" text="전임직원수일람표 불러오기"
+              <DxButton :disabled="!isEdit" @click="handleFillValuePreIndex" text="전임직원수일람표 불러오기"
                 class="d-flex-center" style="background: #337ab7; color: white; height: 100%;" />
             </DxItem>
             <DxItem location="after" name="addRowButton" css-class="cell-button-add" cell-template="addRow">
               <a-tooltip title="임직원보수등록">
                 <div>
                   <DxButton size="large" @click="addRow" style="background: #337ab7; color: white"
-                    :disabled="dataBudget.status !== 10">
+                    :disabled="!isEdit">
                     <PlusOutlined :style="{ fontSize: '17px', color: 'white' }" />
                     신규
                   </DxButton>
@@ -35,7 +38,7 @@
             <DxItem name="saveButton">
               <a-tooltip title="저장">
                 <div>
-                  <DxButton style="background: #337ab7; color: white" :disabled="dataAllRow.length === 0 || dataBudget.status !== 10" @click="actionSave">
+                  <DxButton style="background: #337ab7; color: white" :disabled="dataAllRow.length === 0 || !isEdit" @click="actionSave">
                     <SaveOutlined :style="{ fontSize: '17px', color: 'white' }" />
                     저장
                   </DxButton>
@@ -213,7 +216,7 @@ import { Message } from "@/configs/enum";
 import mutations from '@/graphql/mutations/AC/AC5/AC520';
 import getEmployeePayTable from "@/graphql/queries/AC/AC5/AC520/getEmployeePayTable";
 import searchEmployeeOccupations from "@/graphql/queries/AC/AC5/AC520/searchEmployeeOccupations";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import filters from "@/helpers/filters";
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import notification from "@/utils/notification";
@@ -257,6 +260,7 @@ const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const globalFacilityBizId = computed<number>(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 const dataBudget = computed(() => store.getters['common/getDataBudget']);
 const facilityBizType = computed<number>(() => parseInt(sessionStorage.getItem("facilityBizType") ?? '0'));
+const isEdit = computed(() => (userType !== 'm' && dataBudget.value?.status === 20) || (userType === 'm' && dataBudget.value?.status !== 40))
 const dataOld: any = ref([])
 const dataSource = ref(new DataSource({
   store: {

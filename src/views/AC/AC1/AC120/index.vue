@@ -969,7 +969,7 @@ export default defineComponent({
 					totalResolutionNormalStatuFalse++;
 				}
 			});
-			return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span> 
+			return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span>
 			비정상 내역 건 <span>[${filters.formatCurrency(totalResolutionNormalStatuFalse)}]</span>`;
 		};
 

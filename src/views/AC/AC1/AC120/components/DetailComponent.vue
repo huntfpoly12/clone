@@ -14,7 +14,7 @@
 									</a-form-item>
 									<button-basic @onClick="actionOpenModalCopy" style="margin: -5px 0px 0px 5px"
 										mode="contained" type="default" :text="textButton + '으로 변경'"
-										:disabled="statusNoData || statusProcess != 10" />
+										:disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)" />
 								</div>
 								<a-form-item label="결의구분">
 									<default-text-box
@@ -39,37 +39,37 @@
 								</a-form-item>
 								<a-form-item label="적요" class="red">
 									<default-text-box v-model:valueInput="formData.summary"
-										:disabled="statusNoData || statusProcess != 10" width="150px" :required="true" />
+										:disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40) " width="150px" :required="true" />
 								</a-form-item>
 							</a-col>
 							<a-col :span="6" class="col-4 fl-r">
 								<a-form-item label="자금원천" class="red">
 									<FundingSourceSelect v-model:valueInput="formData.fundingSource"
-										:disabled="statusNoData || statusProcess != 10" width="230px" :required="true" />
+										:disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)" width="230px" :required="true" />
 								</a-form-item>
 								<!-- <a-form-item label="계정과목" class="red">
-                  <account-code-select :key="resetSelectAccount" :disabled="statusNoData || statusProcess != 10" :classification="classificationAccountCode"
+                  <account-code-select :key="resetSelectAccount" :disabled="statusNoData || (userType !== 'm' && statusProcess != 10" || (userType === 'm' && statusProcess === 40 :classification="classificationAccountCode"
                     v-model:valueInput="formData.accountCode" width="230px" :required="true" />
                 </a-form-item> -->
 								<a-form-item label="계정과목">
 									<account-code-select :key="resetSelectAccount"
-										:disabled="statusNoData || statusProcess != 10"
+										:disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										:classification="classificationAccountCode"
 										v-model:valueInput="formData.accountCode" width="230px" />
 								</a-form-item>
 							</a-col>
 							<a-col :span="7" class="col-1">
 								<a-form-item label="원인행위일자" class="red" :class="colorDate">
-									<date-time-box :teleport="true" :disabled="statusNoData || statusProcess != 10"
+									<date-time-box :teleport="true" :disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										v-model:valueDate="formData.causeActionDate" width="150px" :required="true"
 										ref="requiredCauseActionDate" />
 								</a-form-item>
 								<a-form-item label="결재일자">
-									<date-time-box :teleport="true" :disabled="statusNoData || statusProcess != 10"
+									<date-time-box :teleport="true" :disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										v-model:valueDate="formData.paymentDate" width="150px" />
 								</a-form-item>
 								<a-form-item label="발의일자">
-									<date-time-box :teleport="true" :disabled="statusNoData || statusProcess != 10"
+									<date-time-box :teleport="true" :disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										v-model:valueDate="formData.proposedDate" width="150px" />
 								</a-form-item>
 							</a-col>
@@ -80,24 +80,24 @@
 								</a-form-item>
 
 								<a-form-item label="출납일자">
-									<date-time-box :teleport="true" :disabled="statusNoData || statusProcess != 10"
+									<date-time-box :teleport="true" :disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										v-model:valueDate="formData.accountingDate" width="130px" />
 								</a-form-item>
 								<a-form-item label="등기일자">
-									<date-time-box :teleport="true" :disabled="statusNoData || statusProcess != 10"
+									<date-time-box :teleport="true" :disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										v-model:valueDate="formData.registrationDate" width="130px" />
 								</a-form-item>
 							</a-col>
 							<a-col :span="6" class="col-3">
 								<a-form-item label="거래처">
 									<customer-select
-										:disabled="formData.resolutionClassification == 1 || statusNoData || statusProcess != 10"
+										:disabled="formData.resolutionClassification == 1 || statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										v-model:valueInput="formData.clientId" :search-enabled="true" width="150px" />
 								</a-form-item>
 								<div class="input_info">
 									<a-form-item :label="textLabelInputSource">
 										<default-text-box v-model:valueInput="formData.source" width="150px"
-											:disabled="statusNoData || statusProcess != 10" />
+											:disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)" />
 									</a-form-item>
 									<a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
 										<template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서
@@ -109,7 +109,7 @@
 								<div class="input_info">
 									<a-form-item label="작성자">
 										<default-text-box v-model:valueInput="formData.writer" width="150px"
-											:disabled="statusNoData || statusProcess != 10" />
+											:disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)" />
 									</a-form-item>
 									<a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
 										<template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서
@@ -122,7 +122,7 @@
 							<a-col :span="6" class="col-4 fl-r">
 								<a-form-item label="상대계정">
 									<account-code-select :key="resetSelectAccount"
-										:disabled="formData.resolutionClassification == 1 || statusNoData || statusProcess != 10"
+										:disabled="formData.resolutionClassification == 1 || statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										:classification="classificationRelationCode"
 										v-model:valueInput="formData.relationCode" width="230px" />
 								</a-form-item>
@@ -130,7 +130,7 @@
 									<!-- <default-text-box v-model:valueInput="formData.memo"
                                             width="150px" height="60px" /> -->
 									<text-area-box width="230px" v-model:valueInput="formData.memo" :height="60"
-										:disabled="statusNoData || statusProcess != 10" />
+										:disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)" />
 								</a-form-item>
 							</a-col>
 						</a-row>
@@ -151,7 +151,7 @@
 							<a-col :span="12">
 								<a-form-item class="red" label="품의종류">
 									<radio-group
-										:disabled="formData.resolutionClassification == 1 || statusNoData || statusProcess != 10"
+										:disabled="formData.resolutionClassification == 1 || statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										v-model:valueRadioCheck="formData.letterOfApprovalType"
 										:arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'" :required="true" />
 								</a-form-item>
@@ -169,7 +169,7 @@
 							<a-col :span="24">
 								<a-form-item label="품의 원인 및 용도">
 									<text-area-box
-										:disabled="formData.resolutionClassification == 1 || statusNoData || statusProcess != 10"
+										:disabled="formData.resolutionClassification == 1 || statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 										v-model:valueInput="formData.causeUsage" :height="50" />
 								</a-form-item>
 							</a-col>
@@ -179,13 +179,13 @@
 				</StandardForm>
 				<div class="text-align-center mt-20">
 					<DxButton @click="onCancelDeleteRow" class="custom-button" type="default"
-						:height="$config_styles.HeightInput" :disabled="statusNoData || statusProcess != 10">
+						:height="$config_styles.HeightInput" :disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)">
 						<div class="d-flex-center">
 							<checkbox-basic :valueCheckbox="true" disabled="true" />
 							<span>전표취소</span>
 						</div>
 					</DxButton>
-					<button-basic @onClick="onSubmit" :disabled="statusNoData || statusProcess != 10"
+					<button-basic @onClick="onSubmit" :disabled="statusNoData || (userType !== 'm' && statusProcess != 10) || (userType === 'm' && statusProcess === 40)"
 						style="margin-left: 5px" mode="contained" type="default" text="저장" />
 				</div>
 			</a-col>
@@ -226,7 +226,7 @@ import ModalDelete from "./ModalDelete.vue";
 import queries from "@/graphql/queries/AC/AC1/AC120";
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import filters from "@/helpers/filters";
 import UploadPreviewImage from "./UploadPreviewImage.vue";
 import { cloneDeep, isEqual } from "lodash";
@@ -447,7 +447,7 @@ export default defineComponent({
 				};
 				if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 12) {
 				    dataSubmit.input.statementOfGoodsItems = null;
-				} 
+				}
 				// else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
 				//     dataSubmit.input.amount = -dataSubmit.input.amount
 				// }
@@ -545,6 +545,7 @@ export default defineComponent({
 			handleConfirmChange,
 			formData, statusNoData,
 			statusProcess,
+      userType
 		};
 	},
 });
