@@ -288,7 +288,7 @@
           >
             <div v-if="!loading">
               <zoom-in-outlined
-                v-if="data.data.status > 20"
+                v-if="(userType !== 'm' && data.data.status > 20) || (userType === 'm' && data.data.status > 30)"
                 :style="{ fontSize: '20px', color: 'black' }"
               />
               <edit-outlined

@@ -24,7 +24,7 @@
                 v-model:valueInput="formState.nonTaxableRetirementBenefits"
                 format="#0,###"
                 :min="0"
-                :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+                :disabled="!isEdit"
               />
               <span class="pl-5">원</span>
             </div>
@@ -67,7 +67,7 @@
                   v-model:valueInput="formState.taxCredit"
                   format="0,###"
                   :min="0"
-                  :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+                  :disabled="!isEdit"
                 />
                 <span class="pl-5">원</span>
                 <info-tool-tip>
@@ -86,7 +86,7 @@
                 v-model:valueInput="formState.prePaidDelayedTaxPaymentTaxAmount"
                 format="0,###"
                 :min="0"
-                :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+                :disabled="!isEdit"
               />
               <span class="pl-5">원</span>
               <info-tool-tip
@@ -114,7 +114,7 @@
               width="20%"
               class="mr-5"
               placeholder="연금계좌취급자"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
             <biz-number-text-box
               v-model:valueInput="
@@ -125,7 +125,7 @@
               width="20%"
               class="mr-5"
               placeholder="사업자등록번호"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
             <default-text-box
               v-model:valueInput="
@@ -136,7 +136,7 @@
               width="15%"
               class="mr-5"
               placeholder="계좌번호"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
             <date-time-box
               v-model:valueDate="
@@ -148,7 +148,7 @@
               class="mr-5"
               placeholder="입금일"
               ref="statements1Ref"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
             <number-box-money
               v-model:valueInput="
@@ -159,7 +159,7 @@
               width="20%"
               placeholder="계좌입금금액"
               :min="1"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
           </div>
           <div class="d-flex mt-5">
@@ -172,7 +172,7 @@
               width="20%"
               class="mr-5"
               placeholder="연금계좌취급자"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
             <biz-number-text-box
               v-model:valueInput="
@@ -183,7 +183,7 @@
               width="20%"
               class="mr-5"
               placeholder="사업자등록번호"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
             <default-text-box
               v-model:valueInput="
@@ -194,7 +194,7 @@
               width="15%"
               class="mr-5"
               placeholder="계좌번호"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
             <date-time-box
               v-model:valueDate="
@@ -206,7 +206,7 @@
               class="mr-5"
               placeholder="입금일"
               ref="statements2Ref"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
             <number-box-money
               v-model:valueInput="
@@ -217,7 +217,7 @@
               width="20%"
               placeholder="계좌입금금액"
               :min="1"
-              :disabled="retirementStatus !== 10 &&  retirementStatus !== 20"
+              :disabled="!isEdit"
             />
           </div>
         </a-col>
@@ -227,7 +227,7 @@
             type="default"
             mode="contained"
             @onClick="handleCalculateIncomeRetirementTax"
-            :disabled="taxableRetirementBenefitsRef <= 0 || disableBtn || retirementStatus !== 10 &&  retirementStatus !== 20"
+            :disabled="taxableRetirementBenefitsRef <= 0 || disableBtn || !isEdit"
           />
         </div>
 
@@ -610,7 +610,7 @@
 import { computed, reactive, ref, watch, watchEffect } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
 import { useStore } from "vuex";
@@ -629,6 +629,7 @@ const retirementBenefitsStore = computed(
 const interimPaymentTab1 = computed(
   () => store.getters["common/getInterimPaymentTab1"]
 );
+const isEdit = computed(() => (userType === 'm' && retirementStatus.value !== 40) || (userType !== 'm' && retirementStatus.value < 30))
 
 const trigger = ref<boolean>(false);
 const tab3EditForm = ref();
