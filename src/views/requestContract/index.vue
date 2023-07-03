@@ -415,7 +415,7 @@ export default {
         const facilityBizTypeCommon = FacilityBizType.all();
         const plainOptions = ref({ ...plainOptionsUtil });
         const textIDNo = ref("법인등록번호");
-        const step = ref(2);
+        const step = ref(0);
         const disableFormVal = ref(false);
         const disableFormVal2 = ref(false);
         const checkAll = ref(false);

@@ -135,7 +135,7 @@
               </div>
             </a-tooltip>
             <a-tooltip placement="top" title="취소">
-              <div v-if="data.data.workingStatus !== 0">
+              <div v-if="data.data.workingStatus === 1 || data.data.workingStatus === 2">
                 <DxButton type="ghost" @click="handleDelete(data.data.workId)">
                   <DeleteOutlined style="font-size: 16px" />
                 </DxButton>
@@ -306,7 +306,7 @@ const onOpenLogs = (e: any) => {
 };
 const handleOpenViewReportUrl = (workId: number) => {
   triggerReportViewUrl.value = true;
-  actionParam.workId = workId + 13213;
+  actionParam.workId = workId;
 };
 const openAddNewModal = () => {
   isOpenModalCreate.value = true;

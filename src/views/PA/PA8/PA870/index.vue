@@ -44,7 +44,7 @@
             </DxButton>
           </div>
         </template>
-        <template #action=" { data }: any ">
+        <template #action="{ data }">
           <div class="custom-action" style="margin-left: 10px;">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
@@ -58,7 +58,7 @@
                 </a-tooltip>
               </DxButton>
               <DxButton type="ghost" style="cursor: pointer" @click=" actionDelete(data.data.workId) "
-                v-if=" data.data.workingStatus != 0 ">
+                v-if="data.data.workingStatus === 1 || data.data.workingStatus === 2">
                 <a-tooltip zIndex="9999999" placement="top" color="black">
                   <template #title>
                     <div>
@@ -76,9 +76,6 @@
     <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
       typeHistory="pa-870" />
     <CreatePA870Popup v-if=" modalCreate " @closeModal=" onCloseModal " />
-    <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
-      :content=" contentDelete.message " :okText=" contentDelete.yes " :cancelText=" contentDelete.no "
-      @checkConfirm=" handleDelete " />
     <!-- <DxTextBox v-model="text">
       <DxValidator :validation-summary=" true ">
         <DxRequiredRule message="Vui lòng nhập giá trị." />
@@ -107,6 +104,7 @@ import {
 import notification from '@/utils/notification';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import { Message } from '@/configs/enum';
+import deletePopup from "@/utils/deletePopup";
 
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
@@ -183,35 +181,31 @@ const onOpenLogs = (e: any) => {
 
 //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyJoin -----------
 
-const contentDelete = Message.getCommonMessage('303');
-const deleteMesDone = Message.getCommonMessage('302').message;
-const modalDelete = ref(false);
-const cancelCompanyJoinParam = reactive({
-  companyId: companyId,
-  imputedYear: globalYear,
-  workId: NaN,
-})
 const {
   mutate: cancelCompanyJoinMutate,
   onDone: cancelCompanyJoinOnDone,
   onError: cancelCompanyJoinError,
 } = useMutation(mutations.cancelMajorInsuranceCompanyJoin);
 cancelCompanyJoinOnDone(() => {
-  notification('success', deleteMesDone);
+  notification("success", Message.getMessage("COMMON", "302").message);
   companyJoinsRefetch();
 });
 cancelCompanyJoinError((res) => {
   notification('error', res.message);
 })
 const actionDelete = (workId: number) => {
-  modalDelete.value = true;
-  cancelCompanyJoinParam.workId = workId;
-}
-const handleDelete = (e: boolean) => {
-  if (e) {
-    modalDelete.value = false;
-    cancelCompanyJoinMutate(cancelCompanyJoinParam);
-  }
+  deletePopup({
+    callback: () => {
+      cancelCompanyJoinMutate({
+        companyId: companyId,
+        imputedYear: globalYear.value,
+        workId,
+      });
+    },
+    message: Message.getCommonMessage("303").message,
+    cancelText: Message.getCommonMessage("303").no,
+    okText: Message.getCommonMessage("303").yes,
+  });
 }
 
 //------get ReportViewUrl ----

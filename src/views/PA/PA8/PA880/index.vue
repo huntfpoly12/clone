@@ -4,7 +4,7 @@
     <a-spin :spinning="loading">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-        :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef"
+        :column-auto-width="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef"
         noDataText="내역이 없습니다">
         <DxPaging :page-size="0" />
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']"
@@ -47,7 +47,7 @@
           </div>
         </template>
         <DxColumn caption="" cell-template="action" width="100" />
-        <template #action=" { data }: any " class="custom-action">
+        <template #action="{ data }" class="custom-action">
           <div class="custom-action ml-8">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
@@ -61,7 +61,7 @@
                 </a-tooltip>
               </DxButton>
               <DxButton type="ghost" style="cursor: pointer" @click=" actionDelete(data.data.workId) "
-                v-if=" data.data.workingStatus != 0 ">
+                v-if="data.data.workingStatus === 1 || data.data.workingStatus === 2">
                 <a-tooltip zIndex="9999999" placement="top" color="black">
                   <template #title>
                     <div>
@@ -77,9 +77,6 @@
       </DxDataGrid>
     </a-spin>
     <FormReport v-if=" modalCreate " @onCreateModal=" onCreateModal " />
-    <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
-      :content=" contentDelete.message " :okText=" contentDelete.yes " :canclText=" contentDelete.no "
-      @checkConfirm=" handleDelete " />
     <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
       typeHistory="pa-880" />
   </div>
@@ -107,6 +104,7 @@ import { Message } from "@/configs/enum";
 import FormReport from './components/FormReport.vue';
 import { DeleteOutlined, DownloadOutlined, EditOutlined, HistoryOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
+import deletePopup from "@/utils/deletePopup";
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
   접수 = 2,
@@ -195,37 +193,32 @@ export default defineComponent({
 
     //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
-    const contentDelete = Message.getCommonMessage('303');
-    const deleteMesDone = Message.getCommonMessage('302').message;
-    const modalDelete = ref(false);
-    const cancelCompanyOutParam = reactive({
-      companyId: companyId,
-      imputedYear: globalYear,
-      workId: NaN,
-    })
     const {
       mutate: cancelCompanyOutMutate,
       onDone: cancelCompanyOutOnDone,
       onError: cancelCompanyOutError,
     } = useMutation(mutations.cancelMajorInsuranceCompanyOut);
     cancelCompanyOutOnDone(() => {
-      notification('success', deleteMesDone);
+      notification("success", Message.getMessage("COMMON", "302").message);
       companyOutsRefetch();
     });
     cancelCompanyOutError((res) => {
       notification('error', res.message);
     })
     const actionDelete = (workId: number) => {
-      modalDelete.value = true;
-      cancelCompanyOutParam.workId = workId;
+      deletePopup({
+        callback: () => {
+          cancelCompanyOutMutate({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            workId,
+          });
+        },
+        message: Message.getCommonMessage("303").message,
+        cancelText: Message.getCommonMessage("303").no,
+        okText: Message.getCommonMessage("303").yes,
+      });
     }
-    const handleDelete = (e: boolean) => {
-      if (e) {
-        modalDelete.value = false;
-        cancelCompanyOutMutate(cancelCompanyOutParam);
-      }
-    }
-
     //------get ReportViewUrl ----
 
     const companyOutViewUrlParam = reactive({
@@ -264,9 +257,7 @@ export default defineComponent({
       focusedRowKey, dataSource, loading,
       modalHistory, workIdHistory, onOpenLogs,
       onCreateModal, actionDelete, onGetFileStorageId, onGetAcquistionRp,
-      modalCreate, modalDelete, handleDelete, contentDelete,
-      MajorInsuranceWorkingStatus, 
-      // onDetailData, workId,
+      modalCreate, MajorInsuranceWorkingStatus,
     };
   },
 })
