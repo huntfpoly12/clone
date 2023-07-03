@@ -4,6 +4,12 @@
     // }
     #gridContainer {
         max-height: 750px;
+        .search-template {
+            :deep .ant-form-item {
+                margin-bottom: 0;
+            }
+            
+        }
     }
 
     .total-user {
@@ -38,6 +44,7 @@
         margin-top: 10px;
         height: calc(100vh - 155px);
         border: 1px solid #d7d7d7;
+        // border-bottom: none;
     }
     :deep .dx-datagrid-header-panel {
         // border: 1px solid #d7d7d7;
