@@ -1,14 +1,14 @@
 <template>
   <action-header title="기타소득자등록" @actionSave="false" :buttonSave="false" />
-  <div class="page-content">
+  <div class="page-content" id="announcement-user">
     <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10">
-      <a-tab-pane key="1" tab="보험사무대행 신청현황 관리">
-        <Tab1 />
+      <a-tab-pane :key="1" tab="보험사무대행 신청현황 관리" >
+        <Tab1 @activeKey="actionActiveKey"/>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="사업장 신청현황 관리" >
+      <a-tab-pane :key="2" tab="사업장 신청현황 관리" >
         <Tab2 />
       </a-tab-pane>
-      <a-tab-pane key="3" tab="사원 신청현환 관리" >
+      <a-tab-pane :key="3" tab="사원 신청현환 관리" >
         <Tab3 />
       </a-tab-pane>
     </a-tabs>
@@ -25,9 +25,15 @@ export default defineComponent({
     Tab1, Tab2, Tab3
   },
   setup() {
-    const activeKey = ref<string | number>('1');
+    const activeKey = ref<number>(1);
     const dataRow = ref(null)
+    const actionActiveKey = (key: number) => {
+      console.log(key);
+      
+      activeKey.value = key
+    }
     return {
+      actionActiveKey,
       activeKey, dataRow
     }
   }

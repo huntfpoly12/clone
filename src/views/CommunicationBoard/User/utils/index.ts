@@ -15,5 +15,5 @@ export const getFakeData = () => {
 }
 // get random number 1 - 3
 export const getRandomExpressionType = () => {
-	return Math.floor(Math.random() * 3) + 1;
+	return Math.floor(Math.random() * 4) + 1;
 }
