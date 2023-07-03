@@ -13,7 +13,7 @@
       <div class="user-info">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
-        <div @click="openTabBoard" class="cursor-pointer">소통판</div>
+        <div v-if="userType === 'm'" @click="openTabBoard" class="cursor-pointer">소통판</div>
         <account-infor></account-infor>
       </div>
     </a-layout-header>
@@ -228,7 +228,7 @@ import {
   CaretRightOutlined
 } from "@ant-design/icons-vue";
 import { getJwtObject } from '@bankda/jangbuda-common';
-import {companyId, openTab, setMenuTab} from "@/helpers/commonFunction";
+import {companyId, openTab, setMenuTab, userType} from "@/helpers/commonFunction";
 import useCheckPermission from "@/helpers/useCheckPermission";
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
@@ -872,7 +872,8 @@ export default defineComponent({
       count,
       logout,
       ENVIRONMENT,
-      openTabBoard
+      openTabBoard,
+      userType
     }
   },
 });
