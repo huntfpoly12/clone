@@ -18,11 +18,11 @@ export const reportTypeSelectboxTab3 = [
   { id: 5, text: "복직" },
 ];
 export const workingStatusSelectbox = [
-  { id: 1, text: "등록" },
-  { id: 2, text: "접수" },
-  { id: 10, text: "완료" },
-  { id: -1, text: "오류" },
-  { id: 0, text: "취소" },
+  { id: 1, text: "등록", disabled: false },
+  { id: 2, text: "접수", disabled: false },
+  { id: 10, text: "완료", disabled: false },
+  { id: -1, text: "오류", disabled: false },
+  { id: 0, text: "취소", disabled: true },
 ];
 export const companyConsignStatusSelectbox = [
   { id: 1, text: "신규" },

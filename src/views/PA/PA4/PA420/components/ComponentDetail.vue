@@ -446,7 +446,7 @@ const modalAdd = ref(false);
 const modalUpdate = ref(false);
 const modalHistoryStatus = ref<boolean>(false);
 const resetFormNum = ref(1);
-const checkActionValue = computed(() => retirementStatus.value !== 10); // disabeld button
+const checkActionValue = computed(() => retirementStatus.value !== 10 && retirementStatus.value !== 20); // disabeld button
 let dataAction: any = reactive({
   ...dataActionUtils,
 });
