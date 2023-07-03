@@ -423,7 +423,7 @@ const routes = [
         path: "/communication-board",
         component: () => import("../views/CommunicationBoard/index.vue"),
         meta: {
-          roles: ALL_ROLE,
+          roles: AdminScreenRole.all().map((i) => i.enumKey),
         },
       },
       {
