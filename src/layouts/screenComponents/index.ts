@@ -175,10 +175,13 @@ const AC630 = defineAsyncComponent(() =>
 const AC520 = defineAsyncComponent(() =>
     import("@/views/AC/AC5/AC520/index.vue")
 );
-const CommunicationBoard = defineAsyncComponent(() =>
+const CommunicationBoardManager = defineAsyncComponent(() =>
     import("@/views/CommunicationBoard/index.vue")
 );
-const Announcement = defineAsyncComponent(() =>
+const CommunicationBoardUser = defineAsyncComponent(() =>
+    import("@/views/CommunicationBoard/User/index.vue")
+);
+const AnnouncementUser = defineAsyncComponent(() =>
     import("@/views/Announcement/User/index.vue")
 );
 
@@ -241,6 +244,7 @@ export {
     AC520,
     Test,
     Example,
-    CommunicationBoard,
-    Announcement,
+    CommunicationBoardManager,
+    CommunicationBoardUser,
+    AnnouncementUser,
 }

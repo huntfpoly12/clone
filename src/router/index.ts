@@ -12,7 +12,7 @@ import {
 } from "@bankda/jangbuda-common";
 import isEmpty from "lodash/isEmpty";
 import useCheckPermission from "@/helpers/useCheckPermission";
-
+import { userType } from "@/helpers/commonFunction";
 const ALL_ROLE = [
   ...AdminScreenRole.all().map((i) => i.enumKey),
   ...WorkScreenRole.all().map((i) => i.enumKey),
@@ -421,9 +421,9 @@ const routes = [
       },
       {
         path: "/communication-board",
-        component: () => import("../views/CommunicationBoard/index.vue"),
+        component: () =>  import("../views/CommunicationBoard/index.vue"),
         meta: {
-          roles: AdminScreenRole.all().map((i) => i.enumKey),
+          roles: ALL_ROLE,
         },
       },
       {
