@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="ac-130__top-status">
-        <ProcessAccountingStatus :noOptionNoInput="false" v-if="accountingProcessesSelected?.status || 0"
+        <ProcessAccountingStatus :noOptionNoInput="false" v-if="accountingProcessesSelected?.status"
           :preventChange="isPreventChangeProcessStatus" :status="accountingProcessesSelected?.status || 0"
 
           @submitChangeStatus="submitChangeStatus" />
@@ -92,7 +92,7 @@
             <ReloadOutlined class="ac-130__main-content-manager-title-btnReload" @click="refreshFormChat" />
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChat ref="formChat" :payload="{...payload, accountingProcessesSelected}" :disabled="[20, 30, 40].includes(accountingProcessesSelected?.status) || !accountingProcessesSelected" :loading="loadingGetAccountingProcesses"/>
+            <FormChat ref="formChat" :payload="{...payload, accountingProcessesSelected}" :disabled="(userType !== 'm' && accountingProcessesSelected?.status !== 10) || (userType === 'm' && accountingProcessesSelected?.status === 40)" :loading="loadingGetAccountingProcesses"/>
           </div>
         </div>
       </a-col>
@@ -109,7 +109,7 @@ import ProcessAccountingStatus from "./components/ProcessAccountingStatus.vue"
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC130";
 import mutations from "@/graphql/mutations/AC/AC1/AC130";
-import { companyId } from "@/helpers/commonFunction"
+import { companyId, userType } from "@/helpers/commonFunction"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined, DoubleRightOutlined, ReloadOutlined } from "@ant-design/icons-vue";
 import { dataDemoMain, contentPopupRetrieveStatements } from "./utils/index"
@@ -372,6 +372,7 @@ export default defineComponent({
       refTableCashRegisterSummary,
       refTableExpenditureBudgetSummary,
       refTableRevenueBudgetSummary,
+      userType
     };
   },
 });
