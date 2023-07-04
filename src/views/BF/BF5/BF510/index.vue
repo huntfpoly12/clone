@@ -17,7 +17,7 @@
   </div>
   <a-spin :spinning="loading">
     <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10"
+                :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10" :loadPanel="false"
                 style="height: calc(100vh - 240px)">
       <DxPaging :page-size="0"/>
       <DxExport :enabled="true"/>
@@ -105,7 +105,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import {reactive, ref, watchEffect} from 'vue';
+import { reactive, ref, watch, watchEffect } from 'vue';
 import {DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxSearchPanel, DxToolbar} from 'devextreme-vue/data-grid';
 import {searchCompanyAccountingDeadlines} from '@/graphql/queries/BF/BF5/BF510';
 import {useMutation, useQuery} from '@vue/apollo-composable';
@@ -155,8 +155,12 @@ const dataSearch = reactive<ISearchCompanyAccountingDeadlines>({
   manageUserId: null,
   statuses: [1, 10, 20, 30, 40]
 })
+watch(() => dataSearch.month, (val) => {
+  if (val) {
+    searching()
+  }
+})
 const trigger = ref(true);
-
 const {onResult, onError, loading} = useQuery(searchCompanyAccountingDeadlines, {
   filter: dataSearch
 }, () => ({
