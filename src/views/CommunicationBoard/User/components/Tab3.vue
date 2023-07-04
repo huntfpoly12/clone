@@ -1,5 +1,4 @@
 <template>
-	<!-- <div id="announcement-user"> -->
 	<a-row>
 		<a-col span="16" class="data-table">
 			<a-spin :spinning="false" size="large">
@@ -14,7 +13,7 @@
 					<DxToolbar>
 						<DxItem template="search-template" location="before" />
 						<DxItem name="searchPanel" />
-						<!-- <DxItem name="exportButton" css-class="cell-button-export" /> -->
+						<DxItem name="exportButton" css-class="cell-button-export" />
 						<!-- <DxItem location="after" template="button-history" css-class="cell-button-add" /> -->
 						<DxItem location="after" template="button-template" css-class="cell-button-add" />
 					</DxToolbar>
@@ -35,8 +34,8 @@
 							<DxButton>
 								<HistoryOutlined style="font-size: 18px;" @click="openHistory" />
 							</DxButton>
-							<a-tooltip placement="topLeft" title="문의 신규 등록">
-								<div class="ml-5">
+							<a-tooltip title="문의 신규 등록">
+								<div class="mx-5">
 									<DxButton icon="plus" :disabled="false" @click="addRow" />
 								</div>
 							</a-tooltip>
@@ -78,8 +77,6 @@
 			</a-spin>
 		</a-col>
 	</a-row>
-
-	<!-- </div> -->
 </template>
 <script lang="ts">
 import {
