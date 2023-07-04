@@ -14,7 +14,7 @@
     </a-modal>
 
     <a-modal :visible="modalStatusTable" @cancel="cancelTable" :mask-closable="false" class="confirm-md" footer=""
-        :width="1000">
+        :width="700">
         <div class="mt-20" :key="countKey">
             <h1 class="text-center mb-0">전표 업로드</h1>
             <a-spin :spinning="loadingGetFacilityBusinessAccountingProcesses">
@@ -27,9 +27,9 @@
                     <DxToolbar>
                         <DxItem name="searchPanel" />
                     </DxToolbar>
-                    <DxColumn caption="회계연월" width="85" cell-template="year-month" />
+                    <DxColumn caption="회계연월" width="100" cell-template="year-month" />
                     <template #year-month="">
-                        {{ parseInt(yearMonth.toString().slice(0, 4)) }}-{{ parseInt(yearMonth.toString().slice(4, 6)) }}
+                        <b>{{ parseInt(yearMonth.toString().slice(0, 4)) }}-{{ $filters.formatMonth(parseInt(yearMonth.toString().slice(4, 6))) }}</b>
                     </template>
 
                     <!-- <DxColumn caption="결의서 내역수" data-field="" /> -->
@@ -37,11 +37,15 @@
                     <DxColumn caption="마감현황" data-field="facilityBusinessName"
                         cell-template="facilityBusinessName-status" />
                     <template #facilityBusinessName-status="{ data }">
-                        <span class="mr-20">{{ data.data.facilityBusinessName }}</span>
-                        <ProcessStatus :noOptionNoInput="false" :valueStatus="data.data.status" disabled />
+                        <span>{{ data.data.facilityBusinessName }}</span>
+                        <ProcessStatus class="m-20" :noOptionNoInput="false" :valueStatus="data.data.status" disabled />
+                        <spa v-if="data.data.status == 1">
+                            <img src="@/assets/images/iconInfo.png" style="width: 16px"/>
+                            <span class="ml-5">입력된 내역이 없는 상태</span>
+                        </spa>
                     </template>
 
-                    <DxColumn caption="업로드 가능 여부" css-class="cell-left" data-field="status" cell-template="status" />
+                    <DxColumn caption="업로드 가능 여부" width="150" css-class="cell-left" data-field="status" cell-template="status" />
                     <template #status="{ data }">
                         <a-tag v-if="data.data.status == 40" color="#4F6228">업로드 가능</a-tag>
                         <a-tag v-else color="#C00000">업로드 불가</a-tag>
