@@ -94,9 +94,9 @@ let menuData = [
   { name: "보험사무대행신고", url: "/pa-860", id: "pa-860", roles: ROLE_PA000 },
   { name: "사업장가입신고", url: "/pa-870", id: "pa-870", roles: ROLE_PA000 },
   { name: "사업장탈퇴신고", url: "/pa-880", id: "pa-880", roles: ROLE_PA000 },
-  
-  { name: "소통판", url: "/communication-board", id: "communication-board", roles: ROLE_PA000 },
-  { name: "소통판", url: "/announcement", id: "announcement", roles: ROLE_PA000 },
+
+  { name: "소통판", url: "/communication-board", id: "communication-board", roles: ROLE_BF500 },
+  { name: "소통판", url: "/announcement", id: "announcement", roles: ROLE_BF500 },
 ];
 menuData = menuData.filter(i => {
   if (i.roles.length === 0) return false

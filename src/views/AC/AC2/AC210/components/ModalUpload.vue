@@ -29,7 +29,8 @@
                     </DxToolbar>
                     <DxColumn caption="회계연월" width="100" cell-template="year-month" />
                     <template #year-month="">
-                        <b>{{ parseInt(yearMonth.toString().slice(0, 4)) }}-{{ $filters.formatMonth(parseInt(yearMonth.toString().slice(4, 6))) }}</b>
+                        <b>{{ parseInt(yearMonth.toString().slice(0, 4)) }}-{{
+                            $filters.formatMonth(parseInt(yearMonth.toString().slice(4, 6))) }}</b>
                     </template>
 
                     <!-- <DxColumn caption="결의서 내역수" data-field="" /> -->
@@ -37,15 +38,18 @@
                     <DxColumn caption="마감현황" data-field="facilityBusinessName"
                         cell-template="facilityBusinessName-status" />
                     <template #facilityBusinessName-status="{ data }">
-                        <span>{{ data.data.facilityBusinessName }}</span>
-                        <ProcessStatus class="m-20" :noOptionNoInput="false" :valueStatus="data.data.status" disabled />
-                        <spa v-if="data.data.status == 1">
-                            <img src="@/assets/images/iconInfo.png" style="width: 16px"/>
-                            <span class="ml-5">입력된 내역이 없는 상태</span>
-                        </spa>
+                        <div class="d-flex-center">
+                            <span>{{ data.data.facilityBusinessName }}</span>
+                            <ProcessStatus class="ml-20 mr-10" :noOptionNoInput="false" :valueStatus="data.data.status"
+                                disabled />
+                            <spa v-if="data.data.status == 1">
+                                <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
+                            </spa>
+                        </div>
                     </template>
 
-                    <DxColumn caption="업로드 가능 여부" width="150" css-class="cell-left" data-field="status" cell-template="status" />
+                    <DxColumn caption="업로드 가능 여부" width="150" css-class="cell-left" data-field="status"
+                        cell-template="status" />
                     <template #status="{ data }">
                         <a-tag v-if="data.data.status == 40" color="#4F6228">업로드 가능</a-tag>
                         <a-tag v-else color="#C00000">업로드 불가</a-tag>
@@ -53,7 +57,8 @@
                 </DxDataGrid>
             </a-spin>
             <div class="text-center mt-30">
-                <button-basic :text="'업로드'" :type="'default'" :mode="'contained'" @onClick="actionSubmit" :disabled="!statusButtonSubmit" />
+                <button-basic :text="'업로드'" :type="'default'" :mode="'contained'" @onClick="actionSubmit"
+                    :disabled="!statusButtonSubmit" />
             </div>
         </div>
     </a-modal>
