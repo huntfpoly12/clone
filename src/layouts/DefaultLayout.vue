@@ -849,7 +849,7 @@ export default defineComponent({
     }
     const openTabAnnouncement = () => {
         router.push('/announcement ')
-        openTab({ id: 'announcement', name: "소통판", url: '/announcement' })
+        openTab({ id: 'announcement', name: "공지사항", url: '/announcement' })
     }
     const openTabBoard = () => {
         router.push('/communication-board')

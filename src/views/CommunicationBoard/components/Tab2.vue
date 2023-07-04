@@ -78,7 +78,7 @@
           <!--          <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading">-->
           <!--            <a-spin size="large"/>-->
           <!--          </div>-->
-          <div ref="formTimeline" class="form-chat-timeline">
+          <div v-chat-scroll ref="formTimeline" class="form-chat-timeline">
             <div v-for="(item, index) in listChat" :key="index">
               <div v-if="index > 0" class="form-chat-timeline-line"/>
               <div v-if="index >= 0" class="form-chat-timeline-common">
@@ -102,7 +102,7 @@
                       <div class="form-chat-timeline-content-info-classification">{{ item.classification }}</div>
                     </div>
                     <div>
-                      <DxButton type="ghost">
+                      <DxButton type="ghost" @click="handleEditQA(item)">
                         <EditOutlined/>
                       </DxButton>
                       <DxButton type="ghost" @click="handleDeleteQA(item)">
@@ -145,10 +145,13 @@
               <span style="margin: 0 10px;">분류:</span>
               <span class="form-chat-bottom-category-text">회계-마감-( {{ dayjs().format('YYYY-MM') }})</span>
             </div>
-            <InputChat ref="inputChatRef" v-model:content="content" v-model:files="filesUpload"
+            <InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
                        :placeholder="disabled ? '입력마감 상태에서는 이용할 수 없습니다.' : '댓글을 입력하세요…'"
                        :disabled="isLoadingUpload || disabled"
-                       @submitChat="submitChat"/>
+                       @submitChat="submitChat"
+                       :isEdit="rowEdit.isEdit"
+                       @cancel="cancelEdit"
+            />
           </div>
           <ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
                                  :listImage="listImagePreview"/>
@@ -163,7 +166,6 @@
 import { computed, inject, reactive, ref } from "vue";
 import { DxColumn, DxDataGrid, DxExport, DxItem, DxSearchPanel, DxToolbar } from "devextreme-vue/data-grid";
 import dayjs from "dayjs";
-import InfoToolTip from "@/components/common/InfoToolTip.vue";
 import DxButton from "devextreme-vue/button";
 import {
   DeleteOutlined,
@@ -174,7 +176,7 @@ import {
   SearchOutlined
 } from "@ant-design/icons-vue";
 import { DataRowKey } from "@/views/CommunicationBoard/type";
-import InputChat from "@/views/AC/AC1/AC130/components/InputChat.vue";
+import InputChat from "./InputChat.vue";
 import MarkdownCustom from "@/views/AC/AC1/AC130/components/MarkdownCustom.vue";
 import ModalPreviewListImage from "@/views/AC/AC1/AC130/components/ModalPreviewListImage.vue";
 import StatusChat from "@/views/AC/AC1/AC130/components/StatusChat.vue";
@@ -209,7 +211,6 @@ const dataSource = ref([
     replyDateAndTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
   }
 ])
-const content = ref('')
 const filesUpload = ref([])
 const disabled = ref(false)
 const isLoadingUpload = ref(false)
@@ -219,12 +220,28 @@ const listImagePreview = ref({
   files: [],
 })
 const inputChatRef = ref()
+const rowEdit = reactive({
+  id: 0,
+  content: '',
+  files: [],
+  isEdit: false
+})
 const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
-console.log('%c listChat', 'color: red', listChat.value)
 const submitChat = () => {
-  if (isLoadingUpload.value || (!content.value.trim() && !filesUpload.value.length)) return
+  if (rowEdit.isEdit) {
+    editChat()
+  } else {
+    addChat()
+  }
+  rowEdit.isEdit = false
+  rowEdit.content = ''
+  rowEdit.files = []
+  filesUpload.value = []
+}
+function addChat() {
+  if (isLoadingUpload.value || (!rowEdit.content.trim() && !filesUpload.value.length)) return
   isLoadingUpload.value = true
   let fileStorageIds = null
   if (filesUpload.value.length) {
@@ -234,7 +251,7 @@ const submitChat = () => {
     id: listChat.value.length + 1,
     expresstionType: Math.floor(Math.random()*5) + 1,
     classification: "회계-마감-(2023-04)",
-    content: !!content.value.trim() ? content.value.trim() : null,
+    content: !!rowEdit.content.trim() ? rowEdit.content.trim() : null,
     companyId: companyId,
     fiscalYear: 2023,
     facilityBusinessId: 1,
@@ -256,16 +273,6 @@ const submitChat = () => {
     },
     files: null,
   }
-  // const result = {
-  //   companyId: companyId,
-  //   facilityBusinessId: globalFacilityBizId.value,
-  //   fiscalYear: acYear.value,
-  //   year: acYear.value,
-  //   input: {
-  //     content: !!content.value.trim() ? content.value.trim() : null,
-  //     fileStorageIds
-  //   }
-  // }
   if (listChat.value.length === 0) {
     localStorage.setItem("listChat", JSON.stringify([value]))
     listChat.value = [value]
@@ -276,10 +283,30 @@ const submitChat = () => {
     ]
     localStorage.setItem("listChat", JSON.stringify(result))
     listChat.value = result
-    console.log('%c result', 'color: red', result)
   }
-  inputChatRef.value.resetInputChat()
   isLoadingUpload.value = false
+}
+function editChat() {
+  if (isLoadingUpload.value || (!rowEdit.content.trim() && !filesUpload.value.length)) return
+  // find item edit in listChat
+  const index = listChat.value.findIndex((item: any) => item.id === rowEdit.id)
+  if (index === -1) return
+  isLoadingUpload.value = true
+  let fileStorageIds = null
+  if (filesUpload.value.length) {
+    fileStorageIds = filesUpload.value.map((file: any) => parseInt(file.id))
+  }
+  listChat.value[index].content = !!rowEdit.content.trim() ? rowEdit.content.trim() : null
+  listChat.value[index].files = fileStorageIds
+  isLoadingUpload.value = false
+  localStorage.setItem("listChat", JSON.stringify(listChat.value))
+
+}
+const cancelEdit = () => {
+  rowEdit.isEdit = false
+  rowEdit.content = ''
+  rowEdit.files = []
+  filesUpload.value = []
 }
 const previewImage = (files: any, index: number) => {
   listImagePreview.value.index = index
@@ -296,14 +323,17 @@ const handleDeleteQA = (row: any) => {
     callback: () => {
       const result = listChat.value.filter((item: any) => item.id !== row.id)
       localStorage.setItem("listChat", JSON.stringify(result))
-      console.log('%c result', 'color: red', result)
       listChat.value = result
     },
     message: Message.getCommonMessage("303").message,
     cancelText: Message.getCommonMessage("303").no,
     okText: Message.getCommonMessage("303").yes,
   })
-
+}
+const handleEditQA = (row: any) => {
+  rowEdit.content = row.content
+  rowEdit.isEdit = true
+  rowEdit.id = row.id
 }
 const openLinkDownFile = (link: string) => {
   window.open(link, '_blank')
@@ -311,279 +341,5 @@ const openLinkDownFile = (link: string) => {
 </script>
 
 <style lang="scss" scoped>
-.justify-content-end {
-  justify-content: flex-end;
-}
-
-:deep(.ant-form-item-control-input-content) {
-  display: flex;
-  align-items: center;
-}
-
-.form-container {
-  height: calc(100vh - 210px);
-
-  .form-chat {
-    height: 100%;
-    padding: 5px;
-    border: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    position: relative;
-
-    &-loading {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      background-color: rgba(255, 255, 255, 0.568);
-    }
-
-    &-header {
-      text-align: center;
-      border-bottom: 1px solid rgba(17, 17, 26, 0.1);
-      padding: 4px 0;
-      position: relative;
-
-      &-title {
-        font-size: 20px;
-        font-weight: bold;
-      }
-
-      &-btnReload {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        cursor: pointer;
-      }
-    }
-
-    &-timeline {
-      flex-grow: 1;
-      // height: calc(100% - 40px);
-      padding-bottom: 10px;
-      padding-top: 2px;
-      scroll-behavior: smooth;
-      overflow-y: auto;
-
-      &-line {
-        // margin-top: 20px;
-        margin-bottom: 10px;
-        height: 1px;
-        background-color: #e7e6e6;
-
-        &-short {
-          margin-left: 52px;
-        }
-      }
-
-      &-avatar {
-        width: 40px;
-        height: 40px;
-        margin-right: 5px;
-
-        img {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          object-fit: cover;
-          box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
-        }
-      }
-
-      &-common {
-        margin-top: 1px;
-        position: relative;
-
-        &-menu {
-          position: absolute;
-          top: 0;
-          right: 5px;
-          display: none;
-
-          &:hover {
-            display: block;
-          }
-        }
-
-        &:hover {
-          .form-chat-timeline-common-menu {
-            display: block;
-          }
-        }
-      }
-
-      &-content {
-        width: 100%;
-        // background-color: #DCE6F2;
-        padding: 0 12px 0 12px;
-        position: relative;
-
-        &-files {
-          width: 100%;
-          background-color: #fff;
-
-          &-preview {
-            &-images {
-              display: flex;
-              flex-wrap: wrap;
-              margin: 0 -3px 5px -3px;
-
-              &-image {
-                width: 250px;
-                height: 250px;
-                object-fit: cover;
-                display: block;
-                padding: 3px;
-                cursor: pointer;
-
-                &:hover {
-                  opacity: .8;
-                }
-              }
-            }
-
-            &-filetext {
-              display: flex;
-              align-items: center;
-              border: 1px solid #d8d7d7;
-              width: 400px;
-              cursor: pointer;
-              overflow: hidden;
-              padding: 10px;
-
-              & + & {
-                margin-top: 3px;
-              }
-
-              &:last-child {
-                margin-bottom: 10px;
-              }
-
-              &:hover {
-                background-color: #fafafa;
-              }
-
-              &-info {
-                &-name {
-                  white-space: nowrap;
-                  margin: 0;
-                  line-height: 15px;
-                  font-size: 15px;
-                }
-
-                &-size {
-                  margin: 0;
-                  color: #A6A6A6;
-                }
-              }
-            }
-          }
-
-          &-item {
-            display: flex;
-            align-items: center;
-
-            &-info {
-              p {
-                margin: 0;
-                line-height: 15px;
-              }
-
-              &-size {
-                color: #A6A6A6;
-              }
-            }
-          }
-        }
-
-        &-info {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-
-          &-user {
-            display: flex;
-            align-items: center;
-            // margin-right: 30px;
-            margin-right: 20px;
-
-            &-status {
-              // display: inline;
-              // padding: 0 10px;
-              // border-radius: 5px;
-              // border: 1px solid #7f7f7f;
-              // background-color: #ffffff;
-              // color: #7f7f7f;
-              // font-size: 10px;
-              margin-right: 5px;
-            }
-
-            &-name {
-              font-size: 12px;
-              white-space: nowrap;
-              font-weight: bold;
-              color: #333333;
-
-              &-login {
-                color: #1a73e8;
-              }
-            }
-          }
-
-          &-time {
-            color: #bcbcc2ff;
-            text-align: end;
-            font-size: 11px;
-            margin-right: 10px;
-          }
-
-          &-classification {
-            color: #bcbcc2ff;
-            text-align: end;
-            font-size: 11px;
-          }
-        }
-
-        &-background {
-          margin-top: 5px;
-          // &:hover {
-          //   background-color: #fafafa;
-          // }
-        }
-
-        &-text {
-          word-wrap: break-word;
-          white-space: pre-wrap;
-          font-size: 15px;
-          color: #333333;
-        }
-      }
-
-      &-uploading {
-        margin-left: 40px;
-      }
-    }
-
-    &-bottom {
-      &-category {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-
-        &-text {
-          color: #bcbcc2ff;
-        }
-      }
-    }
-  }
-}
-
+@import "./../styles";
 </style>

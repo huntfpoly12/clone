@@ -25,9 +25,8 @@
 									:multi-calendars="true" />
 							</a-form-item>
 
-							<div class="d-flex-center ml-20">
-								<img src="@/assets/images/iconInfo.png" style="width: 16px" />
-								<span class="ml-5">문의글 기준</span>
+							<div class="d-flex-center">
+								<info-tool-tip>문의글 기준</info-tool-tip>
 							</div>
 						</div>
 					</template>
