@@ -44,7 +44,7 @@
                   <SelectCustomField
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
-                    :dataSource="workingStatusSelectbox"
+                    :dataSource="workingStatusSelectFilter"
                     width="95px"
                     displayeExpr="text"
                     valueExpr="id"
@@ -78,7 +78,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            
+
           </template>
           <template #btnSave>
             <div>
@@ -373,6 +373,7 @@ import { Message } from "@/configs/enum";
 import {
   reportTypeSelectboxTab3,
   workingStatusSelectbox,
+  workingStatusSelectFilter,
   EDIStatusSelectbox,
   formatMonth,
   dataTableTab1,
@@ -1054,6 +1055,7 @@ export default defineComponent({
       filterDsTab3Bf530,
       reportTypeSelectboxTab3,
       workingStatusSelectbox,
+      workingStatusSelectFilter,
       EDIStatusSelectbox,
       states1,
       reportTypeSelectbox2,
