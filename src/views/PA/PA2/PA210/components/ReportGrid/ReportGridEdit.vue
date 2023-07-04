@@ -11,7 +11,7 @@
     <a-spin :spinning="false">
       <div class="report-grid">
         <div class="header-report">
-          <div class="header-1">원천세신고서</div> {{isEdit}}
+          <div class="header-1">원천세신고서</div>
           <div class="action-right">
             <img
               style="width: 29px; cursor: pointer"
@@ -360,7 +360,6 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref<any>(JSON.parse(JSON.stringify(props.dataReport)));
-    console.log('%c datasource', 'color: red',dataSource.value)
     const trigger = ref<boolean>(false);
     const isEdit = computed(() => (userType !== 'm' && dataSource.value?.[0]?.status < 30) || (userType === 'm' && dataSource.value?.[0]?.status !== 40))
     const originData = ref();

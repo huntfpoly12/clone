@@ -29,10 +29,7 @@
             </a-button>
 
             <div v-if="!collapsed" class="wrap-search">
-              <a-select v-model:value="selectedItems" :options="menuData.map((item) => ({
-                value: item.id,
-                label: item.id + ' | ' + item.name
-              }))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px" optionFilterProp="label"
+              <a-select v-model:value="selectedItems" :options="menuDataSearch" show-search placeholder="메뉴를 입력해보세요" style="width: 180px" optionFilterProp="label"
                 :disabled="menuTab.length >= MAX_TAB" @change="addMenuTab" notFoundContent="내역이 없습니다"/>
             </div>
           </div>
@@ -539,6 +536,7 @@ export default defineComponent({
     const now = ref(dayjs().valueOf())
     const loginExprTime = ref(parseInt(sessionStorage.getItem("loginExpr")));
     const statusLogin = ref(false);
+
     const intervalId = setInterval(() => {
       now.value = dayjs().valueOf();
       loginExprTime.value = parseInt(sessionStorage.getItem("loginExpr"))
@@ -546,6 +544,7 @@ export default defineComponent({
       const diffInHours = remainingLogout / 3600000;
       if(diffInHours >= 8) statusLogin.value = true;
     }, 1000);
+
     const logout = ()=>{
       router.push("/login");
       location.reload();
@@ -557,6 +556,20 @@ export default defineComponent({
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = computed(() => {
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
+    })
+
+    const menuDataSearch = computed(() => {
+     return menuData.map((item) => {
+      const exceptMenu = ["communication-board", "announcement"];
+       if (!exceptMenu.includes(item.id)) {
+        return {
+         value: item.id,
+         label: item.id + ' | ' + item.name
+       }
+      } else {
+        return null;
+      }
+     }).filter(item => item !== null);
     })
 
     watch(() => cachedTab.value, (value) => {
@@ -849,7 +862,7 @@ export default defineComponent({
     }
     const openTabAnnouncement = () => {
         router.push('/announcement ')
-        openTab({ id: 'announcement', name: "공지사항", url: '/announcement' })
+        openTab({ id: 'announcement', name: "소통판", url: '/announcement' })
     }
     const openTabBoard = () => {
         router.push('/communication-board')
@@ -881,7 +894,8 @@ export default defineComponent({
       logout,
       ENVIRONMENT,
       openTabBoard, openTabAnnouncement,
-      userType
+      userType,
+      menuDataSearch
     }
   },
 });

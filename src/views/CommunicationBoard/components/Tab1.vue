@@ -27,8 +27,6 @@ const loading = ref(false)
 
 // fake run api call to get data from server and set to dataSource in 2s
 
-console.log('%c getFakeData()', 'color: red', getFakeData())
-
 function getData() {
   loading.value = true
   setTimeout(() => {

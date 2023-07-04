@@ -66,7 +66,7 @@
                   <SelectCustomField
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
-                    :dataSource="workingStatusSelectbox"
+                    :dataSource="workingStatusSelectFilter"
                     width="95px"
                     displayeExpr="text"
                     valueExpr="id"
@@ -319,6 +319,7 @@ import { Message } from "@/configs/enum";
 import {
   reportTypeSelectbox,
   workingStatusSelectbox,
+  workingStatusSelectFilter,
   companyConsignStatusSelectbox,
   EDIStatusSelectbox,
   formatMonth,
@@ -695,6 +696,7 @@ export default defineComponent({
       loading1,
       reportTypeSelectbox,
       workingStatusSelectbox,
+      workingStatusSelectFilter,
       companyConsignStatusSelectbox,
       EDIStatusSelectbox,
       states1,
