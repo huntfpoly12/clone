@@ -96,7 +96,7 @@ let menuData = [
   { name: "사업장탈퇴신고", url: "/pa-880", id: "pa-880", roles: ROLE_PA000 },
   
   { name: "소통판", url: "/communication-board", id: "communication-board", roles: ROLE_PA000 },
-  { name: "소통판", url: "/announcement", id: "announcement", roles: ROLE_PA000 },
+  { name: "공지사항", url: "/announcement", id: "announcement", roles: ROLE_PA000 },
 ];
 menuData = menuData.filter(i => {
   if (i.roles.length === 0) return false
