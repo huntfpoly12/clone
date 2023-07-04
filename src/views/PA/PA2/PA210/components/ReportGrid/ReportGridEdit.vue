@@ -7,11 +7,11 @@
     style="top: 20px"
     width="1368px"
     :bodyStyle="{ height: '890px', padding: '8px' }"
-  > 
+  >
     <a-spin :spinning="false">
       <div class="report-grid">
         <div class="header-report">
-          <div class="header-1">원천세신고서</div>
+          <div class="header-1">원천세신고서</div> {{isEdit}}
           <div class="action-right">
             <img
               style="width: 29px; cursor: pointer"
@@ -19,7 +19,7 @@
               alt=""
               class="ml-3"
               @click="actionConfirmDelete"
-              v-if="arrStatusShowBtn.includes(dataSource[0].status)"
+              v-if="isEdit"
             />
             <img
               style="width: 31px; cursor: pointer"
@@ -27,14 +27,14 @@
               alt=""
               class="ml-3"
               @click="updateTaxWithholding"
-              v-if="arrStatusShowBtn.includes(dataSource[0].status)"
+              v-if="isEdit"
             />
             <button-basic
               :width="150"
               text="새로불러오기"
               class="btn-get-income"
               @onClick="actionConfirmLoadNew"
-              :disabled="!arrStatusShowBtn.includes(dataSource[0].status)"
+              :disabled="!isEdit"
             ></button-basic>
           </div>
           <div class="table-detail">
@@ -59,7 +59,7 @@
                   v-model:valueStatus="data.data.status"
                   :dataRow="data.data"
                   @checkConfirmRowTable="changeStatusRowTable"
-                  :disabled="!arrStatusShowBtn.includes(dataSource[0].status)"
+                  :disabled="!isEdit"
                 />
                 <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
                             :dataRow="data.data"/> -->
@@ -170,7 +170,7 @@
                       v-model:valueSwitch="data.data.refund"
                       :textCheck="'O'"
                       :textUnCheck="'X'"
-                      :disabled="disabledRefund || !arrStatusShowBtn.includes(dataSource[0].status)"
+                      :disabled="disabledRefund || !isEdit"
                       />
                   </div>
                 </a-tooltip>
@@ -183,7 +183,7 @@
               <template #submission-date="{ data }">
                 <date-time-box
                   v-model:valueDate="data.data.submissionDate"
-                  :disabled="!arrStatusShowBtn.includes(dataSource[0].status)"
+                  :disabled="!isEdit"
                   :teleport="true"
                 ></date-time-box>
               </template>
@@ -194,7 +194,7 @@
           <hot-table
             ref="wrapper"
             :settings="hotSettings"
-            :readOnly="dataSource[0].status > 20"
+            :readOnly="!isEdit"
           ></hot-table>
         </div>
       </div>
@@ -243,7 +243,7 @@ import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification";
 import { useStore } from "vuex";
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth } from "../../utils/index";
 import ConfirmDelete from "./ConfirmDelete.vue";
 import ConfirmloadNew from "./ConfirmloadNew.vue";
@@ -298,7 +298,7 @@ export default defineComponent({
         var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
         if (
           !cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1]) && // kiểm tra xem có p phải thuộc ô được phép điền số âm không
-          !reg.test(e.key) && 
+          !reg.test(e.key) &&
           e.key != "Backspace"
         ) {
           if(e.key == 'Process') hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit'); // kiểm tra xem có phải kí tự hangul không nếu là hanggul thì key sẽ trẻ về là process
@@ -306,7 +306,7 @@ export default defineComponent({
         }
         // nêu đang nhập ở các ô đặc biệt đươc nhập số âm thì check như sau
         if (
-          cellNegativeNumber.some((item: any) => item[0] === selection[0][0] && item[1] === selection[0][1]) && 
+          cellNegativeNumber.some((item: any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
           !reg.test(e.key) &&
           e.key != "Backspace" &&
           e.key != "-"
@@ -339,7 +339,7 @@ export default defineComponent({
             } else {
               disabledRefund.value = true
             }
-            
+
           }
           dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
           store.commit("common/setHasChangedPopupPA210", true);
@@ -360,7 +360,9 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref<any>(JSON.parse(JSON.stringify(props.dataReport)));
+    console.log('%c datasource', 'color: red',dataSource.value)
     const trigger = ref<boolean>(false);
+    const isEdit = computed(() => (userType !== 'm' && dataSource.value?.[0]?.status < 30) || (userType === 'm' && dataSource.value?.[0]?.status !== 40))
     const originData = ref();
     const setModalVisible = () => {
       emit("closePopup", false);
@@ -720,7 +722,7 @@ export default defineComponent({
           cellPageSettings.value[141].className = "htMiddle htRight"
           cellPageSettings.value[143].readOnly = false
           cellPageSettings.value[143].className = "htMiddle htRight"
-      } else {   
+      } else {
         cellPageSettings.value[123].readOnly = true
         cellPageSettings.value[123].className = "htMiddle htRight disable-cell"
         cellPageSettings.value[124].readOnly = true
@@ -746,7 +748,7 @@ export default defineComponent({
       ){
         dataSource.value[0].refund = false
         disabledRefund.value = true
-      } 
+      }
 
       if (
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
@@ -762,7 +764,7 @@ export default defineComponent({
         disabledRefund.value = false
       }
 
-      if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
+      if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2)
       {
         dataSource.value[0].refund = cell12 ? true : false
         disabledRefund.value = false
@@ -837,7 +839,8 @@ export default defineComponent({
       showTooltipYearMonth,
       changeStatusRowTable,
       disabledRefund,
-      arrStatusShowBtn
+      arrStatusShowBtn,
+      isEdit
     };
   },
 });
