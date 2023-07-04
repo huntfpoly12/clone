@@ -184,6 +184,9 @@ const CommunicationBoardUser = defineAsyncComponent(() =>
 const AnnouncementUser = defineAsyncComponent(() =>
     import("@/views/Announcement/User/index.vue")
 );
+const AnnouncementManager = defineAsyncComponent(() =>
+    import("@/views/Announcement/Manager/index.vue")
+);
 
 export {
     BF310,
@@ -247,4 +250,5 @@ export {
     CommunicationBoardManager,
     CommunicationBoardUser,
     AnnouncementUser,
+    AnnouncementManager
 }

@@ -13,38 +13,7 @@
         </div>
       </div>
     </div>
-    <a-space :size="16">
-      <div>
-        <div class="d-flex-center gap-10" style="height: 40px">
-          <div>마감상태:</div>
-          <div class="d-flex-center gap-10">
-            <div @click="handleClickAll" class="checkbox-all">
-              <DxCheckBox class="mr-10 " v-model:value="checkboxAll" icon-size="16" text="전체" />
-            </div>
-            <div class="d-flex">
-              <checkbox-basic label="미입력" class="custom-checkbox0" v-model:valueCheckbox="statuses.checkbox0"/>
-              <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
-            </div>
-            <checkbox-basic label="입력중" class=" custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
-            <checkbox-basic label="입력마감" class=" custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
-            <checkbox-basic label="조정중" class=" custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
-            <checkbox-basic label="조정마감" class=" custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex-center gap-10">
-        <DxField label="매니저리스트"  class="field-custom-auto">
-          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
-        </DxField>
-        <DxField label="영업자리스트" class="field-custom-auto">
-          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
-        </DxField>
-        <div>
-          <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" width="100px"/>
-        </div>
-      </div>
 
-    </a-space>
   </div>
   <a-spin :spinning="loading">
     <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -54,9 +23,43 @@
       <DxExport :enabled="true"/>
       <DxSearchPanel :visible="true" placeholder="검색" :search-visible-columns="['facilityBusinessName']"/>
       <DxToolbar>
+        <DxItem location="after" template="search" />
         <DxItem name="searchPanel"/>
         <DxItem name="exportButton" css-class="cell-button-export"/>
       </DxToolbar>
+      <template #search>
+        <a-space :size="16">
+          <div>
+            <div class="d-flex-center gap-10" style="height: 40px">
+              <div>마감상태:</div>
+              <div class="d-flex-center gap-10">
+                <div @click="handleClickAll" class="checkbox-all">
+                  <DxCheckBox class="mr-10 " v-model:value="checkboxAll" icon-size="16" text="전체" />
+                </div>
+                <div class="d-flex">
+                  <checkbox-basic label="미입력" class="custom-checkbox0" v-model:valueCheckbox="statuses.checkbox0"/>
+                  <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
+                </div>
+                <checkbox-basic label="입력중" class=" custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
+                <checkbox-basic label="입력마감" class=" custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
+                <checkbox-basic label="조정중" class=" custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
+                <checkbox-basic label="조정마감" class=" custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex-center gap-10">
+            <DxField label="매니저리스트"  class="field-custom-auto">
+              <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
+            </DxField>
+            <DxField label="영업자리스트" class="field-custom-auto">
+              <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
+            </DxField>
+            <div>
+              <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" width="100px"/>
+            </div>
+          </div>
+        </a-space>
+      </template>
       <DxColumn data-field="code" caption="사업자코드"/>
       <DxColumn data-field="name" caption="상호" width="215px"/>
       <DxColumn data-field="address" caption="주소" width="215px"/>

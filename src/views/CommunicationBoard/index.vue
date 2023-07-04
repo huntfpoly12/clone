@@ -1,15 +1,15 @@
 <template>
-  <div class="px-10">
+  <action-header title="소통판" @actionSearch="onSearch" :buttonSearch="true" />
+  <div class="px-10 mt-10">
     <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10">
       <a-tab-pane key="1" tab="보험사무대행 신청현황 관리">
         <Tab1/>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="사업장 신청현황 관리" disabled>
+      <a-tab-pane key="2" tab="사업장 신청현황 관리">
         <Tab2/>
       </a-tab-pane>
-      <a-tab-pane key="3" tab="사원 신청현환 관리" disabled>
+      <a-tab-pane key="3" tab="사원 신청현환 관리">
         <Tab3/>
-
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -33,9 +33,12 @@ const openRow = (data: DataRow) => {
   dataRow.value = data
   // console.log('%c data', 'color: red', data)
 }
-
+const onSearch = () => {
+  console.log('%c onSearch', 'color: red')
+}
 provide(OpenRowKey, openRow)
 provide(DataRowKey, dataRow)
+
 </script>
 
 <style scoped>

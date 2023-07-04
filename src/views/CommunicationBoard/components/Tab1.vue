@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { getFakeData } from "@/views/CommunicationBoard/utils";
+import { dataFake } from "@/views/CommunicationBoard/utils";
 import { inject, InjectionKey, ref } from "vue";
 import dayjs from "dayjs";
 import { DataRow, OpenRowKey } from "@/views/CommunicationBoard/type";
@@ -29,8 +29,8 @@ const loading = ref(false)
 
 function getData() {
   loading.value = true
+  dataSource.value = dataFake;
   setTimeout(() => {
-    dataSource.value = getFakeData()
     loading.value = false
   }, 500)
 }
@@ -64,19 +64,22 @@ const openRow = inject(OpenRowKey)
 
 <style lang="scss" scoped>
 .wrapper {
-  height: calc(100vh - 180px);
+  height: calc(100vh - 210px);
   width: 100%;
   padding: 10px;
   text-align: center;
   overflow-y: auto;
+
   .wrapper-content {
     height: 100%;
     text-align: start
   }
 }
+
 .question-container {
   border-bottom: 1px solid #807b7b;
   padding: 10px;
+
   &:hover {
     background-color: #eeeeee;
     cursor: pointer;
@@ -84,6 +87,7 @@ const openRow = inject(OpenRowKey)
   }
 
 }
+
 .tag {
   color: #FFF;
   border-radius: 5px;
@@ -104,9 +108,11 @@ const openRow = inject(OpenRowKey)
 .tag-alarm {
   background-color: #ffc13c;
 }
+
 .font-bold {
   font-weight: 700;
 }
+
 .time {
   color: #bcbcc2ff;
   text-align: end;
