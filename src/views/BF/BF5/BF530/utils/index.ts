@@ -24,6 +24,13 @@ export const workingStatusSelectbox = [
   { id: -1, text: "오류", disabled: false },
   { id: 0, text: "취소", disabled: true },
 ];
+export const workingStatusSelectFilter = [
+  { id: 1, text: "등록", disabled: false },
+  { id: 2, text: "접수", disabled: false },
+  { id: 10, text: "완료", disabled: false },
+  { id: -1, text: "오류", disabled: false },
+  { id: 0, text: "취소", disabled: false },
+];
 export const companyConsignStatusSelectbox = [
   { id: 1, text: "신규" },
   { id: 2, text: "수임" },
