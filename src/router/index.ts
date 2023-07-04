@@ -433,6 +433,13 @@ const routes = [
           roles: ALL_ROLE,
         },
       },
+      {
+        path: "/announcement-manager",
+        component: () => import("../views/Announcement/Manager/index.vue"),
+        meta: {
+          roles: ALL_ROLE,
+        },
+      },
     ],
   },
   {

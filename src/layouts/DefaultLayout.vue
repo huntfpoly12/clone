@@ -13,8 +13,9 @@
       <div class="user-info">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
-        <div @click="openTabAnnouncement" class="cursor-pointer">공지사항</div>
-        <div @click="openTabBoard" class="cursor-pointer">소통판</div>
+        <div v-if="userType !== 'm'" @click="openTabAnnouncement" class="cursor-pointer">공지사항</div>
+        <div v-if="userType === 'm'" @click="openTabAnnouncementManager" class="cursor-pointer">공지사항</div>
+        <div v-if="userType === 'm'" @click="openTabBoard" class="cursor-pointer">소통판</div>
         <account-infor></account-infor>
       </div>
     </a-layout-header>
@@ -212,6 +213,7 @@ import {
   CommunicationBoardManager,
   CommunicationBoardUser,
   AnnouncementUser,
+  AnnouncementManager
 } from "./screenComponents";
 
 import {
@@ -317,6 +319,7 @@ export default defineComponent({
     CommunicationBoardManager,
     CommunicationBoardUser,
     AnnouncementUser,
+    AnnouncementManager
   },
   created() {
     const tabsCached = sessionStorage.getItem('tabsCached')
@@ -503,6 +506,7 @@ export default defineComponent({
       if (this.activeTab.id === "ac-630") return 'AC630';
       if (this.activeTab.id === "communication-board") return userType === 'm' ? 'CommunicationBoardManager' : 'CommunicationBoardUser';
       if (this.activeTab.id === "announcement") return  userType === 'm' ? '' : 'AnnouncementUser';
+      if (this.activeTab.id === "announcement-manager") return  userType === 'm' ? 'AnnouncementManager' : 'AnnouncementUser';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
@@ -536,7 +540,6 @@ export default defineComponent({
     const now = ref(dayjs().valueOf())
     const loginExprTime = ref(parseInt(sessionStorage.getItem("loginExpr")));
     const statusLogin = ref(false);
-
     const intervalId = setInterval(() => {
       now.value = dayjs().valueOf();
       loginExprTime.value = parseInt(sessionStorage.getItem("loginExpr"))
@@ -544,7 +547,6 @@ export default defineComponent({
       const diffInHours = remainingLogout / 3600000;
       if(diffInHours >= 8) statusLogin.value = true;
     }, 1000);
-
     const logout = ()=>{
       router.push("/login");
       location.reload();
@@ -560,7 +562,7 @@ export default defineComponent({
 
     const menuDataSearch = computed(() => {
      return menuData.map((item) => {
-      const exceptMenu = ["communication-board", "announcement"];
+      const exceptMenu = ["communication-board", "announcement", "announcement-manager"];
        if (!exceptMenu.includes(item.id)) {
         return {
          value: item.id,
@@ -868,7 +870,11 @@ export default defineComponent({
         router.push('/communication-board')
         openTab({ id: 'communication-board', name: "소통판", url: '/communication-board' })
     }
-    
+    const openTabAnnouncementManager = () => {
+        router.push('/announcement-manager')
+        openTab({ id: 'announcement-manager', name: "공지사항", url: '/announcement-manager' })
+    }
+
     return {
       onSearch,
       addMenuTab,
@@ -895,7 +901,8 @@ export default defineComponent({
       ENVIRONMENT,
       openTabBoard, openTabAnnouncement,
       userType,
-      menuDataSearch
+      menuDataSearch,
+      openTabAnnouncementManager
     }
   },
 });

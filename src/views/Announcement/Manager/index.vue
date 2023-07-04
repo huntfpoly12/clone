@@ -1,4 +1,5 @@
 <template>
+  <action-header title="공지사항" @actionSearch="onSearch" :buttonSearch="true" />
   <a-row>
     <a-col :span="14">
       <DxDataGrid
@@ -9,7 +10,7 @@
           :allow-column-resizing="true"
           column-auto-width
           noDataText="내역이 없습니다"
-          style="height: calc(100vh - 210px);"
+          style="height: calc(100vh - 140px);"
       >
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
         <DxExport :enabled="true"/>
@@ -21,7 +22,7 @@
         </DxToolbar>
         <template #search>
           <div class="d-flex-center gap-20">
-            <a-form-item label="작성기간 (최대 1년)">
+            <a-form-item label="작성기간 (최대 3년):">
               <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
                                    :max-range="90"/>
             </a-form-item>
@@ -32,7 +33,7 @@
         </template>
         <template #button-template>
           <a-tooltip placement="top">
-            <template #title>알림 신규 등록</template>
+            <template #title>공지 신규 등록</template>
             <div>
               <DxButton icon="plus" @click="showAddModal"/>
             </div>
@@ -40,26 +41,23 @@
         </template>
         <DxColumn caption="삭제 여부" data-field="delete" alignment="center" cell-template="delete"/>
         <DxColumn caption="구분" data-field="division" alignment="center" cell-template="division"/>
-        <DxColumn caption="사업자코드" data-field="active" alignment="center" cell-template="active"/>
-        <DxColumn caption="상호" data-field="mutual" alignment="center"/>
-        <DxColumn caption="주소" data-field="address" alignment="center"/>
-        <DxColumn caption="분류" data-field="classification" alignment="center"/>
-        <DxColumn caption="알림내용" data-field="contentOfInquiry" alignment="center"/>
-        <DxColumn caption="작성자" data-field="writer" alignment="center"/>
-        <DxColumn caption="작성일시" data-field="dateOfCreation" alignment="center"/>
+        <DxColumn caption="상단고정" data-field="active" alignment="center" cell-template="active"/>
+        <DxColumn caption="내용" data-field="mutual" alignment="center"/>
+        <DxColumn caption="작성자" data-field="address" alignment="center"/>
+        <DxColumn caption="작성일시" data-field="replyDateAndTime" alignment="center"/>
         <DxColumn caption="" alignment="center" cell-template="action"/>
 
-        <template #active="{data}">
+        <template #delete="{data}">
           <div v-if="data.data.active">
             <a-tag color="#f50">해지</a-tag>
           </div>
         </template>
-        <template #delete="{data}">
+        <template #division="{data}">
           <div v-if="data.data.active">
-            <a-tag color="#f50">삭제</a-tag>
+            <a-tag color="#337AB7">삭제</a-tag>
           </div>
         </template>
-        <template #division="{data}">
+        <template #active="{data}">
           <div v-if="data.data.active">
             <a-tag color="#f89a38">알림</a-tag>
           </div>
@@ -69,7 +67,7 @@
         </template>
       </DxDataGrid>
     </a-col>
-    <a-col :span="10" class="form-container pl-10">
+    <a-col :span="10" class="form-container pl-10" style=" height: calc(100vh - 140px);">
       <div class="form-chat">
         <!--          <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading">-->
         <!--            <a-spin size="large"/>-->
@@ -138,8 +136,8 @@
         <div class="form-chat-bottom">
           <div class="form-chat-bottom-category">
             <StatusChat with="150" disabled/>
-            <span style="margin: 0 10px;">분류:</span>
-            <span class="form-chat-bottom-category-text">회계-마감-( {{ dayjs().format('YYYY-MM') }})</span>
+            <checkbox-basic label="상단고정"/>
+            <info-tool-tip>선택시 소통판에서 최우선하여 정렬됩니다.</info-tool-tip>
           </div>
           <InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
                      :placeholder="disabled ? '입력마감 상태에서는 이용할 수 없습니다.' : '댓글을 입력하세요…'"
@@ -181,6 +179,7 @@ import deletePopup from "@/utils/deletePopup";
 import { Message } from "@/configs/enum";
 import { DataRowKey } from "@/views/CommunicationBoard/type";
 import { getJwtObject } from "@bankda/jangbuda-common";
+import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
 const search = reactive({
   replyX: true,
@@ -342,8 +341,11 @@ const handleEditQA = (row: any) => {
 const openLinkDownFile = (link: string) => {
   window.open(link, '_blank')
 }
+const onSearch = () => {
+  console.log('onSearch')
+}
 </script>
 
 <style lang="scss" scoped>
-@import "./../styles";
+@import "src/views/CommunicationBoard/styles.scss";
 </style>
