@@ -82,7 +82,6 @@
                   year: dataSearch.year,
                   month: dataSearch.month
                 }"
-                :noOptionNoInput="false"
                 @checkConfirmRowTable="submitChangeStatus"
               />
               <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">

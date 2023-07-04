@@ -389,7 +389,7 @@ export default defineComponent({
       if (!statusButton.value) {
         return false;
       }
-      return +statusButton.value > 20 ? true : false;
+      return (userType === 'm' && +statusButton.value === 40)  || (userType !== 'm' && +statusButton.value > 20)
     });
     const messageUpdate = Message.getMessage("COMMON", "106").message;
     const idDisableNoData = computed(() => {
