@@ -17,7 +17,7 @@
                 <template #box-action-right>
                     <div class="action d-flex-center">
                         <span class="mr-10">기간: </span>
-                        <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" :max-range="90"/>
+                        <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" :max-select="3"/>
                         <button-basic @onClick="actionOpenModalUpload" class="ml-5 d-flex-center button-upload" :type="'default'" >
                             <upload-outlined :style="{ fontSize: '16px', marginRight: '5px' }" />
                             <span>전표 업로드</span>

@@ -46,6 +46,10 @@ export default defineComponent({
     teleport: {
       default: false,
       type: [Boolean, String]
+    },
+    maxSelect: {
+      type: Number,
+      default: null,
     }
   },
   components: {
@@ -77,6 +81,11 @@ export default defineComponent({
     };
     const handleInternal = (date: any) => {
       if (!date) return
+      if (props.maxSelect) {
+        minDate.value = dayjs(date[0]).subtract(props.maxSelect, "month").toDate();
+        maxDate.value = dayjs(date[0]).add(props.maxSelect, "month").add(1, "day").toDate();
+        return
+      }
       minDate.value = dayjs(date[0]).subtract(1, "year").toDate();
       maxDate.value = dayjs(date[0]).add(1, "year").add(1, "day").toDate();
     }
