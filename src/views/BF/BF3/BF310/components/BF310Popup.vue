@@ -129,7 +129,7 @@
                     </a-form-item>
                   </a-col>
                   <a-col :span="6">
-                    <img-upload :title="titleModal" @update-img="getUrlLicenseFile" :disabledImg="disabledStatus" />
+                    <img-upload :title="titleModal" @update-img="getUrlLicenseFile" :disabledImg="disabledStatus"  :required="false"/>
                   </a-col>
                   <a-col :span="9">
                     <preview-image :dataImage="{
@@ -258,7 +258,7 @@
                           </a-form-item>
                         </a-col>
                         <a-col :span=" 6 " class="pl-12 text-color">
-                          <img-upload :title=" '장기요양기관등록증' " @update-img=" getregCardFile " :disabledImg="disabledStatus" />
+                          <img-upload :title=" '장기요양기관등록증' " @update-img=" getregCardFile " :disabledImg="disabledStatus"/>
                         </a-col>
                         <a-col :span=" 9 ">
                           <div class="preview-img">
@@ -477,6 +477,7 @@ export default defineComponent({
     var formState: any = ref({ ...initialFormState });
     const dataSource: any = ref([]);
     const isDuplicateFacilityBusinesses = ref(false);
+    const checkDuplicateFirstLoad = ref(true);
     const gridRefName: any = ref("grid");
     const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM') };
     const dataActiveRow: any = ref({rowIndex:1,...initRow})
@@ -933,13 +934,12 @@ export default defineComponent({
     });
 
     // check trùng tên FacilityBusinesses
-    console.log(dataActiveRow.value);
-    
     watch(() => dataActiveRow.value.name, (newVal) => {
-      if (dataSource.value.length > 1) {
-        const existValueNane = dataSource.value.find((item: any) => item.name === newVal && typeof item.rowIndex == 'number')
-        return existValueNane ? isDuplicateFacilityBusinesses.value = true : isDuplicateFacilityBusinesses.value = false;
+      if (dataSource.value.length > 1 && !checkDuplicateFirstLoad.value) {
+        const existValueNane = dataSource.value.find((item: any) => item.name === newVal && item.rowIndex !== focusedRowKey.value)
+        existValueNane ? isDuplicateFacilityBusinesses.value = true : isDuplicateFacilityBusinesses.value = false;
       }
+      checkDuplicateFirstLoad.value = false
     }, { deep: true })
     return {
       selectionChanged,
