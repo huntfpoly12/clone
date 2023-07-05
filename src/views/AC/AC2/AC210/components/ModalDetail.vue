@@ -1,9 +1,9 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1650">
-        <div class="mt-20" :key="countKey">
+        <div :key="countKey">
             <h1 class="text-center mb-0">업로드 요청 내역 및 결과</h1>
             <a-spin :spinning="loadingGetAccountingDocumentW4cUploadItems">
-                <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="requestId" :show-row-lines="true"
+                <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210Detail" key-expr="requestId" :show-row-lines="true"
                     :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefDetailAC210"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
@@ -12,7 +12,7 @@
                     <DxToolbar>
                         <DxItem name="searchPanel" />
                     </DxToolbar>
-                    <DxColumn caption="사업명" width="85" data-field="facilityBusinessName" />
+                    <DxColumn caption="사업명" width="120" data-field="facilityBusinessName" />
 
                     <DxColumn caption="일자" data-field="transactionDetailDate" css-class="cell-left"
                         cell-template="transactionDetailDate" />
@@ -28,7 +28,7 @@
 
                     <DxColumn caption="통장별명" data-field="bankbookNickname" />
 
-                    <DxColumn caption="결의서종류" data-field="resolutionType" css-class="cell-left"
+                    <DxColumn caption="결의서종류" width="100" data-field="resolutionType" css-class="cell-left"
                         cell-template="resolutionType" />
                     <template #resolutionType="{ data }">
                         {{ arrResolutionType.find((item: any) => data.data.resolutionType == item.id)?.text }}
@@ -40,7 +40,6 @@
                     <DxColumn caption="계정과목" data-field="theOrder" css-class="cell-left"
                         cell-template="theOrder-accountCode" />
                     <template #theOrder-accountCode="{ data }">
-                        {{ data.data.theOrder }}-
                         {{ accountSubjects.find((item) => item.code == data.data.accountCode)?.name }}
                     </template>
                     <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
@@ -206,4 +205,8 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+#dataGridAC210Detail {
+    max-height: calc(100vh - 250px);
+}
+</style>
