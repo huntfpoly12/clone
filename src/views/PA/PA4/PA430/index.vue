@@ -79,12 +79,15 @@
                             :foreigner="data.data.employee.foreigner" :checkStatus="false"
                             :forDailyUse="data.data.employeeType == 20 ? true : false" />
                     </template>
-                    <DxColumn width="55" data-field="retirementType" caption="구분 " cell-template="grid-cell"
+                    <DxColumn width="80" data-field="retirementType" caption="구분 " cell-template="grid-cell"
                         css-class="cell-center" />
                     <template #grid-cell="{ data }">
-                        <a-tag :color="getColorTag(data.value)?.name">{{
-                            getColorTag(data.value)?.tag_name
-                        }}</a-tag>
+                        <div v-if="data.data.retirementType == 1" class="retirementType-1">
+                            퇴직
+                        </div>
+                        <div v-if="data.data.retirementType == 2" class="retirementType-2">
+                            중간
+                        </div>
                     </template>
                     <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate" cell-template="settlementStartDate"
                         css-class="cell-center" :width="140" />
@@ -153,27 +156,32 @@
                 </DxDataGrid>
                 <div class="custom-smmary">
                     <!-- <div style="margin-left: 70px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-                            <div v-html="employeeType1()"></div>
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                        <div v-html="employeeType1()"></div>
+                    </div>
+
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                        <div v-html="customRetirementBenefits()"></div>
+                    </div>
+
                     <!-- </div>
                     <div style="margin-left: 50px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content"
-                            v-html="customNonTaxableRetirementBenefits()">
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                        v-html="customNonTaxableRetirementBenefits()">
+                    </div>
                     <!-- </div>
                     <div style="margin-left: 50px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content"
-                            v-html="customTaxableRetirementBenefits()">
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                        v-html="customTaxableRetirementBenefits()">
+                    </div>
                     <!-- </div>
                     <div style=" margin-left: 50px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
+                    </div>
                     <!-- </div>
                     <div style=" margin-left: 50px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
+                    </div>
                     <!-- </div> -->
                 </div>
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
@@ -252,14 +260,6 @@ export default defineComponent({
             { "month": 11, "year": paYear.value }
         ]);
 
-
-        const getColorTag = (data: any) => {
-            if (data == 1) {
-                return { name: "#C73F09", tag_name: "퇴직" };
-            } else if (data == 2) {
-                return { name: "#77933C", tag_name: "중간" };
-            }
-        };
         const originData = ref({
             companyId: companyId,
             filter: {
@@ -442,6 +442,14 @@ export default defineComponent({
         const employeeType1 = () => {
             return `사원수 <span>[${totalEmployee.value}]</span> (퇴직 <span>[${emplRetirementType1.value}]</span>, 중간 <span>[${emplRetirementType2.value}]</span>)`
         }
+
+        const customRetirementBenefits = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.retirementBenefits
+            })
+            return `퇴직급여합계 <span>[${filters.formatCurrency(sum)}]</span>`;
+        }
         const customNonTaxableRetirementBenefits = () => {
             let sum = 0
             dataSource.value?.map((row: any) => {
@@ -482,22 +490,18 @@ export default defineComponent({
             searching,
             paYear,
             dataSource,
-            // sendMail,
             move_column,
             colomn_resize,
             modalEmailSingle,
             modalEmailMulti,
-            // onCloseEmailSingleModal,
-            // onCloseEmailMultiModal,
             selectionChanged,
             rangeDate,
             valueRadioBox,
             arrayRadioCheck,
             arrayRadioType,
-            getColorTag,
             originData,
             minDate, maxDate,
-            customNonTaxableRetirementBenefits, customTaxableRetirementBenefits, customTotalDeduction, customActualPayment,
+            customRetirementBenefits, customNonTaxableRetirementBenefits, customTaxableRetirementBenefits, customTotalDeduction, customActualPayment,
         };
     },
 });
