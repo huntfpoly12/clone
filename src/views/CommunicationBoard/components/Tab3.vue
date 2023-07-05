@@ -5,9 +5,13 @@
           :show-row-lines="true"
           :hoverStateEnabled="true"
           :data-source="dataSource"
+          key-expr="id"
           :show-borders="true"
           :allow-column-resizing="true"
           column-auto-width
+          :focused-row-enabled="true"
+          :focused-row-key="focusRowKeys"
+          :focused-row-index="0"
           noDataText="내역이 없습니다"
           style="height: calc(100vh - 210px);"
       >
@@ -51,12 +55,12 @@
 
         <template #active="{data}">
           <div v-if="data.data.active">
-            <a-tag color="#f50">해지</a-tag>
+            <a-tag color="#DC5939">해지</a-tag>
           </div>
         </template>
         <template #delete="{data}">
           <div v-if="data.data.active">
-            <a-tag color="#f50">삭제</a-tag>
+            <a-tag color="#DC5939">삭제</a-tag>
           </div>
         </template>
         <template #division="{data}">
@@ -69,7 +73,7 @@
         </template>
       </DxDataGrid>
     </a-col>
-    <a-col :span="10" class="form-container pl-10">
+    <a-col :span="10" class="form-container pl-10 pt-8">
       <div class="form-chat">
         <!--          <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading">-->
         <!--            <a-spin size="large"/>-->
@@ -153,12 +157,11 @@
                                :listImage="listImagePreview"/>
       </div>
     </a-col>
-
   </a-row>
+  <Tab3PlusModal v-if="isModalTab3Plus" :modal-status="isModalTab3Plus" @cancel="isModalTab3Plus = false" @close-modal="closeModal"/>
 </template>
 
 <script setup lang="ts">
-
 import DxButton from "devextreme-vue/button";
 import {
   DeleteOutlined,
@@ -181,41 +184,26 @@ import deletePopup from "@/utils/deletePopup";
 import { Message } from "@/configs/enum";
 import { DataRowKey } from "@/views/CommunicationBoard/type";
 import { getJwtObject } from "@bankda/jangbuda-common";
+import { dataFake, getFakeData } from "@/views/CommunicationBoard/utils";
+import Tab3PlusModal from "@/views/CommunicationBoard/components/Tab3PlusModal.vue";
 
 const search = reactive({
   replyX: true,
   replyO: true,
 })
 const rangeDate = ref([parseInt(dayjs().format("YYYYMMDD")), parseInt(dayjs().add(3, "month").format("YYYYMMDD"))])
-const addModal = ref(false)
-const showAddModal = () => {
-  addModal.value = true
-}
+
 const dataRow = inject(DataRowKey)
 const token = ref(sessionStorage.getItem("token"))
 let jwtObject = getJwtObject(token.value!);
 const userName = ref(sessionStorage.getItem("name"));
 const userId = jwtObject.userId
-const dataSource = ref([
-  {
-    delete: '',
-    division: '',
-    active: true,
-    mutual: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
-    address: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
-    classification: '',
-    contentOfInquiry: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
-    writer: '',
-    dateOfCreation: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-    answerContent: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum eum labore magnam possimus provident recusandae saepe totam?',
-    answerer: '',
-    replyDateAndTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-  }
-])
+const dataSource = ref(dataFake.filter((item: any) => item.expressionType === 3))
 const filesUpload = ref([])
 const disabled = ref(false)
 const isLoadingUpload = ref(false)
 const isModalPreview = ref(false)
+const isModalTab3Plus = ref(false)
 const listImagePreview = ref({
   index: 0,
   files: [],
@@ -229,6 +217,8 @@ const rowEdit = reactive({
 })
 const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
+const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : listChat.value?.[0].id)
+
 const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
 const submitChat = () => {
   if (rowEdit.isEdit) {
@@ -341,6 +331,12 @@ const handleEditQA = (row: any) => {
 }
 const openLinkDownFile = (link: string) => {
   window.open(link, '_blank')
+}
+const showAddModal = () => {
+  isModalTab3Plus.value = true
+}
+const closeModal = (e: boolean) => {
+  if (e) isModalTab3Plus.value = false
 }
 </script>
 

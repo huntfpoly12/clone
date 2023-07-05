@@ -2,13 +2,13 @@
   <action-header title="소통판" @actionSearch="onSearch" :buttonSearch="true" />
   <div class="px-10 mt-10">
     <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10">
-      <a-tab-pane key="1" tab="보험사무대행 신청현황 관리">
+      <a-tab-pane key="1" tab="최신글">
         <Tab1/>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="사업장 신청현황 관리">
+      <a-tab-pane key="2" tab="문의">
         <Tab2/>
       </a-tab-pane>
-      <a-tab-pane key="3" tab="사원 신청현환 관리">
+      <a-tab-pane key="3" tab="알림">
         <Tab3/>
       </a-tab-pane>
     </a-tabs>
