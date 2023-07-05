@@ -479,7 +479,7 @@ export default defineComponent({
     const isDuplicateFacilityBusinesses = ref(false);
     const checkDuplicateFirstLoad = ref(true);
     const gridRefName: any = ref("grid");
-    const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM') };
+    const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM'),name: null };
     const dataActiveRow: any = ref({rowIndex:1,...initRow})
     const focusedRowKey = ref(0);
     const dataSourceOld: any = ref([]);
