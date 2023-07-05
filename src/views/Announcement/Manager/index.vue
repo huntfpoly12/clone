@@ -135,12 +135,12 @@
         </div>
         <div class="form-chat-bottom">
           <div class="form-chat-bottom-category">
-            <StatusChat with="150" disabled/>
+            <StatusChat :valueSelect="5" with="150" disabled/>
             <checkbox-basic label="상단고정"/>
             <info-tool-tip>선택시 소통판에서 최우선하여 정렬됩니다.</info-tool-tip>
           </div>
           <InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
-                     :placeholder="disabled ? '입력마감 상태에서는 이용할 수 없습니다.' : '댓글을 입력하세요…'"
+                     :placeholder="disabled ? '글작성 (최대 1,000자)' : '글작성 (최대 1,000자)'"
                      :disabled="isLoadingUpload || disabled"
                      @submitChat="submitChat"
                      :isEdit="rowEdit.isEdit"
