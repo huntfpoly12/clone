@@ -449,7 +449,7 @@ const openTabFuc = () => {
 }
 
 const submitForm = (e: any) => {
-  if (retirementStatus.value === 20) {
+  if (!isEdit.value) {
     emit('nextPage', true)
     return
   }
