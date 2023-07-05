@@ -124,7 +124,7 @@
         </div>
       </a-col>
       <a-col class="d-flex-center">
-        <a-tooltip placement="top" class="custom-tooltip">
+        <a-tooltip>
           <template #title> 출력 / 저장 </template>
           <div style="text-align: center">
             <DxButton class="ml-3" @click="modalPrint = true">

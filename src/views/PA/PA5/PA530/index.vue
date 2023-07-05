@@ -138,7 +138,7 @@
                         </div>
                     </template>
                     <template #group-print>
-                        <a-tooltip placement="topRight" color="black">
+                        <a-tooltip>
                             <template #title>출력 / 저장</template>
                             <div class="custom-mail-group">
                                 <DxButton>
