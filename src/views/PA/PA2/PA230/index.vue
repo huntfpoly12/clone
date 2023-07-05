@@ -7,6 +7,12 @@
           <a-col :span="12">
             <a-row :gutter="[24, 8]" >
               <a-col>
+                <div class="dflex custom-flex global-year">
+                  <label class="lable-item">귀속연도 :</label>
+                  <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
+                </div>
+              </a-col>
+              <a-col>
                 <div class="d-flex-center">
                   <label class="lable-item">구분 :</label>
                   <radio-group
@@ -17,12 +23,7 @@
                   />
                 </div>
               </a-col>
-              <a-col>
-                <div class="dflex custom-flex global-year">
-                  <label class="lable-item">귀속연도 :</label>
-                  <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
-                </div>
-              </a-col>
+
             </a-row>
           </a-col>
         </a-row>
@@ -62,6 +63,7 @@
           noDataText="내역이 없습니다"
           style="height: calc(100vh - 285px); margin-top: 100px; z-index: 0;"
         >
+          <DxPaging :page-size="0" />
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" :search-visible-columns="['CompanyNameAndAddress']"/>
           <DxExport :enabled="true" />
           <DxToolbar>
@@ -314,7 +316,7 @@ import {
   DxSelection,
   DxSummary,
   DxToolbar,
-  DxTotalItem, DxExport, DxSearchPanel
+  DxTotalItem, DxExport, DxSearchPanel, DxPaging
 } from "devextreme-vue/data-grid";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useStore } from "vuex";

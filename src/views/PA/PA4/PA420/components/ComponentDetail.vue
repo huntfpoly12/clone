@@ -446,7 +446,7 @@ const modalAdd = ref(false);
 const modalUpdate = ref(false);
 const modalHistoryStatus = ref<boolean>(false);
 const resetFormNum = ref(1);
-const checkActionValue = computed(() => retirementStatus.value !== 10 && retirementStatus.value !== 20); // disabeld button
+const checkActionValue = computed(() => (userType !== 'm' && retirementStatus.value !== 10 && retirementStatus.value !== 20) || (userType === 'm' && retirementStatus.value === 40)); // disabeld button
 let dataAction: any = reactive({
   ...dataActionUtils,
 });
@@ -650,7 +650,6 @@ errorReport(res => {
   notification('error', res.message)
 })
 const handleViewPrint = (data: any) => {
-  console.log('%c data', 'color: red;', data);
   dataInputReport.input.type = data.retirementType;
   dataInputReport.incomeIds = [data.incomeId]
   triggerReport.value = true;
