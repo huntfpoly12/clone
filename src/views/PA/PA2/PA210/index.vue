@@ -329,7 +329,7 @@
         />
         <template #pupop="{ data }">
           <div class="custom-action" style="text-align: center">
-            <a-tooltip>
+            <a-tooltip color="black">
               <template #title>출력 / 저장</template>
               <img
                 @click="openPopupPrint(data.data)"
