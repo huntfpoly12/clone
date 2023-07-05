@@ -133,7 +133,7 @@
 											:width="'130px'" />
 										<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
 											:name="item.name" :type="3" :showTooltip="false" :subName="item.taxfreePayItemCode +
-												' ' + item.taxfreePayItemName + ' ' + (item.taxFreeIncludeSubmission ? 'O' : 'X')" :width="'130px'" />
+												' ' + (item.taxfreePayItemName ? item.taxfreePayItemName : '') + ' ' + (item.taxFreeIncludeSubmission ? 'O' : 'X')" :width="'130px'" />
 										<deduction-items v-if="item.taxPayItemCode == null &&
 											item.taxfreePayItemCode == null
 											" :name="item.name" :type="4" subName="공제" :showTooltip="false" :width="'130px'" />

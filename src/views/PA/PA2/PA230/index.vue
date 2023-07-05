@@ -89,7 +89,7 @@
           </template>
           <template #send-group-print>
             <div class="custom-mail-group">
-              <a-tooltip placement="top" color="black" title="출력 / 저장">
+              <a-tooltip title="출력 / 저장">
                 <div>
                   <DxButton @click="printFunc">
                     <img
@@ -205,7 +205,7 @@
                 style="width: 25px; margin-right: 3px; cursor: pointer"
                 @click="sendMail(data.data.employee)"
               />
-              <a-tooltip placement="top" color="black">
+              <a-tooltip>
                 <template #title>출력 / 저장</template>
                 <img
                   src="@/assets/images/print.svg"
