@@ -14,12 +14,12 @@
                             :layoutCustom="'horizontal'" valueExpr="value" />
                     </div>
                 </a-col>
-                <a-col>
+                <!-- <a-col>
                     <div class="selectRatio">
                         <label class="lable-item">성명 :</label>
                         <default-text-box v-model:valueInput="searchParam.filter.name" width="200px" />
                     </div>
-                </a-col>
+                </a-col> -->
             </a-row>
         </div>
         <div class="page-content">
@@ -99,9 +99,9 @@
                         <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
                             :typeValue="1" />
                         <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
-                            :ratio="data.data.nationalPensionSupportPercent" />
+                            :ratio="data.data.employee.nationalPensionSupportPercent" />
                         <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
-                            :ratio="data.data.employeementInsuranceSupportPercent" />
+                            :ratio="data.data.employee.employeementInsuranceSupportPercent" />
                         <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
                             :ratio="data.data.employee.employeementReductionRatePercent" />
                         <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
@@ -149,7 +149,7 @@
             <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                 :data="popupDataEmailSingle" />
             <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
-                :data="popupDataEmailMulti" :dataSelect="dataSelect"/>
+                :data="popupDataEmailMulti" :dataSelect="dataSelect" />
         </div>
     </div>
 </template>
@@ -321,7 +321,7 @@ export default defineComponent({
                     halfWay++;
                 }
             });
-            return `전체 <span>[${filters.formatCurrency(total)}]</span> / 계속 <span>[${filters.formatCurrency(continuee)}]</span> / 중도 <span>[${filters.formatCurrency(halfWay)}]</span>)`;
+            return `전체 <span>([${filters.formatCurrency(total)}]</span> / 계속 <span>[${filters.formatCurrency(continuee)}]</span> / 중도 <span>[${filters.formatCurrency(halfWay)}])</span>`;
         };
         const customTextSummaryTotalSalary = () => {
             let total = 0;
