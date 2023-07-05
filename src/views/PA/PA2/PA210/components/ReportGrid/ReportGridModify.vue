@@ -326,6 +326,10 @@ export default defineComponent({
           firstTimeLoad.value = true;
         }
       },
+      afterScrollVertically: () => {
+        let hot = wrapper.value.hotInstance;
+        hot.render()
+      },
       hotRef: null,
       data: dataModified,
       mergeCells: mergeCellsModified,
