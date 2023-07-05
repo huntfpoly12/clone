@@ -53,7 +53,7 @@
                   <SelectCustomField
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
-                    :dataSource="workingStatusSelectbox"
+                    :dataSource="workingStatusSelectFilter"
                     width="95px"
                     displayeExpr="text"
                     valueExpr="id"
@@ -161,7 +161,7 @@
           <template #workingStatus="{ data }: any">
             <SelectBoxCT
               v-model:valueInput="data.data.workingStatus"
-              :dataSource="workingStatusSelectbox"
+              :dataSource="workingStatusSelectFilter"
               width="95px"
               displayeExpr="text"
               valueExpr="id"
@@ -393,7 +393,7 @@ import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
 import {
   reportTypeSelectbox,
-  workingStatusSelectbox,
+  workingStatusSelectFilter,
   companyConsignStatusSelectbox,
   EDIStatusSelectbox,
   formatMonth,
@@ -549,14 +549,12 @@ export default defineComponent({
             return true;
           });
         });
-        console.log('%c arr', 'color: red',arr)
         store.commit("common/filterDsTab1Bf530", arr);
         tab1Bf520Ref.value.instance.clearSelection();
       },
       { deep: true }
     );
     const onDataGridInitialized = (e: any) => {
-      console.log('%c reachDataCount', 'color: red',reachDataCount.value)
       if (reachDataCount.value == 0) {
         reachDataCount.value++;
       }
@@ -582,7 +580,6 @@ export default defineComponent({
       // selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
       //   return item !== currentDeselectedRowKeys[0];
       // });
-      console.log('%c selectedRowsData', 'color: red',  selectedRowsData)
       companies.value = selectedRowsData.map((item: any) => item.companyId);
       selectedRowKeys.value = selectedRowsData.map((item: any) => item.companyId);
     };
@@ -596,9 +593,7 @@ export default defineComponent({
         selectedRowKeys.value.push(e.key);
         e.component.selectRows(selectedRowKeys.value);
       } else {
-        selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
-          return item !== e.key;
-        });
+        selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => item !== e.key);
       }
     };
     const rowUpdating = (e: any) => {
@@ -774,7 +769,7 @@ export default defineComponent({
       selectionChanged,
       formatMonth,
       reportTypeSelectbox,
-      workingStatusSelectbox,
+      workingStatusSelectFilter,
       companyConsignStatusSelectbox,
       EDIStatusSelectbox,
       states1,
