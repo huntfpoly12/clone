@@ -18,7 +18,7 @@
   <a-spin :spinning="loading">
     <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10" :loadPanel="false"
-                style="height: calc(100vh - 240px)">
+                style="height: calc(100vh - 200px)">
       <DxPaging :page-size="0"/>
       <DxExport :enabled="true"/>
       <DxSearchPanel :visible="true" placeholder="검색" :search-visible-columns="['facilityBusinessName']"/>
