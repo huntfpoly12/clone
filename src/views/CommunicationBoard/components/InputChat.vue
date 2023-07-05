@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="input-edit-chat-input-action-btn">
-        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
+        <button-basic class="mr-10" text="취소" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
                       :disabled="disabled || (!content.trim() && !filesUpload.length)"/>
         <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()"
                       :disabled="disabled || (!content.trim() && !filesUpload.length)"/>
