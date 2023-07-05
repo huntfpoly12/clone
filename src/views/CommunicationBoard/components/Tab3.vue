@@ -217,7 +217,7 @@ const rowEdit = reactive({
 })
 const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
-const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : listChat.value?.[0].id)
+const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : dataFake[0].id)
 
 const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
 const submitChat = () => {
