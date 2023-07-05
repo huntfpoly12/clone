@@ -632,7 +632,6 @@ export default defineComponent({
       }))
     onResult((result) => {
       const companyFacilityBiz = result?.data?.getMyCompanyFacilityBusinesses?.find((item: any) => item.facilityBusinessId === globalFacilityBizId.value)
-      console.log('companyFacilityBiz', companyFacilityBiz)
       if (companyFacilityBiz) {
         if(!sessionStorage.getItem('facilityBizType')) {
           // window.location.reload()
@@ -1181,27 +1180,38 @@ export default defineComponent({
       const initTransactionDetails: any = { ...InitTransactionDetails };
       const lengthData =
         dataSourceTransactionDetails.value.transactionDetails.length;
+      
+        // initTransactionDetails.theOrder 
+
+      const dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? '')
+      const currentDate = dayjs().format('YYYY-MM-DD')
+      if(!!dataAccountSubject && dataAccountSubject.length) {
+        dataAccountSubject.forEach((account: any) => {
+          const useStartDate = dayjs(account.useStartDate.toString()).format('YYYY-MM-DD')
+          const useFinishDate =  dayjs(account.useFinishDate.toString()).format('YYYY-MM-DD')
+          if(currentDate <=  useFinishDate && currentDate >= useStartDate) {
+            initTransactionDetails.theOrder = account.theOrder
+          }
+        })
+      }
+      
       if (lengthData > 0) {
         const firstTransactionDetail = dataSourceTransactionDetails.value.transactionDetails[0];
         if (lengthData === 1) {
-          initTransactionDetails.theOrder = firstTransactionDetail.theOrder + 1 || 1;
           initTransactionDetails.accountingDocumentId = firstTransactionDetail.accountingDocumentId + 1 + "create" || "create";
         } else {
           const beforTransactionDetail = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1];
-          initTransactionDetails.theOrder = beforTransactionDetail.theOrder + 1 || 1;
           initTransactionDetails.accountingDocumentId = beforTransactionDetail.accountingDocumentId + 1 + "create" || "create";
         }
         initTransactionDetails.summary = firstTransactionDetail.summary;
         initTransactionDetails.letterOfApprovalType = firstTransactionDetail.letterOfApprovalType
       } else {
-        initTransactionDetails.theOrder = 0;
         initTransactionDetails.accountingDocumentId = "create";
       }
       dataSourceTransactionDetails.value.transactionDetails = [
         ...dataSourceTransactionDetails.value.transactionDetails,
         initTransactionDetails,
       ];
-      console.log(dataSourceTransactionDetails.value.transactionDetails);
 
       nextTick(() => {
         rowKeyfocusedGridDetail.value =

@@ -155,7 +155,7 @@
                                 <span>1. 회계서비스 신청</span>
                                 <div class="list-checkbox  ml-45">
                                     <radio-group :arrayValue="arrayRadioCheckStep3"
-                                        v-model:valueRadioCheck="checkedAccounting" :layoutCustom="'horizontal'" />
+                                       v-model:valueRadioCheck="checkedAccounting" :layoutCustom="'horizontal'" />
                                 </div>
                             </label>
                             <div class="group-title">
@@ -166,8 +166,8 @@
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                 :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
                                  :onRowClick="onSelectionClick" @init-new-row="onInitRow" 
-                                :focused-row-enabled="true" key-expr="rowIndex" :focused-row-key="focusedRowKey"
-                                :auto-navigate-to-focused-row="true" noDataText="내역이 없습니다">
+                                :focused-row-enabled="true" key-expr="rowIndex" :auto-navigate-to-focused-row="true"
+                        v-model:focused-row-key="focusedRowKey" noDataText="내역이 없습니다">
                                 <DxScrolling mode="standard" show-scrollbar="always" />
                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="false"
                                     template="button-template" mode="cell" new-row-position="pageBottom" :confirmDelete="false">
@@ -400,8 +400,6 @@ import { makeDataClean } from "@/helpers/commonFunction"
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3} from "./utils";
 import dayjs from 'dayjs';
 import { Message } from "@/configs/enum";
-import { onMounted } from "vue";
-import { DataCreated } from "../PA/PA5/PA520/utils";
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
@@ -437,7 +435,7 @@ export default {
         let dataImg = ref();
         let dataImgStep3 = ref();
         let valueRadioWithdrawDay = ref("5일");
-        const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM') };
+        const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM'),name: null };
         const dataActiveRow: any = ref({rowIndex:1,...initRow})
         const valueFacilityBusinesses: any = ref([dataActiveRow.value]);
         const isResidentId = ref(false);
@@ -687,8 +685,8 @@ export default {
         };
         const gridRefName: any = ref("grid");
         let accountingCustom: any = null;
-        watch(() => checkedAccounting.value,
-            (newVal) => {
+      watch(() => checkedAccounting.value,
+        (newVal) => {
                 if (newVal === 2) {
                   accountingCustom = null;
                   valueFacilityBusinesses.value = [];
@@ -862,7 +860,12 @@ export default {
         }
         );
         watch(
-            [() => contractCreacted.terms, () => contractCreacted.personalInfo, () => contractCreacted.accountingService, () => contractCreacted.withholdingService], (value) => {
+          [
+            () => contractCreacted.terms,
+            () => contractCreacted.personalInfo,
+            () => contractCreacted.accountingService,
+            () => contractCreacted.withholdingService],
+          (value) => {
                 if (
                     contractCreacted.terms == true &&
                     contractCreacted.personalInfo == true &&
@@ -899,13 +902,13 @@ export default {
         },{deep : true});
 
         // check trùng tên FacilityBusinesses
-        watch(()=>dataActiveRow.value.name, (newVal) => {
+        watch(()=>dataActiveRow.value?.name, (newVal) => {
           if (valueFacilityBusinesses.value.length > 1) {
-            const existValueNane = valueFacilityBusinesses.value.find((item: any) => item.name === newVal && typeof item.rowIndex == 'number')
+            const existValueNane = valueFacilityBusinesses.value.find((item: any) => item.name === newVal &&  item.rowIndex !== focusedRowKey.value)
             return existValueNane ? isDuplicateFacilityBusinesses.value = true : isDuplicateFacilityBusinesses.value = false;
           }
    
-        },{deep : true})
+        },{immediate : true})
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady,  checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,

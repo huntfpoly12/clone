@@ -55,9 +55,10 @@
             />
             <template #status="{ data }">
               <process-status-tooltip
-                :valueStatus="10"
+                :valueStatus="data.data.status"
                 :height="32"
                 :dataRow="data.data"
+                :disabled="data.data.status != 10"
               />
             </template>
             <DxColumn

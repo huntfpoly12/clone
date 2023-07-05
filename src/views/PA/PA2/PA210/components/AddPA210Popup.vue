@@ -4,7 +4,7 @@
           :mask-closable="false" width="1000px" footer="">
           <standard-form formName="add-pa-210" class="pt-20">
               <a-spin :spinning="loading">
-                  <a-form-item label="지방소득세환급청구서/납부내역서">
+                  <a-form-item label="신고종류">
                       <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="afterDeadline"
                           :layoutCustom="'horizontal'" />
                   </a-form-item>
