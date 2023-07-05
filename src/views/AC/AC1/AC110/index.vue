@@ -124,7 +124,7 @@
                   data.data.documentRegistered ? 'O' : 'X' }}</div>
                 <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="data.data.documentRegistered ? 'outlined' : 'contained'
                   " @onClick="openPopupRegistration(data.data)"
-                  :disabled="!data.data.normalTransactionDetails || isReadonlyByAccountingProcessesStatus"
+                  :visible="!data.data.normalTransactionDetails || isReadonlyByAccountingProcessesStatus"
                   :style="!data.data.documentRegistered ? 'border: 1px solid #fff;' : ''" />
               </div>
             </template>
