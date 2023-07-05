@@ -4,7 +4,7 @@
     <div class="d-flex-center gap-10 mb-5">
       <div class="d-flex-center gap-10">
         <div>회계연월:</div>
-        <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5" text=""/>
+        <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5" text="" :minYear="2021" :max-year="2033"/>
       </div>
       <div class="month-container">
         <div v-for="(month) in checkBoxSearch" :key="month.id" class="month"
@@ -23,7 +23,7 @@
       <DxExport :enabled="true"/>
       <DxSearchPanel :visible="true" placeholder="검색" :search-visible-columns="['facilityBusinessName']"/>
       <DxToolbar>
-        <DxItem location="after" template="search" />
+        <DxItem location="before" template="search" />
         <DxItem name="searchPanel"/>
         <DxItem name="exportButton" css-class="cell-button-export"/>
       </DxToolbar>
@@ -257,7 +257,6 @@ onErrorChangeStatus((error) => {
   trigger.value = true;
 })
 const submitChangeStatus = (value: any) => {
-  console.log('e', value)
   mutateChangeStatus({
     ...value
   })
