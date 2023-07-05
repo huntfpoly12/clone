@@ -6,9 +6,13 @@
             :show-row-lines="true"
             :hoverStateEnabled="true"
             :data-source="dataSource"
+            key-expr="id"
             :show-borders="true"
             :allow-column-resizing="true"
             column-auto-width
+            :focused-row-enabled="true"
+            :focused-row-key="focusRowKeys"
+            :focused-row-index="0"
             noDataText="내역이 없습니다"
             style="height: calc(100vh - 210px);"
         >
@@ -16,8 +20,8 @@
           <DxExport :enabled="true"/>
           <DxToolbar>
             <DxItem location="before" template="search"/>
-            <DxItem location="after" name="exportButton" css-class="cell-button-export"/>
             <DxItem location="after" name="searchPanel" cssClass="search-panel"/>
+            <DxItem location="after" name="exportButton" css-class="cell-button-export"/>
           </DxToolbar>
           <template #search>
             <div class="d-flex-center gap-20">
@@ -50,12 +54,12 @@
 
           <template #active="{data}">
             <div v-if="data.data.active">
-              <a-tag color="red">해지</a-tag>
+              <a-tag color="#DC5939">해지</a-tag>
             </div>
           </template>
         </DxDataGrid>
       </a-col>
-      <a-col :span="10" class="form-container pl-10">
+      <a-col :span="10" class="form-container pl-10 pt-8">
         <div class="form-chat">
           <!--          <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading">-->
           <!--            <a-spin size="large"/>-->
@@ -149,14 +153,7 @@ import { computed, inject, reactive, ref } from "vue";
 import { DxColumn, DxDataGrid, DxExport, DxItem, DxSearchPanel, DxToolbar } from "devextreme-vue/data-grid";
 import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  FileTextOutlined,
-  PrinterOutlined,
-  SaveOutlined,
-  SearchOutlined
-} from "@ant-design/icons-vue";
+import { DeleteOutlined, EditOutlined, FileTextOutlined } from "@ant-design/icons-vue";
 import { DataRowKey } from "@/views/CommunicationBoard/type";
 import InputChat from "./InputChat.vue";
 import MarkdownCustom from "@/views/AC/AC1/AC130/components/MarkdownCustom.vue";
@@ -197,6 +194,7 @@ const rowEdit = reactive({
 const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
+const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : listChat.value?.[0].id)
 const submitChat = () => {
   if (rowEdit.isEdit) {
     editChat()
@@ -208,6 +206,7 @@ const submitChat = () => {
   rowEdit.files = []
   filesUpload.value = []
 }
+
 function addChat() {
   if (isLoadingUpload.value || (!rowEdit.content.trim() && !filesUpload.value.length)) return
   isLoadingUpload.value = true
@@ -254,6 +253,7 @@ function addChat() {
   }
   isLoadingUpload.value = false
 }
+
 function editChat() {
   if (isLoadingUpload.value || (!rowEdit.content.trim() && !filesUpload.value.length)) return
   // find item edit in listChat
@@ -270,6 +270,7 @@ function editChat() {
   localStorage.setItem("listChat", JSON.stringify(listChat.value))
 
 }
+
 const cancelEdit = () => {
   rowEdit.isEdit = false
   rowEdit.content = ''

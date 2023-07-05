@@ -4,7 +4,7 @@
           :mask-closable="false" width="1000px" footer="">
           <standard-form formName="add-pa-210" class="pt-20">
               <a-spin :spinning="loading">
-                  <a-form-item label="지방소득세환급청구서/납부내역서">
+                  <a-form-item label="신고종류">
                       <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="afterDeadline"
                           :layoutCustom="'horizontal'" />
                   </a-form-item>
@@ -25,7 +25,7 @@
                       </template>
                       <DxColumn caption="귀속 연월" cell-template="imputed" />
                       <template #imputed="{ data }">
-                          <a-tooltip v-if="data.data.imputedStartYearMonth" color="blue">
+                          <a-tooltip v-if="data.data.imputedFinishYearMonth" color="blue">
                               <template #title>
                                   귀속기간 {{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                               </template>
@@ -43,7 +43,7 @@
                       </template>
                       <DxColumn caption="지급 연월" cell-template="payment" />
                       <template #payment="{ data }">
-                          <a-tooltip v-if="data.data.paymentStartYearMonth" color="blue">
+                          <a-tooltip v-if="data.data.paymentFinishYearMonth" color="blue">
                               <template #title>
                                   지급기간 {{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                               </template>

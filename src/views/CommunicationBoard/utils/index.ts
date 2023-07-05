@@ -97,3 +97,19 @@ export const dataFake: DataRow[] = [
 export const getRandomExpressionType = () => {
 	return Math.floor(Math.random()*3) + 1;
 }
+export const getFakeData = () => {
+	return Array.from({ length: 20 }, (v, k) => ({
+		id: k,
+		title: "title" + k,
+		content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum eum labore magnam possimus provident recusandae saepe totam?",
+		date: getRandomDate(),
+		expressionType: getRandomExpressionType(),
+		active: true,
+		mutual: 'mutual',
+		address: 'address',
+		classification: 'asdf -123',
+		writer: '',
+		dateOfCreation: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+		replyDateAndTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+	}))
+}
