@@ -133,7 +133,7 @@
 							<div style="display: -webkit-inline-box">
 								<a-form-item label="산출방법" :label-col="labelCol">
 									<default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
-										v-model:valueInput="formState.formula" :disabled="useChangable">
+										v-model:valueInput="formState.formula" >
 									</default-text-box>
 								</a-form-item>
 							</div>
