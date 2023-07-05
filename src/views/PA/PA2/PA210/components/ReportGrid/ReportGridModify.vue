@@ -278,6 +278,7 @@ export default defineComponent({
       colWidths: 102.5,
       height: 740,
       fixedRowsTop: 4,
+      viewportRowRenderingOffset: 70,
       beforeKeyDown: (e: any) => {
         let hot = wrapper.value.hotInstance;
         const selection = hot.getSelected();
