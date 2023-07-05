@@ -1,32 +1,18 @@
 <template>
   <div>
-    <div class="d-flex-center justify-content-end gap-10 mb-10">
-      <DxButton>
-        <SearchOutlined :style="{fontSize: '17px', color: 'black'}"/>
-        조회
-      </DxButton>
-      <DxButton>
-        <SaveOutlined :style="{fontSize: '17px', color: 'black'}"/>
-        저장
-      </DxButton>
-      <DxButton>
-        <DeleteOutlined :style="{fontSize: '17px', color: 'black'}"/>
-        삭제
-      </DxButton>
-      <DxButton>
-        <PrinterOutlined :style="{fontSize: '17px', color: 'black'}"/>
-        인쇄
-      </DxButton>
-    </div>
-    <a-row :gutter="12">
+    <a-row>
       <a-col :span="14">
         <DxDataGrid
             :show-row-lines="true"
             :hoverStateEnabled="true"
             :data-source="dataSource"
+            key-expr="id"
             :show-borders="true"
             :allow-column-resizing="true"
             column-auto-width
+            :focused-row-enabled="true"
+            :focused-row-key="focusRowKeys"
+            :focused-row-index="0"
             noDataText="내역이 없습니다"
             style="height: calc(100vh - 210px);"
         >
@@ -34,8 +20,8 @@
           <DxExport :enabled="true"/>
           <DxToolbar>
             <DxItem location="before" template="search"/>
-            <DxItem location="after" name="exportButton" css-class="cell-button-export"/>
             <DxItem location="after" name="searchPanel" cssClass="search-panel"/>
+            <DxItem location="after" name="exportButton" css-class="cell-button-export"/>
           </DxToolbar>
           <template #search>
             <div class="d-flex-center gap-20">
@@ -53,8 +39,8 @@
               </div>
             </div>
           </template>
-          <DxColumn caption="삭제 여부" data-field="delete" alignment="end"/>
-          <DxColumn caption="구분" data-field="division" alignment="end"/>
+          <DxColumn caption="삭제 여부" data-field="delete" alignment="center"/>
+          <DxColumn caption="구분" data-field="division" alignment="center"/>
           <DxColumn caption="사업자코드" data-field="active" alignment="center" cell-template="active"/>
           <DxColumn caption="상호" data-field="mutual" alignment="center"/>
           <DxColumn caption="주소" data-field="address" alignment="center"/>
@@ -68,12 +54,12 @@
 
           <template #active="{data}">
             <div v-if="data.data.active">
-              <a-tag color="red">해지</a-tag>
+              <a-tag color="#DC5939">해지</a-tag>
             </div>
           </template>
         </DxDataGrid>
       </a-col>
-      <a-col :span="10" class="form-container">
+      <a-col :span="10" class="form-container pl-10 pt-8">
         <div class="form-chat">
           <!--          <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading">-->
           <!--            <a-spin size="large"/>-->
@@ -167,14 +153,7 @@ import { computed, inject, reactive, ref } from "vue";
 import { DxColumn, DxDataGrid, DxExport, DxItem, DxSearchPanel, DxToolbar } from "devextreme-vue/data-grid";
 import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  FileTextOutlined,
-  PrinterOutlined,
-  SaveOutlined,
-  SearchOutlined
-} from "@ant-design/icons-vue";
+import { DeleteOutlined, EditOutlined, FileTextOutlined } from "@ant-design/icons-vue";
 import { DataRowKey } from "@/views/CommunicationBoard/type";
 import InputChat from "./InputChat.vue";
 import MarkdownCustom from "@/views/AC/AC1/AC130/components/MarkdownCustom.vue";
@@ -184,6 +163,7 @@ import { getJwtObject } from "@bankda/jangbuda-common";
 import { companyId } from "@/helpers/commonFunction";
 import deletePopup from "@/utils/deletePopup";
 import { Message } from "@/configs/enum";
+import { dataFake } from "@/views/CommunicationBoard/utils";
 
 const dataRow = inject(DataRowKey)
 const token = ref(sessionStorage.getItem("token"))
@@ -195,22 +175,7 @@ const search = reactive({
   replyO: true,
 })
 const rangeDate = ref([parseInt(dayjs().format("YYYYMMDD")), parseInt(dayjs().add(3, "month").format("YYYYMMDD"))])
-const dataSource = ref([
-  {
-    delete: '',
-    division: '',
-    active: true,
-    mutual: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
-    address: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
-    classification: '',
-    contentOfInquiry: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
-    writer: '',
-    dateOfCreation: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-    answerContent: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum eum labore magnam possimus provident recusandae saepe totam?',
-    answerer: '',
-    replyDateAndTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-  }
-])
+const dataSource = ref(dataFake.filter((item: any) => item.expressionType < 3))
 const filesUpload = ref([])
 const disabled = ref(false)
 const isLoadingUpload = ref(false)
@@ -229,6 +194,7 @@ const rowEdit = reactive({
 const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
+const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : listChat.value?.[0].id)
 const submitChat = () => {
   if (rowEdit.isEdit) {
     editChat()
@@ -240,6 +206,7 @@ const submitChat = () => {
   rowEdit.files = []
   filesUpload.value = []
 }
+
 function addChat() {
   if (isLoadingUpload.value || (!rowEdit.content.trim() && !filesUpload.value.length)) return
   isLoadingUpload.value = true
@@ -286,6 +253,7 @@ function addChat() {
   }
   isLoadingUpload.value = false
 }
+
 function editChat() {
   if (isLoadingUpload.value || (!rowEdit.content.trim() && !filesUpload.value.length)) return
   // find item edit in listChat
@@ -302,6 +270,7 @@ function editChat() {
   localStorage.setItem("listChat", JSON.stringify(listChat.value))
 
 }
+
 const cancelEdit = () => {
   rowEdit.isEdit = false
   rowEdit.content = ''

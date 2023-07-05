@@ -1,19 +1,16 @@
 <template>
+  <action-header title="공지사항" @actionSearch="onSearch" :buttonSearch="true" />
   <a-row>
     <a-col :span="14">
       <DxDataGrid
           :show-row-lines="true"
           :hoverStateEnabled="true"
           :data-source="dataSource"
-          key-expr="id"
           :show-borders="true"
           :allow-column-resizing="true"
           column-auto-width
-          :focused-row-enabled="true"
-          :focused-row-key="focusRowKeys"
-          :focused-row-index="0"
           noDataText="내역이 없습니다"
-          style="height: calc(100vh - 210px);"
+          style="height: calc(100vh - 140px);"
       >
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
         <DxExport :enabled="true"/>
@@ -25,7 +22,7 @@
         </DxToolbar>
         <template #search>
           <div class="d-flex-center gap-20">
-            <a-form-item label="작성기간 (최대 1년)">
+            <a-form-item label="작성기간 (최대 3년):">
               <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
                                    :max-range="90"/>
             </a-form-item>
@@ -36,7 +33,7 @@
         </template>
         <template #button-template>
           <a-tooltip placement="top">
-            <template #title>알림 신규 등록</template>
+            <template #title>공지 신규 등록</template>
             <div>
               <DxButton icon="plus" @click="showAddModal"/>
             </div>
@@ -44,26 +41,23 @@
         </template>
         <DxColumn caption="삭제 여부" data-field="delete" alignment="center" cell-template="delete"/>
         <DxColumn caption="구분" data-field="division" alignment="center" cell-template="division"/>
-        <DxColumn caption="사업자코드" data-field="active" alignment="center" cell-template="active"/>
-        <DxColumn caption="상호" data-field="mutual" alignment="center"/>
-        <DxColumn caption="주소" data-field="address" alignment="center"/>
-        <DxColumn caption="분류" data-field="classification" alignment="center"/>
-        <DxColumn caption="알림내용" data-field="contentOfInquiry" alignment="center"/>
-        <DxColumn caption="작성자" data-field="writer" alignment="center"/>
-        <DxColumn caption="작성일시" data-field="dateOfCreation" alignment="center"/>
+        <DxColumn caption="상단고정" data-field="active" alignment="center" cell-template="active"/>
+        <DxColumn caption="내용" data-field="mutual" alignment="center"/>
+        <DxColumn caption="작성자" data-field="address" alignment="center"/>
+        <DxColumn caption="작성일시" data-field="replyDateAndTime" alignment="center"/>
         <DxColumn caption="" alignment="center" cell-template="action"/>
 
-        <template #active="{data}">
-          <div v-if="data.data.active">
-            <a-tag color="#DC5939">해지</a-tag>
-          </div>
-        </template>
         <template #delete="{data}">
           <div v-if="data.data.active">
-            <a-tag color="#DC5939">삭제</a-tag>
+            <a-tag color="#f50">해지</a-tag>
           </div>
         </template>
         <template #division="{data}">
+          <div v-if="data.data.active">
+            <a-tag color="#337AB7">삭제</a-tag>
+          </div>
+        </template>
+        <template #active="{data}">
           <div v-if="data.data.active">
             <a-tag color="#f89a38">알림</a-tag>
           </div>
@@ -73,7 +67,7 @@
         </template>
       </DxDataGrid>
     </a-col>
-    <a-col :span="10" class="form-container pl-10 pt-8">
+    <a-col :span="10" class="form-container pl-10" style=" height: calc(100vh - 140px);">
       <div class="form-chat">
         <!--          <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading">-->
         <!--            <a-spin size="large"/>-->
@@ -142,8 +136,8 @@
         <div class="form-chat-bottom">
           <div class="form-chat-bottom-category">
             <StatusChat with="150" disabled/>
-            <span style="margin: 0 10px;">분류:</span>
-            <span class="form-chat-bottom-category-text">회계-마감-( {{ dayjs().format('YYYY-MM') }})</span>
+            <checkbox-basic label="상단고정"/>
+            <info-tool-tip>선택시 소통판에서 최우선하여 정렬됩니다.</info-tool-tip>
           </div>
           <InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
                      :placeholder="disabled ? '입력마감 상태에서는 이용할 수 없습니다.' : '댓글을 입력하세요…'"
@@ -157,11 +151,12 @@
                                :listImage="listImagePreview"/>
       </div>
     </a-col>
+
   </a-row>
-  <Tab3PlusModal v-if="isModalTab3Plus" :modal-status="isModalTab3Plus" @cancel="isModalTab3Plus = false" @close-modal="closeModal"/>
 </template>
 
 <script setup lang="ts">
+
 import DxButton from "devextreme-vue/button";
 import {
   DeleteOutlined,
@@ -184,26 +179,42 @@ import deletePopup from "@/utils/deletePopup";
 import { Message } from "@/configs/enum";
 import { DataRowKey } from "@/views/CommunicationBoard/type";
 import { getJwtObject } from "@bankda/jangbuda-common";
-import { dataFake, getFakeData } from "@/views/CommunicationBoard/utils";
-import Tab3PlusModal from "@/views/CommunicationBoard/components/Tab3PlusModal.vue";
+import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
 const search = reactive({
   replyX: true,
   replyO: true,
 })
 const rangeDate = ref([parseInt(dayjs().format("YYYYMMDD")), parseInt(dayjs().add(3, "month").format("YYYYMMDD"))])
-
+const addModal = ref(false)
+const showAddModal = () => {
+  addModal.value = true
+}
 const dataRow = inject(DataRowKey)
 const token = ref(sessionStorage.getItem("token"))
 let jwtObject = getJwtObject(token.value!);
 const userName = ref(sessionStorage.getItem("name"));
 const userId = jwtObject.userId
-const dataSource = ref(dataFake.filter((item: any) => item.expressionType === 3))
+const dataSource = ref([
+  {
+    delete: '',
+    division: '',
+    active: true,
+    mutual: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
+    address: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
+    classification: '',
+    contentOfInquiry: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum',
+    writer: '',
+    dateOfCreation: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    answerContent: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque consequatur doloremque earum eum labore magnam possimus provident recusandae saepe totam?',
+    answerer: '',
+    replyDateAndTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+  }
+])
 const filesUpload = ref([])
 const disabled = ref(false)
 const isLoadingUpload = ref(false)
 const isModalPreview = ref(false)
-const isModalTab3Plus = ref(false)
 const listImagePreview = ref({
   index: 0,
   files: [],
@@ -217,8 +228,6 @@ const rowEdit = reactive({
 })
 const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
-const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : listChat.value?.[0].id)
-
 const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
 const submitChat = () => {
   if (rowEdit.isEdit) {
@@ -332,14 +341,11 @@ const handleEditQA = (row: any) => {
 const openLinkDownFile = (link: string) => {
   window.open(link, '_blank')
 }
-const showAddModal = () => {
-  isModalTab3Plus.value = true
-}
-const closeModal = (e: boolean) => {
-  if (e) isModalTab3Plus.value = false
+const onSearch = () => {
+  console.log('onSearch')
 }
 </script>
 
 <style lang="scss" scoped>
-@import "./../styles";
+@import "src/views/CommunicationBoard/styles.scss";
 </style>

@@ -15,7 +15,7 @@
 
     <a-modal :visible="modalStatusTable" @cancel="cancelTable" :mask-closable="false" class="confirm-md" footer=""
         :width="700">
-        <div class="mt-20" :key="countKey">
+        <div :key="countKey">
             <h1 class="text-center mb-0">전표 업로드</h1>
             <a-spin :spinning="loadingGetFacilityBusinessAccountingProcesses">
                 <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="facilityBusinessId" :show-row-lines="true"

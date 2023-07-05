@@ -6,6 +6,13 @@ export interface DataRow {
 	content: string
 	date: Date
 	expressionType: number
+	active: boolean
+	mutual: string
+	address: string
+	classification: string
+	writer: string
+	dateOfCreation: string
+	replyDateAndTime: string
 }
 
 export const OpenRowKey = Symbol() as InjectionKey<(data: DataRow) => void>

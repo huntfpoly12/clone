@@ -1,18 +1,18 @@
 <template>
     <div>
-        <a-modal :visible="modalStatus" title="직인자동생성" @cancel="setModalVisible()" :mask-closable="false" width="400px" footer="">
+        <a-modal :visible="modalStatus" title="직인자동생성" @cancel="setModalVisible()" :mask-closable="false" width="420px" footer="">
             <div class="stamp-image-content">
                 <div class="stamp-child">
-                    <div class="stamp-text-note">
-                        <div style="font-size: 16px;margin-right: 5px;">
+                    <!-- <div class="stamp-text-note"> -->
+                        <!-- <div style="font-size: 16px;margin-right: 5px;">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                        </div>
+                        </div> -->
                         <div>
-                            <a-typography-text class="style-note">
-                                직인에 인쇄될 상호를 입력하신 후 <b>미리보기</b> 버튼을 누르세요.
-                            </a-typography-text>
+                            <!-- <a-typography-text> -->
+                                ※ 직인에 인쇄될 상호를 입력하신 후 <b>미리보기</b> 버튼을 누르세요.
+                            <!-- </a-typography-text> -->
                         </div>
-                    </div>
+                    <!-- </div> -->
                 </div>
                 <div class="stamp-child d-flex" style="justify-content: center;">
                         <default-text-box  v-model:valueInput="signature"

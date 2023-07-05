@@ -38,7 +38,7 @@
 
                 <DxColumn caption="내용" data-field="month" cell-template="year-month" css-class="cell-left"/>
                 <template #year-month="{ data }">
-                    <span>전표 {{ data.data.year }}-{{ data.data.month }} 업로드 </span>
+                    <span>전표 {{ data.data.year }}-{{ $filters.formatMonth(data.data.month) }} 업로드 </span>
                 </template>
 
                 <DxColumn caption="전체건수" data-field="totalCount" format="fixedPoint"/>

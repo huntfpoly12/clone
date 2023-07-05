@@ -36,7 +36,7 @@
           </DxButton>
         </template>
         <template #button-template>
-          <a-tooltip placement="topLeft" color="blue">
+          <a-tooltip placement="topLeft" color="black">
             <template #title>정기(기한후)신고서 새로 작성</template>
             <div class="custom-grade-cell">
               <DxButton icon="plus" @click="openAddNewModal" />
@@ -64,7 +64,7 @@
           :sort-index="1"
         />
         <template #imputed="{ data }">
-          <a-tooltip color="blue">
+          <a-tooltip color="black">
             <template #title>
               귀속기간 {{
                 showTooltipYearMonth(
@@ -98,7 +98,7 @@
           :sort-index="0"
         />
         <template #payment="{ data }">
-          <a-tooltip color="blue">
+          <a-tooltip color="black">
             <template #title>
               지급기간 {{
                 showTooltipYearMonth(
@@ -306,7 +306,7 @@
           fixedPosition="right"
         />
         <template #add="{ data }">
-          <a-tooltip v-if="checkModify(data.data)" color="blue">
+          <a-tooltip v-if="checkModify(data.data)" color="black">
             <template #title
               >본 신고서에 대한 수정신고서를 작성합니다.</template
             >
@@ -329,7 +329,7 @@
         />
         <template #pupop="{ data }">
           <div class="custom-action" style="text-align: center">
-            <a-tooltip color="blue">
+            <a-tooltip>
               <template #title>출력 / 저장</template>
               <img
                 @click="openPopupPrint(data.data)"

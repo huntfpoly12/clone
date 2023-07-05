@@ -1,6 +1,4 @@
 <template>
-    <!-- <div > -->
-    <!-- <div class="page-content"> -->
     <a-row>
         <a-col span="16" class="data-table">
             <a-spin :spinning="false" size="large">
@@ -15,7 +13,7 @@
                     <DxToolbar>
                         <DxItem template="search-template" location="before" />
                         <DxItem name="searchPanel" />
-                        <!-- <DxItem name="exportButton" css-class="cell-button-export" /> -->
+                        <DxItem name="exportButton" css-class="cell-button-export" />
                         <!-- <DxItem location="after" template="button-history" css-class="cell-button-add" /> -->
                         <!-- <DxItem location="after" template="button-template" css-class="cell-button-add" /> -->
                     </DxToolbar>
@@ -62,9 +60,6 @@
             </a-spin>
         </a-col>
     </a-row>
-    <!-- </div> -->
-
-    <!-- </div> -->
 </template>
 <script lang="ts">
 import {
@@ -179,3 +174,8 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss" src="../style/style.scss"></style>
+<style scoped>
+:deep .dx-toolbar-after .dx-toolbar-item{
+    padding: 0 5px 0 0;
+}
+</style>

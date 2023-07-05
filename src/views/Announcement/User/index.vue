@@ -17,7 +17,7 @@
                             <DxToolbar>
                                 <DxItem template="search-template" location="before" />
                                 <DxItem name="searchPanel" />
-                                <!-- <DxItem name="exportButton" css-class="cell-button-export" /> -->
+                                <DxItem name="exportButton" css-class="cell-button-export" />
                                 <!-- <DxItem location="after" template="button-history" css-class="cell-button-add" /> -->
                                 <!-- <DxItem location="after" template="button-template" css-class="cell-button-add" /> -->
                             </DxToolbar>
