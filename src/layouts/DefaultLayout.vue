@@ -13,9 +13,8 @@
       <div class="user-info">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
-        <div v-if="userType !== 'm'" @click="openTabAnnouncement" class="cursor-pointer">공지사항</div>
-        <div v-if="userType === 'm'" @click="openTabAnnouncementManager" class="cursor-pointer">공지사항</div>
-        <div v-if="userType === 'm'" @click="openTabBoard" class="cursor-pointer">소통판</div>
+        <div @click="openTabAnnouncement" class="cursor-pointer">공지사항</div>
+        <div @click="openTabBoard" class="cursor-pointer">소통판</div>
         <account-infor></account-infor>
       </div>
     </a-layout-header>
@@ -505,8 +504,7 @@ export default defineComponent({
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "ac-630") return 'AC630';
       if (this.activeTab.id === "communication-board") return userType === 'm' ? 'CommunicationBoardManager' : 'CommunicationBoardUser';
-      if (this.activeTab.id === "announcement") return  userType === 'm' ? '' : 'AnnouncementUser';
-      if (this.activeTab.id === "announcement-manager") return  userType === 'm' ? 'AnnouncementManager' : 'AnnouncementUser';
+      if (this.activeTab.id === "announcement") return  userType === 'm' ? 'AnnouncementManager' : 'AnnouncementUser';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
@@ -562,7 +560,7 @@ export default defineComponent({
 
     const menuDataSearch = computed(() => {
      return menuData.map((item) => {
-      const exceptMenu = ["communication-board", "announcement", "announcement-manager"];
+      const exceptMenu = ["communication-board", "announcement"];
        if (!exceptMenu.includes(item.id)) {
         return {
          value: item.id,
@@ -864,15 +862,11 @@ export default defineComponent({
     }
     const openTabAnnouncement = () => {
         router.push('/announcement ')
-        openTab({ id: 'announcement', name: "소통판", url: '/announcement' })
+        openTab({ id: 'announcement', name: "공지사항", url: '/announcement' })
     }
     const openTabBoard = () => {
         router.push('/communication-board')
         openTab({ id: 'communication-board', name: "소통판", url: '/communication-board' })
-    }
-    const openTabAnnouncementManager = () => {
-        router.push('/announcement-manager')
-        openTab({ id: 'announcement-manager', name: "공지사항", url: '/announcement-manager' })
     }
 
     return {
@@ -902,7 +896,6 @@ export default defineComponent({
       openTabBoard, openTabAnnouncement,
       userType,
       menuDataSearch,
-      openTabAnnouncementManager
     }
   },
 });
