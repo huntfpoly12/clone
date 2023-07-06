@@ -25,7 +25,7 @@
                       </template>
                       <DxColumn caption="귀속 연월" cell-template="imputed" />
                       <template #imputed="{ data }">
-                          <a-tooltip v-if="data.data.imputedStartYearMonth" color="black">
+                          <a-tooltip v-if="data.data.imputedFinishYearMonth" color="black">
                               <template #title>
                                   귀속기간 {{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                               </template>
@@ -43,7 +43,7 @@
                       </template>
                       <DxColumn caption="지급 연월" cell-template="payment" />
                       <template #payment="{ data }">
-                          <a-tooltip v-if="data.data.paymentStartYearMonth" color="black">
+                          <a-tooltip v-if="data.data.paymentFinishYearMonth" color="black">
                               <template #title>
                                   지급기간 {{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                               </template>

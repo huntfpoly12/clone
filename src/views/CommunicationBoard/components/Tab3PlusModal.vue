@@ -6,7 +6,7 @@
       title=""
       centered
       @cancel="setModalVisible" width="1200px">
-    <div class="text-center">알림 대상 선택</div>
+    <div class="title">알림 대상 선택</div>
     <DxDataGrid
         :show-row-lines="true"
         :hoverStateEnabled="true"
@@ -115,5 +115,10 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
-
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
 </style>
