@@ -132,7 +132,7 @@
               <span class="form-chat-bottom-category-text">회계-마감-( {{ dayjs().format('YYYY-MM') }})</span>
             </div>
             <InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
-                       :placeholder="disabled ? '입력마감 상태에서는 이용할 수 없습니다.' : '댓글을 입력하세요…'"
+                       :placeholder="disabled ? '글작성 (최대 1,000자)' : '글작성 (최대 1,000자)'"
                        :disabled="isLoadingUpload || disabled"
                        @submitChat="submitChat"
                        :isEdit="rowEdit.isEdit"
@@ -174,7 +174,7 @@ const search = reactive({
   replyX: true,
   replyO: true,
 })
-const rangeDate = ref([parseInt(dayjs().format("YYYYMMDD")), parseInt(dayjs().add(3, "month").format("YYYYMMDD"))])
+const rangeDate = ref([parseInt(dayjs().subtract(3, "month").format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
 const dataSource = ref(dataFake.filter((item: any) => item.expressionType < 3))
 const filesUpload = ref([])
 const disabled = ref(false)
@@ -194,7 +194,8 @@ const rowEdit = reactive({
 const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
-const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : listChat.value?.[0].id)
+console.log('%c focusRowKeys', 'color: red',dataRow?.value, listChat.value)
+const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : dataFake[0].id)
 const submitChat = () => {
   if (rowEdit.isEdit) {
     editChat()

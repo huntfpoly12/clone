@@ -1,6 +1,6 @@
 <template>
     <DxButton :focusStateEnabled="false" :disabled="disabled" :text="text" :type="type" @click="onClick($event)" :styling-mode="mode"
-        :style="{ color: color, backgroundColor: backGround, border: border }" :height="$config_styles.HeightInput" >
+        :style="{ color: color, backgroundColor: backGround, border: border }" :height="$config_styles.HeightInput" :visible="visible" >
         <slot></slot>
         </DxButton>
 </template>
@@ -33,6 +33,10 @@ export default defineComponent({
         bgColor: {
             type: String,
             default: '#337ab7'
+        },
+        visible: {
+            type: Boolean,
+            default: true
         }
     },
     components: {

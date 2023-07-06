@@ -52,8 +52,8 @@
               css-class="cell-center"
             />
             <template #status="{ data }">
-              <process-status-tooltip
-                :valueStatus="data.data.status"
+              <process-status
+                :valueStatus="10"
                 :height="32"
                 :dataRow="data.data"
               />
@@ -278,6 +278,7 @@ export default defineComponent({
       colWidths: 102.5,
       height: 740,
       fixedRowsTop: 4,
+      viewportRowRenderingOffset: 70,
       beforeKeyDown: (e: any) => {
         let hot = wrapper.value.hotInstance;
         const selection = hot.getSelected();
