@@ -58,7 +58,7 @@
                 :valueStatus="data.data.status"
                 :height="32"
                 :dataRow="data.data"
-                :disabled="true"
+                :disabled="data.data.status != 10"
               />
             </template>
             <DxColumn
