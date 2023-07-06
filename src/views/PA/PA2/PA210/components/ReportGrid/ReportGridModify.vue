@@ -52,7 +52,7 @@
               css-class="cell-center"
             />
             <template #status="{ data }">
-              <process-status-tooltip
+              <process-status
                 :valueStatus="10"
                 :height="32"
                 :dataRow="data.data"
