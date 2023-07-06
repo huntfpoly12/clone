@@ -80,7 +80,7 @@
 <script lang="ts">
 import { defineComponent, ref, reactive, watch, computed, toRefs } from "vue";
 import { useStore } from "vuex";
-import comfirmClosePopup from "@utils/comfirmClosePopup";
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: {
         modalStatus: {
