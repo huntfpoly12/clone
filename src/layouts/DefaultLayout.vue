@@ -156,6 +156,7 @@ import {
   BF330,
   BF340,
   BF210,
+  BF251,
   BF510,
   BF530,
   BF610,
@@ -250,6 +251,7 @@ export default defineComponent({
     BF330,
     BF340,
     BF210,
+    BF251,
     BF510,
     BF530,
     BF610,
@@ -371,6 +373,9 @@ export default defineComponent({
           if (newValue.id.includes("bf-2")) {
             this.openKeys = ["bf-000", "bf-200"];
           }
+          if (newValue.id.includes("bf-25")) {
+            this.openKeys = ["bf-000", "bf-250"];
+          }
           if (newValue.id.includes("bf-3")) {
             this.openKeys = ["bf-000", "bf-300"];
           }
@@ -453,6 +458,7 @@ export default defineComponent({
       if (this.activeTab.id === "bf-340") return 'BF340';
       if (this.activeTab.id === "bf-210") return 'BF210';
       if (this.activeTab.id === "bf-220") return 'BF220';
+      if (this.activeTab.id === "bf-251") return 'BF251';
       if (this.activeTab.id === "bf-510") return 'BF510';
       if (this.activeTab.id === "bf-530") return 'BF530';
       if (this.activeTab.id === "bf-610") return 'BF610';

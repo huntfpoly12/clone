@@ -297,9 +297,6 @@ export default defineComponent({
 
 		// ================ FUNCTION ============================================
 		const cancel = () => {
-			console.log(formStateDataSource.value);
-			console.log(dataSource.value);
-			
 			if (JSON.stringify(formStateDataSource.value) == JSON.stringify(dataSource.value)) {
 				emit("closePopup", false);
 			} else {
