@@ -49,12 +49,12 @@
 
         <template #delete="{data}">
           <div v-if="data.data.active">
-            <a-tag color="#f50">해지</a-tag>
+            <a-tag color="#f50">삭제</a-tag>
           </div>
         </template>
         <template #division="{data}">
           <div v-if="data.data.active">
-            <a-tag color="#337AB7">삭제</a-tag>
+            <a-tag color="#337AB7">공지</a-tag>
           </div>
         </template>
         <template #active="{data}">
