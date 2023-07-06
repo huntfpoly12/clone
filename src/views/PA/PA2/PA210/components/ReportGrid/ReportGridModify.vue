@@ -53,7 +53,7 @@
             />
             <template #status="{ data }">
               <process-status-tooltip
-                :valueStatus="data.data.status"
+                :valueStatus="10"
                 :height="32"
                 :dataRow="data.data"
               />
