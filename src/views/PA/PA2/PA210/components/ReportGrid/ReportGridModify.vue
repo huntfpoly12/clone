@@ -130,11 +130,11 @@
             <template #afterDeadline-index="{ data }">
               <DxButton
                 :text="
-                  getAfterDeadline(data.data.index + 1, data.data.afterDeadline)
+                  getAfterDeadline(nextIndex, data.data.afterDeadline)
                     ?.tag_name
                 "
                 :style="
-                  getAfterDeadline(data.data.index + 1, data.data.afterDeadline)
+                  getAfterDeadline(nextIndex, data.data.afterDeadline)
                     ?.style
                 "
                 :height="$config_styles.HeightInput"
@@ -272,6 +272,7 @@ export default defineComponent({
     const firstTimeLoad = ref<boolean>(false);
     const cellNegativeNumber = [[7, 7], [15, 7], [59, 7]]
     const cellPageSettings = ref<any>(cellsSettingModified);
+    const nextIndex = ref(0)
     const hotSettings = {
       comments: true,
       fillHandle: true,
@@ -315,7 +316,7 @@ export default defineComponent({
           if (!cell12) {
             dataSource.value[0].refund = false
             //[thanh toán 6 tháng 1, tháng 1-2] [EDIT] ô (21)=0 thì switch refund vẫn enable (enable và false)
-            if (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) {
+            if (dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) { 
               disabledRefund.value = false
             } else {
               disabledRefund.value = true
@@ -398,6 +399,7 @@ export default defineComponent({
     });
     // The above code is used to load the data from the database to the table.
     const loadNew = async (firstLoad: boolean) => {
+      nextIndex.value = dataSource.value[0].index  + 1
       let oldPropsData : any = props.dataReport[0]
       clearAllCellValue(wrapper);
       // call api to set modified value
@@ -415,10 +417,11 @@ export default defineComponent({
           reportClassCode : dataSource.value[0].reportClassCode
         },
       };
-      trigger.value = true;
-      refetchData();
       if (!firstLoad) {
+        trigger.value = true;
+        refetchData();
         store.commit("common/setHasChangedPopupPA210", true);
+        return;
       }
       let hot = wrapper.value?.hotInstance;
       //Put in a loop to set data into each cell
@@ -785,7 +788,7 @@ export default defineComponent({
           paymentYear: dataSource.value[0].paymentYear,
           paymentMonth: dataSource.value[0].paymentMonth,
           reportType: dataSource.value[0].reportType,
-          index: dataSource.value[0].index + 1, // increase index value 1
+          index: nextIndex, // increase index value 1
         },
         input: {
           paymentType: dataSource.value[0].paymentType,
@@ -948,10 +951,10 @@ export default defineComponent({
       let cell12 =  hot.getDataAtCell(67,12);
 
       if (
-        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
-        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == true) ||
-        (dataSource.value[0].index > 0 && dataSource.value[0].afterDeadline == false)
-      ){
+        (nextIndex.value == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (nextIndex.value == 0 && dataSource.value[0].afterDeadline == true) ||
+        (nextIndex.value >= 1 && dataSource.value[0].afterDeadline == false)
+      ) {
         dataSource.value[0].refund = false
         disabledRefund.value = true
         cellPageSettings.value[574].readOnly = true
@@ -961,8 +964,8 @@ export default defineComponent({
       } 
 
       if (
-        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
-        (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2)
+        (nextIndex.value == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
+        (nextIndex.value == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2)
       ) {
         dataSource.value[0].refund = true
         disabledRefund.value = true
@@ -972,7 +975,7 @@ export default defineComponent({
         cellPageSettings.value[575].className = "htMiddle htRight"
       }
 
-      if (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2)
+      if (nextIndex.value == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2)
       {
         dataSource.value[0].refund = cell12 ? true : false
         disabledRefund.value = false
@@ -982,7 +985,7 @@ export default defineComponent({
         cellPageSettings.value[575].className = "htMiddle htRight"
       }
 
-      if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
+      if(nextIndex.value == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
       {
         dataSource.value[0].refund = cell12 ? true : false
         disabledRefund.value = false
@@ -1013,7 +1016,8 @@ export default defineComponent({
       confirmLoadNewStatus,
       showTooltipYearMonth,
       dataModified,
-      disabledRefund
+      disabledRefund,
+      nextIndex
     };
   },
 });

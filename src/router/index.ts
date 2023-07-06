@@ -70,6 +70,13 @@ const routes = [
         },
       },
       {
+        path: "/bf-251",
+        component: () => import("../views/BF/BF2/BF251/index.vue"),
+        meta: {
+          roles: [AdminScreenRole.ROLE_MANAGE.enumKey],
+        },
+      },
+      {
         path: "/bf-510",
         component: () => import("../views/BF/BF5/BF510/index.vue"),
         meta: {
