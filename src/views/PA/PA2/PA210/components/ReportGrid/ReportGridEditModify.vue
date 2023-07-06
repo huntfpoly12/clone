@@ -54,11 +54,11 @@
               css-class="cell-center"
             />
             <template #status="{ data }">
-              <process-status-tooltip
+              <process-status
                 :valueStatus="data.data.status"
                 :height="32"
                 :dataRow="data.data"
-                :disabled="data.data.status != 10"
+                :disabled="true"
               />
             </template>
             <DxColumn
