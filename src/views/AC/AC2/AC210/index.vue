@@ -32,7 +32,7 @@
                         </button-basic>
                     </div>
                 </template>
-                <DxColumn caption="NO" width="85" data-field="requestId" css-class="cell-left"/>
+                <DxColumn caption="일련번호" width="85" data-field="requestId" css-class="cell-left"/>
 
                 <DxColumn caption="요청일시" data-field="requedtedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
 
@@ -166,7 +166,7 @@ export default defineComponent({
         watch(resSearchAccountingDocumentW4cUploads, (value) => {
 			triggerSearchAccountingDocumentW4cUploads.value = false;
             let data = value.searchAccountingDocumentW4cUploads.map((item: any) => {
-                item.textYearMonth = "전표" + item.year + "-" + filters.formatMonth(item.month) + "업로드"
+                item.textYearMonth = "전표 " + item.year + "-" + filters.formatMonth(item.month) + " 업로드"
                 return item
             })
             dataSource.value = new DataSource({

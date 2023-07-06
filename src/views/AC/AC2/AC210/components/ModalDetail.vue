@@ -9,8 +9,10 @@
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                     <DxPaging :enabled="false" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" css-class="cell-button-export" />
                     </DxToolbar>
                     <DxColumn caption="사업명" width="120" data-field="facilityBusinessName" />
 
@@ -41,11 +43,11 @@
                     <!-- <template #theOrder-accountCode="{ data }">
                         {{ accountSubjects.find((item) => item.code == data.data.accountCode)?.name }}
                     </template> -->
-                    <DxColumn caption="상대계정" data-field="textRelationCode"  />
+                    <DxColumn caption="상대계정" data-field="textRelationCode" />
                     <!-- <template #relationCode="{ data }">
                         {{ accountSubjects.find((item) => item.code == data.data.relationCode)?.name }}
                     </template> -->
-                    <DxColumn caption="자금원천" data-field="textRelationCode" css-class="cell-left" />
+                    <DxColumn caption="자금원천" data-field="textFundingSource" css-class="cell-left" />
                     <!-- <template #fundingSource="{ data }">
                         {{ arrFundingSource.find((item: any) => item.id == data.data.fundingSource)?.text }}
                     </template> -->
@@ -77,6 +79,7 @@ import {
     DxPaging,
     DxSearchPanel,
     DxToolbar,
+    DxExport,
 } from "devextreme-vue/data-grid";
 import DataSource from "devextreme/data/data_source";
 import {
@@ -94,6 +97,7 @@ export default defineComponent({
         DxButton,
         DxSearchPanel,
         DxToolbar,
+        DxExport,
     },
     props: {
         modalStatus: {
@@ -176,7 +180,7 @@ export default defineComponent({
                 item.textResolutionType = arrResolutionType.value.find((row: any) => item.resolutionType == row.id)?.text
                 item.textAccountCode = accountSubjects.find((row) => row.code == item.accountCode)?.name
                 item.textRelationCode = accountSubjects.find((row) => row.code == item.relationCode)?.name
-                item.textRelationCode = arrFundingSource.value.find((row: any) => row.id == item.fundingSource)?.text
+                item.textFundingSource = arrFundingSource.value.find((row: any) => row.id == item.fundingSource)?.text
                 return item
             })
             dataSource.value = new DataSource({

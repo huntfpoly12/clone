@@ -1,5 +1,5 @@
 <template>
-    <action-header title="4대보험업무관리" @actionSearch="onSearch()" buttonSearch buttonDelete buttonPrint />
+    <action-header title="4대보험업무관리" buttonSearch buttonDelete buttonPrint />
     <div id="bf-251" class="page-content">
         <div class="content-grid">
             <a-spin :spinning="false">
