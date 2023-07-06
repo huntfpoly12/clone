@@ -116,6 +116,8 @@ import mutations from "@/graphql/mutations/AddToken";
 import {ISearchCompanyAccountingDeadlines} from "@/views/BF/BF5/BF510/types";
 import DxCheckBox from "devextreme-vue/check-box";
 import changeAccountingProcessStatus from "@/graphql/mutations/BF/BF5/BF510/changeAccountingProcessStatus";
+import notification from '@/utils/notification';
+import { Message } from '@/configs/enum';
 
 const checkBoxSearch = [
   {id: 1, text: '01'},
@@ -251,6 +253,7 @@ const { mutate: mutateChangeStatus, onDone: onDoneChangeStatus, onError: onError
 
 onDoneChangeStatus(({ data }) => {
   trigger.value = true;
+  notification('success', Message.getCommonMessage('106').message)
 })
 onErrorChangeStatus((error) => {
   console.log('error', error)
