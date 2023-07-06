@@ -2,7 +2,7 @@
   margin-top: 10px;
 
   #pa-120-gridContainer {
-    height: calc(100vh - 173px) !important;
+    height: calc(100vh - 160px) !important;
 
     :deep .dx-freespace-row {
       display: none !important;
@@ -40,12 +40,17 @@
     margin-left: 10px;
     border: 1px solid #d7d7d7;
     padding-top: 10px;
-    height: calc(100vh - 161px);
+    // height: calc(100vh - 161px);
     overflow: auto;
   }
-  :deep .col-left {
+  :deep .dx-datagrid-header-panel {
     border: 1px solid #d7d7d7;
-    padding-top: 10px;
+    border-bottom: none;
+    padding: 5px;
+}
+  :deep .col-left {
+    // border: 1px solid #d7d7d7;
+    // margin-top: 10px;
   }
   .current-user {
     background-color: #d99694;

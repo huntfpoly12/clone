@@ -5,6 +5,7 @@
             <a-spin :spinning="loadingCM110">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxPaging page-size="15" />
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn data-field="createdAt" caption="기록일시" cell-template="creactedAt" data-type="text"/>
                     <template #creactedAt="{ data }"> 
@@ -70,8 +71,8 @@ export default defineComponent({
                     companyId: companyId,
                     userId: props.idRowEdit,
                     filter: {
-                        page: 1,
-                        rows: per_page
+                        // page: null,
+                        rows: 999999,
                     }
                 })
                 await (trigger110.value = true)
