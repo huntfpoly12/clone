@@ -167,6 +167,7 @@ export default defineComponent({
         } = useMutation(mutations.registerAccountingDocumentW4cUpload);
 
         doneRegisterAccountingDocumentW4cUpload((e: any) => {
+            notification("success", Message.getMessage("COMMON", "106").message);
             modalStatusTable.value = false;
             emit("closePopup", false);
             emit("resetTable", true);

@@ -15,7 +15,7 @@ let menuData = [
   { name: "서비스관리", url: "/bf-330", id: "bf-330", roles: [AdminScreenRole.SERVICE_MANAGE.enumKey] },
   { name: "영업자관리", url: "/bf-340", id: "bf-340", roles: [AdminScreenRole.SALES_REPRESENTATIVE_MANAGE.enumKey] },
 
-  { name: "CMS 관리", url: "#", id: "bf-251", roles: [AdminScreenRole.BILLING_MANAGE.enumKey] },
+  { name: "CMS 관리", url: "/bf-251", id: "bf-251", roles: [AdminScreenRole.BILLING_MANAGE.enumKey] },
   { name: "청구 관리", url: "#", id: "bf-252", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey] },
   { name: "입금 관리", url: "#", id: "bf-253", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey] },
   { name: "입금 현황", url: "#", id: "bf-254", roles: [AdminScreenRole.BILLING_MANAGE.enumKey] },
