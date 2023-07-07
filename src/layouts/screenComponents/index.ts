@@ -25,6 +25,9 @@ const BF251 = defineAsyncComponent(() =>
 const BF252 = defineAsyncComponent(() =>
     import("@/views/BF/BF2/BF252/index.vue")
 );
+const BF253 = defineAsyncComponent(() =>
+    import("@/views/BF/BF2/BF253/index.vue")
+);
 const BF510 = defineAsyncComponent(() =>
     import("@/views/BF/BF5/BF510/index.vue")
 );
@@ -204,6 +207,7 @@ export {
     BF220,
     BF251,
     BF252,
+    BF253,
     BF510,
     BF530,
     BF610,

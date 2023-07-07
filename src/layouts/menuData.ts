@@ -17,7 +17,7 @@ let menuData = [
 
   { name: "CMS 관리", url: "/bf-251", id: "bf-251", roles: [AdminScreenRole.BILLING_MANAGE.enumKey] },
   { name: "청구 괸리", url: "bf-252", id: "bf-252", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey] },
-  { name: "입금 관리", url: "#", id: "bf-253", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey] },
+  { name: "입금 관리", url: "/bf-253", id: "bf-253", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey] },
   { name: "입금 현황", url: "#", id: "bf-254", roles: [AdminScreenRole.BILLING_MANAGE.enumKey] },
   { name: "환급 관리", url: "#", id: "bf-255", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey] },
   { name: "해지 관리", url: "#", id: "bf-260", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey] },
@@ -95,8 +95,8 @@ let menuData = [
   { name: "사업장가입신고", url: "/pa-870", id: "pa-870", roles: ROLE_PA000 },
   { name: "사업장탈퇴신고", url: "/pa-880", id: "pa-880", roles: ROLE_PA000 },
 
-  { name: "소통판", url: "/communication-board", id: "communication-board", roles: [...ROLE_BF500, ...ROLE_PA000] },
-  { name: "공지사항", url: "/announcement", id: "announcement", roles: [...ROLE_BF500, ...ROLE_PA000] },
+  { name: "소통판", url: "/communication-board", id: "communication-board", roles: [AdminScreenRole.MESSAGE_MANAGE.enumKey] },
+  { name: "공지사항", url: "/announcement", id: "announcement", roles: [AdminScreenRole.NOTICE_MANAGE.enumKey] },
 ];
 menuData = menuData.filter(i => {
   if (i.roles.length === 0) return false
