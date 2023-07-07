@@ -197,7 +197,7 @@
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
-                                    <a-tooltip color="black" placement="top">
+                                    <a-tooltip color="black" placement="topLeft">
                                         <template #title>로그인이력</template>
                                         <login-outlined @click="modalLogin(data)" />
                                     </a-tooltip>
