@@ -1,0 +1,13 @@
+#bf-253 {
+  .content-grid {
+    #data-source {
+      height: calc(100vh - 150px);
+      .custom-button .dx-button-content {
+        padding: 6px 8px;
+      }
+      .ant-form-item {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
