@@ -62,6 +62,10 @@ export default defineComponent({
       type: Array,
       default: [],
     },
+    alllSelected: {
+      type: Boolean,
+      default: false,
+    }
   },
   components: {
     DxSelectBox,
@@ -103,9 +107,12 @@ export default defineComponent({
     watch(
       () => props.ageCount,
       (newVal) => {
-        value.value = 0;
+        // value.value = 0;
         basicDeductionData.value = basicDeductionData.value.map((item: any) => {
           let label = item.label;
+          if (props.alllSelected) {
+            return { value: item.value, label };
+          }
           if (
             props.itemSelected.find(
               (item2: any) => item2.value == item.value && item2.value == 2
