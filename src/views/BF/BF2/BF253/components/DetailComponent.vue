@@ -121,7 +121,7 @@ import { DownloadOutlined } from "@ant-design/icons-vue";
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { Message } from "@/configs/enum";
 import notification from '@/utils/notification';
-import { arrSelect1, arrSelect2 } from '../index.ts'
+import { arrSelect1, arrSelect2 } from '../index'
 import {
     DxDataGrid,
     DxColumn,
