@@ -78,6 +78,7 @@
                 :disabled="disabledButton || formState.relation == 0"
                 :ageCount="ageCount"
                 :itemSelected="deductionSelected"
+                :alllSelected="formState.relation == 0 ? true : false"
               />
             </a-form-item>
             <a-form-item label="부녀자" label-align="right">
