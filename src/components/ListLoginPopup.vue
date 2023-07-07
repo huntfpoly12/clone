@@ -5,11 +5,13 @@
             <a-spin :spinning="loadingCM110">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxPaging page-size="15" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                     <DxScrolling mode="standard" show-scrollbar="always"/>
-                    <DxColumn data-field="createdAt" caption="기록일시" cell-template="creactedAt" data-type="text"/>
-                    <template #creactedAt="{ data }"> 
+                    <DxColumn data-field="createdAt" caption="기록일시" format="yyyy-MM-dd HH:mm:ss" data-type="date"/>
+                    <!-- <template #creactedAt="{ data }"> 
                         {{ formarDate(data.value) }}
-                    </template>
+                    </template> -->
 
                     <DxColumn data-field="success" caption="성공여부" cell-template="tag-login" css-class="cell-center" />
                     <template #tag-login="{ data }">
@@ -37,7 +39,8 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxScrolling
+    DxScrolling,
+    DxSearchPanel,
 } from "devextreme-vue/data-grid";
 import queries from "../../src/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -49,7 +52,8 @@ export default defineComponent({
         DxDataGrid,
         DxColumn,
         DxPaging, 
-        DxScrolling
+        DxScrolling,
+        DxSearchPanel,
     },
 
     setup(props) {
@@ -70,8 +74,8 @@ export default defineComponent({
                     companyId: companyId,
                     userId: props.idRowEdit,
                     filter: {
-                        page: 1,
-                        rows: per_page
+                        // page: null,
+                        rows: 999999,
                     }
                 })
                 await (trigger110.value = true)
@@ -101,9 +105,9 @@ export default defineComponent({
 
         });
 
-        const formarDate = (date: any) => {
-            return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
-        };
+        // const formarDate = (date: any) => {
+        //     return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
+        // };
 
 
 
@@ -112,7 +116,7 @@ export default defineComponent({
             loadingCM110,
             move_column,
             colomn_resize,
-            formarDate,
+            // formarDate,
         }
     },
     methods: {
