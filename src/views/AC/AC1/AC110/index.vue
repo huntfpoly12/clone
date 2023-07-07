@@ -124,7 +124,8 @@
                   data.data.documentRegistered ? 'O' : 'X' }}</div>
                 <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="data.data.documentRegistered ? 'outlined' : 'contained'
                   " @onClick="openPopupRegistration(data.data)"
-                  :visible="!data.data.normalTransactionDetails || isReadonlyByAccountingProcessesStatus"
+                  :disabled="!data.data.normalTransactionDetails || isReadonlyByAccountingProcessesStatus"
+                  :visible="!isReadonlyByAccountingProcessesStatus"
                   :style="!data.data.documentRegistered ? 'border: 1px solid #fff;' : ''" />
               </div>
             </template>
@@ -604,7 +605,7 @@ export default defineComponent({
     });
     const isReadonlyByAccountingProcessesStatus = computed(() => {
       const status = listAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0
-      return (userType === 'm' && +status === 40)  || (userType !== 'm' && +status > 20);
+      return (userType === 'm' && status === 40)  || (userType !== 'm' && status > 20);
     })
     let isSelectAll = computed(() => {
       const valueSelect = selectedRowKeys.value.length
