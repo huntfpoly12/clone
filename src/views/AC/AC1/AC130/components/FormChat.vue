@@ -12,7 +12,7 @@
                   <StatusChat :valueSelect="items.expresstionType" :isSelect="false" />
                 </div>
                 <div class="form-chat-timeline-content-info-user-name"
-                  :class="{ 'form-chat-timeline-content-info-user-name-login': items.writerUser.id === userId }">{{
+                  :class="{ 'form-chat-timeline-content-info-user-name-login': items.writerUser.type === 'm' }">{{
                     items.writerUser.name }}
                 </div>
               </div>
@@ -73,6 +73,7 @@ import StatusChat from './StatusChat.vue'
 import InputChat from './InputChat.vue'
 import MarkdownCustom from './MarkdownCustom.vue';
 import notification from "@/utils/notification";
+import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     payload: {
@@ -219,11 +220,7 @@ export default defineComponent({
     };
 
     const formatDate = (timestamp: number) => {
-      const date = new Date(timestamp)
-      const month = date.getMonth() + 1
-      const day = date.getDate()
-      const minutes = date.getMinutes().toString()
-      return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${minutes.length === 2 ? minutes : '0' + minutes}`
+      return dayjs(timestamp).format('YYYY-MM-DD HH:mm:mm')
     }
 
     const previewImage = (files: any, index: number) => {
