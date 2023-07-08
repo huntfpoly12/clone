@@ -605,7 +605,7 @@ export default defineComponent({
     });
     const isReadonlyByAccountingProcessesStatus = computed(() => {
       const status = listAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0
-      return (userType === 'm' && status === 40)  || (userType !== 'm' && status > 20);
+      return (userType === 'm' && status === 40)  || (userType !== 'm' && status > 10);
     })
     let isSelectAll = computed(() => {
       const valueSelect = selectedRowKeys.value.length
