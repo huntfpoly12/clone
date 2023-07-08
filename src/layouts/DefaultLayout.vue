@@ -393,7 +393,7 @@ export default defineComponent({
             this.openKeys = ["bf-000", "bf-600"];
           }
           if (newValue.id.includes("cm-1")) {
-            this.openKeys = ["cm-100", "cm-120"];
+            this.openKeys = ["cm-000", "cm-120"];
           }
           if (newValue.id.includes("ac-1")) {
             this.openKeys = ["ac-000", "ac-100"];
@@ -527,7 +527,7 @@ export default defineComponent({
     const inputSearchText = ref("");
     const filteredResult = ref([]);
     const openKeys = ref([]);
-    const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
+    const rootSubmenuKeys = ref(["bf-000", "cm-000", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
     let menuItems = menuTree;
@@ -862,7 +862,7 @@ export default defineComponent({
         if (latestOpenKey && latestOpenKey.includes("bf")) {
           openKeys.value = ["bf-000", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("cm")) {
-          openKeys.value = ["cm-100", latestOpenKey];
+          openKeys.value = ["cm-000", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("ac")) {
           openKeys.value = ["ac-000", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("pa")) {
