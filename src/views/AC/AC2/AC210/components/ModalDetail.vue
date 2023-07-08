@@ -9,8 +9,10 @@
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                     <DxPaging :enabled="false" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" css-class="cell-button-export" />
                     </DxToolbar>
                     <DxColumn caption="사업명" width="120" data-field="facilityBusinessName" />
 
@@ -28,29 +30,27 @@
 
                     <DxColumn caption="통장별명" data-field="bankbookNickname" />
 
-                    <DxColumn caption="결의서종류" width="100" data-field="resolutionType" css-class="cell-left"
-                        cell-template="resolutionType" />
-                    <template #resolutionType="{ data }">
+                    <DxColumn caption="결의서종류" width="100" data-field="textResolutionType" css-class="cell-left"
+                         />
+                    <!-- <template #resolutionType="{ data }">
                         {{ arrResolutionType.find((item: any) => data.data.resolutionType == item.id)?.text }}
-                    </template>
+                    </template> -->
 
                     <DxColumn caption="세입액" data-field="revenue" format="fixedPoint" />
                     <DxColumn caption="세출액" data-field="expenditure" format="fixedPoint" />
                     <DxColumn caption="적요" data-field="summary" />
-                    <DxColumn caption="계정과목" data-field="theOrder" css-class="cell-left"
-                        cell-template="theOrder-accountCode" />
-                    <template #theOrder-accountCode="{ data }">
+                    <DxColumn caption="계정과목" data-field="textAccountCode" css-class="cell-left" />
+                    <!-- <template #theOrder-accountCode="{ data }">
                         {{ accountSubjects.find((item) => item.code == data.data.accountCode)?.name }}
-                    </template>
-                    <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
-                    <template #relationCode="{ data }">
+                    </template> -->
+                    <DxColumn caption="상대계정" data-field="textRelationCode" />
+                    <!-- <template #relationCode="{ data }">
                         {{ accountSubjects.find((item) => item.code == data.data.relationCode)?.name }}
-                    </template>
-                    <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource"
-                        css-class="cell-left" />
-                    <template #fundingSource="{ data }">
+                    </template> -->
+                    <DxColumn caption="자금원천" data-field="textFundingSource" css-class="cell-left" />
+                    <!-- <template #fundingSource="{ data }">
                         {{ arrFundingSource.find((item: any) => item.id == data.data.fundingSource)?.text }}
-                    </template>
+                    </template> -->
                     <DxColumn caption="거래처" data-field="clientName" />
                     <DxColumn caption="결과" data-field="success" cell-template="success-result" />
                     <template #success-result="{ data }">
@@ -79,6 +79,7 @@ import {
     DxPaging,
     DxSearchPanel,
     DxToolbar,
+    DxExport,
 } from "devextreme-vue/data-grid";
 import DataSource from "devextreme/data/data_source";
 import {
@@ -96,6 +97,7 @@ export default defineComponent({
         DxButton,
         DxSearchPanel,
         DxToolbar,
+        DxExport,
     },
     props: {
         modalStatus: {
@@ -174,11 +176,18 @@ export default defineComponent({
         });
         watch(resGetAccountingDocumentW4cUploadItems, (value) => {
             triggerGetAccountingDocumentW4cUploadItems.value = false;
+            let data = value.getAccountingDocumentW4cUploadItems.map((item: any) => {
+                item.textResolutionType = arrResolutionType.value.find((row: any) => item.resolutionType == row.id)?.text
+                item.textAccountCode = accountSubjects.find((row) => row.code == item.accountCode)?.name
+                item.textRelationCode = accountSubjects.find((row) => row.code == item.relationCode)?.name
+                item.textFundingSource = arrFundingSource.value.find((row: any) => row.id == item.fundingSource)?.text
+                return item
+            })
             dataSource.value = new DataSource({
                 store: {
                     type: "array",
                     key: "requestId",
-                    data: value.getAccountingDocumentW4cUploadItems,
+                    data: data,
                 },
                 requireTotalCount: true,
             });

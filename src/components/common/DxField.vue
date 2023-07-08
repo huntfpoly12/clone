@@ -67,7 +67,6 @@ export default defineComponent({
 .dx-field {
   align-items: center;
   margin-bottom: 0;
-  width: 100%;
   .dx-field-label {
     width: 110px ;
     flex: 0 0 auto;

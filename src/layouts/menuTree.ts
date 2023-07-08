@@ -48,9 +48,9 @@ export default [
         title: "CMS/정산 관리",
         id: "bf-250",
         subMenus: [
-          {title: "CMS 관리", url: "#", id: "bf-251", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
-          {title: "청구 관리", url: "#", id: "bf-252", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
-          {title: "입금 관리", url: "#", id: "bf-253", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
+          {title: "CMS 관리", url: "/bf-251", id: "bf-251", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
+          {title: "청구 괸리", url: "/bf-252", id: "bf-252", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
+          {title: "입금 관리", url: "/bf-253", id: "bf-253", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
           {title: "입금 현황", url: "#", id: "bf-254", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
           {title: "환급 관리", url: "#", id: "bf-255", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
           {title: "해지 관리", url: "#", id: "bf-260", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},

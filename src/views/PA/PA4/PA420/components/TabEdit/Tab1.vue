@@ -52,7 +52,7 @@
       </a-col>
       <a-col :span="12">
         <div class="header-text-2 mb-10">중간지급 근속연수</div>
-        <DxFieldCustom label="정산시작(기산)일" :required="interimPaymentTab1" class="field-custom">
+        <a-form-item label="정산시작(기산)일" :required="interimPaymentTab1">
           <div class="d-flex-center">
             <!-- TODO PRE Settlement START DATE -->
             <date-time-box-custom
@@ -66,8 +66,8 @@
               퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의 다음날입니다
             </info-tool-tip>
           </div>
-        </DxFieldCustom>
-        <DxFieldCustom label="지급일" :required="interimPaymentTab1" class="field-custom">
+        </a-form-item>
+        <a-form-item label="지급일" :class="interimPaymentTab1 ? 'label-required' : ''">
           <div class="d-flex-center">
             <!-- TODO PRE Settlement END DATE -->
             <date-time-box-custom width="150px"
@@ -80,15 +80,15 @@
               퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다
             </info-tool-tip>
           </div>
-        </DxFieldCustom>
-        <DxFieldCustom label="지급일" :required="interimPaymentTab1" class="field-custom">
+        </a-form-item>
+        <a-form-item label="지급일" :class="interimPaymentTab1 ? 'label-required' : ''" >
           <date-time-box-custom
             :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1 || !isEdit"
             v-model:valueDate="formState.prevRetiredYearsOfService.paymentDate"
             ref="prevRetiredYearsOfServicePaymentDate"
           />
-        </DxFieldCustom>
-        <DxFieldCustom label="제외일수" class="field-custom">
+        </a-form-item>
+        <a-form-item label="제외일수" >
           <div class="d-flex-center">
             <number-box-money
               :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1 || !isEdit"
@@ -97,8 +97,8 @@
             />
             <info-tool-tip>정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다</info-tool-tip>
           </div>
-        </DxFieldCustom>
-        <DxFieldCustom label="가산일수" class="field-custom">
+        </a-form-item>
+        <a-form-item label="가산일수" >
           <div class="d-flex-center">
             <number-box-money :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1 || !isEdit"
                               v-model:valueInput="formState.prevRetiredYearsOfService.additionalDays"
@@ -107,7 +107,7 @@
             />
             <info-tool-tip>정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다</info-tool-tip>
           </div>
-        </DxFieldCustom>
+        </a-form-item>
         <div>
           근속연수 / 근속월수 / 근속일수:
           {{ dataPrevRetiredYearsOfService.yearsOfService || 0 }}년/
@@ -117,7 +117,7 @@
       </a-col>
       <a-col :span="12">
         <div class="header-text-2 mb-10">최종 근속연수</div>
-        <DxFieldCustom label="정산시작(입사)일" class="field-custom" required>
+        <a-form-item label="정산시작(입사)일"  class="label-required">
           <div class="d-flex-center">
             <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementStartDate"
@@ -130,8 +130,8 @@
               퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의 다음날입니다
             </info-tool-tip>
           </div>
-        </DxFieldCustom>
-        <DxFieldCustom label="정산종료(퇴사)일" class="field-custom" required>
+        </a-form-item>
+        <a-form-item label="정산종료(퇴사)일" class="label-required">
         <div class="d-flex-center">
             <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementFinishDate"
@@ -140,26 +140,26 @@
                                   ref="lastSettlementFinishDate"/>
             <info-tool-tip>퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다</info-tool-tip>
           </div>
-        </DxFieldCustom>
-        <DxFieldCustom label="지급일" class="field-custom" required>
+        </a-form-item>
+        <a-form-item label="지급일" class="label-required">
           <date-time-box-custom disabled width="150px" v-model:valueDate="paymentDay"/>
-        </DxFieldCustom>
-        <DxFieldCustom label="제외일수" class="field-custom" required>
+        </a-form-item>
+        <a-form-item label="제외일수" class="label-required">
           <div class="d-flex-center">
             <number-box-money :required="true" width="150px" format="#0,###"
                               :disabled="!isEdit"
                         v-model:valueInput="formState.lastRetiredYearsOfService.exclusionDays"/>
             <info-tool-tip>정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다</info-tool-tip>
           </div>
-        </DxFieldCustom>
-        <DxFieldCustom label="가산일수" class="field-custom" required>
+        </a-form-item>
+        <a-form-item label="가산일수" class="label-required">
           <div class="d-flex-center">
             <number-box-money :required="true" width="150px" format="#0,###"
                               :disabled="!isEdit"
                         v-model:valueInput="formState.lastRetiredYearsOfService.additionalDays"/>
             <info-tool-tip>정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다</info-tool-tip>
           </div>
-        </DxFieldCustom>
+        </a-form-item>
         <div>
           근속연수 / 근속월수 / 근속일수:
           {{ dataLastRetiredYearsOfService.yearsOfService || 0 }}년/
@@ -201,21 +201,21 @@
       <a-col :span="12" class="mt-10">
         <div class="header-text-2 mb-10">정산 근속연수</div>
         <!--        TODO incomeCalculationInput settlementStartDate -->
-        <DxFieldCustom label="정산시작(기산)일" class="field-custom" required>
+        <a-form-item label="정산시작(기산)일" class="label-required">
           <div class="d-flex-center">
             <date-time-box width="150px" disabled :required="true"
                            v-model:valueDate="formState.incomeCalculationInput.settlementStartDate"
                            ref="incomeCalculationInputSettlementStartDate"/>
           </div>
-        </DxFieldCustom>
+        </a-form-item>
         <!--        TODO incomeCalculationInput settlementFinishDate -->
-        <DxFieldCustom label="정산종료(퇴사)일" class="field-custom" required>
+        <a-form-item label="정산종료(퇴사)일" class="label-required">
           <div class="d-flex-center">
             <date-time-box width="150px" disabled
                            v-model:valueDate="formState.incomeCalculationInput.settlementFinishDate"
                            ref="incomeCalculationInputSettlementFinishDate"/>
           </div>
-        </DxFieldCustom>
+        </a-form-item>
         <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService || 0 }}년/{{ dataSettlement.monthsOfService || 0 }}개월/{{
             dataSettlement.daysOfService || 0
           }}일

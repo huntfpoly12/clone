@@ -32,14 +32,14 @@
                         </button-basic>
                     </div>
                 </template>
-                <DxColumn caption="NO" width="85" data-field="requestId" css-class="cell-left"/>
+                <DxColumn caption="일련번호" width="85" data-field="requestId" css-class="cell-left"/>
 
                 <DxColumn caption="요청일시" data-field="requedtedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
 
-                <DxColumn caption="내용" data-field="month" cell-template="year-month" css-class="cell-left"/>
-                <template #year-month="{ data }">
+                <DxColumn caption="내용" data-field="textYearMonth" css-class="cell-left"/>
+                <!-- <template #year-month="{ data }">
                     <span>전표 {{ data.data.year }}-{{ $filters.formatMonth(data.data.month) }} 업로드 </span>
-                </template>
+                </template> -->
 
                 <DxColumn caption="전체건수" data-field="totalCount" format="fixedPoint"/>
 
@@ -165,11 +165,15 @@ export default defineComponent({
         // ================== WATCH ================
         watch(resSearchAccountingDocumentW4cUploads, (value) => {
 			triggerSearchAccountingDocumentW4cUploads.value = false;
+            let data = value.searchAccountingDocumentW4cUploads.map((item: any) => {
+                item.textYearMonth = "전표 " + item.year + "-" + filters.formatMonth(item.month) + " 업로드"
+                return item
+            })
             dataSource.value = new DataSource({
 				store: {
 					type: "array",
 					key: "requestId",
-					data: value.searchAccountingDocumentW4cUploads,
+					data: data,
 				},
 				requireTotalCount: true,
 			});
