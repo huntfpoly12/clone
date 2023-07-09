@@ -460,7 +460,6 @@ const sendMail = (e: any) => {
     createDate: createDate.value,
   };
   if (e.employeeId) {
-    console.log('%c sessionStorage.getItem("username")', 'color: red;', sessionStorage.getItem("username"));
     emailAddress.value = userInfo.value.email;
     dataSendEmail.value.employeeInputs = [
       {
@@ -474,17 +473,18 @@ const sendMail = (e: any) => {
     clearSelection();
   } else {
     if (selectedItemKeys.value.length < 1) {
-      notification("error", Message.getCommonMessage("404").message);
+      notification("warning", Message.getCommonMessage("404").message);
       return;
     }
-    emailAddress.value = userInfo.value.email;
-    switchTypeSendMail.value = false;
+    // emailAddress.value = userInfo.value.email;
+    switchTypeSendMail.value = false
 
     dataSendEmail.value.employeeInputs = selectedItemKeys.value.map(
       (val: any) => {
         let dataChecked = dataSource.value.find(
           (data: any) => data.employeeId === val
         );
+
         return {
           receiverName: dataChecked.employee.name,
           receiverAddress: dataChecked.employee.email || emailAddress.value,
@@ -536,10 +536,8 @@ const confirmSendMail = (e: any) => {
       dataSendEmail.value.employeeInputs[0].receiverAddress =
         emailAddress.value;
     } else {
-      dataSendEmail.value.employeeInputs.map((val: any) => {
-        if (!val.receiverAddress) {
-          val.receiverAddress = emailAddress.value;
-        }
+      dataSendEmail.value.employeeInputs = dataSendEmail.value.employeeInputs.map((val: any) => {
+        return ({...val,  receiverAddress: emailAddress.value})
       });
     }
     callSendEmail(dataSendEmail.value);
