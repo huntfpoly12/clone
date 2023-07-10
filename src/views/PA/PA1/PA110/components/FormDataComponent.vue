@@ -524,9 +524,9 @@ export default defineComponent({
 				store.state.common.pa110.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
 			dataIW.value = store.state.common.pa110.dataTaxPayInfo[store.state.common.pa110.dataTaxPayInfo.length - 1];
 			dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ?
-				parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`)
-				: parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(
-					dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth())}`);
+				parseInt(`${processKey.value.paymentYear}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`)
+				: parseInt(`${processKey.value.paymentYear}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(
+					dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).daysInMonth())}`);
 			store.state.common.pa110.focusedRowKey = "PA110";
 			onResetForm();
 		});
@@ -620,7 +620,7 @@ export default defineComponent({
 
 				dataIW.value.employee.employeeId = data.employee.employeeId;
 				dataIW.value.paymentDay = parseInt(
-					`${paYear.value}${filters.formatMonth(
+					`${processKey.value.paymentYear}${filters.formatMonth(
 						processKey.value.paymentMonth
 					)}${filters.formatMonth(data.paymentDay)}`
 				);
@@ -662,7 +662,7 @@ export default defineComponent({
 		watch(resCalcIncomeWageTax, async (value) => {
 			triggerCalcIncome.value = false;
 			if (value) {
-				let data = value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100);
+				let data = Math.floor(value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100));
 				dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = data;
 				let value1012 = Math.floor(data / 100) * 10;
 				localReal.value = value1012 >= 1000 ? 0 : value1012;
@@ -954,18 +954,18 @@ export default defineComponent({
 			);
 			dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay
 				? parseInt(
-					`${paYear.value}${filters.formatMonth(
+					`${processKey.value.paymentYear}${filters.formatMonth(
 						processKey.value.paymentMonth
 					)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`)
 				: parseInt(
-					`${paYear.value}${filters.formatMonth(
+					`${processKey.value.paymentYear}${filters.formatMonth(
 						processKey.value.paymentMonth
 					)}${filters.formatMonth(
 						dayjs(
-							`${paYear.value}-${processKey.value.paymentMonth}`
+							`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`
 						).daysInMonth()
 					)}`
-				);
+				);	
 			await dataConfigDeductions.value.map((data: any) => {
 				data.amount = 0;
 			});

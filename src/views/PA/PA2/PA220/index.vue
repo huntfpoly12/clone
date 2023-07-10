@@ -321,7 +321,7 @@ export default defineComponent({
                     halfWay++;
                 }
             });
-            return `전체 <span>([${filters.formatCurrency(total)}]</span> / 계속 <span>[${filters.formatCurrency(continuee)}]</span> / 중도 <span>[${filters.formatCurrency(halfWay)}])</span>`;
+            return `전체 <span>[${filters.formatCurrency(total)}]</span> (계속 <span>[${filters.formatCurrency(continuee)}]</span> / 중도 <span>[${filters.formatCurrency(halfWay)}]</span>)`;
         };
         const customTextSummaryTotalSalary = () => {
             let total = 0;
