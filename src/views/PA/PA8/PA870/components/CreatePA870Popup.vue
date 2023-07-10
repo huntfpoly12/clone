@@ -3,9 +3,9 @@
            title="사업장가입신규신청" centered @cancel="closePopup" :footer="null" :mask-closable="false">
     <a-spin :spinning="myCompanyLoading" size="large">
       <standard-form ref="formRef">
-        <a-row :gutter="[0, 0]" class="item-group mb-10">
+        <a-row :gutter="gutter" class="item-group mb-10">
           <box-title title="4대보험 적용 및 성립신고">
-            <a-row class="px-10">
+            <a-row :gutter="gutter" class="px-10">
               <a-col span="6">
                 <checkbox-basic label="국민연금" v-model:valueCheckbox="formState.nationalPensionReport" />
               </a-col>
@@ -21,7 +21,7 @@
             </a-row>
           </box-title>
           <box-title title="고용, 산재보험 가입신청" tooltip="해당사항이 있는 경우만 신청해 주세요.">
-            <a-row class="px-10">
+            <a-row :gutter="gutter" class="px-10">
               <a-col span="6">
                 <checkbox-basic v-model:value-checkbox="formState.employeementInsuranceValidReport" label="고용보험가입" />
               </a-col>
@@ -35,170 +35,170 @@
           </box-title>
         </a-row>
 
-        <a-row :gutter="[0, 0]" class="item-group mb-10">
+        <a-row :gutter="gutter" class="item-group mb-10">
           <div class="mb-10">가입신고 기재항목</div>
           <box-title title="사업장">
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="명칭" required>
+                <a-form-item label="명칭" class="red">
                   <default-text-box v-model:valueInput='formState.companyName' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <!-- <a-col span="8">
-                <DxField label="사업장관리번호">
+                <a-form-item label="사업장관리번호">
                   <text-number-box v-model:valueInput='formState.adding' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col> -->
               <a-col span="8">
-                <DxField label="사업장형태" required>
+                <a-form-item label="사업장형태" class="red">
                   <radio-group :arrayValue="companyTypeArr" v-model:valueRadioCheck="formState.companyType"
                                layoutCustom="horizontal" class="mt-1" required></radio-group>
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
-            <DxField label="소재지" required>
+            <a-form-item label="소재지" class="red">
               <default-text-box v-model:valueInput='formState.companyAddress' placeholder="" required />
-            </DxField>
-            <a-row>
+            </a-form-item>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="사업자등록번호" required>
+                <a-form-item label="사업자등록번호" class="red">
                   <biz-number-text-box v-model:valueInput='formState.companyBizNuber'
                                        mess="이항목은 필수 입력사항입니다!" nameInput="companyBizNumber" required/>
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="법인등록번호" required>
+                <a-form-item label="법인등록번호" class="red">
                   <text-number-box required v-model:valueInput='formState.companyCorpRegNuber' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label=" 전화번호(유선)" required>
+                <a-form-item label=" 전화번호(유선)" class="red">
                   <tel-text-box v-model:valueInput="formState.companyTel" placeholder="" required/>
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
 
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label=" 휴대전화번호">
+                <a-form-item label=" 휴대전화번호">
                   <tel-text-box v-model:valueInput='formState.companyMobile' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="우편번호">
+                <a-form-item label="우편번호">
                   <text-number-box v-model:valueInput='formState.companyPostNumber' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="FAX번호">
+                <a-form-item label="FAX번호">
                   <text-number-box v-model:valueInput='formState.companyFax' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
 
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="업태">
+                <a-form-item label="업태">
                   <default-text-box v-model:valueInput='formState.companyUptae' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="종목">
+                <a-form-item label="종목">
                   <default-text-box v-model:valueInput='formState.companyjongmok' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
 
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="환급계좌은행">
+                <a-form-item label="환급계좌은행">
                   <default-text-box v-model:valueInput='formState.companyRefundBankName' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="환급계좌번호">
+                <a-form-item label="환급계좌번호">
                   <number-box v-model:valueInput='formState.companyRefundAccountNumber' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="예금주명">
+                <a-form-item label="예금주명">
                   <default-text-box v-model:valueInput='formState.companyRefundAccountOwner' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
 
           <box-title title="대표자">
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="성명" required>
+                <a-form-item label="성명" class="red">
                   <default-text-box v-model:valueInput='formState.presidentName' placeholder="" required/>
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="주민등록번호" required>
+                <a-form-item label="주민등록번호" class="red">
                   <id-number-text-box v-model:valueInput="formState.presidentResidentNumber" placeholder="" required />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="전화번호">
+                <a-form-item label="전화번호">
                   <tel-text-box v-model:valueInput="formState.presidentTel" placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
 
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="24">
-                <DxField label="주소" required>
+                <a-form-item label="주소" class="red">
                   <default-text-box v-model:valueInput='formState.presidentAddress' placeholder="" required/>
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
 
           <box-title title="보험료자동이체신청">
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="은행명" >
+                <a-form-item label="은행명" >
                   <default-text-box v-model:valueInput='formState.directDebitBankName' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="계좌번호" class="field-custom">
+                <a-form-item label="계좌번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.directDebitAccountNumber' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="예금주주민등록번호" class="field-custom">
+                <a-form-item label="예금주주민등록번호" class="field-custom">
                   <id-number-text-box v-model="formState.directDebitAccountOwnerResidentNumber" placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="예금주명" >
+                <a-form-item label="예금주명" >
                   <default-text-box v-model:valueInput='formState.directDebitAccountOwner' placeholder="" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="합산자동이체적용여부" class="field-custom">
+                <a-form-item label="합산자동이체적용여부" class="field-custom">
                   <radio-group :arrayValue="combinedDirectDebitStatusArr"
                                v-model:valueRadioCheck="formState.combinedDirectDebitStatus" layoutCustom="horizontal"
                                class="mt-1"></radio-group>
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="이체 희망일" class="field-custom">
+                <a-form-item label="이체 희망일" class="field-custom">
                   <radio-group :arrayValue="directDebitDateTypeArr"
                                v-model:valueRadioCheck="formState.directDebitDateType" layoutCustom="horizontal"
                                class="mt-1"></radio-group>
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
 
           <box-title title="전자고지신청">
-            <a-row class="px-10 my-3">
+            <a-row :gutter="gutter" class="px-10 my-3">
               <a-col span="24" style="display: flex; align-items: center; padding: 3px 0">
                 <span class="mr-30">고지방법:</span>
                 <div class="mr-30">
@@ -219,45 +219,45 @@
               </a-col>
             </a-row>
 
-            <a-row>
-              <DxField label="수신처 (전자우편주소, 휴대전화번호 또는 아이디)" class="field-custom-auto">
+            <a-row :gutter="gutter">
+              <a-form-item label="수신처 (전자우편주소, 휴대전화번호 또는 아이디)" class="field-custom-auto">
                 <default-text-box v-model:valueInput='formState.electronicReceive' placeholder="" style="flex: 1" />
-              </DxField>
+              </a-form-item>
             </a-row>
 
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="수신자명" >
+                <a-form-item label="수신자명" >
                   <default-text-box v-model:valueInput='formState.electronicReceiverName' placeholder=""
                                     style="flex: 1" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="수신자주민등록번호" class="field-custom">
+                <a-form-item label="수신자주민등록번호" class="field-custom">
                   <id-number-text-box v-model:valueInput="formState.electronicReceiverResidentNumber" placeholder=""
                                       style="flex: 1" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
 
           <box-title title="국민연금/건강보험">
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="건설현장사업장해당여부" class="field-custom-auto">
+                <a-form-item label="건설현장사업장해당여부" class="field-custom-auto">
                   <radio-group :arrayValue="constructionSiteWorkplaceArr"
                                v-model:valueRadioCheck="formState.constructionSiteWorkplace" layoutCustom="horizontal"
                                class="mt-1"></radio-group>
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="10">
-                <DxField label="건설현장사업기간" class="field-custom">
+                <a-form-item label="건설현장사업기간" class="field-custom">
 <!--                  <default-text-box v-model:valueInput='formState.constructionSiteBusinessPeriod' placeholder="" />-->
                   <range-date-time-box
                     v-model:valueDate="formState.constructionSiteBusinessPeriod"
                     :multi-calendars="true"
                   />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
@@ -272,28 +272,28 @@
           </box-title>
 
           <box-title title="국민연금">
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="근로자수" :required="formState.nationalPensionReport">
+                <a-form-item label="근로자수" :class="formState.nationalPensionReport ? 'red': ''" class="field-custom">
                   <number-box v-model:valueInput='formState.nationalPensionEmployeeCount' :min="0"
-                              :required="formState.nationalPensionReport" :disabled="!formState.nationalPensionReport" />
-                </DxField>
+                              :class="formState.nationalPensionReport ? 'red': ''" :disabled="!formState.nationalPensionReport" />
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="가입대상자수" :required="formState.nationalPensionReport" class="field-custom">
+                <a-form-item label="가입대상자수" :class="formState.nationalPensionReport ? 'red': ''" class="field-custom">
                   <number-box v-model:valueInput='formState.nationalPensionEmployeeTargetNumber' :min="0"
-                              :required="formState.nationalPensionReport" :disabled="!formState.nationalPensionReport" />
-                </DxField>
+                              :class="formState.nationalPensionReport ? 'red': ''" :disabled="!formState.nationalPensionReport" />
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="적용연월일" :required="formState.nationalPensionReport" >
+                <a-form-item label="적용연월일" :class="formState.nationalPensionReport ? 'red': ''" >
                   <date-time-box :clearable="false" placeholder="" :required="formState.nationalPensionApplyDate" :disabled="!formState.nationalPensionReport" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="분리적용사업장여부" :required="formState.nationalPensionReport" class="field-custom-auto">
+                <a-form-item label="분리적용사업장여부" :class="formState.nationalPensionReport ? 'red': ''" class="field-custom-auto">
                   <div class="d-flex gap-20">
                     <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                  v-model:valueRadioCheck="formState.nationalPensionSeparatelySiteStatus" layoutCustom="horizontal"
@@ -301,47 +301,46 @@
                                  :disabled="!formState.nationalPensionReport"
                     />
                   </div>
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="본점사업장관리번호" class="field-custom">
+                <a-form-item label="본점사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.nationalPensionSeparatelySiteManageNumber'
                                    placeholder="" :disabled="!formState.nationalPensionReport" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
 
           <box-title title="건강보험">
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="적용대상자수" :required="formState.healthInsuranceReport">
-                  <number-box v-model:valueInput='formState.healthInsuranceEmployeeTargetNumber' :min="0"
-                              :required="formState.healthInsuranceReport" :disabled="!formState.healthInsuranceReport" />
-                </DxField>
+                <a-form-item label="적용대상자수" :class="formState.healthInsuranceReport ? 'red' : ''">
+                  <number-box v-model:valueInput='formState.healthInsuranceEmployeeTargetNumber' :min="0" :class="formState.healthInsuranceReport ? 'red' : ''" :disabled="!formState.healthInsuranceReport" />
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="적용연월일" :required="formState.healthInsuranceReport" class="field-custom">
+                <a-form-item label="적용연월일" :class="formState.healthInsuranceReport ? 'red' : ''" class="field-custom">
                   <date-time-box :clearable="false" v-model:valueDate="formState.healthInsuranceApplyDate"
-                                 placeholder="" :required="formState.healthInsuranceReport" :disabled="!formState.healthInsuranceReport" />
-                </DxField>
+                                 placeholder="" :class="formState.healthInsuranceReport ? 'red' : ''" :disabled="!formState.healthInsuranceReport" />
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="본점사업장관리번호" class="field-custom-auto">
+                <a-form-item label="본점사업장관리번호" class="field-custom-auto">
                   <text-number-box v-model:valueInput='formState.healthInsuranceHeadOfficeManageNumber'
                                    :min="0" :disabled="!formState.healthInsuranceReport" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
 
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="사업장특성부호">
+                <a-form-item label="사업장특성부호">
                   <default-text-box v-model:valueInput='formState.healthInsuranceSpecificCode' :disabled="!formState.healthInsuranceReport" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="16">
-                <DxField label="회계종목(공무원 및 교직원기관만 작성)" class="field-custom-auto">
+                <a-form-item label="회계종목(공무원 및 교직원기관만 작성)" class="field-custom-auto">
                   <div class="d-flex-center justify-content-around">
                     <a-space :size="8">
                       <span>1</span>
@@ -356,131 +355,131 @@
                       <default-text-box v-model:valueInput='formState.adding' :disabled="!formState.healthInsuranceReport" width="80px" />
                     </a-space>
                   </div>
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
 
           <box-title title="고용보험">
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="상시근로자수" :required="formState.employeementInsuranceReport">
+                <a-form-item label="상시근로자수" :class="formState.employeementInsuranceReport ? 'red' : ''">
                   <number-box v-model:valueInput='formState.employeementInsuranceFulltimeWorkerCount' :min="0"
-                              :required="formState.employeementInsuranceReport" :disabled="!formState.employeementInsuranceReport" />
-                </DxField>
+                              :class="formState.employeementInsuranceReport ? 'red' : ''" :disabled="!formState.employeementInsuranceReport" />
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="피보험자수" :required="formState.employeementInsuranceReport" class="field-custom">
+                <a-form-item label="피보험자수" :class="formState.employeementInsuranceReport ? 'red' : ''" class="field-custom">
                   <number-box v-model:valueInput='formState.employeementInsuranceEmployeeTargetNumber' :min="0"
-                              :required="formState.employeementInsuranceReport" :disabled="!formState.employeementInsuranceReport"/>
-                </DxField>
+                              :class="formState.employeementInsuranceReport ? 'red' : ''" :disabled="!formState.employeementInsuranceReport"/>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="성립일" :required="formState.employeementInsuranceReport">
+                <a-form-item label="성립일" :class="formState.employeementInsuranceReport ? 'red' : ''">
                   <date-time-box :clearable="false" placeholder="" :required="formState.employeementInsuranceApplyDate"
                                  :disabled="!formState.employeementInsuranceReport"
                   />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
-            <DxField label="주된사업장" />
-            <a-row>
+            <a-form-item label="주된사업장" />
+            <a-row :gutter="gutter">
               <a-col span="8" class="">
-                <DxField label="명칭" class="" styleLabel="padding-left: 15px">
+                <a-form-item label="명칭" class="" styleLabel="padding-left: 15px">
                   <default-text-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceName'
                                     :disabled="!formState.employeementInsuranceReport" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="사업자등록번호" class="field-custom">
+                <a-form-item label="사업자등록번호" class="field-custom">
                   <biz-number-text-box v-model:valueInput="formState.employeementInsuranceMainWorkplaceBizNumber"
                                        :disabled="!formState.employeementInsuranceReport" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8" />
               <a-col span="8">
-                <DxField label="우선지원대상기업" class="field-custom" styleLabel="padding-left: 15px">
+                <a-form-item label="우선지원대상기업" class="field-custom" styleLabel="padding-left: 15px">
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.employeementInsuranceMainWorkplacePrioritySupport"
                                layoutCustom="horizontal" class="mt-1"
                                :disabled="!formState.employeementInsuranceReport"
                   />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="주된사업장관리번호" class="field-custom">
+                <a-form-item label="주된사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceManageNumber'
                                    :disabled="!formState.employeementInsuranceReport" />
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
 
           <box-title title="산재보험">
-            <a-row>
+            <a-row :gutter="gutter">
               <a-col span="8">
-                <DxField label="상시근로자수" :required="formState.industrialAccidentInsuranceReport">
+                <a-form-item label="상시근로자수" :class="formState.industrialAccidentInsuranceReport ? 'red' : ''">
                   <number-box v-model:valueInput='formState.industrialAccidentInsuranceFulltimeWokerCount' :min="0"
-                              :required="formState.industrialAccidentInsuranceReport" :disabled="!formState.industrialAccidentInsuranceReport"/>
-                </DxField>
+                              :class="formState.industrialAccidentInsuranceReport ? 'red' : ''" :disabled="!formState.industrialAccidentInsuranceReport"/>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="성립일" class="field-custom" :required="formState.industrialAccidentInsuranceReport">
+                <a-form-item label="성립일" class="field-custom" :class="formState.industrialAccidentInsuranceReport ? 'red' : ''">
                   <date-time-box :clearable="false" v-model:valueDate="formState.industrialAccidentInsuranceApplyDate"
-                                 placeholder="" :required="formState.industrialAccidentInsuranceReport"
+                                 placeholder="" :class="formState.industrialAccidentInsuranceReport ? 'red' : ''"
                                  :disabled="!formState.industrialAccidentInsuranceReport"
                     />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="6">
-                <DxField label="사업종류코드" >
+                <a-form-item label="사업종류코드" >
                   <default-text-box v-model:valueInput='formState.industrialAccidentInsuranceBusinessTypeCode'
                                     placeholder=""
                                     :disabled="!formState.industrialAccidentInsuranceReport"
                   />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="사업의형태"  :required="formState.industrialAccidentInsuranceReport">
+                <a-form-item label="사업의형태"  :class="formState.industrialAccidentInsuranceReport ? 'red' : ''">
                   <radio-group :arrayValue="industrialAccidentInsuranceBusinessTypeArr"
                                v-model:valueRadioCheck="formState.industrialAccidentInsuranceBusinessType" layoutCustom="horizontal"
                                class="mt-1"
                                :disabled="!formState.industrialAccidentInsuranceReport"
                   />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="10">
-                <DxField label="신고일현재 산재발생여부" :required="formState.industrialAccidentInsuranceReport"
+                <a-form-item label="신고일현재 산재발생여부" :class="formState.industrialAccidentInsuranceReport ? 'red' : ''"
                          class="field-custom">
                   <radio-group :arrayValue="industrialAccidentInsuranceOccurrenceArr"
                                v-model:valueRadioCheck="formState.industrialAccidentInsuranceOccurrence" layoutCustom="horizontal"
                                class="mt-1"
                                :disabled="!formState.industrialAccidentInsuranceReport"
                   />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="주된사업장여부" >
+                <a-form-item label="주된사업장여부" >
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.industrialAccidentInsuranceMainWorkplace" layoutCustom="horizontal"
                                class="mt-1"
                                :disabled="!formState.industrialAccidentInsuranceReport"
                   />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="8">
-                <DxField label="주된사업장관리번호" class="field-custom">
+                <a-form-item label="주된사업장관리번호" class="field-custom">
                   <text-number-box v-model:valueInput='formState.industrialAccidentInsuranceMainWorkplaceBizNumber'
                                    :disabled="!formState.industrialAccidentInsuranceReport" />
-                </DxField>
+                </a-form-item>
               </a-col>
               <a-col span="16">
-                <DxField label="원사업주 사업장관리번호 또는 사업개시번호 (사내하도급 수급사업주인 경우만 적습니다)" class="field-custom-auto justify-content-around">
+                <a-form-item label="원사업주 사업장관리번호 또는 사업개시번호 (사내하도급 수급사업주인 경우만 적습니다)" class="">
                   <div class="d-flex justify-content-end">
                     <text-number-box v-model:valueInput='formState.industrialAccidentMainWorkplaceManageNumber'
                                    :disabled="!formState.industrialAccidentInsuranceReport" width="180px" />
                   </div>
-                </DxField>
+                </a-form-item>
               </a-col>
             </a-row>
           </box-title>
@@ -613,12 +612,13 @@ export default defineComponent({
       companyTypeArr, combinedDirectDebitStatusArr, directDebitDateTypeArr, constructionSiteWorkplaceArr, nationalPensionSeparatelySiteStatusArr,
       industrialAccidentInsuranceBusinessTypeArr, industrialAccidentInsuranceOccurrenceArr,
       myCompanyLoading,
+      gutter: [16, 0]
     }
   },
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .gap-20 {
   gap: 20px;
 }
@@ -627,5 +627,17 @@ export default defineComponent({
 }
 :deep .popper {
   width: 245px;
+}
+.label-custom {
+  :deep(.ant-form-item-label ) {
+    label {
+      min-width: 150px;
+    }
+  }
+}
+:deep(.ant-form-item-label ) {
+  label {
+    min-width: 110px;
+  }
 }
 </style>
