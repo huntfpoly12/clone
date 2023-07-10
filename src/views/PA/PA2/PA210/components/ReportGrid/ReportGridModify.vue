@@ -417,9 +417,9 @@ export default defineComponent({
           reportClassCode : dataSource.value[0].reportClassCode
         },
       };
+      trigger.value = true;
+      refetchData();
       if (!firstLoad) {
-        trigger.value = true;
-        refetchData();
         store.commit("common/setHasChangedPopupPA210", true);
         return;
       }
@@ -788,7 +788,7 @@ export default defineComponent({
           paymentYear: dataSource.value[0].paymentYear,
           paymentMonth: dataSource.value[0].paymentMonth,
           reportType: dataSource.value[0].reportType,
-          index: nextIndex, // increase index value 1
+          index: nextIndex.value, // increase index value 1
         },
         input: {
           paymentType: dataSource.value[0].paymentType,
