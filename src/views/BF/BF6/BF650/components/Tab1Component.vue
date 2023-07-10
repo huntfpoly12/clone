@@ -92,7 +92,7 @@
             <DxItem location="after" name="exportButton" css-class="cell-button-export" />
           </DxToolbar>
           <template #settingExport>
-            <DxField label="파일 제작 설정" class="field-custom-auto">
+            <a-form-item label="파일 제작 설정">
               <div class="custom-note d-flex-center">
                 <switch-basic
                   :disabled="true"
@@ -104,10 +104,10 @@
                   본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
                 </info-tool-tip>
               </div>
-            </DxField>
+            </a-form-item>
           </template>
           <template #filterSearch>
-            <DxField label="제출연월일" class="field-custom-auto">
+            <a-form-item label="제출연월일">
               <div class="d-flex-center">
                 <date-time-box
                   width="150px"
@@ -125,7 +125,7 @@
                   </div>
                 </a-tooltip>
               </div>
-            </DxField>
+            </a-form-item>
           </template>
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn

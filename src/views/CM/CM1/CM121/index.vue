@@ -56,7 +56,7 @@
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" width="127" />
               <DxColumn caption="최종 스크래핑 현황" cell-template="action" width="127" />
               <template #action="{ data }">
-                <div style="text-align: center" :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''
+                <div style="text-align: center" :style="data.data.bankbookId === newSampleID || !data.data.useScrap ? 'opacity: .2' : ''
                   ">
                   <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px"
                     @click="showPopupLastScrapingStatus(data.data)" />
@@ -728,15 +728,17 @@ export default defineComponent({
           );
           isSetTypeClassification.value.corporate = typeItem.coporateScrapable;
           isSetTypeClassification.value.private = typeItem.privateScrapable;
-          if (
-            (isSetTypeClassification.value.corporate &&
-              isSetTypeClassification.value.private) ||
-            (isSetTypeClassification.value.corporate &&
-              !isSetTypeClassification.value.private)
-          ) {
-            isTypeClassification.value = true;
-          } else {
-            isTypeClassification.value = false;
+          if (isCreate.value) {
+            if (
+              (isSetTypeClassification.value.corporate &&
+                isSetTypeClassification.value.private) ||
+              (isSetTypeClassification.value.corporate &&
+                !isSetTypeClassification.value.private)
+            ) {
+              isTypeClassification.value = true;
+            } else {
+              isTypeClassification.value = false;
+            }
           }
           handleGetInputBankType("c", typeItem.i.coporate);
           handleGetInputBankType("p", typeItem.i.private);
@@ -1020,7 +1022,7 @@ export default defineComponent({
     };
 
     const showPopupLastScrapingStatus = (data: any) => {
-      if (data.bankbookId === newSampleID) return;
+      if (data.bankbookId === newSampleID || !data.useScrap) return;
       dataPopupScrapingStatus.value = data;
       if (!dataPopupScrapingStatus.value.lastScrapingStatus) {
         dataPopupScrapingStatus.value.lastScrapingStatus = {
