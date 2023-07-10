@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox v-if="isSelect" :noDataText="Message.getMessage('COMMON', '901').message" width="120" :search-enabled="false"
+    <DxSelectBox v-if="isSelect" :noDataText="Message.getMessage('COMMON', '901').message" :width="width" :search-enabled="false"
       :data-source="liststatus" placeholder="선택" value-expr="id" display-expr="value" v-model:value="valueBinding"
       field-template="field" item-template="item" :disabled="disabled" :read-only="readOnly" @value-changed="updateValue()"
       :height="$config_styles.HeightInput">
@@ -37,7 +37,10 @@
         type: Boolean,
         default: false,
       },
-      width: String,
+      width: {
+        type: [Number, String],
+        default: 120,
+      },
       disabled: Boolean,
       valueSelect: {
         type: [Number, String],
@@ -112,20 +115,21 @@
     
   <style scoped lang="scss">
   .category-select {
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-  
+    margin: auto 0;
     &-items {
-      width: 60px;
+      // width: 60px;
       text-align: center;
       border-radius: 5px;
+      padding: 2px 20px;
     }
-    .fs-10 {
-      font-size: 10px;
-    }
+    // .fs-10 {
+    //   font-size: 10px;
+    // }
   }
   </style>
     
