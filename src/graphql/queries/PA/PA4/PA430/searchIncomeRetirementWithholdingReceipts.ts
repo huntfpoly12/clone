@@ -72,6 +72,8 @@ export default gql`
           insuranceSupport
           nationalPensionSupportPercent
           employeementInsuranceSupportPercent
+          employeementReductionRatePercent
+          incomeTaxMagnification
         }
         ... on EmployeeWageDaily {
           type
