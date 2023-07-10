@@ -311,11 +311,11 @@ export default defineComponent({
                     type: dataInputReport.input.type,
                     receiptDate: dataInputReport.input.receiptDate,
                 },
-                employeeInputs: {
+                incomeInputs: {
                     senderName: sessionStorage.getItem("username"),
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
+                    incomeId: data.incomeId,
                     // incomeTypeCode: data.employee.incomeTypeCode
                 }
             }
@@ -339,7 +339,7 @@ export default defineComponent({
                         type: dataInputReport.input.type,
                         receiptDate: dataInputReport.input.receiptDate,
                     },
-                    employeeInputs: dataSelect.value
+                    incomeInputs: dataSelect.value
                 }
                 modalEmailMulti.value = true
             } else {
@@ -395,7 +395,7 @@ export default defineComponent({
                     senderName: sessionStorage.getItem("username"),
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
+                    incomeId: data.incomeId,
                     // incomeTypeCode: data.employee.incomeTypeCode
                 })
                 incomeIds.value.push(data.incomeId)
@@ -405,7 +405,6 @@ export default defineComponent({
         watch(result, (value) => {
             trigger.value = false;
             if (value) {
-                value.searchIncomeRetirementWithholdingReceipts
                 dataSource.value = value.searchIncomeRetirementWithholdingReceipts;
                 totalEmployee.value = value.searchIncomeRetirementWithholdingReceipts.length
                 emplRetirementType1.value = value.searchIncomeRetirementWithholdingReceipts.filter((item: any) => item.retirementType == 1).length;

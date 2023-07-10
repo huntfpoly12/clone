@@ -1,11 +1,12 @@
 <template>
     <a-row>
         <a-col span="16" class="data-table">
-            <a-spin :spinning="false" size="large">
+            <a-spin :spinning="loadingTable" size="large">
                 <DxDataGrid noDataText="내역이 없습니다" id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
-                    :data-source="dataSource" :show-borders="true" key-expr="residentIdHide"
+                    :data-source="dataSource" :show-borders="true" key-expr="messageId"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    ref="gridRef" :focused-row-enabled="true">
+                    ref="gridRef" :focused-row-enabled="true" @focused-row-changing="onFocusedRowChanging"
+                    v-model:focused-row-key="focusedRowKey">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
                     <DxPaging :enabled="false" />
@@ -23,41 +24,57 @@
                                 <range-date-time-box v-model:valueDate="rangeDate" maxRange width="250px"
                                     :multi-calendars="true" />
                             </a-form-item>
-
                             <div class="d-flex-center">
                                 <info-tool-tip>문의글 기준</info-tool-tip>
                             </div>
                         </div>
                     </template>
-                    <DxColumn caption="구분" cell-template="" data-field="" />
+                    <DxColumn caption="구분" cell-template="expresstionType" css-class="cell-center"
+                        data-field="expresstionType" width="90" />
+                    <template #expresstionType="{ data }">
+                        <ExpressionType :valueSelect="data.data.expresstionType" :isSelect="false" />
+                    </template>
 
-                    <DxColumn caption="분류" cell-template="" data-field="" />
+                    <DxColumn caption="분류" cell-template="" data-field="classification" />
 
-                    <DxColumn caption="알림내용" cell-template="" data-field="" />
+                    <DxColumn caption="알림내용" cell-template="" data-field="content" />
 
-                    <DxColumn caption="작성자" cell-template="" data-field="" />
+                    <DxColumn caption="작성자" cell-template="" data-field="writerCompactUser.name" />
 
-                    <DxColumn caption="작성일시" cell-template="" data-field="" />
+                    <DxColumn caption="작성일시" width="150" data-field="writedAt" format="yyyy-MM-dd HH:mm:ss"
+                        data-type="date" />
                 </DxDataGrid>
             </a-spin>
         </a-col>
         <a-col span="8" class="custom-layout">
-            <a-spin :spinning="false" size="large">
-                <StandardForm formName="form-tab2" ref="pa710FormRef">
-                    <div v-if="dataSource" class="wrapper-content">
-                        <div v-for="data in dataSourceDetail" :key="data.id" class="question-container">
+            <div>
+                <div style="text-align: end">
+                    <DxButton @click="reloadData">
+                        <ReloadOutlined style="font-size: 14px;" />
+                    </DxButton>
+                </div>
+                <a-spin :spinning="loadingWorkNotificationMessage" size="large">
+                    <div v-if="dataDetail" class="wrapper-content">
+                        <div class="question-container">
                             <div class="d-flex-center gap-10">
-                                <div :class="`tag ${getTag(data.expressionType).class}`">{{
-                                    getTag(data.expressionType).text }}</div>
-                                <div class="font-bold">id_{{ data.id }}</div>
-                                <div class="time">{{ dayjs(data.date).format('YYYY-MM-DD hh:mm:ss') }}</div>
-                                <div class="classification">회계-마감-(2023-05)</div>
+                                <ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
+                                <div class="font-bold"
+                                    :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
+                                    {{ dataDetail.writerCompactUser.name }}</div>
+                                <div class="time">
+                                    {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
+                                        dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
+                                </div>
+                                <div class="classification">{{ dataDetail.classification }}</div>
+                                <div class="time" v-if="dataDetail.updatedAt > dataDetail.writedAt">
+                                    Edited
+                                </div>
                             </div>
-                            <div class="truncate" style=" width: 250px;">{{ data.content }}</div>
+                            <div>{{ dataDetail.content }}</div>
                         </div>
                     </div>
-                </StandardForm>
-            </a-spin>
+                </a-spin>
+            </div>
         </a-col>
     </a-row>
 </template>
@@ -70,7 +87,6 @@ import {
     computed,
     watchEffect,
 } from "vue";
-import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import {
     DxDataGrid,
@@ -87,11 +103,14 @@ import {
     HistoryOutlined,
     DeleteOutlined,
     SaveOutlined,
+    ReloadOutlined,
 } from "@ant-design/icons-vue";
 import dayjs from 'dayjs';
 import DxButton from "devextreme-vue/button";
-import { getFakeData } from "../utils/index";
-import DataSource from "devextreme/data/data_source";
+import queries from "@/graphql/queries/CommunicationBoard/User/index";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+import notification from "@/utils/notification";
+import { companyId } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -107,75 +126,108 @@ export default defineComponent({
         SaveOutlined,
         DxScrolling,
         DxPaging,
+        ReloadOutlined,
     },
-    setup() {
+    props: {
+        onSearch: Number,
+    },
+    setup(props) {
         // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const dataSource = ref([])
-        const dataSourceDetail = ref<any>()
+        const dataDetail = ref<any>(null)
 
-        dataSourceDetail.value = getFakeData()
-        let trigger = ref(true);
-        const loading = ref(false);
+        // dataDetail.value = getFakeData()
+
+        const focusedRowKey = ref(null);
         const rangeDate = ref([parseInt(dayjs().subtract(1, 'year').format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
-
+        const trigger = ref<boolean>(true)
+        const triggerWorkNotificationMessage = ref<boolean>(false)
+        const originData = {
+            companyId: companyId,
+            filter: {
+                startWriteDate: computed(() => rangeDate.value[0]),
+                finishWriteDate: computed(() => rangeDate.value[1]),
+            },
+        }
+        const originDataDetail = {
+            companyId: companyId,
+            messageId: null,
+        }
         // ================GRAPQL==============================================
+        const { loading: loadingTable, onResult: resWorkNotificationMessages, onError
+        } = useQuery(queries.searchWorkNotificationMessages, originData, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }));
+        onError((error) => {
+            trigger.value = false;
+            dataSource.value = []
+            dataDetail.value = null
+            focusedRowKey.value = null
+            //notification('error', error.message)
+        });
+        resWorkNotificationMessages((value) => {
+            trigger.value = false;
+            let data = value.data.searchWorkNotificationMessages
+            if (data.length) {
+                dataSource.value = data;
+                focusedRowKey.value = data[0].messageId
+                originDataDetail.messageId = data[0].messageId
+                triggerWorkNotificationMessage.value = true;
+            } else {
+                dataSource.value = []
+                dataDetail.value = null
+                focusedRowKey.value = null
+            }
+        });
+        const { loading: loadingWorkNotificationMessage, onResult: resWorkNotificationMessage, onError: errorWorkNotificationMessage
+        } = useQuery(queries.getWorkNotificationMessage, originDataDetail, () => ({
+            enabled: triggerWorkNotificationMessage.value,
+            fetchPolicy: "no-cache",
+        }));
+        errorWorkNotificationMessage((error) => {
+            triggerWorkNotificationMessage.value = false;
+            dataDetail.value = null
+            //notification('error', error.message)
+        });
+        resWorkNotificationMessage((value) => {
+            triggerWorkNotificationMessage.value = false;
+            dataDetail.value = value.data.getWorkNotificationMessage;
+        });
 
         // ================FUNCTION============================================
-
-        const getTag = (expressionType: number) => {
-            switch (expressionType) {
-                case 1:
-                    return {
-                        text: '문의',
-                        class: 'tag-inquiry'
-                    }
-                case 2:
-                    return {
-                        text: '답글',
-                        class: 'tag-reply'
-                    }
-                case 3:
-                    return {
-                        text: '알림',
-                        class: 'tag-alarm'
-                    }
-                case 4:
-                    return {
-                        text: '일반',
-                        class: 'tag-white'
-                    }
-                default:
-                    return {
-                        text: '', class: ''
-                    }
-            }
+        const onFocusedRowChanging = (e: any) => {
+            originDataDetail.messageId = e.rows[e.newRowIndex]?.data.messageId
+            triggerWorkNotificationMessage.value = true;
+        };
+        const reloadData = () => {
+            triggerWorkNotificationMessage.value = true;
         }
-        // const openRow = (data: any) => {
-
-        // }
         // ================WATCHING============================================
-
-
+        watch(() => props.onSearch, (newValue, old) => {
+            trigger.value = true;
+        });
         return {
             move_column,
             colomn_resize,
             labelCol: { style: { width: "150px" } },
-            dataSource, dataSourceDetail,
-            loading,
-            getTag,
-            // openRow, 
+            dataSource, dataDetail,
+            loadingTable,
+            focusedRowKey, onFocusedRowChanging,
             dayjs,
+            reloadData,
             rangeDate,
+            loadingWorkNotificationMessage,
         };
     },
 });
 </script>
 <style scoped lang="scss" src="../style/style.scss"></style>
 <style scoped>
-:deep .dx-toolbar-after .dx-toolbar-item{
+:deep .dx-toolbar-after .dx-toolbar-item {
     padding: 0 5px 0 0;
 }
 </style>
