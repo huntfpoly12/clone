@@ -34,26 +34,26 @@
               <div>마감상태:</div>
               <div class="d-flex-center gap-10">
                 <div @click="handleClickAll" class="checkbox-all">
-                  <DxCheckBox class="mr-10 " v-model:value="checkboxAll" icon-size="16" text="전체" />
+                  <checkbox-basic label="전체12" v-model:value="checkboxAll" />
                 </div>
                 <div class="d-flex">
                   <checkbox-basic label="미입력" class="custom-checkbox0" v-model:valueCheckbox="statuses.checkbox0"/>
                   <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
                 </div>
-                <checkbox-basic label="입력중" class=" custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
-                <checkbox-basic label="입력마감" class=" custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
-                <checkbox-basic label="조정중" class=" custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
-                <checkbox-basic label="조정마감" class=" custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
+                <checkbox-basic label="입력중" class="custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
+                <checkbox-basic label="입력마감" class="custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
+                <checkbox-basic label="조정중" class="custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
+                <checkbox-basic label="조정마감" class="custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
               </div>
             </div>
           </div>
           <div class="d-flex-center gap-10">
-            <DxField label="매니저리스트"  class="field-custom-auto">
+            <a-form-item label="매니저리스트">
               <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
-            </DxField>
-            <DxField label="영업자리스트" class="field-custom-auto">
+            </a-form-item>
+            <a-form-item label="영업자리스트">
               <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
-            </DxField>
+            </a-form-item>
             <div>
               <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" width="100px"/>
             </div>
@@ -317,7 +317,7 @@ const submitChangeStatus = (value: any) => {
   height: 24px;
 }
 :deep(.checkbox-all) {
-  height: 24px;
+  //height: 24px;
   .dx-checkbox-text {
     width: auto;
     height: 100%;

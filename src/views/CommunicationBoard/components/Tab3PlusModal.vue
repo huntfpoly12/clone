@@ -29,13 +29,13 @@
       </DxToolbar>
       <template #search>
         <a-space :size="16">
-          <div class="d-flex-center">
-            <DxField label="매니저리스트" class="field-custom-auto">
+          <div class="d-flex-center gap-10">
+            <a-form-item label="매니저리스트">
               <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
-            </DxField>
-            <DxField label="영업자리스트" class="field-custom-auto">
+            </a-form-item>
+            <a-form-item label="영업자리스트">
               <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
-            </DxField>
+            </a-form-item>
             <div>
               <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel"
                             width="100px"/>
