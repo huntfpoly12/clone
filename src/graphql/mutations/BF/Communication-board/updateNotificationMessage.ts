@@ -1,12 +1,12 @@
 import gql from "graphql-tag";
 export default gql`
-    mutation createNotificationMessage(
+    mutation updateNotificationMessage(
         $companyId: Int!,
         $messageId: Int!,
         $input: NotificationMessageUpdateInput!
 
     ) {
-        createNotificationMessage(
+        updateNotificationMessage(
             companyId: $companyId,
             messageId: $messageId,
             input: $input,

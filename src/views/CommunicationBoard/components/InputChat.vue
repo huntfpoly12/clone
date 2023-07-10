@@ -12,12 +12,12 @@
     </div>
     <div class="input-edit-chat-input">
       <textarea rows="1" ref="inputChat" :placeholder="placeholder" :value="content" @input="changeInput"
-                @keypress.enter.exact.prevent="submitChat" :disabled="disabled"></textarea>
+                @keypress.enter.exact.prevent="submitChat" :disabled="disabled" />
     </div>
 
     <div class="input-edit-chat-input-action">
       <div class="input-edit-chat-input-action-icon">
-        <div class="input-edit-chat-input-action-icon-files" @click="openFile">
+        <div :class="disabled ? `input-edit-chat-input-action-icon-files disabled` : `input-edit-chat-input-action-icon-files`" @click="openFile">
           <FileAddOutlined/>
         </div>
       </div>
@@ -59,6 +59,11 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  companyId: {
+    type: Number,
+    default: 0,
+    required: false
+  },
   files: {
     type: Array,
     default: []
@@ -99,6 +104,7 @@ const submitChat = () => {
 };
 
 watch(() => filesUpload.value, (value) => {
+  console.log('%c value', 'color: red',value)
   emit('update:files', value)
 })
 
@@ -165,10 +171,8 @@ const uploadPreviewFile = async (e?: any, files?: any) => {
     }
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('companyId', companyId);
-    formData.append('fiscalYear', acYear.value);
-    formData.append('facilityBusinessId', globalFacilityBizId.value);
-    uploadRepository.accountingFile(formData).then(async (res: any) => {
+    formData.append('companyId', props.companyId.toString());
+    uploadRepository.messageNotification(formData).then(async (res: any) => {
       filesUpload.value.push({
         id: res.data.id,
         contentType: file.type,
@@ -274,6 +278,9 @@ const drop = (event: any) => {
           align-items: center;
           cursor: pointer;
           margin-right: 5px;
+          &.disabled {
+            cursor: not-allowed;
+          }
         }
       }
     }
