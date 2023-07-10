@@ -346,40 +346,70 @@ export default defineComponent({
 		const incomeTaxMagnification = ref<number>(0);
 		// ============ GRAPQL ===============================
 		// get employeewage
-		const { loading: loadingEmployeeWage, onResult: resEmployeeWage
+		const { loading: loadingEmployeeWage, onResult: resEmployeeWage, onError: errorEmployeeWage
 		} = useQuery(queries.getEmployeeWages, originData, () => ({
 			enabled: triggerEmployeeWages.value,
 			fetchPolicy: "no-cache",
 		}));
-		const { onResult: resConfigPayItems, loading: loadingConfigPayItems,
+		errorEmployeeWage((e) => {
+			triggerEmployeeWages.value = false;
+			//notification('error', e.message)
+		})
+		const { onResult: resConfigPayItems, loading: loadingConfigPayItems, onError: errorConfigPayItems
 		} = useQuery(queries.getWithholdingConfigPayItems, originDataConfig, () => ({
 			enabled: triggerConfigPayItems.value,
 			fetchPolicy: "no-cache",
 		}));
-		const { onResult: resConfigDeductions, loading: loadingConfigDeductions
+		errorConfigPayItems((e) => {
+			triggerConfigPayItems.value = false;
+			//notification('error', e.message)
+		})
+		const { onResult: resConfigDeductions, loading: loadingConfigDeductions, onError: errorConfigDeductions
 		} = useQuery(queries.getWithholdingConfigDeductionItems, originDataConfig, () => ({
 			enabled: triggerConfigDeductions.value,
 			fetchPolicy: "no-cache",
 		}));
-		const { result, loading } = useQuery(queries.getIncomeWage, incomeWageParams, () => ({
+		errorConfigDeductions((e) => {
+			triggerConfigDeductions.value = false;
+			//notification('error', e.message)
+		})
+		const { result, loading, onError: onErrorDetail } = useQuery(queries.getIncomeWage, incomeWageParams, () => ({
 			fetchPolicy: "no-cache",
 			enabled: triggerDetail.value,
 		}));
+		onErrorDetail((e) => {
+			triggerDetail.value = false;
+			//notification('error', e.message)
+		})
 		const { result: resCalcIncomeWageTax, onError: onIncomeWageTaxError
 		} = useQuery(queries.calculateIncomeWageTax, calculateVariables, () => ({
 			enabled: triggerCalcIncome.value,
 			fetchPolicy: "no-cache",
 		}));
-		const { result: resultEmployeeWage, loading: loadingGetEmployeeWage
+		onIncomeWageTaxError((e) => {
+			triggerCalcIncome.value = false;
+			//notification('error', e.message)
+		});
+
+		const { result: resultEmployeeWage, loading: loadingGetEmployeeWage, onError: errorGetEmployeeWage
 		} = useQuery(queries120.getEmployeeWage, originDataEmployeeWage, () => ({
 			fetchPolicy: "no-cache",
 			enabled: triggerEmployeeWage.value,
 		}));
+		errorGetEmployeeWage((e) => {
+			triggerEmployeeWage.value = false;
+			//notification('error', e.message)
+		})
+
 		const { result: resultCalculateMidTermSettlement, onError: onErrorCalculateMidTermSettlement
 		} = useQuery(queries.calculateMidTermSettlement, originCalculateMidTermSettlement, () => ({
 			fetchPolicy: "no-cache",
 			enabled: triggerCalculateMidTermSettlement.value,
 		}));
+		onErrorCalculateMidTermSettlement((e) => {
+			triggerCalculateMidTermSettlement.value = false;
+			//notification('error', e.message)
+		})
 
 		// API EDIT
 		const {
@@ -448,12 +478,6 @@ export default defineComponent({
 				});
 			}
 		});
-		onIncomeWageTaxError((e) => {
-			//notification('error', e.message)
-		});
-		onErrorCalculateMidTermSettlement((e) => {
-			//notification('error', e.message)
-		})
 		errorUpdate(async (e) => {
 			//notification('error', e.message)
 		});
