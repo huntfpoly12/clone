@@ -243,8 +243,8 @@ export default defineComponent({
 		};
 
 		let requiredPaymentDay = ref();
-		const startDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).startOf("month").toDate());
-		const finishDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).endOf("month").toDate());
+		const startDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).startOf("month").toDate());
+		const finishDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).endOf("month").toDate());
 		const statusChangeFormPrice = ref<boolean>(false);
 
 		// ============ GRAPQL ===============================

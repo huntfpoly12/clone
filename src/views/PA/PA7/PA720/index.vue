@@ -7,7 +7,7 @@
           :allow-column-reordering="move_column" key-expr="globalYear" :allow-column-resizing="colomn_resize"
           :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn :caption="processKeyPA720.processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
+          <DxColumn width="calc(100% - 400px)" :caption="processKeyPA720.processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year>
             <span>지급연월 </span>
           </template>

@@ -86,20 +86,8 @@ export default defineComponent({
 			parseInt(sessionStorage.getItem("paYear") ?? "0")
 		);
 		// const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth())
-		const startDate = computed(() =>
-			dayjs(
-				`${paYear.value}-${processKey.value.paymentMonth}`
-			)
-				.startOf("month")
-				.toDate()
-		);
-		const finishDate = computed(() =>
-			dayjs(
-				`${paYear.value}-${processKey.value.paymentMonth}`
-			)
-				.endOf("month")
-				.toDate()
-		);
+		const startDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).startOf("month").toDate());
+		const finishDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).endOf("month").toDate());
 		const setModalVisible = () => {
 			emit("closePopup", false);
 		};
@@ -119,7 +107,7 @@ export default defineComponent({
 			store.state.common.pa110.onDoneEdit = true;
 			store.state.common.pa110.loadingTableInfo++;
 			// }
-			
+
 			// emit("closePopup", false)
 
 			// store.state.common.pa110.loadingFormData++
@@ -179,16 +167,16 @@ export default defineComponent({
 					// dayValue.value = parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}01}`)
 					dayValue.value = sampleDataIncomeWage.paymentDay
 						? parseInt(
-							`${paYear.value}${filters.formatMonth(
+							`${processKey.value.paymentYear}${filters.formatMonth(
 								processKey.value.paymentMonth
 							)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`
 						)
 						: parseInt(
-							`${paYear.value}${filters.formatMonth(
+							`${processKey.value.paymentYear}${filters.formatMonth(
 								processKey.value.paymentMonth
 							)}${filters.formatMonth(
 								dayjs(
-									`${paYear.value}-${processKey.value.paymentMonth}`
+									`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`
 								).daysInMonth()
 							)}`
 						);
