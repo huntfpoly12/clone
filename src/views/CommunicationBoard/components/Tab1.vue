@@ -1,41 +1,33 @@
 <template>
   <div class="wrapper">
     <a-spin :spinning="loading">
-      <div v-if="dataSource" class="wrapper-content">
-        <div v-for="data in dataSource" :key="data.id" class="question-container" @click="openRow && openRow(data)">
+      <div v-if="dataSource.length" class="wrapper-content">
+        <div v-for="data in dataSource" :key="data.cursor" class="question-container" @click="openRow && openRow(data.node)">
           <div class="d-flex-center gap-10">
-            <div :class="`tag ${getTag(data.expressionType).class}`">{{ getTag(data.expressionType).text }}</div>
-            <div class="font-bold">id_{{ data.id }}</div>
-            <div class="time">{{ dayjs(data.date).format('YYYY-MM-DD hh:mm:ss') }}</div>
-            <div class="classification">회계-마감-(2023-05)</div>
+            <ExpressionType :is-select="false" :value-select="data.node.expresstionType"/>
+            <div class="font-bold">{{ data.node.writerCompactUser.name }}</div>
+            <div class="time">{{ dayjs(data.node.writedAt).format('YYYY-MM-DD hh:mm:ss') }}</div>
+            <div class="classification">{{data.node.classification}}</div>
           </div>
-          <div class="truncate" style=" width: 250px;">{{ data.content }}</div>
+          <div class="truncate" style=" width: 250px;">{{ data.node.content }}</div>
         </div>
       </div>
+      <div v-else>내역이 없습니다</div>
     </a-spin>
   </div>
 </template>
 
 <script setup lang="ts">
-import { dataFake } from "@/views/CommunicationBoard/utils";
-import { inject, InjectionKey, ref } from "vue";
 import dayjs from "dayjs";
-import { DataRow, OpenRowKey } from "@/views/CommunicationBoard/type";
+import {OpenRowKey, RecentAdminCommunicationMessages} from "@/views/CommunicationBoard/type";
+import {useQuery} from "@vue/apollo-composable";
+import getRecentAdminCommunicationMessages
+  from "@/graphql/queries/BF/Communication-board/getRecentAdminCommunicationMessages";
+import {inject, ref} from "vue";
+import ExpressionType from "@/components/common/ExpressionType.vue";
 
-const dataSource = ref<DataRow[]>()
-const loading = ref(false)
+const dataSource: any = ref<RecentAdminCommunicationMessages[]>([])
 
-// fake run api call to get data from server and set to dataSource in 2s
-
-function getData() {
-  loading.value = true
-  dataSource.value = dataFake;
-  setTimeout(() => {
-    loading.value = false
-  }, 500)
-}
-
-getData()
 const getTag = (expressionType: number) => {
   switch (expressionType) {
     case 1:
@@ -60,6 +52,18 @@ const getTag = (expressionType: number) => {
   }
 }
 const openRow = inject(OpenRowKey)
+
+const {onResult, onError, loading, refetch} = useQuery(getRecentAdminCommunicationMessages, {
+  filter: {
+    first: 1000,
+  }
+})
+onResult((result) => {
+  dataSource.value = result?.data.getRecentAdminCommunicationMessages.edges || []
+})
+onError((error) => {
+  console.log(error)
+})
 </script>
 
 <style lang="scss" scoped>

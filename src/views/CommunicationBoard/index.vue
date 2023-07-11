@@ -16,16 +16,20 @@
 </template>
 
 <script setup lang="ts">
-import { InjectionKey, provide, ref } from "vue";
+import {provide, ref} from "vue";
 import Tab1 from "./components/Tab1.vue";
 import Tab2 from "./components/Tab2.vue";
 import Tab3 from "./components/Tab3.vue";
-import { DataRow, DataRowKey, OpenRowKey } from "@/views/CommunicationBoard/type";
+import {DataRowKey, MessageDetail, OpenRowKey} from "@/views/CommunicationBoard/type";
 
-const activeKey = ref<string | number>('1');
-const dataRow = ref<DataRow | null>(null)
-const openRow = (data: DataRow) => {
-  if (data.expressionType !== 3) {
+const activeKey = ref<string | number>('3');
+const dataRow = ref<MessageDetail | null>(null)
+const openRow = (data: MessageDetail) => {
+  if (data.expresstionType === 1) {
+    window.open(`/ac-130`)
+    return
+  }
+  if (data.expresstionType !== 4) {
     activeKey.value = '2'
   } else {
     activeKey.value = '3'

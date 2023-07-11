@@ -3,18 +3,18 @@
     <a-row>
       <a-col :span="14">
         <DxDataGrid
-            :show-row-lines="true"
-            :hoverStateEnabled="true"
-            :data-source="dataSource"
-            key-expr="id"
-            :show-borders="true"
-            :allow-column-resizing="true"
-            column-auto-width
-            :focused-row-enabled="true"
-            :focused-row-key="focusRowKeys"
-            :focused-row-index="0"
-            noDataText="내역이 없습니다"
-            style="height: calc(100vh - 210px);"
+          :show-row-lines="true"
+          :hoverStateEnabled="true"
+          :data-source="dataSource"
+          key-expr="id"
+          :show-borders="true"
+          :allow-column-resizing="true"
+          column-auto-width
+          :focused-row-enabled="true"
+          :focused-row-key="focusRowKeys"
+          :focused-row-index="0"
+          noDataText="내역이 없습니다"
+          style="height: calc(100vh - 210px);"
         >
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
           <DxExport :enabled="true"/>
@@ -99,7 +99,7 @@
                   <div class="form-chat-timeline-content-background">
                     <div class="form-chat-timeline-content-text">
                       <MarkdownCustom
-                          :options="{ source: item.content || '', linkify: true, typographer: true, highlight: true }"/>
+                        :options="{ source: item.content || '', linkify: true, typographer: true, highlight: true }"/>
                     </div>
                     <div v-if="item?.files && item?.files?.length" class="form-chat-timeline-content-files">
                       <div class="form-chat-timeline-content-files-preview">
@@ -134,6 +134,7 @@
             <InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
                        :placeholder="disabled ? '글작성 (최대 1,000자)' : '글작성 (최대 1,000자)'"
                        :disabled="isLoadingUpload || disabled"
+                       :companyId="0"
                        @submitChat="submitChat"
                        :isEdit="rowEdit.isEdit"
                        @cancel="cancelEdit"
@@ -149,21 +150,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, reactive, ref } from "vue";
-import { DxColumn, DxDataGrid, DxExport, DxItem, DxSearchPanel, DxToolbar } from "devextreme-vue/data-grid";
+import {computed, inject, reactive, ref} from "vue";
+import {DxColumn, DxDataGrid, DxExport, DxItem, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
 import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
-import { DeleteOutlined, EditOutlined, FileTextOutlined } from "@ant-design/icons-vue";
-import { DataRowKey } from "@/views/CommunicationBoard/type";
+import {DeleteOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons-vue";
+import {DataRowKey} from "@/views/CommunicationBoard/type";
 import InputChat from "./InputChat.vue";
 import MarkdownCustom from "@/views/AC/AC1/AC130/components/MarkdownCustom.vue";
 import ModalPreviewListImage from "@/views/AC/AC1/AC130/components/ModalPreviewListImage.vue";
 import StatusChat from "@/views/AC/AC1/AC130/components/StatusChat.vue";
-import { getJwtObject } from "@bankda/jangbuda-common";
-import { companyId } from "@/helpers/commonFunction";
+import {getJwtObject} from "@bankda/jangbuda-common";
+import {companyId} from "@/helpers/commonFunction";
 import deletePopup from "@/utils/deletePopup";
-import { Message } from "@/configs/enum";
-import { dataFake } from "@/views/CommunicationBoard/utils";
+import {Message} from "@/configs/enum";
 
 const dataRow = inject(DataRowKey)
 const token = ref(sessionStorage.getItem("token"))
@@ -175,7 +175,7 @@ const search = reactive({
   replyO: true,
 })
 const rangeDate = ref([parseInt(dayjs().subtract(3, "month").format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
-const dataSource = ref(dataFake.filter((item: any) => item.expressionType < 3))
+const dataSource = ref([])
 const filesUpload = ref([])
 const disabled = ref(false)
 const isLoadingUpload = ref(false)
@@ -194,8 +194,8 @@ const rowEdit = reactive({
 const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
 const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
-console.log('%c focusRowKeys', 'color: red',dataRow?.value, listChat.value)
-const focusRowKeys = computed(() => dataRow?.value?.id ? dataRow?.value?.id : dataFake[0].id)
+console.log('%c focusRowKeys', 'color: red', dataRow?.value, listChat.value)
+const focusRowKeys = computed(() => dataRow?.value?.companyId ? dataRow?.value?.companyId : null)
 const submitChat = () => {
   if (rowEdit.isEdit) {
     editChat()
@@ -217,7 +217,7 @@ function addChat() {
   }
   const value = {
     id: listChat.value.length + 1,
-    expresstionType: Math.floor(Math.random()*5) + 1,
+    expresstionType: Math.floor(Math.random() * 5) + 1,
     classification: "회계-마감-(2023-04)",
     content: !!rowEdit.content.trim() ? rowEdit.content.trim() : null,
     companyId: companyId,

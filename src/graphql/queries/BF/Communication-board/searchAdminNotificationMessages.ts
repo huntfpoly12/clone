@@ -15,13 +15,24 @@ export default gql`
             expresstionType
             classification
             company {
+                code
+                active
                 id
+                __typename @skip(if: true)
             }
             writerCompactUser {
                 id
+                name
+                username
+                active
+                __typename @skip(if: true)
             }
             fileStorages {
                 id
+                name
+                url
+                turl
+                __typename @skip(if: true)
             }
             __typename @skip(if: true)
         }
