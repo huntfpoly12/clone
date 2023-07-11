@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 export default gql`
-    query searchAdminNotificationMessages($filter: SearchNotificationMessageFilter!) {
-        searchAdminNotificationMessages(filter : $filter){
+    query getAdminNotificationMessage($companyId: Int!, $messageId: Int!) {
+        getAdminNotificationMessage(companyId : $companyId, messageId: $messageId){
             companyId
             messageId
             writedAt

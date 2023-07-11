@@ -1,56 +1,57 @@
 <template>
-  <div class="input-edit-chat" :class="{'input-edit-chat-dragFile': isDragging}" @dragover="dragover"
-       @dragleave="dragleave" @drop="drop">
-    <div v-if="isEdit">
-      <div class="d-flex-center justify-content-start gap-16 px-5">
-        <EditOutlined class="edit-icon"/>
-        <div class="edit-content">
-          <div class="title-edit">Edit message</div>
-          <div class="truncate">{{ content }}</div>
-        </div>
-      </div>
-    </div>
+  <div class="input-edit-chat" :class="{ 'input-edit-chat-dragFile': isDragging }" @dragover="dragover"
+    @dragleave="dragleave" @drop="drop">
+    <!--    <div v-if="isEdit">-->
+    <!--      <div class="d-flex-center justify-content-start gap-16 px-5">-->
+    <!--        <EditOutlined class="edit-icon"/>-->
+    <!--        <div class="edit-content">-->
+    <!--          <div class="title-edit">Edit message</div>-->
+    <!--          <div class="truncate">{{ content }}</div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
     <div class="input-edit-chat-input">
       <textarea rows="1" ref="inputChat" :placeholder="placeholder" :value="content" @input="changeInput"
-                @keypress.enter.exact.prevent="submitChat" :disabled="disabled" />
+        @keypress.enter.exact.prevent="submitChat" :disabled="disabled || !isEdit" />
     </div>
 
     <div class="input-edit-chat-input-action">
       <div class="input-edit-chat-input-action-icon">
-        <div :class="disabled ? `input-edit-chat-input-action-icon-files disabled` : `input-edit-chat-input-action-icon-files`" @click="openFile">
-          <FileAddOutlined/>
+        <div
+          :class="disabled || !isEdit ? `input-edit-chat-input-action-icon-files disabled` : `input-edit-chat-input-action-icon-files`"
+          @click="openFile">
+          <FileAddOutlined />
         </div>
       </div>
       <div class="input-edit-chat-input-action-btn">
         <button-basic class="mr-10" text="취소" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
-                      :disabled="disabled || (!content.trim() && !filesUpload.length)"/>
+          :disabled="disabled || (!content.trim() && !filesUpload.length)" />
         <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()"
-                      :disabled="disabled || (!content.trim() && !filesUpload.length)"/>
+          :disabled="disabled || (!content.trim() && !filesUpload.length)" />
       </div>
     </div>
-    <div v-if="filesUpload.length" class="input-edit-chat-input-files">
+    <div v-if="filesUpload.length && isNewRow" class="input-edit-chat-input-files">
       <div v-for="(file, index) in filesUpload" class="input-edit-chat-input-files-item" :key="index">
         <div class="input-edit-chat-input-files-item-file">
-          <FileOutlined style="margin-right: 10px;"/>
+          <FileOutlined style="margin-right: 10px;" />
           <div class="input-edit-chat-input-files-item-file-info">
             <p class="input-edit-chat-input-files-item-file-info-name">{{ file?.file ? file.file.name : file.name }}</p>
           </div>
         </div>
-        <DeleteOutlined class="input-edit-chat-input-files-item-delete" @click="removeFile(index)"/>
+        <DeleteOutlined class="input-edit-chat-input-files-item-delete" @click="removeFile(index)" />
       </div>
     </div>
   </div>
-  <input v-show="false" ref="inputFile" type="file" multiple @change="uploadPreviewFile"/>
+  <input v-show="false" ref="inputFile" type="file" multiple @change="uploadPreviewFile" />
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from 'vue'
-import { DeleteOutlined, EditOutlined, FileAddOutlined, FileOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
-import { companyId } from "@/helpers/commonFunction"
+import { DeleteOutlined, FileAddOutlined, FileOutlined } from '@ant-design/icons-vue';
+import { nextTick, ref } from 'vue';
 
-import Repository from "@/repositories";
 import { Message } from "@/configs/enum";
+import Repository from "@/repositories";
 
 const uploadRepository = Repository.get("upload");
 
@@ -79,34 +80,27 @@ const props = defineProps({
   isEdit: {
     type: Boolean,
     default: false
+  },
+  isNewRow: {
+    type: Boolean,
+    default: false
   }
 })
-const emit = defineEmits(['update:content', 'update:files', 'submitChat', 'cancel'])
-const acYear: any = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
-const globalFacilityBizId: any = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
+const emit = defineEmits(['update:content', 'update:files', 'submitChat', 'cancel', 'updateImage'])
 
 const inputFile = ref<any>()
 let filesUpload: any = ref(props.files || [])
 const inputChat: any = ref()
-const objectChatUpFile: any = ref(null)
-const listChat = ref<any>([])
-let listImagePreview: any = ref({
-  index: 0,
-  files: [],
-})
 
 const isDragging = ref(false)
-const date = new Date()
-const currentTime = date.getFullYear() + '-' + ((date.getMonth() + 1) < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
 
 const submitChat = () => {
   emit('submitChat')
 };
-
-watch(() => filesUpload.value, (value) => {
-  console.log('%c value', 'color: red',value)
-  emit('update:files', value)
-})
+// watch(() => filesUpload.value, (value) => {
+//   console.log('%c value', 'color: red', value)
+//   emit('update:files', value)
+// })
 
 const changeInput = (event: any) => {
   const element = event?.target ? event.target : event
@@ -128,15 +122,6 @@ const resetInputChat = () => {
   focus()
   emit('cancel')
 }
-
-const formatDate = (timestamp: number) => {
-  const date = new Date(timestamp)
-  const month = date.getMonth()
-  const day = date.getDate()
-  const minutes = date.getMinutes().toString()
-  return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${minutes.length === 2 ? minutes : '0' + minutes}`
-}
-
 const openFile = () => {
   if (props.disabled) return
   inputFile.value.click()
@@ -155,9 +140,8 @@ const uploadPreviewFile = async (e?: any, files?: any) => {
     e.target.value = null
     return
   }
-
-  listFile.forEach((file: any) => {
-    const isLt10M = file.size/1024/1024 <= 10;
+  const uploadPromises = listFile.map((file: any) => {
+    const isLt10M = file.size / 1024 / 1024 <= 10;
     if (!isLt10M) {
       notification("error", Message.getMessage("COMMON", "1003").message);
     }
@@ -172,7 +156,7 @@ const uploadPreviewFile = async (e?: any, files?: any) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('companyId', props.companyId.toString());
-    uploadRepository.messageNotification(formData).then(async (res: any) => {
+    return uploadRepository.messageNotification(formData).then(async (res: any) => {
       filesUpload.value.push({
         id: res.data.id,
         contentType: file.type,
@@ -180,10 +164,20 @@ const uploadPreviewFile = async (e?: any, files?: any) => {
       })
     }).catch((error: any) => {
       notification('error', error.message)
-    }).finally(() => {
-      e.target.value = null
     })
   });
+  Promise.all(uploadPromises)
+    .then(() => {
+      if (!props.isNewRow) {
+        emit('updateImage', filesUpload.value)
+      } else {
+        emit('update:files', filesUpload.value)
+      }
+      e.target.value = null;
+    })
+    .catch((error) => {
+      console.error("Error occurred during file uploads:", error);
+    });
 }
 
 const removeFile = (index: number) => {
@@ -196,8 +190,8 @@ const formatFileSize = (bytes: number) => {
   const k = 1000
   const decimalPoint = 2
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-  const i = Math.floor(Math.log(bytes)/Math.log(k));
-  return parseFloat((bytes/Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i];
 }
 
 const resizeInput = () => {
@@ -278,6 +272,7 @@ const drop = (event: any) => {
           align-items: center;
           cursor: pointer;
           margin-right: 5px;
+
           &.disabled {
             cursor: not-allowed;
           }

@@ -8,7 +8,6 @@
     @cancel="setModalVisible" width="1200px">
     <div class="title">알림 대상 선택</div>
     <a-spin :spinning="loading">
-
       <DxDataGrid
         :show-row-lines="true"
         :hoverStateEnabled="true"
@@ -66,7 +65,7 @@
       </DxDataGrid>
     </a-spin>
     <div class="text-center mt-20">
-      <DxButton type="default" @click="handleSubmit">알림글 작성</DxButton>
+      <DxButton type="default" @click="handleSubmit" :disabled="!dataCompanyTab3">알림글 작성</DxButton>
     </div>
 
   </a-modal>
@@ -79,7 +78,7 @@ import DxButton from 'devextreme-vue/button';
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320";
 import {FocusedRowChangedEvent} from "devextreme/ui/data_grid";
-import {OpenRowCompanyTab3, OpenRowKey} from "@/views/CommunicationBoard/type";
+import {DataCompanyTab3, OpenRowCompanyTab3, OpenRowKey} from "@/views/CommunicationBoard/type";
 
 const props = defineProps({
   modalStatus: {
@@ -93,6 +92,7 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['closeModal'])
+const dataCompanyTab3 = inject(DataCompanyTab3)
 const dataSearch = reactive({
   excludeCancel: true,
   salesRepresentativeId: null,
@@ -101,7 +101,6 @@ const dataSearch = reactive({
   page: 1
 })
 const dataSource = ref([])
-console.log('%c dataSearch', 'color: red', dataSearch)
 const {refetch: refetchData, onResult, loading, onError} = useQuery(queries.searchCompanies, dataSearch, () => ({
   fetchPolicy: "no-cache",
 }))
@@ -114,7 +113,13 @@ const handleSubmit = () => {
 const openRowCompanyTab3 = inject(OpenRowCompanyTab3)
 
 const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
-  if (e?.row?.data && openRowCompanyTab3) openRowCompanyTab3(e.row.data)
+  if (e?.row?.data && openRowCompanyTab3) openRowCompanyTab3({
+    name: e.row.data.name,
+    id: e.row.data.id,
+    address: e.row.data.address,
+    code: e.row.data.code,
+    active: e.row.data.active
+  })
 }
 </script>
 
