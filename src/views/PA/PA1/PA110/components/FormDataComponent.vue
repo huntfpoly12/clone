@@ -340,8 +340,8 @@ export default defineComponent({
 		const statusMidTermSettlement2 = computed(() => store.state.common.pa110.statusMidTermSettlement2);
 		let statusCalculateMTS = ref<boolean>(false);
 		let requiredPaymentDay = ref();
-		const startDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).startOf("month").toDate());
-		const finishDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).endOf("month").toDate());
+		const startDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).startOf("month").toDate());
+		const finishDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).endOf("month").toDate());
 		const statusChangeFormPrice = ref<boolean>(false);
 		const incomeTaxMagnification = ref<number>(0);
 		// ============ GRAPQL ===============================

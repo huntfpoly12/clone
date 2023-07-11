@@ -31,9 +31,9 @@
 					</template>
 					<template #button-template>
 						<div class="d-flex-center">
-							<DxButton>
+							<!-- <DxButton>
 								<HistoryOutlined style="font-size: 18px;" @click="openHistory" />
-							</DxButton>
+							</DxButton> -->
 							<a-tooltip title="문의 신규 등록">
 								<div class="mx-5">
 									<DxButton icon="plus" :disabled="false" @click="addRow" />
@@ -67,10 +67,10 @@
 		<a-col span="8" class="custom-layout">
 			<div>
 				<div style="text-align: end">
-                    <DxButton @click="reloadData">
-                        <ReloadOutlined style="font-size: 14px;" />
-                    </DxButton>
-                </div>
+					<DxButton @click="reloadData">
+						<ReloadOutlined style="font-size: 14px;" />
+					</DxButton>
+				</div>
 				<a-spin :spinning="loadingWorkInquiryMessage" size="large">
 					<div class="wrapper-content">
 						<div v-if="dataDetail" class="question-container">
@@ -83,6 +83,11 @@
 										dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
 								</div>
 								<div class="classification">{{ dataDetail.classification }}</div>
+								<div class="d-flex-center">
+									<checkbox-basic :valueCheckbox="dataDetail.secret" disabled="true" />
+									<span>비밀글</span>
+									<info-tool-tip>선택시 작성글과 답글은 작성자만 조회할 수 있습니다</info-tool-tip>
+								</div>
 								<div class="time" v-if="dataDetail.updatedAt > dataDetail.writedAt">
 									Edited
 								</div>
@@ -209,7 +214,6 @@ import {
 } from "devextreme-vue/data-grid";
 import {
 	EditOutlined,
-	HistoryOutlined,
 	DeleteOutlined,
 	SaveOutlined,
 	ReloadOutlined,
@@ -234,7 +238,6 @@ export default defineComponent({
 		DxDataGrid,
 		DxColumn,
 		EditOutlined,
-		HistoryOutlined,
 		DxToolbar,
 		DxItem,
 		DxExport,
@@ -373,10 +376,6 @@ export default defineComponent({
 			triggerWorkInquiryMessage.value = true;
 		};
 
-		const openHistory = () => {
-
-		}
-
 		const submitChat = () => {
 			if (rowEdit.isEdit) {
 				editChat()
@@ -489,8 +488,8 @@ export default defineComponent({
 			window.open(link, '_blank')
 		}
 		const reloadData = () => {
-            triggerWorkInquiryMessage.value = true;
-        }
+			triggerWorkInquiryMessage.value = true;
+		}
 		// ================WATCHING============================================
 		watch(() => props.onSearch, (newValue, old) => {
 			trigger.value = true;
@@ -502,7 +501,7 @@ export default defineComponent({
 			labelCol: { style: { width: "150px" } },
 			dataSource, dataDetail,
 			rangeDate,
-			addRow, openHistory,
+			addRow,
 			reloadData,
 			onFocusedRowChanging, focusedRowKey,
 			dayjs,
