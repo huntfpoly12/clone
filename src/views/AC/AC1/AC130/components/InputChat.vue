@@ -1,7 +1,7 @@
 <template>
   <div class="input-edit-chat" :class="{'input-edit-chat-dragFile': isDragging}" @dragover="dragover" @dragleave="dragleave" @drop="drop">
     <div class="input-edit-chat-input">
-      <textarea rows="1" ref="inputChat" :placeholder="placeholder" v-model="contentBinding" @input="changeInput"
+      <textarea rows="1" ref="inputChat" :placeholder="placeholder" :value="contentBinding" @input="changeInput"
         @keypress.enter.exact.prevent="submitChat" :disabled="disabled"></textarea>
     </div>
 
@@ -32,7 +32,7 @@
   </div>
   <input v-show="false" ref="inputFile" type="file" multiple @change="uploadPreviewFile" />
 </template>
-  
+
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, FileTextOutlined } from '@ant-design/icons-vue';
@@ -257,7 +257,7 @@ export default defineComponent({
   },
 })
 </script>
-  
+
 <style lang="scss" scoped>
 .input-edit-chat {
   &-dragFile {

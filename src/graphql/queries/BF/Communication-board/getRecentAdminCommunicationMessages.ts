@@ -5,6 +5,7 @@ export default gql`
       totalCount
       pageInfo {
         hasNextPage
+        __typename @skip(if: true)
       }
       edges {
         cursor
@@ -22,8 +23,15 @@ export default gql`
           month
           writerCompactUser {
             id
+            type
+            username
+            name
+            active
+            __typename @skip(if: true)
           }
+          __typename @skip(if: true)
         }
+        __typename @skip(if: true)
       }
       __typename @skip(if: true)
     }

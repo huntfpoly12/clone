@@ -90,17 +90,17 @@
         },
       ]
       let valueBinding: any = ref(props.valueSelect || 1)
-  
+
       const objectFilter = computed(() => {
         return liststatus.find((item: any) => item.id === valueBinding.value)
       })
-  
+
       watch(() => valueBinding.value, (value) => {
         emit("update:valueSelect", value);
       })
-  
+
       const updateValue = () => {
-  
+
       }
       return {
         valueBinding,
@@ -112,7 +112,7 @@
     },
   };
   </script>
-    
+
   <style scoped lang="scss">
   .category-select {
     // width: 100%;
@@ -132,4 +132,3 @@
     // }
   }
   </style>
-    

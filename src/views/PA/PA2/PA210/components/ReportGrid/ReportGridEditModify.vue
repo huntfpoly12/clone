@@ -429,8 +429,7 @@ export default defineComponent({
       if (!firstLoad) {
         trigger.value = true;
         refetchData();
-        store.commit("common/setHasChangedPopupPA210", true);
-        return
+        store.commit("common/setHasChangedPopupPA210", true);  
       }
 
       let hot = wrapper.value?.hotInstance;
@@ -729,6 +728,7 @@ export default defineComponent({
 
     // The above code is a function that is called when the user clicks the "수정" button.
     const updateTaxWithholdingModifiy = () => {
+      store.commit("common/setHasChangedPopupPA210", false);
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData();
       let statement = Array();
