@@ -11,8 +11,8 @@
     "test": "vitest --dom"
   },
   "dependencies": {
-    "@apollo/client": "^3.6.9",
-    "@bankda/jangbuda-common": "^0.7.23",
+    "@apollo/client": "^3.7.17",
+    "@bankda/jangbuda-common": "^0.7.25",
     "@handsontable/vue3": "^13.0.0",
     "@trandung1291/common-tsv": "^0.0.4",
     "@types/file-saver-es": "^2.0.1",
@@ -29,7 +29,7 @@
     "enumify": "^2.0.0",
     "exceljs": "^4.3.0",
     "file-saver-es": "^2.0.5",
-    "graphql": "^16.6.0",
+    "graphql": "^15.8.0",
     "graphql-tag": "^2.12.6",
     "handsontable": "^13.0.0",
     "lodash": "^4.17.21",
