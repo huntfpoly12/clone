@@ -437,6 +437,7 @@ const {
 onDone(() => {
   clearSelection();
   notification("success", Message.getCommonMessage("801").message);
+  emailAddress.value = userInfo.value?.email;
 });
 onError((e) => {
   //notification('error', e.message)
@@ -478,16 +479,14 @@ const sendMail = (e: any) => {
     }
     // emailAddress.value = userInfo.value.email;
     switchTypeSendMail.value = false
-
     dataSendEmail.value.employeeInputs = selectedItemKeys.value.map(
       (val: any) => {
         let dataChecked = dataSource.value.find(
           (data: any) => data.employeeId === val
         );
-
         return {
           receiverName: dataChecked.employee.name,
-          receiverAddress: dataChecked.employee.email || emailAddress.value,
+          receiverAddress: dataChecked.employee.email,
           senderName: sessionStorage.getItem("username"),
           employeeId: dataChecked.employeeId,
         };
@@ -537,7 +536,7 @@ const confirmSendMail = (e: any) => {
         emailAddress.value;
     } else {
       dataSendEmail.value.employeeInputs = dataSendEmail.value.employeeInputs.map((val: any) => {
-        return ({...val,  receiverAddress: emailAddress.value})
+        return ({...val,  receiverAddress: val.receiverAddress || emailAddress.value})
       });
     }
     callSendEmail(dataSendEmail.value);
