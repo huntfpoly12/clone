@@ -57,26 +57,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
-import {
-  addDetailRadio, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox,
-  includeDependentsSelectbox,
-} from "../utils/index";
-import notification from '@/utils/notification';
-import { useMutation } from '@vue/apollo-composable';
-import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
-import { Message } from '@/configs/enum';
-import dayjs from 'dayjs';
+import {computed, defineComponent, reactive, ref} from 'vue';
+import {addDetailRadio, healthInsuranceSelectbox,} from "../utils/index";
+import {Message} from '@/configs/enum';
 import DxButton from "devextreme-vue/button";
-import { computed } from '@vue/reactivity';
-import { useStore } from 'vuex';
+import {useStore} from 'vuex';
+
 export default defineComponent({
   // props: {
   // },
   components: { DxButton },
   setup(props, { emit }) {
     const isOpenAddModal = ref(true);
-    const messageDel = Message.getMessage('COMMON', '402').message;
     const formState = reactive({
       healthInsuranceAcquisitionCode: 1,
       type: 'type',

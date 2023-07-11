@@ -26,7 +26,7 @@
             </div>
           </a-tooltip>
         </template>
-        <DxColumn caption="일련번호" data-field="companyId" alignment="center" width="130" />
+        <DxColumn caption="일련번호" data-field="workId" alignment="center" width="130" />
         <DxColumn caption="상태" data-field="workingStatus" alignment="center" width="130" cell-template="workingStatus" />
         <template #workingStatus=" {data: dataValue}: any">
           <div>

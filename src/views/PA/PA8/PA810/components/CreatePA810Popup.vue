@@ -89,7 +89,7 @@
             <div class="item-wrap">
               <span class="item-wrap-title">외국인</span>
               <a-row :gutter="[7, 20]">
-                <a-col :span="col.item">
+                <a-col :span="12">
                   <a-form-item label="국적코드">
                     <div class="d-flex items-center gap-4">
                       <text-number-box v-model:valueInput="formData.nationalityNumber" placeholder=""
@@ -98,7 +98,6 @@
                     </div>
                   </a-form-item>
                 </a-col>
-                <a-col :span="col.space" />
                 <a-col :span="12">
                   <a-form-item label="체류자격">
                     <div class="d-flex items-center gap-4">
@@ -161,18 +160,14 @@
             <div class="item-wrap">
               <span class="item-wrap-title">건강보험</span>
               <a-row gutter="7">
-                <a-col :span="col.item">
+                <a-col :span="12">
                   <a-form-item label="취득부호">
                     <div class="d-flex items-center">
-                      <text-number-box :required="true" placeholder="00" v-model:valueInput="formData.healthInsuranceAcquisitionCode
-                        " :disabled="isChooseHealthInsuranceReport" />
-                      <SearchCodeButton :src="URL_CONST.URL_HEALTH_INSURANCE_ACQUISITION_CODE_CODE
-                        " />
+                      <text-number-box :required="true" placeholder="00" v-model:valueInput="formData.healthInsuranceAcquisitionCode" :disabled="isChooseHealthInsuranceReport" width="250px" />
+                      <SearchCodeButton :src="URL_CONST.URL_HEALTH_INSURANCE_ACQUISITION_CODE_CODE" />
                     </div>
                   </a-form-item>
                 </a-col>
-                <a-col :span="col.space" />
-
                 <a-col span="6">
                   <div class="h-full d-flex items-center">
                     <checkbox-basic label="보험증발송여부 " value="false" :disabled="true" />
@@ -192,51 +187,49 @@
             <div class="item-wrap">
               <span class="item-wrap-title">고용산재</span>
               <a-row gutter="7">
-                <a-col span="7">
+                <a-col span="12">
                   <a-form-item label="직종부호">
-                    <div class="flex items-start">
-                      <text-number-box placeholder="232" v-model:valueInput="formData.jobTypeCode" :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
-                        " />
+                    <div class="flex justify-content-start">
+                      <text-number-box placeholder="232" v-model:valueInput="formData.jobTypeCode"
+                        :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance "
+                        width="250px"
+                        />
                       <SearchCodeButton :src="URL_CONST.URL_JOB_TYPE_CODE_CODE" text-tooltip="직종코드 조회" />
                     </div>
                   </a-form-item>
                 </a-col>
-                <a-col span="7">
-                  <div class="h-full flex items-center justify-content-start px-10">
-                    <checkbox-basic label="계약직여부" v-model:valueCheckbox="formData.contractWorker" :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
-                      " />
+                <a-col span="6">
+                  <div class="h-full flex items-center justify-content-start">
+                    <checkbox-basic label="계약직여부" v-model:valueCheckbox="formData.contractWorker" :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance " />
                   </div>
                 </a-col>
-                <a-col span="7">
-                  <a-form-item label="계약종료일123">
-                    <div class="h-full flex items-center">
-                      <date-time-box
-                        default="2022-12-12" dateFormat="YYYY-MM-DD"
-                        v-model:value-date="formData.contractExpiredDate"
-                        :disabled="!formData.contractWorker || !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
-                        width="200px"
-                      />
-                    </div>
+                <a-col span="6">
+                  <a-form-item label="계약종료일" class="small">
+                    <date-time-box
+                      default="2022-12-12" dateFormat="YYYY-MM-DD"
+                      v-model:value-date="formData.contractExpiredDate"
+                      :disabled="!formData.contractWorker || !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                      width="150px"
+                    />
                   </a-form-item>
                   <!--                      <label class="lable-item">계약종료일:</label>-->
                 </a-col>
-                <a-col span="7">
+              </a-row>
+              <a-row gutter="7">
+                <a-col span="6">
                   <a-form-item label="" label-align="right" style="padding-left: 10px">
                     <checkbox-basic label="일자리안정자금지원 신청"
                       v-model:valueCheckbox="formData.jobSecurityFundSupportApplication" :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
                         " />
                   </a-form-item>
                 </a-col>
-                <a-col span="7">
+                <a-col span="8">
                   <a-form-item label="주소정근로시간">
-                    <div class="flex justify-content-start">
-                      <number-box :required="true" :spinButtons="true" v-model:valueInput="formData.weeklyWorkingHours"
-                        :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
-                          " />
-                    </div>
+                    <number-box :required="true" :spinButtons="true" v-model:valueInput="formData.weeklyWorkingHours"
+                      :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance" />
                   </a-form-item>
                 </a-col>
-                <a-col span="7" class="relative">
+                <a-col span="8" class="relative">
                   <a-form-item label="보험료부과구분부호 및 사유" >
                     <div class="w-full d-flex flex-col gap-1 align-items-end">
                       <text-number-box :spinButtons="true" v-model:valueInput="formData.insuranceReductionCode"
@@ -504,6 +497,9 @@ watch(
             .map((i: any) => ({ ...i, contractExpiredDate: [filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs())], disabledRegisteredDate: null }))
             .sort((a: any, b: any) => a.relation - b.relation)
         }
+      }
+      if (stateSelectQuery.selectedRadioValue === EmployeeWageType.WAGEDaily) {
+        emp = {...emp, president: false}
       }
       employeeWage.value = cloneDeep(emp);
     }
