@@ -6,7 +6,7 @@
         <Tab1/>
       </a-tab-pane>
       <a-tab-pane key="2" tab="문의">
-        <Tab2/>
+        <Tab2 ref="tab3"/>
       </a-tab-pane>
       <a-tab-pane key="3" tab="알림" >
         <Tab3 ref="tab3"/>
@@ -22,10 +22,11 @@ import Tab1 from "./components/Tab1.vue";
 import Tab2 from "./components/Tab2.vue";
 import Tab3 from "./components/Tab3.vue";
 
-const activeKey = ref<string | number>('3');
+const activeKey = ref<string | number>('2');
 const dataRow = ref<MessageDetail | null>(null)
 
 const tab3 = ref<InstanceType<typeof Tab3> | null>(null)
+const tab2 = ref<InstanceType<typeof Tab2> | null>(null)
 const openRow = (data: MessageDetail) => {
   if (data.expresstionType === 1) {
     window.open(`/ac-130`)
@@ -40,7 +41,11 @@ const openRow = (data: MessageDetail) => {
   // console.log('%c data', 'color: red', data)
 }
 const searching = () => {
-  tab3.value?.refetchData()
+  if (activeKey.value === '2') {
+    tab2.value?.refetchDataTab3()
+  } else if (activeKey.value === '3')  {
+    tab3.value?.refetchData()
+  }
 }
 provide(OpenRowKey, openRow)
 provide(DataRowKey, dataRow)
