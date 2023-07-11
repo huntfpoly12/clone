@@ -255,19 +255,19 @@ export default defineComponent({
                   }
               } else {
                   for (let i = 0; i <= 12; i++) {
-                      if (!value.reportClassCodes.find((item: any) => item == "매익" + i)) {
+                    if (!value.reportClassCodes.find((item: any) => item == "매익" + i)) {   
                           let imputedMonth = i == 0 ? 2 : i
-                          let paymentMonth = i == 0 ? 2 : i + 1
-                          paymentMonth = paymentMonth == 13 ? 2 : paymentMonth
+                          let payMonth = i == 0 ? 2 : i + 1
+                          let paymentMonth = payMonth == 13 ? 1 : payMonth
                           // string concatenation 10th next month of paymentday
-                          const yearSub = (paymentMonth == 13 ? year + 1 : year).toString();
-                          const monthSub = (paymentMonth < 10 ? '0' + (paymentMonth + 1).toString() : (paymentMonth + 1).toString()) 
+                          const yearSub = (payMonth == 13 ? year + 1 : year).toString();
+                          const monthSub = (payMonth < 10 ? '0' + (payMonth + 1).toString() : (payMonth + 1).toString()) 
                           const subDate = parseInt(yearSub+monthSub +'10') 
                           dataReports.value.push({
                               reportId: i,
                               imputedYear: year,
                               imputedMonth: imputedMonth,
-                              paymentYear: imputedMonth == 12 ? year + 1 : year,
+                              paymentYear: imputedMonth >= 12 ? year + 1 : year,
                               paymentMonth: paymentMonth,
                               reportClassCode: "매익" + i,
                               ...value,
@@ -277,7 +277,7 @@ export default defineComponent({
                               submissionDate: subDate, // 10th next month of paymentday
                               yearEndTaxAdjustment: i == 0 ? true : false,
                               imputedFinishYearMonth: i ? parseInt(year + `${i}`) : null,
-                              paymentFinishYearMonth: i ? parseInt((paymentMonth == 13 ? year + 1 : year) + `${paymentMonth == 13 ? 1 : paymentMonth}`) : null,
+                              paymentFinishYearMonth: i ? parseInt((payMonth == 13 ? year + 1 : year) + `${payMonth == 13 ? 1 : payMonth}`) : null,
                           })
                       }
                   }
