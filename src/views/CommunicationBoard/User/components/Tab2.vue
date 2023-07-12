@@ -58,8 +58,7 @@
                         <div class="question-container">
                             <div class="d-flex-center gap-10">
                                 <ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
-                                <div class="font-bold"
-                                    :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
+                                <div class="font-bold" :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
                                     {{ dataDetail.writerCompactUser.name }}</div>
                                 <div class="time">
                                     {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
@@ -71,12 +70,29 @@
                                 </div>
                             </div>
                             <div>{{ dataDetail.content }}</div>
+                            <div v-if="dataDetail?.fileStorages && dataDetail?.fileStorages.length" class="files">
+                                <div class="images">
+                                    <img v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => isImgLink(item.url))"
+                                        :key="indexFile" class="image" :src="file.url" alt=""
+                                        @click="previewImage(dataDetail.fileStorages.filter((item: any) => isImgLink(item.url)), indexFile)">
+                                </div>
+                                <div v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => !isImgLink(item.url))"
+                                    :key="indexFile" class="files-preview-filetext" @click="openLinkDownFile(file.url)">
+                                    <FileTextOutlined style="margin-right: 10px; font-size:30px" />
+                                    <div class="files-preview-filetext-info">
+                                        <p class="files-preview-filetext-info-name">{{
+                                            file.name }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </a-spin>
             </div>
         </a-col>
     </a-row>
+    <ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
+        :listImage="listImagePreview" />
 </template>
 <script lang="ts">
 import {
@@ -104,6 +120,7 @@ import {
     DeleteOutlined,
     SaveOutlined,
     ReloadOutlined,
+    FileTextOutlined,
 } from "@ant-design/icons-vue";
 import dayjs from 'dayjs';
 import DxButton from "devextreme-vue/button";
@@ -111,6 +128,7 @@ import queries from "@/graphql/queries/CommunicationBoard/User/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import { companyId } from "@/helpers/commonFunction";
+import ModalPreviewListImage from "@/views/AC/AC1/AC130/components/ModalPreviewListImage.vue";
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -127,6 +145,8 @@ export default defineComponent({
         DxScrolling,
         DxPaging,
         ReloadOutlined,
+        ModalPreviewListImage,
+        FileTextOutlined,
     },
     props: {
         onSearch: Number,
@@ -140,7 +160,11 @@ export default defineComponent({
         const dataDetail = ref<any>(null)
 
         // dataDetail.value = getFakeData()
-
+        const isModalPreview = ref<boolean>(false)
+        const listImagePreview = ref({
+            index: 0,
+            files: [],
+        })
         const focusedRowKey = ref(null);
         const rangeDate = ref([parseInt(dayjs().subtract(1, 'year').format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
         const trigger = ref<boolean>(true)
@@ -206,6 +230,20 @@ export default defineComponent({
         const reloadData = () => {
             triggerWorkNotificationMessage.value = true;
         }
+
+        const previewImage = (files: any, index: number) => {
+            listImagePreview.value.index = index
+            listImagePreview.value.files = files.map((file: any) => file.url)
+            isModalPreview.value = true
+        }
+        const isImgLink = (url: any) => {
+            if (typeof url !== 'string') return false;
+            return (url.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp|webp)(\?(.*))?$/gmi) !== null);
+        }
+        const openLinkDownFile = (link: string) => {
+            window.open(link, '_blank')
+        }
+
         // ================WATCHING============================================
         watch(() => props.onSearch, (newValue, old) => {
             trigger.value = true;
@@ -221,6 +259,8 @@ export default defineComponent({
             reloadData,
             rangeDate,
             loadingWorkNotificationMessage,
+            isModalPreview, listImagePreview,
+            previewImage, isImgLink, openLinkDownFile,
         };
     },
 });
