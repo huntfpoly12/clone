@@ -103,6 +103,7 @@ const dataSearch = reactive({
 const dataSource = ref([])
 const {refetch: refetchData, onResult, loading, onError} = useQuery(queries.searchCompanies, dataSearch, () => ({
   fetchPolicy: "no-cache",
+  enabled: props.modalStatus
 }))
 onResult((result) => {
   dataSource.value = result.data?.searchCompanies?.datas

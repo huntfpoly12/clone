@@ -92,7 +92,7 @@
       let valueBinding: any = ref(props.valueSelect || 1)
 
       const objectFilter = computed(() => {
-        return liststatus.find((item: any) => item.id === valueBinding.value)
+        return liststatus.find((item: any) => item.id === props.valueSelect)
       })
 
       watch(() => valueBinding.value, (value) => {

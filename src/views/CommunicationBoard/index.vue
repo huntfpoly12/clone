@@ -6,7 +6,7 @@
         <Tab1/>
       </a-tab-pane>
       <a-tab-pane key="2" tab="문의">
-        <Tab2 ref="tab3"/>
+        <Tab2 ref="tab2"/>
       </a-tab-pane>
       <a-tab-pane key="3" tab="알림" >
         <Tab3 ref="tab3"/>
@@ -42,9 +42,9 @@ const openRow = (data: MessageDetail) => {
 }
 const searching = () => {
   if (activeKey.value === '2') {
-    tab2.value?.refetchDataTab3()
+    tab2.value?.refetchDataTab2()
   } else if (activeKey.value === '3')  {
-    tab3.value?.refetchData()
+    tab3.value?.refetchDataTab3()
   }
 }
 provide(OpenRowKey, openRow)
