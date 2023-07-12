@@ -1,14 +1,9 @@
 .form-modal {
+
   .item-group {
     margin-top: 10px;
     border: 1px solid #a3a2a277;
     padding: 6px 0 3px;
-
-    :deep .ant-form-item-label > label {
-      width: 130px;
-      padding-left: 10px;
-    }
-
     .item-wrap {
       position: relative;
       border: 1px solid #cfcfcf77;
@@ -16,9 +11,7 @@
       padding: 15px 0 10px;
       margin: 8px 5px;
 
-      :deep .ant-form-item-label > label {
-        width: 122px;
-      }
+
 
       &-title {
         position: absolute;
@@ -109,3 +102,18 @@
     grid-column: span $i / span $i;
   }
 }
+
+:deep(.ant-form-item-label ) {
+  label {
+    min-width: 145px;
+    padding-left: 10px;
+  }
+}
+
+:deep(.small) {
+  label {
+    padding-left: 0;
+    min-width: 100px
+  }
+}
+

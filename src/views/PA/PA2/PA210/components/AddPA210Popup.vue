@@ -4,7 +4,7 @@
           :mask-closable="false" width="1000px" footer="">
           <standard-form formName="add-pa-210" class="pt-20">
               <a-spin :spinning="loading">
-                  <a-form-item label="지방소득세환급청구서/납부내역서">
+                  <a-form-item label="신고종류">
                       <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="afterDeadline"
                           :layoutCustom="'horizontal'" />
                   </a-form-item>
@@ -25,7 +25,7 @@
                       </template>
                       <DxColumn caption="귀속 연월" cell-template="imputed" />
                       <template #imputed="{ data }">
-                          <a-tooltip v-if="data.data.imputedStartYearMonth" color="blue">
+                          <a-tooltip v-if="data.data.imputedFinishYearMonth" color="black">
                               <template #title>
                                   귀속기간 {{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                               </template>
@@ -43,7 +43,7 @@
                       </template>
                       <DxColumn caption="지급 연월" cell-template="payment" />
                       <template #payment="{ data }">
-                          <a-tooltip v-if="data.data.paymentStartYearMonth" color="blue">
+                          <a-tooltip v-if="data.data.paymentFinishYearMonth" color="black">
                               <template #title>
                                   지급기간 {{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                               </template>
@@ -255,19 +255,19 @@ export default defineComponent({
                   }
               } else {
                   for (let i = 0; i <= 12; i++) {
-                      if (!value.reportClassCodes.find((item: any) => item == "매익" + i)) {
+                    if (!value.reportClassCodes.find((item: any) => item == "매익" + i)) {   
                           let imputedMonth = i == 0 ? 2 : i
-                          let paymentMonth = i == 0 ? 2 : i + 1
-                          paymentMonth = paymentMonth == 13 ? 2 : paymentMonth
+                          let payMonth = i == 0 ? 2 : i + 1
+                          let paymentMonth = payMonth == 13 ? 1 : payMonth
                           // string concatenation 10th next month of paymentday
-                          const yearSub = (paymentMonth == 13 ? year + 1 : year).toString();
-                          const monthSub = (paymentMonth < 10 ? '0' + (paymentMonth + 1).toString() : (paymentMonth + 1).toString()) 
+                          const yearSub = (payMonth == 13 ? year + 1 : year).toString();
+                          const monthSub = (payMonth < 10 ? '0' + (payMonth + 1).toString() : (payMonth + 1).toString()) 
                           const subDate = parseInt(yearSub+monthSub +'10') 
                           dataReports.value.push({
                               reportId: i,
                               imputedYear: year,
                               imputedMonth: imputedMonth,
-                              paymentYear: imputedMonth == 12 ? year + 1 : year,
+                              paymentYear: imputedMonth >= 12 ? year + 1 : year,
                               paymentMonth: paymentMonth,
                               reportClassCode: "매익" + i,
                               ...value,
@@ -277,7 +277,7 @@ export default defineComponent({
                               submissionDate: subDate, // 10th next month of paymentday
                               yearEndTaxAdjustment: i == 0 ? true : false,
                               imputedFinishYearMonth: i ? parseInt(year + `${i}`) : null,
-                              paymentFinishYearMonth: i ? parseInt((paymentMonth == 13 ? year + 1 : year) + `${paymentMonth == 13 ? 1 : paymentMonth}`) : null,
+                              paymentFinishYearMonth: i ? parseInt((payMonth == 13 ? year + 1 : year) + `${payMonth == 13 ? 1 : payMonth}`) : null,
                           })
                       }
                   }

@@ -13,8 +13,9 @@
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
+          :selected-row-keys="selectedRowKeys"
           @selection-changed="selectionChanged"
-          :allowSelection="true"
+
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
           @contentReady="onDataGridInitialized"
@@ -52,7 +53,7 @@
                   <SelectCustomField
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
-                    :dataSource="workingStatusSelectbox"
+                    :dataSource="workingStatusSelectFilter"
                     width="95px"
                     displayeExpr="text"
                     valueExpr="id"
@@ -160,7 +161,7 @@
           <template #workingStatus="{ data }: any">
             <SelectBoxCT
               v-model:valueInput="data.data.workingStatus"
-              :dataSource="workingStatusSelectbox"
+              :dataSource="workingStatusSelectFilter"
               width="95px"
               displayeExpr="text"
               valueExpr="id"
@@ -392,7 +393,7 @@ import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
 import {
   reportTypeSelectbox,
-  workingStatusSelectbox,
+  workingStatusSelectFilter,
   companyConsignStatusSelectbox,
   EDIStatusSelectbox,
   formatMonth,
@@ -549,6 +550,7 @@ export default defineComponent({
           });
         });
         store.commit("common/filterDsTab1Bf530", arr);
+        tab1Bf520Ref.value.instance.clearSelection();
       },
       { deep: true }
     );
@@ -575,10 +577,11 @@ export default defineComponent({
 
     const selectionChanged = (event: any) => {
       let { selectedRowsData, currentDeselectedRowKeys } = event;
-      selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
-        return item !== currentDeselectedRowKeys[0];
-      });
+      // selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
+      //   return item !== currentDeselectedRowKeys[0];
+      // });
       companies.value = selectedRowsData.map((item: any) => item.companyId);
+      selectedRowKeys.value = selectedRowsData.map((item: any) => item.companyId);
     };
     const selectedRowKeys: any = ref([]);
     const handleRowClick = (e: any) => {
@@ -589,6 +592,8 @@ export default defineComponent({
       ) {
         selectedRowKeys.value.push(e.key);
         e.component.selectRows(selectedRowKeys.value);
+      } else {
+        selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => item !== e.key);
       }
     };
     const rowUpdating = (e: any) => {
@@ -764,7 +769,7 @@ export default defineComponent({
       selectionChanged,
       formatMonth,
       reportTypeSelectbox,
-      workingStatusSelectbox,
+      workingStatusSelectFilter,
       companyConsignStatusSelectbox,
       EDIStatusSelectbox,
       states1,

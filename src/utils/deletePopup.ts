@@ -10,25 +10,30 @@ interface DeletePopup {
   okText?: string,
   cancelText?: string,
   callback: Function,
+  cancelFn?: Function,
   width?: number,
   wrapClassName?: string
+  icon?: boolean
 }
-export default ({ callback, width = 400, wrapClassName = '', message = Message.getCommonMessage('401').message, okText = '네. 삭제합니다', cancelText = "아니요" }: DeletePopup) => {
+export default ({ callback, width = 400, wrapClassName = '', message = Message.getCommonMessage('401').message, okText = '네. 삭제합니다', cancelText = "아니요", icon = true, cancelFn = () => {} }: DeletePopup) => {
   let status = false
   Modal.confirm({
     title: message,
-    icon: h('span', { class: 'anticon' }, [
+    icon: icon ? h('span', { class: 'anticon' }, [
       h('img', {
         src: Icon_Del,
         alt: '',
         width: 40,
         height: 40,
       })
-    ]),
+    ]) : '',
     onOk() {
       callback();
     },
-    onCancel() { status = false },
+    onCancel() {
+      status = false
+      cancelFn()
+    },
     cancelText,
     okText,
     width,

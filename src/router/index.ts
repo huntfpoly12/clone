@@ -12,7 +12,7 @@ import {
 } from "@bankda/jangbuda-common";
 import isEmpty from "lodash/isEmpty";
 import useCheckPermission from "@/helpers/useCheckPermission";
-
+import { userType } from "@/helpers/commonFunction";
 const ALL_ROLE = [
   ...AdminScreenRole.all().map((i) => i.enumKey),
   ...WorkScreenRole.all().map((i) => i.enumKey),
@@ -65,6 +65,34 @@ const routes = [
       {
         path: "/bf-220",
         component: () => import("../views/BF/BF2/BF220/index.vue"),
+        meta: {
+          roles: [AdminScreenRole.ROLE_MANAGE.enumKey],
+        },
+      },
+      {
+        path: "/bf-251",
+        component: () => import("../views/BF/BF2/BF251/index.vue"),
+        meta: {
+          roles: [AdminScreenRole.ROLE_MANAGE.enumKey],
+        },
+      },
+      {
+        path: "/bf-252",
+        component: () => import("../views/BF/BF2/BF252/index.vue"),
+        meta: {
+          roles: [AdminScreenRole.ROLE_MANAGE.enumKey],
+        },
+      },
+      {
+        path: "/bf-253",
+        component: () => import("../views/BF/BF2/BF253/index.vue"),
+        meta: {
+          roles: [AdminScreenRole.ROLE_MANAGE.enumKey],
+        },
+      },
+      {
+        path: "/bf-255",
+        component: () => import("../views/BF/BF2/BF255/index.vue"),
         meta: {
           roles: [AdminScreenRole.ROLE_MANAGE.enumKey],
         },
@@ -421,7 +449,7 @@ const routes = [
       },
       {
         path: "/communication-board",
-        component: () => import("../views/CommunicationBoard/index.vue"),
+        component: () =>  import("../views/CommunicationBoard/index.vue"),
         meta: {
           roles: ALL_ROLE,
         },
@@ -429,6 +457,13 @@ const routes = [
       {
         path: "/announcement",
         component: () => import("../views/Announcement/User/index.vue"),
+        meta: {
+          roles: ALL_ROLE,
+        },
+      },
+      {
+        path: "/announcement-manager",
+        component: () => import("../views/Announcement/Manager/index.vue"),
         meta: {
           roles: ALL_ROLE,
         },

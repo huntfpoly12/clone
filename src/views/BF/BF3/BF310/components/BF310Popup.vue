@@ -129,7 +129,7 @@
                     </a-form-item>
                   </a-col>
                   <a-col :span="6">
-                    <img-upload :title="titleModal" @update-img="getUrlLicenseFile" :disabledImg="disabledStatus" />
+                    <img-upload :title="titleModal" @update-img="getUrlLicenseFile" :disabledImg="disabledStatus"  :required="false"/>
                   </a-col>
                   <a-col :span="9">
                     <preview-image :dataImage="{
@@ -207,7 +207,7 @@
                           <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
-                          <button-basic icon="plus" @onClick="addRow" text="추가" :disabled="checkedAccounting == 2 || disabledStatus"/>
+                          <button-basic icon="plus" @onClick="addRow" text="추가" :disabled="checkedAccounting == 2 || disabledStatus || isDuplicateFacilityBusinesses"/>
                         </template>
                         <DxColumn cell-template="action" width="48" />
                         <template #action="{ data }: any">
@@ -233,8 +233,14 @@
                               width="160px" :disabled="disabledStatus" />
                           </a-form-item>
                           <a-form-item label="사업명 (중복불가)" :label-col=" labelCol ">
-                            <default-text-box v-model:valueInput=" dataActiveRow.name " :required=" true "
+                            <div  :class="isDuplicateFacilityBusinesses ? 'compaFacilityBusinessesny-name':''" :style="{ width: '162px' }">
+                              <default-text-box v-model:valueInput=" dataActiveRow.name " :required=" true "
                               width="160px" :disabled="disabledStatus" />
+                              <div v-if="isDuplicateFacilityBusinesses" class="message-error">
+                                  <span>다른 사업명과 중복됩니다.</span>
+                              </div>
+                            </div>
+
                           </a-form-item>
                           <a-form-item label="서비스 시작년월" :label-col=" labelCol ">
                             <month-picker-box :required=" true " v-model:valueDate=" dataActiveRow.startYearMonth "
@@ -252,7 +258,7 @@
                           </a-form-item>
                         </a-col>
                         <a-col :span=" 6 " class="pl-12 text-color">
-                          <img-upload :title=" '장기요양기관등록증' " @update-img=" getregCardFile " :disabledImg="disabledStatus" />
+                          <img-upload :title=" '장기요양기관등록증' " @update-img=" getregCardFile " :disabledImg="disabledStatus"/>
                         </a-col>
                         <a-col :span=" 9 ">
                           <div class="preview-img">
@@ -470,6 +476,12 @@ export default defineComponent({
     const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay]);
     var formState: any = ref({ ...initialFormState });
     const dataSource: any = ref([]);
+    const isDuplicateFacilityBusinesses = ref(false);
+    const checkDuplicateFirstLoad = ref(true);
+    const gridRefName: any = ref("grid");
+    const initRow = {capacity:NaN, startYearMonth: +dayjs().format('YYYYMM'),name: null };
+    const dataActiveRow: any = ref({rowIndex:1,...initRow})
+    const focusedRowKey = ref(0);
     const dataSourceOld: any = ref([]);
     const isResidentId = ref(false);
     const statusPupopInfo = ref<boolean>(false);
@@ -862,10 +874,7 @@ export default defineComponent({
       return /^-?\d+$/.test(value);
     };
     // change form
-    const gridRefName: any = ref("grid");
-    const dataActiveRow: any = ref(dataSource.value[0]);
-    const focusedRowKey = ref(0);
-    const initRow = { rowIndex: null, capacity: NaN, startYearMonth: +dayjs().format('YYYYMM') };
+    // const initRow = { rowIndex: null, capacity: NaN, startYearMonth: +dayjs().format('YYYYMM') };
     // A function that is called when a row is clicked.
     const onSelectionClick = (value: any) => {
       dataActiveRow.value = value.data;
@@ -893,6 +902,7 @@ export default defineComponent({
       e.data = initRow;
     };
     const onDelete = (data: any) => {
+      isDuplicateFacilityBusinesses.value = false
       deleteModal.value = true;
       rowIndexDelete.value = data.rowIndex;
     };
@@ -922,6 +932,15 @@ export default defineComponent({
         checkBizNumberLen.value = false;
       }
     });
+
+    // check trùng tên FacilityBusinesses
+    watch(() => dataActiveRow.value.name, (newVal) => {
+      if (dataSource.value.length > 1 && !checkDuplicateFirstLoad.value) {
+        const existValueNane = dataSource.value.find((item: any) => item.name === newVal && item.rowIndex !== focusedRowKey.value)
+        existValueNane ? isDuplicateFacilityBusinesses.value = true : isDuplicateFacilityBusinesses.value = false;
+      }
+      checkDuplicateFirstLoad.value = false
+    }, { deep: true })
     return {
       selectionChanged,
       contentReady,
@@ -975,6 +994,7 @@ export default defineComponent({
       checkBizNumberLen,lenFixedMsg,
       bizResNumber,
       disabledStatus,
+      isDuplicateFacilityBusinesses,
     };
   },
 });

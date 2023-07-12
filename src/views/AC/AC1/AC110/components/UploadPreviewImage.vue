@@ -21,14 +21,14 @@
             </div>
           </a-upload>
         </div>
+        <a-image :preview="{ visible: previewVisible, onVisibleChange: setVisible }" style="width: 100%; display: none"
+          :src="previewImage" />
       </div>
     </a-spin>
   </a-config-provider>
   <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
     :title="Message.getMessage('COMMON', '401').message" content="" :okText="Message.getMessage('COMMON', '401').yes"
     :cancelText="Message.getMessage('COMMON', '401').no" @checkConfirm="handleDelete" />
-  <a-image :preview="{ visible: previewVisible, onVisibleChange: setVisible }" style="width: 100%; display: none"
-    :src="previewImage" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from "vue";
@@ -238,7 +238,7 @@ export default defineComponent({
       }
       isFailUpload.value = isImage && isLt10M && !isDuplicaseName;
     };
-    
+
     const customRequest = (e: any) => {
       if (!isFailUpload.value) {
         fileList.value.splice(fileList.value.length - 1, 1);

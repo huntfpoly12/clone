@@ -920,7 +920,7 @@ export default defineComponent({
 
     watch(resCalcIncomeWageTax, (value) => {
       if (value) {
-        let itemValue11 = value.calculateIncomeWageTax * (formStateTab2PA120.value.incomeTaxMagnification / 100);
+        let itemValue11 = Math.floor(value.calculateIncomeWageTax * (formStateTab2PA120.value.incomeTaxMagnification / 100));
         let itemValue12 = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
         // localIncomeBoo.value = itemValue12 < 1000 && itemValue11 > 0;
         let value1012 = Math.floor(itemValue11 / 100) * 10;

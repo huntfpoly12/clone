@@ -3,7 +3,7 @@
 
   <div id="pa-820" class="px-10 py-10">
     <a-spin :spinning="loading" size="large">
-      <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true"
+      <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" :hoverStateEnabled="true"
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef" noDataText="내역이 없습니다">
         <DxPaging :page-size="0" />
@@ -54,7 +54,7 @@
           </div>
         </template>
         <DxColumn caption="" cell-template="action" width="120px" />
-        <template #action=" { data }: any ">
+        <template #action="{ data } ">
           <div class="custom-action" style="margin-left: 20px;">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
@@ -68,7 +68,7 @@
                 </a-tooltip>
               </DxButton>
               <DxButton type="ghost" style="cursor: pointer" @click=" actionDelete(data.data.workId) "
-                v-if=" data.data.workingStatus != 0 ">
+                v-if="data.data.workingStatus === 1 || data.data.workingStatus === 2">
                 <a-tooltip zIndex="9999999" placement="top" color="black">
                   <template #title>
                     <div>
@@ -84,8 +84,6 @@
       </DxDataGrid>
     </a-spin>
     <CreatePA820Popup v-if=" modalCreate " @closeModal=" onCreateModal " />
-    <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
-      :content=" contentDelete.message " :okText="contentDelete.yes" :cancelText="contentDelete.no" @checkConfirm=" handleDelete " />
     <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
       typeHistory="pa-820" />
   </div>
@@ -120,6 +118,7 @@ import { Message } from "@/configs/enum";
 import CreatePA820Popup from './components/CreatePA820Popup.vue';
 import { DeleteOutlined, DownloadOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
+import deletePopup from "@/utils/deletePopup";
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
   접수 = 2,
@@ -220,35 +219,31 @@ export default defineComponent({
 
     //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
-    const contentDelete = Message.getCommonMessage('303');
-    const deleteMesDone = Message.getCommonMessage('302').message;
-    const modalDelete = ref(false);
-    const cancelCompanyOutParam = reactive({
-      companyId: companyId,
-      imputedYear: globalYear,
-      workId: NaN,
-    })
     const {
       mutate: cancelCompanyOutMutate,
       onDone: cancelCompanyOutOnDone,
       onError: cancelCompanyOutError,
     } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeLoss);
     cancelCompanyOutOnDone(() => {
-      notification('success', deleteMesDone);
+      notification("success", Message.getMessage("COMMON", "302").message);
       companyEmployeeLossesRefetch();
     });
     cancelCompanyOutError((res) => {
       notification('error', res.message);
     })
     const actionDelete = (workId: number) => {
-      modalDelete.value = true;
-      cancelCompanyOutParam.workId = workId;
-    }
-    const handleDelete = (e: boolean) => {
-      if (e) {
-        modalDelete.value = false;
-        cancelCompanyOutMutate(cancelCompanyOutParam);
-      }
+      deletePopup({
+        callback: () => {
+          cancelCompanyOutMutate({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            workId,
+          });
+        },
+        message: Message.getCommonMessage("303").message,
+        cancelText: Message.getCommonMessage("303").no,
+        okText: Message.getCommonMessage("303").yes,
+      });
     }
 
     //--------------------------get ReportViewUrl ---------------------
@@ -289,8 +284,7 @@ export default defineComponent({
       per_page, move_column, colomn_resize,loading,
       focusedRowKey, dataSource, modalHistory,
       onOpenLogs, actionDelete, onGetFileStorageId, onGetAcquistionRp,
-      onCreateModal, modalCreate, modalDelete, handleDelete, contentDelete,
-      workIdHistory,
+      onCreateModal, modalCreate, workIdHistory,
       MajorInsuranceWorkingStatus, convertBirthDayKorea,
     };
   },

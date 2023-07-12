@@ -57,7 +57,7 @@
             <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" v-model="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
               :required="true" :disabled="idDisableInput">
-              <template #item="{ data } : any">
+              <template #item="{ data }">
                 <a-tooltip placement="top" zIndex="9999">
                   <template #title v-if=" data?.tooltip ">
                     <span>{{ data.tooltip }}</span>
@@ -83,7 +83,7 @@
             <a-form-item label="소득세(공제)" class="mb-10">
               <div class="d-flex-center">
                 <number-box-money :disabled=" idDisableInput " v-model:valueInput=" formPA720.input.withholdingIncomeTax "
-                format="0,###" :min=" 0" :width="140"/>
+                format="0,###" :min=" 0" :width="135"/>
               <span class="ml-5">원</span>
               </div>
               
@@ -92,7 +92,7 @@
           <!-- <div class="input-text"> -->
             <a-form-item label="지방소득세(공제)" class="mb-10">
               <div class="d-flex-center">
-                <number-box-money :disabled=" idDisableInput " :width="140"
+                <number-box-money :disabled=" idDisableInput " :width="135"
                 v-model:valueInput=" formPA720.input.withholdingLocalIncomeTax " format="0,###" :min=" 0 " />
               <span class="ml-5">원</span>
               </div>

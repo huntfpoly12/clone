@@ -125,6 +125,7 @@
                 <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="data.data.documentRegistered ? 'outlined' : 'contained'
                   " @onClick="openPopupRegistration(data.data)"
                   :disabled="!data.data.normalTransactionDetails || isReadonlyByAccountingProcessesStatus"
+                  :visible="!isReadonlyByAccountingProcessesStatus"
                   :style="!data.data.documentRegistered ? 'border: 1px solid #fff;' : ''" />
               </div>
             </template>
@@ -405,7 +406,7 @@ import {defineComponent, ref, reactive, computed, watch, nextTick, watchEffect} 
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
-import {makeDataClean } from "@/helpers/commonFunction";
+import { makeDataClean, userType } from "@/helpers/commonFunction";
 import ProcessStatus from "@/components/common/ProcessStatus.vue";
 import {
   DxItem,
@@ -604,11 +605,7 @@ export default defineComponent({
     });
     const isReadonlyByAccountingProcessesStatus = computed(() => {
       const status = listAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status || 0
-      if (status === 20 || status === 30 || status === 40) {
-        return true
-      } else {
-        return false
-      }
+      return (userType === 'm' && status === 40)  || (userType !== 'm' && status > 10);
     })
     let isSelectAll = computed(() => {
       const valueSelect = selectedRowKeys.value.length
@@ -636,7 +633,6 @@ export default defineComponent({
       }))
     onResult((result) => {
       const companyFacilityBiz = result?.data?.getMyCompanyFacilityBusinesses?.find((item: any) => item.facilityBusinessId === globalFacilityBizId.value)
-      console.log('companyFacilityBiz', companyFacilityBiz)
       if (companyFacilityBiz) {
         if(!sessionStorage.getItem('facilityBizType')) {
           // window.location.reload()
@@ -1185,27 +1181,38 @@ export default defineComponent({
       const initTransactionDetails: any = { ...InitTransactionDetails };
       const lengthData =
         dataSourceTransactionDetails.value.transactionDetails.length;
+      
+        // initTransactionDetails.theOrder 
+
+      const dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? '')
+      const currentDate = dayjs().format('YYYY-MM-DD')
+      if(!!dataAccountSubject && dataAccountSubject.length) {
+        dataAccountSubject.forEach((account: any) => {
+          const useStartDate = dayjs(account.useStartDate.toString()).format('YYYY-MM-DD')
+          const useFinishDate =  dayjs(account.useFinishDate.toString()).format('YYYY-MM-DD')
+          if(currentDate <=  useFinishDate && currentDate >= useStartDate) {
+            initTransactionDetails.theOrder = account.theOrder
+          }
+        })
+      }
+      
       if (lengthData > 0) {
         const firstTransactionDetail = dataSourceTransactionDetails.value.transactionDetails[0];
         if (lengthData === 1) {
-          initTransactionDetails.theOrder = firstTransactionDetail.theOrder + 1 || 1;
           initTransactionDetails.accountingDocumentId = firstTransactionDetail.accountingDocumentId + 1 + "create" || "create";
         } else {
           const beforTransactionDetail = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1];
-          initTransactionDetails.theOrder = beforTransactionDetail.theOrder + 1 || 1;
           initTransactionDetails.accountingDocumentId = beforTransactionDetail.accountingDocumentId + 1 + "create" || "create";
         }
         initTransactionDetails.summary = firstTransactionDetail.summary;
         initTransactionDetails.letterOfApprovalType = firstTransactionDetail.letterOfApprovalType
       } else {
-        initTransactionDetails.theOrder = 0;
         initTransactionDetails.accountingDocumentId = "create";
       }
       dataSourceTransactionDetails.value.transactionDetails = [
         ...dataSourceTransactionDetails.value.transactionDetails,
         initTransactionDetails,
       ];
-      console.log(dataSourceTransactionDetails.value.transactionDetails);
 
       nextTick(() => {
         rowKeyfocusedGridDetail.value =
@@ -1499,7 +1506,8 @@ export default defineComponent({
       refFormDetailAc110,
       keyRefreshGridDetailAc,
       changeInput,
-      isReadonlyByAccountingProcessesStatus
+      isReadonlyByAccountingProcessesStatus,
+      userType
     };
   },
 });

@@ -29,7 +29,7 @@
         <process-status
           v-model:valueStatus="statusButton"
           @checkConfirm="statusConfirm"
-          :disabled="statusButton !== 10 && statusButton !== 20"
+          :disabled="statusButton !== 10 && statusButton !== 20 && userType !== 'm'"
         />
       </div>
       <div class="table-detail-right">
@@ -393,7 +393,7 @@ import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import getIncomeRetirementWithholdingReceiptReportViewUrl from "@/graphql/queries/PA/PA4/PA430/getIncomeRetirementWithholdingReceiptReportViewUrl";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import filters from "@/helpers/filters";
 import notification from "@/utils/notification";
 import {
@@ -446,7 +446,7 @@ const modalAdd = ref(false);
 const modalUpdate = ref(false);
 const modalHistoryStatus = ref<boolean>(false);
 const resetFormNum = ref(1);
-const checkActionValue = computed(() => retirementStatus.value !== 10); // disabeld button
+const checkActionValue = computed(() => (userType !== 'm' && retirementStatus.value !== 10 && retirementStatus.value !== 20) || (userType === 'm' && retirementStatus.value === 40)); // disabeld button
 let dataAction: any = reactive({
   ...dataActionUtils,
 });
@@ -650,7 +650,6 @@ errorReport(res => {
   notification('error', res.message)
 })
 const handleViewPrint = (data: any) => {
-  console.log('%c data', 'color: red;', data);
   dataInputReport.input.type = data.retirementType;
   dataInputReport.incomeIds = [data.incomeId]
   triggerReport.value = true;

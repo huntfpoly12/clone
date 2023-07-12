@@ -66,7 +66,7 @@
                     </template>
                     <template #send-group-print>
                         <DxButton @click="onPrintGroup" class="bt-print-group">
-                            <a-tooltip title="출력 / 저장" placement="topLeft">
+                            <a-tooltip title="출력 / 저장">
                                 <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;" />
                             </a-tooltip>
                         </DxButton>
@@ -79,12 +79,15 @@
                             :foreigner="data.data.employee.foreigner" :checkStatus="false"
                             :forDailyUse="data.data.employeeType == 20 ? true : false" />
                     </template>
-                    <DxColumn width="55" data-field="retirementType" caption="구분 " cell-template="grid-cell"
+                    <DxColumn width="80" data-field="retirementType" caption="구분 " cell-template="grid-cell"
                         css-class="cell-center" />
                     <template #grid-cell="{ data }">
-                        <a-tag :color="getColorTag(data.value)?.name">{{
-                            getColorTag(data.value)?.tag_name
-                        }}</a-tag>
+                        <div v-if="data.data.retirementType == 1" class="retirementType-1">
+                            퇴직
+                        </div>
+                        <div v-if="data.data.retirementType == 2" class="retirementType-2">
+                            중간
+                        </div>
                     </template>
                     <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate" cell-template="settlementStartDate"
                         css-class="cell-center" :width="140" />
@@ -120,7 +123,7 @@
                             <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
                         </a-tooltip>
                     </template>
-                    <DxColumn caption="차인지급액" data-field="actualPayment" width="70" format="#,###" alignment="right" />
+                    <DxColumn caption="차인지급액" data-field="actualPayment" width="100" format="#,###" alignment="right" />
                     <DxColumn caption="비고" css-class="cell-left" cell-template="note"
                         data-field="employee.nationalPensionDeduction" />
                     <template #note="{ data }">
@@ -139,13 +142,13 @@
                         <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
                             :ratio="data.data.employee.incomeTaxMagnification" />
                     </template>
-                    <DxColumn :width="80" cell-template="pupop" />
+                    <DxColumn :width="80" cell-template="pupop" :fixed="true"  fixedPosition="right"/>
                     <template #pupop="{ data }">
                         <div style="text-align: center;">
                             <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
-                                style="width: 25px; margin-right: 3px;" />
+                                style="width: 27px; margin-right: 3px;" />
                             <a-tooltip title="출력 / 저장" placement="topLeft">
-                                <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
+                                <img src="@/assets/images/print.svg" alt="" style="width: 27px;"
                                     @click="actionPrint(data.data)" />
                             </a-tooltip>
                         </div>
@@ -153,27 +156,32 @@
                 </DxDataGrid>
                 <div class="custom-smmary">
                     <!-- <div style="margin-left: 70px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content">
-                            <div v-html="employeeType1()"></div>
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                        <div v-html="employeeType1()"></div>
+                    </div>
+
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content">
+                        <div v-html="customRetirementBenefits()"></div>
+                    </div>
+
                     <!-- </div>
                     <div style="margin-left: 50px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content"
-                            v-html="customNonTaxableRetirementBenefits()">
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                        v-html="customNonTaxableRetirementBenefits()">
+                    </div>
                     <!-- </div>
                     <div style="margin-left: 50px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content"
-                            v-html="customTaxableRetirementBenefits()">
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content"
+                        v-html="customTaxableRetirementBenefits()">
+                    </div>
                     <!-- </div>
                     <div style=" margin-left: 50px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customTotalDeduction()">
+                    </div>
                     <!-- </div>
                     <div style=" margin-left: 50px;"> -->
-                        <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
-                        </div>
+                    <div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customActualPayment()">
+                    </div>
                     <!-- </div> -->
                 </div>
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
@@ -252,14 +260,6 @@ export default defineComponent({
             { "month": 11, "year": paYear.value }
         ]);
 
-
-        const getColorTag = (data: any) => {
-            if (data == 1) {
-                return { name: "#C73F09", tag_name: "퇴직" };
-            } else if (data == 2) {
-                return { name: "#77933C", tag_name: "중간" };
-            }
-        };
         const originData = ref({
             companyId: companyId,
             filter: {
@@ -311,11 +311,11 @@ export default defineComponent({
                     type: dataInputReport.input.type,
                     receiptDate: dataInputReport.input.receiptDate,
                 },
-                employeeInputs: {
+                incomeInputs: {
                     senderName: sessionStorage.getItem("username"),
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
+                    incomeId: data.incomeId,
                     // incomeTypeCode: data.employee.incomeTypeCode
                 }
             }
@@ -339,7 +339,7 @@ export default defineComponent({
                         type: dataInputReport.input.type,
                         receiptDate: dataInputReport.input.receiptDate,
                     },
-                    employeeInputs: dataSelect.value
+                    incomeInputs: dataSelect.value
                 }
                 modalEmailMulti.value = true
             } else {
@@ -395,7 +395,7 @@ export default defineComponent({
                     senderName: sessionStorage.getItem("username"),
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
+                    incomeId: data.incomeId,
                     // incomeTypeCode: data.employee.incomeTypeCode
                 })
                 incomeIds.value.push(data.incomeId)
@@ -405,7 +405,6 @@ export default defineComponent({
         watch(result, (value) => {
             trigger.value = false;
             if (value) {
-                value.searchIncomeRetirementWithholdingReceipts
                 dataSource.value = value.searchIncomeRetirementWithholdingReceipts;
                 totalEmployee.value = value.searchIncomeRetirementWithholdingReceipts.length
                 emplRetirementType1.value = value.searchIncomeRetirementWithholdingReceipts.filter((item: any) => item.retirementType == 1).length;
@@ -441,6 +440,14 @@ export default defineComponent({
 
         const employeeType1 = () => {
             return `사원수 <span>[${totalEmployee.value}]</span> (퇴직 <span>[${emplRetirementType1.value}]</span>, 중간 <span>[${emplRetirementType2.value}]</span>)`
+        }
+
+        const customRetirementBenefits = () => {
+            let sum = 0
+            dataSource.value?.map((row: any) => {
+                sum += row.retirementBenefits
+            })
+            return `퇴직급여합계 <span>[${filters.formatCurrency(sum)}]</span>`;
         }
         const customNonTaxableRetirementBenefits = () => {
             let sum = 0
@@ -482,22 +489,18 @@ export default defineComponent({
             searching,
             paYear,
             dataSource,
-            // sendMail,
             move_column,
             colomn_resize,
             modalEmailSingle,
             modalEmailMulti,
-            // onCloseEmailSingleModal,
-            // onCloseEmailMultiModal,
             selectionChanged,
             rangeDate,
             valueRadioBox,
             arrayRadioCheck,
             arrayRadioType,
-            getColorTag,
             originData,
             minDate, maxDate,
-            customNonTaxableRetirementBenefits, customTaxableRetirementBenefits, customTotalDeduction, customActualPayment,
+            customRetirementBenefits, customNonTaxableRetirementBenefits, customTaxableRetirementBenefits, customTotalDeduction, customActualPayment,
         };
     },
 });

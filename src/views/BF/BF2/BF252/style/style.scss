@@ -1,0 +1,41 @@
+.ant-form-item {
+  margin-bottom: 0px;
+}
+
+.footer-summary {
+  border: 1px solid #ddd;
+  border-top: none;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 20px;
+  font-size: 14px;
+  font-weight: 600;
+
+  .footer-summary-total {
+    font-size: 16px;
+    font-weight: 700;
+  }
+}
+
+.text-red {
+  color: red;
+}
+
+.tag-1 {
+  width: 60px;
+  background-color: #ffffff;
+  color: #4b4b4b;
+  border: 1px solid #0e0e0e;
+  border-radius: 5px;
+  text-align: center;
+  padding: 2px 0;
+}
+
+.tag-2 {
+  width: 60px;
+  background-color: #b2b2b2;
+  color: #4b4b4b;
+  border-radius: 5px;
+  text-align: center;
+  padding: 2px 0;
+}

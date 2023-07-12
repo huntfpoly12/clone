@@ -18,6 +18,19 @@ const BF210 = defineAsyncComponent(() =>
 const BF220 = defineAsyncComponent(() =>
     import("@/views/BF/BF2/BF220/index.vue")
 );
+const BF251 = defineAsyncComponent(() =>
+    import("@/views/BF/BF2/BF251/index.vue")
+);
+
+const BF252 = defineAsyncComponent(() =>
+    import("@/views/BF/BF2/BF252/index.vue")
+);
+const BF253 = defineAsyncComponent(() =>
+    import("@/views/BF/BF2/BF253/index.vue")
+);
+const BF255 = defineAsyncComponent(() =>
+    import("@/views/BF/BF2/BF255/index.vue")
+);
 const BF510 = defineAsyncComponent(() =>
     import("@/views/BF/BF5/BF510/index.vue")
 );
@@ -175,11 +188,17 @@ const AC630 = defineAsyncComponent(() =>
 const AC520 = defineAsyncComponent(() =>
     import("@/views/AC/AC5/AC520/index.vue")
 );
-const CommunicationBoard = defineAsyncComponent(() =>
+const CommunicationBoardManager = defineAsyncComponent(() =>
     import("@/views/CommunicationBoard/index.vue")
 );
-const Announcement = defineAsyncComponent(() =>
+const CommunicationBoardUser = defineAsyncComponent(() =>
+    import("@/views/CommunicationBoard/User/index.vue")
+);
+const AnnouncementUser = defineAsyncComponent(() =>
     import("@/views/Announcement/User/index.vue")
+);
+const AnnouncementManager = defineAsyncComponent(() =>
+    import("@/views/Announcement/Manager/index.vue")
 );
 
 export {
@@ -189,6 +208,10 @@ export {
     BF340,
     BF210,
     BF220,
+    BF251,
+    BF252,
+    BF253,
+    BF255,
     BF510,
     BF530,
     BF610,
@@ -241,6 +264,8 @@ export {
     AC520,
     Test,
     Example,
-    CommunicationBoard,
-    Announcement,
+    CommunicationBoardManager,
+    CommunicationBoardUser,
+    AnnouncementUser,
+    AnnouncementManager
 }

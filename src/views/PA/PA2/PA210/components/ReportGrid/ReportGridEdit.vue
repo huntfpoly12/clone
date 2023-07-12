@@ -7,7 +7,7 @@
     style="top: 20px"
     width="1368px"
     :bodyStyle="{ height: '890px', padding: '8px' }"
-  > 
+  >
     <a-spin :spinning="false">
       <div class="report-grid">
         <div class="header-report">
@@ -19,7 +19,7 @@
               alt=""
               class="ml-3"
               @click="actionConfirmDelete"
-              v-if="dataSource[0].status >= 20"
+              v-if="isEdit"
             />
             <img
               style="width: 31px; cursor: pointer"
@@ -27,14 +27,14 @@
               alt=""
               class="ml-3"
               @click="updateTaxWithholding"
-              v-if="dataSource[0].status >= 20"
+              v-if="isEdit"
             />
             <button-basic
               :width="150"
               text="새로불러오기"
               class="btn-get-income"
               @onClick="actionConfirmLoadNew"
-              :disabled="dataSource[0].status > 20"
+              :disabled="!isEdit"
             ></button-basic>
           </div>
           <div class="table-detail">
@@ -59,7 +59,7 @@
                   v-model:valueStatus="data.data.status"
                   :dataRow="data.data"
                   @checkConfirmRowTable="changeStatusRowTable"
-                  :disabled="dataSource[0].status != 10"
+                  :disabled="!isEdit"
                 />
                 <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
                             :dataRow="data.data"/> -->
@@ -70,7 +70,7 @@
                 css-class="cell-center"
               />
               <template #imputedYear-imputedMonth="{ data }">
-                <a-tooltip color="blue">
+                <a-tooltip color="black">
                   <template #title>
                     귀속기간 {{
                       showTooltipYearMonth(
@@ -102,7 +102,7 @@
                 css-class="cell-center"
               />
               <template #paymentYear-paymentMonth="{ data }">
-                <a-tooltip color="blue">
+                <a-tooltip color="black">
                   <template #title>
                     지급기간 {{
                       showTooltipYearMonth(
@@ -164,13 +164,13 @@
                 css-class="cell-center"
               />
               <template #refund="{ data }">
-                <a-tooltip  :title="'환급신청여부'" color="blue">
+                <a-tooltip  :title="'환급신청여부'" color="black">
                   <div>
                     <switch-basic
                       v-model:valueSwitch="data.data.refund"
                       :textCheck="'O'"
                       :textUnCheck="'X'"
-                      :disabled="disabledRefund || dataSource[0].status != 10"
+                      :disabled="disabledRefund || !isEdit"
                       />
                   </div>
                 </a-tooltip>
@@ -183,7 +183,7 @@
               <template #submission-date="{ data }">
                 <date-time-box
                   v-model:valueDate="data.data.submissionDate"
-                  :disabled="dataSource[0].status != 10"
+                  :disabled="!isEdit"
                   :teleport="true"
                 ></date-time-box>
               </template>
@@ -194,7 +194,7 @@
           <hot-table
             ref="wrapper"
             :settings="hotSettings"
-            :readOnly="dataSource[0].status > 20"
+            :readOnly="!isEdit"
           ></hot-table>
         </div>
       </div>
@@ -243,7 +243,7 @@ import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification";
 import { useStore } from "vuex";
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth } from "../../utils/index";
 import ConfirmDelete from "./ConfirmDelete.vue";
 import ConfirmloadNew from "./ConfirmloadNew.vue";
@@ -284,6 +284,7 @@ export default defineComponent({
     const firstTimeLoad = ref<boolean>(false);
     const cellNegativeNumber = [[5, 7], [9, 7], [31, 7]]
     const cellPageSettings = ref<any>(cellsSetting);
+    const arrStatusShowBtn = [10,20]
     // The above code is setting up the hot table.
     const hotSettings = {
       comments: true,
@@ -291,13 +292,14 @@ export default defineComponent({
       colWidths: 102.5,
       height: 740,
       fixedRowsTop: 4,
+      viewportRowRenderingOffset: 70,
       beforeKeyDown: (e: any) => {
         let hot = wrapper.value.hotInstance;
         const selection = hot.getSelected();
         var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
         if (
           !cellNegativeNumber.some((item : any) => item[0] === selection[0][0] && item[1] === selection[0][1]) && // kiểm tra xem có p phải thuộc ô được phép điền số âm không
-          !reg.test(e.key) && 
+          !reg.test(e.key) &&
           e.key != "Backspace"
         ) {
           if(e.key == 'Process') hot.setDataAtCell(selection[0][0], selection[0][1],null,'validateEdit'); // kiểm tra xem có phải kí tự hangul không nếu là hanggul thì key sẽ trẻ về là process
@@ -305,7 +307,7 @@ export default defineComponent({
         }
         // nêu đang nhập ở các ô đặc biệt đươc nhập số âm thì check như sau
         if (
-          cellNegativeNumber.some((item: any) => item[0] === selection[0][0] && item[1] === selection[0][1]) && 
+          cellNegativeNumber.some((item: any) => item[0] === selection[0][0] && item[1] === selection[0][1]) &&
           !reg.test(e.key) &&
           e.key != "Backspace" &&
           e.key != "-"
@@ -338,13 +340,17 @@ export default defineComponent({
             } else {
               disabledRefund.value = true
             }
-            
+
           }
           dataSource.value[0].yearEndTaxAdjustment = checkYETaxAdj
           store.commit("common/setHasChangedPopupPA210", true);
         } else if (source == "edit") {
           firstTimeLoad.value = true;
         }
+      },
+      afterScrollVertically: () => {
+        let hot = wrapper.value.hotInstance;
+        hot.render()
       },
       hotRef: null,
       data: dataInit,
@@ -360,6 +366,7 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref<any>(JSON.parse(JSON.stringify(props.dataReport)));
     const trigger = ref<boolean>(false);
+    const isEdit = computed(() => (userType !== 'm' && dataSource.value?.[0]?.status < 30) || (userType === 'm' && dataSource.value?.[0]?.status !== 40))
     const originData = ref();
     const setModalVisible = () => {
       emit("closePopup", false);
@@ -719,7 +726,7 @@ export default defineComponent({
           cellPageSettings.value[141].className = "htMiddle htRight"
           cellPageSettings.value[143].readOnly = false
           cellPageSettings.value[143].className = "htMiddle htRight"
-      } else {   
+      } else {
         cellPageSettings.value[123].readOnly = true
         cellPageSettings.value[123].className = "htMiddle htRight disable-cell"
         cellPageSettings.value[124].readOnly = true
@@ -745,7 +752,7 @@ export default defineComponent({
       ){
         dataSource.value[0].refund = false
         disabledRefund.value = true
-      } 
+      }
 
       if (
         (dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 6 && dataSource.value[0].paymentType == 1 && dataSource.value[0].imputedMonth == 2 && dataSource.value[0].paymentMonth == 2) ||
@@ -761,7 +768,7 @@ export default defineComponent({
         disabledRefund.value = false
       }
 
-      if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2) 
+      if(dataSource.value[0].index == 0 && dataSource.value[0].afterDeadline == false && dataSource.value[0].reportType == 1 && dataSource.value[0].paymentType == 2 && dataSource.value[0].imputedMonth == 1 && dataSource.value[0].paymentMonth == 2)
       {
         dataSource.value[0].refund = cell12 ? true : false
         disabledRefund.value = false
@@ -835,7 +842,9 @@ export default defineComponent({
       confirmStatus,
       showTooltipYearMonth,
       changeStatusRowTable,
-      disabledRefund
+      disabledRefund,
+      arrStatusShowBtn,
+      isEdit
     };
   },
 });

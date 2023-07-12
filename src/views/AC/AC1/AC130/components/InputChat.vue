@@ -1,7 +1,7 @@
 <template>
   <div class="input-edit-chat" :class="{'input-edit-chat-dragFile': isDragging}" @dragover="dragover" @dragleave="dragleave" @drop="drop">
     <div class="input-edit-chat-input">
-      <textarea rows="1" ref="inputChat" :placeholder="placeholder" v-model="contentBinding" @input="changeInput"
+      <textarea rows="1" ref="inputChat" :placeholder="placeholder" :value="contentBinding" @input="changeInput"
         @keypress.enter.exact.prevent="submitChat" :disabled="disabled"></textarea>
     </div>
 
@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="input-edit-chat-input-action-btn">
-        <button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
+        <button-basic class="mr-10" text="취소" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
           :disabled="disabled || (!contentBinding.trim() && !filesUpload.length)" />
         <button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()"
           :disabled="disabled || (!contentBinding.trim() && !filesUpload.length)" />
@@ -32,7 +32,7 @@
   </div>
   <input v-show="false" ref="inputFile" type="file" multiple @change="uploadPreviewFile" />
 </template>
-  
+
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, FileOutlined, FileTextOutlined } from '@ant-design/icons-vue';
@@ -257,7 +257,7 @@ export default defineComponent({
   },
 })
 </script>
-  
+
 <style lang="scss" scoped>
 .input-edit-chat {
   &-dragFile {

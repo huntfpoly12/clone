@@ -45,20 +45,23 @@ export default [
         roles: [AdminScreenRole.CONTRACT_MANAGE.enumKey, AdminScreenRole.COMPANY_MANAGE.enumKey, AdminScreenRole.SERVICE_MANAGE.enumKey, AdminScreenRole.SALES_REPRESENTATIVE_MANAGE.enumKey]
       },
       {
-        title: "수납관리",
-        id: "bf-400",
+        title: "CMS/정산 관리",
+        id: "bf-250",
         subMenus: [
-          {title: "요금청구,심사", url: "#", id: "bf-410", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
-          {title: "서비스해지", url: "#", id: "bf-420", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
-          {title: "미납관리", url: "#", id: "bf-430", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
+          {title: "CMS 관리", url: "/bf-251", id: "bf-251", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
+          {title: "청구 괸리", url: "/bf-252", id: "bf-252", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
+          {title: "입금 관리", url: "/bf-253", id: "bf-253", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
+          {title: "입금 현황", url: "#", id: "bf-254", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
+          {title: "환급 관리", url: "/bf-255", id: "bf-255", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
+          {title: "해지 관리", url: "#", id: "bf-260", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
         ],
         roles: [AdminScreenRole.BILLING_MANAGE.enumKey, AdminScreenRole.TERMINATION_MANAGE.enumKey, AdminScreenRole.UNPAID_MANAGE.enumKey]
       },
       {
-        title: "업무마감",
+        title: "회계업무",
         id: "bf-500",
         subMenus: [
-          {title: "회계업무마감관리", url: "/bf-510", id: "bf-510", roles: ROLE_BF500},
+          {title: "회계업무마감", url: "/bf-510", id: "bf-510", roles: ROLE_BF500},
           {title: "4대보험업무관리", url: "/bf-530", id: "bf-530", roles: ROLE_BF500},
         ],
         roles: ROLE_BF500
@@ -81,7 +84,7 @@ export default [
   },
   {
     title: "사용자업무설정",
-    id: "cm-100",
+    id: "cm-000",
     subMenus: [
       {title: "기초정보설정", url: "/cm-110", id: "cm-110", roles: [WorkScreenRole.BASIC_SETTINGS.enumKey]},
       {
@@ -120,19 +123,9 @@ export default [
         id: "ac-200",
         subMenus: [
           {title: "전표업로드", url: "/ac-210", id: "ac-210", roles: ROLE_AC000},
-          // {title: "예산서", url: "#", id: "ac-220", roles: ROLE_AC000},
-          // {title: "결산서", url: "#", id: "ac-230", roles: ROLE_AC000},
         ],
         roles: ROLE_AC000
       },
-      // {
-      //   title: "예산",
-      //   id: "ac-300",
-      //   subMenus: [
-      //     {title: "예산서자동작성", url: "#", id: "ac-380", roles: ROLE_AC000},
-      //   ],
-      //   roles: ROLE_AC000
-      // },
       {
         title: "보고서",
         id: "ac-500",
@@ -191,7 +184,6 @@ export default [
         ],
         roles: ROLE_PA000
       },
-
       {
         title: "퇴직소득관리",
         id: "pa-400",
@@ -218,7 +210,7 @@ export default [
         subMenus: [
           {title: "사업소득자등록", url: "/pa-610", id: "pa-610", roles: ROLE_PA000},
           {title: "사업소득자료입력", url: "/pa-620", id: "pa-620", roles: ROLE_PA000},
-          {title: "사업소득원천징수영수증", url: "/pa-630", id: "pa-630", roles: ROLE_PA000},
+          {title: "거주자의 사업소득원천징수영수증", url: "/pa-630", id: "pa-630", roles: ROLE_PA000},
         ],
         roles: ROLE_PA000
       },
@@ -236,10 +228,10 @@ export default [
         title: "4대보험",
         id: "pa-800",
         subMenus: [
-          {title: "취득신고등록", url: "/pa-810", id: "pa-810", roles: ROLE_PA000},
+          {title: "취득신고", url: "/pa-810", id: "pa-810", roles: ROLE_PA000},
           {title: "상실신고", url: "/pa-820", id: "pa-820", roles: ROLE_PA000},
           {title: "급여변경신고", url: "/pa-830", id: "pa-830", roles: ROLE_PA000},
-          {title: "휴직복직신고", url: "/pa-840", id: "pa-840", roles: ROLE_PA000},
+          {title: "휴직,복직신고", url: "/pa-840", id: "pa-840", roles: ROLE_PA000},
           {title: "보수총액신고", url: "#", id: "pa-850", roles: ROLE_PA000},
           {title: "보험사무대행신고", url: "/pa-860", id: "pa-860", roles: ROLE_PA000},
           {title: "사업장가입신고", url: "/pa-870", id: "pa-870", roles: ROLE_PA000},

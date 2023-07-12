@@ -54,10 +54,11 @@
               css-class="cell-center"
             />
             <template #status="{ data }">
-              <process-status-tooltip
-                :valueStatus="10"
+              <process-status
+                :valueStatus="data.data.status"
                 :height="32"
                 :dataRow="data.data"
+                :disabled="data.data.status != 10"
               />
             </template>
             <DxColumn
@@ -66,7 +67,7 @@
               css-class="cell-center"
             />
             <template #imputedYear-imputedMonth="{ data }">
-              <a-tooltip color="blue">
+              <a-tooltip color="black">
                 <template #title>
                   귀속기간 {{
                     showTooltipYearMonth(
@@ -98,7 +99,7 @@
               css-class="cell-center"
             />
             <template #paymentYear-paymentMonth="{ data }">
-              <a-tooltip color="blue">
+              <a-tooltip color="black">
                 <template #title>
                   지급기간 {{
                     showTooltipYearMonth(
@@ -160,7 +161,7 @@
               css-class="cell-center"
             />
             <template #refund="{ data }">
-              <a-tooltip  :title="'환급신청여부'" color="blue">
+              <a-tooltip  :title="'환급신청여부'" color="black">
                   <div>
                     <switch-basic
                       v-model:valueSwitch="data.data.refund"
@@ -288,6 +289,7 @@ export default defineComponent({
       colWidths: 102.5,
       height: 740,
       fixedRowsTop: 4,
+      viewportRowRenderingOffset: 70,
       beforeKeyDown: (e: any) => {
         let hot = wrapper.value.hotInstance;
         const selection = hot.getSelected();
@@ -335,6 +337,10 @@ export default defineComponent({
         } else if (source == "edit") {
           firstTimeLoad.value = true;
         }
+      },
+      afterScrollVertically: () => {
+        let hot = wrapper.value.hotInstance;
+        hot.render()
       },
       hotRef: null,
       data: dataModified,
@@ -423,8 +429,7 @@ export default defineComponent({
       if (!firstLoad) {
         trigger.value = true;
         refetchData();
-        store.commit("common/setHasChangedPopupPA210", true);
-        return
+        store.commit("common/setHasChangedPopupPA210", true);  
       }
 
       let hot = wrapper.value?.hotInstance;
@@ -723,6 +728,7 @@ export default defineComponent({
 
     // The above code is a function that is called when the user clicks the "수정" button.
     const updateTaxWithholdingModifiy = () => {
+      store.commit("common/setHasChangedPopupPA210", false);
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData();
       let statement = Array();

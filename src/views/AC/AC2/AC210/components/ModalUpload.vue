@@ -14,8 +14,8 @@
     </a-modal>
 
     <a-modal :visible="modalStatusTable" @cancel="cancelTable" :mask-closable="false" class="confirm-md" footer=""
-        :width="1000">
-        <div class="mt-20" :key="countKey">
+        :width="700">
+        <div :key="countKey">
             <h1 class="text-center mb-0">전표 업로드</h1>
             <a-spin :spinning="loadingGetFacilityBusinessAccountingProcesses">
                 <DxDataGrid noDataText="내역이 없습니다" id="dataGridAC210" key-expr="facilityBusinessId" :show-row-lines="true"
@@ -27,9 +27,10 @@
                     <DxToolbar>
                         <DxItem name="searchPanel" />
                     </DxToolbar>
-                    <DxColumn caption="회계연월" width="85" cell-template="year-month" />
-                    <template #year-month="">
-                        {{ parseInt(yearMonth.toString().slice(0, 4)) }}-{{ parseInt(yearMonth.toString().slice(4, 6)) }}
+                    <DxColumn caption="회계연월" width="100" cell-template="year-month" />
+                    <template #year-month="{data}">
+                        <b>{{ parseInt(yearMonth.toString().slice(0, 4)) }}-{{
+                            $filters.formatMonth(parseInt(yearMonth.toString().slice(4, 6))) }}</b>
                     </template>
 
                     <!-- <DxColumn caption="결의서 내역수" data-field="" /> -->
@@ -37,11 +38,18 @@
                     <DxColumn caption="마감현황" data-field="facilityBusinessName"
                         cell-template="facilityBusinessName-status" />
                     <template #facilityBusinessName-status="{ data }">
-                        <span class="mr-20">{{ data.data.facilityBusinessName }}</span>
-                        <ProcessStatus :noOptionNoInput="false" :valueStatus="data.data.status" disabled />
+                        <div class="d-flex-center">
+                            <span>{{ data.data.facilityBusinessName }}</span>
+                            <ProcessStatus class="ml-20 mr-10" :noOptionNoInput="false" :valueStatus="data.data.status"
+                                disabled />
+                            <spa v-if="data.data.status == 1">
+                                <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
+                            </spa>
+                        </div>
                     </template>
 
-                    <DxColumn caption="업로드 가능 여부" css-class="cell-left" data-field="status" cell-template="status" />
+                    <DxColumn caption="업로드 가능 여부" width="150" css-class="cell-left" data-field="status"
+                        cell-template="status" />
                     <template #status="{ data }">
                         <a-tag v-if="data.data.status == 40" color="#4F6228">업로드 가능</a-tag>
                         <a-tag v-else color="#C00000">업로드 불가</a-tag>
@@ -49,7 +57,8 @@
                 </DxDataGrid>
             </a-spin>
             <div class="text-center mt-30">
-                <button-basic :text="'업로드'" :type="'default'" :mode="'contained'" @onClick="actionSubmit" :disabled="!statusButtonSubmit" />
+                <button-basic :text="'업로드'" :type="'default'" :mode="'contained'" @onClick="actionSubmit"
+                    :disabled="!statusButtonSubmit" />
             </div>
         </div>
     </a-modal>
@@ -158,6 +167,7 @@ export default defineComponent({
         } = useMutation(mutations.registerAccountingDocumentW4cUpload);
 
         doneRegisterAccountingDocumentW4cUpload((e: any) => {
+            notification("success", Message.getMessage("COMMON", "106").message);
             modalStatusTable.value = false;
             emit("closePopup", false);
             emit("resetTable", true);

@@ -4,7 +4,7 @@
     <div class="d-flex-center gap-10 mb-5">
       <div class="d-flex-center gap-10">
         <div>회계연월:</div>
-        <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5" text=""/>
+        <year-picker-box-custom v-model:valueDate="dataSearch.year" width="65px" class="mr-5" text="" :minYear="2021" :max-year="2033"/>
       </div>
       <div class="month-container">
         <div v-for="(month) in checkBoxSearch" :key="month.id" class="month"
@@ -13,50 +13,53 @@
         </div>
       </div>
     </div>
-    <a-space :size="16">
-      <div>
-        <div class="d-flex-center gap-10" style="height: 40px">
-          <div>마감상태:</div>
-          <div class="d-flex-center gap-10">
-            <div @click="handleClickAll" class="checkbox-all">
-              <DxCheckBox class="mr-10 " v-model:value="checkboxAll" icon-size="16" text="전체" />
-            </div>
-            <div class="d-flex">
-              <checkbox-basic label="미입력" class="custom-checkbox0" v-model:valueCheckbox="statuses.checkbox0"/>
-              <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
-            </div>
-            <checkbox-basic label="입력중" class=" custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
-            <checkbox-basic label="입력마감" class=" custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
-            <checkbox-basic label="조정중" class=" custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
-            <checkbox-basic label="조정마감" class=" custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex-center gap-10">
-        <DxField label="매니저리스트"  class="field-custom-auto">
-          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
-        </DxField>
-        <DxField label="영업자리스트" class="field-custom-auto">
-          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
-        </DxField>
-        <div>
-          <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" width="100px"/>
-        </div>
-      </div>
 
-    </a-space>
   </div>
   <a-spin :spinning="loading">
     <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10"
-                style="height: calc(100vh - 240px)">
+                :allow-column-resizing="true" :show-borders="true" keyExpr="id" class="px-10" :loadPanel="false"
+                style="height: calc(100vh - 200px)">
       <DxPaging :page-size="0"/>
       <DxExport :enabled="true"/>
       <DxSearchPanel :visible="true" placeholder="검색" :search-visible-columns="['facilityBusinessName']"/>
       <DxToolbar>
+        <DxItem location="before" template="search" />
         <DxItem name="searchPanel"/>
         <DxItem name="exportButton" css-class="cell-button-export"/>
       </DxToolbar>
+      <template #search>
+        <a-space :size="16">
+          <div>
+            <div class="d-flex-center gap-10" style="height: 40px">
+              <div>마감상태:</div>
+              <div class="d-flex-center gap-10">
+                <div @click="handleClickAll" class="checkbox-all">
+                  <checkbox-basic label="전체12" v-model:value="checkboxAll" />
+                </div>
+                <div class="d-flex">
+                  <checkbox-basic label="미입력" class="custom-checkbox0" v-model:valueCheckbox="statuses.checkbox0"/>
+                  <info-tool-tip>입력된 내역이 없는 상태</info-tool-tip>
+                </div>
+                <checkbox-basic label="입력중" class="custom-checkbox1" v-model:valueCheckbox="statuses.checkbox1"/>
+                <checkbox-basic label="입력마감" class="custom-checkbox2" v-model:valueCheckbox="statuses.checkbox2"/>
+                <checkbox-basic label="조정중" class="custom-checkbox3" v-model:valueCheckbox="statuses.checkbox3"/>
+                <checkbox-basic label="조정마감" class="custom-checkbox4" v-model:valueCheckbox="statuses.checkbox4"/>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex-center gap-10">
+            <a-form-item label="매니저리스트">
+              <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="160px"/>
+            </a-form-item>
+            <a-form-item label="영업자리스트">
+              <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" width="160px"/>
+            </a-form-item>
+            <div>
+              <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" width="100px"/>
+            </div>
+          </div>
+        </a-space>
+      </template>
       <DxColumn data-field="code" caption="사업자코드"/>
       <DxColumn data-field="name" caption="상호" width="215px"/>
       <DxColumn data-field="address" caption="주소" width="215px"/>
@@ -82,7 +85,6 @@
                   year: dataSearch.year,
                   month: dataSearch.month
                 }"
-                :noOptionNoInput="false"
                 @checkConfirmRowTable="submitChangeStatus"
               />
               <a-tooltip :title="`${data.data.name} ${company.facilityBusinessName} 의 [통장내역]으로 이동`">
@@ -103,7 +105,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import {reactive, ref, watchEffect} from 'vue';
+import { reactive, ref, watch, watchEffect } from 'vue';
 import {DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxSearchPanel, DxToolbar} from 'devextreme-vue/data-grid';
 import {searchCompanyAccountingDeadlines} from '@/graphql/queries/BF/BF5/BF510';
 import {useMutation, useQuery} from '@vue/apollo-composable';
@@ -114,6 +116,8 @@ import mutations from "@/graphql/mutations/AddToken";
 import {ISearchCompanyAccountingDeadlines} from "@/views/BF/BF5/BF510/types";
 import DxCheckBox from "devextreme-vue/check-box";
 import changeAccountingProcessStatus from "@/graphql/mutations/BF/BF5/BF510/changeAccountingProcessStatus";
+import notification from '@/utils/notification';
+import { Message } from '@/configs/enum';
 
 const checkBoxSearch = [
   {id: 1, text: '01'},
@@ -153,8 +157,12 @@ const dataSearch = reactive<ISearchCompanyAccountingDeadlines>({
   manageUserId: null,
   statuses: [1, 10, 20, 30, 40]
 })
+watch(() => dataSearch.month, (val) => {
+  if (val) {
+    searching()
+  }
+})
 const trigger = ref(true);
-
 const {onResult, onError, loading} = useQuery(searchCompanyAccountingDeadlines, {
   filter: dataSearch
 }, () => ({
@@ -245,13 +253,13 @@ const { mutate: mutateChangeStatus, onDone: onDoneChangeStatus, onError: onError
 
 onDoneChangeStatus(({ data }) => {
   trigger.value = true;
+  notification('success', Message.getCommonMessage('106').message)
 })
 onErrorChangeStatus((error) => {
   console.log('error', error)
   trigger.value = true;
 })
 const submitChangeStatus = (value: any) => {
-  console.log('e', value)
   mutateChangeStatus({
     ...value
   })
@@ -309,7 +317,7 @@ const submitChangeStatus = (value: any) => {
   height: 24px;
 }
 :deep(.checkbox-all) {
-  height: 24px;
+  //height: 24px;
   .dx-checkbox-text {
     width: auto;
     height: 100%;

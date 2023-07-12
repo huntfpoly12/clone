@@ -33,7 +33,7 @@
                             <div class="dflex">
                                 <div class="dflex">
                                     <a-form-item label="휴대폰" class="red" :label-col="labelCol">
-                                        <text-number-box v-model:valueInput="formState.presidentMobilePhone"
+                                        <text-number-box v-model:valueInput="formState.extendInfo.detail.phone"
                                             :required="true" style="width: 150px;">
                                         </text-number-box>
                                     </a-form-item>
@@ -104,7 +104,7 @@
                                 </div>
                                 <div style="display: flex; margin-left: 150px;">
                                     <a-form-item label="대표번호" class="red" :label-col="labelCol">
-                                        <tel-text-box v-model:valueInput="formState.extendInfo.detail.phone"
+                                        <tel-text-box v-model:valueInput="formState.presidentMobilePhone"
                                             style="width: 150px;" :required="true">
                                         </tel-text-box>
                                     </a-form-item>
@@ -197,7 +197,7 @@
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
-                                    <a-tooltip color="black" placement="top">
+                                    <a-tooltip color="black" placement="topLeft">
                                         <template #title>로그인이력</template>
                                         <login-outlined @click="modalLogin(data)" />
                                     </a-tooltip>

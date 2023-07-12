@@ -14,7 +14,7 @@
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
           @selection-changed="selectionChanged"
-          :allowSelection="true"
+          :selected-row-keys="selectedRowKeys"
           ref="tab1Bf520Ref"
           noDataText="내역이 없습니다"
           @contentReady="onDataGridInitialized"
@@ -66,7 +66,7 @@
                   <SelectCustomField
                     :searchEnabled="true"
                     v-model:valueInput="formState.workingStatus"
-                    :dataSource="workingStatusSelectbox"
+                    :dataSource="workingStatusSelectFilter"
                     width="95px"
                     displayeExpr="text"
                     valueExpr="id"
@@ -129,6 +129,7 @@
               valueExpr="id"
               :isShowId="false"
               placeholder="선택"
+              :search-enabled="false"
             />
           </template>
           <DxColumn
@@ -318,6 +319,7 @@ import { Message } from "@/configs/enum";
 import {
   reportTypeSelectbox,
   workingStatusSelectbox,
+  workingStatusSelectFilter,
   companyConsignStatusSelectbox,
   EDIStatusSelectbox,
   formatMonth,
@@ -475,6 +477,7 @@ export default defineComponent({
           });
         });
         store.commit("common/filterDsTab2Bf530", arr);
+        tab1Bf520Ref.value.instance.clearSelection();
       },
       { deep: true }
     );
@@ -505,11 +508,10 @@ export default defineComponent({
     //----------------------------SELECT ROW IN TABLES ------------------------
 
     const selectionChanged = (event: any) => {
-      let { selectedRowsData, currentDeselectedRowKeys } = event;
-      selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
-        return item !== currentDeselectedRowKeys[0];
-      });
+      let { selectedRowsData } = event;
       workIds.value = selectedRowsData.map((item: any) => item.workId);
+      selectedRowKeys.value = selectedRowsData.map((item: any) => item.workId);
+
     };
     const selectedRowKeys: any = ref([]);
     const handleRowClick = (e: any) => {
@@ -520,7 +522,11 @@ export default defineComponent({
       ) {
         selectedRowKeys.value.push(e.key);
         e.component.selectRows(selectedRowKeys.value);
-      }
+      } else {
+        selectedRowKeys.value = selectedRowKeys.value.filter((item: any) => {
+          return item !== e.key;
+        })
+      };
     };
 
     //----------------------GET ViewURL SQL------------------------
@@ -694,6 +700,7 @@ export default defineComponent({
       loading1,
       reportTypeSelectbox,
       workingStatusSelectbox,
+      workingStatusSelectFilter,
       companyConsignStatusSelectbox,
       EDIStatusSelectbox,
       states1,
@@ -712,6 +719,7 @@ export default defineComponent({
       consignStatusText,
       onDataGridInitialized,
       handleRowClick,
+      selectedRowKeys
     };
   },
 });

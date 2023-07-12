@@ -7,7 +7,7 @@
           :allow-column-reordering="move_column" key-expr="globalYear" :allow-column-resizing="colomn_resize"
           :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn :caption="processKeyPA720.processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
+          <DxColumn width="calc(100% - 400px)" :caption="processKeyPA720.processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year>
             <span>지급연월 </span>
           </template>
@@ -214,7 +214,7 @@
           :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
         <DxButton :text="'지 ' + paymentDate"
           :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
-        <ProcessStatus v-model:value-status="statusParam.status" :disabled="statusParam.status > 20 || !compareForm()"
+        <ProcessStatus v-model:value-status="statusParam.status" :disabled="(statusParam.status > 20 || !compareForm() ) && userType !== 'm'"
           @checkConfirm="mutateChangeStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
@@ -283,7 +283,7 @@ import { ref, defineComponent, watch, computed, reactive } from 'vue';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { companyId, openTab, startYearMonth } from '@/helpers/commonFunction';
+import { companyId, openTab, startYearMonth, userType } from '@/helpers/commonFunction';
 import { DxDataGrid, DxColumn, DxScrolling, DxMasterDetail } from 'devextreme-vue/data-grid';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -526,7 +526,7 @@ export default defineComponent({
     };
     //on add row
     const rowChangeStatus = ref<Boolean>(false);
-    // click add button 
+    // click add button
     const openAddNewModal = async () => {
       compareType.value = 3;
       if (isNewRowPA720.value) {
@@ -685,7 +685,7 @@ export default defineComponent({
       notification('error', res.message);
     })
     //check to disable all input
-    const isExpiredStatus = computed(() => statusParam.value.status > 20)
+    const isExpiredStatus = computed(() => (userType !== 'm' && statusParam.value.status > 20) || (userType === 'm' && statusParam.value.status > 30))
 
     // -------------------- Delete item in tax table --------------------
 
@@ -921,8 +921,9 @@ export default defineComponent({
       customColumnClass,
       isClickAddMonthDiff, isClickMonthDiff,
       disableAddMonth,
+      userType
     };
   },
 });
-</script> 
+</script>
 <style lang="scss" scoped src="./style/style.scss" ></style>

@@ -12,7 +12,7 @@
         height: $config_styles.HeightInput,
       }" class="btn-date" />
       <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm"
-        :disabled="statusButton == 30 || statusButton == 40 || !compareForm()" />
+        :disabled="(statusButton == 30 || statusButton == 40 || !compareForm()) && userType !== 'm'" />
     </div>
     <div class="d-flex option-action">
       <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || isExpiredStatus" />
@@ -48,7 +48,7 @@
     </div>
   </div>
   <a-row class="mt-10">
-    <a-col span="15" class="col-tax" :class="{ 'ele-opacity': !compareForm() }">
+    <a-col :span="15" class="col-tax" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="loadingIncomeBusinesses" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
           key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
@@ -145,7 +145,7 @@
         </a-row>
       </a-spin>
     </a-col>
-    <a-col span="9" class="form-tax form-action">
+    <a-col :span="9" class="form-tax">
       <a-spin :spinning="loadingIncomeBusiness || loadingIncomeBusinesses" size="large">
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
@@ -206,7 +206,7 @@
                 <div>
                   <a-form-item label="소득세(공제)" label-align="right">
                     <div class="d-flex-center">
-                      <number-box-money :min="0" width="135px" class="mr-5" :disabled="idDisableNoData"
+                      <number-box-money :min="0" width="130px" class="mr-5" :disabled="idDisableNoData"
                         v-model:valueInput="dataAction.input.withholdingIncomeTax
                           " format="0,###" />
                       원
@@ -214,7 +214,7 @@
                   </a-form-item>
                   <a-form-item label="지방소득세(공제)" label-align="right">
                     <div class="d-flex-center">
-                      <number-box-money :min="0" width="135px" class="mr-5" :disabled="idDisableNoData"
+                      <number-box-money :min="0" width="130px" class="mr-5" :disabled="idDisableNoData"
                         v-model:valueInput="dataAction.input.withholdingLocalIncomeTax
                           " format="0,###" />
                       원
@@ -285,7 +285,7 @@ import {
   DeleteOutlined,
   SaveOutlined,
 } from "@ant-design/icons-vue";
-import { calcSummary, companyId, openTab } from "@/helpers/commonFunction";
+import { calcSummary, companyId, openTab, userType } from "@/helpers/commonFunction";
 import { dataActionUtils } from "../utils/index";
 import { Formula } from "@bankda/jangbuda-common";
 import notification from "@/utils/notification";
@@ -389,7 +389,7 @@ export default defineComponent({
       if (!statusButton.value) {
         return false;
       }
-      return +statusButton.value > 20 ? true : false;
+      return (userType === 'm' && +statusButton.value === 40)  || (userType !== 'm' && +statusButton.value > 20)
     });
     const messageUpdate = Message.getMessage("COMMON", "106").message;
     const idDisableNoData = computed(() => {
@@ -1178,6 +1178,7 @@ export default defineComponent({
       isLoopDay,
       calculateIncomeTypeCodeAndName,
       dayArr,
+      userType
     };
   },
 });

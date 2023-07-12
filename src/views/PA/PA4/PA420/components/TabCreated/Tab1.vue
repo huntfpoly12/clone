@@ -62,7 +62,7 @@
         </a-col>
         <a-col :span="12">
           <div class="header-text-2 mb-10">중간지급 근속연수</div>
-          <DxFieldCustom label="정산시작(기산)일" :required="interimPaymentTab1" class="field-custom">
+          <a-form-item label="정산시작(기산)일" :class="interimPaymentTab1 ? 'label-required' : ''">
             <div class="d-flex-center">
               <!-- TODO PRE Settlement START DATE -->
               <date-time-box-custom
@@ -79,8 +79,8 @@
                 </info-tool-tip>
               </div>
             </div>
-          </DxFieldCustom>
-          <DxFieldCustom label="정산종료(퇴사)일" :required="interimPaymentTab1" class="field-custom">
+          </a-form-item>
+          <a-form-item label="정산종료(퇴사)일" :class="interimPaymentTab1 ? 'label-required' : ''">
             <div class="d-flex-center">
               <!-- TODO PRE Settlement END DATE -->
               <date-time-box-custom width="150px"
@@ -95,15 +95,15 @@
                 </info-tool-tip>
               </div>
             </div>
-          </DxFieldCustom>
-          <DxFieldCustom label="지급일" :required="interimPaymentTab1" class="field-custom">
+          </a-form-item>
+          <a-form-item label="지급일" :class="interimPaymentTab1 ? 'label-required' : ''">
             <date-time-box-custom
               :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
               v-model:valueDate="formState.prevRetiredYearsOfService.paymentDate"
               ref="prevRetiredYearsOfServicePaymentDate"
             />
-          </DxFieldCustom>
-          <DxFieldCustom label="제외일수" class="field-custom">
+          </a-form-item>
+          <a-form-item label="제외일수">
             <div class="d-flex-center">
               <number-box-money
                 :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
@@ -117,8 +117,8 @@
                 </info-tool-tip>
               </div>
             </div>
-          </DxFieldCustom>
-          <DxFieldCustom label="가산일수" class="field-custom">
+          </a-form-item>
+          <a-form-item label="가산일수">
             <div class="d-flex-center">
               <number-box-money :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
                           v-model:valueInput="formState.prevRetiredYearsOfService.additionalDays"
@@ -130,7 +130,7 @@
                 </info-tool-tip>
               </div>
             </div>
-          </DxFieldCustom>
+          </a-form-item>
           <div>
             근속연수 / 근속월수 / 근속일수:
             {{ dataPrevRetiredYearsOfService.yearsOfService }}년/
@@ -140,7 +140,7 @@
         </a-col>
         <a-col :span="12">
           <div class="header-text-2 mb-10">최종 근속연수</div>
-          <DxFieldCustom label="정산시작(입사)일" class="field-custom" required>
+          <a-form-item label="정산시작(입사)일" class="label-required">
             <div class="d-flex-center">
               <date-time-box-custom :required="true" width="150px"
                                     v-model:valueDate="formState.lastRetiredYearsOfService.settlementStartDate"
@@ -154,8 +154,8 @@
                 </info-tool-tip>
               </div>
             </div>
-          </DxFieldCustom>
-          <DxFieldCustom label="정산종료(퇴사)일" class="field-custom" required>
+          </a-form-item>
+          <a-form-item label="정산종료(퇴사)일" class="label-required">
             <div class="d-flex-center">
               <date-time-box-custom :required="true" width="150px"
                                     v-model:valueDate="formState.lastRetiredYearsOfService.settlementFinishDate"
@@ -168,12 +168,12 @@
                 </info-tool-tip>
               </div>
             </div>
-          </DxFieldCustom>
-          <DxFieldCustom label="지급일" class="field-custom" required>
+          </a-form-item>
+          <a-form-item label="지급일" class="label-required">
             <date-time-box-custom :required="false" disabled width="150px"
                                   v-model:valueDate="paymentDay"/>
-          </DxFieldCustom>
-          <DxFieldCustom label="제외일수" class="field-custom" required>
+          </a-form-item>
+          <a-form-item label="제외일수" class="label-required">
             <div class="d-flex-center">
               <number-box-money :required="true" width="150px" format="#0,###"
                           v-model:valueInput="formState.lastRetiredYearsOfService.exclusionDays"/>
@@ -183,8 +183,8 @@
                 </info-tool-tip>
               </div>
             </div>
-          </DxFieldCustom>
-          <DxFieldCustom label="가산일수" class="field-custom" required>
+          </a-form-item>
+          <a-form-item label="가산일수" class="label-required">
             <div class="d-flex-center">
               <number-box-money :required="true" width="150px" format="#0,###"
                           v-model:valueInput="formState.lastRetiredYearsOfService.additionalDays"/>
@@ -194,7 +194,7 @@
                 </info-tool-tip>
               </div>
             </div>
-          </DxFieldCustom>
+          </a-form-item>
           <div>
             근속연수 / 근속월수 / 근속일수:
             {{ dataLastRetiredYearsOfService.yearsOfService }}년/
@@ -236,21 +236,21 @@
         <a-col :span="12" class="mt-10">
           <div class="header-text-2 mb-10">정산 근속연수</div>
           <!--        TODO incomeCalculationInput settlementStartDate -->
-          <DxFieldCustom label="정산시작(기산)일" class="field-custom" required>
+          <a-form-item label="정산시작(기산)일" class="label-required">
             <div class="d-flex-center">
               <date-time-box width="150px" disabled :required="true"
                              v-model:valueDate="formState.incomeCalculationInput.settlementStartDate"
                              ref="incomeCalculationInputSettlementStartDate"/>
             </div>
-          </DxFieldCustom>
+          </a-form-item>
           <!--        TODO incomeCalculationInput settlementFinishDate -->
-          <DxFieldCustom label="정산종료(퇴사)일" class="field-custom" required>
+          <a-form-item label="정산종료(퇴사)일" class="label-required">
             <div class="d-flex-center">
               <date-time-box width="150px" disabled
                              v-model:valueDate="formState.incomeCalculationInput.settlementFinishDate"
                              ref="incomeCalculationInputSettlementFinishDate"/>
             </div>
-          </DxFieldCustom>
+          </a-form-item>
           <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService }}년/{{ dataSettlement.monthsOfService }}개월/{{
               dataSettlement.daysOfService
             }}일

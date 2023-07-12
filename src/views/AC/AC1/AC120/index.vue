@@ -19,7 +19,7 @@
 			v-model:opened="store.state.common.ac120.statusShowFull" :height="'100%'" template="listMenu">
 			<template #listMenu="{ data }">
 				<DetailComponent
-					:statusProcess="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status" />
+					:statusProcess="statusSelected" />
 			</template>
 			<div id="content" class="dx-theme-background-color">
 				<a-spin :spinning="loadingGetAccountingDocuments">
@@ -33,7 +33,7 @@
 						v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
 						@selection-changed="selectionChanged">
 						<DxRowDragging
-							:allow-reordering="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status == 10"
+							:allow-reordering="(userType !== 'm' && statusSelected === 10) || (userType === 'm' && statusSelected !== 40)"
 							:show-drag-icons="true" :on-reorder="onReorder" />
 						<DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
 						<DxScrolling mode="standard" show-scrollbar="always" />
@@ -49,7 +49,7 @@
 								<div class="action d-flex-center">
 									<ProcessStatus
 										:noOptionNoInput="false"
-										v-if="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
+										v-if="statusSelected"
 										:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
 										:disabled="true" />
 									<button-basic v-else mode="contained" style="width: 90px" :disabled="true">
@@ -72,7 +72,7 @@
 									<template #title>전표 신규 건별 등록</template>
 									<span>
 										<DxButton class="ml-4 custom-button" type="default"
-											:disabled="[20, 30, 40].includes(dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status)"
+											:disabled="(userType !== 'm' && [20, 30, 40].includes(statusSelected)) || (userType === 'm' && statusSelected === 40)"
 											:height="$config_styles.HeightInput" @click="actionOpenModalAdd" :width="120">
 											<div class="d-flex-center">
 												<PlusOutlined style="font-size: 14px" />
@@ -94,7 +94,7 @@
 									</span>
 								</a-tooltip>
 								<DxButton class="ml-4 mr-4 custom-button" type="default" :width="90"
-									:disabled="[20, 30, 40].includes(dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status)"
+									:disabled="(userType !== 'm' && [20, 30, 40].includes(statusSelected)) || (userType === 'm' && statusSelected === 40)"
 									:height="$config_styles.HeightInput" @click="actionModalDelete">
 									<div class="d-flex-center">
 										<span><checkbox-basic :valueCheckbox="true" disabled="true" /></span>
@@ -372,7 +372,7 @@ import filters from "@/helpers/filters";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC120";
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userType } from "@/helpers/commonFunction";
 import dayjs from "dayjs";
 import notification from "@/utils/notification";
 import DataSource from "devextreme/data/data_source";
@@ -453,6 +453,7 @@ export default defineComponent({
 		// get store data
 		const storeDataSource: any = computed(() => dataSource.value?.store() as Store);
 		const totalCount = computed(() => dataSource.value?.totalCount());
+    	const statusSelected = computed(() => dataGetAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status)
 		const triggerGetAccountingProcesses = ref<boolean>(true);
 		const triggerGetAccountingDocuments = ref<boolean>(true);
 		const dataQueryGetAccountingProcesses = ref({
@@ -969,7 +970,7 @@ export default defineComponent({
 					totalResolutionNormalStatuFalse++;
 				}
 			});
-			return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span> 
+			return `정상 내역 건수 <span>[${filters.formatCurrency(totalResolutionNormalStatuTrue)}]</span>
 			비정상 내역 건 <span>[${filters.formatCurrency(totalResolutionNormalStatuFalse)}]</span>`;
 		};
 
@@ -1018,6 +1019,8 @@ export default defineComponent({
 			gridRefAC120,
 			heightDrawer,
 			monthNewClick,
+			statusSelected,
+      		userType,
 		};
 	},
 });

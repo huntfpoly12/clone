@@ -4,7 +4,10 @@
             :mask-closable="false">
             <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrayLog" :show-borders="true"
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
-                <DxScrolling mode="standard" show-scrollbar="always"/>
+                <DxSearchPanel :visible="true" placeholder="검색" />
+                <DxToolbar>
+                  <DxItem name="searchPanel" />
+                </DxToolbar>
                 <DxPaging :page-size="15" />
                 <DxColumn data-field="createdAt" caption="기록일시" data-type="date"
                         format="yyyy-MM-dd HH:mm"/>
@@ -25,13 +28,23 @@
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxPaging ,DxScrolling} from "devextreme-vue/data-grid";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxPaging,
+  DxScrolling,
+  DxItem,
+  DxToolbar,
+  DxSearchPanel
+} from "devextreme-vue/data-grid";
 import { ZoomInOutlined } from "@ant-design/icons-vue";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF2/BF210/index";
 export default defineComponent({
     props: ['modalStatus', 'data', 'title', 'idRow'],
     components: {
+      DxSearchPanel,
+      DxToolbar, DxItem,
         DxDataGrid,
         DxColumn,
         DxPaging,
@@ -41,7 +54,7 @@ export default defineComponent({
     setup(props) {
         // config grid
         const store = useStore();
-        
+
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         let trigger = ref<boolean>(false);
@@ -113,7 +126,7 @@ export default defineComponent({
         },
     },
 });
-</script> 
+</script>
 
 <style scoped>
 ::v-deep .ant-pagination-options {

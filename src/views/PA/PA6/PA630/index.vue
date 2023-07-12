@@ -59,7 +59,7 @@
                     </template>
                     <template #send-group-print>
                         <DxButton @click="onPrintGroup">
-                            <a-tooltip title="출력 / 저장" placement="topLeft">
+                            <a-tooltip title="출력 / 저장">
                                 <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;" />
                             </a-tooltip>
                         </DxButton>

@@ -57,7 +57,7 @@
                 css-class="cell-center"
               />
               <template #imputedYear-imputedMonth="{ data }">
-                <a-tooltip color="blue">
+                <a-tooltip color="black">
                   <template #title>
                     귀속기간 {{
                       showTooltipYearMonth(
@@ -89,7 +89,7 @@
                 css-class="cell-center"
               />
               <template #paymentYear-paymentMonth="{ data }">
-                <a-tooltip color="blue">
+                <a-tooltip color="black">
                   <template #title>
                     지급기간 {{
                       showTooltipYearMonth(
@@ -148,7 +148,7 @@
                 css-class="cell-center"
               />
               <template #refund="{ data }">
-                <a-tooltip  :title="'환급신청여부'" color="blue">
+                <a-tooltip  :title="'환급신청여부'" color="black">
                   <div>
                     <switch-basic
                       v-model:valueSwitch="data.data.refund"
@@ -341,6 +341,7 @@ export default defineComponent({
       colWidths: 102.5,
       height: 740,
       fixedRowsTop: 4,
+      viewportRowRenderingOffset: 70,
       beforeKeyDown: (e: any) => {
         let hot = wrapper.value.hotInstance;
         const selection = hot.getSelected();
@@ -398,7 +399,10 @@ export default defineComponent({
           firstTimeLoad.value = true;
         }
       },
-
+      afterScrollVertically: () => {
+        let hot = wrapper.value.hotInstance;
+        hot.render()
+      },
       hotRef: null,
       data: [...dataInit],
       mergeCells: mergeCells,

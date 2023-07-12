@@ -1,6 +1,6 @@
 <template>
     <action-header title="기타소득자등록" @actionSave="false" :buttonSave="false" />
-    <div id="pa-710">
+    <div id="announcement-user">
         <div class="page-content">
             <a-row>
                 <a-col span="16" class="data-table">
@@ -17,14 +17,14 @@
                             <DxToolbar>
                                 <DxItem template="search-template" location="before" />
                                 <DxItem name="searchPanel" />
-                                <!-- <DxItem name="exportButton" css-class="cell-button-export" /> -->
+                                <DxItem name="exportButton" css-class="cell-button-export" />
                                 <!-- <DxItem location="after" template="button-history" css-class="cell-button-add" /> -->
                                 <!-- <DxItem location="after" template="button-template" css-class="cell-button-add" /> -->
                             </DxToolbar>
                             <template #search-template>
                                 <div class="d-flex-center">
                                     <a-form-item label="작성기간 (최대 3년)" :label-col="labelCol" class="red">
-                                        <range-date-time-box v-model:valueDate="labelCol" width="250px"
+                                        <range-date-time-box v-model:valueDate="rangeDate" width="250px"
                                             :multi-calendars="true" />
                                     </a-form-item>
 
@@ -85,6 +85,7 @@ import {
     DeleteOutlined,
     SaveOutlined,
 } from "@ant-design/icons-vue";
+import dayjs from 'dayjs';
 import DxButton from "devextreme-vue/button";
 import DataSource from "devextreme/data/data_source";
 export default defineComponent({
@@ -110,6 +111,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const dataSource = ref([])
         let trigger = ref(true);
+        const rangeDate = ref([parseInt(dayjs().subtract(3, 'year').format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
 
         // ================GRAPQL==============================================
 
@@ -122,7 +124,8 @@ export default defineComponent({
             move_column,
             colomn_resize,
             labelCol: { style: { width: "150px" } },
-            dataSource
+            dataSource,
+            rangeDate,
         };
     },
 });

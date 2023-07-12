@@ -13,6 +13,7 @@
       <div class="user-info">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
+        <div @click="openTabAnnouncement" class="cursor-pointer">공지사항</div>
         <div @click="openTabBoard" class="cursor-pointer">소통판</div>
         <account-infor></account-infor>
       </div>
@@ -28,10 +29,7 @@
             </a-button>
 
             <div v-if="!collapsed" class="wrap-search">
-              <a-select v-model:value="selectedItems" :options="menuData.map((item) => ({
-                value: item.id,
-                label: item.id + ' | ' + item.name
-              }))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px" optionFilterProp="label"
+              <a-select v-model:value="selectedItems" :options="menuDataSearch" show-search placeholder="메뉴를 입력해보세요" style="width: 180px" optionFilterProp="label"
                 :disabled="menuTab.length >= MAX_TAB" @change="addMenuTab" notFoundContent="내역이 없습니다"/>
             </div>
           </div>
@@ -158,6 +156,10 @@ import {
   BF330,
   BF340,
   BF210,
+  BF251,
+  BF252,
+  BF253,
+  BF255,
   BF510,
   BF530,
   BF610,
@@ -211,8 +213,10 @@ import {
   AC520,
   Test,
   Example,
-  CommunicationBoard,
-  Announcement,
+  CommunicationBoardManager,
+  CommunicationBoardUser,
+  AnnouncementUser,
+  AnnouncementManager
 } from "./screenComponents";
 
 import {
@@ -228,7 +232,7 @@ import {
   CaretRightOutlined
 } from "@ant-design/icons-vue";
 import { getJwtObject } from '@bankda/jangbuda-common';
-import {companyId, openTab, setMenuTab} from "@/helpers/commonFunction";
+import {companyId, openTab, setMenuTab, userType} from "@/helpers/commonFunction";
 import useCheckPermission from "@/helpers/useCheckPermission";
 import DxSortable from "devextreme-vue/sortable";
 import DxTabs from 'devextreme-vue/tabs';
@@ -250,6 +254,10 @@ export default defineComponent({
     BF330,
     BF340,
     BF210,
+    BF251,
+    BF252,
+    BF253,
+    BF255,
     BF510,
     BF530,
     BF610,
@@ -315,8 +323,10 @@ export default defineComponent({
     CaretRightOutlined,
     DxSortable,
     DxTabs,
-    CommunicationBoard,
-    Announcement,
+    CommunicationBoardManager,
+    CommunicationBoardUser,
+    AnnouncementUser,
+    AnnouncementManager
   },
   created() {
     const tabsCached = sessionStorage.getItem('tabsCached')
@@ -369,6 +379,9 @@ export default defineComponent({
           if (newValue.id.includes("bf-2")) {
             this.openKeys = ["bf-000", "bf-200"];
           }
+          if (newValue.id.includes("bf-25")) {
+            this.openKeys = ["bf-000", "bf-250"];
+          }
           if (newValue.id.includes("bf-3")) {
             this.openKeys = ["bf-000", "bf-300"];
           }
@@ -382,7 +395,7 @@ export default defineComponent({
             this.openKeys = ["bf-000", "bf-600"];
           }
           if (newValue.id.includes("cm-1")) {
-            this.openKeys = ["cm-100", "cm-120"];
+            this.openKeys = ["cm-000", "cm-120"];
           }
           if (newValue.id.includes("ac-1")) {
             this.openKeys = ["ac-000", "ac-100"];
@@ -451,6 +464,10 @@ export default defineComponent({
       if (this.activeTab.id === "bf-340") return 'BF340';
       if (this.activeTab.id === "bf-210") return 'BF210';
       if (this.activeTab.id === "bf-220") return 'BF220';
+      if (this.activeTab.id === "bf-251") return 'BF251';
+      if (this.activeTab.id === "bf-252") return 'BF252';
+      if (this.activeTab.id === "bf-253") return 'BF253';
+      if (this.activeTab.id === "bf-255") return 'BF255';
       if (this.activeTab.id === "bf-510") return 'BF510';
       if (this.activeTab.id === "bf-530") return 'BF530';
       if (this.activeTab.id === "bf-610") return 'BF610';
@@ -501,8 +518,8 @@ export default defineComponent({
       if (this.activeTab.id === "ac-610") return 'AC610';
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "ac-630") return 'AC630';
-      if (this.activeTab.id === "communication-board") return 'CommunicationBoard';
-      if (this.activeTab.id === "announcement") return 'announcement';
+      if (this.activeTab.id === "communication-board") return userType === 'm' ? 'CommunicationBoardManager' : 'CommunicationBoardUser';
+      if (this.activeTab.id === "announcement") return  userType === 'm' ? 'AnnouncementManager' : 'AnnouncementUser';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
@@ -513,7 +530,7 @@ export default defineComponent({
     const inputSearchText = ref("");
     const filteredResult = ref([]);
     const openKeys = ref([]);
-    const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
+    const rootSubmenuKeys = ref(["bf-000", "cm-000", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
     let menuItems = menuTree;
@@ -554,6 +571,20 @@ export default defineComponent({
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = computed(() => {
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
+    })
+
+    const menuDataSearch = computed(() => {
+     return menuData.map((item) => {
+      const exceptMenu = ["communication-board", "announcement"];
+       if (!exceptMenu.includes(item.id)) {
+        return {
+         value: item.id,
+         label: item.id + ' | ' + item.name
+       }
+      } else {
+        return null;
+      }
+     }).filter(item => item !== null);
     })
 
     watch(() => cachedTab.value, (value) => {
@@ -834,7 +865,7 @@ export default defineComponent({
         if (latestOpenKey && latestOpenKey.includes("bf")) {
           openKeys.value = ["bf-000", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("cm")) {
-          openKeys.value = ["cm-100", latestOpenKey];
+          openKeys.value = ["cm-000", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("ac")) {
           openKeys.value = ["ac-000", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("pa")) {
@@ -844,10 +875,15 @@ export default defineComponent({
         openKeys.value = latestOpenKey ? [latestOpenKey] : [];
       }
     }
-    const openTabBoard = () => {
-      router.push('/communication-board')
-      openTab({ id: 'communication-board', name: 'Communication Board', url: '/communication-board' })
+    const openTabAnnouncement = () => {
+        router.push('/announcement ')
+        openTab({ id: 'announcement', name: "공지사항", url: '/announcement' })
     }
+    const openTabBoard = () => {
+        router.push('/communication-board')
+        openTab({ id: 'communication-board', name: "소통판", url: '/communication-board' })
+    }
+
     return {
       onSearch,
       addMenuTab,
@@ -872,7 +908,9 @@ export default defineComponent({
       count,
       logout,
       ENVIRONMENT,
-      openTabBoard
+      openTabBoard, openTabAnnouncement,
+      userType,
+      menuDataSearch,
     }
   },
 });
