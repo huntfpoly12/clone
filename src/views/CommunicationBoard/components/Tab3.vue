@@ -420,6 +420,7 @@ onDoneCreate((result) => {
     queryDetail.messageId = result.data.createNotificationMessage.messageId
     queryDetail.companyId = result.data.createNotificationMessage.companyId
     state.triggerDetail = true
+    state.trigger = true
     cancelEdit()
     notification("success", Message.getCommonMessage('106').message);
   }
@@ -589,13 +590,13 @@ const chooseCompany = (data: DataCompanyTab3) => {
 provide(OpenRowCompanyTab3, chooseCompany)
 provide(DataCompanyTab3, dataRowCompany)
 
-const refetchData = () => {
+const refetchDataTab3 = () => {
   filterSearch.startWriteDate = rangeDate.value[0]
   filterSearch.finishWriteDate = rangeDate.value[1]
   state.trigger = true
 }
 defineExpose({
-  refetchData
+  refetchDataTab3
 })
 </script>
 
