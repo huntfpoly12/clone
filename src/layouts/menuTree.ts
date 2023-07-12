@@ -52,7 +52,7 @@ export default [
           {title: "청구 괸리", url: "/bf-252", id: "bf-252", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
           {title: "입금 관리", url: "/bf-253", id: "bf-253", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
           {title: "입금 현황", url: "#", id: "bf-254", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
-          {title: "환급 관리", url: "#", id: "bf-255", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
+          {title: "환급 관리", url: "/bf-255", id: "bf-255", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
           {title: "해지 관리", url: "#", id: "bf-260", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
         ],
         roles: [AdminScreenRole.BILLING_MANAGE.enumKey, AdminScreenRole.TERMINATION_MANAGE.enumKey, AdminScreenRole.UNPAID_MANAGE.enumKey]
