@@ -43,7 +43,7 @@
           </a-col>
         </a-row>
 
-        <a-row :gutter="[0, 0]" class="item-group row-bd mb-20">
+        <a-row :gutter="[16, 0]" class="item-group row-bd mb-20">
           <!-- row 1 -->
           <a-col :span="8">
             <a-form-item label="성명">

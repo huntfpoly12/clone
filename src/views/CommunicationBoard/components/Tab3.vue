@@ -71,7 +71,7 @@
       </a-spin>
     </a-col>
     <a-col :span="10">
-      <a-spin :spinning="loadingDetail">
+      <a-spin :spinning="loadingDetail || loadingUpdate || loadingAddImage || loadingCreate || loadingDeleteImage || loadingDelete">
         <div class="form-container pl-10 pt-8">
           <div class="form-chat">
             <!--          <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading">-->
@@ -139,7 +139,6 @@
             <div class="form-chat-bottom">
               <div class="form-chat-bottom-category">
                 <StatusChat with="150" :valueSelect="4" disabled />
-                {{ rowEdit.isEdit }}
                 <span style="margin: 0 10px;">분류:</span>
                 <span class="form-chat-bottom-category-text">
                   <Classification v-if="messageDetail && messageDetail?.expresstionType !== 3"
@@ -252,8 +251,6 @@ const listImagePreview = ref({
 })
 const inputChatRef = ref()
 const rowEdit = reactive(rowEditDefault)
-const globalFacilityBizId = computed(() => parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"));
-const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? '0'))
 const focusRowKey: any = ref(dataRow?.value?.messageId || null)
 const focusRowIndex = ref(dataRow?.value?.messageId ? -1 : 0)
 const selectRowKeyAction = ref(0)

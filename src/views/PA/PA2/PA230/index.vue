@@ -474,7 +474,7 @@ const sendMail = (e: any) => {
     clearSelection();
   } else {
     if (selectedItemKeys.value.length < 1) {
-      notification("warning", Message.getCommonMessage("404").message);
+      notification("error", Message.getCommonMessage("404").message);
       return;
     }
     // emailAddress.value = userInfo.value.email;

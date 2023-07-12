@@ -68,7 +68,7 @@
               </a-col>
               <a-col span="8">
                 <a-form-item label="법인등록번호" class="red">
-                  <text-number-box required v-model:valueInput='formState.companyCorpRegNuber' placeholder="" />
+                  <id-number-text-box required v-model:valueInput='formState.companyCorpRegNuber' placeholder="" :isResidentId="false"/>
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -513,9 +513,10 @@ import { getCurrentInstance } from 'vue';
 import dayjs from "dayjs";
 import cloneDeep from "lodash/cloneDeep";
 import NumberBox from "@/components/common/NumberBox.vue";
+import IdNumberTextBox from "@/components/common/IdNumberTextBox.vue";
 
 export default defineComponent({
-  components: {NumberBox},
+  components: {IdNumberTextBox, NumberBox},
   props: {
     isOpenModalCreate: {
       type: Boolean,
