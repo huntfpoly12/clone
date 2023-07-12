@@ -8,7 +8,7 @@
 		<!-- <ExpressionType  /> -->
 		<a-spin :spinning="loadingTable">
 			<div v-if="dataSource" class="wrapper-content">
-				<div v-for="data in dataSource.edges" :key="data" class="question-container"
+				<div v-for="data in dataSource.edges" :key="data" class="question-container-tab1"
 					@click="openRow(data.node.expresstionType)">
 					<div class="d-flex-center gap-10">
 						<ExpressionType :valueSelect="data.node.expresstionType" :isSelect="false" />
