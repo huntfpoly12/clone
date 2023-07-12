@@ -93,6 +93,21 @@
 								</div>
 							</div>
 							<div>{{ dataDetail.content }}</div>
+							<div v-if="dataDetail?.fileStorages && dataDetail?.fileStorages.length" class="files">
+                                <div class="images">
+                                    <img v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => isImgLink(item.url))"
+                                        :key="indexFile" class="image" :src="file.url" alt=""
+                                        @click="previewImage(dataDetail.fileStorages.filter((item: any) => isImgLink(item.url)), indexFile)">
+                                </div>
+                                <div v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => !isImgLink(item.url))"
+                                    :key="indexFile" class="files-preview-filetext" @click="openLinkDownFile(file.url)">
+                                    <FileTextOutlined style="margin-right: 10px; font-size:30px" />
+                                    <div class="files-preview-filetext-info">
+                                        <p class="files-preview-filetext-info-name">{{
+                                            file.name }}</p>
+                                    </div>
+                                </div>
+                            </div>
 						</div>
 					</div>
 				</a-spin>
