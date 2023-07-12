@@ -429,7 +429,7 @@ export default defineComponent({
       if (!firstLoad) {
         trigger.value = true;
         refetchData();
-       // store.commit("common/setHasChangedPopupPA210", true);  
+        store.commit("common/setHasChangedPopupPA210", true);  
       }
 
       let hot = wrapper.value?.hotInstance;

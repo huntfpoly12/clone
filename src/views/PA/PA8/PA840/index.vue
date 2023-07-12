@@ -251,7 +251,7 @@ const {
 } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeReturnToWork);
 cancelReturnToWorkOnDone(() => {
   notification('success', Message.getMessage('COMMON', '402').message);
-  companyEmployeeLeaveOfAbsencesRefetch();
+  companyEmployeeReturnToWorksRefetch()
 });
 cancelReturnToWorkError((res) => {
   notification('error', res.message);
