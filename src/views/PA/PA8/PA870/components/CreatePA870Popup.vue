@@ -244,14 +244,14 @@
           <box-title title="국민연금/건강보험">
             <a-row :gutter="gutter">
               <a-col span="8">
-                <a-form-item label="건설현장사업장해당여부" class="field-custom-auto">
+                <a-form-item label="건설현장사업장해당여부">
                   <radio-group :arrayValue="constructionSiteWorkplaceArr"
                                v-model:valueRadioCheck="formState.constructionSiteWorkplace" layoutCustom="horizontal"
                                class="mt-1"></radio-group>
                 </a-form-item>
               </a-col>
-              <a-col span="10">
-                <a-form-item label="건설현장사업기간" class="field-custom">
+              <a-col span="8">
+                <a-form-item label="건설현장사업기간" >
 <!--                  <default-text-box v-model:valueInput='formState.constructionSiteBusinessPeriod' placeholder="" />-->
                   <range-date-time-box
                     v-model:valueDate="formState.constructionSiteBusinessPeriod"
@@ -384,8 +384,8 @@
             </a-row>
             <a-form-item label="주된사업장" />
             <a-row :gutter="gutter">
-              <a-col span="8" class="">
-                <a-form-item label="명칭" class="" styleLabel="padding-left: 15px">
+              <a-col span="8" >
+                <a-form-item label="명칭" class="pl-30 custom">
                   <default-text-box v-model:valueInput='formState.employeementInsuranceMainWorkplaceName'
                                     :disabled="!formState.employeementInsuranceReport" />
                 </a-form-item>
@@ -398,7 +398,7 @@
               </a-col>
               <a-col span="8" />
               <a-col span="8">
-                <a-form-item label="우선지원대상기업" class="field-custom" styleLabel="padding-left: 15px">
+                <a-form-item label="우선지원대상기업" class="pl-30">
                   <radio-group :arrayValue="nationalPensionSeparatelySiteStatusArr"
                                v-model:valueRadioCheck="formState.employeementInsuranceMainWorkplacePrioritySupport"
                                layoutCustom="horizontal" class="mt-1"
@@ -428,10 +428,11 @@
                   <date-time-box :clearable="false" v-model:valueDate="formState.industrialAccidentInsuranceApplyDate"
                                  placeholder="" :class="formState.industrialAccidentInsuranceReport ? 'red' : ''"
                                  :disabled="!formState.industrialAccidentInsuranceReport"
+                                 width="250px"
                     />
                 </a-form-item>
               </a-col>
-              <a-col span="6">
+              <a-col span="8">
                 <a-form-item label="사업종류코드" >
                   <default-text-box v-model:valueInput='formState.industrialAccidentInsuranceBusinessTypeCode'
                                     placeholder=""
@@ -473,12 +474,10 @@
                                    :disabled="!formState.industrialAccidentInsuranceReport" />
                 </a-form-item>
               </a-col>
-              <a-col span="16">
+              <a-col span="17">
                 <a-form-item label="원사업주 사업장관리번호 또는 사업개시번호 (사내하도급 수급사업주인 경우만 적습니다)" class="">
-                  <div class="d-flex justify-content-end">
-                    <text-number-box v-model:valueInput='formState.industrialAccidentMainWorkplaceManageNumber'
-                                   :disabled="!formState.industrialAccidentInsuranceReport" width="180px" />
-                  </div>
+                  <text-number-box v-model:valueInput='formState.industrialAccidentMainWorkplaceManageNumber'
+                                  :disabled="!formState.industrialAccidentInsuranceReport" width="175px" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -633,6 +632,13 @@ export default defineComponent({
   :deep(.ant-form-item-label ) {
     label {
       min-width: 150px;
+    }
+  }
+}
+.custom {
+  :deep(.ant-form-item-label ) {
+    label {
+      min-width: 80px;
     }
   }
 }
