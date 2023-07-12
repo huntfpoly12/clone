@@ -30,6 +30,7 @@ export default gql`
         name
         username
         active
+        type
         __typename @skip(if: true)
       }
       fileStorages {
@@ -41,9 +42,15 @@ export default gql`
       }
       answerCompactUser {
         id
+        type
+        name
+        active
       }
       answerFileStorages {
         id
+        name
+        url
+        __typename @skip(if: true)
       }
       __typename @skip(if: true)
     }

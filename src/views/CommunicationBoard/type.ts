@@ -84,6 +84,35 @@ export interface MessageDetail {
     url: string
   }>
 }
+export interface MessageDetailAnswer extends MessageDetail {
+  answeredAt: number
+  answer: string
+  answerCompactUser: {
+    id: number
+    type: string
+    name: string
+    active: boolean
+  }
+  answerFileStorages?: Array<{
+    id: number
+    name: string
+    url: string
+  }>
+  secret: boolean
+}
+
+export interface RowEditDefault {
+  id: number
+  content: string
+  files: Array<{ id: number, url: string, name: string }>
+  isEdit: boolean
+  classification: ClassificationEnum
+  type?: TypeEditMessage
+}
+export enum TypeEditMessage {
+  QUESTION,
+  ANSWER
+}
 
 export const OpenRowKey = Symbol() as InjectionKey<(data: MessageDetail) => void>
 export const DataRowKey = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetail | null>>>

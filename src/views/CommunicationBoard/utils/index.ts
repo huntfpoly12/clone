@@ -1,4 +1,4 @@
-import { ClassificationEnum } from "@/views/CommunicationBoard/type";
+import {ClassificationEnum, RowEditDefault, TypeEditMessage} from "@/views/CommunicationBoard/type";
 
 export const messageTab3 = {
   messageId: 0,
@@ -20,13 +20,6 @@ export const messageTab3 = {
   },
   fileStorages: "",
   classification: ClassificationEnum.MAJOR_INSURANCE
-}
-interface RowEditDefault {
-  id: number
-  content: string
-  files: Array<{ id: number, url: string, name: string }>
-  isEdit: boolean
-  classification: ClassificationEnum
 }
 export const rowEditDefault: RowEditDefault = {
   id: 0,

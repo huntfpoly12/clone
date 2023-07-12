@@ -154,7 +154,7 @@ async function getRefreshToken() {
 	return data.data.refreshLogin.accessToken;
 }
 
-export async function getRefreshTokenCustom(accessToken: string) {
+async function getRefreshTokenCustom(accessToken: string) {
 	const response = await fetch(baseURL, {
 		method: "POST",
 		// Add any required parameters for the refresh login API
