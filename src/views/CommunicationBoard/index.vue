@@ -16,29 +16,36 @@
 </template>
 
 <script setup lang="ts">
-import { DataRowKey, MessageDetail, OpenRowKey } from "@/views/CommunicationBoard/type";
-import { provide, ref } from "vue";
+import {
+  DataRowKeyTab2,
+  DataRowKeyTab3,
+  MessageDetail,
+  MessageDetailAnswer,
+  OpenRowKey
+} from "@/views/CommunicationBoard/type";
+import {provide, ref} from "vue";
 import Tab1 from "./components/Tab1.vue";
 import Tab2 from "./components/Tab2.vue";
 import Tab3 from "./components/Tab3.vue";
 
-const activeKey = ref<string | number>('2');
-const dataRow = ref<MessageDetail | null>(null)
+const activeKey = ref<string | number>('1');
+const dataRowTab2 = ref<MessageDetail | null>(null)
+const dataRowTab3 = ref<MessageDetailAnswer | null>(null)
 
 const tab3 = ref<InstanceType<typeof Tab3> | null>(null)
 const tab2 = ref<InstanceType<typeof Tab2> | null>(null)
-const openRow = (data: MessageDetail) => {
+const openRow = (data: MessageDetail | MessageDetailAnswer) => {
   if (data.expresstionType === 1) {
     window.open(`/ac-130`)
     return
   }
   if (data.expresstionType !== 4) {
     activeKey.value = '2'
+    dataRowTab2.value = data as MessageDetail
   } else {
     activeKey.value = '3'
+    dataRowTab3.value = data as MessageDetailAnswer
   }
-  dataRow.value = data
-  // console.log('%c data', 'color: red', data)
 }
 const searching = () => {
   if (activeKey.value === '2') {
@@ -48,7 +55,8 @@ const searching = () => {
   }
 }
 provide(OpenRowKey, openRow)
-provide(DataRowKey, dataRow)
+provide(DataRowKeyTab2, dataRowTab2)
+provide(DataRowKeyTab3, dataRowTab3)
 
 // I want when actionSearch runs to perform an action in tab3
 

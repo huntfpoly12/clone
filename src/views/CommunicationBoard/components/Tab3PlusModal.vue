@@ -51,11 +51,11 @@
         <DxColumn data-field="address" caption="주소" alignment="center"/>
         <DxColumn data-field="presidentName" caption="대표자" alignment="center"/>
         <DxColumn data-field="phone" caption="연락처" alignment="center"/>
-        <DxColumn data-field="presidentMobilePhone" caption="대표자" alignment="center"/>
+        <DxColumn data-field="presidentMobilePhone" caption="휴대폰" alignment="center"/>
         <DxColumn caption="담당매니저" data-field="manageCompactUser.name" alignment="center"/>
-        <DxColumn data-field="manageStartDate" caption="관리시작일" alignment="center"/>
+        <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" format="yyyy-MM-dd" alignment="center"/>
         <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" alignment="center"/>
-        <DxColumn data-field="canceledAt" caption="해지일자" alignment="center"/>
+        <DxColumn data-field="canceledAt" caption="해지일자" data-type="date" format="yyyy-MM-dd" alignment="center"/>
         <DxColumn data-field="unpaidMonths" caption="연체 (개월)" alignment="center"/>
 
         <template #code="{data}">

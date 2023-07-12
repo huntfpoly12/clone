@@ -115,6 +115,7 @@ export enum TypeEditMessage {
 }
 
 export const OpenRowKey = Symbol() as InjectionKey<(data: MessageDetail) => void>
-export const DataRowKey = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetail | null>>>
+export const DataRowKeyTab2 = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetail | null>>>
+export const DataRowKeyTab3 = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetailAnswer | null>>>
 export const DataCompanyTab3 = Symbol() as InjectionKey<Ref<UnwrapRef<DataCompanyTab3 | null>>>
 export const OpenRowCompanyTab3 = Symbol() as InjectionKey<(data: DataCompanyTab3) => void>

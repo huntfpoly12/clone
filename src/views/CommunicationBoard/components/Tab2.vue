@@ -37,7 +37,7 @@
           <DxColumn caption="주소" data-field="company.address" alignment="center" width="200px"/>
           <DxColumn caption="분류" data-field="classification" alignment="center"/>
           <DxColumn caption="문의내용" data-field="content" alignment="center" width="200px"/>
-          <DxColumn caption="작성자" data-field="writerCompactUser.id" alignment="center"/>
+          <DxColumn caption="작성자" data-field="writerCompactUser.name" alignment="center"/>
           <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm" alignment="center"/>
           <DxColumn caption="답변내용" data-field="answer" alignment="center" width="200px"/>
           <DxColumn caption="답변자" data-field="answerCompactUser.id" alignment="center"/>
@@ -60,7 +60,7 @@
           </template>
           <template #action="{ data }">
             <a-tooltip>
-              <template #title>마감상태 변경이력</template>
+              <template #title>변경이력</template>
               <HistoryOutlined style="font-size: 18px; margin-left: 5px" @click="openLogs(data.data)" />
             </a-tooltip>
           </template>
@@ -70,7 +70,9 @@
     <a-col :span="10">
       <a-spin :spinning="loadingDetail || loadingUpdateAnswerToInquiryMessage || loadingUpdateInquiryMessage
         || loadingAddImageAnswerToInquiryMessage || loadingUpdateInquiryMessage || loadingCreate
-        || loadingDelete || loadingDeleteImageInquiryMessage || loadingDeleteImageInquiryMessage">
+        || loadingDeleteInquiryMessage || loadingDeleteAnswerToInquiryMessage || loadingDeleteImageInquiryMessage
+        || loadingDeleteImageAnswerToInquiryMessage || loadingAddImageInquiryMessage
+      ">
         <div class="form-container pl-10 pt-8">
           <div class="form-chat">
             <div v-chat-scroll ref="formTimeline" class="form-chat-timeline">
@@ -95,15 +97,16 @@
                         {{ dayjs(messageDetail.updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
                       </div>
                       <div class="form-chat-timeline-content-info-classification">{{ messageDetail.classification }}</div>
+                      <div v-if="messageDetail.active && messageDetail?.messageId !== 0" class="ml-10">
+                        <DxButton type="ghost" @click="handleEditMessage(messageDetail, TypeEditMessage.QUESTION)" :disabled="rowEdit.isEdit">
+                          <EditOutlined />
+                        </DxButton>
+                        <DxButton type="ghost" @click="handleDeleteMessage(messageDetail, TypeEditMessage.QUESTION)">
+                          <DeleteOutlined />
+                        </DxButton>
+                      </div>
                     </div>
-                    <div v-if="messageDetail.active && messageDetail?.messageId !== 0">
-                      <DxButton type="ghost" @click="handleEditMessage(messageDetail, TypeEditMessage.QUESTION)" :disabled="rowEdit.isEdit">
-                        <EditOutlined />
-                      </DxButton>
-                      <DxButton type="ghost" @click="handleDeleteMessage(messageDetail)">
-                        <DeleteOutlined />
-                      </DxButton>
-                    </div>
+                    <div v-if="messageDetail.createdAt < messageDetail.updatedAt" class="edited">Edited</div>
                   </div>
                   <div class="form-chat-timeline-content-background">
                     <div class="form-chat-timeline-content-text">
@@ -151,15 +154,18 @@
                           {{ dayjs(messageDetail.answeredAt).format('YYYY-MM-DD HH:mm:ss') }}
                         </div>
                         <div class="form-chat-timeline-content-info-classification">{{ messageDetail.classification }}</div>
+                        <div v-if="messageDetail.active && messageDetail?.messageId !== 0">
+                          <DxButton type="ghost" @click="handleEditMessage(messageDetail, TypeEditMessage.ANSWER)" :disabled="rowEdit.isEdit">
+                            <EditOutlined />
+                          </DxButton>
+                          <DxButton type="ghost" @click="handleDeleteMessage(messageDetail, TypeEditMessage.ANSWER)">
+                            <DeleteOutlined />
+                          </DxButton>
+                        </div>
                       </div>
-                      <div v-if="messageDetail.active && messageDetail?.messageId !== 0">
-                        <DxButton type="ghost" @click="handleEditMessage(messageDetail, TypeEditMessage.ANSWER)" :disabled="rowEdit.isEdit">
-                          <EditOutlined />
-                        </DxButton>
-                        <DxButton type="ghost" @click="handleDeleteMessage(messageDetail)">
-                          <DeleteOutlined />
-                        </DxButton>
-                      </div>
+
+                      <div v-if="messageDetail.createdAt < messageDetail.updatedAt" class="edited">Edited</div>
+
                     </div>
                     <div class="form-chat-timeline-content-background">
                       <div class="form-chat-timeline-content-text">
@@ -192,30 +198,29 @@
                 </div>
               </div>
             </div>
-            <div class="form-chat-bottom">
+            <div class="form-chat-bottom" v-if="rowEdit.isEdit || !messageDetail?.answeredAt">
               <div class="form-chat-bottom-category">
                 <StatusChat with="150" :valueSelect="3" disabled />
                 <div v-if="messageDetail">
                   <checkbox-basic label="비밀글" v-model:valueCheckbox="messageDetail.secret" :disabled="!rowEdit.isEdit"/>
                 </div>
-                <info-tool-tip>
+                <info-tool-tip style="margin-left: 0">
                   선택시 작성글과 답글은 작성자만 조회할 수 있습니다
                 </info-tool-tip>
-                <span style="margin: 0 10px;">분류:</span>
-                <span class="form-chat-bottom-category-text">
-                  <Classification v-if="messageDetail && messageDetail?.expresstionType !== 3"
-                                  v-model:value-select="messageDetail.classification"
-                                  :disabled="!messageDetail?.active || !rowEdit.isEdit && !state.isNewRow" />
-                </span>
+                <a-form-item label="분류" v-if="messageDetail && messageDetail?.answeredAt && rowEdit.type === TypeEditMessage.QUESTION">
+                  <Classification
+                    v-model:value-select="messageDetail.classification"
+                    :disabled="!messageDetail?.active || !rowEdit.isEdit" />
+                </a-form-item>
               </div>
-              <InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
+              <InputChat v-model:content="rowEdit.content" v-model:files="filesUpload"
                          :placeholder="'글작성 (최대 1,000자)'" :companyId="messageDetail?.companyId || 0"
                          :disabled="!!messageDetail?.answeredAt && !rowEdit.isEdit || !messageDetail?.active" @submitChat="submitChat"
                          :isEdit="true" @cancel="cancelEdit"
-                         :isNewRow="!rowEdit.isEdit"
+                         :isNewRow="!rowEdit.isEdit && !messageDetail?.answeredAt"
                          @update-image="updateImage" />
               <div v-if="rowEdit.isEdit" class="mt-10">
-                <div v-for="file in messageDetail?.fileStorages" class="d-flex-center justify-content-between"
+                <div v-for="file in rowEdit.files" class="d-flex-center justify-content-between"
                      :key="file.id">
                   <div class="d-flex-center">
                     <FileOutlined style="margin-right: 10px;" />
@@ -251,9 +256,11 @@ import {Message} from "@/configs/enum";
 import {
   addAttachedFileOfAnswerToInquiryMessage,
   addAttachedFileOfInquiryMessage,
-  createAnswerToInquiryMessage, deleteAttachedFileOfAnswerToInquiryMessage, deleteAttachedFileOfInquiryMessage,
+  createAnswerToInquiryMessage,
+  deleteAnswerToInquiryMessage,
+  deleteAttachedFileOfAnswerToInquiryMessage,
+  deleteAttachedFileOfInquiryMessage,
   deleteInquiryMessage,
-  deleteNotificationMessage,
   updateAnswerToInquiryMessage,
   updateInquiryMessage
 } from "@/graphql/mutations/BF/Communication-board";
@@ -268,7 +275,7 @@ import Tab3PlusModal from "@/views/CommunicationBoard/components/Tab3PlusModal.v
 import {
   ClassificationEnum,
   DataCompanyTab3,
-  DataRowKey,
+  DataRowKeyTab2,
   MessageDetailAnswer,
   OpenRowCompanyTab3,
   OpenRowKey,
@@ -288,7 +295,7 @@ import InfoToolTip from "@/components/common/InfoToolTip.vue";
 const rangeDate = ref([parseInt(dayjs().subtract(1, "year").format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
 const dataRowCompany = ref<DataCompanyTab3 | null>(null)
 
-const dataRow = inject(DataRowKey)
+const dataRow = inject(DataRowKeyTab2)
 const openRow = inject(OpenRowKey)
 
 const gridRef = ref()
@@ -299,7 +306,6 @@ const state = reactive({
   isModalPreview: false,
   isModalTab3Plus: false,
   isModalHistory: false,
-  isNewRow: false,
   trigger: true,
   triggerDetail: false,
   classification: ClassificationEnum.MAJOR_INSURANCE
@@ -328,8 +334,7 @@ const listImagePreview = ref({
   index: 0,
   files: [],
 })
-const inputChatRef = ref()
-const rowEdit: RowEditDefault = reactive(rowEditDefault)
+const rowEdit: RowEditDefault = reactive(cloneDeep(rowEditDefault))
 const focusRowKey: any = ref(dataRow?.value?.messageId || null)
 const focusRowIndex = ref(dataRow?.value?.messageId ? -1 : 0)
 const selectRowKeyAction = ref(0)
@@ -353,7 +358,6 @@ onResult((result) => {
       key: "messageId",
     },
   });
-  state.isNewRow = false
   state.trigger = false
 })
 onError((error) => {
@@ -408,7 +412,6 @@ const closeModal = (e: boolean) => {
       gridRef.value.instance?.refresh()
       focusRowKey.value = result?.messageId
       messageDetail.value = cloneDeep(result)
-      state.isNewRow = true
     });
   }
   state.isModalTab3Plus = false
@@ -416,52 +419,30 @@ const closeModal = (e: boolean) => {
 const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
   const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
   selectRowKeyAction.value = e.rows[e.newRowIndex].key;
-  if (state.isNewRow) {
+  if (rowEdit.isEdit && focusRowKey.value !== e.rows[e.newRowIndex].key || filesUpload.value.length > 0) {
     rowElement?.classList.add("dx-state-hover-custom")
+    e.cancel = true
     deletePopup({
       message: Message.getCommonMessage('301').message,
       okText: '네',
       callback: () => {
         dataSource.value?.store().remove(0)
-        state.isNewRow = false
         focusRowKey.value = selectRowKeyAction.value
         gridRef.value.instance?.refresh()
+        cancelEdit()
       },
       cancelFn: () => {
         rowElement?.classList.remove("dx-state-hover-custom")
       },
       icon: false
     })
-    e.cancel = true
-  } else {
-    if (rowEdit.isEdit) {
-      rowElement?.classList.add("dx-state-hover-custom")
-      e.cancel = true
-      deletePopup({
-        message: Message.getCommonMessage('301').message,
-        okText: '네',
-        callback: () => {
-          dataSource.value?.store().remove(0)
-          state.isNewRow = false
-          focusRowKey.value = selectRowKeyAction.value
-          gridRef.value.instance?.refresh()
-          cancelEdit()
-        },
-        cancelFn: () => {
-          rowElement?.classList.remove("dx-state-hover-custom")
-        },
-        icon: false
-      })
-    }
   }
 }
 const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
   if (e.row?.data) {
-    if (!state.isNewRow) {
-      queryDetail.messageId = e.row.data.messageId
-      queryDetail.companyId = e.row.data.companyId
-      state.triggerDetail = true
-    }
+    queryDetail.messageId = e.row.data.messageId
+    queryDetail.companyId = e.row.data.companyId
+    state.triggerDetail = true
     // messageDetail.value = cloneDeep(e.row.data)
     // previousRowData.value = cloneDeep(e.row.data);
     if (openRow) openRow(e.row.data)
@@ -513,7 +494,6 @@ const {
 onDoneCreate((result) => {
   if (result) {
     focusRowKey.value = result.data.createAnswerToInquiryMessage.messageId
-    state.isNewRow = false
     queryDetail.messageId = result.data.createAnswerToInquiryMessage.messageId
     queryDetail.companyId = result.data.createAnswerToInquiryMessage.companyId
     state.triggerDetail = true
@@ -526,35 +506,37 @@ onErrorCreate((error) => {
   notification('error', error.message)
 })
 const {
-  mutate: mutateDelete,
-  onDone: onDoneDelete,
-  onError: onErrorDelete,
-  loading: loadingDelete
-} = useMutation(deleteNotificationMessage)
-onDoneDelete((result) => {
+  mutate: mutateDeleteAnswerToInquiryMessage,
+  onDone: onDoneDeleteAnswerToInquiryMessage,
+  onError: onErrorDeleteAnswerToInquiryMessage,
+  loading: loadingDeleteAnswerToInquiryMessage
+} = useMutation(deleteAnswerToInquiryMessage)
+onDoneDeleteAnswerToInquiryMessage((result) => {
   if (result) {
-    refetch()
+    state.triggerDetail = true
+    state.trigger = true
     notification("success", Message.getCommonMessage('402').message);
   }
 })
-onErrorDelete((error) => {
+onErrorDeleteAnswerToInquiryMessage((error) => {
   console.log('%c error', 'color: red', error)
   notification('error', error.message)
 })
 
 const {
-  mutate: mutateDeleteImage,
-  onDone: onDoneDeleteImage,
-  onError: onErrorDeleteImage,
-  loading: loadingDeleteImage
+  mutate: mutateDeleteInquiryMessage,
+  onDone: onDoneDeleteInquiryMessage,
+  onError: onErrorDeleteInquiryMessage,
+  loading: loadingDeleteInquiryMessage
 } = useMutation(deleteInquiryMessage)
-onDoneDeleteImage((result) => {
+onDoneDeleteInquiryMessage((result) => {
   if (result) {
     state.triggerDetail = true
+    state.trigger = true
     notification("success", Message.getCommonMessage('402').message);
   }
 })
-onErrorDeleteImage((error) => {
+onErrorDeleteInquiryMessage((error) => {
   console.log('%c error', 'color: red', error)
   notification('error', error.message)
 })
@@ -603,6 +585,7 @@ const {
 onDoneDeleteImageInquiryMessage((result) => {
   if (result) {
     state.triggerDetail = true
+    rowEdit.files = result.data.deleteAttachedFileOfInquiryMessage.fileStorages
     notification("success", Message.getCommonMessage('402').message);
   }
 })
@@ -621,6 +604,7 @@ const {
 onDoneDeleteImageAnswerToInquiryMessage((result) => {
   if (result) {
     state.triggerDetail = true
+    rowEdit.files = result.data.deleteAttachedFileOfAnswerToInquiryMessage.answerFileStorages
     notification("success", Message.getCommonMessage('402').message);
   }
 })
@@ -629,17 +613,14 @@ onErrorDeleteImageAnswerToInquiryMessage((error) => {
   notification('error', error.message)
 })
 const submitChat = () => {
-  console.log('%c syb', 'color: red', rowEdit.isEdit)
   if (rowEdit.isEdit) {
     editChat()
   } else {
-    console.log('%c vao day ', 'color: red',)
     addChat()
   }
 }
 
 function addChat() {
-  console.log('%c add chat', 'color: red',)
   if (state.isLoadingUpload || (!rowEdit.content.trim() && !filesUpload.value.length)) return
   let fileStorageIds = null
   if (filesUpload.value.length) {
@@ -723,17 +704,24 @@ const isImgLink = (url: any) => {
   return (url.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp|webp)(\?(.*))?$/gmi) !== null);
 }
 
-const handleDeleteMessage = (messageDetail: any) => {
+const handleDeleteMessage = (messageDetail: any, type: TypeEditMessage) => {
   deletePopup({
     callback: () => {
-      mutateDelete({
-        companyId: messageDetail.companyId,
-        messageId: messageDetail.messageId
-      })
+      if (type === TypeEditMessage.QUESTION) {
+        mutateDeleteInquiryMessage({
+          companyId: messageDetail.companyId,
+          messageId: messageDetail.messageId
+        })
+      } else {
+        mutateDeleteAnswerToInquiryMessage({
+          companyId: messageDetail.companyId,
+          messageId: messageDetail.messageId
+        })
+      }
     },
-    message: Message.getCommonMessage("303").message,
-    cancelText: Message.getCommonMessage("303").no,
-    okText: Message.getCommonMessage("303").yes,
+    message: `만약 답글이 있는 경우 답글도 함께 삭제됩니다. 본 글을 삭제하시겠습니까?`,
+    cancelText: `아니오`,
+    okText: `네. 삭제합니다`,
   })
 }
 const handleDeleteMessageImage = (fileStorageId: number) => {
@@ -749,17 +737,16 @@ const handleDeleteMessageImage = (fileStorageId: number) => {
         mutateDeleteImageAnswerToInquiryMessage({
           companyId: messageDetail.value!.companyId,
           messageId: messageDetail.value!.messageId,
-          fileStorageId
+          answerFileStorageId: fileStorageId
         })
       }
     },
-    message: Message.getCommonMessage("303").message,
-    cancelText: Message.getCommonMessage("303").no,
-    okText: Message.getCommonMessage("303").yes,
+    message: `만약 답글이 있는 경우 답글도 함께 삭제됩니다. 본 글을 삭제하시겠습니까?`,
+    cancelText: `아니오`,
+    okText: `네. 삭제합니다`,
   })
 }
 const handleEditMessage = (row: any, type: TypeEditMessage) => {
-  console.log('%c row', 'color: red',row)
   rowEdit.type = type
   if (type === TypeEditMessage.QUESTION) {
     rowEdit.content = row.content
@@ -803,4 +790,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 @import "./../styles";
+.ant-form-item {
+  margin-bottom: 0 !important;
+}
 </style>

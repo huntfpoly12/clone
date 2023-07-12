@@ -1,7 +1,7 @@
 <template>
   <DxSelectBox v-if="isSelect" :noDataText="Message.getMessage('COMMON', '901').message" :width="width"
     :search-enabled="false" :data-source="listStatus" placeholder="선택" value-expr="id" display-expr="value"
-    v-model:value="valueBind" :disabled="disabled" :read-only="readOnly" @value-changed="updateValue(valueSelect)">
+    v-model:value="valueBind" :disabled="disabled" :read-only="readOnly" @value-changed="updateValue(valueBind)">
   </DxSelectBox>
 </template>
 <script setup lang="ts">
