@@ -5,9 +5,12 @@
         <div v-for="data in dataSource" :key="data.cursor" class="question-container" @click="openRow && openRow(data.node)">
           <div class="d-flex-center gap-10">
             <ExpressionType :is-select="false" :value-select="data.node.expresstionType"/>
-            <div class="font-bold">{{ data.node.writerCompactUser.name }}</div>
+            <div :class='`font-bold ${data.node.writerCompactUser.type === `m` ? `text-blue` : ``}`'>{{ data.node.writerCompactUser.name }}</div>
             <div class="time">{{ dayjs(data.node.writedAt).format('YYYY-MM-DD hh:mm:ss') }}</div>
             <div class="classification">{{data.node.classification}}</div>
+            <div v-if="data.node.secret !== null && data.node.expresstionType === 2">
+              <checkbox-basic label="비밀글" :value-checkbox="data.node.secret" disabled/>
+            </div>
           </div>
           <div class="truncate" style=" width: 250px;">{{ data.node.content }}</div>
         </div>
@@ -25,6 +28,7 @@ import getRecentAdminCommunicationMessages
   from "@/graphql/queries/BF/Communication-board/getRecentAdminCommunicationMessages";
 import {inject, ref} from "vue";
 import ExpressionType from "@/components/common/ExpressionType.vue";
+import PostCodeButton from "@/components/common/PostCodeButton.vue";
 
 const dataSource: any = ref<RecentAdminCommunicationMessages[]>([])
 
@@ -116,7 +120,9 @@ onError((error) => {
 .font-bold {
   font-weight: 700;
 }
-
+.text-blue {
+  color: #1890ff;
+}
 .time {
   color: #bcbcc2ff;
   text-align: end;

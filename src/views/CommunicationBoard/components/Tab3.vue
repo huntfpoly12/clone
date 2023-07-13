@@ -64,7 +64,7 @@
             </template>
             <template #action="{ data }">
               <a-tooltip>
-                <template #title>마감상태 변경이력</template>
+                <template #title>변경이력</template>
                 <HistoryOutlined style="font-size: 18px; margin-left: 5px" @click="openLogs(data.data)" />
               </a-tooltip>
             </template>
@@ -91,7 +91,7 @@
                         </div>
                         <div class="form-chat-timeline-content-info-user-name">
                           {{
-                            messageDetail.writerCompactUser.name
+                            messageDetail.writerCompactUser.name || userInfo.name
                           }}
                         </div>
                       </div>
@@ -218,8 +218,12 @@ import dayjs from "dayjs";
 import DataSource from "devextreme/data/data_source";
 import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
 import cloneDeep from "lodash/cloneDeep";
-import {inject, provide, reactive, ref, watch} from "vue";
+import {computed, inject, provide, reactive, ref, watch} from "vue";
 import Classification from "./Classification.vue";
+import {useStore} from "vuex";
+
+const store = useStore()
+const userInfo = computed(() => store.state.auth.userInfor);
 
 const rangeDate = ref([parseInt(dayjs().subtract(1, "year").add(1, "day").format("YYYYMMDD")), parseInt(dayjs().add(1, "day").format("YYYYMMDD"))])
 const dataRowCompany = ref<DataCompanyTab3 | null>(null)
@@ -565,7 +569,7 @@ const handleDeleteMessage = (messageDetail: any) => {
         messageId: messageDetail.messageId
       })
     },
-    message: `만약 답글이 있는 경우 답글도 함께 삭제됩니다. 본 글을 삭제하시겠습니까?`,
+    message: `본 글을 삭제하시겠습니까?`,
     cancelText: `아니오`,
     okText: `네. 삭제합니다`,
   })
