@@ -9,7 +9,7 @@
 		<a-spin :spinning="loadingTable">
 			<div v-if="dataSource" class="wrapper-content">
 				<div v-for="data in dataSource.edges" :key="data" class="question-container-tab1"
-					@click="openRow(data.node.expresstionType)">
+					@click="openRow(data.node)">
 					<div class="d-flex-center gap-10">
 						<ExpressionType :valueSelect="data.node.expresstionType" :isSelect="false" />
 						<div class="font-bold" :class="data.node.writerCompactUser.type == 'm' ? 'blue' : 'black'">{{
@@ -81,17 +81,22 @@ export default defineComponent({
 
 		});
 
-		const openRow = (expressionType: number) => {
-			console.log(expressionType);
-			switch (expressionType) {
+		const openRow = (node: any) => {
+			switch (node.expresstionType) {
 				case 1:
 					return openTab({ name: '마감', url: '/ac-130', id: 'ac-130' })
 				case 2:
-					return emit('activeKey', 3)
+					emit('messageId', node.messageId)
+					emit('activeKey', 3)
+					return
 				case 3:
-					return emit('activeKey', 3)
+					emit('messageId', node.messageId)
+					emit('activeKey', 3)
+					return
 				case 4:
-					return emit('activeKey', 2)
+					emit('messageId', node.messageId)
+					emit('activeKey', 2)
+					return
 				default:
 			}
 		}

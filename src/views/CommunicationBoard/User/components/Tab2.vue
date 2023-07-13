@@ -77,9 +77,10 @@
                                         @click="previewImage(dataDetail.fileStorages.filter((item: any) => isImgLink(item.url)), indexFile)">
                                 </div>
                                 <div v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => !isImgLink(item.url))"
-                                    :key="indexFile" class="d-flex-center mb-10 file-texts" @click="openLinkDownFile(file.url)">
+                                    :key="indexFile" class="d-flex-center mb-10 file-texts"
+                                    @click="openLinkDownFile(file.url)">
                                     <FileTextOutlined class="mr-10 fz-20" />
-									<div>{{ file.name }}</div>
+                                    <div>{{ file.name }}</div>
                                 </div>
                             </div>
                         </div>
@@ -147,8 +148,12 @@ export default defineComponent({
     },
     props: {
         onSearch: Number,
+        messageId: {
+            type: Number,
+            default: null,
+        },
     },
-    setup(props) {
+    setup(props, { emit }) {
         // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
@@ -175,7 +180,7 @@ export default defineComponent({
         }
         const originDataDetail = {
             companyId: companyId,
-            messageId: null,
+            messageId: 0,
         }
         // ================GRAPQL==============================================
         const { loading: loadingTable, onResult: resWorkNotificationMessages, onError
@@ -195,8 +200,12 @@ export default defineComponent({
             let data = value.data.searchWorkNotificationMessages
             if (data.length) {
                 dataSource.value = data;
-                focusedRowKey.value = data[0].messageId
-                originDataDetail.messageId = data[0].messageId
+                if (props.messageId) {
+                    originDataDetail.messageId = props.messageId
+                    emit('resetMessageId', true);
+                } else {
+                    originDataDetail.messageId = data[0].messageId
+                }
                 triggerWorkNotificationMessage.value = true;
             } else {
                 dataSource.value = []
@@ -217,6 +226,7 @@ export default defineComponent({
         resWorkNotificationMessage((value) => {
             triggerWorkNotificationMessage.value = false;
             dataDetail.value = value.data.getWorkNotificationMessage;
+            focusedRowKey.value = value.data.getWorkNotificationMessage.messageId
         });
 
         // ================FUNCTION============================================

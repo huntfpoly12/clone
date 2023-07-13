@@ -226,8 +226,12 @@ export default defineComponent({
 	},
 	props: {
 		onSearch: Number,
+		messageId: {
+			type: Number,
+			default: null,
+		},
 	},
-	setup(props) {
+	setup(props, { emit }) {
 		// config grid
 		const store = useStore();
 		const move_column = computed(() => store.state.settings.move_column);
@@ -267,7 +271,7 @@ export default defineComponent({
 		}
 		const originDataDetail = {
 			companyId: companyId,
-			messageId: null,
+			messageId: 0,
 			currentUserId: userId,
 		}
 		const dataRowClick: any = ref({})
@@ -299,11 +303,17 @@ export default defineComponent({
 					addRow()
 					return;
 				}
-				if (statusClickButtonSave.value) {
-					originDataDetail.messageId = data[0].messageId;
+				if (props.messageId) {
+					originDataDetail.messageId = props.messageId
+					emit('resetMessageId', true);
 				} else {
-					originDataDetail.messageId = dataRowClick.value.messageId;
+					if (statusClickButtonSave.value) {
+						originDataDetail.messageId = data[0].messageId;
+					} else {
+						originDataDetail.messageId = dataRowClick.value.messageId;
+					}
 				}
+
 				triggerWorkInquiryMessage.value = true;
 			} else {
 				focusedRowKey.value = null;
@@ -350,14 +360,13 @@ export default defineComponent({
 		// ================FUNCTION============================================
 		const onCreate = () => {
 			if (!disabledFormAdd.value && (rowEdit.content || filesUpload.value.length || rowEdit.secret || rowEdit.classification != '일반')) { // có thay đổi
-				console.log('mở popup');
 				modalStatusAdd.value = true
 				statusClickButtonAdd.value = true;
 			} else {
 				if (disabledFormAdd.value) {
 					addRow()
 				}
-				
+
 			}
 		}
 		const addRow = () => {
@@ -371,23 +380,17 @@ export default defineComponent({
 			statusClickButtonAdd.value = false;
 			dataRowClick.value = e.rows[e.newRowIndex]?.data;
 			if (focusedRowKey.value !== dataRowClick.value.messageId) { // if click same focused row
-				console.log(!disabledFormAdd.value);
-
 				if (!disabledFormAdd.value && (rowEdit.content || filesUpload.value.length || rowEdit.secret || rowEdit.classification != '일반')) { // có thay đổi
-					console.log('mở popup');
 					modalStatus.value = true
 				}
 				else {
 					if (!disabledFormAdd.value) { // ko thay đổi nhưng đang add
 						dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1); // delete row add
 						// disabledFormAdd.value = true;
-						console.log('delete');
 					}
 					originDataDetail.messageId = e.rows[e.newRowIndex]?.data.messageId
 					triggerWorkInquiryMessage.value = true;
-
 				}
-
 			}
 		};
 
