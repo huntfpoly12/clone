@@ -48,7 +48,7 @@
 <script lang="ts" setup>
 import notification from '@/utils/notification';
 import { DeleteOutlined, FileAddOutlined, FileOutlined } from '@ant-design/icons-vue';
-import { nextTick, ref } from 'vue';
+import { ref } from 'vue';
 
 import { Message } from "@/configs/enum";
 import Repository from "@/repositories";
@@ -154,7 +154,7 @@ const uploadPreviewFile = async (e?: any, files?: any) => {
     }
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('companyId', props.companyId.toString());
+    if (props.companyId > 0) formData.append('companyId', props.companyId.toString());
     return uploadRepository.messageNotification(formData).then(async (res: any) => {
       filesUpload.value.push({
         id: res.data.id,
