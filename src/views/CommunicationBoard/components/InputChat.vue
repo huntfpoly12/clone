@@ -170,6 +170,7 @@ const uploadPreviewFile = async (e?: any, files?: any) => {
     .then(() => {
       if (!props.isNewRow) {
         emit('updateImage', filesUpload.value)
+        filesUpload.value = []
       } else {
         emit('update:files', filesUpload.value)
       }

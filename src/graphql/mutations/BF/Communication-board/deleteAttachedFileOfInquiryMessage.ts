@@ -11,6 +11,11 @@ export default gql`
             fileStorageId: $fileStorageId,
         ){
             companyId
+            fileStorages {
+                id
+                name
+                url
+            }
         }
 
     }

@@ -19,12 +19,16 @@
                     </DxToolbar>
                     <template #search-action>
                         <a-row class="d-flex-center">
-                            <a-form-item label="매니저리스트" class="mr-10">
+                            <!-- <a-form-item label="매니저리스트" class="mr-10">
                                 <list-manager-dropdown v-model:valueInput="dataSource" width="180px" />
                             </a-form-item>
                             <a-form-item label="영업자리스트" class="mr-10">
                                 <list-sales-dropdown v-model:valueInput="dataSource" width="180px" />
-                            </a-form-item>
+                            </a-form-item> -->
+                            <div class="mr-20">
+                                khiêm: this is test detail
+                                <EditOutlined style="font-size: 18px " class="mr-10" @click="onOpenDetail" />
+                            </div>
                             <switch-basic width="80px" class="switch-insurance mr-10" switch-basic textCheck="해지제외"
                                 textUnCheck="해지포함" v-model:valueSwitch="dataSource" />
                             <a-tooltip title="CMS 동의신청서">
@@ -86,11 +90,6 @@
                         <HistoryOutlined style="font-size: 18px" />
                     </template>
                 </DxDataGrid>
-                <!-- <div>
-                    <EditOutlined style="font-size: 18px " class="mr-10" @click="onOpenDetail" />
-
-                    <HistoryOutlined style="font-size: 18px" @click="onOpenHistory" />
-                </div> -->
             </a-spin>
         </div>
     </div>
