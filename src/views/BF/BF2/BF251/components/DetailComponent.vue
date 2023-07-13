@@ -83,12 +83,6 @@
             <button-basic :disabled="false" @onClick="onSubmit" class="button-form-modal" :text="'저장'" :type="'default'"
                 :mode="'contained'" />
         </div>
-        <PopupMessage :modalStatus="isModal" @closePopup="isModal = false" :typeModal="'confirm'" okText="네. 저장합니다"
-            cancelText="아니오" @checkConfirm="handle" content="">{{ arrSelectCMS }}
-            <!-- <div>
-                CMS승인상태 : ….. <br />저장될 CMS승인상태는 실제와 상이할 수 있으니 반드시 확인하시기 바랍니다.그래도 저장하시겠습니까?
-            </div> -->
-        </PopupMessage>
     </a-modal>
 </template>
 
@@ -98,6 +92,7 @@ import { useStore } from "vuex";
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { DownloadOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
+import { Modal } from 'ant-design-vue';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -127,7 +122,6 @@ export default defineComponent({
             ownerName: null,
             valueSelect1: null,
         })
-        const isModal = ref(false)
         const dataSource = ref<any>([]);
         let arrSelect1 = [
             {
@@ -202,10 +196,24 @@ export default defineComponent({
             // }
         };
         const onSubmit = () => {
-            isModal.value = true;
+            Modal.confirm({
+                title: 'CMS승인상태 : ….. ',
+                content: '저장될 CMS승인상태는 실제와 상이할 수 있으니 반드시 확인하시기 바랍니다.그래도 저장하시겠습니까? ',
+                okText: '네. 저장합니다',
+                cancelText: '저장',
+                icon: null,
+                width: 521,
+                onOk() {
+                    handle()
+                },
+                onCancel() {
+                    
+                },
+            });
         }
         const handle = () => {
-
+                console.log('hihih');
+                
         }
         return {
             move_column,
@@ -214,7 +222,7 @@ export default defineComponent({
             cancel,
             ...toRefs(dataDetail),
             arrSelectCMS, arrSelect1, onSubmit,
-            isModal, handle
+            handle
         };
     },
 });

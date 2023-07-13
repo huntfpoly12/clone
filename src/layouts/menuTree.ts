@@ -48,14 +48,22 @@ export default [
         title: "CMS/정산 관리",
         id: "bf-250",
         subMenus: [
-          {title: "CMS 관리", url: "/bf-251", id: "bf-251", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
-          {title: "청구 괸리", url: "/bf-252", id: "bf-252", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
-          {title: "입금 관리", url: "/bf-253", id: "bf-253", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
-          {title: "입금 현황", url: "#", id: "bf-254", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
-          {title: "환급 관리", url: "/bf-255", id: "bf-255", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey]},
-          {title: "해지 관리", url: "#", id: "bf-260", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey]},
+          {title: "CMS 관리", url: "/bf-251", id: "bf-251", roles: [AdminScreenRole.CMS_MANAGE.enumKey]},
+          {title: "청구 괸리", url: "/bf-252", id: "bf-252", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
+          {title: "입금 관리", url: "/bf-253", id: "bf-253", roles: [AdminScreenRole.DEPOSIT_MANAGE.enumKey]},
+          {title: "입금 현황", url: "#", id: "bf-254", roles: [AdminScreenRole.DEPOSIT_MANAGE.enumKey]},
+          {title: "환급 관리", url: "/bf-255", id: "bf-255", roles: [...AdminScreenRole.REFUNDS_NORMAL_MANAGE.enumKey, ...AdminScreenRole.REFUNDS_SPECIAL_MANAGE.enumKey]},
+          {title: "해지 관리", url: "#", id: "bf-260", roles: [...AdminScreenRole.TERMINATION_NORMAL_MANAGE.enumKey, ...AdminScreenRole.TERMINATION_SPECIAL_MANAGE.enumKey]},
         ],
-        roles: [AdminScreenRole.BILLING_MANAGE.enumKey, AdminScreenRole.TERMINATION_MANAGE.enumKey, AdminScreenRole.UNPAID_MANAGE.enumKey]
+        roles: [
+          AdminScreenRole.CMS_MANAGE.enumKey,
+          AdminScreenRole.BILLING_MANAGE.enumKey,
+          AdminScreenRole.DEPOSIT_MANAGE.enumKey,
+          AdminScreenRole.REFUNDS_NORMAL_MANAGE.enumKey,
+          AdminScreenRole.REFUNDS_SPECIAL_MANAGE.enumKey,
+          AdminScreenRole.TERMINATION_NORMAL_MANAGE.enumKey,
+          AdminScreenRole.TERMINATION_SPECIAL_MANAGE.enumKey
+        ]
       },
       {
         title: "회계업무",

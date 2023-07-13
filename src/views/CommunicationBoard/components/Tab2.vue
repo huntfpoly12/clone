@@ -40,7 +40,7 @@
           <DxColumn caption="작성자" data-field="writerCompactUser.name" alignment="center"/>
           <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm" alignment="center"/>
           <DxColumn caption="답변내용" data-field="answer" alignment="center" width="200px"/>
-          <DxColumn caption="답변자" data-field="answerCompactUser.id" alignment="center"/>
+          <DxColumn caption="답변자" data-field="answerCompactUser.name" alignment="center"/>
           <DxColumn caption="답변일시" data-field="answeredAt" data-type="date" format="yyyy-MM-dd HH:mm" alignment="center"/>
           <DxColumn caption="" alignment="center" cell-template="action" />
           <template #active="{ data }">
@@ -49,7 +49,6 @@
             </div>
           </template>
           <template #expresstionType="{ data }">
-            <ExpressionType v-if="data.data.answeredAt" :is-select="false" :value-select="2" style="margin-bottom: 5px"/>
             <ExpressionType :is-select="false" :value-select="data.data.expresstionType" />
           </template>
           <template #companyCode="{ data }">
