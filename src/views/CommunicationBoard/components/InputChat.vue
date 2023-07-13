@@ -119,7 +119,6 @@ const resetInputChat = () => {
   filesUpload.value = []
   inputChat.value.style.overflowY = "hidden"
   inputChat.value.style.height = "40px"
-  focus()
   emit('cancel')
 }
 const openFile = () => {
@@ -197,12 +196,6 @@ const formatFileSize = (bytes: number) => {
 
 const resizeInput = () => {
   changeInput(inputChat.value)
-}
-
-const focus = () => {
-  nextTick(() => {
-    inputChat.value.focus()
-  })
 }
 
 const dragover = (event: any) => {

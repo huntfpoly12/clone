@@ -615,8 +615,12 @@ const refetchDataTab3 = () => {
   }
   state.trigger = true
 }
+const reloadDetail = () => {
+  state.triggerDetail = true
+}
 defineExpose({
-  refetchDataTab3
+  refetchDataTab3,
+  reloadDetail
 })
 </script>
 
