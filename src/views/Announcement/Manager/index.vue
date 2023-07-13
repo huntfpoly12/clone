@@ -177,7 +177,7 @@ import InputChat from "@/views/CommunicationBoard/components/InputChat.vue";
 import { companyId } from "@/helpers/commonFunction";
 import deletePopup from "@/utils/deletePopup";
 import { Message } from "@/configs/enum";
-import { DataRowKey } from "@/views/CommunicationBoard/type";
+import { DataRowKeyTab2 } from "@/views/CommunicationBoard/type";
 import { getJwtObject } from "@bankda/jangbuda-common";
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
@@ -190,7 +190,7 @@ const addModal = ref(false)
 const showAddModal = () => {
   addModal.value = true
 }
-const dataRow = inject(DataRowKey)
+const dataRow = inject(DataRowKeyTab2)
 const token = ref(sessionStorage.getItem("token"))
 let jwtObject = getJwtObject(token.value!);
 const userName = ref(sessionStorage.getItem("name"));

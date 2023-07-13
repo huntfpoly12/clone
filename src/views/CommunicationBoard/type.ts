@@ -1,26 +1,33 @@
 import {InjectionKey, Ref, UnwrapRef} from "vue";
 
+export enum ClassificationEnum {
+  'COMMON' = '일반',
+  'ACCOUNTING' = '회계',
+  'SOURCE' = '원천',
+  'MAJOR_INSURANCE' = '4대보험'
+}
+
 export interface DataCompanyTab3 {
   id: number
   code: string
   name: string
   address: string
-  phone: string
-  presidentName: string
-  presidentMobilePhone: string
-  manageStartDate: number
-  usedAccountingCount: boolean
-  usedWithholding: boolean
-  servicePrice: number
   active: boolean
-  compactSalesRepresentative: {
-    name: string
-  }
-  manageCompactUser: {
-    name: string
-  }
-  canceledAt: number
-  unpaidMonths: number
+  // phone: string
+  // presidentName: string
+  // presidentMobilePhone: string
+  // manageStartDate: number
+  // usedAccountingCount: boolean
+  // usedWithholding: boolean
+  // servicePrice: number
+  // compactSalesRepresentative: {
+  //   name: string
+  // }
+  // manageCompactUser: {
+  //   name: string
+  // }
+  // canceledAt: number
+  // unpaidMonths: number
 }
 
 export interface RecentAdminCommunicationMessages {
@@ -46,6 +53,7 @@ export interface RecentAdminCommunicationMessages {
     }
   }
 }
+
 export interface MessageDetail {
   companyId: number
   messageId: number
@@ -76,7 +84,38 @@ export interface MessageDetail {
     url: string
   }>
 }
+export interface MessageDetailAnswer extends MessageDetail {
+  answeredAt: number
+  answer: string
+  answerCompactUser: {
+    id: number
+    type: string
+    name: string
+    active: boolean
+  }
+  answerFileStorages?: Array<{
+    id: number
+    name: string
+    url: string
+  }>
+  secret: boolean
+}
+
+export interface RowEditDefault {
+  id: number
+  content: string
+  files: Array<{ id: number, url: string, name: string }>
+  isEdit: boolean
+  classification: ClassificationEnum
+  type?: TypeEditMessage
+}
+export enum TypeEditMessage {
+  QUESTION,
+  ANSWER
+}
+
 export const OpenRowKey = Symbol() as InjectionKey<(data: MessageDetail) => void>
-export const DataRowKey = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetail | null>>>
+export const DataRowKeyTab2 = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetail | null>>>
+export const DataRowKeyTab3 = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetailAnswer | null>>>
 export const DataCompanyTab3 = Symbol() as InjectionKey<Ref<UnwrapRef<DataCompanyTab3 | null>>>
 export const OpenRowCompanyTab3 = Symbol() as InjectionKey<(data: DataCompanyTab3) => void>

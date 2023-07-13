@@ -57,8 +57,6 @@ export default {
         });
 
         const updateValue = (e: any, val: any) => {
-            console.log('ầ', val);
-            
             emit("update:valueSelect", val);
         }
         return {

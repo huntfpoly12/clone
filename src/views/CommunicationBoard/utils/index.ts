@@ -1,3 +1,5 @@
+import {ClassificationEnum, RowEditDefault, TypeEditMessage} from "@/views/CommunicationBoard/type";
+
 export const messageTab3 = {
   messageId: 0,
   active: true,
@@ -16,5 +18,13 @@ export const messageTab3 = {
     username: '',
     active: true,
   },
-  fileStorages: ""
+  fileStorages: "",
+  classification: ClassificationEnum.MAJOR_INSURANCE
+}
+export const rowEditDefault: RowEditDefault = {
+  id: 0,
+  content: '',
+  files: [],
+  isEdit: false,
+  classification: ClassificationEnum.MAJOR_INSURANCE
 }

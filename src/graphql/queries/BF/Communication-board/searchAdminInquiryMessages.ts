@@ -18,13 +18,26 @@ export default gql`
             answeredAt
             answer
             company {
+                code
+                active
                 id
+                name
+                address
+                __typename @skip(if: true)
             }
             writerCompactUser {
                 id
+                name
+                username
+                active
+                __typename @skip(if: true)
             }
             fileStorages {
                 id
+                name
+                url
+                turl
+                __typename @skip(if: true)
             }
             answerCompactUser {
                 id

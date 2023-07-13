@@ -77,12 +77,9 @@
                                         @click="previewImage(dataDetail.fileStorages.filter((item: any) => isImgLink(item.url)), indexFile)">
                                 </div>
                                 <div v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => !isImgLink(item.url))"
-                                    :key="indexFile" class="files-preview-filetext" @click="openLinkDownFile(file.url)">
-                                    <FileTextOutlined style="margin-right: 10px; font-size:30px" />
-                                    <div class="files-preview-filetext-info">
-                                        <p class="files-preview-filetext-info-name">{{
-                                            file.name }}</p>
-                                    </div>
+                                    :key="indexFile" class="d-flex-center mb-10 file-texts" @click="openLinkDownFile(file.url)">
+                                    <FileTextOutlined class="mr-10 fz-20" />
+									<div>{{ file.name }}</div>
                                 </div>
                             </div>
                         </div>

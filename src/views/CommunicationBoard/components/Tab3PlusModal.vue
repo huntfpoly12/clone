@@ -8,7 +8,6 @@
     @cancel="setModalVisible" width="1200px">
     <div class="title">알림 대상 선택</div>
     <a-spin :spinning="loading">
-
       <DxDataGrid
         :show-row-lines="true"
         :hoverStateEnabled="true"
@@ -52,11 +51,11 @@
         <DxColumn data-field="address" caption="주소" alignment="center"/>
         <DxColumn data-field="presidentName" caption="대표자" alignment="center"/>
         <DxColumn data-field="phone" caption="연락처" alignment="center"/>
-        <DxColumn data-field="presidentMobilePhone" caption="대표자" alignment="center"/>
+        <DxColumn data-field="presidentMobilePhone" caption="휴대폰" alignment="center"/>
         <DxColumn caption="담당매니저" data-field="manageCompactUser.name" alignment="center"/>
-        <DxColumn data-field="manageStartDate" caption="관리시작일" alignment="center"/>
+        <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" format="yyyy-MM-dd" alignment="center"/>
         <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" alignment="center"/>
-        <DxColumn data-field="canceledAt" caption="해지일자" alignment="center"/>
+        <DxColumn data-field="canceledAt" caption="해지일자" data-type="date" format="yyyy-MM-dd" alignment="center"/>
         <DxColumn data-field="unpaidMonths" caption="연체 (개월)" alignment="center"/>
 
         <template #code="{data}">
@@ -66,7 +65,7 @@
       </DxDataGrid>
     </a-spin>
     <div class="text-center mt-20">
-      <DxButton type="default" @click="handleSubmit">알림글 작성</DxButton>
+      <DxButton type="default" @click="handleSubmit" :disabled="!dataCompanyTab3">알림글 작성</DxButton>
     </div>
 
   </a-modal>
@@ -79,7 +78,7 @@ import DxButton from 'devextreme-vue/button';
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320";
 import {FocusedRowChangedEvent} from "devextreme/ui/data_grid";
-import {OpenRowCompanyTab3, OpenRowKey} from "@/views/CommunicationBoard/type";
+import {DataCompanyTab3, OpenRowCompanyTab3, OpenRowKey} from "@/views/CommunicationBoard/type";
 
 const props = defineProps({
   modalStatus: {
@@ -93,6 +92,7 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['closeModal'])
+const dataCompanyTab3 = inject(DataCompanyTab3)
 const dataSearch = reactive({
   excludeCancel: true,
   salesRepresentativeId: null,
@@ -101,9 +101,9 @@ const dataSearch = reactive({
   page: 1
 })
 const dataSource = ref([])
-console.log('%c dataSearch', 'color: red', dataSearch)
 const {refetch: refetchData, onResult, loading, onError} = useQuery(queries.searchCompanies, dataSearch, () => ({
   fetchPolicy: "no-cache",
+  enabled: props.modalStatus
 }))
 onResult((result) => {
   dataSource.value = result.data?.searchCompanies?.datas
@@ -114,7 +114,13 @@ const handleSubmit = () => {
 const openRowCompanyTab3 = inject(OpenRowCompanyTab3)
 
 const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
-  if (e?.row?.data && openRowCompanyTab3) openRowCompanyTab3(e.row.data)
+  if (e?.row?.data && openRowCompanyTab3) openRowCompanyTab3({
+    name: e.row.data.name,
+    id: e.row.data.id,
+    address: e.row.data.address,
+    code: e.row.data.code,
+    active: e.row.data.active
+  })
 }
 </script>
 

@@ -35,7 +35,6 @@
 </template>
 
 <script lang="ts">
-import { getFakeData } from "../utils/index";
 import { defineComponent, reactive, ref } from "vue";
 import dayjs from "dayjs";
 import { ReloadOutlined } from '@ant-design/icons-vue';
@@ -53,7 +52,6 @@ export default defineComponent({
 	},
 	setup(props, { emit }) {
 		const dataSource = ref<any>()
-		dataSource.value = getFakeData()
 		// const loading = ref(false)
 		const token = ref(sessionStorage.getItem("token"))
 		let jwtObject = getJwtObject(token.value!);

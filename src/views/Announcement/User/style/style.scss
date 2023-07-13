@@ -28,7 +28,27 @@
             height: 100%;
         }
     }
+}
 
+.files {
+    width: 100%;
+    background-color: #fff;
+    .images {
+        display: flex;
+        flex-wrap: wrap;
+
+        .image {
+            width: 50%;
+            padding: 5px;
+            cursor: pointer;
+            &:hover {
+                opacity: .8;
+            }
+        }
+    }
+    .file-texts {
+        cursor: pointer;
+    }
 }
 
 .blue {
@@ -38,6 +58,7 @@
 .black {
     color: #333333;
 }
+
 .font-bold {
     font-weight: 700;
 }

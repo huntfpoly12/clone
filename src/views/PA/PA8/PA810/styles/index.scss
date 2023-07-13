@@ -105,7 +105,15 @@
 
 :deep(.ant-form-item-label ) {
   label {
-    min-width: 130px;
+    min-width: 145px;
     padding-left: 10px;
   }
 }
+
+:deep(.small) {
+  label {
+    padding-left: 0;
+    min-width: 100px
+  }
+}
+

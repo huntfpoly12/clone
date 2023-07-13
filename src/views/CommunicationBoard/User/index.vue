@@ -25,7 +25,7 @@ export default defineComponent({
     Tab1, Tab2, Tab3
   },
   setup() {
-    const activeKey = ref<number>(2);
+    const activeKey = ref<number>(3);
     const dataRow = ref(null)
     const actionActiveKey = (key: number) => {
       activeKey.value = key

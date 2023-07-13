@@ -67,7 +67,13 @@ export default gql`
             ip
             active
         }
-        # answerCompactUser
+        answerCompactUser {
+            id
+            type
+            username
+            name
+            active
+        }
         answerFileStorages {
             id
             name
