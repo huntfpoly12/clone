@@ -190,7 +190,7 @@
 				</div>
 			</a-col>
 			<a-col class="upload detail2">
-				<UploadPreviewImage v-model:list-image-file="fileList" :statusProcess="statusProcess" />
+				<UploadPreviewImage v-model:list-image-file="fileList" :isDisabled="isDisabled" />
 			</a-col>
 		</a-row>
 	</div>
@@ -269,7 +269,7 @@ export default defineComponent({
 		let dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? "[]");
 		const keyResetPopupCopy = ref<number>(0)
 		const statusProcess = computed(() => props.statusProcess)
-    const isDisabled = computed(() => (userType !== 'm' && statusProcess.value !== 10) || (userType === 'm' && statusProcess.value === 40))
+    	const isDisabled = computed(() => (userType !== 'm' && statusProcess.value !== 10) || (userType === 'm' && statusProcess.value === 40))
 		// =================== GRAPHQL ===================
 		// mutation updateAccountingDocument
 		const {

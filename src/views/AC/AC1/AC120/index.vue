@@ -122,7 +122,7 @@
 							width="80" />
 						<template #bankbook="{ data }">
 							<a-tooltip placement="top"
-								:title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
+								:title="data.data.bankbook?.bankbookNickname + ' ' + data.data.bankbook?.bankbookNumber">
 								<span :title="data.data.bankbook?.bankbookNickname">{{ data.data.bankbook?.bankbookNickname
 								}}</span>
 							</a-tooltip>
