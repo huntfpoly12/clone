@@ -290,6 +290,8 @@ export default defineComponent({
     const { mutate: renewMajor, onDone: renewMajorDone, onError: renewMajorError } = useMutation(mutations.renewMajorInsuranceConsignStatus);
     renewMajorDone((res: any) => {
       notification('success', messageCreate);
+      let data = res.data.renewMajorInsuranceConsignStatus;
+      dataState.value.registeredAt = data.registeredAt;
     })
     renewMajorError((res: any) => {
       notification('error', res.message);

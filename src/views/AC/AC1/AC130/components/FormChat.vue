@@ -12,8 +12,8 @@
                   <StatusChat :valueSelect="items.expresstionType" :isSelect="false" />
                 </div>
                 <div class="form-chat-timeline-content-info-user-name"
-                  :class="{ 'form-chat-timeline-content-info-user-name-login': items.writerUser.type === 'm' }">{{
-                    items.writerUser.name }}
+                  :class="{ 'form-chat-timeline-content-info-user-name-login': items.writerCompactUser.type === 'm' }">{{
+                    items.writerCompactUser.name }}
                 </div>
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
@@ -24,14 +24,14 @@
                 <MarkdownCustom
                   :options="{ source: items.content || '', linkify: true, typographer: true, highlight: true }" />
               </div>
-              <div v-if="items?.files && items?.files.length" class="form-chat-timeline-content-files">
+              <div v-if="items?.fileStorages && items?.fileStorages.length" class="form-chat-timeline-content-files">
                 <div class="form-chat-timeline-content-files-preview">
                   <div class="form-chat-timeline-content-files-preview-images">
-                    <img v-for="(file, indexFile) in items.files.filter((file: any) => isImgLink(file.url))"
+                    <img v-for="(file, indexFile) in items.fileStorages.filter((file: any) => isImgLink(file.url))"
                       :key="indexFile" class="form-chat-timeline-content-files-preview-images-image" :src="file.url"
-                      alt="" @click="previewImage(items.files.filter((file: any) => isImgLink(file.url)), indexFile)">
+                      alt="" @click="previewImage(items.fileStorages.filter((file: any) => isImgLink(file.url)), indexFile)">
                   </div>
-                  <div v-for="(file, indexFile) in items.files.filter((file: any) => !isImgLink(file.url))"
+                  <div v-for="(file, indexFile) in items.fileStorages.filter((file: any) => !isImgLink(file.url))"
                     :key="indexFile" class="form-chat-timeline-content-files-preview-filetext"
                     @click="openLinkDownFile(file.url)">
                     <FileTextOutlined style="margin-right: 10px; font-size:30px" />

@@ -8,30 +8,30 @@ export default gql`
       page
       rows
       datas {
-        id
-        expresstionType
-        classification
-        content
         companyId
-        fiscalYear
-        facilityBusinessId
-        year
-        month
+        messageId
         writedAt
+        content
         createdAt
         createdBy
         updatedAt
         updatedBy
         ip
         active
-        writerUser {
+        expresstionType
+        classification
+        fiscalYear
+        facilityBusinessId
+        year
+        month
+        writerCompactUser {
           id
           type
           username
           name
           active
         }
-        files {
+        fileStorages {
           id
           name
           url
