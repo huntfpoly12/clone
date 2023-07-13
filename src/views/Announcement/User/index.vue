@@ -1,5 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="false" :buttonSave="false" buttonSearch @actionSearch="actionSearch"/>
+    <action-header title="기타소득자등록" @actionSave="false" :buttonSave="false" buttonSearch @actionSearch="actionSearch" />
     <div id="announcement-user">
         <div class="page-content">
             <a-row>
@@ -35,15 +35,18 @@
                                 <ExpressionType :valueSelect="data.data.expresstionType" :isSelect="false" />
                             </template>
 
-                            <DxColumn caption="상단고정" cell-template="showO" data-field="" />
-                            <template #showO>O</template>
+                            <DxColumn caption="상단고정" width="90" cell-template="sticky" data-field="sticky"
+                                css-class="cell-center" />
+                            <template #sticky="{ data }">
+                                <PushpinOutlined v-if="data.data.sticky" style="font-size: 16px;" />
+                            </template>
 
                             <DxColumn caption="내용" data-field="content" />
 
                             <DxColumn caption="작성자" cell-template="abc" data-field="" />
                             <template #abc>장부다</template>
 
-                            <DxColumn caption="작성일" data-field="writedAt" format="yyyy-MM-dd HH:mm:ss" data-type="date" />
+                            <DxColumn caption="작성일" data-field="writedAt" format="yyyy-MM-dd" data-type="date" />
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
@@ -64,7 +67,7 @@
                                             {{ dataDetail.writerCompactUser.name }}</div>
                                         <div class="time">
                                             {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
-                                                dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
+                                                dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD') }}
                                         </div>
                                         <div class="classification">{{ dataDetail.classification }}</div>
                                         <div class="time" v-if="dataDetail.updatedAt > dataDetail.writedAt">
@@ -123,6 +126,7 @@ import {
     SaveOutlined,
     ReloadOutlined,
     FileTextOutlined,
+    PushpinOutlined
 } from "@ant-design/icons-vue";
 import dayjs from 'dayjs';
 import DxButton from "devextreme-vue/button";
@@ -150,6 +154,7 @@ export default defineComponent({
         ModalPreviewListImage,
         ReloadOutlined,
         FileTextOutlined,
+        PushpinOutlined,
     },
     setup() {
         // config grid
@@ -196,7 +201,14 @@ export default defineComponent({
             trigger.value = false;
             let data = value.data.searchWorkNoticeMessages
             if (data.length) {
-                dataSource.value = data;
+                dataSource.value = data.sort((itemA: any, itemB: any) => {
+                    // Điều kiện sắp xếp
+                    if (itemA.sticky) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
                 focusedRowKey.value = data[0].id
                 originDataDetail.messageId = data[0].id
                 triggerDetail.value = true;
