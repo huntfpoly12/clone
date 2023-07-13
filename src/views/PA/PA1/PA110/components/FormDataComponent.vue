@@ -340,46 +340,76 @@ export default defineComponent({
 		const statusMidTermSettlement2 = computed(() => store.state.common.pa110.statusMidTermSettlement2);
 		let statusCalculateMTS = ref<boolean>(false);
 		let requiredPaymentDay = ref();
-		const startDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).startOf("month").toDate());
-		const finishDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).endOf("month").toDate());
+		const startDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).startOf("month").toDate());
+		const finishDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).endOf("month").toDate());
 		const statusChangeFormPrice = ref<boolean>(false);
 		const incomeTaxMagnification = ref<number>(0);
 		// ============ GRAPQL ===============================
 		// get employeewage
-		const { loading: loadingEmployeeWage, onResult: resEmployeeWage
+		const { loading: loadingEmployeeWage, onResult: resEmployeeWage, onError: errorEmployeeWage
 		} = useQuery(queries.getEmployeeWages, originData, () => ({
 			enabled: triggerEmployeeWages.value,
 			fetchPolicy: "no-cache",
 		}));
-		const { onResult: resConfigPayItems, loading: loadingConfigPayItems,
+		errorEmployeeWage((e) => {
+			triggerEmployeeWages.value = false;
+			//notification('error', e.message)
+		})
+		const { onResult: resConfigPayItems, loading: loadingConfigPayItems, onError: errorConfigPayItems
 		} = useQuery(queries.getWithholdingConfigPayItems, originDataConfig, () => ({
 			enabled: triggerConfigPayItems.value,
 			fetchPolicy: "no-cache",
 		}));
-		const { onResult: resConfigDeductions, loading: loadingConfigDeductions
+		errorConfigPayItems((e) => {
+			triggerConfigPayItems.value = false;
+			//notification('error', e.message)
+		})
+		const { onResult: resConfigDeductions, loading: loadingConfigDeductions, onError: errorConfigDeductions
 		} = useQuery(queries.getWithholdingConfigDeductionItems, originDataConfig, () => ({
 			enabled: triggerConfigDeductions.value,
 			fetchPolicy: "no-cache",
 		}));
-		const { result, loading } = useQuery(queries.getIncomeWage, incomeWageParams, () => ({
+		errorConfigDeductions((e) => {
+			triggerConfigDeductions.value = false;
+			//notification('error', e.message)
+		})
+		const { result, loading, onError: onErrorDetail } = useQuery(queries.getIncomeWage, incomeWageParams, () => ({
 			fetchPolicy: "no-cache",
 			enabled: triggerDetail.value,
 		}));
+		onErrorDetail((e) => {
+			triggerDetail.value = false;
+			//notification('error', e.message)
+		})
 		const { result: resCalcIncomeWageTax, onError: onIncomeWageTaxError
 		} = useQuery(queries.calculateIncomeWageTax, calculateVariables, () => ({
 			enabled: triggerCalcIncome.value,
 			fetchPolicy: "no-cache",
 		}));
-		const { result: resultEmployeeWage, loading: loadingGetEmployeeWage
+		onIncomeWageTaxError((e) => {
+			triggerCalcIncome.value = false;
+			//notification('error', e.message)
+		});
+
+		const { result: resultEmployeeWage, loading: loadingGetEmployeeWage, onError: errorGetEmployeeWage
 		} = useQuery(queries120.getEmployeeWage, originDataEmployeeWage, () => ({
 			fetchPolicy: "no-cache",
 			enabled: triggerEmployeeWage.value,
 		}));
+		errorGetEmployeeWage((e) => {
+			triggerEmployeeWage.value = false;
+			//notification('error', e.message)
+		})
+
 		const { result: resultCalculateMidTermSettlement, onError: onErrorCalculateMidTermSettlement
 		} = useQuery(queries.calculateMidTermSettlement, originCalculateMidTermSettlement, () => ({
 			fetchPolicy: "no-cache",
 			enabled: triggerCalculateMidTermSettlement.value,
 		}));
+		onErrorCalculateMidTermSettlement((e) => {
+			triggerCalculateMidTermSettlement.value = false;
+			//notification('error', e.message)
+		})
 
 		// API EDIT
 		const {
@@ -448,12 +478,6 @@ export default defineComponent({
 				});
 			}
 		});
-		onIncomeWageTaxError((e) => {
-			//notification('error', e.message)
-		});
-		onErrorCalculateMidTermSettlement((e) => {
-			//notification('error', e.message)
-		})
 		errorUpdate(async (e) => {
 			//notification('error', e.message)
 		});
@@ -524,9 +548,9 @@ export default defineComponent({
 				store.state.common.pa110.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
 			dataIW.value = store.state.common.pa110.dataTaxPayInfo[store.state.common.pa110.dataTaxPayInfo.length - 1];
 			dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay ?
-				parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`)
-				: parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(
-					dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth())}`);
+				parseInt(`${processKey.value.paymentYear}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`)
+				: parseInt(`${processKey.value.paymentYear}${filters.formatMonth(processKey.value.paymentMonth)}${filters.formatMonth(
+					dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).daysInMonth())}`);
 			store.state.common.pa110.focusedRowKey = "PA110";
 			onResetForm();
 		});
@@ -620,7 +644,7 @@ export default defineComponent({
 
 				dataIW.value.employee.employeeId = data.employee.employeeId;
 				dataIW.value.paymentDay = parseInt(
-					`${paYear.value}${filters.formatMonth(
+					`${processKey.value.paymentYear}${filters.formatMonth(
 						processKey.value.paymentMonth
 					)}${filters.formatMonth(data.paymentDay)}`
 				);
@@ -662,7 +686,7 @@ export default defineComponent({
 		watch(resCalcIncomeWageTax, async (value) => {
 			triggerCalcIncome.value = false;
 			if (value) {
-				let data = value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100);
+				let data = Math.floor(value.calculateIncomeWageTax * (incomeTaxMagnification.value / 100));
 				dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = data;
 				let value1012 = Math.floor(data / 100) * 10;
 				localReal.value = value1012 >= 1000 ? 0 : value1012;
@@ -954,18 +978,18 @@ export default defineComponent({
 			);
 			dataIW.value.paymentDay = sampleDataIncomeWage.paymentDay
 				? parseInt(
-					`${paYear.value}${filters.formatMonth(
+					`${processKey.value.paymentYear}${filters.formatMonth(
 						processKey.value.paymentMonth
 					)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`)
 				: parseInt(
-					`${paYear.value}${filters.formatMonth(
+					`${processKey.value.paymentYear}${filters.formatMonth(
 						processKey.value.paymentMonth
 					)}${filters.formatMonth(
 						dayjs(
-							`${paYear.value}-${processKey.value.paymentMonth}`
+							`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`
 						).daysInMonth()
 					)}`
-				);
+				);	
 			await dataConfigDeductions.value.map((data: any) => {
 				data.amount = 0;
 			});

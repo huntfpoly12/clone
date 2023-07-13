@@ -1,17 +1,22 @@
 import gql from "graphql-tag";
 export default gql`
-    mutation createNotificationMessage(
+    mutation addAttachedFileOfNotificationMessage(
         $companyId: Int!,
         $messageId: Int!,
-        $fileStorageId: Int!
+        $fileStorageId: Int
 
     ) {
-        createNotificationMessage(
+        addAttachedFileOfNotificationMessage(
             companyId: $companyId,
             messageId: $messageId,
             fileStorageId: $fileStorageId,
         ){
             companyId
+            fileStorages {
+              id
+              url
+              name
+            }
         }
 
     }

@@ -10,23 +10,31 @@ const mutations = {
     }
   `,
   ResetPassword: gql`
-  mutation resetPassword($key: String!, $password: String!) {
-    resetPassword(key: $key, password: $password)
-  }
-`,
-ChangePassword: gql`
-  mutation changeMyPassword($password: String!) {
-    changeMyPassword(password: $password)
-  }
-`,
-refreshLogin:gql`
-mutation refreshLogin($accessToken: String! , $refreshToken: String!) {
-  refreshLogin(accessToken: $accessToken, refreshToken: $refreshToken) {
-    accessToken
-    refreshToken
-  }
-}
-`
+    mutation resetPassword($key: String!, $password: String!) {
+      resetPassword(key: $key, password: $password)
+    }
+  `,
+  ChangePassword: gql`
+    mutation changeMyPassword($password: String!) {
+      changeMyPassword(password: $password)
+    }
+  `,
+  refreshLogin: gql`
+    mutation refreshLogin($accessToken: String! , $refreshToken: String!) {
+      refreshLogin(accessToken: $accessToken, refreshToken: $refreshToken) {
+        accessToken
+        refreshToken
+      }
+    }
+  `,
+  customerWorkLogin: gql`
+    mutation customerWorkLogin($companyId: Int!) {
+      customerWorkLogin(companyId: $companyId) {
+        accessToken
+        refreshToken
+      }
+    }
+  `
 };
 
 export default mutations;

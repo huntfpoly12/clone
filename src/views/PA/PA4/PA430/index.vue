@@ -123,7 +123,7 @@
                             <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
                         </a-tooltip>
                     </template>
-                    <DxColumn caption="차인지급액" data-field="actualPayment" width="70" format="#,###" alignment="right" />
+                    <DxColumn caption="차인지급액" data-field="actualPayment" width="100" format="#,###" alignment="right" />
                     <DxColumn caption="비고" css-class="cell-left" cell-template="note"
                         data-field="employee.nationalPensionDeduction" />
                     <template #note="{ data }">
@@ -142,13 +142,13 @@
                         <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
                             :ratio="data.data.employee.incomeTaxMagnification" />
                     </template>
-                    <DxColumn :width="80" cell-template="pupop" />
+                    <DxColumn :width="80" cell-template="pupop" :fixed="true"  fixedPosition="right"/>
                     <template #pupop="{ data }">
                         <div style="text-align: center;">
                             <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
-                                style="width: 25px; margin-right: 3px;" />
+                                style="width: 27px; margin-right: 3px;" />
                             <a-tooltip title="출력 / 저장" placement="topLeft">
-                                <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
+                                <img src="@/assets/images/print.svg" alt="" style="width: 27px;"
                                     @click="actionPrint(data.data)" />
                             </a-tooltip>
                         </div>
@@ -311,11 +311,11 @@ export default defineComponent({
                     type: dataInputReport.input.type,
                     receiptDate: dataInputReport.input.receiptDate,
                 },
-                employeeInputs: {
+                incomeInputs: {
                     senderName: sessionStorage.getItem("username"),
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
+                    incomeId: data.incomeId,
                     // incomeTypeCode: data.employee.incomeTypeCode
                 }
             }
@@ -339,7 +339,7 @@ export default defineComponent({
                         type: dataInputReport.input.type,
                         receiptDate: dataInputReport.input.receiptDate,
                     },
-                    employeeInputs: dataSelect.value
+                    incomeInputs: dataSelect.value
                 }
                 modalEmailMulti.value = true
             } else {
@@ -395,7 +395,7 @@ export default defineComponent({
                     senderName: sessionStorage.getItem("username"),
                     receiverName: data.employee.name,
                     receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
+                    incomeId: data.incomeId,
                     // incomeTypeCode: data.employee.incomeTypeCode
                 })
                 incomeIds.value.push(data.incomeId)
@@ -405,7 +405,6 @@ export default defineComponent({
         watch(result, (value) => {
             trigger.value = false;
             if (value) {
-                value.searchIncomeRetirementWithholdingReceipts
                 dataSource.value = value.searchIncomeRetirementWithholdingReceipts;
                 totalEmployee.value = value.searchIncomeRetirementWithholdingReceipts.length
                 emplRetirementType1.value = value.searchIncomeRetirementWithholdingReceipts.filter((item: any) => item.retirementType == 1).length;

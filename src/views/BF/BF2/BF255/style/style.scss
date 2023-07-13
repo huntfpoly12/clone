@@ -1,0 +1,49 @@
+.bf-225 {
+  padding: 10px;
+  &-date {
+    display: flex;
+    align-items: center;
+    padding-bottom: 1px;
+  }
+  &-table {
+    &-WL1 {
+      #bf-225-data-grid-WL1 {
+        height: 320px;
+        :deep .dx-freespace-row {
+          display: none !important;
+        }
+      }
+      &-sumary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: bold;
+        border: 1px solid #ddd;
+        border-top: none;
+        padding: 5px;
+        color: rgba(51, 51, 51, 0.7);
+        background-color: #f2f5f7;
+      }
+    }
+    &-WL2 {
+      margin-top: 30px;
+      #bf-225-data-grid-WL2 {
+        height: 320px;
+        :deep .dx-freespace-row {
+          display: none !important;
+        }
+      }
+      &-sumary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: bold;
+        border: 1px solid #ddd;
+        border-top: none;
+        padding: 5px;
+        color: rgba(51, 51, 51, 0.7);
+        background-color: #f2f5f7;
+      }
+    }
+  }
+}

@@ -5,19 +5,23 @@
                 <h2><b>CMS 계좌정보</b></h2>
             </div>
             <standard-form ref="refFormItemAC120">
-                <a-row>
-                    <a-col :span="8">
+                <a-row class="form">
+                    <a-col :span="8" class="row1">
                         <a-form-item label="사업자코드">
                             <default-text-box v-model:valueInput="code" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                                :required="true" />
                         </a-form-item>
                         <a-form-item label="연락처">
                             <default-text-box v-model:valueInput="phone" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                                :required="true" />
                         </a-form-item>
                         <a-form-item label="금융기관코드">
                             <default-text-box v-model:valueInput="bankType" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                                :required="true" />
+                        </a-form-item>
+                        <a-form-item label="사업자(주민)등록번호">
+                            <default-text-box v-model:valueInput="no" width="130px" style="margin-right: 10px"
+                                :required="true" />
                         </a-form-item>
                         <a-form-item label="출금동의일자">
                             <default-text-box v-model:valueInput="no" width="130px" style="margin-right: 10px"
@@ -31,49 +35,60 @@
                     <a-col :span="8">
                         <a-form-item label="상호">
                             <default-text-box v-model:valueInput="companyName" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                                :required="true" />
                         </a-form-item>
                         <a-form-item label="휴대폰">
                             <default-text-box v-model:valueInput="mobilePhone" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                                :required="true" />
                         </a-form-item>
                         <a-form-item label="계좌번호">
                             <default-text-box v-model:valueInput="accountNumber" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                                :required="true" />
                         </a-form-item>
-                        <a-form-item label="출금동의신청서">
-                            <!-- <default-text-box v-model:valueInput="null" width="130px" style="margin-right: 10px"
-                                :required="true" /> -->
+                        <a-form-item label="자동출금일">
+                            <select-box-common width="180px" :arrSelect="arrSelect1" :required="true"
+                                v-model:valueInput="valueSelect1" />
+                        </a-form-item>
+                        <a-form-item label="출금동의신청서" class="custom">
+                            <DxButton class="custom-button" :height="$config_styles.HeightInput">
+                                <div class="d-flex-center">
+                                    <DownloadOutlined style="font-size: 14px; transform: rotate(180deg)" />
+                                    <span class="pl-5">파일 선택</span>
+                                </div>
+                            </DxButton>
                         </a-form-item>
                     </a-col>
                     <a-col :span="8">
                         <a-form-item label="대표자명">
                             <default-text-box v-model:valueInput="presidentName" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                                :required="true" />
                         </a-form-item>
                         <a-form-item label="금융기관명">
                             <default-text-box v-model:valueInput="bankType" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                                :required="true" />
                         </a-form-item>
                         <a-form-item label="예금주">
-                            <default-text-box v-model:valueInput="ownerName" width="130px" style="margin-right: 10px"
-                                :required="true" disabled="true" />
+                            <select-box-common width="180px" :arrSelect="[]" :required="true"
+                                v-model:valueInput="ownerName" />
                         </a-form-item>
                         <a-form-item label="CMS승인상태" class="red">
-                            <default-text-box v-model:valueInput="no" width="130px" style="margin-right: 10px"
-                                :required="true" />
+                            <select-box-common width="180px" :arrSelect="arrSelectCMS" :required="true"
+                                v-model:valueInput="no" />
                         </a-form-item>
                     </a-col>
                 </a-row>
             </standard-form>
         </div>
-        <div class="btn_submit text-align-center mt-20">
-            <!-- <button-basic :disabled="false" @onClick="onSubmit" class="button-form-modal"
-                :text="'저장'" :type="'default'" :mode="'contained'" /> -->
+        <div class="text-center mt-20">
+            <button-basic :disabled="false" @onClick="onSubmit" class="button-form-modal" :text="'저장'" :type="'default'"
+                :mode="'contained'" />
         </div>
-        <!-- <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
-            :title="Message.getMessage('AC110', '005').message" content="" :okText="Message.getMessage('AC110', '005').yes"
-            :cancelText="Message.getMessage('AC110', '005').no" @checkConfirm="handleDelete" /> -->
+        <PopupMessage :modalStatus="isModal" @closePopup="isModal = false" :typeModal="'confirm'" okText="네. 저장합니다"
+            cancelText="아니오" @checkConfirm="handle" content="">{{ arrSelectCMS }}
+            <!-- <div>
+                CMS승인상태 : ….. <br />저장될 CMS승인상태는 실제와 상이할 수 있으니 반드시 확인하시기 바랍니다.그래도 저장하시겠습니까?
+            </div> -->
+        </PopupMessage>
     </a-modal>
 </template>
 
@@ -81,6 +96,8 @@
 import { defineComponent, ref, reactive, watch, computed, toRefs } from "vue";
 import { useStore } from "vuex";
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import { DownloadOutlined } from "@ant-design/icons-vue";
+import DxButton from "devextreme-vue/button";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -89,7 +106,7 @@ export default defineComponent({
         },
     },
     components: {
-
+        DownloadOutlined, DxButton,
     },
 
     setup(props, { emit }) {
@@ -107,9 +124,59 @@ export default defineComponent({
             accountNumber: null,
             presidentName: null,
             // bankType: null,
-            ownerName: null
+            ownerName: null,
+            valueSelect1: null,
         })
+        const isModal = ref(false)
         const dataSource = ref<any>([]);
+        let arrSelect1 = [
+            {
+                value: '1',
+                label: '5일',
+            },
+            {
+                value: '2',
+                label: '12일',
+            },
+            {
+                value: '3',
+                label: '19일',
+            },
+        ]
+        let arrSelectCMS = [
+            {
+                value: '1',
+                label: '대기',
+            },
+            {
+                value: '2',
+                label: '접수',
+            },
+            {
+                value: '3',
+                label: '승인신청',
+            },
+            {
+                value: '4',
+                label: '승인완료',
+            },
+            {
+                value: '5',
+                label: '승인실패',
+            },
+            {
+                value: '6',
+                label: '해지신청',
+            },
+            {
+                value: '7',
+                label: '해지완료',
+            },
+            {
+                value: '8',
+                label: '해지실패',
+            },
+        ]
 
         // =================== GRAPHQL ===================
 
@@ -134,12 +201,20 @@ export default defineComponent({
             // 	comfirmClosePopup(() => emit('closePopup', false))
             // }
         };
+        const onSubmit = () => {
+            isModal.value = true;
+        }
+        const handle = () => {
+
+        }
         return {
             move_column,
             colomn_resize,
             dataSource,
             cancel,
-            ...toRefs(dataDetail)
+            ...toRefs(dataDetail),
+            arrSelectCMS, arrSelect1, onSubmit,
+            isModal, handle
         };
     },
 });
@@ -148,5 +223,23 @@ export default defineComponent({
 <style lang="scss" scoped>
 :deep .ant-form-item-label>label {
     width: 110px;
+}
+
+:deep .row1 .ant-form-item-label>label {
+    width: 150px;
+}
+
+:deep .form .custom .dx-state-hover {
+    background-color: #474747 !important;
+}
+
+.custom-button {
+    color: white;
+    background-color: #6b6b6b;
+
+    :deep .dx-button-content {
+        padding: 6px 8px;
+    }
+
 }
 </style>

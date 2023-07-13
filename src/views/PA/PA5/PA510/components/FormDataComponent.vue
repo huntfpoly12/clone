@@ -243,8 +243,8 @@ export default defineComponent({
 		};
 
 		let requiredPaymentDay = ref();
-		const startDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).startOf("month").toDate());
-		const finishDate = computed(() => dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).endOf("month").toDate());
+		const startDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).startOf("month").toDate());
+		const finishDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).endOf("month").toDate());
 		const statusChangeFormPrice = ref<boolean>(false);
 
 		// ============ GRAPQL ===============================
@@ -391,7 +391,7 @@ export default defineComponent({
 
 			await (dataIncomeWageDaily.value = data);
 			dataIncomeWageDaily.value.paymentDay = parseInt(
-				`${paYear.value}${filters.formatMonth(
+				`${processKey.value.paymentYear}${filters.formatMonth(
 					processKey.value.paymentMonth
 				)}${filters.formatMonth(data.paymentDay)}`
 			);
@@ -556,16 +556,16 @@ export default defineComponent({
 			dataIncomeWageDaily.value.paymentDay =
 				sampleDataIncomeWageDaily.paymentDay
 					? parseInt(
-						`${paYear.value}${filters.formatMonth(
+						`${processKey.value.paymentYear}${filters.formatMonth(
 							processKey.value.paymentMonth
 						)}${filters.formatMonth(sampleDataIncomeWageDaily.paymentDay)}`
 					)
 					: parseInt(
-						`${paYear.value}${filters.formatMonth(
+						`${processKey.value.paymentYear}${filters.formatMonth(
 							processKey.value.paymentMonth
 						)}${filters.formatMonth(
 							dayjs(
-								`${paYear.value}-${processKey.value.paymentMonth}`
+								`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`
 							).daysInMonth()
 						)}`
 					);
@@ -804,16 +804,16 @@ export default defineComponent({
 			dataIncomeWageDaily.value.paymentDay =
 				sampleDataIncomeWageDaily.paymentDay
 					? parseInt(
-						`${paYear.value}${filters.formatMonth(
+						`${processKey.value.paymentYear}${filters.formatMonth(
 							processKey.value.paymentMonth
 						)}${filters.formatMonth(sampleDataIncomeWageDaily.paymentDay)}`
 					)
 					: parseInt(
-						`${paYear.value}${filters.formatMonth(
+						`${processKey.value.paymentYear}${filters.formatMonth(
 							processKey.value.paymentMonth
 						)}${filters.formatMonth(
 							dayjs(
-								`${paYear.value}-${processKey.value.paymentMonth}`
+								`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`
 							).daysInMonth()
 						)}`
 					);

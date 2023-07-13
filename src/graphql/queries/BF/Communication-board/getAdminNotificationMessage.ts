@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 export default gql`
-    query searchAdminInquiryMessages($filter: SearchInquiryMessageFilter!) {
-        searchAdminInquiryMessages(filter : $filter){
+    query getAdminNotificationMessage($companyId: Int!, $messageId: Int!) {
+        getAdminNotificationMessage(companyId : $companyId, messageId: $messageId){
             companyId
             messageId
             writedAt
@@ -14,23 +14,27 @@ export default gql`
             active
             expresstionType
             classification
-            secret
-            answeredAt
-            answer
             company {
+                code
+                active
                 id
+                name
+                address
+                __typename @skip(if: true)
             }
             writerCompactUser {
                 id
+                name
+                username
+                active
+                __typename @skip(if: true)
             }
             fileStorages {
                 id
-            }
-            answerCompactUser {
-                id
-            }
-            answerFileStorages {
-                id
+                name
+                url
+                turl
+                __typename @skip(if: true)
             }
             __typename @skip(if: true)
         }

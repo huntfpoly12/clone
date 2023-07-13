@@ -40,7 +40,7 @@ export default defineComponent({
   border: 1px solid #d4d2d2;
   border-radius: 10px;
   padding: 15px;
-  margin: 8px 0;
+  margin: 10px 0;
   &-title {
     position: absolute;
     top: -15px;
@@ -49,7 +49,7 @@ export default defineComponent({
     z-index: 100;
     display: flex;
     text-align: center;
-    padding: 6px 10px;
+    padding: 0 10px;
   }
 }
 </style>

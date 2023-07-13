@@ -17,4 +17,7 @@ export default {
   accountingFile(payload: any, config?: any) {
     return Client.post(`${resource}/accounting-file `, payload, config);
   },
+  messageNotification(payload: any, config?: any) {
+    return Client.post(`${resource}/message `, payload, config);
+  },
 };

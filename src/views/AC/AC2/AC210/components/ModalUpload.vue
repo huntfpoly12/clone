@@ -28,7 +28,7 @@
                         <DxItem name="searchPanel" />
                     </DxToolbar>
                     <DxColumn caption="회계연월" width="100" cell-template="year-month" />
-                    <template #year-month="">
+                    <template #year-month="{data}">
                         <b>{{ parseInt(yearMonth.toString().slice(0, 4)) }}-{{
                             $filters.formatMonth(parseInt(yearMonth.toString().slice(4, 6))) }}</b>
                     </template>

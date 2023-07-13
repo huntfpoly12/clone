@@ -26,7 +26,7 @@ import { defineComponent, watch, ref, computed } from "vue";
 import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA6/PA630/index";
+import mutations from "@/graphql/mutations/PA/PA4/PA430/index";
 import { Message } from "@/configs/enum";
 export default defineComponent({
   props: {
@@ -63,13 +63,13 @@ export default defineComponent({
       mutate: sendEmail,
       onDone: onDoneAdd,
       onError: errorSendEmail,
-    } = useMutation(mutations.sendIncomeBusinessWithholdingReceiptReportEmail);
+    } = useMutation(mutations.sendIncomeRetirementWithholdingReceiptReportEmail);
     const onSubmit = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        props.data.employeeInputs.map((value: any) => {
+        props.data.incomeInputs.map((value: any) => {
           if (value.receiverAddress == "" || value.receiverAddress == null) {
             value.receiverAddress = emailAddress.value;
           }

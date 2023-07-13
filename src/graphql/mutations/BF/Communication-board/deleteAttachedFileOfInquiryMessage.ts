@@ -1,16 +1,21 @@
 import gql from "graphql-tag";
 export default gql`
-    mutation deleteAttachedFileOfNotificationMessage(
+    mutation deleteAttachedFileOfInquiryMessage(
         $companyId: Int!,
         $messageId: Int!,
-        $fileStorageId: Int!
+        $fileStorageId : Int!,
     ) {
-        deleteAttachedFileOfNotificationMessage(
+        deleteAttachedFileOfInquiryMessage(
             companyId: $companyId,
             messageId: $messageId,
             fileStorageId: $fileStorageId,
         ){
             companyId
+            fileStorages {
+                id
+                name
+                url
+            }
         }
 
     }

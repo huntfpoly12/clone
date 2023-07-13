@@ -195,7 +195,10 @@
           display: flex;
           align-items: center;
           justify-content: space-between;
-
+          .edited {
+            color: #bcbcc2ff;
+            font-size: 11px;
+          }
           &-user {
             display: flex;
             align-items: center;
