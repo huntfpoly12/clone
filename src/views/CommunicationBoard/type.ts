@@ -1,4 +1,4 @@
-import {InjectionKey, Ref, UnwrapRef} from "vue";
+import { InjectionKey, Ref, UnwrapRef } from "vue";
 
 export enum ClassificationEnum {
   'COMMON' = '일반',
@@ -30,28 +30,30 @@ export interface DataCompanyTab3 {
   // unpaidMonths: number
 }
 
+export interface NodeNotification {
+  companyId: number
+  messageId: number
+  expresstionType: number
+  classification: string
+  writedAt: string
+  content: string
+  secret: boolean
+  fiscalYear: number
+  facilityBusinessId: number
+  year: number
+  month: number
+  writerCompactUser: {
+    id: number
+    type: string
+    name: string
+    username: string
+    active: boolean
+  }
+}
+
 export interface RecentAdminCommunicationMessages {
   cursor: string
-  node: {
-    companyId: number
-    messageId: number
-    expresstionType: number
-    classification: string
-    writedAt: string
-    content: string
-    secret: boolean
-    fiscalYear: number
-    facilityBusinessId: number
-    year: number
-    month: number
-    writerCompactUser: {
-      id: number
-      type: string
-      name: string
-      username: string
-      active: boolean
-    }
-  }
+  node: NodeNotification
 }
 
 export interface MessageDetail {
@@ -84,6 +86,7 @@ export interface MessageDetail {
     url: string
   }>
 }
+
 export interface MessageDetailAnswer extends MessageDetail {
   answeredAt: number
   answer: string
@@ -109,12 +112,13 @@ export interface RowEditDefault {
   classification: ClassificationEnum
   type?: TypeEditMessage
 }
+
 export enum TypeEditMessage {
   QUESTION,
   ANSWER
 }
 
-export const OpenRowKey = Symbol() as InjectionKey<(data: MessageDetail) => void>
+export const OpenRowKey = Symbol() as InjectionKey<(data: MessageDetail | MessageDetailAnswer | NodeNotification) => void>
 export const DataRowKeyTab2 = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetail | null>>>
 export const DataRowKeyTab3 = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetailAnswer | null>>>
 export const DataCompanyTab3 = Symbol() as InjectionKey<Ref<UnwrapRef<DataCompanyTab3 | null>>>

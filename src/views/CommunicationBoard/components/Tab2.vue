@@ -17,8 +17,8 @@
           <template #search>
             <div class="d-flex-center gap-20">
               <a-form-item label="문의">
-                <checkbox-basic label="답글O" v-model:valueCheckbox="expresstionTypes.expresstionType2"/>
-                <checkbox-basic label="답글X" v-model:valueCheckbox="expresstionTypes.expresstionType3"/>
+                <checkbox-basic label="답글O" v-model:valueCheckbox="expresstionTypes.expresstionType3"/>
+                <checkbox-basic label="답글X" v-model:valueCheckbox="expresstionTypes.expresstionType2"/>
               </a-form-item>
               <a-form-item label="작성기간 (최대 3월)">
                 <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
@@ -30,18 +30,18 @@
               </div>
             </div>
           </template>
-          <DxColumn caption="삭제 여부" data-field="active" alignment="center" cell-template="active"/>
+          <DxColumn caption="삭제 여부" data-field="active" alignment="center" cell-template="active" width="75px"/>
           <DxColumn caption="구분" data-field="expresstionType" alignment="center" cell-template="expresstionType"/>
           <DxColumn caption="사업자코드" data-field="company.code" alignment="center" cell-template="companyCode"/>
           <DxColumn caption="상호" data-field="company.name" alignment="center"/>
-          <DxColumn caption="주소" data-field="company.address" alignment="center" width="200px"/>
+          <DxColumn caption="주소" data-field="company.address" alignment="left" width="200px"/>
           <DxColumn caption="분류" data-field="classification" alignment="center"/>
-          <DxColumn caption="문의내용" data-field="content" alignment="center" width="200px"/>
+          <DxColumn caption="문의내용" data-field="content" alignment="left" width="200px"/>
           <DxColumn caption="작성자" data-field="writerCompactUser.name" alignment="center"/>
           <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm" alignment="center"/>
           <DxColumn caption="답변내용" data-field="answer" alignment="center" width="200px"/>
           <DxColumn caption="답변자" data-field="answerCompactUser.name" alignment="center"/>
-          <DxColumn caption="답변일시" data-field="answeredAt" data-type="date" format="yyyy-MM-dd HH:mm" alignment="center"/>
+          <DxColumn caption="답변일시" data-field="answeredAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" alignment="center"/>
           <DxColumn caption="" alignment="center" cell-template="action" />
           <template #active="{ data }">
             <div v-if="!data.data.active">
@@ -199,14 +199,15 @@
             </div>
             <div class="form-chat-bottom" v-if="rowEdit.isEdit || !messageDetail?.answeredAt">
               <div class="form-chat-bottom-category">
-                <StatusChat with="150" :valueSelect="3" disabled />
-                <div v-if="messageDetail">
+                <StatusChat v-if="rowEdit.isEdit && rowEdit.type === TypeEditMessage.QUESTION" with="150" :valueSelect="2" disabled />
+                <StatusChat v-else with="150" :valueSelect="3" disabled />
+                <div v-if="messageDetail && rowEdit.isEdit && rowEdit.type === TypeEditMessage.QUESTION">
                   <checkbox-basic label="비밀글" v-model:valueCheckbox="messageDetail.secret" :disabled="!rowEdit.isEdit"/>
                 </div>
                 <info-tool-tip style="margin-left: 0">
                   선택시 작성글과 답글은 작성자만 조회할 수 있습니다
                 </info-tool-tip>
-                <a-form-item label="분류" v-if="messageDetail && messageDetail?.answeredAt && rowEdit.type === TypeEditMessage.QUESTION">
+                <a-form-item label="분류" v-if="messageDetail && rowEdit.isEdit && rowEdit.type === TypeEditMessage.QUESTION">
                   <Classification
                     v-model:value-select="messageDetail.classification"
                     :disabled="!messageDetail?.active || !rowEdit.isEdit" />
@@ -242,7 +243,7 @@
   <Tab3PlusModal :modal-status="state.isModalTab3Plus" @cancel="state.isModalTab3Plus = false"
                  @close-modal="closeModal" />
   <HistoryPopup :modalStatus="state.isModalHistory" @closePopup="state.isModalHistory = false" title="변경이력"
-                :idRowEdit="null" typeHistory="communication-board" :data="dataHistory" />
+                :idRowEdit="null" typeHistory="getInquiryMessageLogs" :data="dataHistory" />
 </template>
 
 <script setup lang="ts">
@@ -287,7 +288,7 @@ import dayjs from "dayjs";
 import DataSource from "devextreme/data/data_source";
 import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
 import cloneDeep from "lodash/cloneDeep";
-import {inject, provide, reactive, ref, watch} from "vue";
+import {computed, inject, provide, reactive, ref, watch} from "vue";
 import Classification from "./Classification.vue";
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
@@ -296,7 +297,6 @@ const dataRowCompany = ref<DataCompanyTab3 | null>(null)
 
 const dataRow = inject(DataRowKeyTab2)
 const openRow = inject(OpenRowKey)
-
 const gridRef = ref()
 const dataSource: any = ref([])
 const filesUpload = ref([])
@@ -782,8 +782,12 @@ const refetchDataTab2 = () => {
   }
   state.trigger = true
 }
+const reloadDetail = () => {
+  state.triggerDetail = true
+}
 defineExpose({
-  refetchDataTab2
+  refetchDataTab2,
+  reloadDetail
 })
 </script>
 
