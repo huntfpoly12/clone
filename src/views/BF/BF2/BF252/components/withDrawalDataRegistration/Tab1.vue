@@ -5,7 +5,7 @@
         <month-picker-box v-model="month" width="100px"/>
       </a-form-item>
       <a-form-item label="결제예정일자">
-        <month-picker-box v-model="month" width="100px"/>
+        <date-time-box v-model:valueDate="date" width="150px"/>
       </a-form-item>
     </div>
     <div class="text-center mb-10">${결제예정연월(YYYY-MM)} 출금자료등록내역</div>
@@ -43,8 +43,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import dayjs from "dayjs";
+import DateTimeBox from "@/components/common/DateTimeBox.vue";
 
 const month = ref<string>(dayjs().format("YYYYMM"));
+const date = ref<string | null>(null);
 const data = ref<any>('asdfadsf');
 </script>
 
