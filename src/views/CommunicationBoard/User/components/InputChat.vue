@@ -22,7 +22,7 @@
 				</div>
 			</div>
 			<div class="input-edit-chat-input-action-btn">
-				<button-basic class="mr-10" text="삭제" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
+				<button-basic class="mr-10" text="취소" type="default" mode="outlined" :width="80" @onClick="resetInputChat()"
 					:disabled="disabled || (!content.trim() && !filesUpload.length)" />
 				<button-basic text="저장" type="default" mode="contained" :width="80" @onClick="submitChat()"
 					:disabled="disabled || (!content.trim() && !filesUpload.length)" />
@@ -49,7 +49,6 @@ import { computed, nextTick, ref, watch, defineComponent } from 'vue'
 import { DeleteOutlined, EditOutlined, FileAddOutlined, FileOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
 import { companyId } from "@/helpers/commonFunction"
-
 import Repository from "@/repositories";
 import { Message } from "@/configs/enum";
 
@@ -86,18 +85,18 @@ export default defineComponent({
 		const globalFacilityBizId: any = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
 
 		const inputFile = ref<any>()
-		let filesUpload: any = ref(props.files || [])
+		let filesUpload: any = computed(() => props.files)
 		const inputChat: any = ref()
-		const objectChatUpFile: any = ref(null)
-		const listChat = ref<any>([])
-		let listImagePreview: any = ref({
-			index: 0,
-			files: [],
-		})
+		// const objectChatUpFile: any = ref(null)
+		// const listChat = ref<any>([])
+		// let listImagePreview: any = ref({
+		// 	index: 0,
+		// 	files: [],
+		// })
 
 		const isDragging = ref(false)
-		const date = new Date()
-		const currentTime = date.getFullYear() + '-' + ((date.getMonth() + 1) < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
+		// const date = new Date()
+		// const currentTime = date.getFullYear() + '-' + ((date.getMonth() + 1) < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
 
 		const submitChat = () => {
 			emit('submitChat')
@@ -231,6 +230,7 @@ export default defineComponent({
 		return {
 			isDragging, dragover, dragleave, drop, changeInput, submitChat, openFile,
 			resetInputChat, filesUpload, removeFile, uploadPreviewFile, inputFile,
+			inputChat,
 		}
 	}
 })
