@@ -413,12 +413,14 @@ export default defineComponent({
 
 		const changeRadioResolutionType = (value: Number) => {
 			if (value == 21 || value == 22) {
+				textLabelInputSource.value = "지출원";
 				formDataAdd.value.resolutionClassification = 2;
 				classificationAccountCode.value = [5];
 				classificationRelationCode.value = [4];
 				statusShowLetterOfApprovalType.value = true;
 				formDataAdd.value.letterOfApprovalType = 1;
 			} else {
+				textLabelInputSource.value = "수입원";
 				formDataAdd.value.resolutionClassification = 1;
 				classificationAccountCode.value = [4];
 				classificationRelationCode.value = [5];
