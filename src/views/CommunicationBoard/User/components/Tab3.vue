@@ -102,7 +102,7 @@
 											@click="previewImage(dataDetail.fileStorages?.filter((item: any) => isImgLink(item.url)), indexFile)">
 									</div>
 									<div v-for="(file, indexFile) in dataDetail.fileStorages?.filter((item: any) => !isImgLink(item.url))"
-										:key="indexFile" class="d-flex-center mb-10 file-texts"
+										:key="indexFile" class="d-flex-center my-5 file-texts"
 										@click="openLinkDownFile(file.url)">
 										<FileTextOutlined class="mr-10 fz-20" />
 										<div>{{ file.name }}</div>
@@ -142,7 +142,7 @@
 						</div>
 					</div>
 				</a-spin>
-				<div class="form-create-bottom">
+				<div class="form-create-bottom mt-10">
 					<div class="d-flex-center mb-10">
 						<ExpressionType :valueSelect="2" disabled />
 						<span class="mx-10">분류: </span>
@@ -405,15 +405,16 @@ export default defineComponent({
 						fileStorageIds: filesUpload.value.map((file: any) => parseInt(file.id))
 					}
 				})
+			} else {
+				actionCreate({
+					companyId: companyId,
+					input: {
+						classification: rowEdit.classification,
+						secret: rowEdit.secret,
+						content: !!rowEdit.content.trim() ? rowEdit.content.trim() : null,
+					}
+				})
 			}
-			actionCreate({
-				companyId: companyId,
-				input: {
-					classification: rowEdit.classification,
-					secret: rowEdit.secret,
-					content: !!rowEdit.content.trim() ? rowEdit.content.trim() : null,
-				}
-			})
 		}
 		const statusComfirm = (val: any) => {
 			if (val) {
