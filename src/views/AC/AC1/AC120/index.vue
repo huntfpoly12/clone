@@ -18,8 +18,7 @@
 		<DxDrawer :opened-state-mode="'shrink'" :position="'bottom'" :reveal-mode="'expand'"
 			v-model:opened="store.state.common.ac120.statusShowFull" :height="'100%'" template="listMenu">
 			<template #listMenu="{ data }">
-				<DetailComponent
-					:statusProcess="statusSelected" />
+				<DetailComponent :statusProcess="statusSelected" />
 			</template>
 			<div id="content" class="dx-theme-background-color">
 				<a-spin :spinning="loadingGetAccountingDocuments">
@@ -46,24 +45,22 @@
 						</DxToolbar>
 						<template #box-action-left>
 							<!-- <div class="d-flex-center"> -->
-								<div class="action d-flex-center">
-									<ProcessStatus
-										:noOptionNoInput="false"
-										v-if="statusSelected"
-										:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
-										:disabled="true" />
-									<button-basic v-else mode="contained" style="width: 90px" :disabled="true">
-									</button-basic>
-									<DxButton icon="plus" class="ml-4" @click="modalHistoryAccountingProcess">
-										<a-tooltip placement="top" title="마감상태 변경이력">
-											<HistoryOutlined style="font-size: 18px" />
-										</a-tooltip>
-									</DxButton>
-									<div class="ml-10">
-										<span style="color: rgb(202, 131, 0);">(주의) 동일한 통장내역 전표는 함께 선택되며, 취소시 함께
-											취소됩니다.</span>
-									</div>
+							<div class="action d-flex-center">
+								<ProcessStatus :noOptionNoInput="false" v-if="statusSelected"
+									:valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === monthSelected)?.status"
+									:disabled="true" />
+								<button-basic v-else mode="contained" style="width: 90px" :disabled="true">
+								</button-basic>
+								<DxButton icon="plus" class="ml-4" @click="modalHistoryAccountingProcess">
+									<a-tooltip placement="top" title="마감상태 변경이력">
+										<HistoryOutlined style="font-size: 18px" />
+									</a-tooltip>
+								</DxButton>
+								<div class="ml-10">
+									<span style="color: rgb(202, 131, 0);">(주의) 동일한 통장내역 전표는 함께 선택되며, 취소시 함께
+										취소됩니다.</span>
 								</div>
+							</div>
 							<!-- </div> -->
 						</template>
 						<template #box-action-right>
@@ -122,7 +119,7 @@
 							width="80" />
 						<template #bankbook="{ data }">
 							<a-tooltip placement="top"
-								:title="data.data.bankbook?.bankbookNickname + ' ' + data.data.bankbook?.bankbookNumber">
+								:title="getNameBankType(data.data.bankbook?.type)+ ' ' + data.data.bankbook?.bankbookNumber">
 								<span :title="data.data.bankbook?.bankbookNickname">{{ data.data.bankbook?.bankbookNickname
 								}}</span>
 							</a-tooltip>
@@ -240,32 +237,32 @@
 					<!-- <div class="action"> -->
 					<div class="custom-smmary">
 						<!-- <div> -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customCountRow()"></div>
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customCountRow()"></div>
 						<!-- </div> -->
 						<!-- <div style="margin-left: 20px"> -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
-								v-html="sumOfResolutionClassification1()">
-							</div>
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content"
+							v-html="sumOfResolutionClassification1()">
+						</div>
 						<!-- </div>
 						<div style="margin-left: 20px"> -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
-								v-html="sumOfResolutionClassification2()">
-							</div>
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content"
+							v-html="sumOfResolutionClassification2()">
+						</div>
 						<!-- </div>
 						<div style="margin-left: 20px"> -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content">
-								<a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
-									<div style="display: inline">
-										전월 잔액
-										<span>[{{ $filters.formatCurrency(lastBalance) }}]</span>
-									</div>
-								</a-tooltip>
-								<div style="display: inline" v-html="customBalance()"></div>
-							</div>
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content">
+							<a-tooltip placement="top" title="조정마감되지 않는경우 전월이 0입니다">
+								<div style="display: inline">
+									전월 잔액
+									<span>[{{ $filters.formatCurrency(lastBalance) }}]</span>
+								</div>
+							</a-tooltip>
+							<div style="display: inline" v-html="customBalance()"></div>
+						</div>
 						<!-- </div>
 						<div style="margin-left: 20px"> -->
-							<div class="dx-datagrid-summary-item dx-datagrid-text-content"
-								v-html="countResolutionNormalStatus()"></div>
+						<div class="dx-datagrid-summary-item dx-datagrid-text-content"
+							v-html="countResolutionNormalStatus()"></div>
 						<!-- </div> -->
 						<!-- </div> -->
 					</div>
@@ -378,6 +375,7 @@ import notification from "@/utils/notification";
 import DataSource from "devextreme/data/data_source";
 import { Store } from "devextreme/data";
 import { cloneDeep, isEqual } from "lodash";
+import { BankType } from "@bankda/jangbuda-common";
 // import {
 // 	FullscreenOutlined,
 // 	FullscreenExitOutlined,
@@ -435,7 +433,7 @@ export default defineComponent({
 		const popupData = ref({});
 		const modalHistoryStatusAccountingProcess = ref<boolean>(false);
 		const modalHistoryStatuAccountingDocuments = ref<boolean>(false);
-
+		const bankType = BankType.all();
 		const dataRows: any = ref([]);
 		let keySelect = ref();
 		store.state.common.ac120.formData = reactive({ ...initialStateFormData });
@@ -453,7 +451,7 @@ export default defineComponent({
 		// get store data
 		const storeDataSource: any = computed(() => dataSource.value?.store() as Store);
 		const totalCount = computed(() => dataSource.value?.totalCount());
-    	const statusSelected = computed(() => dataGetAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status)
+		const statusSelected = computed(() => dataGetAccountingProcesses.value.find((item: any) => item.month === monthSelected.value)?.status)
 		const triggerGetAccountingProcesses = ref<boolean>(true);
 		const triggerGetAccountingDocuments = ref<boolean>(true);
 		const dataQueryGetAccountingProcesses = ref({
@@ -918,6 +916,12 @@ export default defineComponent({
 				item.balance = totalBefore.value + item.balance;
 			});
 		};
+		const getNameBankType = (value: any) => {
+			const item: any = bankType.find(
+				(items: any) => items.c === value.toString()
+			);
+			return item.n || "";
+		};
 
 		// ================ CUSTOM SUMMARY TABLE ============================================
 		const customCountRow = () => {
@@ -1020,7 +1024,8 @@ export default defineComponent({
 			heightDrawer,
 			monthNewClick,
 			statusSelected,
-      		userType,
+			userType,
+			getNameBankType,
 		};
 	},
 });
