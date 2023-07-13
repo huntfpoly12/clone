@@ -166,7 +166,7 @@
     </a-col>
   </a-row>
   <HistoryPopup :modalStatus="state.isModalHistory" @closePopup="state.isModalHistory = false" title="변경이력"
-                :idRowEdit="null" typeHistory="communication-board" :data="dataHistory" />
+                :idRowEdit="null" typeHistory="getNoticeMessageLogs" :data="dataHistory" />
 </template>
 
 <script setup lang="ts">
@@ -234,7 +234,6 @@ const filterSearch = reactive({
   finishWriteDate: rangeDate.value[1],
 })
 const dataHistory = reactive({
-  companyId: 0,
   messageId: 0
 })
 const listImagePreview = ref({
@@ -292,8 +291,7 @@ onErrorDetail((error) => {
 // get all admin notification messages logs
 const openLogs = (data: any) => {
   state.isModalHistory = true
-  dataHistory.companyId = data.company.id
-  dataHistory.messageId = data.messageId
+  dataHistory.messageId = data.id
 }
 const messageDetail = ref<NoticeMessage | null>(null)
 const addNewRow = () => {
