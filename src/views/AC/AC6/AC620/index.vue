@@ -10,7 +10,7 @@
     <div class="px-6">
       <a-row :gutter="[12,0]">
         <a-col span="16">
-          <div style="height: 100%; border: 1px solid #d7d7d7">
+          <div style="border: 1px solid #d7d7d7">
             <a-spin :spinning="loading" size="large">
               <DxDataGrid
                 ref="gridRef"
@@ -25,7 +25,7 @@
                 @focused-row-changed="onFocusedRowChanged"
                 :focused-row-key="focusedRowKey"
                 :focusedRowIndex="focusedRowIndex"
-                style="height: 740px"
+                style="height: calc(100vh - 150px)"
                 noDataText="내역이 없습니다"
               >
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
