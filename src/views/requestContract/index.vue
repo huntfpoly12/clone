@@ -296,7 +296,7 @@
                             <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                             <div class="form-item">
                                 <label class="red">출금은행:</label>
-                                <bank-select-box v-model:valueInput="contractCreacted.bankType" width="178px"
+                                <bank-select-box v-model:valueInput="contractCreacted.financialCompany" width="178px"
                                     :required="true" />
                             </div>
                             <div class="form-item">
@@ -522,7 +522,7 @@ export default {
                         }
                     }
                     if (dataInputCallApi.applicationService == 1) {
-                        if (contractCreacted.bankType == ''
+                        if (contractCreacted.financialCompany == ''
                             || contractCreacted.accountNumber == ''
                             || contractCreacted.ownerName == ''
                             || contractCreacted.ownerBizNumber2 == ''
@@ -621,7 +621,7 @@ export default {
                         // }
                         // if (dataInputCallApi.applicationService == 1) {
                         //     if (
-                        //         contractCreacted.bankType == "" ||
+                        //         contractCreacted.financialCompany == "" ||
                         //         contractCreacted.accountNumber == "" ||
                         //         contractCreacted.ownerName == "" ||
                         //         contractCreacted.ownerBizNumber == ""
@@ -783,7 +783,7 @@ export default {
                     accounting: accountingCustom,
                     withholding: withholdingCustom,
                     cmsBank: {
-                        bankType: contractCreacted.bankType,
+                        financialCompany: contractCreacted.financialCompany,
                         accountNumber: contractCreacted.accountNumber,
                         ownerName: contractCreacted.ownerName,
                         withdrawDay: contractCreacted.withdrawDay,
