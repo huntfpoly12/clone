@@ -253,7 +253,7 @@ export default defineComponent({
 			outline: none;
 			resize: none;
 			width: 100%;
-			min-height: 38px;
+			min-height: 200px;
 			max-height: 200px;
 			padding: 7px 10px;
 			font-size: 14px;

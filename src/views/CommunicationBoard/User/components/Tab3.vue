@@ -51,14 +51,14 @@
 
 					<DxColumn caption="분류" cell-template="" data-field="classification" />
 
-					<DxColumn caption="문의내용" cell-template="" data-field="content" />
+					<DxColumn caption="문의내용" cell-template="" width="200" data-field="content" />
 
 					<DxColumn caption="작성자" cell-template="" data-field="writerCompactUser.name" />
 
 					<DxColumn caption="작성일시" cell-template="" width="140" data-field="writedAt" format="yyyy-MM-dd HH:mm:ss"
 						data-type="date" />
 
-					<DxColumn caption="답변내용" cell-template="" data-field="answer" />
+					<DxColumn caption="답변내용" cell-template="" width="200" data-field="answer" />
 
 					<DxColumn caption="답변자" cell-template="" data-field="answerCompactUser.name" />
 
@@ -195,14 +195,14 @@
 						</div>
 					</div>
 					<InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
-						placeholder="안녕하세요? 테스트 입력입니다. 수고하세요" :disabled="disabledFormAdd || statusNullSelect" @submitChat="submitChat"
-						@cancel="cancelEdit" />
-					<ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
-						:listImage="listImagePreview" />
+						placeholder="글작성 (최대 1,000자)" :disabled="disabledFormAdd || statusNullSelect"
+						@submitChat="submitChat" @cancel="cancelEdit" />
 				</div>
 			</div>
 		</a-col>
 	</a-row>
+	<ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
+		:listImage="listImagePreview" />
 	<PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
 		:title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
 		:cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirm" />
@@ -291,7 +291,7 @@ export default defineComponent({
 			files: [],
 		})
 		store.dispatch('auth/getUserInfor');
-    	const userInfor = computed(() => store.state.auth.userInfor);
+		const userInfor = computed(() => store.state.auth.userInfor);
 		const rowEdit = reactive({
 			messageId: 0,
 			expresstionType: 2,
@@ -304,7 +304,7 @@ export default defineComponent({
 			}
 		})
 		const statusNullSelect = computed(() => rowEdit.classification ? false : true)
-		
+
 		const focusedRowKey: any = ref(null);
 		const trigger = ref<boolean>(true)
 		const triggerWorkInquiryMessage = ref<boolean>(false)
@@ -500,6 +500,8 @@ export default defineComponent({
 
 		}
 		const previewImage = (files: any, index: number) => {
+			console.log('àasfasfasfasf');
+
 			listImagePreview.value.index = index
 			listImagePreview.value.files = files.map((file: any) => file.url)
 			isModalPreview.value = true

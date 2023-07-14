@@ -7,7 +7,8 @@ export const noticeDefault = {
   active: true,
   writerCompactUser: {
     id: 0,
-    name: ''
+    name: '',
+    type: 'm'
   },
   fileStorages: []
 }

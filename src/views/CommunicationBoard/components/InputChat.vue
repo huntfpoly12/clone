@@ -11,8 +11,7 @@
     <!--      </div>-->
     <!--    </div>-->
     <div class="input-edit-chat-input">
-      <textarea rows="1" ref="inputChat" :placeholder="placeholder" :value="content" @input="changeInput"
-        @keypress.enter.exact.prevent="submitChat" :disabled="disabled || !isEdit" />
+      <textarea rows="1" ref="inputChat" v-chat-scroll :placeholder="placeholder" :value="content" @focus="resizeTextarea" @input="changeInput" :disabled="disabled || !isEdit" />
     </div>
 
     <div class="input-edit-chat-input-action">
@@ -97,12 +96,10 @@ const isDragging = ref(false)
 const submitChat = () => {
   emit('submitChat')
 };
-// watch(() => filesUpload.value, (value) => {
-//   console.log('%c value', 'color: red', value)
-//   emit('update:files', value)
-// })
-
 const changeInput = (event: any) => {
+  emit('update:content', event.target.value)
+}
+const resizeTextarea = (event: any) => {
   const element = event?.target ? event.target : event
   const style = getComputedStyle(element, null);
   const verticalBorders = Math.round(parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth));
@@ -111,9 +108,7 @@ const changeInput = (event: any) => {
   const newHeight = element.scrollHeight + verticalBorders;
   element.style.overflowY = newHeight > maxHeight ? "auto" : "hidden";
   element.style.height = Math.min(newHeight, maxHeight) + "px";
-  emit('update:content', event.target.value)
 }
-
 const resetInputChat = () => {
   emit('update:content', '')
   filesUpload.value = []
@@ -185,19 +180,6 @@ const removeFile = (index: number) => {
   filesUpload.value.splice(index, 1)
 }
 
-const formatFileSize = (bytes: number) => {
-  if (bytes === 0) return '0 Bytes'
-  const k = 1000
-  const decimalPoint = 2
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i];
-}
-
-const resizeInput = () => {
-  changeInput(inputChat.value)
-}
-
 const dragover = (event: any) => {
   event.preventDefault();
   if (props.disabled) return
@@ -233,7 +215,7 @@ const drop = (event: any) => {
       outline: none;
       resize: none;
       width: 100%;
-      min-height: 38px;
+      min-height: 200px;
       max-height: 200px;
       padding: 7px 10px;
       font-size: 14px;

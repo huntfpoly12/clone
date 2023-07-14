@@ -15,6 +15,7 @@ export interface NoticeMessage {
     name: string
     username: string
     active: boolean
+    type: string
   }
   fileStorages?: Array<{
     id: number
