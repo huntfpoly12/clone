@@ -27,6 +27,7 @@ export default gql`
                 name
                 username
                 active
+                type
                 __typename @skip(if: true)
             }
             fileStorages {
