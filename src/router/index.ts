@@ -91,6 +91,13 @@ const routes = [
         },
       },
       {
+        path: "/bf-254",
+        component: () => import("../views/BF/BF2/BF254/index.vue"),
+        meta: {
+          roles: AdminScreenRole.all().map((i) => i.enumKey),
+        },
+      },
+      {
         path: "/bf-255",
         component: () => import("../views/BF/BF2/BF255/index.vue"),
         meta: {
