@@ -3,14 +3,11 @@
     margin: 10px;
     margin-bottom: 0;
     max-height: calc(100vh - 140px);
-    // min-height: calc(100vh - 140px);
     .top {
         margin-bottom: 10px;
-
         .grid {
             display: flex;
             justify-content: space-between;
-
             .items {
                 border: 1px solid #bfbfbf;
                 border-left: none;
@@ -30,18 +27,6 @@
                 }
             }
         }
-
-        // .flex {
-        //     margin-top: 15px;
-        //     display: flex;
-        //     align-items: center;
-        //     justify-content: space-between;
-
-        //     .action {
-        //         display: flex;
-        //         align-items: center;
-        //     }
-        // }
     }
     #content {
         #dataGridAc120 {
@@ -171,10 +156,6 @@
     padding: 2px 4px;
 }
 
-.text-align-center {
-    text-align: center;
-}
-
 :deep .custom-button .dx-button-content {
     padding: 6px 8px;
 }
@@ -199,7 +180,3 @@
 :deep .dx-datagrid-content.dx-sortable {
     border-bottom: 1px solid #ddd;
 }
-// .month-hover {
-//     background-color: #D1E1F8;
-//     color: black;
-// }

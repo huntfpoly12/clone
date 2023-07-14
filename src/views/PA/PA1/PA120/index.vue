@@ -218,16 +218,16 @@
           />
           <span>{{ contentDelete }}</span>
         </div>
-        <div class="text-align-center mt-30">
+        <div class="text-center mt-30">
           <button-basic
-            class="button-form-modal"
+            class="mr-5"
             :text="'아니요'"
             :type="'default'"
             :mode="'outlined'"
             @onClick="delStatus = false"
           />
           <button-basic
-            class="button-form-modal"
+            class="ml-5"
             :text="'네. 삭제합니다'"
             :width="140"
             :type="'default'"

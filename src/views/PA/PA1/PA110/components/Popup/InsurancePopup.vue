@@ -2,7 +2,7 @@
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="600">
         <div class="custom-modal">
-            <div class="text-align-center">
+            <div class="text-center">
                 <div style="display: -webkit-inline-box;">
                     <h3>4대보험 EDI 조회 결과</h3>
                     <a-tooltip color="black" placement="top">
@@ -34,8 +34,8 @@
                 </div>
             </div>
         </div>
-        <div class="text-align-center mt-40">
-            <button-basic class="button-form-modal" :text="'적용'" :width="140" :type="'default'" :mode="'contained'"
+        <div class="text-center mt-40">
+            <button-basic :text="'적용'" :width="140" :type="'default'" :mode="'contained'"
                 @onClick="onSubmit" />
         </div>
     </a-modal>
@@ -61,8 +61,6 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
-        ;
-
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -98,19 +96,7 @@ export default defineComponent({
     }
 }
 
-.mt-40 {
-    margin-top: 40px;
-}
-
-.text-align-center {
-    text-align: center;
-}
-
 .text-align-left {
     text-align: left;
-}
-
-.button-form-modal {
-    margin: 0px 5px;
 }
 </style>

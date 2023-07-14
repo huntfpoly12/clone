@@ -39,7 +39,7 @@
 								</a-form-item>
 								<a-form-item label="적요" class="red">
 									<default-text-box v-model:valueInput="formData.summary"
-										:disabled="statusNoData || isDisabled " width="150px" :required="true" />
+										:disabled="statusNoData || isDisabled" width="150px" :required="true" />
 								</a-form-item>
 							</a-col>
 							<a-col :span="6" class="col-4 fl-r">
@@ -52,8 +52,7 @@
                     v-model:valueInput="formData.accountCode" width="230px" :required="true" />
                 </a-form-item> -->
 								<a-form-item label="계정과목">
-									<account-code-select :key="resetSelectAccount"
-										:disabled="statusNoData || isDisabled"
+									<account-code-select :key="resetSelectAccount" :disabled="statusNoData || isDisabled"
 										:classification="classificationAccountCode"
 										v-model:valueInput="formData.accountCode" width="230px" />
 								</a-form-item>
@@ -158,10 +157,9 @@
 							</a-col>
 							<a-col :span="12">
 								<a-form-item label="물품내역수">
-									<default-text-box v-if="formData.resolutionClassification != 1" :disabled="true" v-model:valueInput="formData.goodsCount"
-										width="150px" />
-									<default-text-box v-else :disabled="true" :valueInput="0"
-										width="150px" />
+									<default-text-box v-if="formData.resolutionClassification != 1" :disabled="true"
+										v-model:valueInput="formData.goodsCount" width="150px" />
+									<default-text-box v-else :disabled="true" :valueInput="0" width="150px" />
 								</a-form-item>
 							</a-col>
 						</a-row>
@@ -177,7 +175,7 @@
 						<!-- </div> -->
 					</div>
 				</StandardForm>
-				<div class="text-align-center mt-20">
+				<div class="text-center mt-20">
 					<DxButton @click="onCancelDeleteRow" class="custom-button" type="default"
 						:height="$config_styles.HeightInput" :disabled="statusNoData || isDisabled">
 						<div class="d-flex-center">
@@ -185,8 +183,8 @@
 							<span>전표취소</span>
 						</div>
 					</DxButton>
-					<button-basic @onClick="onSubmit" :disabled="statusNoData || isDisabled"
-						style="margin-left: 5px" mode="contained" type="default" text="저장" />
+					<button-basic @onClick="onSubmit" :disabled="statusNoData || isDisabled" style="margin-left: 5px"
+						mode="contained" type="default" text="저장" />
 				</div>
 			</a-col>
 			<a-col class="upload detail2">
@@ -204,32 +202,19 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import {
-	defineComponent,
-	ref,
-	reactive,
-	computed,
-	onMounted,
-	watch,
-} from "vue";
+import { defineComponent, ref, reactive, computed, watch, } from "vue";
 import { initialStateFormData } from "../utils/index";
 import PopupCopyData from "./PopupCopyData.vue";
 import DxButton from "devextreme-vue/button";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
-import dayjs from "dayjs";
-import {
-	FullscreenOutlined,
-	FullscreenExitOutlined,
-} from "@ant-design/icons-vue";
+import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons-vue";
 import ModalDelete from "./ModalDelete.vue";
 import queries from "@/graphql/queries/AC/AC1/AC120";
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
-import { companyId, userType } from "@/helpers/commonFunction";
-import filters from "@/helpers/filters";
+import { companyId, userType, makeDataClean } from "@/helpers/commonFunction";
 import UploadPreviewImage from "./UploadPreviewImage.vue";
-import { cloneDeep, isEqual } from "lodash";
 export default defineComponent({
 	components: {
 		PopupCopyData,
@@ -269,7 +254,7 @@ export default defineComponent({
 		let dataAccountSubject = JSON.parse(sessionStorage.getItem("accountSubject") ?? "[]");
 		const keyResetPopupCopy = ref<number>(0)
 		const statusProcess = computed(() => props.statusProcess)
-    	const isDisabled = computed(() => (userType !== 'm' && statusProcess.value !== 10) || (userType === 'm' && statusProcess.value === 40))
+		const isDisabled = computed(() => (userType !== 'm' && statusProcess.value !== 10) || (userType === 'm' && statusProcess.value === 40))
 		// =================== GRAPHQL ===================
 		// mutation updateAccountingDocument
 		const {
@@ -447,7 +432,7 @@ export default defineComponent({
 					},
 				};
 				if (dataSubmit.input.resolutionType == 11 || dataSubmit.input.resolutionType == 12) {
-				    dataSubmit.input.statementOfGoodsItems = null;
+					dataSubmit.input.statementOfGoodsItems = null;
 				}
 				// else if (dataSubmit.input.resolutionType == 12 || dataSubmit.input.resolutionType == 22) {
 				//     dataSubmit.input.amount = -dataSubmit.input.amount
@@ -483,7 +468,7 @@ export default defineComponent({
 						}
 					})
 				);
-				mutateUpdateAccountingDocument(cleanData);
+				mutateUpdateAccountingDocument(makeDataClean(cleanData));
 				// }
 			}
 		};
@@ -546,8 +531,8 @@ export default defineComponent({
 			handleConfirmChange,
 			formData, statusNoData,
 			statusProcess,
-      userType,
-      isDisabled
+			userType,
+			isDisabled
 		};
 	},
 });
