@@ -29,6 +29,7 @@ import Tab2 from "./components/Tab2.vue";
 import Tab3 from "./components/Tab3.vue";
 import {ReloadOutlined} from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
+import { computed } from "vue";
 
 const activeKey = ref<string | number>('1');
 const dataRowTab2 = ref<MessageDetail | null>(null)
@@ -47,6 +48,7 @@ const openRow = (data: MessageDetail | MessageDetailAnswer | NodeNotification) =
     dataRowTab3.value = data as MessageDetailAnswer
   }
 }
+const topCss = computed(() => activeKey.value === '1' ? '46px' : '70px')
 const searching = () => {
   if (activeKey.value === '2') {
     tab2.value?.refetchDataTab2()
@@ -77,7 +79,7 @@ provide(DataRowKeyTab3, dataRowTab3)
   position: relative;
   .custom-button {
     position: absolute;
-    top: 46px;
+    top: v-bind(topCss);
     right: 25px;
     z-index: 10;
   }

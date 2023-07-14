@@ -6,46 +6,19 @@
 				<div class="custom-modal-edit">
 					<img src="@/assets/images/icon_edit.png" alt="" style="width: 30px" />
 					<span>선택된 내역 지급일을</span>
-					<!-- <number-box :key="resetInput" width="70px" :required="true" :min="0" :max="maxDayMonth" v-model:valueInput="dayValue"
-                    :spinButtons="true" /> -->
 					<date-time-box-custom ref="requiredDayValue" width="150px" :required="true" :startDate="startDate"
 						:finishDate="finishDate" v-model:valueDate="dayValue" />
 					<span>일로 변경하시겠습니까?</span>
 				</div>
-				<div class="text-align-center mt-30">
-					<button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+				<div class="text-center mt-30">
+					<button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
 						@onClick="setModalVisible" />
-					<button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'"
-						:mode="'contained'" @onClick="onSubmit" />
+					<button-basic class="ml-5" :text="'네. 변경합니다'" :width="140" :type="'default'" :mode="'contained'"
+						@onClick="onSubmit" />
 				</div>
 			</standard-form>
 		</a-spin>
 	</a-modal>
-	<!-- <a-modal v-model:visible="statusOnCallApiChange" okText="확인" :closable="false" :footer="null">
-		<h3 style="text-align: center">지급일변경 결과</h3>
-		<p class="d-flex-center">
-			<img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수:
-			{{ data.length }}건
-		</p>
-		<p class="d-flex-center">
-			<img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{ sumSuccessCallApi }}건
-		</p>
-		<p class="d-flex-center">
-			<img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{ sumErrorCallApi }} 건
-		</p>
-		<ul>
-			<li v-for="item in arrDataError" :key="item.employeeId" class="list-error">
-				<employee-info :idEmployee="item.employee.employeeId" :name="item.employee.name"
-					:idCardNumber="item.employee.residentId" :status="item.employee.status"
-					:foreigner="item.employee.foreigner" :checkStatus="false" />
-				<span style="margin-left: 10px">{{ item.error }}</span>
-			</li>
-		</ul>
-		<a-row justify="center">
-			<button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
-				@onClick="closePupop" />
-		</a-row>
-	</a-modal> -->
 </template>
 
 <script lang="ts">
@@ -75,17 +48,8 @@ export default defineComponent({
 		const store = useStore();
 		const processKey = computed(() => store.state.common.pa110.processKeyPA110);
 		const dayValue = ref(1);
-		// const statusOnCallApiChange = ref<boolean>(false);
-		// const arrData = ref<any[]>([]);
-		// const arrDataError = ref<any[]>([]);
-		// let sumSuccessCallApi = ref<number>(0);
-		// let sumErrorCallApi = ref<number>(0);
 		const loading = ref<boolean>(false);
 		const requiredDayValue = ref();
-		const paYear = ref<number>(
-			parseInt(sessionStorage.getItem("paYear") ?? "0")
-		);
-		// const maxDayMonth = ref<number>(dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth())
 		const startDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).startOf("month").toDate());
 		const finishDate = computed(() => dayjs(`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`).endOf("month").toDate());
 		const setModalVisible = () => {
@@ -95,46 +59,19 @@ export default defineComponent({
 			mutations.changeIncomeWagePaymentDay
 		);
 		onDone(() => {
-			// sumSuccessCallApi.value++;
-			// arrData.value.shift();
-			// if (arrData.value?.length) {
-			// 	callOneApiChange();
-			// } else {
-			// 	loading.value = false;
-			// 	statusOnCallApiChange.value = true;
 			notification('success', Message.getMessage('COMMON', '106').message)
 			emit("closePopup", false);
 			store.state.common.pa110.onDoneEdit = true;
 			store.state.common.pa110.loadingTableInfo++;
-			// }
-
-			// emit("closePopup", false)
-
-			// store.state.common.pa110.loadingFormData++
 		});
 		onError((e: any) => {
-			// //notification('error', e.message)
-			// sumErrorCallApi.value++;
-			// arrDataError.value.push({ ...arrData.value[0], error: e.message });
-			// arrData.value.shift();
-			// if (arrData.value?.length) {
-			// 	callOneApiChange();
-			// } else {
-			// 	loading.value = false;
-			// 	statusOnCallApiChange.value = true;
-			// store.state.common.pa110.onDoneEdit = true;
-			// store.state.common.pa110.loadingTableInfo++;
-			// }
+			//notification('error', e.message)
 		});
 		const onSubmit = (e: any) => {
 			if (!dayValue.value) {
 				requiredDayValue.value.validate(true);
 				return;
 			}
-			// sumSuccessCallApi.value = 0;
-			// sumErrorCallApi.value = 0;
-			// arrDataError.value = [];
-			// arrData.value = JSON.parse(JSON.stringify(props.data));
 			props.data?.forEach((data: any) => {
 				mutate({
 					companyId: companyId,
@@ -143,62 +80,33 @@ export default defineComponent({
 					day: parseInt(dayValue.value?.toString().slice(6, 8)) ?? 1,
 				});
 			})
-			// if (arrData.value?.length) {
-			// 	loading.value = true;
-			// 	callOneApiChange();
-			// }
 		};
-		// const callOneApiChange = () => {
-		// 	mutate({
-		// 		companyId: companyId,
-		// 		processKey: processKey.value,
-		// 		incomeId: arrData.value[0].incomeId,
-		// 		day: parseInt(dayValue.value?.toString().slice(6, 8)) ?? 1,
-		// 	});
-		// };
-		// const closePupop = () => {
-		// 	// statusOnCallApiChange.value = false;
-		// 	emit("closePopup", false);
-		// };
-		watch(
-			() => props.modalStatus,
-			(value) => {
-				if (value) {
-					// dayValue.value = parseInt(`${paYear.value}${filters.formatMonth(processKey.value.paymentMonth)}01}`)
-					dayValue.value = sampleDataIncomeWage.paymentDay
-						? parseInt(
-							`${processKey.value.paymentYear}${filters.formatMonth(
-								processKey.value.paymentMonth
-							)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`
-						)
-						: parseInt(
-							`${processKey.value.paymentYear}${filters.formatMonth(
-								processKey.value.paymentMonth
-							)}${filters.formatMonth(
-								dayjs(
-									`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`
-								).daysInMonth()
-							)}`
-						);
-					// dayValue.value = 1
-					// maxDayMonth.value = dayjs(`${paYear.value}-${processKey.value.paymentMonth}`).daysInMonth()
-					// resetInput.value++
-				}
+		watch(() => props.modalStatus, (value) => {
+			if (value) {
+				dayValue.value = sampleDataIncomeWage.paymentDay
+					? parseInt(
+						`${processKey.value.paymentYear}${filters.formatMonth(
+							processKey.value.paymentMonth
+						)}${filters.formatMonth(sampleDataIncomeWage.paymentDay)}`
+					)
+					: parseInt(
+						`${processKey.value.paymentYear}${filters.formatMonth(
+							processKey.value.paymentMonth
+						)}${filters.formatMonth(
+							dayjs(
+								`${processKey.value.paymentYear}-${processKey.value.paymentMonth}`
+							).daysInMonth()
+						)}`
+					);
 			}
-		);
+		});
 
 		return {
 			setModalVisible,
 			store,
 			onSubmit,
 			dayValue,
-			// statusOnCallApiChange,
-			// arrDataError,
-			// sumSuccessCallApi,
-			// sumErrorCallApi,
-			// closePupop,
 			loading,
-			// maxDayMonth,
 			startDate,
 			finishDate,
 			requiredDayValue,
@@ -223,18 +131,6 @@ export default defineComponent({
 	span {
 		padding: 0px 5px;
 	}
-}
-
-.mt-30 {
-	margin-top: 30px;
-}
-
-.text-align-center {
-	text-align: center;
-}
-
-.button-form-modal {
-	margin: 0px 5px;
 }
 
 .list-error {

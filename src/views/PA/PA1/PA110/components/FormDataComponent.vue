@@ -187,7 +187,7 @@
 						</a-spin>
 					</a-col>
 				</a-row>
-				<div class="text-align-center mt-20 mb-10" style="display: flex; justify-content: center">
+				<div class="text-center mt-20 mb-10 d-flex-center justify-content-center">
 					<a-tooltip placement="top" :overlayStyle="{ maxWidth: '500px' }" title="입력된 급여 금액으로 공제 재계산합니다.">
 						<div>
 							<button-tooltip-error

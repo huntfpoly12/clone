@@ -8,6 +8,7 @@
             :column-auto-width="true" :loadPanel="false" :focused-row-key="focusRowKey"
             @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged"
             :focused-row-index="focusRowIndex" noDataText="내역이 없습니다" style="height: calc(100vh - 210px);">
+            <DxPaging :page-size="0" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
             <DxExport :enabled="true" />
             <DxToolbar>
@@ -46,7 +47,7 @@
             <DxColumn caption="작성자" data-field="writerCompactUser.name" alignment="center" />
             <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" alignment="center"
               width="140px" />
-            <DxColumn caption="" alignment="center" cell-template="action" />
+            <DxColumn caption="" cell-template="action" width="50px" />
 
             <template #active="{ data }">
               <div v-if="!data.data.active">
@@ -63,10 +64,12 @@
               </div>
             </template>
             <template #action="{ data }">
-              <a-tooltip>
-                <template #title>변경이력</template>
-                <HistoryOutlined style="font-size: 18px; margin-left: 5px" @click="openLogs(data.data)" />
-              </a-tooltip>
+              <div class="d-flex-center justify-content-center">
+                <a-tooltip>
+                  <template #title>변경이력</template>
+                  <HistoryOutlined style="font-size: 18px" @click="openLogs(data.data)" />
+                </a-tooltip>
+              </div>
             </template>
           </DxDataGrid>
         </standard-form>
@@ -90,9 +93,9 @@
                           <ExpressionType :is-select="false" :value-select="messageDetail.expresstionType" />
                         </div>
                         <div class="form-chat-timeline-content-info-user-name">
-                          {{
-                            messageDetail.writerCompactUser.name || userInfo.name
-                          }}
+                          <span :class="messageDetail.writerCompactUser.type === `m` ? `text-blue` : ``"> 
+                            {{ messageDetail.writerCompactUser.name || userInfo.name }}
+                          </span>
                         </div>
                       </div>
                       <div class="form-chat-timeline-content-info-time">
@@ -186,7 +189,7 @@
 <script setup lang="ts">
 import {DeleteOutlined, EditOutlined, FileOutlined, FileTextOutlined, HistoryOutlined} from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
-import {DxColumn, DxDataGrid, DxExport, DxItem, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
+import {DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
 
 import ExpressionType from "@/components/common/ExpressionType.vue";
 import {Message} from "@/configs/enum";
@@ -268,7 +271,7 @@ watch(() => dataRow?.value?.messageId, (value) => {
 })
 
 // get all admin notification messages
-const { onResult, onError, loading, refetch } = useQuery(searchAdminNotificationMessages, {
+const { onResult, onError, loading } = useQuery(searchAdminNotificationMessages, {
   filter: filterSearch
 }, () => ({
   fetchPolicy: "no-cache",
@@ -293,7 +296,7 @@ const queryDetail = reactive({
   messageId: 0,
   companyId: 0
 })
-const { onResult: onResultDetail, onError: onErrorDetail, loading: loadingDetail, refetch: refetchDetail } = useQuery(getAdminNotificationMessage,
+const { onResult: onResultDetail, onError: onErrorDetail, loading: loadingDetail } = useQuery(getAdminNotificationMessage,
   queryDetail, () => ({
     fetchPolicy: "no-cache",
     enabled: state.triggerDetail
@@ -450,7 +453,8 @@ const {
 } = useMutation(deleteNotificationMessage)
 onDoneDelete((result) => {
   if (result) {
-    refetch()
+    state.trigger = true
+    if(filterSearch.includeDeletion) state.triggerDetail = true
     notification("success", Message.getCommonMessage('402').message);
   }
 })

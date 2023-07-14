@@ -44,9 +44,8 @@
         <!-- <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA720" :isFormat="true" /> -->
       </a-form-item>
 
-      <div class="text-align-center mt-20">
+      <div class="text-center mt-20">
         <button-basic
-          class="button-form-modal"
           text="새로 입력"
           :width="140"
           type="default"
@@ -102,9 +101,9 @@
       </div>
     </a-spin>
 
-    <div class="text-align-center mt-30">
+    <div class="text-center mt-30">
       <button-basic
-        class="button-form-modal"
+        class="mr-5"
         text="아니요"
         :width="140"
         type="default"
@@ -112,7 +111,7 @@
         @onClick="setModalVisibleCopy"
       />
       <button-basic
-        class="button-form-modal"
+        class="ml-5"
         text="네"
         :width="140"
         type="default"
@@ -369,18 +368,6 @@ export default defineComponent({
   span {
     padding: 0px 5px;
   }
-}
-
-.mt-30 {
-  margin-top: 30px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
 }
 
 :deep label {

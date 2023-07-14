@@ -1,13 +1,14 @@
 <template>
 	<a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1100">
 		<div class="mt-30">
-			<div class="text-align-center">
+			<div class="text-center">
 				<h2><b>물품내역</b></h2>
 			</div>
 			<standard-form ref="refFormItemAC120">
 				<DxDataGrid noDataText="내역이 없습니다" class="mt-20" ref="dataGridRef" :show-row-lines="true"
 					:data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
 					:allow-column-resizing="colomn_resize" :column-auto-width="true">
+					<DxPaging page-size="15" />
 					<DxToolbar>
 						<DxItem location="after" template="button-add" css-class="cell-button-add" />
 					</DxToolbar>
@@ -58,36 +59,21 @@
 					<template #action="{ data }">
 						<DeleteOutlined style="font-size: 12px" @click="deleteItem(data.data)" />
 					</template>
-					<!-- <DxSummary :recalculate-while-editing="true">
-                        <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}건" />
-                        <DxTotalItem column="금액" cssClass="refTotalValue" :customize-text="customSumAmount" />
-                        <DxTotalItem cssClass="custom-sumary refTotalDifference" column="비고" :customize-text="checkAlone" />
-                    </DxSummary> -->
 				</DxDataGrid>
 				<div class="custom-smmary">
-					<!-- <div style="margin-left: 10px"> -->
-						<div class="dx-datagrid-summary-item dx-datagrid-text-content">
-							<!-- <div> -->
-								전체<span>[{{ dataSource?.length }}]</span>
-							<!-- </div> -->
-						</div>
-					<!-- </div>
-					<div style="margin-left: 60px"> -->
-						<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customSumAmount()"></div>
-					<!-- </div>
-					<div style="margin-left: 20px"> -->
-						<div class="dx-datagrid-summary-item dx-datagrid-text-content">
-							지출액 <span>[{{ $filters.formatCurrency(amount) }}]</span>
-						</div>
-					<!-- </div>
-					<div style="margin-left: 20px"> -->
-						<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="checkAlone()"></div>
-					<!-- </div> -->
+					<div class="dx-datagrid-summary-item dx-datagrid-text-content">
+						전체<span>[{{ dataSource?.length }}]</span>
+					</div>
+					<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="customSumAmount()"></div>
+					<div class="dx-datagrid-summary-item dx-datagrid-text-content">
+						지출액 <span>[{{ $filters.formatCurrency(amount) }}]</span>
+					</div>
+					<div class="dx-datagrid-summary-item dx-datagrid-text-content" v-html="checkAlone()"></div>
 				</div>
 			</standard-form>
 		</div>
-		<div class="btn_submit text-align-center mt-20">
-			<button-basic :disabled="disabledSubmit || !dataSource?.length" @onClick="onSubmit" class="button-form-modal"
+		<div class="text-center mt-20">
+			<button-basic :disabled="disabledSubmit || !dataSource?.length" @onClick="onSubmit"
 				:text="'저장'" :type="'default'" :mode="'contained'" />
 		</div>
 		<PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
@@ -104,23 +90,12 @@ import {
 	DxDataGrid,
 	DxColumn,
 	DxScrolling,
-	DxSelection,
-	DxSummary,
 	DxTotalItem,
 	DxToolbar,
-	DxEditing,
 	DxPaging,
-	DxTexts,
-	DxLookup,
 } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
-import {
-	EditOutlined,
-	HistoryOutlined,
-	DeleteOutlined,
-	SaveOutlined,
-} from "@ant-design/icons-vue";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import { DeleteOutlined } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
 import DxNumberBox from "devextreme-vue/number-box";
@@ -139,22 +114,19 @@ export default defineComponent({
 		},
 	},
 	components: {
-		DxRequiredRule,
 		DxNumberBox,
 		DxItem,
 		DxDataGrid,
 		DxColumn,
 		DxScrolling,
-		DxSelection,
-		DxSummary,
+
 		DxTotalItem,
 		DeleteOutlined,
 		DxButton,
 		DxToolbar,
-		DxEditing,
+
 		DxPaging,
-		DxTexts,
-		DxLookup,
+
 	},
 
 	setup(props, { emit }) {
@@ -306,10 +278,10 @@ export default defineComponent({
 		const addNewRow = async () => {
 			if (dataSource.value?.length) {
 				dataSource.value = [...dataSource.value,
-					{
-						...initStatementOfGoods,
-						id: dataSource.value[dataSource.value.length - 1].id + "create",
-					},
+				{
+					...initStatementOfGoods,
+					id: dataSource.value[dataSource.value.length - 1].id + "create",
+				},
 				];
 			} else {
 				dataSource.value = [{ ...initStatementOfGoods, id: "create" }];
@@ -352,23 +324,17 @@ export default defineComponent({
 					delete value.__typename;
 					return value;
 				});
-				// if (!store.state.common.ac120.statusFormAdd) {
-					// status update = true
-					if (dataSource.value.length) {
-						let dataSave = {
-							companyId: companyId,
-							fiscalYear: acYear.value,
-							facilityBusinessId: globalFacilityBizId.value,
-							transactionDetailDate: formData.value.transactionDetailDate,
-							accountingDocumentId: formData.value.accountingDocumentId,
-							items: dataItem,
-						};
-						mutateSaveStatementOfGoods(dataSave);
-					}
-				// } else {
-				// 	formData.value.statementOfGoodsItems = dataItem;
-				// 	emit("closePopup", false);
-				// }
+				if (dataSource.value.length) {
+					let dataSave = {
+						companyId: companyId,
+						fiscalYear: acYear.value,
+						facilityBusinessId: globalFacilityBizId.value,
+						transactionDetailDate: formData.value.transactionDetailDate,
+						accountingDocumentId: formData.value.accountingDocumentId,
+						items: dataItem,
+					};
+					mutateSaveStatementOfGoods(dataSave);
+				}
 			}
 		};
 		const changeInput = (key: string, index: number) => {
@@ -444,22 +410,6 @@ export default defineComponent({
 			}
 		}
 	}
-}
-
-.text-align-center {
-	text-align: center;
-}
-
-.button-form-modal {
-	margin: 0px 5px;
-}
-
-.mr-10 {
-	margin-right: 10px;
-}
-
-.mt-10 {
-	margin-top: 10px;
 }
 
 :deep .dx-datagrid-rowsview .dx-row>td,

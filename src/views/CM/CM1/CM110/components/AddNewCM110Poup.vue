@@ -99,16 +99,16 @@
           </a-col>
         </a-row>
 
-        <div class="text-align-center mt-20">
+        <div class="text-center mt-20">
           <button-basic
-            class="button-form-modal"
+            class="mr-5"
             text="그냥 나가기"
             :type="'default'"
             :mode="'outlined'"
             @onClick="setModalVisible()"
           />
           <button-basic
-            class="button-form-modal"
+            class="ml-5"
             text="저장하고 나가기"
             :width="140"
             :type="'default'"

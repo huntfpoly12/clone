@@ -103,7 +103,7 @@
         </DxDataGrid>
       </div>
     </a-spin>
-    <div class="btn_submit">
+    <div class="text-center">
       <a-tooltip placement="top" title="원본결의서 참조없이 여입결의서로 변경">
         <span>
           <button-basic class="button-form-modal1" :text="'원본결의서 반영 안함'" :type="'default'" :mode="'contained'"
@@ -113,7 +113,7 @@
 
       <a-tooltip placement="top" title="선택한 원본결의서 반영하여 여입결의서로 변경">
         <span>
-          <button-basic class="button-form-modal2" :text="'원본결의서 반영'" :type="'default'" :mode="'contained'"
+          <button-basic class="mx-10" :text="'원본결의서 반영'" :type="'default'" :mode="'contained'"
             @onClick="onCopy" />
         </span>
       </a-tooltip>
@@ -277,9 +277,6 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.btn_submit {
-  text-align: center;
-}
 
 .button-form-modal1 {
   background-color: orange;
@@ -287,10 +284,6 @@ export default defineComponent({
 
 .button-form-modal1:hover {
   background-color: rgb(207, 135, 0);
-}
-
-.button-form-modal2 {
-  margin: 0 10px;
 }
 
 .button-form-modal3 {

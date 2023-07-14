@@ -23,16 +23,16 @@
           ></mail-text-box>
         </div>
       </div>
-      <div class="text-align-center mt-20">
+      <div class="text-center mt-20">
         <button-basic
-          class="button-form-modal"
+          class="mr-5"
           :text="'아니요'"
           :type="'default'"
           :mode="'outlined'"
           @onClick="$emit('cancel')"
         />
         <button-basic
-          class="button-form-modal"
+          class="ml-5"
           :text="'네. 제작요청합니다'"
           :width="160"
           :type="'default'"
@@ -175,17 +175,5 @@ export default defineComponent({
   span {
     padding-right: 10px;
   }
-}
-
-.mt-50 {
-  margin-top: 50px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
 }
 </style>

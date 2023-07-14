@@ -13,10 +13,10 @@
         <span class="mt-5">일로 변경하시겠습니까?</span>
       </div>
       <div v-else class="text-center">항목을 하나 선택해야합니다</div>
-      <div class="text-align-center mt-30">
-        <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+      <div class="text-center mt-30">
+        <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
           @onClick="setModalVisible" />
-        <button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'" :mode="'contained'"
+        <button-basic class="ml-5" :text="'네. 변경합니다'" :width="140" :type="'default'" :mode="'contained'"
           @onClick="onSubmit" />
       </div>
     </standard-form>
@@ -226,18 +226,6 @@ export default defineComponent({
   span {
     padding: 0px 5px;
   }
-}
-
-.mt-30 {
-  margin-top: 30px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
 }
 
 .red {

@@ -24,13 +24,13 @@
                     <a-form-item label="전용액" class="red">
                         <number-box-money width="230px" v-model:valueInput="formState.transitionAmount" :min="1" :required="true" :spinButtons="false" placeholder="양수만 가능"/>
                     </a-form-item>
-                    <div class="text-align-center mt-20"><span>과목전용조서를 등록하시겠습니까?</span></div>
+                    <div class="text-center mt-20"><span>과목전용조서를 등록하시겠습니까?</span></div>
                 </div>
             </div>
-            <div class="text-align-center mt-20">
-                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+            <div class="text-center mt-20">
+                <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible()" />
-                <button-basic class="button-form-modal" :text="'네. 등록합니다'" :width="140" :type="'default'"
+                <button-basic class="ml-5" :text="'네. 등록합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -139,12 +139,5 @@ export default defineComponent({
 .custom-modal .ant-form-item-label>label {
     width: 130px;
     padding-left: 10px;
-}
-.text-align-center {
-    text-align: center;
-}
-
-.button-form-modal {
-    margin: 0px 5px;
 }
 </style>
