@@ -31,12 +31,14 @@
   .text-align-center {
     text-align: center;
   }
-
-  :deep .ant-form-item-label > label {
-    width: 180px;
-    padding-left: 10px;
-
+  .ant-form-item.custom {
+    margin-bottom: 0;
   }
+
+  //:deep .ant-form-item-label > label {
+  //  width: 180px;
+  //  padding-left: 10px;
+  //}
   :deep(.dx-datagrid-header-panel) {
     padding: 5px !important;
   }

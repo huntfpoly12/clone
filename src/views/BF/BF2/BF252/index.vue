@@ -1,49 +1,6 @@
 <template>
   <action-header buttonSearch buttonDelete buttonPrint @actionSearch="searching"/>
   <div id="bf-252" class="page-content">
-    <div class="d-flex-center gap-10">
-      <a-form-item label="청구연월">
-        <range-month-time-box v-model:valueDate="search.billingYearAndMonth" width="180px"
-                              :multi-calendars="true"/>
-      </a-form-item>
-      <a-form-item label="청구연월">
-        <range-date-time-box v-model:valueDate="search.scheduledPaymentDate" width="220px" :multi-calendars="true"/>
-      </a-form-item>
-      <a-form-item label="청구연월">
-        <range-date-time-box v-model:valueDate="search.paymentDate" width="220px" :multi-calendars="true"/>
-      </a-form-item>
-      <checkbox-basic v-model:valueCheckbox="search.includingBillAmount" label="청구금액 0원 포함"/>
-      <a-tooltip title="일괄청구 신규 등록">
-        <div>
-          <DxButton class=" custom-button" type="default" @click="onOpenPopupEI13">
-            <div class="d-flex-center gap-5">
-              <PlusOutlined/>
-              <span>일괄청구등록</span>
-            </div>
-          </DxButton>
-        </div>
-      </a-tooltip>
-      <a-tooltip title="개별청구 신규 등록">
-        <div>
-          <DxButton class="custom-button" type="default" @click="onOpenPopupEB13">
-            <div class="d-flex-center gap-5">
-              <PlusOutlined/>
-              <span>개별청구 신규 등록</span>
-            </div>
-          </DxButton>
-        </div>
-      </a-tooltip>
-      <a-tooltip title="출금자료 미리보기 및 신규 등록">
-        <div>
-          <DxButton class="custom-button" type="default" @click="onOpenModalEB13EB14">
-            <div class="d-flex-center gap-5">
-              <PlusOutlined/>
-              <span>출금자료등록</span>
-            </div>
-          </DxButton>
-        </div>
-      </a-tooltip>
-    </div>
     <div class="content-grid">
       <a-spin :spinning="false">
         <DxDataGrid id="data-source" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -56,10 +13,56 @@
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
           <DxExport :enabled="true"/>
           <DxToolbar>
+            <DxItem location="after" template="search"/>
             <DxItem location="after" template="search-action"/>
             <DxItem name="searchPanel" location="after"/>
             <DxItem name="exportButton" css-class="cell-button-export" location="after"/>
           </DxToolbar>
+          <template #search>
+            <div class="d-flex-center gap-10">
+              <a-form-item label="청구연월">
+                <range-month-time-box v-model:valueDate="search.billingYearAndMonth" width="180px"
+                                      :multi-calendars="true"/>
+              </a-form-item>
+              <a-form-item label="결제예정일자">
+                <range-date-time-box v-model:valueDate="search.scheduledPaymentDate" width="220px" :multi-calendars="true"/>
+              </a-form-item>
+              <a-form-item label="결제일자">
+                <range-date-time-box v-model:valueDate="search.paymentDate" width="220px" :multi-calendars="true"/>
+              </a-form-item>
+              <checkbox-basic v-model:valueCheckbox="search.includingBillAmount" label="청구금액 0원 포함"/>
+              <a-tooltip title="일괄청구 신규 등록">
+                <div>
+                  <DxButton class=" custom-button" type="default" @click="onOpenPopupEI13">
+                    <div class="d-flex-center gap-5">
+                      <PlusOutlined/>
+                      <span>일괄청구등록</span>
+                    </div>
+                  </DxButton>
+                </div>
+              </a-tooltip>
+              <a-tooltip title="개별청구 신규 등록">
+                <div>
+                  <DxButton class="custom-button" type="default" @click="onOpenPopupEB13">
+                    <div class="d-flex-center gap-5">
+                      <PlusOutlined/>
+                      <span>개별청구등록</span>
+                    </div>
+                  </DxButton>
+                </div>
+              </a-tooltip>
+              <a-tooltip title="출금자료 미리보기 및 신규 등록">
+                <div>
+                  <DxButton class="custom-button" type="default" @click="onOpenModalEB13EB14">
+                    <div class="d-flex-center gap-5">
+                      <PlusOutlined/>
+                      <span>출금자료등록</span>
+                    </div>
+                  </DxButton>
+                </div>
+              </a-tooltip>
+            </div>
+          </template>
           <template #search-action>
 
           </template>

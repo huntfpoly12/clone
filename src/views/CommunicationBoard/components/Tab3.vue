@@ -139,6 +139,7 @@
                   </div>
                 </div>
               </div>
+              <div v-else class="no-data">내역이 없습니다</div>
             </div>
             <div class="form-chat-bottom" v-if="rowEdit.isEdit || state.isNewRow">
               <div class="form-chat-bottom-category">
@@ -283,6 +284,7 @@ onResult((result) => {
   });
   state.isNewRow = false
   state.trigger = false
+  if (result?.data?.searchAdminNotificationMessages.length === 0) messageDetail.value = null
 })
 onError((error) => {
   console.log(error)

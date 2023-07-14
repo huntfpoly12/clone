@@ -54,6 +54,7 @@ import getMajorInsuranceCompanyJoinLogs from "./getMajorInsuranceCompanyJoinLogs
 import getBudgetsLogs from "./getBudgetsLogs";
 import getNotificationMessageLogs from "./getNotificationMessageLogs";
 import getInquiryMessageLogs from "./getInquiryMessageLogs";
+import getNoticeMessageLogs from "./getNoticeMessageLogs";
 const queries = {
   getMe: getMe,
   getUser: getUser,
@@ -112,7 +113,8 @@ const queries = {
   getMajorInsuranceCompanyJoinLogs,
   getBudgetsLogs,
   getNotificationMessageLogs,
-  getInquiryMessageLogs
+  getInquiryMessageLogs,
+  getNoticeMessageLogs
 };
 
 export default queries;
