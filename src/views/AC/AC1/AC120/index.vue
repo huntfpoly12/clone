@@ -119,7 +119,7 @@
 							width="80" />
 						<template #bankbook="{ data }">
 							<a-tooltip placement="top"
-								:title="getNameBankType(data.data.bankbook?.type)+ ' ' + data.data.bankbook?.bankbookNumber">
+								:title="getNameBankType(data.data.bankbook?.type) + ' ' + data.data.bankbook?.bankbookNumber">
 								<span :title="data.data.bankbook?.bankbookNickname">{{ data.data.bankbook?.bankbookNickname
 								}}</span>
 							</a-tooltip>
@@ -917,10 +917,13 @@ export default defineComponent({
 			});
 		};
 		const getNameBankType = (value: any) => {
-			const item: any = bankType.find(
-				(items: any) => items.c === value.toString()
-			);
-			return item.n || "";
+			if (value) {
+				const item: any = bankType.find(
+					(items: any) => items.c === value.toString()
+				);
+				return item.n || "";
+			}
+			return "";
 		};
 
 		// ================ CUSTOM SUMMARY TABLE ============================================
