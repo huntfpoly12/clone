@@ -7,7 +7,7 @@
                     loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                     loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
                     || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingPA870 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments || loadingAC520
-                    || loadingAC570 || loadingPA860 || loadingCommunicationBoard || loadingGetInquiryMessageLogs">
+                    || loadingAC570 || loadingPA860 || loadingCommunicationBoard || loadingGetInquiryMessageLogs || loadingGetNoticeMessageLogs">
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true"
                     :data-source="dataTableShow" :show-borders="true" :keyExpr="keyExpr ? keyExpr : 'ts'"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -112,6 +112,7 @@ export default defineComponent({
         let triggerAC120AccountingDocuments = ref<boolean>(false);
         let triggerCommunicationBoard = ref<boolean>(false);
         let triggerGetInquiryMessageLogs = ref<boolean>(false);
+        let triggerGetNoticeMessageLogs = ref<boolean>(false);
         const dataTableShow: any = ref([]);
 
         // config grid
@@ -509,6 +510,12 @@ export default defineComponent({
                             };
                           triggerGetInquiryMessageLogs.value = true;
                             break;
+                        case 'getNoticeMessageLogs':
+                            dataQuery.value = {
+                                messageId: props.data.messageId,
+                            };
+                          triggerGetNoticeMessageLogs.value = true;
+                            break;
                         default:
                             break;
                     }
@@ -556,6 +563,7 @@ export default defineComponent({
                     triggerAC120AccountingDocuments.value = false;
                     triggerCommunicationBoard.value = false;
                     triggerGetInquiryMessageLogs.value = false;
+                    triggerGetNoticeMessageLogs.value = false;
                 }
             }
         );
@@ -1208,6 +1216,21 @@ export default defineComponent({
             }
         });
 
+        const { result: resultGetNoticeMessageLogs, loading: loadingGetNoticeMessageLogs } = useQuery(
+            queries.getNoticeMessageLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerGetNoticeMessageLogs.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultGetNoticeMessageLogs, (value) => {
+          triggerGetNoticeMessageLogs.value = false;
+            if (value) {
+                dataTableShow.value = fomatDataField(value.getNoticeMessageLogs)
+            }
+        });
+
         const fomatDataField = (value: any) => {
             return value.map((items: any) => ({
                 ...items,
@@ -1274,7 +1297,8 @@ export default defineComponent({
             loadingAC120AccountingProcess,
             loadingAC120AccountingDocuments,
             loadingCommunicationBoard,
-            loadingGetInquiryMessageLogs
+            loadingGetInquiryMessageLogs,
+            loadingGetNoticeMessageLogs
         }
     },
 

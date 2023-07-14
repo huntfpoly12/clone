@@ -18,8 +18,8 @@
           <div class="truncate" style=" width: 250px;">{{ data.node.content }}</div>
         </div>
       </div>
-      <div v-else>내역이 없습니다</div>
     </a-spin>
+    <div v-if="!dataSource.length" class="no-data">내역이 없습니다</div>
   </div>
 </template>
 
@@ -207,4 +207,5 @@ defineExpose({
   text-align: end;
   font-size: 11px;
 }
+
 </style>

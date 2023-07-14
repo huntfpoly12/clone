@@ -15,7 +15,7 @@
       <div class="d-flex-center justify-content-center gap-10">
         <button-basic class="button-form-modal" text="아니요" type="default" :mode="'outlined'"
                       @onClick="cancel"/>
-        <button-basic class="button-form-modal" text="네. 일괄청구등록합니다" type="default" :mode="'contained'"
+        <button-basic class="button-form-modal" text="다음" type="default" :mode="'contained'"
                       @onClick="submit"/>
       </div>
     </div>
@@ -51,7 +51,6 @@
             mode="outlined"
             class="mr-5"
             @onClick="prevStep"
-            v-if="step != 0"
         />
         <button-basic
             text="다음"
@@ -92,7 +91,11 @@ const month = ref<string>(dayjs().format("YYYYMM"));
 const step = ref(0);
 const visibleCreate = ref(false);
 const prevStep = () => {
-  step.value--;
+  if(step.value === 0) {
+    emit("closePopup", false)
+  } else {
+    step.value--;
+  }
 };
 const nextStep = () => {
   step.value++;

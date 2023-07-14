@@ -1,6 +1,6 @@
 <template>
   <action-header title="소통판" @actionSearch="searching" :buttonSearch="true" />
-  <div class="px-10 mt-10">
+  <div class="px-10 mt-10 wrap-tab">
     <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10">
       <a-tab-pane key="1" tab="최신글">
         <Tab1 ref="tab1"/>
@@ -11,10 +11,13 @@
       <a-tab-pane key="3" tab="알림" >
         <Tab3 ref="tab3"/>
       </a-tab-pane>
+
+    </a-tabs>
+    <div>
       <DxButton class="custom-button" type="normal" @click="reload">
         <ReloadOutlined />
       </DxButton>
-    </a-tabs>
+    </div>
   </div>
 </template>
 
@@ -70,13 +73,12 @@ provide(DataRowKeyTab3, dataRowTab3)
 </script>
 
 <style lang="scss" scoped>
-:deep(.ant-tabs-content-top) {
+.wrap-tab {
   position: relative;
-
   .custom-button {
     position: absolute;
-    top: -6px;
-    right: 10px;
+    top: 46px;
+    right: 25px;
     z-index: 10;
   }
 }

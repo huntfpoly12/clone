@@ -41,13 +41,6 @@ query getCompanyLogs ($id: Int!) {
         mobilePhone
         email
       }
-      cmsBank{
-        bankType
-        accountNumber
-        ownerBizNumber
-        ownerName
-        withdrawDay
-      }
     }
     sealFileStorageId
     createdAt
