@@ -1,6 +1,7 @@
 <template>
     <div style="display: flex; align-items: center; justify-content: center;" :class="{'text_under':isUnder, 'hover_text': true}">
         <span style="margin-right: 10px;">{{year}}-<b>{{ $filters.formatMonth(month) }}</b></span>
+        <div v-if="value == 1" class="badge normal"></div>
         <div v-if="value == 10" class="badge entering"></div>
         <div v-if="value == 20" class="badge input closing"></div>
         <div v-if="value == 30" class="badge adjusting"></div>
@@ -37,6 +38,10 @@ export default defineComponent({
     width: 12px;
     height: 12px;
     border-radius: 50%;
+}
+.normal {
+    background-color: #7F7F7F !important;
+    box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
 }
 .entering {
     background-color: blue;
