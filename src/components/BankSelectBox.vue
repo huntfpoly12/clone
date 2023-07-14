@@ -8,8 +8,8 @@
       :show-clear-button="clearButton"
       v-model:value="value"
       :read-only="readOnly"
-      display-expr="n"
-      value-expr="c"
+      display-expr="label"
+      value-expr="value"
       :disabled="disabled"
       @value-changed="updateValue(value)"
       :height="$config_styles.HeightInput"
@@ -25,7 +25,7 @@
 import { ref, onMounted, watch ,getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import { BankType } from "@bankda/jangbuda-common";
+import { FinancialCompany, enum2Array, enum2Entries, enum2KeysByValueMap, getEnumValue } from "@bankda/jangbuda-common";
 import type { SelectProps } from "ant-design-vue";
 import { Message } from "@/configs/enum"
 export default {
@@ -64,9 +64,13 @@ export default {
       messageRequired.value = props.messRequired;
     }
     const value = ref(props.valueInput);
-    const bankTypeSelect = ref<SelectProps["options"]>([]);
+    const bankTypeSelect = ref();
     onMounted(() => {
-      bankTypeSelect.value = BankType.all();
+      bankTypeSelect.value = enum2Entries(FinancialCompany).map((item: any) => {
+        return {
+          label: item[0], value: item[1]
+        }
+      });
     });
     const updateValue = (value: any) => {
       emit("update:valueInput", value);

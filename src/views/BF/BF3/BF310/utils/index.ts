@@ -70,7 +70,7 @@ export const initialFormState = {
       withholdingServiceTypes: [],
     },
     cmsBank: {
-      bankType: "",
+      financialCompany: "",
       accountNumber: "",
       ownerName: "",
       ownerBizNumber: "",

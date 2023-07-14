@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 export default  gql`
 query getSubscriptionRequest($id: Int!) {
     getSubscriptionRequest(id: $id) {
-        id
+    id
     status
     code
     companyName
@@ -94,7 +94,7 @@ query getSubscriptionRequest($id: Int!) {
         withholdingServiceTypes
       }
       cmsBank{
-        bankType
+        financialCompany
         accountNumber
         ownerName
         ownerBizNumber

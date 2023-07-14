@@ -312,7 +312,7 @@
               </a-collapse-panel>
               <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력" forceRender>
                 <a-form-item label="출금은행" class="clr" label-align="left" :label-col=" labelCol ">
-                  <bank-select-box v-model:valueInput=" formState.content.cmsBank.bankType " width="150px" :disabled="disabledStatus" />
+                  <bank-select-box v-model:valueInput=" formState.content.cmsBank.financialCompany " width="150px" :disabled="disabledStatus" />
                 </a-form-item>
                 <a-form-item label="출금계좌번호" class="clr" label-align="left" :label-col=" labelCol ">
                   <text-number-box width="250px" :required=" true "
