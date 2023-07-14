@@ -15,12 +15,12 @@
 						<div class="font-bold" :class="data.node.writerCompactUser.type == 'm' ? 'blue' : 'black'">{{
 							data.node.writerCompactUser.name }}</div>
 						<div class="time">{{ dayjs(data.node.writedAt).format('YYYY-MM-DD HH:mm:ss') }}</div>
-						<div class="classification" v-if="data.node.expresstionType == 1">
+						<div class="classification">
 							{{ data.node.classification }}
 						</div>
-						<div class="classification" v-if="data.node.expresstionType == 4">
+						<!-- <div class="classification" v-if="data.node.expresstionType == 4">
 							<classification-select :valueSelect="data.node.classification" disabled/>
-						</div>
+						</div> -->
 						<div v-if="data.node.expresstionType == 2" class="d-flex-center">
 							<checkbox-basic :valueCheckbox="data.node.secret" disabled="true" />
 							<span>비밀글</span>

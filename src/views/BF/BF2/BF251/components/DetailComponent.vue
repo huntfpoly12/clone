@@ -8,47 +8,78 @@
                 <a-row class="form">
                     <a-col :span="8" class="row1">
                         <a-form-item label="사업자코드">
-                            <default-text-box v-model:valueInput="code" width="130px" style="margin-right: 10px"
+                            <default-text-box v-model:valueInput="code" width="130px"
                                 :required="true" />
                         </a-form-item>
                         <a-form-item label="연락처">
-                            <default-text-box v-model:valueInput="phone" width="130px" style="margin-right: 10px"
+                            <default-text-box v-model:valueInput="phone" width="130px"
                                 :required="true" />
                         </a-form-item>
-                        <a-form-item label="금융기관코드">
-                            <default-text-box v-model:valueInput="bankType" width="130px" style="margin-right: 10px"
+                        <a-form-item label="금융기관명">
+                            <default-text-box v-model:valueInput="bankType" width="130px"
                                 :required="true" />
                         </a-form-item>
-                        <a-form-item label="사업자(주민)등록번호">
-                            <default-text-box v-model:valueInput="no" width="130px" style="margin-right: 10px"
-                                :required="true" />
-                        </a-form-item>
-                        <a-form-item label="출금동의일자">
-                            <default-text-box v-model:valueInput="no" width="130px" style="margin-right: 10px"
+                        <a-form-item label="계좌번호">
+                            <default-text-box v-model:valueInput="accountNumber" width="130px"
                                 :required="true" />
                         </a-form-item>
                         <a-form-item label="에러코드">
-                            <default-text-box v-model:valueInput="no" width="130px" style="margin-right: 10px"
+                            <default-text-box v-model:valueInput="no" width="130px"
                                 :required="true" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8">
                         <a-form-item label="상호">
-                            <default-text-box v-model:valueInput="companyName" width="130px" style="margin-right: 10px"
+                            <default-text-box v-model:valueInput="companyName" width="130px"
                                 :required="true" />
                         </a-form-item>
                         <a-form-item label="휴대폰">
-                            <default-text-box v-model:valueInput="mobilePhone" width="130px" style="margin-right: 10px"
+                            <default-text-box v-model:valueInput="mobilePhone" width="130px"
                                 :required="true" />
                         </a-form-item>
-                        <a-form-item label="계좌번호">
-                            <default-text-box v-model:valueInput="accountNumber" width="130px" style="margin-right: 10px"
+                        <a-form-item label="금융기관코드">
+                            <default-text-box v-model:valueInput="bankType" width="130px"
                                 :required="true" />
+                        </a-form-item>
+                        <a-form-item label="예금주">
+                            <default-text-box v-model:valueInput="ownerName" width="130px"
+                                :required="true" />
+                        </a-form-item>
+                        <a-form-item label="에러내용">
+                            <default-text-box v-model:valueInput="no" width="130px"
+                                :required="true" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="8">
+                        <a-form-item label="대표자명">
+                            <default-text-box v-model:valueInput="presidentName" width="130px"
+                                :required="true" />
+                        </a-form-item>
+                        <a-form-item label="CMS승인상태" class="red">
+                            <select-box-common width="130px" :arrSelect="arrSelectCMS" :required="true"
+                                v-model:valueInput="no" />
                         </a-form-item>
                         <a-form-item label="자동출금일">
-                            <select-box-common width="180px" :arrSelect="arrSelect1" :required="true"
+                            <select-box-common width="130px" :arrSelect="arrSelect1" :required="true"
                                 v-model:valueInput="valueSelect1" />
                         </a-form-item>
+                        <a-form-item label="출금동의일자">
+                            <default-text-box v-model:valueInput="no" width="130px"
+                                :required="true" />
+                        </a-form-item>
+                        <a-form-item label="에러사유">
+                            <default-text-box v-model:valueInput="no" width="130px"
+                                :required="true" />
+                        </a-form-item>
+                    </a-col>
+
+                    <a-col :span="12" class="mt-10 d-flex-center">
+                        <radio-group :arrayValue="[{ id: 1, text: '사업자등록번호', }, { id: 2, text: '주민등록번호', }]"
+                            v-model:valueRadioCheck="no" :layoutCustom="'horizontal'" />
+                        <default-text-box v-model:valueInput="no" width="180px" class="ml-20"
+                            :required="true" />
+                    </a-col>
+                    <a-col :span="12" class="mt-10">
                         <a-form-item label="출금동의신청서" class="custom">
                             <DxButton class="custom-button" :height="$config_styles.HeightInput">
                                 <div class="d-flex-center">
@@ -58,24 +89,7 @@
                             </DxButton>
                         </a-form-item>
                     </a-col>
-                    <a-col :span="8">
-                        <a-form-item label="대표자명">
-                            <default-text-box v-model:valueInput="presidentName" width="130px" style="margin-right: 10px"
-                                :required="true" />
-                        </a-form-item>
-                        <a-form-item label="금융기관명">
-                            <default-text-box v-model:valueInput="bankType" width="130px" style="margin-right: 10px"
-                                :required="true" />
-                        </a-form-item>
-                        <a-form-item label="예금주">
-                            <select-box-common width="180px" :arrSelect="[]" :required="true"
-                                v-model:valueInput="ownerName" />
-                        </a-form-item>
-                        <a-form-item label="CMS승인상태" class="red">
-                            <select-box-common width="180px" :arrSelect="arrSelectCMS" :required="true"
-                                v-model:valueInput="no" />
-                        </a-form-item>
-                    </a-col>
+
                 </a-row>
             </standard-form>
         </div>
@@ -207,13 +221,13 @@ export default defineComponent({
                     handle()
                 },
                 onCancel() {
-                    
+
                 },
             });
         }
         const handle = () => {
-                console.log('hihih');
-                
+            console.log('hihih');
+
         }
         return {
             move_column,
@@ -231,10 +245,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 :deep .ant-form-item-label>label {
     width: 110px;
-}
-
-:deep .row1 .ant-form-item-label>label {
-    width: 150px;
 }
 
 :deep .form .custom .dx-state-hover {

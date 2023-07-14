@@ -15,18 +15,17 @@
                             <DxPaging :enabled="false" />
                             <DxExport :enabled="true" />
                             <DxToolbar>
-                                <DxItem template="search-template" location="before" />
+                                <DxItem template="search-template" location="after" />
                                 <DxItem name="searchPanel" />
                                 <DxItem name="exportButton" css-class="cell-button-export" />
                                 <!-- <DxItem location="after" template="button-history" css-class="cell-button-add" /> -->
                                 <!-- <DxItem location="after" template="button-template" css-class="cell-button-add" /> -->
                             </DxToolbar>
                             <template #search-template>
-                                <div class="d-flex-center">
-                                    <a-form-item label="작성기간 (최대 3년)" :label-col="labelCol" class="red">
-                                        <range-date-time-box v-model:valueDate="rangeDate" width="250px"
-                                            :multi-calendars="true" :maxSelect="36" />
-                                    </a-form-item>
+                                <div class="d-flex-center red">
+                                    <span class="mr-10">작성기간 (최대 3년) : </span>
+                                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
+                                        :maxSelect="36" />
                                 </div>
                             </template>
                             <DxColumn caption="구분" cell-template="expresstionType" css-class="cell-center"
@@ -41,7 +40,7 @@
                                 <PushpinOutlined v-if="data.data.sticky" style="font-size: 16px;" />
                             </template>
 
-                            <DxColumn caption="내용" data-field="content" />
+                            <DxColumn caption="내용" data-field="content" width="500" />
 
                             <DxColumn caption="작성자" cell-template="abc" data-field="" />
                             <template #abc>장부다</template>

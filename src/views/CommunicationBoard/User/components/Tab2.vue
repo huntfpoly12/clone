@@ -37,7 +37,7 @@
 
                     <DxColumn caption="분류" cell-template="" data-field="classification" />
 
-                    <DxColumn caption="알림내용" cell-template="" data-field="content" />
+                    <DxColumn caption="알림내용" cell-template="" width="200" data-field="content" />
 
                     <DxColumn caption="작성자" cell-template="" data-field="writerCompactUser.name" />
 
