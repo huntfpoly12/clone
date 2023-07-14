@@ -6,206 +6,204 @@
     :buttonSave="true"
     :buttonSearch="true"
   />
-  <div id="ac-610">
-    <div class="px-6">
-      <a-row :gutter="[12,0]">
-        <a-col span="16" class="">
-          <div style="height: 100%; border: 1px solid #d7d7d7">
-            <a-spin :spinning="loading" size="large">
-              <DxDataGrid
-                ref="gridRef"
-                :show-row-lines="true"
-                :hoverStateEnabled="true"
-                :dataSource="dataSource"
-                :show-borders="true"
-                key-expr="clientId"
-                :allow-column-reordering="move_column"
-                :allow-column-resizing="column_resize"
-                :focused-row-enabled="true"
-                @focused-row-changing="onFocusedRowChanging"
-                @focused-row-changed="onFocusedRowChanged"
-                v-model:focused-row-key="focusedRowKey"
-                :focusedRowIndex="focusedRowIndex"
-                style="height: 740px"
-                noDataText="내역이 없습니다"
-              >
-                <!--              <DxScrolling mode="standard" show-scrollbar="always" />-->
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
-                <DxPaging :page-size="0"/>
-                <DxExport :enabled="true"/>
-                <DxToolbar>
-                  <DxItem location="after" template="search"/>
-                  <DxItem location="after" template="button-template" css-class="cell-button-add"/>
-                  <DxItem name="searchPanel"/>
-                  <DxItem name="exportButton" css-class="cell-button-export"/>
+  <div id="ac-610" class="px-6">
+    <a-row :gutter="[12,0]">
+      <a-col span="16" class="">
+        <div style="height: 100%; border: 1px solid #d7d7d7">
+          <a-spin :spinning="loading" size="large">
+            <DxDataGrid
+              ref="gridRef"
+              :show-row-lines="true"
+              :hoverStateEnabled="true"
+              :dataSource="dataSource"
+              :show-borders="true"
+              key-expr="clientId"
+              :allow-column-reordering="move_column"
+              :allow-column-resizing="column_resize"
+              :focused-row-enabled="true"
+              @focused-row-changing="onFocusedRowChanging"
+              @focused-row-changed="onFocusedRowChanged"
+              v-model:focused-row-key="focusedRowKey"
+              :focusedRowIndex="focusedRowIndex"
+              style="height: calc(100vh - 150px)"
+              noDataText="내역이 없습니다"
+            >
+              <!--              <DxScrolling mode="standard" show-scrollbar="always" />-->
+              <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
+              <DxPaging :page-size="0"/>
+              <DxExport :enabled="true"/>
+              <DxToolbar>
+                <DxItem location="after" template="search"/>
+                <DxItem location="after" template="button-template" css-class="cell-button-add"/>
+                <DxItem name="searchPanel"/>
+                <DxItem name="exportButton" css-class="cell-button-export"/>
 
-                </DxToolbar>
-                <template #search>
-                  <checkbox-basic
-                    v-model:valueCheckbox="dataSearch.includeNonUse"
-                    :size="'20'"
-                    label="이용중지 포함"
-                  />
-                </template>
-                <template #button-template>
-                  <a-tooltip placement="top" title="거래처 등록">
-                    <div>
-                      <DxButton icon="plus" @click="addRow"/>
-                    </div>
+              </DxToolbar>
+              <template #search>
+                <checkbox-basic
+                  v-model:valueCheckbox="dataSearch.includeNonUse"
+                  :size="'20'"
+                  label="이용중지 포함"
+                />
+              </template>
+              <template #button-template>
+                <a-tooltip placement="top" title="거래처 등록">
+                  <div>
+                    <DxButton icon="plus" @click="addRow"/>
+                  </div>
+                </a-tooltip>
+              </template>
+              <DxColumn caption="거래처명" data-field="name"/>
+              <DxColumn
+                caption="사업자등록번호"
+                cell-template="bizNumber"
+                data-field="bizNumber"
+              />
+              <template #bizNumber="{ data }">
+              <span v-if="data.data.bizNumber">
+                {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
+                  data.data.bizNumber.toString().slice(3, 5)
+                }}-{{ data.data.bizNumber.toString().slice(5, 10) }}
+              </span>
+              </template>
+              <DxColumn
+                caption="주민등록번호"
+                cell-template="residentId"
+                data-field="residentId"
+              />
+              <template #residentId="{ data }">
+                <div v-if="data.data.residentId?.length == 14">
+                  <a-tooltip
+                    placement="top"
+                    v-if="
+                    parseInt(data.data.residentId.split('-')[0].slice(2, 4)) <
+                      13 &&
+                    parseInt(data.data.residentId.split('-')[0].slice(4, 6)) <
+                      32
+                  "
+                    key="black"
+                  >
+                    {{ data.data.residentId }}
                   </a-tooltip>
-                </template>
-                <DxColumn caption="거래처명" data-field="name"/>
-                <DxColumn
-                  caption="사업자등록번호"
-                  cell-template="bizNumber"
-                  data-field="bizNumber"
-                />
-                <template #bizNumber="{ data }">
-                <span v-if="data.data.bizNumber">
-                  {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
-                    data.data.bizNumber.toString().slice(3, 5)
-                  }}-{{ data.data.bizNumber.toString().slice(5, 10) }}
-                </span>
-                </template>
-                <DxColumn
-                  caption="주민등록번호"
-                  cell-template="residentId"
-                  data-field="residentId"
-                />
-                <template #residentId="{ data }">
-                  <div v-if="data.data.residentId?.length == 14">
-                    <a-tooltip
-                      placement="top"
-                      v-if="
-                      parseInt(data.data.residentId.split('-')[0].slice(2, 4)) <
-                        13 &&
-                      parseInt(data.data.residentId.split('-')[0].slice(4, 6)) <
-                        32
-                    "
-                      key="black"
-                    >
-                      {{ data.data.residentId }}
-                    </a-tooltip>
-                    <a-tooltip placement="top" v-else title="ERROR" color="red">
-                      {{ data.data.residentId }}
-                    </a-tooltip>
-                  </div>
-                  <div v-else>
-                    <a-tooltip
-                      v-if="data.data.residentId"
-                      placement="top"
-                      key="black"
-                    >
-                      {{
-                        data.data.residentId.slice(0, 6) +
-                        "-" +
-                        data.data.residentId.slice(6, 13)
-                      }}
-                    </a-tooltip>
-                  </div>
-                </template>
+                  <a-tooltip placement="top" v-else title="ERROR" color="red">
+                    {{ data.data.residentId }}
+                  </a-tooltip>
+                </div>
+                <div v-else>
+                  <a-tooltip
+                    v-if="data.data.residentId"
+                    placement="top"
+                    key="black"
+                  >
+                    {{
+                      data.data.residentId.slice(0, 6) +
+                      "-" +
+                      data.data.residentId.slice(6, 13)
+                    }}
+                  </a-tooltip>
+                </div>
+              </template>
 
-                <DxColumn caption="대표자명" data-field="presidentName"/>
-                <DxColumn caption="연락처" data-field="phone"/>
-                <DxColumn
-                  caption="이용여부"
-                  cell-template="use"
-                  data-field="use"
-                />
-                <template #use="{ data }">
-                  <tag-color-use :valueUse="data.value"/>
-                </template>
-                <DxColumn cell-template="historyClient"/>
-                <template #historyClient="{ data }">
-                  <div class="custom-action" style="text-align: center">
-                    <HistoryOutlined
-                      v-if="data.data.clientId"
-                      style="font-size: 18px"
-                      @click="modalHistory(data.data.clientId)"
-                    />
-                  </div>
-                </template>
-              </DxDataGrid>
-            </a-spin>
-          </div>
-        </a-col>
-        <a-col span="8" class="" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
-          <standard-form formName="ac-610" ref="formRef" style="padding-top: 10px">
-            <a-form-item label="거래처명" :label-col="labelCol" class="red">
-              <default-text-box
-                :required="true"
-                width="200"
-                v-model:valueInput="formState.name"
+              <DxColumn caption="대표자명" data-field="presidentName"/>
+              <DxColumn caption="연락처" data-field="phone"/>
+              <DxColumn
+                caption="이용여부"
+                cell-template="use"
+                data-field="use"
               />
-            </a-form-item>
-
-            <a-form-item label="사업자등록번호" :label-col="labelCol">
-              <biz-number-text-box
-                v-model:valueInput="formState.bizNumber"
-                width="200"
-                :disabled="!!formState.residentId"
-              />
-            </a-form-item>
-
-            <a-form-item label="주민등록번호" :label-col="labelCol">
-              <id-number-text-box
-                width="200"
-                v-model:valueInput="formState.residentId"
-                :disabled="!!formState.bizNumber"
-                :isResidentId="true"
-                checkAllResidentId
-              />
-            </a-form-item>
-
-            <a-form-item label="대표자명" :label-col="labelCol">
-              <default-text-box
-                :width="200"
-                v-model:valueInput="formState.presidentName"
-              />
-            </a-form-item>
-
-            <a-form-item label="연락처" :label-col="labelCol">
-              <tel-text-box
-                type="text"
-                :width="200"
-                v-model:valueInput="formState.phone"
-              />
-            </a-form-item>
-
-            <a-form-item label="이용/여부" :label-col="labelCol">
-              <div class="d-flex-center">
-                <switch-basic
-                  :width="50"
-                  v-model:valueSwitch="formState.use"
-                  :textCheck="'O'"
-                  :textUnCheck="'X'"
-                />
-                <info-tool-tip class="ml-10">
-                  이용하지 않는 경우 삭제되지 않으며,<br/>
-                  거래처 리스트에서 조회되지 않습니다
-                </info-tool-tip>
-              </div>
-            </a-form-item>
-
-            <div class="text-align-center mt-20">
-              <button-basic
-                id="ac610-btn-save"
-                :text="'저장'"
-                type="default"
-                @onClick="actionSave($event)"
-              />
-            </div>
-            <button-basic
-              @onClick="actionToAddFromEdit"
-              mode="outlined"
-              type="default"
-              text="취소"
-              id="active-save"
+              <template #use="{ data }">
+                <tag-color-use :valueUse="data.value"/>
+              </template>
+              <DxColumn cell-template="historyClient"/>
+              <template #historyClient="{ data }">
+                <div class="custom-action" style="text-align: center">
+                  <HistoryOutlined
+                    v-if="data.data.clientId"
+                    style="font-size: 18px"
+                    @click="modalHistory(data.data.clientId)"
+                  />
+                </div>
+              </template>
+            </DxDataGrid>
+          </a-spin>
+        </div>
+      </a-col>
+      <a-col span="8" class="" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
+        <standard-form formName="ac-610" ref="formRef" style="padding-top: 10px">
+          <a-form-item label="거래처명" :label-col="labelCol" class="red">
+            <default-text-box
+              :required="true"
+              width="200"
+              v-model:valueInput="formState.name"
             />
-          </standard-form>
-        </a-col>
-      </a-row>
-    </div>
+          </a-form-item>
+
+          <a-form-item label="사업자등록번호" :label-col="labelCol">
+            <biz-number-text-box
+              v-model:valueInput="formState.bizNumber"
+              width="200"
+              :disabled="!!formState.residentId"
+            />
+          </a-form-item>
+
+          <a-form-item label="주민등록번호" :label-col="labelCol">
+            <id-number-text-box
+              width="200"
+              v-model:valueInput="formState.residentId"
+              :disabled="!!formState.bizNumber"
+              :isResidentId="true"
+              checkAllResidentId
+            />
+          </a-form-item>
+
+          <a-form-item label="대표자명" :label-col="labelCol">
+            <default-text-box
+              :width="200"
+              v-model:valueInput="formState.presidentName"
+            />
+          </a-form-item>
+
+          <a-form-item label="연락처" :label-col="labelCol">
+            <tel-text-box
+              type="text"
+              :width="200"
+              v-model:valueInput="formState.phone"
+            />
+          </a-form-item>
+
+          <a-form-item label="이용/여부" :label-col="labelCol">
+            <div class="d-flex-center">
+              <switch-basic
+                :width="50"
+                v-model:valueSwitch="formState.use"
+                :textCheck="'O'"
+                :textUnCheck="'X'"
+              />
+              <info-tool-tip class="ml-10">
+                이용하지 않는 경우 삭제되지 않으며,<br/>
+                거래처 리스트에서 조회되지 않습니다
+              </info-tool-tip>
+            </div>
+          </a-form-item>
+
+          <div class="text-align-center mt-20">
+            <button-basic
+              id="ac610-btn-save"
+              :text="'저장'"
+              type="default"
+              @onClick="actionSave($event)"
+            />
+          </div>
+          <button-basic
+            @onClick="actionToAddFromEdit"
+            mode="outlined"
+            type="default"
+            text="취소"
+            id="active-save"
+          />
+        </standard-form>
+      </a-col>
+    </a-row>
     <HistoryPopup
       :modalStatus="modalHistoryStatus"
       @closePopup="modalHistoryStatus = false"

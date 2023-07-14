@@ -79,6 +79,7 @@ export interface MessageDetail {
     name: string
     username: string
     active: boolean
+    type: string
   }
   fileStorages?: Array<{
     id: number
