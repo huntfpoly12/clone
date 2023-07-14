@@ -17,18 +17,18 @@
                     <a-col class="mt-30">
                         <a-form-item label="세금계산서 연계 O">
                             <div class="d-flex-center">
-                                <number-box :width="150" v-model:valueInput="valueNumber1" :spinButtons="true" />
+                                <text-number-box :width="150" v-model:valueInput="valueNumber1" :spinButtons="true" />
                                 <info-tool-tip>이미 세금계산서 연계되었던 적이 있는 내역</info-tool-tip>
                             </div>
                         </a-form-item>
                         <a-form-item label="세금계산서 연계 X">
                             <div class="d-flex-center">
-                                <number-box :width="150" v-model:valueInput="valueNumber2" :spinButtons="true" />
+                                <text-number-box :width="150" v-model:valueInput="valueNumber2" :spinButtons="true" />
                                 <info-tool-tip>이미 세금계산서 연계되었던 적이 없는 내역</info-tool-tip>
                             </div>
                         </a-form-item>
                         <a-form-item label="합계">
-                            <number-box :width="150" v-model:valueInput="valueNumber3" :spinButtons="true" />
+                            <text-number-box :width="150" v-model:valueInput="valueNumber3" :spinButtons="true" />
                         </a-form-item>
                     </a-col>
                 </a-row>
