@@ -12,7 +12,7 @@
                     <DxPaging :enabled="false" />
                     <DxExport :enabled="true" />
                     <DxToolbar>
-                        <DxItem template="search-template" location="before" />
+                        <DxItem template="search-template" location="after" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" css-class="cell-button-export" />
                         <!-- <DxItem location="after" template="button-history" css-class="cell-button-add" /> -->
@@ -24,9 +24,9 @@
                                 <range-date-time-box v-model:valueDate="rangeDate" maxRange width="250px"
                                     :multi-calendars="true" />
                             </a-form-item>
-                            <div class="d-flex-center">
+                            <!-- <div class="d-flex-center">
                                 <info-tool-tip>문의글 기준</info-tool-tip>
-                            </div>
+                            </div> -->
                         </div>
                     </template>
                     <DxColumn caption="구분" cell-template="expresstionType" css-class="cell-center"
@@ -56,15 +56,18 @@
                 <a-spin :spinning="loadingWorkNotificationMessage" size="large">
                     <div v-if="dataDetail" class="wrapper-content">
                         <div class="question-container">
-                            <div class="d-flex-center gap-10">
-                                <ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
-                                <div class="font-bold" :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
-                                    {{ dataDetail.writerCompactUser.name }}</div>
-                                <div class="time">
-                                    {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
-                                        dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
+                            <div class="d-flex-center" style="justify-content: space-between;">
+                                <div class="d-flex-center gap-10">
+                                    <ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
+                                    <div class="font-bold"
+                                        :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
+                                        {{ dataDetail.writerCompactUser.name }}</div>
+                                    <div class="time">
+                                        {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
+                                            dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
+                                    </div>
+                                    <div class="classification">{{ dataDetail.classification }}</div>
                                 </div>
-                                <div class="classification">{{ dataDetail.classification }}</div>
                                 <div class="time" v-if="dataDetail.updatedAt > dataDetail.writedAt">
                                     Edited
                                 </div>

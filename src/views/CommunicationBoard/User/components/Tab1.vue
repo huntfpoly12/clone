@@ -7,19 +7,19 @@
 	<div class="wrapper">
 		<!-- <ExpressionType  /> -->
 		<a-spin :spinning="loadingTable">
-			<div v-if="dataSource" class="wrapper-content">
+			<div v-if="dataSource" class="wrapper-content-tab1">
 				<div v-for="data in dataSource.edges" :key="data" class="question-container-tab1"
 					@click="openRow(data.node)">
 					<div class="d-flex-center gap-10">
 						<ExpressionType :valueSelect="data.node.expresstionType" :isSelect="false" />
 						<div class="font-bold" :class="data.node.writerCompactUser.type == 'm' ? 'blue' : 'black'">{{
 							data.node.writerCompactUser.name }}</div>
-						<div class="time">{{ dayjs(data.node.writedAt).format('YYYY-MM-DD hh:mm:ss') }}</div>
+						<div class="time">{{ dayjs(data.node.writedAt).format('YYYY-MM-DD HH:mm:ss') }}</div>
 						<div class="classification" v-if="data.node.expresstionType == 1">
 							{{ data.node.classification }}
 						</div>
 						<div class="classification" v-if="data.node.expresstionType == 4">
-							<!-- <resolution-classification-select :valueInput="data.node.classification" /> -->
+							<classification-select :valueSelect="data.node.classification" disabled/>
 						</div>
 						<div v-if="data.node.expresstionType == 2" class="d-flex-center">
 							<checkbox-basic :valueCheckbox="data.node.secret" disabled="true" />
@@ -60,7 +60,7 @@ export default defineComponent({
 		const originData = reactive({
 			companyId: companyId,
 			filter: {
-				first: 2,
+				first: 999999,
 				after: null,
 			},
 			currentUserId: jwtObject.userId,
