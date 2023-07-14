@@ -60,16 +60,18 @@
                         <a-spin :spinning="loadingWorkNoticeMessage" size="large">
                             <div v-if="dataDetail" class="wrapper-content">
                                 <div class="question-container">
-                                    <div class="d-flex-center gap-10">
-                                        <ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
-                                        <div class="font-bold"
-                                            :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
-                                            {{ dataDetail.writerCompactUser.name }}</div>
-                                        <div class="time">
-                                            {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
-                                                dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD') }}
+                                    <div class="d-flex-center" style="justify-content: space-between;">
+                                        <div class="d-flex-center gap-10">
+                                            <ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
+                                            <div class="font-bold"
+                                                :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
+                                                {{ dataDetail.writerCompactUser.name }}</div>
+                                            <div class="time">
+                                                {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
+                                                    dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD') }}
+                                            </div>
+                                            <div class="classification">{{ dataDetail.classification }}</div>
                                         </div>
-                                        <div class="classification">{{ dataDetail.classification }}</div>
                                         <div class="time" v-if="dataDetail.updatedAt > dataDetail.writedAt">
                                             Edited
                                         </div>
