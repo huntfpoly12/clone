@@ -45,14 +45,6 @@ query getCompany ($id: Int!) {
         mobilePhone
         email
       }
-      cmsBank{
-        bankType
-        accountNumber
-        ownerBizNumber
-        ownerName
-        withdrawDay
-        ownerResidentId
-      }
     }
     sealFileStorageId
     createdAt

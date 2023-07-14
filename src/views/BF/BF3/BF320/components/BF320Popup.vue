@@ -157,68 +157,7 @@
                 </a-form-item>
               </a-form>
             </a-collapse-panel>
-            <a-collapse-panel
-              key="3"
-              header="CMS (자동이체출금) 계좌 정보 입력"
-            >
-              <a-form>
-                <a-form-item label="출금은행" class="clr">
-                  <bank-select-box
-                    v-model:valueInput="formState.extendInfoCmsBankBankType"
-                    width="250px"
-                  />
-                </a-form-item>
-                <a-form-item label="출금계좌번호" class="clr">
-                  <text-number-box
-                    v-model:valueInput="
-                      formState.extendInfoCmsBankAccountNumber
-                    "
-                    placeholder="‘-’없이 숫자만 입력"
-                    width="250px"
-                    :required="true"
-                    nameInput="formState-extendInfoCmsBankAccountNumber"
-                  >
-                  </text-number-box>
-                </a-form-item>
-                <a-form-item label="예금주명" class="clr">
-                  <default-text-box
-                    width="250px"
-                    v-model:valueInput="formState.extendInfoCmsBankOwnerName"
-                    :required="true"
-                    nameInput="formState-extendInfoCmsBankOwnerName"
-                  >
-                  </default-text-box>
-                </a-form-item>
-                <a-form-item
-                  label="사업자(주민)등록번호:"
-                  class=" mt-5 clr"
-                >
-                  <div class="d-flex-center">
-                    <text-number-box
-                    width="250px"
-                    v-model:valueInput="
-                      formState.extendInfoCmsBankOwnerBizNumber
-                    "
-                    :required="true"
-                    nameInput="formState-extendInfoCmsBankOwnerBizNumber"
-                    :ruleCustom="ruleCustomOwnerBizNumber"
-                    customRule
-                  />
-                  <info-tool-tip>예금주의 사업자등록번호 또는 주민등록번호입니다.</info-tool-tip>
-                  </div>
-                </a-form-item>
-                <a-form-item label="자동이체출금일자" class="clr custom-flex">
-                  <radio-group
-                    :arrayValue="arrayRadioWithdrawDay"
-                    style="margin-top: 5px"
-                    v-model:valueRadioCheck="
-                      formState.extendInfoCmsBankWithdrawDay
-                    "
-                  />
-                </a-form-item>
-              </a-form>
-            </a-collapse-panel>
-            <a-collapse-panel key="4" header="메모" class="modal-note">
+            <a-collapse-panel key="3" header="메모" class="modal-note">
               <a-table
                 :bordered="false"
                 :data-source="formStateMomes"
@@ -519,16 +458,16 @@ export default defineComponent({
           value.getCompany.extendInfo.president.mobilePhone;
         formState.extendInfoPresidentEmail =
           value.getCompany.extendInfo.president.email;
-        formState.extendInfoCmsBankBankType =
-          value.getCompany.extendInfo.cmsBank.bankType;
-        formState.extendInfoCmsBankAccountNumber =
-          value.getCompany.extendInfo.cmsBank.accountNumber;
-        formState.extendInfoCmsBankOwnerBizNumber =
-          value.getCompany.extendInfo.cmsBank.ownerBizNumber || value.getCompany.extendInfo.cmsBank.ownerResidentId;
-        formState.extendInfoCmsBankOwnerName =
-          value.getCompany.extendInfo.cmsBank.ownerName;
-        formState.extendInfoCmsBankWithdrawDay =
-          value.getCompany.extendInfo.cmsBank.withdrawDay;
+        // formState.extendInfoCmsBankBankType =
+        //   value.getCompany.extendInfo.cmsBank.bankType;
+        // formState.extendInfoCmsBankAccountNumber =
+        //   value.getCompany.extendInfo.cmsBank.accountNumber;
+        // formState.extendInfoCmsBankOwnerBizNumber =
+        //   value.getCompany.extendInfo.cmsBank.ownerBizNumber || value.getCompany.extendInfo.cmsBank.ownerResidentId;
+        // formState.extendInfoCmsBankOwnerName =
+        //   value.getCompany.extendInfo.cmsBank.ownerName;
+        // formState.extendInfoCmsBankWithdrawDay =
+        //   value.getCompany.extendInfo.cmsBank.withdrawDay;
         formState.sealFileStorageId = value.getCompany.sealFileStorageId;
         formState.createdAt = value.getCompany.createdAt;
         formState.createdBy = value.getCompany.createdBy;
@@ -614,22 +553,22 @@ export default defineComponent({
           mobilePhone: formState.extendInfoPresidentMobilePhone,
           email: formState.extendInfoPresidentEmail,
         };
-        let extendInfoCmsBank: any = {
-          bankType: formState.extendInfoCmsBankBankType,
-          accountNumber: formState.extendInfoCmsBankAccountNumber.toString(),
-          ownerName: formState.extendInfoCmsBankOwnerName,
-          withdrawDay: formState.extendInfoCmsBankWithdrawDay,
-        };
-        if(formState.extendInfoCmsBankOwnerBizNumber.length === 10) {
-          extendInfoCmsBank.ownerBizNumber = formState.extendInfoCmsBankOwnerBizNumber
-        } else {
-          extendInfoCmsBank.ownerResidentId = formState.extendInfoCmsBankOwnerBizNumber
-        }
+        // let extendInfoCmsBank: any = {
+        //   bankType: formState.extendInfoCmsBankBankType,
+        //   accountNumber: formState.extendInfoCmsBankAccountNumber.toString(),
+        //   ownerName: formState.extendInfoCmsBankOwnerName,
+        //   withdrawDay: formState.extendInfoCmsBankWithdrawDay,
+        // };
+        // if(formState.extendInfoCmsBankOwnerBizNumber.length === 10) {
+        //   extendInfoCmsBank.ownerBizNumber = formState.extendInfoCmsBankOwnerBizNumber
+        // } else {
+        //   extendInfoCmsBank.ownerResidentId = formState.extendInfoCmsBankOwnerBizNumber
+        // }
         let variables = {
           id: formState.id,
           detail: extendInfoDetail,
           president: extendInfoPresident,
-          cmsBank: extendInfoCmsBank,
+          // cmsBank: extendInfoCmsBank,
         };
         actionUpdate(variables);
       }
@@ -662,14 +601,14 @@ export default defineComponent({
           emit("closePopup", false)
           activeKey.value = [1]
         }, {
-          okText: '네', 
+          okText: '네',
           cancelText: '취소',
         });
       else {
         emit("closePopup", false);
         activeKey.value = [1]
       }
-      
+
     };
     const getImgUrl = (img: any) => {
       let resImg = {

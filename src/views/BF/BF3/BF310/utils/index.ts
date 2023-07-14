@@ -69,13 +69,13 @@ export const initialFormState = {
       capacity: 1234,
       withholdingServiceTypes: [],
     },
-    cmsBank: {
-      bankType: "",
-      accountNumber: "",
-      ownerName: "",
-      ownerBizNumber: "",
-      withdrawDay: "",
-    },
+    // cmsBank: {
+    //   bankType: "",
+    //   accountNumber: "",
+    //   ownerName: "",
+    //   ownerBizNumber: "",
+    //   withdrawDay: "",
+    // },
     extra: {
       salesRepresentativeId: 1,
       comment: "",
