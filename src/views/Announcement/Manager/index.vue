@@ -1,6 +1,6 @@
 <template>
   <action-header title="기타소득자등록" @actionSave="false" buttonSearch @actionSearch="searching" />
-  <a-row>
+  <a-row class="px-10">
     <a-col :span="14">
       <a-spin :spinning="loading">
         <standard-form ref="formRef">
@@ -24,7 +24,7 @@
                                        :max-range="90" :required="true" />
                 </a-form-item>
                 <div class="d-flex-center">
-                  <checkbox-basic label="삭제 포함" v-model:valueCheckbox="filterSearch.includeDeletion" />
+                  <checkbox-basic label="상단고정" v-model:valueCheckbox="filterSearch.includeDeletion" />
                 </div>
               </div>
             </template>
@@ -38,7 +38,7 @@
             <DxColumn caption="삭제 여부" data-field="active" alignment="center" cell-template="active" width="80px" />
             <DxColumn caption="구분" data-field="expresstionType" alignment="center" cell-template="expresstionType" />
             <DxColumn caption="상단고정" data-field="sticky" alignment="center" cell-template="sticky" width="80px" />
-            <DxColumn caption="내용" data-field="content" alignment="left" />
+            <DxColumn caption="내용" data-field="content" alignment="left" width="400px" />
             <DxColumn caption="작성자" data-field="writerCompactUser.name" alignment="center" />
             <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" alignment="center" width="140px" />
             <DxColumn caption="" alignment="center" cell-template="action" />
@@ -72,6 +72,11 @@
             <!--            <a-spin size="large"/>-->
             <!--          </div>-->
             <div v-chat-scroll ref="formTimeline" class="form-chat-timeline">
+              <div style="text-align: right; margin-bottom: 10px;">
+                <DxButton class="custom-button" type="normal" @click="reload">
+                  <ReloadOutlined />
+                </DxButton>
+              </div>
               <div v-if="messageDetail" class="form-chat-timeline-common">
                 <div class="form-chat-timeline-content">
                   <div class="form-chat-timeline-content-info">
@@ -81,9 +86,9 @@
                           <ExpressionType :is-select="false" :value-select="messageDetail.expresstionType" />
                         </div>
                         <div class="form-chat-timeline-content-info-user-name">
-                          {{
-                            messageDetail.writerCompactUser.name || userInfo.name
-                          }}
+                          <span :class="messageDetail.writerCompactUser.type === `m` ? `text-blue` : ``">
+                            {{messageDetail.writerCompactUser.name || userInfo.name}}
+                          </span>
                         </div>
                       </div>
                       <div class="form-chat-timeline-content-info-time">
@@ -140,7 +145,7 @@
                 <info-tool-tip>선택시 소통판에서 최우선하여 정렬됩니다</info-tool-tip>
               </div>
               <InputChat v-model:content="rowEdit.content" v-model:files="filesUpload"
-                         :placeholder="'글작성 (최대 1,000자)'"
+                         placeholder="첫라인에 제목을, 그 다음 라인부터 내용을 입력하세요. (최대 1,000자)"
                          :disabled="state.isLoadingUpload || dataSource.length === 0" @submitChat="submitChat"
                          :isNewRow="state.isNewRow" :isEdit="rowEdit.isEdit || messageDetail?.id === 0" @cancel="cancelEdit"
                          @update-image="updateImage" />
@@ -180,7 +185,7 @@ import {
 } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import {DxColumn, DxDataGrid, DxExport, DxItem, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
-
+import {ReloadOutlined} from "@ant-design/icons-vue";
 import ExpressionType from "@/components/common/ExpressionType.vue";
 import {Message} from "@/configs/enum";
 import {
@@ -570,6 +575,9 @@ const searching = () => {
     filterSearch.finishWriteDate = rangeDate.value[1]
   }
   state.trigger = true
+}
+const reload = () => {
+  state.triggerDetail = true
 }
 </script>
 

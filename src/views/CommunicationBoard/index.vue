@@ -11,7 +11,6 @@
       <a-tab-pane key="3" tab="알림" >
         <Tab3 ref="tab3"/>
       </a-tab-pane>
-
     </a-tabs>
     <div>
       <DxButton class="custom-button" type="normal" @click="reload">
