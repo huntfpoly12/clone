@@ -3,7 +3,7 @@
         <a-spin :spinning="loadingGetAccountingDocumentProofs" size="large">
             <div class="form-upload-ac120" :class="{ 'ac120-disable-form-upload': false }">
                 <div ref="elementUpload" class="upload-pewview-img-ac-120">
-                    <a-upload :disabled="statusDisabledImg || statusProcess != 10" list-type="picture-card" :multiple="multiple"
+                    <a-upload :disabled="statusDisabledImg || isDisabled" list-type="picture-card" :multiple="multiple"
                         v-model:file-list="fileList" @preview="handlePreview" :customRequest="customRequest"
                         :before-upload="beforeUpload" @remove="remove" accept="image/png, image/jpeg, image/jpg image/gif">
                         <div v-if="fileList.length <= limit">
@@ -28,7 +28,7 @@
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
-import { defineComponent, ref, watch, computed, nextTick } from "vue";
+import { defineComponent, ref, watch, computed } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC120";
 import mutations from "@/graphql/mutations/AC/AC1/AC120";
@@ -67,9 +67,9 @@ export default defineComponent({
             type: Object,
             default: () => { },
         },
-        statusProcess: {
-			type: Number,
-			default: 0,
+        isDisabled: {
+			type: Boolean,
+            default: false,
 		},
     },
     setup(props, { emit }) {

@@ -198,31 +198,30 @@
           </box-title>
 
           <box-title title="전자고지신청">
-            <a-row :gutter="gutter" class="px-10 my-3">
-              <a-col span="24" style="display: flex; align-items: center; padding: 3px 0">
-                <span class="mr-30">고지방법:</span>
-                <div class="mr-30">
-                  <checkbox-basic label="전자우편" v-model:valueCheckbox="formState.electronicNotificationEmail" />
-                </div>
-                <div class="mr-30">
-                  <checkbox-basic label="휴대전화" v-model:valueCheckbox="formState.electronicNotificationMobile" />
-                </div>
-                <div class="mr-30">
-                  <checkbox-basic label="전자문서교환시스템" v-model:value-checkbox="formState.electronicNotificationEdoc" />
-                </div>
-                <div>
-                  <checkbox-basic label="홈페이지" v-model:value-checkbox="formState.electronicNotificationWeb" />
-                </div>
-                <info-tool-tip>
-                  신청하는 경우 아래 항목을 반드시 입력해 주세요.
-                </info-tool-tip>
+            <a-row :gutter="gutter" class="px-10">
+              <a-col span="12" style="display: flex; align-items: center; padding: 3px 0">
+                <a-form-item label="고지방법">
+                  <div class="d-flex-center gap-5">
+                    <checkbox-basic label="전자우편" v-model:valueCheckbox="formState.electronicNotificationEmail" />
+                    <checkbox-basic label="휴대전화" v-model:valueCheckbox="formState.electronicNotificationMobile" />
+                    <checkbox-basic label="전자문서교환시스템" v-model:value-checkbox="formState.electronicNotificationEdoc" />
+                    <checkbox-basic label="홈페이지" v-model:value-checkbox="formState.electronicNotificationWeb" />
+                    <info-tool-tip>
+                      신청하는 경우 아래 항목을 반드시 입력해 주세요.
+                    </info-tool-tip>
+                  </div>
+                </a-form-item>
               </a-col>
+              <a-col span="12">
+                <a-form-item label="수신처 (전자우편주소, 휴대전화번호 또는 아이디)" class="field-custom-auto">
+                  <default-text-box v-model:valueInput='formState.electronicReceive' placeholder="" style="flex: 1" />
+                </a-form-item>
+              </a-col>
+
             </a-row>
 
             <a-row :gutter="gutter">
-              <a-form-item label="수신처 (전자우편주소, 휴대전화번호 또는 아이디)" class="field-custom-auto">
-                <default-text-box v-model:valueInput='formState.electronicReceive' placeholder="" style="flex: 1" />
-              </a-form-item>
+
             </a-row>
 
             <a-row :gutter="gutter">

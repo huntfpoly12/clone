@@ -12,7 +12,7 @@
                     <DxPaging :enabled="false" />
                     <DxExport :enabled="true" />
                     <DxToolbar>
-                        <DxItem template="search-template" location="before" />
+                        <DxItem template="search-template" location="after" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" css-class="cell-button-export" />
                         <!-- <DxItem location="after" template="button-history" css-class="cell-button-add" /> -->
@@ -24,9 +24,9 @@
                                 <range-date-time-box v-model:valueDate="rangeDate" maxRange width="250px"
                                     :multi-calendars="true" />
                             </a-form-item>
-                            <div class="d-flex-center">
+                            <!-- <div class="d-flex-center">
                                 <info-tool-tip>문의글 기준</info-tool-tip>
-                            </div>
+                            </div> -->
                         </div>
                     </template>
                     <DxColumn caption="구분" cell-template="expresstionType" css-class="cell-center"
@@ -56,15 +56,18 @@
                 <a-spin :spinning="loadingWorkNotificationMessage" size="large">
                     <div v-if="dataDetail" class="wrapper-content">
                         <div class="question-container">
-                            <div class="d-flex-center gap-10">
-                                <ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
-                                <div class="font-bold" :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
-                                    {{ dataDetail.writerCompactUser.name }}</div>
-                                <div class="time">
-                                    {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
-                                        dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
+                            <div class="d-flex-center" style="justify-content: space-between;">
+                                <div class="d-flex-center gap-10">
+                                    <ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
+                                    <div class="font-bold"
+                                        :class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
+                                        {{ dataDetail.writerCompactUser.name }}</div>
+                                    <div class="time">
+                                        {{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
+                                            dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
+                                    </div>
+                                    <div class="classification">{{ dataDetail.classification }}</div>
                                 </div>
-                                <div class="classification">{{ dataDetail.classification }}</div>
                                 <div class="time" v-if="dataDetail.updatedAt > dataDetail.writedAt">
                                     Edited
                                 </div>
@@ -77,9 +80,10 @@
                                         @click="previewImage(dataDetail.fileStorages.filter((item: any) => isImgLink(item.url)), indexFile)">
                                 </div>
                                 <div v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => !isImgLink(item.url))"
-                                    :key="indexFile" class="d-flex-center mb-10 file-texts" @click="openLinkDownFile(file.url)">
+                                    :key="indexFile" class="d-flex-center mb-10 file-texts"
+                                    @click="openLinkDownFile(file.url)">
                                     <FileTextOutlined class="mr-10 fz-20" />
-									<div>{{ file.name }}</div>
+                                    <div>{{ file.name }}</div>
                                 </div>
                             </div>
                         </div>
@@ -147,8 +151,12 @@ export default defineComponent({
     },
     props: {
         onSearch: Number,
+        messageId: {
+            type: Number,
+            default: null,
+        },
     },
-    setup(props) {
+    setup(props, { emit }) {
         // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
@@ -175,7 +183,7 @@ export default defineComponent({
         }
         const originDataDetail = {
             companyId: companyId,
-            messageId: null,
+            messageId: 0,
         }
         // ================GRAPQL==============================================
         const { loading: loadingTable, onResult: resWorkNotificationMessages, onError
@@ -195,8 +203,12 @@ export default defineComponent({
             let data = value.data.searchWorkNotificationMessages
             if (data.length) {
                 dataSource.value = data;
-                focusedRowKey.value = data[0].messageId
-                originDataDetail.messageId = data[0].messageId
+                if (props.messageId) {
+                    originDataDetail.messageId = props.messageId
+                    emit('resetMessageId', true);
+                } else {
+                    originDataDetail.messageId = data[0].messageId
+                }
                 triggerWorkNotificationMessage.value = true;
             } else {
                 dataSource.value = []
@@ -217,6 +229,7 @@ export default defineComponent({
         resWorkNotificationMessage((value) => {
             triggerWorkNotificationMessage.value = false;
             dataDetail.value = value.data.getWorkNotificationMessage;
+            focusedRowKey.value = value.data.getWorkNotificationMessage.messageId
         });
 
         // ================FUNCTION============================================

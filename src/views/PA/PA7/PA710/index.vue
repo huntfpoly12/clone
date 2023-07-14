@@ -137,7 +137,7 @@
 									</a-tooltip>
 								</div>
 							</a-form-item>
-							<div class="text-align-center mt-20">
+							<div class="text-center mt-20">
 								<button-basic :text="'저장'" type="default" :mode="'contained'" @onClick="actionSave()" />
 							</div>
 							<!-- <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
@@ -154,10 +154,10 @@
 					<img src="@/assets/images/icon_delete.png" alt="" style="width: 30px" />
 					<span>{{ contentDelete }}</span>
 				</div>
-				<div class="text-align-center mt-30">
-					<button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+				<div class="text-center mt-30">
+					<button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
 						@onClick="modalStatusDelete = false" />
-					<button-basic class="button-form-modal" :text="'네. 삭제합니다'" :width="140" :type="'default'"
+					<button-basic class="ml-5" :text="'네. 삭제합니다'" :width="140" :type="'default'"
 						:mode="'contained'" @onClick="onSubmitDelete" />
 				</div>
 			</standard-form>

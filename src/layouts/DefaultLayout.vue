@@ -159,6 +159,7 @@ import {
   BF251,
   BF252,
   BF253,
+  BF254,
   BF255,
   BF510,
   BF530,
@@ -257,6 +258,7 @@ export default defineComponent({
     BF251,
     BF252,
     BF253,
+    BF254,
     BF255,
     BF510,
     BF530,
@@ -467,6 +469,7 @@ export default defineComponent({
       if (this.activeTab.id === "bf-251") return 'BF251';
       if (this.activeTab.id === "bf-252") return 'BF252';
       if (this.activeTab.id === "bf-253") return 'BF253';
+      if (this.activeTab.id === "bf-254") return 'BF254';
       if (this.activeTab.id === "bf-255") return 'BF255';
       if (this.activeTab.id === "bf-510") return 'BF510';
       if (this.activeTab.id === "bf-530") return 'BF530';

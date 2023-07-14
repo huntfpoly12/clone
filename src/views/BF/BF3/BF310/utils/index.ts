@@ -76,6 +76,7 @@ export const initialFormState = {
       ownerBizNumber: "",
       withdrawDay: "",
     },
+
     extra: {
       salesRepresentativeId: 1,
       comment: "",

@@ -152,7 +152,8 @@ export default defineComponent({
     const acYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
     const globalFacilityBizId = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
     let dataSource = ref<any>({})
-    let monthSelected = ref(dayjs().month() + 1)
+    const month = sessionStorage.getItem('month') && Math.abs(Number(sessionStorage.getItem('month'))) < 13 ? Number(sessionStorage.getItem('month')) : dayjs().month() + 1;
+    let monthSelected = ref(month)
     let listAccountingProcesses = ref<any[]>([])
     const activeKey = ref<string[]>([])
     const formChat = ref()

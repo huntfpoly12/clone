@@ -12,11 +12,12 @@
 					<DxPaging :enabled="false" />
 					<DxExport :enabled="true" />
 					<DxToolbar>
-						<DxItem template="search-template" location="before" />
+						<DxItem template="search-template" location="after" />
+						<DxItem location="after" template="button-template" css-class="cell-button-add" />
 						<DxItem name="searchPanel" />
 						<DxItem name="exportButton" css-class="cell-button-export" />
 						<!-- <DxItem location="after" template="button-history" css-class="cell-button-add" /> -->
-						<DxItem location="after" template="button-template" css-class="cell-button-add" />
+
 					</DxToolbar>
 					<template #search-template>
 						<div class="d-flex-center search-template">
@@ -36,7 +37,7 @@
 							</DxButton> -->
 							<a-tooltip title="문의 신규 등록">
 								<div class="mx-5">
-									<DxButton icon="plus" :disabled="false" @click="addRow" />
+									<DxButton icon="plus" :disabled="false" @click="onCreate" />
 								</div>
 							</a-tooltip>
 						</div>
@@ -59,6 +60,8 @@
 
 					<DxColumn caption="답변내용" cell-template="" data-field="answer" />
 
+					<DxColumn caption="답변자" cell-template="" data-field="answerCompactUser.name" />
+
 					<DxColumn caption="답변일시" cell-template="" width="140" data-field="answeredAt"
 						format="yyyy-MM-dd HH:mm:ss" data-type="date" />
 				</DxDataGrid>
@@ -75,34 +78,36 @@
 					<div class="wrapper-content">
 						<div v-if="dataDetail" class="question-container">
 							<div v-if="dataDetail.expresstionType === 2">
-								<div class="d-flex-center gap-10">
-									<ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
-									<div class="font-bold"
-										:class="dataDetail.writerCompactUser.type == 'm' ? 'blue' : 'black'">
-										{{ dataDetail.writerCompactUser.name }}</div>
-									<div class="time">
-										{{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
-											dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
-									</div>
-									<div class="classification">{{ dataDetail.classification }}</div>
-									<div class="d-flex-center">
-										<checkbox-basic :valueCheckbox="dataDetail.secret" disabled="true" />
-										<span>비밀글</span>
-										<info-tool-tip>선택시 작성글과 답글은 작성자만 조회할 수 있습니다</info-tool-tip>
+								<div class="d-flex-center" style="justify-content: space-between;">
+									<div class="d-flex-center gap-10">
+										<ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
+										<div class="font-bold"
+											:class="dataDetail.writerCompactUser?.type == 'm' ? 'blue' : 'black'">
+											{{ dataDetail.writerCompactUser?.name }}</div>
+										<div class="time">
+											{{ dayjs(dataDetail.writedAt > dataDetail.updatedAt ?
+												dataDetail.writedAt : dataDetail.updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+										</div>
+										<div class="classification">{{ dataDetail.classification }}</div>
+										<div class="d-flex-center">
+											<checkbox-basic :valueCheckbox="dataDetail.secret" disabled="true" />
+											<span>비밀글</span>
+											<info-tool-tip>선택시 작성글과 답글은 작성자만 조회할 수 있습니다</info-tool-tip>
+										</div>
 									</div>
 									<div class="time" v-if="dataDetail.updatedAt > dataDetail.writedAt">
 										Edited
 									</div>
 								</div>
 								<div>{{ dataDetail.content }}</div>
-								<div v-if="dataDetail?.fileStorages && dataDetail?.fileStorages.length" class="files">
+								<div v-if="dataDetail.fileStorages && dataDetail.fileStorages?.length" class="files">
 									<div class="images">
-										<img v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => isImgLink(item.url))"
+										<img v-for="(file, indexFile) in dataDetail.fileStorages?.filter((item: any) => isImgLink(item.url))"
 											:key="indexFile" class="image" :src="file.url" alt=""
-											@click="previewImage(dataDetail.fileStorages.filter((item: any) => isImgLink(item.url)), indexFile)">
+											@click="previewImage(dataDetail.fileStorages?.filter((item: any) => isImgLink(item.url)), indexFile)">
 									</div>
-									<div v-for="(file, indexFile) in dataDetail?.fileStorages.filter((item: any) => !isImgLink(item.url))"
-										:key="indexFile" class="d-flex-center mb-10 file-texts"
+									<div v-for="(file, indexFile) in dataDetail.fileStorages?.filter((item: any) => !isImgLink(item.url))"
+										:key="indexFile" class="d-flex-center my-5 file-texts"
 										@click="openLinkDownFile(file.url)">
 										<FileTextOutlined class="mr-10 fz-20" />
 										<div>{{ file.name }}</div>
@@ -110,28 +115,64 @@
 								</div>
 							</div>
 							<div v-else-if="dataDetail.expresstionType === 3">
-								<div class="d-flex-center gap-10">
-									<ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
-									<div class="font-bold"
-										:class="dataDetail.answerCompactUser.type == 'm' ? 'blue' : 'black'">
-										{{ dataDetail.answerCompactUser.name }}</div>
-									<div class="time">
-										{{ dayjs(dataDetail.answeredAt > dataDetail.updatedAt ?
-											dataDetail.answeredAt : dataDetail.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}
+								<div class="d-flex-center" style="justify-content: space-between;">
+									<div class="d-flex-center gap-10">
+										<ExpressionType :valueSelect="2" :isSelect="false" />
+										<div class="font-bold"
+											:class="dataDetail.writerCompactUser?.type == 'm' ? 'blue' : 'black'">
+											{{ dataDetail.writerCompactUser?.name }}</div>
+										<div class="time">
+											{{ dayjs(dataDetail.writedAt).format('YYYY-MM-DD HH:mm:ss') }}
+										</div>
+										<div class="classification">{{ dataDetail.classification }}</div>
+										<div class="d-flex-center">
+											<checkbox-basic :valueCheckbox="dataDetail.secret" disabled="true" />
+											<span>비밀글</span>
+											<info-tool-tip>선택시 작성글과 답글은 작성자만 조회할 수 있습니다</info-tool-tip>
+										</div>
+									</div>
+									<div class="time" v-if="dataDetail.updatedAt > dataDetail.writedAt">
+										Edited
+									</div>
+								</div>
+								<div>{{ dataDetail.content }}</div>
+								<div v-if="dataDetail.fileStorages && dataDetail.fileStorages?.length" class="files">
+									<div class="images">
+										<img v-for="(file, indexFile) in dataDetail.fileStorages?.filter((item: any) => isImgLink(item.url))"
+											:key="indexFile" class="image" :src="file.url" alt=""
+											@click="previewImage(dataDetail.fileStorages?.filter((item: any) => isImgLink(item.url)), indexFile)">
+									</div>
+									<div v-for="(file, indexFile) in dataDetail.fileStorages?.filter((item: any) => !isImgLink(item.url))"
+										:key="indexFile" class="d-flex-center my-5 file-texts"
+										@click="openLinkDownFile(file.url)">
+										<FileTextOutlined class="mr-10 fz-20" />
+										<div>{{ file.name }}</div>
+									</div>
+								</div>
+								<div class="d-flex-center" style="justify-content: space-between;">
+									<div class="d-flex-center gap-10">
+										<ExpressionType :valueSelect="dataDetail.expresstionType" :isSelect="false" />
+										<div class="font-bold"
+											:class="dataDetail.answerCompactUser.type == 'm' ? 'blue' : 'black'">
+											{{ dataDetail.answerCompactUser.name }}</div>
+										<div class="time">
+											{{ dayjs(dataDetail.answeredAt > dataDetail.updatedAt ?
+												dataDetail.answeredAt : dataDetail.updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+										</div>
 									</div>
 									<div class="time" v-if="dataDetail.updatedAt > dataDetail.answeredAt">
 										Edited
 									</div>
 								</div>
 								<div>{{ dataDetail.answer }}</div>
-								<div v-if="dataDetail?.answerFileStorages && dataDetail?.answerFileStorages.length"
+								<div v-if="dataDetail.answerFileStorages && dataDetail.answerFileStorages?.length"
 									class="files">
 									<div class="images">
-										<img v-for="(file, indexFile) in dataDetail?.answerFileStorages.filter((item: any) => isImgLink(item.url))"
+										<img v-for="(file, indexFile) in dataDetail.answerFileStorages?.filter((item: any) => isImgLink(item.url))"
 											:key="indexFile" class="image" :src="file.url" alt=""
-											@click="previewImage(dataDetail.answerFileStorages.filter((item: any) => isImgLink(item.url)), indexFile)">
+											@click="previewImage(dataDetail.answerFileStorages?.filter((item: any) => isImgLink(item.url)), indexFile)">
 									</div>
-									<div v-for="(file, indexFile) in dataDetail?.answerFileStorages.filter((item: any) => !isImgLink(item.url))"
+									<div v-for="(file, indexFile) in dataDetail.answerFileStorages?.filter((item: any) => !isImgLink(item.url))"
 										:key="indexFile" class="d-flex-center mb-10 file-texts"
 										@click="openLinkDownFile(file.url)">
 										<FileTextOutlined class="mr-10 fz-20" />
@@ -142,7 +183,7 @@
 						</div>
 					</div>
 				</a-spin>
-				<div class="form-create-bottom">
+				<div class="form-create-bottom mt-10" v-if="!disabledFormAdd">
 					<div class="d-flex-center mb-10">
 						<ExpressionType :valueSelect="2" disabled />
 						<span class="mx-10">분류: </span>
@@ -154,14 +195,20 @@
 						</div>
 					</div>
 					<InputChat ref="inputChatRef" v-model:content="rowEdit.content" v-model:files="filesUpload"
-						placeholder="안녕하세요? 테스트 입력입니다. 수고하세요" :disabled="isLoadingUpload || disabledFormAdd"
-						@submitChat="submitChat" @cancel="cancelEdit" />
+						placeholder="안녕하세요? 테스트 입력입니다. 수고하세요" :disabled="disabledFormAdd || statusNullSelect" @submitChat="submitChat"
+						@cancel="cancelEdit" />
 					<ModalPreviewListImage :isModalPreview="isModalPreview" @cancel="isModalPreview = false"
 						:listImage="listImagePreview" />
 				</div>
 			</div>
 		</a-col>
 	</a-row>
+	<PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
+		:title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
+		:cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirm" />
+	<PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+		:title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
+		:cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vue";
@@ -220,8 +267,12 @@ export default defineComponent({
 	},
 	props: {
 		onSearch: Number,
+		messageId: {
+			type: Number,
+			default: null,
+		},
 	},
-	setup(props) {
+	setup(props, { emit }) {
 		// config grid
 		const store = useStore();
 		const move_column = computed(() => store.state.settings.move_column);
@@ -231,26 +282,30 @@ export default defineComponent({
 		const dataDetail = ref<any>(null)
 		const filesUpload = ref([])
 		const disabledFormAdd = ref(true)
-		const isLoadingUpload = ref(false)
 		const isModalPreview = ref(false)
 		const token = ref(sessionStorage.getItem("token"))
 		let jwtObject = getJwtObject(token.value!);
 		const userId = jwtObject.userId
-
 		const listImagePreview = ref({
 			index: 0,
 			files: [],
 		})
-		const inputChatRef = ref()
+		store.dispatch('auth/getUserInfor');
+    	const userInfor = computed(() => store.state.auth.userInfor);
 		const rowEdit = reactive({
-			id: 0,
+			messageId: 0,
+			expresstionType: 2,
 			content: '',
 			secret: false,
-			classification: '일반',
+			classification: '',
+			writedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+			writerCompactUser: {
+				name: userInfor.value.name
+			}
 		})
-		const focusedRowKey = ref(null);
-		// const listChat = ref(JSON.parse(localStorage.getItem("listChat") ?? '[]'))
-		// dataDetail.value = getFakeData()
+		const statusNullSelect = computed(() => rowEdit.classification ? false : true)
+		
+		const focusedRowKey: any = ref(null);
 		const trigger = ref<boolean>(true)
 		const triggerWorkInquiryMessage = ref<boolean>(false)
 		const originData = {
@@ -263,9 +318,14 @@ export default defineComponent({
 		}
 		const originDataDetail = {
 			companyId: companyId,
-			messageId: null,
+			messageId: 0,
 			currentUserId: userId,
 		}
+		const dataRowClick: any = ref({})
+		const modalStatus = ref<boolean>(false);
+		const modalStatusAdd = ref<boolean>(false);
+		const statusClickButtonSave = ref<boolean>(true);
+		const statusClickButtonAdd = ref<boolean>(false);
 		// ================GRAPQL==============================================
 		// api table
 		const { loading: loadingTable, onResult: resWorkInquiryMessages, onError
@@ -285,8 +345,22 @@ export default defineComponent({
 			let data = value.data.searchWorkInquiryMessages;
 			if (data.length) {
 				dataSource.value = data;
-				focusedRowKey.value = data[0].messageId;
-				originDataDetail.messageId = data[0].messageId;
+				// focusedRowKey.value = data[0].messageId;
+				if (statusClickButtonAdd.value) {
+					addRow()
+					return;
+				}
+				if (props.messageId) {
+					originDataDetail.messageId = props.messageId
+					emit('resetMessageId', true);
+				} else {
+					if (statusClickButtonSave.value) {
+						originDataDetail.messageId = data[0].messageId;
+					} else {
+						originDataDetail.messageId = dataRowClick.value.messageId;
+					}
+				}
+
 				triggerWorkInquiryMessage.value = true;
 			} else {
 				focusedRowKey.value = null;
@@ -308,6 +382,8 @@ export default defineComponent({
 		resWorkInquiryMessage((value) => {
 			triggerWorkInquiryMessage.value = false;
 			dataDetail.value = value.data.getWorkInquiryMessage;
+			focusedRowKey.value = value.data.getWorkInquiryMessage.messageId
+			disabledFormAdd.value = true;
 		});
 
 		// api create
@@ -320,37 +396,108 @@ export default defineComponent({
 			//notification('error', e.message)
 		});
 		onDoneCreate((res) => {
-			console.log('123');
-			
 			resetForm()
+			disabledFormAdd.value = true;
+			// filesUpload.value = []
 			trigger.value = true;
 			notification("success", Message.getMessage("COMMON", "106").message);
 		});
 
 
 		// ================FUNCTION============================================
+		const onCreate = () => {
+			if (!disabledFormAdd.value && (rowEdit.content || filesUpload.value.length || rowEdit.secret || rowEdit.classification != '일반')) { // có thay đổi
+				modalStatusAdd.value = true
+				statusClickButtonAdd.value = true;
+			} else {
+				if (disabledFormAdd.value) {
+					addRow()
+				}
+
+			}
+		}
 		const addRow = () => {
 			disabledFormAdd.value = false;
+			dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat(rowEdit);
+			focusedRowKey.value = 0;
+			dataDetail.value = rowEdit
 		}
 
 		const onFocusedRowChanging = (e: any) => {
-			originDataDetail.messageId = e.rows[e.newRowIndex]?.data.messageId
-			triggerWorkInquiryMessage.value = true;
+			statusClickButtonAdd.value = false;
+			dataRowClick.value = e.rows[e.newRowIndex]?.data;
+			if (focusedRowKey.value !== dataRowClick.value.messageId) { // if click same focused row
+				if (!disabledFormAdd.value && (rowEdit.content || filesUpload.value.length || rowEdit.secret || rowEdit.classification != '일반')) { // có thay đổi
+					modalStatus.value = true
+				}
+				else {
+					if (!disabledFormAdd.value) { // ko thay đổi nhưng đang add
+						dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1); // delete row add
+						// disabledFormAdd.value = true;
+					}
+					originDataDetail.messageId = e.rows[e.newRowIndex]?.data.messageId
+					triggerWorkInquiryMessage.value = true;
+				}
+			}
 		};
 
 		const submitChat = () => {
-			actionCreate({
-				companyId: companyId,
-				input: {
-					classification: rowEdit.classification,
-					secret: rowEdit.secret,
-					content: !!rowEdit.content.trim() ? rowEdit.content.trim() : null,
-					fileStorageIds: filesUpload.value.map((file: any) => parseInt(file.id))
-				}
-			})
+			if (filesUpload.value.length) {
+				actionCreate({
+					companyId: companyId,
+					input: {
+						classification: rowEdit.classification,
+						secret: rowEdit.secret,
+						content: !!rowEdit.content.trim() ? rowEdit.content.trim() : null,
+						fileStorageIds: filesUpload.value.map((file: any) => parseInt(file.id))
+					}
+				})
+			} else {
+				actionCreate({
+					companyId: companyId,
+					input: {
+						classification: rowEdit.classification,
+						secret: rowEdit.secret,
+						content: !!rowEdit.content.trim() ? rowEdit.content.trim() : null,
+					}
+				})
+			}
 		}
-		const cancelEdit = () => {
+		const statusComfirm = (val: any) => {
+			if (val) {
+				statusClickButtonSave.value = false;
+				submitChat();
+			} else {
+				if (!disabledFormAdd.value) {
+					dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1); // delete row add
+					disabledFormAdd.value = true;
+					focusedRowKey.value = dataRowClick.value.messageId;
+				}
+				originDataDetail.messageId = dataRowClick.value.messageId
+				triggerWorkInquiryMessage.value = true;
+			}
 			resetForm()
+			// dataGridRef.value?.refresh();
+		};
+		const statusComfirmAdd = (val: any) => {
+			if (val) {
+				// statusClickButtonSave.value = false;
+				submitChat();
+			} else {
+				// if (statusAddRow.value && statusClickButtonAdd.value) {
+				// 	// add row
+				// 	addRow();
+				// } else {
+				resetForm()
+				// reset form
+				// resetFormNum.value++;
+				// Object.assign(formState.value, initialState);
+				// }
+			}
+			// dataGridRef.value?.refresh();
+		};
+		const cancelEdit = () => {
+
 		}
 		const previewImage = (files: any, index: number) => {
 			listImagePreview.value.index = index
@@ -362,32 +509,12 @@ export default defineComponent({
 			return (url.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp|webp)(\?(.*))?$/gmi) !== null);
 		}
 		const resetForm = () => {
-			console.log('hihihihi');
-			
 			rowEdit.content = ''
 			rowEdit.secret = false
 			rowEdit.classification = '일반'
-			disabledFormAdd.value = true;
+
 			filesUpload.value = []
 		}
-
-		// const handleDeleteQA = (row: any) => {
-		// 	deletePopup({
-		// 		callback: () => {
-		// 			const result = listChat.value.filter((item: any) => item.id !== row.id)
-		// 			localStorage.setItem("listChat", JSON.stringify(result))
-		// 			listChat.value = result
-		// 		},
-		// 		message: Message.getCommonMessage("303").message,
-		// 		cancelText: Message.getCommonMessage("303").no,
-		// 		okText: Message.getCommonMessage("303").yes,
-		// 	})
-		// }
-		// const handleEditQA = (row: any) => {
-		// 	rowEdit.content = row.content
-		// 	rowEdit.isEdit = true
-		// 	rowEdit.id = row.id
-		// }
 
 		const openLinkDownFile = (link: string) => {
 			window.open(link, '_blank')
@@ -406,21 +533,19 @@ export default defineComponent({
 			labelCol: { style: { width: "150px" } },
 			dataSource, dataDetail,
 			rangeDate,
-			addRow,
+			onCreate,
 			reloadData,
 			onFocusedRowChanging, focusedRowKey,
 			dayjs,
 			rowEdit, loadingTable, loadingWorkInquiryMessage,
 			filesUpload,
 			listImagePreview,
-			disabledFormAdd, isLoadingUpload, cancelEdit, submitChat, isModalPreview,
+			disabledFormAdd, cancelEdit, submitChat, isModalPreview,
 			previewImage, isImgLink,
-			// userId,
-			// listChat,
-			//  handleDeleteQA,
-			//  handleEditQA, 
-			openLinkDownFile,
-			inputChatRef,
+			openLinkDownFile, Message, modalStatus, statusComfirm,
+			modalStatusAdd, statusComfirmAdd,
+			// inputChatRef,
+			statusNullSelect,
 		};
 	},
 });

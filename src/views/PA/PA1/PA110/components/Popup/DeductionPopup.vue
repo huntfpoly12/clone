@@ -2,7 +2,7 @@
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="600">
         <div class="custom-modal">
-            <div class="text-align-center">
+            <div class="text-center">
                 <h3>공제 재계산 결과</h3>
                 <DxDataGrid noDataText="내역이 없습니다" :show-row-lines="true" :hoverStateEnabled="true" :data-source="showData"
                     allow-column-resizing="false" :show-borders="true" :column-auto-width="true"
@@ -14,8 +14,8 @@
                 </DxDataGrid>
             </div>
         </div>
-        <div class="text-align-center mt-40">
-            <button-basic class="button-form-modal" :text="'적용'" :width="140" :type="'default'" :mode="'contained'"
+        <div class="text-center mt-40">
+            <button-basic :text="'적용'" :width="140" :type="'default'" :mode="'contained'"
                 @onClick="onSubmit" />
         </div>
     </a-modal>
@@ -91,14 +91,6 @@ export default defineComponent({
     .title {
         background-color: #e6f7ff;
     }
-}
-
-.mt-40 {
-    margin-top: 40px;
-}
-
-.text-align-center {
-    text-align: center;
 }
 
 .text-align-left {

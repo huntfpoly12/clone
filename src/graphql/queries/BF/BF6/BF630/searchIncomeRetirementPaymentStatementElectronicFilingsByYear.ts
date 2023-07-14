@@ -54,13 +54,6 @@ query searchIncomeRetirementPaymentStatementElectronicFilingsByYear($imputedYear
             mobilePhone
             email
           }
-          cmsBank{
-            bankType
-            accountNumber
-            ownerBizNumber
-            ownerName
-            withdrawDay
-          }
         }
         sealFileStorageId
         createdAt

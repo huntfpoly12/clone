@@ -11,6 +11,7 @@
       <div class="content-grid">
         <a-spin :spinning="loading" size="large">
           <DxDataGrid
+            noDataText="내역이 없습니다"
             :show-row-lines="true"
             :hoverStateEnabled="true"
             :data-source="dataSource"

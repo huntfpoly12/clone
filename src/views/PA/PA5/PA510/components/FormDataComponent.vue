@@ -142,7 +142,7 @@
 				</a-row>
 			</StandardForm>
 		</a-spin>
-		<div class="text-align-center mt-50" style="display: flex; justify-content: center">
+		<div class="text-center mt-50 d-flex-center justify-content-center">
 			<a-tooltip placement="top" :overlayStyle="{ maxWidth: '500px' }">
 				<template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
 				<div>
@@ -153,11 +153,11 @@
 			<a-tooltip placement="top">
 				<template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
 				<div>
-					<button-basic :disabled="store.state.common.pa510.statusDisabledStatus || true" style="margin: 0px 5px"
+					<button-basic :disabled="store.state.common.pa510.statusDisabledStatus || true" class="mx-5"
 						@onClick="actionInsurance" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
 				</div>
 			</a-tooltip>
-			<button-basic :disabled="store.state.common.pa510.statusDisabledStatus" style="margin: 0px 5px"
+			<button-basic :disabled="store.state.common.pa510.statusDisabledStatus" class="mx-5"
 				@onClick="onSubmitForm" mode="contained" type="default" text="저장" />
 		</div>
 	</standard-form>

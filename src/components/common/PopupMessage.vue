@@ -8,7 +8,6 @@
             <a-col :span="20" class="centent-wrap">
                 <h3><b>{{ title }}</b></h3>
                 <p> {{ content }}</p>
-                <p><slot></slot></p>
             </a-col>
             <div style="text-align: center; width: 100%;">
                 <a-input placeholder="확인" style="width: 200px" v-model:value="inputAccep" />

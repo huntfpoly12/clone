@@ -1,8 +1,7 @@
 <template>
   <div class="container">
     <a-row :gutter="[0, 12]">
-      <a-col :span="12"></a-col>
-      <a-col :span="12">
+      <a-col :span="24" class="d-flex-center justify-content-end">
         <a-form-item label="결제예정일자">
           <date-time-box width="200px" v-model:value-date="date"/>
         </a-form-item>
@@ -13,17 +12,37 @@
         </a-form-item>
       </a-col>
       <a-col :span="12">
-        <a-form-item label="전체 사업자 수">
+        <a-form-item label="청구금액 (합계)">
           <default-text-box width="200px"/>
         </a-form-item>
       </a-col>
       <a-col :span="12">
-        <a-form-item label="전체 사업자 수">
+        <a-form-item label="당월 사업자 수">
           <default-text-box width="200px"/>
         </a-form-item>
       </a-col>
       <a-col :span="12">
-        <a-form-item label="전체 사업자 수">
+        <a-form-item label="청구금액 (당월)">
+          <default-text-box width="200px"/>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="연체 사업자 수">
+          <default-text-box width="200px"/>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="청구금액 (연체)">
+          <default-text-box width="200px"/>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="선납 사업자 수">
+          <default-text-box width="200px"/>
+        </a-form-item>
+      </a-col>
+      <a-col :span="12">
+        <a-form-item label="청구금액 (선납)">
           <default-text-box width="200px"/>
         </a-form-item>
       </a-col>
@@ -49,9 +68,8 @@ const date = ref<string>(dayjs().format("YYYYMMDD"));
 
 <style lang="scss" scoped>
 .container {
-  width: 700px;
+  width: 800px;
   margin: 0 auto;
-
   .note {
     padding-left: 50px;
   }
