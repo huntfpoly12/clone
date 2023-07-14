@@ -1,7 +1,7 @@
 <template>
 	<a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1600">
 		<div class="mt-20" :key="countKey">
-			<standard-form formName="ac-120-form-add" ref="refFormAddAC120" class="text-align-center mt-20">
+			<standard-form formName="ac-120-form-add" ref="refFormAddAC120" class="text-center mt-20">
 				<h2>전표 건별 등록</h2>
 				<a-row class="mt-20">
 					<a-col :span="7" class="col-1">
@@ -79,7 +79,7 @@
 							<customer-select :search-enabled="true" :disabled="formDataAdd.resolutionClassification == 1"
 								v-model:valueInput="formDataAdd.clientId" width="150px" />
 						</a-form-item>
-						<div class="input_info">
+						<div class="d-flex-center">
 							<a-form-item :label="textLabelInputSource">
 								<default-text-box v-model:valueInput="formDataAdd.source" width="150px" />
 							</a-form-item>
@@ -89,7 +89,7 @@
 								<img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px" class="mr-5" />
 							</a-tooltip>
 						</div>
-						<div class="input_info">
+						<div class="d-flex-center">
 							<a-form-item label="작성자">
 								<default-text-box v-model:valueInput="formDataAdd.writer" width="150px" />
 							</a-form-item>
@@ -144,9 +144,9 @@
 				</a-row>
 				<div class="mt-10"><span>전표를 등록하시겠습니까?</span></div>
 				<div class="mt-20">
-					<button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+					<button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
 						@onClick="cancel" />
-					<button-basic class="button-form-modal" :text="'네. 등록합니다'" :type="'default'" :mode="'contained'"
+					<button-basic class="ml-5" :text="'네. 등록합니다'" :type="'default'" :mode="'contained'"
 						@onClick="submit" />
 				</div>
 			</standard-form>
@@ -487,26 +487,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.text-align-center {
-	text-align: center;
-}
-
-.button-form-modal {
-	margin: 0px 5px;
-}
-
-.mt-10 {
-	margin-top: 10px;
-}
-
-.mt-20 {
-	margin-top: 20px;
-}
-
-.input_number {
-	display: flex;
-	align-items: center;
-}
 
 :deep .redColor input.dp__input {
 	color: #ff3030;
@@ -514,11 +494,6 @@ export default defineComponent({
 
 :deep .greenColor input.dp__input {
 	color: #48b148;
-}
-
-.input_info {
-	display: flex;
-	align-items: center;
 }
 
 :deep .col-1 .ant-form-item-label {

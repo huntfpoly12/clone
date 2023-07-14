@@ -4,16 +4,9 @@
         height: calc(100vh - 160px);
     }
 
-
-
-    .text-align-center {
-        text-align: center;
-    }
-
     :deep .ant-form-item-label>label {
         width: 180px;
         padding-left: 10px;
-
     }
 
     .data-table {
@@ -25,17 +18,6 @@
         border-bottom: none;
         padding: 5px;
     }
-
-    // .custom-layout {
-    //     margin-top: 10px;
-    //     padding-left: 10px;
-
-    //     >div {
-    //         border: 1px solid #d7d7d7;
-    //         padding: 10px;
-    //         height: 100%;
-    //     }
-    // }
 
     .custom-note {
         >span {
@@ -64,18 +46,6 @@
     span {
         padding: 0px 5px;
     }
-}
-
-.mt-30 {
-    margin-top: 30px;
-}
-
-.text-align-center {
-    text-align: center;
-}
-
-.button-form-modal {
-    margin: 0px 5px;
 }
 
 .disabledBlock {

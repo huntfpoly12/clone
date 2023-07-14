@@ -2,7 +2,7 @@
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="600">
         <div class="custom-modal">
-            <div class="text-align-center">
+            <div class="text-center">
                 <h3>중도퇴사자정산 결과</h3>
                 <!-- <div>
                     <table class="table text-align-left">
@@ -33,8 +33,8 @@
                 </DxDataGrid>
             </div>
         </div>
-        <div class="text-align-center mt-40">
-            <button-basic class="button-form-modal" :text="'반영'" :width="140" :type="'default'" :mode="'contained'"
+        <div class="text-center mt-40">
+            <button-basic :text="'반영'" :width="140" :type="'default'" :mode="'contained'"
                 @onClick="onSubmit" />
         </div>
     </a-modal>
@@ -135,19 +135,7 @@ export default defineComponent({
     }
 }
 
-.mt-40 {
-    margin-top: 40px;
-}
-
-.text-align-center {
-    text-align: center;
-}
-
 .text-align-left {
     text-align: left;
-}
-
-.button-form-modal {
-    margin: 0px 5px;
 }
 </style>

@@ -18,8 +18,8 @@
           v-model:valueDate="paymentDayPA620" />
       </a-form-item>
 
-      <div class="text-align-center mt-20">
-        <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
+      <div class="text-center mt-20">
+        <button-basic text="새로 입력" :width="140" type="default" mode="contained"
           @onClick="onSubmit" />
         <!-- <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
         @onClick="openModalCopy" /> -->
@@ -56,10 +56,10 @@
       </div>
     </a-spin>
 
-    <div class="text-align-center mt-30">
-      <button-basic class="button-form-modal" text="아니요" :width="140" type="default" mode="outlined"
+    <div class="text-center mt-30">
+      <button-basic class="mr-5" text="아니요" :width="140" type="default" mode="outlined"
         @onClick="setModalVisibleCopy" />
-      <button-basic class="button-form-modal" text="네" :width="140" type="default" mode="contained"
+      <button-basic class="ml-5" text="네" :width="140" type="default" mode="contained"
         @onClick="actionCopy" />
     </div>
   </a-modal>
@@ -252,17 +252,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.mt-30 {
-  margin-top: 30px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
-}
 
 :deep label {
   width: 100px;

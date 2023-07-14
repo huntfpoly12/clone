@@ -13,7 +13,7 @@
           formName="ac-570-form"
           ref="ac570FormRef"
         >
-          <h2 class="text-align-center">과목전용조서</h2>
+          <h2 class="text-center">과목전용조서</h2>
           <a-row>
             <a-col :span="11"></a-col>
             <a-col :span="13">
@@ -161,8 +161,7 @@
             </a-form-item>
           </div>
           <div
-            class="text-align-center mt-20"
-            style="display: flex; justify-content: center"
+            class="text-center mt-20"
           >
             <button-basic
               mode="contained"
@@ -368,14 +367,6 @@ export default defineComponent({
 .custom-modal .ant-form-item-label > label {
   width: 130px;
   padding-left: 10px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
 }
 
 .top-content {

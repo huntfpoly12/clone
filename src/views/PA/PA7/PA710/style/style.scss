@@ -1,7 +1,4 @@
 #pa-710 {
-    // .confirm {
-    //     color: red;
-    // }
     #gridContainer {
         height: calc(100vh - 155px);
     }
@@ -21,23 +18,12 @@
         }
     }
 
-    .text-align-center {
-        text-align: center;
-    }
-
     :deep .ant-form-item-label>label {
         width: 180px;
         padding-left: 10px;
-
     }
-
-    // :deep .red .ant-form-item-label>label {
-    //     color: red;
-    // }
     .data-table {
         margin-top: 10px;
-        // height: calc(100vh - 155px);
-        // border: 1px solid #d7d7d7;
     }
     :deep .dx-datagrid-header-panel {
         border: 1px solid #d7d7d7;
@@ -73,18 +59,6 @@
         display: none;
     }
     
-}
-
-.mt-30 {
-    margin-top: 30px;
-}
-
-.text-align-center {
-    text-align: center;
-}
-
-.button-form-modal {
-    margin: 0px 5px;
 }
 .disabledBlock {
     pointer-events: none;
