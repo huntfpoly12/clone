@@ -58,7 +58,7 @@ export default defineComponent({
 
     const fomatDate = (date: any) => {
       if (typeof date == 'number') {
-        return dayjs(date).format('YYYY-MM-DD hh:mm:ss')
+        return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
       } else {
         return ''
       }
