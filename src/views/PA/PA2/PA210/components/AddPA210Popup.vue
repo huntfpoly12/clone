@@ -16,7 +16,7 @@
                       <DxScrolling mode="standard" show-scrollbar="always"/>
                       <DxColumn caption="선택" cell-template="radioCheck" />
                       <template #radioCheck="{ data }">
-                          <div class="text-align-center pt-8">
+                          <div class="text-center pt-8">
                               <input type="radio" name="radioCheck" 
                               :checked="!disableRadio(data.data) && focusedRowKey == data.data.reportId ? true : false" 
                               :disabled="disableRadio(data.data)"
@@ -29,13 +29,13 @@
                               <template #title>
                                   귀속기간 {{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                               </template>
-                              <div class="text-align-center">
+                              <div class="text-center">
                                   <DxButton
                                       :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                                       :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                               </div>
                           </a-tooltip>
-                          <div class="text-align-center" v-else>
+                          <div class="text-center" v-else>
                                 <DxButton
                                       :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                                       :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
@@ -47,13 +47,13 @@
                               <template #title>
                                   지급기간 {{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                               </template>
-                              <div class="text-align-center">
+                              <div class="text-center">
                                   <DxButton
                                       :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                                       :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                               </div>
                           </a-tooltip>
-                          <div class="text-align-center" v-else>
+                          <div class="text-center" v-else>
                                   <DxButton
                                       :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                                       :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
@@ -74,11 +74,11 @@
                       <template #refund="{ data }">{{ data.data.refund ? 'O' : 'X' }}</template>
                   </DxDataGrid>
               </a-spin>
-              <h3 class="text-align-center mt-20">선택한 원천징수이행상황신고서를 작성하시겠습니까?</h3>
-              <div class="text-align-center mt-20">
-                  <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+              <h3 class="text-center mt-20">선택한 원천징수이행상황신고서를 작성하시겠습니까?</h3>
+              <div class="text-center mt-20">
+                  <button-basic class="mr-5" :text="'아니요'" :type="'default'" :mode="'outlined'"
                       @onClick="setModalVisible()" />
-                  <button-basic class="button-form-modal" :text="'네. 작성합니다'" :width="140" :type="'default'"
+                  <button-basic class="ml-5" :text="'네. 작성합니다'" :width="140" :type="'default'"
                       :mode="'contained'" @onClick="onSubmit($event)" />
               </div>
           </standard-form>

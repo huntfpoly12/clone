@@ -229,16 +229,16 @@
               <div>합니다. 그래도 삭제하시겠습니까?</div>
             </div>
           </div>
-          <div class="text-align-center mt-20">
+          <div class="text-center mt-20">
             <button-basic
-              class="button-form-modal"
+              class="mr-5"
               :text="'아니요'"
               :type="'default'"
               :mode="'outlined'"
               @onClick="modalStatusDelete = false"
             />
             <button-basic
-              class="button-form-modal"
+              class="ml-5"
               :text="'네. 삭제합니다'"
               :width="140"
               :type="'default'"

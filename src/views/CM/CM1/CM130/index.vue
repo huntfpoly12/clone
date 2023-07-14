@@ -46,11 +46,11 @@
 							<a-col :span="24">
 								<div style="display: -webkit-inline-box">
 									<a-form-item label="급여지급일자" :label-col="labelCol">
-										<div style="display: flex; align-items: center">
+										<div class="d-flex-center">
 											<number-box :width="150" :min="0" :max="30"
 												v-model:valueInput="formState.paymentDay" :spinButtons="true">
 											</number-box>
-											<span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
+											<span class="ml-5">일, ( 말일은 ‘0’을 선택하세요)</span>
 										</div>
 									</a-form-item>
 								</div>
@@ -65,7 +65,7 @@
 							<a-col :span="24">
 								<div style="display: -webkit-inline-box">
 									<a-form-item>
-										<div style="margin-left: 50px">
+										<div class="ml-50">
 											<span>두루누리 적용 여부 (사업자):</span>
 											<switch-basic style="width: 80px; margin-left: 8px"
 												v-model:valueSwitch="formState.insuranceSupport" :textCheck="'적용'"
@@ -104,10 +104,9 @@
 							<a-col>
 								<a-form-item label="사업장주소" :label-col="labelCol">
 									<default-text-box style="width: 565px; margin-right: 10px; float: left" :disabled="true"
-										v-model:valueInput="formState.companyAddressInfoAddress
-											">
+										v-model:valueInput="formState.companyAddressInfoAddress">
 									</default-text-box>
-									<button-basic class="button-form-modal" :text="'자동선택'" :type="'default'"
+									<button-basic class="ml-5" :text="'자동선택'" :type="'default'"
 										:mode="'contained'" @onClick="showModal" />
 									<a-modal class="container_email" v-model:visible="isShow" okText="네. 적용합니다"
 										cancelText="아니오" @ok="handleSuccsess" :mask-closable="false" footer="">
@@ -133,9 +132,9 @@
 											</div>
 										</div>
 										<div class="text-align-right mt-20">
-											<button-basic class="button-form-modal" :text="'아니오'" :type="'default'"
+											<button-basic class="mr-5" :text="'아니오'" :type="'default'"
 												:mode="'outlined'" @onClick="setModalVisible()" />
-											<button-basic class="button-form-modal" :text="'네. 적용합니다'" :width="140"
+											<button-basic class="ml-5" :text="'네. 적용합니다'" :width="140"
 												:type="'default'" :mode="'contained'" @onClick="handleSuccsess" />
 										</div>
 									</a-modal>

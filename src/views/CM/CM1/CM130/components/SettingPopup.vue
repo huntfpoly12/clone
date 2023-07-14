@@ -5,11 +5,11 @@
 			<h2 style="font-weight: 600; color: gray">
 				관할세무서, 지방소득세 납세지 검색
 			</h2>
-			<div style="text-align: center; margin-top: 32px">
+			<div class="text-center mt-32">
 				<!-- <search-outlined /> -->
 				주소 또는 소재지 ‘읍.면.동’ 이름을 입력하세요
 			</div>
-			<div style="margin-top: 10px; display: flex; justify-content: center;">
+			<div class="mt-10 justify-content-center d-flex-center">
 				<StandardForm formName="cm-130-search" ref="CM130Search">
 					<default-text-box style="margin-right: 10px;" width="350" :required="true" v-model:valueInput="search">
 					</default-text-box>
@@ -47,7 +47,7 @@
 				</div>
 			</a-spin>
 			<div class="text-center">
-				<button-basic class="button-form-modal" :disabled="!showEmployeeInfo" :text="'확인'" :type="'default'"
+				<button-basic :disabled="!showEmployeeInfo" :text="'확인'" :type="'default'"
 					:mode="'contained'" @onClick="onSubmit" />
 			</div>
 		</a-modal>

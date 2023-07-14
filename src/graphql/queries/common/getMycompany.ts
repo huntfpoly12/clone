@@ -51,13 +51,6 @@ export default gql`
           mobilePhone
           email
         }
-        cmsBank{
-          bankType
-          accountNumber
-          ownerBizNumber
-          ownerName
-          withdrawDay
-        }
       }
       sealFileStorageId
       createdAt

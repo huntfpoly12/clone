@@ -7,6 +7,7 @@
                     :column-auto-width="true" :loadPanel="false" :focused-row-key="focusRowKey"
                     @focused-row-changing="onFocusedRowChanging" @focused-row-changed="onFocusedRowChanged"
                     :focused-row-index="focusRowIndex" noDataText="내역이 없습니다" style="height: calc(100vh - 210px);">
+          <DxPaging :page-size="0" />
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색" />
           <DxExport :enabled="true" />
           <DxToolbar>
@@ -17,8 +18,8 @@
           <template #search>
             <div class="d-flex-center gap-20">
               <a-form-item label="문의">
-                <checkbox-basic label="답글O" v-model:valueCheckbox="expresstionTypes.expresstionType2"/>
-                <checkbox-basic label="답글X" v-model:valueCheckbox="expresstionTypes.expresstionType3"/>
+                <checkbox-basic label="답글O" v-model:valueCheckbox="expresstionTypes.expresstionType3"/>
+                <checkbox-basic label="답글X" v-model:valueCheckbox="expresstionTypes.expresstionType2"/>
               </a-form-item>
               <a-form-item label="작성기간 (최대 3월)">
                 <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"
@@ -30,26 +31,25 @@
               </div>
             </div>
           </template>
-          <DxColumn caption="삭제 여부" data-field="active" alignment="center" cell-template="active"/>
+          <DxColumn caption="삭제 여부" data-field="active" alignment="center" cell-template="active" width="75px"/>
           <DxColumn caption="구분" data-field="expresstionType" alignment="center" cell-template="expresstionType"/>
           <DxColumn caption="사업자코드" data-field="company.code" alignment="center" cell-template="companyCode"/>
           <DxColumn caption="상호" data-field="company.name" alignment="center"/>
-          <DxColumn caption="주소" data-field="company.address" alignment="center" width="200px"/>
+          <DxColumn caption="주소" data-field="company.address" alignment="left" width="200px"/>
           <DxColumn caption="분류" data-field="classification" alignment="center"/>
-          <DxColumn caption="문의내용" data-field="content" alignment="center" width="200px"/>
+          <DxColumn caption="문의내용" data-field="content" alignment="left" width="200px"/>
           <DxColumn caption="작성자" data-field="writerCompactUser.name" alignment="center"/>
           <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm" alignment="center"/>
           <DxColumn caption="답변내용" data-field="answer" alignment="center" width="200px"/>
-          <DxColumn caption="답변자" data-field="answerCompactUser.id" alignment="center"/>
-          <DxColumn caption="답변일시" data-field="answeredAt" data-type="date" format="yyyy-MM-dd HH:mm" alignment="center"/>
-          <DxColumn caption="" alignment="center" cell-template="action" />
+          <DxColumn caption="답변자" data-field="answerCompactUser.name" alignment="center"/>
+          <DxColumn caption="답변일시" data-field="answeredAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" alignment="center"/>
+          <DxColumn caption="" cell-template="action" width="50px" />
           <template #active="{ data }">
             <div v-if="!data.data.active">
               <a-tag color="#DC5939">삭제</a-tag>
             </div>
           </template>
           <template #expresstionType="{ data }">
-            <ExpressionType v-if="data.data.answeredAt" :is-select="false" :value-select="2" style="margin-bottom: 5px"/>
             <ExpressionType :is-select="false" :value-select="data.data.expresstionType" />
           </template>
           <template #companyCode="{ data }">
@@ -59,10 +59,12 @@
             </div>
           </template>
           <template #action="{ data }">
-            <a-tooltip>
-              <template #title>변경이력</template>
-              <HistoryOutlined style="font-size: 18px; margin-left: 5px" @click="openLogs(data.data)" />
-            </a-tooltip>
+            <div class="d-flex-center justify-content-center">
+              <a-tooltip>
+                <template #title>변경이력</template>
+                <HistoryOutlined style="font-size: 18px" @click="openLogs(data.data)" />
+              </a-tooltip>
+            </div>
           </template>
         </DxDataGrid>
       </a-spin>
@@ -88,9 +90,9 @@
                           />
                         </div>
                         <div class="form-chat-timeline-content-info-user-name">
-                          {{
-                            messageDetail.writerCompactUser.name
-                          }}
+                          <span :class="messageDetail.writerCompactUser.type === `m` ? `text-blue` : ``"> 
+                            {{messageDetail.writerCompactUser.name}}
+                          </span>
                         </div>
                       </div>
                       <div class="form-chat-timeline-content-info-time">
@@ -145,9 +147,9 @@
                             <ExpressionType :is-select="false" :value-select="messageDetail.expresstionType" />
                           </div>
                           <div class="form-chat-timeline-content-info-user-name">
-                            {{
-                              messageDetail.answerCompactUser.name
-                            }}
+                            <span :class="messageDetail.answerCompactUser.type === `m` ? `text-blue` : ``"> 
+                              {{messageDetail.answerCompactUser.name}}
+                            </span>
                           </div>
                         </div>
                         <div class="form-chat-timeline-content-info-time">
@@ -197,21 +199,21 @@
                   </div>
                 </div>
               </div>
+              <div v-else class="no-data">내역이 없습니다</div>
             </div>
             <div class="form-chat-bottom" v-if="rowEdit.isEdit || !messageDetail?.answeredAt">
               <div class="form-chat-bottom-category">
-                <StatusChat with="150" :valueSelect="3" disabled />
-                <div v-if="messageDetail">
+                <StatusChat v-if="rowEdit.isEdit && rowEdit.type === TypeEditMessage.QUESTION" with="150" :valueSelect="2" disabled />
+                <StatusChat v-else with="150" :valueSelect="3" disabled />
+                <div v-if="messageDetail && rowEdit.isEdit && rowEdit.type === TypeEditMessage.QUESTION" class="d-flex-center gap-10">
                   <checkbox-basic label="비밀글" v-model:valueCheckbox="messageDetail.secret" :disabled="!rowEdit.isEdit"/>
+                  <info-tool-tip>선택시 작성글과 답글은 작성자만 조회할 수 있습니다</info-tool-tip>
+                  <a-form-item label="분류" v-if="messageDetail && rowEdit.isEdit && rowEdit.type === TypeEditMessage.QUESTION">
+                    <Classification
+                      v-model:value-select="messageDetail.classification"
+                      :disabled="!messageDetail?.active || !rowEdit.isEdit" />
+                  </a-form-item>
                 </div>
-                <info-tool-tip style="margin-left: 0">
-                  선택시 작성글과 답글은 작성자만 조회할 수 있습니다
-                </info-tool-tip>
-                <a-form-item label="분류" v-if="messageDetail && messageDetail?.answeredAt && rowEdit.type === TypeEditMessage.QUESTION">
-                  <Classification
-                    v-model:value-select="messageDetail.classification"
-                    :disabled="!messageDetail?.active || !rowEdit.isEdit" />
-                </a-form-item>
               </div>
               <InputChat v-model:content="rowEdit.content" v-model:files="filesUpload"
                          :placeholder="'글작성 (최대 1,000자)'" :companyId="messageDetail?.companyId || 0"
@@ -243,13 +245,13 @@
   <Tab3PlusModal :modal-status="state.isModalTab3Plus" @cancel="state.isModalTab3Plus = false"
                  @close-modal="closeModal" />
   <HistoryPopup :modalStatus="state.isModalHistory" @closePopup="state.isModalHistory = false" title="변경이력"
-                :idRowEdit="null" typeHistory="communication-board" :data="dataHistory" />
+                :idRowEdit="null" typeHistory="getInquiryMessageLogs" :data="dataHistory" />
 </template>
 
 <script setup lang="ts">
 import {DeleteOutlined, EditOutlined, FileOutlined, FileTextOutlined, HistoryOutlined} from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
-import {DxColumn, DxDataGrid, DxExport, DxItem, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
+import {DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
 
 import ExpressionType from "@/components/common/ExpressionType.vue";
 import {Message} from "@/configs/enum";
@@ -288,7 +290,7 @@ import dayjs from "dayjs";
 import DataSource from "devextreme/data/data_source";
 import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
 import cloneDeep from "lodash/cloneDeep";
-import {inject, provide, reactive, ref, watch} from "vue";
+import {computed, inject, provide, reactive, ref, watch} from "vue";
 import Classification from "./Classification.vue";
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
@@ -297,7 +299,6 @@ const dataRowCompany = ref<DataCompanyTab3 | null>(null)
 
 const dataRow = inject(DataRowKeyTab2)
 const openRow = inject(OpenRowKey)
-
 const gridRef = ref()
 const dataSource: any = ref([])
 const filesUpload = ref([])
@@ -359,6 +360,7 @@ onResult((result) => {
     },
   });
   state.trigger = false
+  if (result?.data?.searchAdminInquiryMessages.length === 0) messageDetail.value = null
 })
 onError((error) => {
   console.log(error)
@@ -388,20 +390,6 @@ const openLogs = (data: any) => {
   dataHistory.messageId = data.messageId
 }
 const messageDetail = ref<MessageDetailAnswer | null>(null)
-const showAddModal = () => {
-  if (rowEdit.isEdit) {
-    deletePopup({
-      message: Message.getCommonMessage('301').message,
-      okText: '네',
-      callback: () => {
-        cancelEdit()
-        state.isModalTab3Plus = true
-      },
-      cancelFn: () => { },
-      icon: false
-    })
-  } else state.isModalTab3Plus = true
-}
 const closeModal = (e: boolean) => {
   if (e && dataRowCompany.value) {
     dataSource.value?.store().insert(cloneDeep({
@@ -719,7 +707,7 @@ const handleDeleteMessage = (messageDetail: any, type: TypeEditMessage) => {
         })
       }
     },
-    message: `만약 답글이 있는 경우 답글도 함께 삭제됩니다. 본 글을 삭제하시겠습니까?`,
+    message: type === TypeEditMessage.QUESTION ?  `만약 답글이 있는 경우 답글도 함께 삭제됩니다. 본 글을 삭제하시겠습니까?` : `본 글을 삭제하시겠습니까?`,
     cancelText: `아니오`,
     okText: `네. 삭제합니다`,
   })
@@ -783,8 +771,12 @@ const refetchDataTab2 = () => {
   }
   state.trigger = true
 }
+const reloadDetail = () => {
+  state.triggerDetail = true
+}
 defineExpose({
-  refetchDataTab2
+  refetchDataTab2,
+  reloadDetail
 })
 </script>
 

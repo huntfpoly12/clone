@@ -7,28 +7,10 @@
     :buttonSearch="true"
   />
   <div id="ac-620">
-    <div class="search-form dflex">
-      <div class="dflex">
-        <label class="lable-item">후원자명 :</label>
-        <default-text-box v-model:valueInput="dataSearch.name" />
-      </div>
-      <div class="dflex">
-        <label class="lable-item">후원자 구분 :</label>
-        <select-box-common
-          :arrSelect="backerTypeArrayAll"
-          displayeExpr="name" valueExpr="id" width="150px"
-          v-model:valueInput="type"
-        />
-      </div>
-      <div class="dflex">
-        <label class="lable-item">연락처 :</label>
-        <text-number-box width="150px" v-model:valueInput="dataSearch.phone" />
-      </div>
-    </div>
     <div class="px-6">
       <a-row :gutter="[12,0]">
         <a-col span="16">
-          <div style="height: 100%; border: 1px solid #d7d7d7">
+          <div style="border: 1px solid #d7d7d7">
             <a-spin :spinning="loading" size="large">
               <DxDataGrid
                 ref="gridRef"
@@ -43,19 +25,34 @@
                 @focused-row-changed="onFocusedRowChanged"
                 :focused-row-key="focusedRowKey"
                 :focusedRowIndex="focusedRowIndex"
-                style="height: 740px"
+                style="height: calc(100vh - 150px)"
                 noDataText="내역이 없습니다"
               >
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                 <DxPaging :page-size="0" />
                 <DxExport :enabled="true" />
                 <DxToolbar>
+                  <DxItem location="after" template="search"/>
+                  <DxItem location="after" template="button-template" css-class="cell-button-add"/>
                   <DxItem name="searchPanel" />
                   <DxItem name="exportButton" css-class="cell-button-export" />
-                  <DxItem location="after" template="button-template" css-class="cell-button-add"/>
-
                 </DxToolbar>
-
+                <template #search>
+                  <div class="d-flex-center gap-10">
+                    <a-form-item label="후원자 구분" class="custom">
+                      <select-box-common
+                        :arrSelect="backerTypeArrayAll"
+                        displayeExpr="name" valueExpr="id" width="150px"
+                        v-model:valueInput="type"
+                      />
+                    </a-form-item>
+                    <checkbox-basic
+                      v-model:valueCheckbox="dataSearch.includeNonUse"
+                      :size="'20'"
+                      label="이용중지 포함"
+                    />
+                  </div>
+                </template>
                 <template #button-template>
                   <a-tooltip placement="top" title="신규">
                     <div>
@@ -172,7 +169,6 @@
                 v-model:valueInput="formState.name"
               />
             </a-form-item>
-
             <a-form-item v-if="formState.type === 3" label="비영리법인구분" :label-col="labelCol">
               <a-radio-group
                 v-model:value="formState.nonProfitCorpType"
@@ -195,7 +191,6 @@
                 </div>
               </a-radio-group>
             </a-form-item>
-
             <a-form-item label="모금(자) 기관 여부" :label-col="labelCol">
               <switch-basic v-if="isShowFundrasingInstitution" v-model:valueSwitch="formState.fundrasingInstitution" textCheck="Y" textUnCheck="N"
                             style="width: 80px" />
@@ -207,7 +202,6 @@
                             style="width: 80px" />
               <span v-else>해당사항없음</span>
             </a-form-item>
-
             <a-form-item label="주민등록번호" :label-col="labelCol" v-if="formState.type === 1">
               <div class="d-flex gap-6" >
                 <id-number-text-box
@@ -225,7 +219,6 @@
                 </info-tool-tip>
               </div>
             </a-form-item>
-
             <a-form-item label="사업자(고유)등록번호" :label-col="labelCol" v-else>
               <div class="d-flex gap-6">
                 <biz-number-text-box
@@ -236,16 +229,10 @@
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
                 <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || isCheckedBizNumber || formState.type === 1" />
                 <info-tool-tip placement="left">
-                    <span>
-                    이용하지 않는 경우 삭제되지 않으며<br />
-                    거래처 리스트에서 조회되지 않습니다
-                  </span>
+                  기부금영수증 발행시 반드시 필요합니다.
                 </info-tool-tip>
               </div>
             </a-form-item>
-
-
-
             <a-form-item label="주소" :label-col="labelCol">
               <div class="d-flex gap-6 mb-5">
                 <default-text-box v-model:valueInput="formState.roadAddress" width="200px" :disabled="true" class="roadAddress"
@@ -259,7 +246,6 @@
               </div>
               <default-text-box v-model:valueInput="formState.addressExtend" width="300px" placeholder="상세 주소 입력" />
             </a-form-item>
-
             <a-form-item label="연락처" :label-col="labelCol">
               <tel-text-box
                 type="text"
@@ -267,7 +253,6 @@
                 v-model:valueInput="formState.phone"
               />
             </a-form-item>
-
             <a-form-item label="이용 여부" :label-col="labelCol">
               <div class="d-flex gap-6">
                 <switch-basic
@@ -281,7 +266,6 @@
                 </info-tool-tip>
               </div>
             </a-form-item>
-
             <div class="text-align-center mt-20">
               <button-basic
                 :text="'저장'"
@@ -408,8 +392,6 @@ export default defineComponent({
     const dataSearch: any = ref({
       page: 1,
       rows: per_page,
-      name: null,
-      phone: undefined,
       type: null,
       includeNonUse: true,
     });
@@ -441,7 +423,7 @@ export default defineComponent({
         filter: {
           page: 1,
           rows: per_page,
-          includeNonUse: true,
+          includeNonUse: dataSearch.value.includeNonUse,
         },
       },() => ({
         fetchPolicy: "no-cache",
@@ -892,10 +874,8 @@ export default defineComponent({
       const dataFilter = {
         page: 1,
         rows: per_page,
-        includeNonUse: true,
+        includeNonUse: dataSearch.value.includeNonUse,
       };
-      checkAndAddKeyToObject({obj: dataFilter, key: 'name', value: dataSearch.value.name})
-      checkAndAddKeyToObject({obj: dataFilter, key: 'phone', value: dataSearch.value.phone})
       checkAndAddKeyToObject({obj: dataFilter, key: 'type', value: type.value})
       refetchData({
         companyId: companyId,

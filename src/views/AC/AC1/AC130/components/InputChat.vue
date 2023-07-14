@@ -1,7 +1,7 @@
 <template>
   <div class="input-edit-chat" :class="{'input-edit-chat-dragFile': isDragging}" @dragover="dragover" @dragleave="dragleave" @drop="drop">
     <div class="input-edit-chat-input">
-      <textarea rows="1" ref="inputChat" :placeholder="placeholder" :value="contentBinding" @input="changeInput"
+      <textarea rows="1" ref="inputChat" :placeholder="placeholder" v-model="contentBinding" @input="changeInput"
         @keypress.enter.exact.prevent="submitChat" :disabled="disabled"></textarea>
     </div>
 
