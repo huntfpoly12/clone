@@ -51,6 +51,7 @@ export default [
           {title: "CMS 관리", url: "/bf-251", id: "bf-251", roles: [AdminScreenRole.CMS_MANAGE.enumKey]},
           {title: "청구 괸리", url: "/bf-252", id: "bf-252", roles: [AdminScreenRole.BILLING_MANAGE.enumKey]},
           {title: "입금 관리", url: "/bf-253", id: "bf-253", roles: [AdminScreenRole.DEPOSIT_MANAGE.enumKey]},
+          { name: "입금관리", url: "/bf-254", id: "bf-254", roles: [AdminScreenRole.USER_MANAGE.enumKey] },
           {title: "입금 현황", url: "#", id: "bf-254", roles: [AdminScreenRole.DEPOSIT_MANAGE.enumKey]},
           {title: "환급 관리", url: "/bf-255", id: "bf-255", roles: [...AdminScreenRole.REFUNDS_NORMAL_MANAGE.enumKey, ...AdminScreenRole.REFUNDS_SPECIAL_MANAGE.enumKey]},
           {title: "해지 관리", url: "#", id: "bf-260", roles: [...AdminScreenRole.TERMINATION_NORMAL_MANAGE.enumKey, ...AdminScreenRole.TERMINATION_SPECIAL_MANAGE.enumKey]},
