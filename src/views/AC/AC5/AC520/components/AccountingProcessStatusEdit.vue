@@ -1,5 +1,5 @@
 <template>
-  <a-popover v-model:visible="visible" :trigger="data.status === 10 && data.revenueBudgetSum !== null && data.expenditureBudgetSum !== null || userType === 'm' ? 'click' :''" color="#e6e6e6">
+  <a-popover v-model:visible="visible" :trigger="(data.status === 10 ||  userType === 'm') && data.revenueBudgetSum !== null && data.expenditureBudgetSum !== null ? 'click' :''" color="#e6e6e6">
     <template #content>
       <div class="mytext">
         <div v-if="status == 30 || status == 40 || userType === 'm'">

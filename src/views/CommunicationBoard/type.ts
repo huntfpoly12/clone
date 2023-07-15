@@ -118,6 +118,8 @@ export enum TypeEditMessage {
   QUESTION,
   ANSWER
 }
+export const IsChanged = Symbol() as InjectionKey<Ref<UnwrapRef<boolean>>>
+export const SetChanged = Symbol() as InjectionKey<(data: boolean) => void>
 
 export const OpenRowKey = Symbol() as InjectionKey<(data: MessageDetail | MessageDetailAnswer | NodeNotification) => void>
 export const DataRowKeyTab2 = Symbol() as InjectionKey<Ref<UnwrapRef<MessageDetail | null>>>

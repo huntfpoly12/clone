@@ -187,20 +187,20 @@
 </template>
 
 <script setup lang="ts">
-import {DeleteOutlined, EditOutlined, FileOutlined, FileTextOutlined, HistoryOutlined} from "@ant-design/icons-vue";
+import { DeleteOutlined, EditOutlined, FileOutlined, FileTextOutlined, HistoryOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
-import {DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
+import { DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxSearchPanel, DxToolbar } from "devextreme-vue/data-grid";
 
 import ExpressionType from "@/components/common/ExpressionType.vue";
-import {Message} from "@/configs/enum";
+import { Message } from "@/configs/enum";
 import {
-  addAttachedFileOfNotificationMessage,
-  createNotificationMessage,
-  deleteAttachedFileOfNotificationMessage,
-  deleteNotificationMessage,
-  updateNotificationMessage
+addAttachedFileOfNotificationMessage,
+createNotificationMessage,
+deleteAttachedFileOfNotificationMessage,
+deleteNotificationMessage,
+updateNotificationMessage
 } from "@/graphql/mutations/BF/Communication-board";
-import {getAdminNotificationMessage, searchAdminNotificationMessages} from "@/graphql/queries/BF/Communication-board";
+import { getAdminNotificationMessage, searchAdminNotificationMessages } from "@/graphql/queries/BF/Communication-board";
 import deletePopup from "@/utils/deletePopup";
 import notification from "@/utils/notification";
 import MarkdownCustom from "@/views/AC/AC1/AC130/components/MarkdownCustom.vue";
@@ -209,22 +209,24 @@ import StatusChat from "@/views/AC/AC1/AC130/components/StatusChat.vue";
 import InputChat from "@/views/CommunicationBoard/components/InputChat.vue";
 import Tab3PlusModal from "@/views/CommunicationBoard/components/Tab3PlusModal.vue";
 import {
-  ClassificationEnum,
-  DataCompanyTab3,
-  DataRowKeyTab3,
-  MessageDetail,
-  OpenRowCompanyTab3,
-  OpenRowKey
+ClassificationEnum,
+DataCompanyTab3,
+DataRowKeyTab3,
+IsChanged,
+MessageDetail,
+OpenRowCompanyTab3,
+OpenRowKey,
+SetChanged
 } from "@/views/CommunicationBoard/type";
-import {messageTab3, rowEditDefault} from "@/views/CommunicationBoard/utils";
-import {useMutation, useQuery} from "@vue/apollo-composable";
+import { messageTab3, rowEditDefault } from "@/views/CommunicationBoard/utils";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import DataSource from "devextreme/data/data_source";
-import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
+import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
 import cloneDeep from "lodash/cloneDeep";
-import {computed, inject, provide, reactive, ref, watch} from "vue";
+import { computed, inject, provide, reactive, ref, watch } from "vue";
+import { useStore } from "vuex";
 import Classification from "./Classification.vue";
-import {useStore} from "vuex";
 
 const store = useStore()
 const userInfo = computed(() => store.state.auth.userInfor);
@@ -233,6 +235,8 @@ const rangeDate = ref([parseInt(dayjs().subtract(1, "year").add(1, "day").format
 const dataRowCompany = ref<DataCompanyTab3 | null>(null)
 
 const dataRow = inject(DataRowKeyTab3)
+const isChanged = inject(IsChanged)
+const setChanged = inject(SetChanged)
 const openRow = inject(OpenRowKey)
 const formRef = ref()
 const gridRef = ref()
@@ -344,10 +348,12 @@ const closeModal = (e: boolean) => {
       messageDetail.value = cloneDeep(result)
       state.classification = result?.classification || ClassificationEnum.MAJOR_INSURANCE
       state.isNewRow = true
+      setChanged && setChanged(true)
     });
   }
   state.isModalTab3Plus = false
 }
+
 const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
   const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
   selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -556,6 +562,7 @@ const cancelEdit = () => {
   rowEdit.content = ''
   rowEdit.files = []
   filesUpload.value = []
+  setChanged && setChanged(false)
 }
 const previewImage = (files: any, index: number) => {
   listImagePreview.value.index = index
@@ -599,6 +606,7 @@ const handleEditMessage = (row: any) => {
   rowEdit.isEdit = true
   rowEdit.id = row.id
   rowEdit.files = row.fileStorages
+  setChanged && setChanged(true)
 }
 const openLinkDownFile = (link: string) => {
   window.open(link, '_blank')
@@ -611,15 +619,15 @@ provide(OpenRowCompanyTab3, chooseCompany)
 provide(DataCompanyTab3, dataRowCompany)
 
 const refetchDataTab3 = () => {
-  // const res = formRef.value.validate();
-  // if (!res.isValid) {
-  //   return;
-  // }
   if (rangeDate){
     filterSearch.startWriteDate = rangeDate.value[0]
     filterSearch.finishWriteDate = rangeDate.value[1]
   }
   state.trigger = true
+  if(isChanged?.value) {
+    state.triggerDetail = true
+    cancelEdit()
+  }
 }
 const reloadDetail = () => {
   state.triggerDetail = true

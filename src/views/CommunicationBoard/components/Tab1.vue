@@ -9,7 +9,7 @@
             <div :class='`font-bold ${data.node.writerCompactUser.type === `m` ? `text-blue` : ``}`'>
               {{ data.node.writerCompactUser.name }}
             </div>
-            <div class="time">{{ dayjs(data.node.writedAt).format('YYYY-MM-DD hh:mm:ss') }}</div>
+            <div class="time">{{ dayjs(data.node.writedAt).format('YYYY-MM-DD HH:mm:ss') }}</div>
             <div class="classification" v-if="data.node.expresstionType !== 3">{{ data.node.classification }}</div>
             <div v-if="data.node.secret !== null && data.node.expresstionType === 2" class="d-flex-center">
               <checkbox-basic label="비밀글" :value-checkbox="data.node.secret" disabled/>
@@ -41,7 +41,7 @@ import ExpressionType from "@/components/common/ExpressionType.vue";
 import {ISearchCompanyAccountingDeadlines} from "@/views/BF/BF5/BF510/types";
 import {searchCompanyAccountingDeadlines} from "@/graphql/queries/BF/BF5/BF510";
 import mutations from "@/graphql/mutations/AddToken";
-import {ReloadOutlined} from "@ant-design/icons-vue";
+import { getJwtObject } from "@bankda/jangbuda-common";
 
 const dataSource: any = ref<RecentAdminCommunicationMessages[]>([])
 const openRow = inject(OpenRowKey)
@@ -81,7 +81,53 @@ const {result, onError} = useQuery(searchCompanyAccountingDeadlines, {
 onError((error) => {
   console.log('%c error', 'color: red', error)
 })
-
+const getMe = async (accessToken: string) => {
+  const response = await fetch(`https://dev-jangbuda-api.bankda.com/graphql/`, {
+		method: "POST",
+		// Add any required parameters for the refresh login API
+		body: JSON.stringify({
+			query: `
+      query me {
+        me {
+          type
+          username
+          name
+          mobilePhone
+          email
+          president
+          managerGrade
+          compactCompany{
+            name
+          }
+          facilityBusinesses{
+            facilityBusinessId
+            name
+            longTermCareInstitutionNumber
+            facilityBizType
+            startYearMonth
+            capacity
+            registrationCardFileStorageId
+            price
+            createdAt
+            createdBy
+            updatedAt
+            updatedBy
+            ip
+            active
+          }
+          createdAt
+          updatedAt
+        }
+      }
+      `,
+		}),
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + accessToken,
+		}
+	});
+  return response.json();
+}
 const {
   mutate,
   onDone,
@@ -91,16 +137,20 @@ const {
 customerLoginError((error) => {
   console.log('%c error', 'color: red', error)
 })
-onDone((result) => {
+onDone(async (result) => {
   if (result) {
     const accessToken = result.data.customerWorkLogin.accessToken;
     const refreshToken = result.data.customerWorkLogin.refreshToken;
+
+    const jwtObject = getJwtObject(accessToken);
+    const data = await getMe(accessToken)
+    console.log('%c data get me', 'color: red;', data );
     const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
     const windowFeatures = `width=${width},height=${height},fullscreen=yes`;
     const currentUrl = window.location.origin.replace(/\/$/, '');
     const newTab = `${currentUrl}/ac-130?token=${accessToken}&refreshToken=${refreshToken}&companyId=${companyInfo.companyId}&companyName=${encodeURIComponent(companyInfo.companyName)}&facilityBizType=&globalFacilityBizId=${companyInfo.facilityBusinessId}&facilityBusinessName=${encodeURIComponent(companyInfo.facilityBusinessName)}&year=${companyInfo.year}&month=${companyInfo.month}&path=AC130&typeLogin=custom`
-    window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,' + windowFeatures);
+    // window.open(newTab, '_blank', 'noopener=yes,noreferrer=yes,' + windowFeatures);
   }
 })
 const openNotification = (data: MessageDetail | MessageDetailAnswer | NodeNotification) => {

@@ -31,7 +31,7 @@
             <template #button-template>
               <a-tooltip placement="top" title="공지 신규 등록">
                 <div>
-                  <DxButton icon="plus" @click="addRow" :disabled="state.isNewRow" />
+                  <DxButton icon="plus" @click="addRow" :disabled="state.isNewRow || disable" />
                 </div>
               </a-tooltip>
             </template>
@@ -73,7 +73,7 @@
             <!--          </div>-->
             <div ref="formTimeline" class="form-chat-timeline">
               <div style="text-align: right; margin-bottom: 10px;">
-                <DxButton class="custom-button" type="normal" @click="reload">
+                <DxButton class="custom-button" type="normal" @click="reload" :disabled="isChanged">
                   <ReloadOutlined />
                 </DxButton>
               </div>
@@ -95,10 +95,10 @@
                         {{ dayjs(messageDetail.updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
                       </div>
                       <div v-if="messageDetail.active && messageDetail?.id !== 0" class="ml-10">
-                        <DxButton type="ghost" @click="handleEditMessage(messageDetail)" :disabled="rowEdit.isEdit">
+                        <DxButton type="ghost" @click="handleEditMessage(messageDetail)" :disabled="rowEdit.isEdit || disable">
                           <EditOutlined />
                         </DxButton>
-                        <DxButton type="ghost" @click="handleDeleteMessage(messageDetail)">
+                        <DxButton type="ghost" @click="handleDeleteMessage(messageDetail)" :disabled="disable">
                           <DeleteOutlined />
                         </DxButton>
                       </div>
@@ -216,9 +216,9 @@ import InfoToolTip from "@/components/common/InfoToolTip.vue";
 
 const store = useStore()
 const userInfo = computed(() => store.state.auth.userInfor);
-
+const disable = computed(() => userInfo.value?.type === 'm' && userInfo.value?.managerGrade === 3)
 const rangeDate = ref([parseInt(dayjs().subtract(1, "year").add(1, "day").format("YYYYMMDD")), parseInt(dayjs().add(1, "day").format("YYYYMMDD"))])
-
+const isChanged = ref(false)
 const formRef = ref()
 const gridRef = ref()
 const dataSource: any = ref([])
@@ -306,6 +306,7 @@ const addNewRow = () => {
     messageDetail.value = cloneDeep(result)
     state.sticky = result.sticky
     state.isNewRow = true
+    isChanged.value = true
   });
 }
 const addRow = () => {
@@ -328,6 +329,7 @@ const cancelNewRow = () => {
   dataSource.value?.store().remove(0)
   state.isNewRow = false
   gridRef.value.instance?.refresh()
+  isChanged.value = false
 }
 const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
   const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
@@ -528,6 +530,7 @@ const cancelEdit = () => {
   rowEdit.files = []
   filesUpload.value = []
   if(state.isNewRow) cancelNewRow()
+  isChanged.value = false
 }
 const previewImage = (files: any, index: number) => {
   listImagePreview.value.index = index
@@ -569,6 +572,7 @@ const handleEditMessage = (row: any) => {
   rowEdit.isEdit = true
   rowEdit.id = row.id
   rowEdit.files = row.fileStorages
+  isChanged.value = true
 }
 const openLinkDownFile = (link: string) => {
   window.open(link, '_blank')
@@ -578,7 +582,22 @@ const searching = () => {
     filterSearch.startWriteDate = rangeDate.value[0]
     filterSearch.finishWriteDate = rangeDate.value[1]
   }
-  state.trigger = true
+  if (isChanged.value) {
+    deletePopup({
+      message: Message.getCommonMessage('301').message,
+      okText: '네',
+      callback: () => {
+        state.trigger = true
+        if(rowEdit.isEdit) {
+          state.triggerDetail = true
+          cancelEdit()
+        }
+        isChanged.value = false
+      },
+      cancelFn: () => {},
+      icon: false
+    })
+  }
 }
 const reload = () => {
   state.triggerDetail = true

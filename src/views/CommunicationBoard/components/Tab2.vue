@@ -39,7 +39,7 @@
           <DxColumn caption="분류" data-field="classification" alignment="center"/>
           <DxColumn caption="문의내용" data-field="content" alignment="left" width="200px"/>
           <DxColumn caption="작성자" data-field="writerCompactUser.name" alignment="center"/>
-          <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm" alignment="center"/>
+          <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" alignment="center"/>
           <DxColumn caption="답변내용" data-field="answer" alignment="center" width="200px"/>
           <DxColumn caption="답변자" data-field="answerCompactUser.name" alignment="center"/>
           <DxColumn caption="답변일시" data-field="answeredAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" alignment="center"/>
@@ -201,7 +201,7 @@
               </div>
               <div v-else class="no-data">내역이 없습니다</div>
             </div>
-            <div class="form-chat-bottom" v-if="rowEdit.isEdit || !messageDetail?.answeredAt">
+            <div class="form-chat-bottom" v-if="(rowEdit.isEdit || !messageDetail?.answeredAt) && messageDetail?.active">
               <div class="form-chat-bottom-category">
                 <StatusChat v-if="rowEdit.isEdit && rowEdit.type === TypeEditMessage.QUESTION" with="150" :valueSelect="2" disabled />
                 <StatusChat v-else with="150" :valueSelect="3" disabled />
@@ -242,8 +242,6 @@
       </a-spin>
     </a-col>
   </a-row>
-  <Tab3PlusModal :modal-status="state.isModalTab3Plus" @cancel="state.isModalTab3Plus = false"
-                 @close-modal="closeModal" />
   <HistoryPopup :modalStatus="state.isModalHistory" @closePopup="state.isModalHistory = false" title="변경이력"
                 :idRowEdit="null" typeHistory="getInquiryMessageLogs" :data="dataHistory" />
 </template>
@@ -273,15 +271,16 @@ import MarkdownCustom from "@/views/AC/AC1/AC130/components/MarkdownCustom.vue";
 import ModalPreviewListImage from "@/views/AC/AC1/AC130/components/ModalPreviewListImage.vue";
 import StatusChat from "@/views/AC/AC1/AC130/components/StatusChat.vue";
 import InputChat from "@/views/CommunicationBoard/components/InputChat.vue";
-import Tab3PlusModal from "@/views/CommunicationBoard/components/Tab3PlusModal.vue";
 import {
   ClassificationEnum,
   DataCompanyTab3,
   DataRowKeyTab2,
+  IsChanged,
   MessageDetailAnswer,
   OpenRowCompanyTab3,
   OpenRowKey,
   RowEditDefault,
+  SetChanged,
   TypeEditMessage
 } from "@/views/CommunicationBoard/type";
 import {messageTab3, rowEditDefault} from "@/views/CommunicationBoard/utils";
@@ -293,10 +292,13 @@ import cloneDeep from "lodash/cloneDeep";
 import {computed, inject, provide, reactive, ref, watch} from "vue";
 import Classification from "./Classification.vue";
 import InfoToolTip from "@/components/common/InfoToolTip.vue";
+import { watchEffect } from "vue";
 
 const rangeDate = ref([parseInt(dayjs().subtract(1, "year").format("YYYYMMDD")), parseInt(dayjs().format("YYYYMMDD"))])
 const dataRowCompany = ref<DataCompanyTab3 | null>(null)
 
+const isChanged = inject(IsChanged)
+const setChanged = inject(SetChanged)
 const dataRow = inject(DataRowKeyTab2)
 const openRow = inject(OpenRowKey)
 const gridRef = ref()
@@ -343,7 +345,9 @@ const previousRowData = ref()
 watch(() => dataRow?.value?.messageId, (value) => {
   focusRowKey.value = value
 })
-
+watchEffect(() => {
+  setChanged && setChanged(!rowEdit.isEdit && rowEdit.content !== "")
+})
 // get all admin notification messages
 const { onResult, onError, loading, refetch } = useQuery(searchAdminInquiryMessages, {
   filter: filterSearch
@@ -390,20 +394,7 @@ const openLogs = (data: any) => {
   dataHistory.messageId = data.messageId
 }
 const messageDetail = ref<MessageDetailAnswer | null>(null)
-const closeModal = (e: boolean) => {
-  if (e && dataRowCompany.value) {
-    dataSource.value?.store().insert(cloneDeep({
-      ...messageTab3,
-      company: dataRowCompany.value,
-      companyId: dataRowCompany.value.id,
-    })).then((result: any) => {
-      gridRef.value.instance?.refresh()
-      focusRowKey.value = result?.messageId
-      messageDetail.value = cloneDeep(result)
-    });
-  }
-  state.isModalTab3Plus = false
-}
+
 const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
   const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
   selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -681,6 +672,7 @@ const cancelEdit = () => {
   rowEdit.content = ''
   rowEdit.files = []
   filesUpload.value = []
+  setChanged && setChanged(false)
 }
 const previewImage = (files: any, index: number) => {
   listImagePreview.value.index = index
@@ -744,6 +736,7 @@ const handleEditMessage = (row: any, type: TypeEditMessage) => {
     rowEdit.files = row.answerFileStorages
   }
   rowEdit.isEdit = true
+  setChanged && setChanged(true)
 }
 const openLinkDownFile = (link: string) => {
   window.open(link, '_blank')
@@ -770,6 +763,10 @@ const refetchDataTab2 = () => {
     delete filterSearch.expresstionTypes
   }
   state.trigger = true
+  if(isChanged?.value) {
+    state.triggerDetail = true
+    cancelEdit()
+  }
 }
 const reloadDetail = () => {
   state.triggerDetail = true
