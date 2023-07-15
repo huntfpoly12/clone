@@ -155,7 +155,7 @@
                         <div class="form-chat-timeline-content-info-time">
                           {{ dayjs(messageDetail.answeredAt).format('YYYY-MM-DD HH:mm:ss') }}
                         </div>
-                        <div class="form-chat-timeline-content-info-classification">{{ messageDetail.classification }}</div>
+                        <div class="form-chat-timeline-content-info-classification" v-if="messageDetail.expresstionType !== 3">{{ messageDetail.classification }}</div>
                         <div v-if="messageDetail.active && messageDetail?.messageId !== 0">
                           <DxButton type="ghost" @click="handleEditMessage(messageDetail, TypeEditMessage.ANSWER)" :disabled="rowEdit.isEdit">
                             <EditOutlined />
@@ -221,7 +221,7 @@
                          :isEdit="true" @cancel="cancelEdit"
                          :isNewRow="!rowEdit.isEdit && !messageDetail?.answeredAt"
                          @update-image="updateImage" />
-              <div v-if="rowEdit.isEdit" class="mt-10">
+              <div v-if="rowEdit.isEdit && messageDetail?.fileStorages?.length" class="mt-10">
                 <div v-for="file in rowEdit.files" class="d-flex-center justify-content-between"
                      :key="file.id">
                   <div class="d-flex-center">

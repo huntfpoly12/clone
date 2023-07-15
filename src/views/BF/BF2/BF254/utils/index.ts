@@ -18,6 +18,8 @@ export const fakeData = [
     withdrawalRequestAmount: 123121,// money
     numberOfWithdrawalHolds: 61,
     withdrawalPendingAmount: 111221,// money
+    numberOfWithdrawalExceptions: 111221,// money
+    amountExcludedFromWithdrawal: 111221,// money
   }
 ]
 export const options = [

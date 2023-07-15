@@ -46,7 +46,7 @@
       </div>
       <div style="justify-content: center" class="pt-10 wf-100 d-flex-center">
         <button-basic
-            text="이전"
+            :text="step === 1 ? `취소` : `이전`"
             type="default"
             mode="outlined"
             class="mr-5"

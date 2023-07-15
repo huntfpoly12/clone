@@ -28,14 +28,14 @@
             </a-form-item>
           </div>
         </template>
-        <DxColumn caption="구연월" data-field="guYeonwol" alignment="center"/>
-        <DxColumn caption="구건수" data-field="guGeon" alignment="center"/>
-        <DxColumn caption="구금액" data-field="detentionAmount" :format="$filters.formatCurrency" alignment="center"/>
-        <DxColumn caption="상입금 건수" data-field="numberOfDeposits" alignment="center"/>
-        <DxColumn caption="상입금 금액" data-field="depositAmount" alignment="center"/>
-        <DxColumn caption="납입금 건수" data-field="numberOfPayments" alignment="center"/>
-        <DxColumn caption="납입금 금액" data-field="amountOfPayment" alignment="center"/>
-        <DxColumn caption="체입금 건수" data-field="numberOfDeposit" alignment="center"/>
+        <DxColumn caption="청구연월" data-field="guYeonwol" alignment="center"/>
+        <DxColumn caption="청구건수" data-field="guGeon" alignment="center"/>
+        <DxColumn caption="청구금액" data-field="detentionAmount" :format="$filters.formatCurrency" alignment="center"/>
+        <DxColumn caption="정상입금 건수" data-field="numberOfDeposits" alignment="center"/>
+        <DxColumn caption="정상입금 금액" data-field="depositAmount" alignment="center"/>
+        <DxColumn caption="선납입금 건수" data-field="numberOfPayments" alignment="center"/>
+        <DxColumn caption="선납입금 금액" data-field="amountOfPayment" alignment="center"/>
+        <DxColumn caption="연체입금 건수" data-field="numberOfDeposit" alignment="center"/>
         <DxColumn caption="연체입금 금액" data-field="overdueDepositAmount" alignment="center"/>
         <DxColumn caption="출금실패 건수" data-field="numberOfFailedWithdrawals" alignment="center"/>
         <DxColumn caption="출금실패 금액" data-field="withdrawalFailedAmount" alignment="center"/>
@@ -45,6 +45,8 @@
         <DxColumn caption="출금신청 금액" data-field="withdrawalRequestAmount" alignment="center"/>
         <DxColumn caption="출금보류 건수" data-field="numberOfWithdrawalHolds" alignment="center"/>
         <DxColumn caption="출금보류 금액" data-field="withdrawalPendingAmount" alignment="center"/>
+        <DxColumn caption="출금제외 건수" data-field="numberOfWithdrawalExceptions" alignment="center"/>
+        <DxColumn caption="출금제외 금액 " data-field="amountExcludedFromWithdrawal" alignment="center"/>
       </DxDataGrid>
     </a-spin>
   </div>
@@ -89,6 +91,7 @@ const closePopup = (e: boolean) => {
 const searching = () => {
   console.log('%c searching', 'color: red',)
 }
+
 </script>
 
 <style scoped>

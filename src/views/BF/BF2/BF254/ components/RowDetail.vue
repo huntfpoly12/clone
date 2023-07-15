@@ -42,6 +42,8 @@
           <DxColumn caption="출금신청 금액" data-field="withdrawalRequestAmount" alignment="center"/>
           <DxColumn caption="출금보류 건수" data-field="numberOfWithdrawalHolds" alignment="center"/>
           <DxColumn caption="출금보류 금액" data-field="withdrawalPendingAmount" alignment="center"/>
+          <DxColumn caption="출금제외 건수" data-field="numberOfWithdrawalExceptions" alignment="center"/>
+          <DxColumn caption="출금제외 금액" data-field="amountExcludedFromWithdrawal" alignment="center"/>
         </DxDataGrid>
       </a-spin>
     </div>

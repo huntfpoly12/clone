@@ -6,7 +6,7 @@
         <DxDataGrid id="data-source" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true" ref="tab1Bf520Ref"
-                    noDataText="내역이 없습니다" style="height: calc(100vh - 220px)">
+                    noDataText="내역이 없습니다" style="height: calc(100vh - 180px)">
           <DxScrolling mode="standard" show-scrollbar="always"/>
           <DxPaging :page-size="1000"/>
           <DxSelection :select-all-mode="'allPages'" :show-check-boxes-mode="'always'" mode="multiple"/>
@@ -262,5 +262,7 @@ const searching = () => {
   margin-bottom: 7px;
   cursor: pointer;
 }
-
+.dx-toolbar-items-container {
+  margin-bottom: 10px;
+}
 </style>

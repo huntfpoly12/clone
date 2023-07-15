@@ -40,8 +40,13 @@
     <DxColumn caption="청구금액 (선납)" data-field="billedAmountAdvancePayment" alignment="center"/>
   </DxDataGrid>
   <div class="footer-summary">
-    <div>전체 사업자 수 <span class="footer-summary-total">[{{ dataSource.length }}]</span></div>
-    <div>당월 사업자 수 <span class="footer-summary-total">[{{ dataSource.length }}]</span></div>
+    <div>사업자 수
+      <span class="footer-summary-total">[{{ dataSource.length }}]</span>
+      (당월 <span class="footer-summary-total">[{{ dataSource.length }}]</span>,
+      연체 <span class="footer-summary-total">[{{ dataSource.length }}]</span>,
+      선납 <span class="footer-summary-total">[{{ dataSource.length }}]</span>)
+    </div>
+    <div>청구금액 합계<span class="footer-summary-total">[{{ dataSource.length }}]</span></div>
     <div>연체 사업자 수 <span class="footer-summary-total">[{{ dataSource.length }}]</span></div>
     <div>선납 사업자 수<span class="footer-summary-total">[{{ dataSource.length }}]</span></div>
   </div>
@@ -110,5 +115,6 @@ const dataSourceDetail = ref(data())
 </script>
 
 <style scoped>
-@import "./../../style/style.scss";
+@import "./../../style/style.scss"
+
 </style>

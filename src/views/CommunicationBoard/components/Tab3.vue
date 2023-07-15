@@ -159,7 +159,7 @@
                 :disabled="state.isLoadingUpload || dataSource.length === 0" @submitChat="submitChat"
                 :isNewRow="state.isNewRow" :isEdit="rowEdit.isEdit || messageDetail?.messageId === 0" @cancel="cancelEdit"
                 @update-image="updateImage" />
-              <div v-if="rowEdit.isEdit" class="mt-10">
+              <div v-if="rowEdit.isEdit && messageDetail?.fileStorages?.length" class="mt-10">
                 <div v-for="file in messageDetail?.fileStorages" class="d-flex-center justify-content-between"
                   :key="file.id">
                   <div class="d-flex-center">
