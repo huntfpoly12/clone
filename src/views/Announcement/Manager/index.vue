@@ -24,7 +24,7 @@
                                        :max-range="90" :required="true" />
                 </a-form-item>
                 <div class="d-flex-center">
-                  <checkbox-basic label="상단고정" v-model:valueCheckbox="filterSearch.includeDeletion" />
+                  <checkbox-basic label="삭제 포함" v-model:valueCheckbox="filterSearch.includeDeletion" />
                 </div>
               </div>
             </template>
@@ -37,7 +37,7 @@
             </template>
             <DxColumn caption="삭제 여부" data-field="active" alignment="center" cell-template="active" width="80px" />
             <DxColumn caption="구분" data-field="expresstionType" alignment="center" cell-template="expresstionType" />
-            <DxColumn caption="상단고정" data-field="sticky" alignment="center" cell-template="sticky" width="80px" />
+            <DxColumn caption="삭제 포함" data-field="sticky" alignment="center" cell-template="sticky" width="80px" />
             <DxColumn caption="내용" data-field="content" alignment="left" width="400px" />
             <DxColumn caption="작성자" data-field="writerCompactUser.name" alignment="center" />
             <DxColumn caption="작성일시" data-field="writedAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" alignment="center" width="140px" />
@@ -71,7 +71,7 @@
             <!--          <div v-if="loadinggetGetAccountingClosingMessages || loading" class="form-chat-loading">-->
             <!--            <a-spin size="large"/>-->
             <!--          </div>-->
-            <div v-chat-scroll ref="formTimeline" class="form-chat-timeline">
+            <div ref="formTimeline" class="form-chat-timeline">
               <div style="text-align: right; margin-bottom: 10px;">
                 <DxButton class="custom-button" type="normal" @click="reload">
                   <ReloadOutlined />
@@ -140,7 +140,7 @@
               <div class="form-chat-bottom-category">
                 <StatusChat with="150" :valueSelect="5" disabled />
                 <span class="form-chat-bottom-category-text">
-                  <checkbox-basic label="삭제 포함" v-model:valueCheckbox="state.sticky" />
+                  <checkbox-basic label="상단고정" v-model:valueCheckbox="state.sticky" />
                 </span>
                 <info-tool-tip>선택시 소통판에서 최우선하여 정렬됩니다</info-tool-tip>
               </div>
@@ -149,7 +149,7 @@
                          :disabled="state.isLoadingUpload || dataSource.length === 0" @submitChat="submitChat"
                          :isNewRow="state.isNewRow" :isEdit="rowEdit.isEdit || messageDetail?.id === 0" @cancel="cancelEdit"
                          @update-image="updateImage" />
-              <div v-if="rowEdit.isEdit" class="mt-10">
+              <div v-if="rowEdit.isEdit" class="mt-10 list-file">
                 <div v-for="file in messageDetail?.fileStorages" class="d-flex-center justify-content-between"
                      :key="file.id">
                   <div class="d-flex-center">
@@ -324,6 +324,11 @@ const addRow = () => {
     addNewRow()
   }
 }
+const cancelNewRow = () => {
+  dataSource.value?.store().remove(0)
+  state.isNewRow = false
+  gridRef.value.instance?.refresh()
+}
 const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
   const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
   selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -334,10 +339,8 @@ const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
         message: Message.getCommonMessage('301').message,
         okText: '네',
         callback: () => {
-          dataSource.value?.store().remove(0)
-          state.isNewRow = false
+          cancelNewRow()
           focusRowKey.value = selectRowKeyAction.value
-          gridRef.value.instance?.refresh()
         },
         cancelFn: () => {
           rowElement?.classList.remove("dx-state-hover-custom")
@@ -524,6 +527,7 @@ const cancelEdit = () => {
   rowEdit.content = ''
   rowEdit.files = []
   filesUpload.value = []
+  if(state.isNewRow) cancelNewRow()
 }
 const previewImage = (files: any, index: number) => {
   listImagePreview.value.index = index

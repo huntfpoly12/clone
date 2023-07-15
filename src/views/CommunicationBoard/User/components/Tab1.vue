@@ -84,6 +84,7 @@ export default defineComponent({
 		const openRow = (node: any) => {
 			switch (node.expresstionType) {
 				case 1:
+					sessionStorage.setItem("month", node.month);
 					return openTab({ name: '마감', url: '/ac-130', id: 'ac-130' })
 				case 2:
 					emit('messageId', node.messageId)

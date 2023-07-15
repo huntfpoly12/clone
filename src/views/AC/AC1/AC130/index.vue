@@ -104,7 +104,7 @@
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
-import { defineComponent, ref, reactive, computed, onMounted } from "vue";
+import { defineComponent, ref, reactive, computed, onMounted, watch } from "vue";
 import ProcessAccountingStatus from "./components/ProcessAccountingStatus.vue"
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC130";
@@ -248,6 +248,17 @@ export default defineComponent({
     errorChangeAccountingProcessStatus(e => {
       notification("error", e.message);
     })
+
+    watch(() => store.state.common.activeTab, (newVal) => { // thay đổi month từ màn communication
+			if (newVal.id == "ac-130") {
+				if(sessionStorage.getItem('month') && Number(sessionStorage.getItem('month')) !== monthSelected.value) {
+          monthSelected.value = Number(sessionStorage.getItem('month'))
+          payload.month = Number(sessionStorage.getItem('month'))
+          triggerAccountingClosingCheckItems.value = true;
+          sessionStorage.removeItem('month');
+        }
+			}
+    });
 
     // METHODS
     const selectedMonth = (month: number) => {

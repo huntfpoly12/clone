@@ -11,7 +11,7 @@
     <!--      </div>-->
     <!--    </div>-->
     <div class="input-edit-chat-input">
-      <textarea rows="1" ref="inputChat" v-chat-scroll :placeholder="placeholder" :value="content" @focus="resizeTextarea" @input="changeInput" :disabled="disabled || !isEdit" />
+      <textarea rows="1" ref="inputChat" v-chat-scroll v-resize-textarea :placeholder="placeholder" :value="content"  @input="changeInput" :disabled="disabled || !isEdit" />
     </div>
 
     <div class="input-edit-chat-input-action">
@@ -215,7 +215,7 @@ const drop = (event: any) => {
       outline: none;
       resize: none;
       width: 100%;
-      min-height: 200px;
+      min-height: 38px;
       max-height: 200px;
       padding: 7px 10px;
       font-size: 14px;
@@ -257,6 +257,8 @@ const drop = (event: any) => {
     }
 
     &-files {
+      max-height: 70px;
+      overflow-y: auto;
       width: 100%;
 
       &-item {

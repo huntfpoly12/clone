@@ -77,7 +77,7 @@
       ">
         <div class="form-container pl-10 pt-8">
           <div class="form-chat">
-            <div v-chat-scroll ref="formTimeline" class="form-chat-timeline">
+            <div ref="formTimeline" class="form-chat-timeline">
               <div v-if="messageDetail" class="form-chat-timeline-common">
                 <div class="form-chat-timeline-content">
                   <div class="form-chat-timeline-content-info">
@@ -221,7 +221,7 @@
                          :isEdit="true" @cancel="cancelEdit"
                          :isNewRow="!rowEdit.isEdit && !messageDetail?.answeredAt"
                          @update-image="updateImage" />
-              <div v-if="rowEdit.isEdit && messageDetail?.fileStorages?.length" class="mt-10">
+              <div v-if="rowEdit.isEdit && messageDetail?.fileStorages?.length" class="mt-10 list-file">
                 <div v-for="file in rowEdit.files" class="d-flex-center justify-content-between"
                      :key="file.id">
                   <div class="d-flex-center">
